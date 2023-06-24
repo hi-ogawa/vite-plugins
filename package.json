@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "pnpm -r build",
     "tsc": "tsc -b",
     "dev:tsc": "pnpm tsc --watch --preserveWatchOutput",
     "test": "vitest",
