@@ -1,4 +1,5 @@
-import internal from "virtual:@hiogawa/vite-index-html-middleware/internal";
+// @ts-expect-error
+import internal from "/virtual:@hiogawa/vite-index-html-middleware/internal";
 import type { RequestHandler } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
 

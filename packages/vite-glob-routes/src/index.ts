@@ -6,9 +6,9 @@ import type { Plugin } from "vite";
 
 // pass internal runtime data via virtual module
 const VIRTUAL_INTERNAL_PAGE_ROUTES =
-  "virtual:@hiogawa/vite-index-html-middleware/internal/page-routes";
+  "virtual:@hiogawa/vite-glob-routes/internal/page-routes";
 const VIRTUAL_INTERNAL_API_ROUTES =
-  "virtual:@hiogawa/vite-index-html-middleware/internal/api-routes";
+  "virtual:@hiogawa/vite-glob-routes/internal/api-routes";
 
 export default function globRoutesPlugin(options: { root: string }): Plugin[] {
   // TODO: escape js string
@@ -16,6 +16,7 @@ export default function globRoutesPlugin(options: { root: string }): Plugin[] {
   return [
     {
       name: "@hiogawa/vite-glob-routes",
+      enforce: "pre",
       // // https://github.com/vitejs/vite/issues/9364#issuecomment-1197842127
       // enforce: "pre", // TODO: this works in the demo (inside monorepo), but doesn't when installed externally in https://github.com/hi-ogawa/youtube-dl-web-v2/pull/62 ???
 

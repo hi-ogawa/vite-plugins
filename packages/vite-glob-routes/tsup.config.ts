@@ -5,7 +5,7 @@ export default defineConfig({
   format: ["esm", "cjs"],
   dts: true,
   external: [
-    "virtual:@hiogawa/vite-index-html-middleware/internal/page-routes",
-    "virtual:@hiogawa/vite-index-html-middleware/internal/api-routes",
+    "virtual:@hiogawa/vite-glob-routes/internal/page-routes",
+    "virtual:@hiogawa/vite-glob-routes/internal/api-routes",
   ],
 });

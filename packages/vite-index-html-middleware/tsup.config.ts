@@ -4,5 +4,5 @@ export default defineConfig({
   entry: ["src/index.ts", "src/hattip.ts"],
   format: ["esm", "cjs"],
   dts: true,
-  external: ["virtual:@hiogawa/vite-index-html-middleware/internal"],
+  external: ["/virtual:@hiogawa/vite-index-html-middleware/internal"],
 });

@@ -1,4 +1,4 @@
-declare module "virtual:@hiogawa/vite-index-html-middleware/internal/page-routes" {
+declare module "virtual:@hiogawa/vite-glob-routes/internal/page-routes" {
   const value: {
     root: string;
     globPage: Record<string, any>;
@@ -7,7 +7,7 @@ declare module "virtual:@hiogawa/vite-index-html-middleware/internal/page-routes
   export default value;
 }
 
-declare module "virtual:@hiogawa/vite-index-html-middleware/internal/api-routes" {
+declare module "virtual:@hiogawa/vite-glob-routes/internal/api-routes" {
   const value: {
     root: string;
     globApi: Record<string, any>;
