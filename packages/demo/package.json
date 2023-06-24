@@ -1,11 +1,14 @@
 {
+  "type": "module",
   "scripts": {
     "dev": "run-p dev:*",
     "dev:vite": "vite",
     "dev:tsc": "tsc -b --watch --preserveWatchOutput",
-    "build": "run-s build:*",
+    "build": "SERVER_ENTRY=./src/server/adapter-vercel-edge.ts run-s build:*",
     "build:vite": "vite build && vite build --ssr",
     "build:vercel": "bash misc/vercel/build.sh",
+    "build-preview": "run-s build:vite",
+    "preview": "vite preview",
     "release": "vercel deploy --prebuilt .",
     "release-production": "vercel deploy --prebuilt . --prod"
   },
