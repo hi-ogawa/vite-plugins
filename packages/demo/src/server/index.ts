@@ -1,5 +1,5 @@
+import indexHtmlMiddleware from "virtual:@hiogawa/vite-index-html-middleware/hattip";
 import globApiRoutes from "virtual:glob-api-routes/hattip";
-import indexHtmlMiddleware from "virtual:index-html-middleware/hattip";
 import { compose } from "@hattip/compose";
 
 export function createHattipApp() {

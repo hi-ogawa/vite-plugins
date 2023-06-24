@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-index-html-middleware",
-  "version": "0.0.2-pre.0",
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -10,6 +10,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
+    },
+    "./runtime": {
+      "import": "./dist/runtime.js",
+      "require": "./dist/runtime.cjs",
+      "types": "./dist/runtime.d.ts"
     },
     "./virtual": {
       "types": "./virtual.d.ts"
@@ -28,6 +33,9 @@
   "scripts": {
     "build": "tsup",
     "release": "pnpm publish --no-git-checks --access public"
+  },
+  "devDependencies": {
+    "@hattip/compose": "^0.0.34"
   },
   "peerDependencies": {
     "@hattip/compose": "*",
