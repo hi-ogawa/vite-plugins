@@ -2,4 +2,5 @@
 
 ```sh
 pnpm build
+pnpm release
 ```
