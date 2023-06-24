@@ -1,4 +1,4 @@
-import type { createGlobApiRoutes } from "./hattip-internal";
+import type { createGlobApiRoutes } from "./internal/hattip";
 
 export const globApiRoutes = (() => {
   throw new Error(

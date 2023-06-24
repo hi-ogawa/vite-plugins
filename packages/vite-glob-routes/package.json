@@ -12,9 +12,9 @@
       "types": "./dist/index.d.ts"
     },
     "./internal": {
-      "import": "./dist/internal.js",
-      "require": "./dist/internal.cjs",
-      "types": "./dist/internal.d.ts"
+      "import": "./dist/internal/index.js",
+      "require": "./dist/internal/index.cjs",
+      "types": "./dist/internal/index.d.ts"
     },
     "./react-router": {
       "import": "./dist/react-router.js",

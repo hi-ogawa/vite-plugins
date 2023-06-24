@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  createGlobPageRoutes,
-  splitPathSegment,
-} from "./react-router-internal";
+import { createGlobPageRoutes, splitPathSegment } from "./react-router";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
