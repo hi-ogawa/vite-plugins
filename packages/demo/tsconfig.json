@@ -2,11 +2,7 @@
   "extends": ["../../tsconfig.base.json"],
   "include": ["src"],
   "compilerOptions": {
-    "types": [
-      "vite/client",
-      "@hiogawa/vite-glob-routes/virtual",
-      "@hiogawa/vite-index-html-middleware/virtual"
-    ],
+    "types": ["vite/client", "@hiogawa/vite-glob-routes/virtual"],
     "jsx": "preserve"
   }
 }

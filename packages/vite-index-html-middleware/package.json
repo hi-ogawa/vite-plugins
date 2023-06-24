@@ -16,8 +16,10 @@
       "require": "./dist/runtime.cjs",
       "types": "./dist/runtime.d.ts"
     },
-    "./virtual": {
-      "types": "./virtual.d.ts"
+    "./runtime-internal": {
+      "import": "./dist/runtime-internal.js",
+      "require": "./dist/runtime-internal.cjs",
+      "types": "./dist/runtime-internal.d.ts"
     }
   },
   "files": [
