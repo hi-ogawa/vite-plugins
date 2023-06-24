@@ -1,3 +1,6 @@
 # vite-index-html-middleware
 
-TODO
+```sh
+pnpm build
+pnpm release
+```

@@ -1,15 +1,15 @@
 import type { Plugin } from "vite";
 
-const externalId = "@hiogawa/vite-index-html-middleware/runtime";
-const virtualId = "virtual:" + externalId;
+// pass internal runtime data via virtual module
+const VIRTUAL_INTERNAL =
+  "/virtual:@hiogawa/vite-index-html-middleware/internal";
 
 const globalViteDevServerKey =
   "__indexHtmlMiddlewarePlugin_globalViteDevServerKey";
 
-export function indexHtmlMiddlewarePlugin(): Plugin {
+export default function indexHtmlMiddlewarePlugin(): Plugin {
   return {
     name: "@hiogawa/vite-index-html-middleware",
-    enforce: "pre", // required to intercept `resolveId`
 
     // expose dev server to access "transformIndexHtml"
     // https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts
@@ -22,22 +22,37 @@ export function indexHtmlMiddlewarePlugin(): Plugin {
       delete (globalThis as any)[globalViteDevServerKey];
     },
 
+    config(_config, _env) {
+      // vite has to handle internal "virtual" modules
+      // cf. https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts#L49-L65
+      const exclude = ["@hiogawa/vite-index-html-middleware"];
+      return {
+        optimizeDeps: {
+          exclude,
+        },
+        ssr: {
+          noExternal: exclude,
+          optimizeDeps: {
+            exclude,
+          },
+        },
+      };
+    },
+
     async resolveId(source, _importer, options) {
-      if (options.ssr && source === externalId) {
-        return virtualId;
+      if (options.ssr && source == VIRTUAL_INTERNAL) {
+        return source;
       }
       return;
     },
 
     load(id, _options) {
-      // TODO: configurable index.html entry?
-      if (id === virtualId) {
+      if (id === VIRTUAL_INTERNAL) {
         return `
-          import { createIndexHtmlMiddleware } from "@hiogawa/vite-index-html-middleware/runtime-internal";
-          export const indexHtmlMiddleware = createIndexHtmlMiddleware({
+          export default {
             server: globalThis[${JSON.stringify(globalViteDevServerKey)}],
             importIndexHtml: () => (import.meta.env.DEV ? import("/index.html?raw") : import("/dist/client/index.html?raw")),
-          });
+          }
         `;
       }
       return;

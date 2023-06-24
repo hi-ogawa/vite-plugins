@@ -1,3 +1,6 @@
 # vite-glob-routes
 
-TODO
+```sh
+pnpm build
+pnpm release
+```
