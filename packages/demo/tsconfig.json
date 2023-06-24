@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "noEmit": true,
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "types": ["vite/client", "@hiogawa/vite-glob-routes/virtual"],
+    "jsx": "react-jsx"
+  }
+}
