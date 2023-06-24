@@ -8,6 +8,7 @@
     "build:vercel": "bash misc/vercel/build.sh",
     "build-preview": "SERVER_ENTRY=./src/server/adapter-preview.ts run-s build:vite",
     "preview": "node ./dist/server/index.mjs",
+    "test-e2e": "playwright test",
     "release": "vercel deploy --prebuilt .",
     "release-production": "vercel deploy --prebuilt . --prod"
   },
@@ -22,6 +23,7 @@
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-index-html-middleware": "workspace:*",
     "@iconify-json/ri": "^1.1.9",
+    "@playwright/test": "^1.35.1",
     "@tanstack/react-query": "^4.29.14",
     "@tanstack/react-query-devtools": "^4.29.14",
     "@tsconfig/strictest": "^2.0.1",
