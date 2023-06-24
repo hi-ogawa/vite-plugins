@@ -24,7 +24,7 @@ function PageInner() {
 
 function Header() {
   return (
-    <header className="top-0 sticky antd-body flex items-center p-2 px-4 gap-4 shadow-md shadow-black/[0.05] dark:shadow-black/[0.7] z-1">
+    <header className="top-0 sticky antd-body flex items-center p-2 px-4 gap-3 shadow-md shadow-black/[0.05] dark:shadow-black/[0.7] z-1">
       <div>Example</div>
       <ul className="flex gap-2 text-sm font-mono">
         {ROUTES.map((href) => (
@@ -40,6 +40,7 @@ function Header() {
         ))}
       </ul>
       <div className="flex-1"></div>
+      <ThemeSelect />
       <a
         className="antd-btn antd-btn-ghost i-ri-github-line w-6 h-6"
         href="https://github.com/hi-ogawa/vite-plugins"
@@ -50,3 +51,19 @@ function Header() {
 }
 
 const ROUTES = ["/", "/other", "/some-dynamic-id", "/subdir", "/subdir/other"];
+
+declare let __themeSet: (theme: string) => void;
+declare let __themeGet: () => string;
+
+export function ThemeSelect() {
+  return (
+    <button
+      className="flex items-center antd-btn antd-btn-ghost"
+      onClick={() => {
+        __themeSet(__themeGet() === "dark" ? "light" : "dark");
+      }}
+    >
+      <span className="dark:i-ri-sun-line light:i-ri-moon-line !w-5 !h-5"></span>
+    </button>
+  );
+}
