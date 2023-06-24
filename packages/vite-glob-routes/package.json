@@ -1,0 +1,62 @@
+{
+  "name": "@hiogawa/vite-glob-routes",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./internal": {
+      "import": "./dist/internal.js",
+      "require": "./dist/internal.cjs",
+      "types": "./dist/internal.d.ts"
+    },
+    "./react-router": {
+      "import": "./dist/react-router.js",
+      "require": "./dist/react-router.cjs",
+      "types": "./dist/react-router.d.ts"
+    },
+    "./hattip": {
+      "import": "./dist/hattip.js",
+      "require": "./dist/hattip.cjs",
+      "types": "./dist/hattip.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/vite-glob-routes"
+  },
+  "scripts": {
+    "build": "tsup",
+    "release": "pnpm publish --no-git-checks --access public"
+  },
+  "devDependencies": {
+    "@hattip/compose": "^0.0.34",
+    "@types/react": "^18.2.14",
+    "react-router": "^6.13.0"
+  },
+  "peerDependencies": {
+    "@hattip/compose": "*",
+    "@types/react": "*",
+    "react-router": "*",
+    "vite": "*"
+  },
+  "peerDependenciesMeta": {
+    "@hattip/compose": {
+      "optional": true
+    },
+    "react-router": {
+      "optional": true
+    }
+  }
+}

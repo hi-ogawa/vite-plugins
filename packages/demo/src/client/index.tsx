@@ -1,6 +1,6 @@
 import "virtual:uno.css";
-import globPageRoutes from "virtual:glob-page-routes/react-router";
 import { tinyassert } from "@hiogawa/utils";
+import { globPageRoutes } from "@hiogawa/vite-glob-routes/react-router";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";

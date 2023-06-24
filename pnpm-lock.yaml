@@ -66,8 +66,8 @@ importers:
         specifier: 1.4.2-pre.12
         version: 1.4.2-pre.12
       '@hiogawa/vite-glob-routes':
-        specifier: 0.0.2-pre.0
-        version: 0.0.2-pre.0(@hattip/compose@0.0.34)(vite@4.3.9)
+        specifier: workspace:*
+        version: link:../vite-glob-routes
       '@hiogawa/vite-index-html-middleware':
         specifier: workspace:*
         version: link:../vite-index-html-middleware
@@ -80,12 +80,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^4.29.14
         version: 4.29.14(@tanstack/react-query@4.29.14)(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/client':
-        specifier: ^10.30.0
-        version: 10.30.0(@trpc/server@10.30.0)
-      '@trpc/server':
-        specifier: ^10.30.0
-        version: 10.30.0
       '@tsconfig/strictest':
         specifier: ^2.0.1
         version: 2.0.1
@@ -125,6 +119,22 @@ importers:
       zod:
         specifier: ^3.21.4
         version: 3.21.4
+
+  packages/vite-glob-routes:
+    dependencies:
+      vite:
+        specifier: '*'
+        version: 4.3.9(@types/node@18.16.18)
+    devDependencies:
+      '@hattip/compose':
+        specifier: ^0.0.34
+        version: 0.0.34
+      '@types/react':
+        specifier: ^18.2.14
+        version: 18.2.14
+      react-router:
+        specifier: ^6.13.0
+        version: 6.13.0(react@18.2.0)
 
   packages/vite-index-html-middleware:
     dependencies:
@@ -810,22 +820,6 @@ packages:
     resolution: {integrity: sha512-YkNSrK+h1/iFeshHC+9YAhux1kUO0JJ+hjZdlcT5gJR8hW9GJpOK8xwOpAE1fVjRE+QWupKwPx33tJUXCGPoPA==}
     dev: true
 
-  /@hiogawa/vite-glob-routes@0.0.2-pre.0(@hattip/compose@0.0.34)(vite@4.3.9):
-    resolution: {integrity: sha512-YUlNPSR5u75EfLQMKNFKEb0TqNjggg6+S2JZ4N9fyKGSrKVpvRVPTuPZ7QVF2HRGhvYKJtemSoF1vg4X4WojnA==}
-    peerDependencies:
-      '@hattip/compose': '*'
-      react-router: '*'
-      vite: '*'
-    peerDependenciesMeta:
-      '@hattip/compose':
-        optional: true
-      react-router:
-        optional: true
-    dependencies:
-      '@hattip/compose': 0.0.34
-      vite: 4.3.9(@types/node@18.16.18)
-    dev: true
-
   /@iconify-json/ri@1.1.9:
     resolution: {integrity: sha512-YOSBce/bzkORxBI1mYz4b9vidaJDeorwzuddFoIV9ajazncI55VLtQ+puIra0d3HQhYfswNSwRy8PrHTZmvaOg==}
     dependencies:
@@ -971,18 +965,6 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: true
 
-  /@trpc/client@10.30.0(@trpc/server@10.30.0):
-    resolution: {integrity: sha512-utz0qRI4eU3QcHvBwcSONEnt5pWR3Dyk4VFJnySHysBT6GQRRpJifWX5+RxDhFK93LxcAmiirFbYXjZ40gbobw==}
-    peerDependencies:
-      '@trpc/server': 10.30.0
-    dependencies:
-      '@trpc/server': 10.30.0
-    dev: true
-
-  /@trpc/server@10.30.0:
-    resolution: {integrity: sha512-pRsrHCuar3fbyOdJvO4b80OMP1Tx/wOSy5Ozy6cFDFWVUmfAyIX3En5Hoysy4cmMUuCsQsfTEYQwo+OcpjzBkg==}
-    dev: true
-
   /@tsconfig/strictest@2.0.1:
     resolution: {integrity: sha512-7JHHCbyCsGUxLd0pDbp24yz3zjxw2t673W5oAP6HCEdr/UUhaRhYd3SSnUsGCk+VnPVJVA4mXROzbhI+nyIk+w==}
     dev: true
@@ -1011,11 +993,19 @@ packages:
   /@types/react-dom@18.2.5:
     resolution: {integrity: sha512-sRQsOS/sCLnpQhR4DSKGTtWFE3FZjpQa86KPVbhUqdYMRZ9FEFcfAytKhR/vUG2rH1oFbOOej6cuD7MFSobDRQ==}
     dependencies:
-      '@types/react': 18.2.12
+      '@types/react': 18.2.14
     dev: true
 
   /@types/react@18.2.12:
     resolution: {integrity: sha512-ndmBMLCgn38v3SntMeoJaIrO6tGHYKMEBohCUmw8HoLLQdRMOIGXfeYaBTLe2lsFaSB3MOK1VXscYFnmLtTSmw==}
+    dependencies:
+      '@types/prop-types': 15.7.5
+      '@types/scheduler': 0.16.3
+      csstype: 3.1.2
+    dev: true
+
+  /@types/react@18.2.14:
+    resolution: {integrity: sha512-A0zjq+QN/O0Kpe30hA1GidzyFjatVvrpIvWLxD+xv67Vt91TWWgco9IvrJBkeyHm1trGaFS/FSGqPlhyeZRm0g==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.3
