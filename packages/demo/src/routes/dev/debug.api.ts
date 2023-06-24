@@ -1,4 +1,4 @@
-import { RequestContext } from "@hattip/compose";
+import type { RequestContext } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
 
 // global "process.env" in vercel edge

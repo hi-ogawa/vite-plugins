@@ -1,7 +1,5 @@
-import {
-  indexHtmlMiddlewarePlugin,
-  viteGlobRoutes,
-} from "@hiogawa/vite-glob-routes";
+import { viteGlobRoutes } from "@hiogawa/vite-glob-routes";
+import { indexHtmlMiddlewarePlugin } from "@hiogawa/vite-index-html-middleware";
 import vaviteConnect from "@vavite/connect";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
