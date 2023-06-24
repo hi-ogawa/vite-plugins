@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-index-html-middleware",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -11,15 +11,15 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
-    "./runtime": {
-      "import": "./dist/runtime.js",
-      "require": "./dist/runtime.cjs",
-      "types": "./dist/runtime.d.ts"
+    "./dist/hattip": {
+      "import": "./dist/hattip.js",
+      "require": "./dist/hattip.cjs",
+      "types": "./dist/hattip.d.ts"
     },
-    "./runtime-internal": {
-      "import": "./dist/runtime-internal.js",
-      "require": "./dist/runtime-internal.cjs",
-      "types": "./dist/runtime-internal.d.ts"
+    "./dist/internal": {
+      "import": "./dist/internal.js",
+      "require": "./dist/internal.cjs",
+      "types": "./dist/internal.d.ts"
     }
   },
   "files": [

@@ -1,6 +1,4 @@
-import type { IndexHtmlMiddleware } from "./runtime-internal";
-
-// TODO: rename to hattip.ts
+import type { IndexHtmlMiddleware } from "./internal";
 
 export const indexHtmlMiddleware = (() => {
   throw new Error(

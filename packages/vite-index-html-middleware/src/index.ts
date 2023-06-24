@@ -1,12 +1,12 @@
 import type { Plugin } from "vite";
 
-const externalId = "@hiogawa/vite-index-html-middleware/runtime";
-const virtualId = "virtual:" + externalId;
+const EXPORT_HATTIP = "@hiogawa/vite-index-html-middleware/dist/hattip";
+const TAG = "virtual:";
 
 const globalViteDevServerKey =
   "__indexHtmlMiddlewarePlugin_globalViteDevServerKey";
 
-export function indexHtmlMiddlewarePlugin(): Plugin {
+export default function indexHtmlMiddlewarePlugin(): Plugin {
   return {
     name: "@hiogawa/vite-index-html-middleware",
     enforce: "pre", // required to intercept `resolveId`
@@ -23,17 +23,17 @@ export function indexHtmlMiddlewarePlugin(): Plugin {
     },
 
     async resolveId(source, _importer, options) {
-      if (options.ssr && source === externalId) {
-        return virtualId;
+      if (options.ssr && source === EXPORT_HATTIP) {
+        return TAG + EXPORT_HATTIP;
       }
       return;
     },
 
     load(id, _options) {
       // TODO: configurable index.html entry?
-      if (id === virtualId) {
+      if (id === TAG + EXPORT_HATTIP) {
         return `
-          import { createIndexHtmlMiddleware } from "@hiogawa/vite-index-html-middleware/runtime-internal";
+          import { createIndexHtmlMiddleware } from "@hiogawa/vite-index-html-middleware/dist/internal";
           export const indexHtmlMiddleware = createIndexHtmlMiddleware({
             server: globalThis[${JSON.stringify(globalViteDevServerKey)}],
             importIndexHtml: () => (import.meta.env.DEV ? import("/index.html?raw") : import("/dist/client/index.html?raw")),
