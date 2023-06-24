@@ -1,7 +1,8 @@
 import type { Plugin } from "vite";
 
 // pass internal runtime data via virtual module
-const VIRTUAL_INTERNAL = "/virtual:@hiogawa/vite-index-html-middleware/internal";
+const VIRTUAL_INTERNAL =
+  "/virtual:@hiogawa/vite-index-html-middleware/internal";
 
 const globalViteDevServerKey =
   "__indexHtmlMiddlewarePlugin_globalViteDevServerKey";
@@ -9,7 +10,6 @@ const globalViteDevServerKey =
 export default function indexHtmlMiddlewarePlugin(): Plugin {
   return {
     name: "@hiogawa/vite-index-html-middleware",
-    enforce: "pre",
 
     // expose dev server to access "transformIndexHtml"
     // https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts
@@ -20,6 +20,23 @@ export default function indexHtmlMiddlewarePlugin(): Plugin {
 
     buildEnd() {
       delete (globalThis as any)[globalViteDevServerKey];
+    },
+
+    config(_config, _env) {
+      // vite has to handle internal "virtual" modules
+      // cf. https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts#L49-L65
+      const exclude = ["@hiogawa/vite-index-html-middleware"];
+      return {
+        optimizeDeps: {
+          exclude,
+        },
+        ssr: {
+          noExternal: exclude,
+          optimizeDeps: {
+            exclude,
+          },
+        },
+      };
     },
 
     async resolveId(source, _importer, options) {

@@ -1,9 +1,5 @@
 import type { Plugin } from "vite";
 
-// const PAGE_ROUTES_REACT_ROUTER = "@hiogawa/vite-glob-routes/dist/react-router";
-// const API_ROUTES_HATTIP = "@hiogawa/vite-glob-routes/dist/hattip";
-// const TAG = "virtual:";
-
 // pass internal runtime data via virtual module
 const VIRTUAL_INTERNAL_PAGE_ROUTES =
   "virtual:@hiogawa/vite-glob-routes/internal/page-routes";
@@ -16,9 +12,23 @@ export default function globRoutesPlugin(options: { root: string }): Plugin[] {
   return [
     {
       name: "@hiogawa/vite-glob-routes",
-      enforce: "pre",
-      // // https://github.com/vitejs/vite/issues/9364#issuecomment-1197842127
-      // enforce: "pre", // TODO: this works in the demo (inside monorepo), but doesn't when installed externally in https://github.com/hi-ogawa/youtube-dl-web-v2/pull/62 ???
+
+      config(_config, _env) {
+        // vite has to handle internal "virtual" modules
+        // cf. https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts#L49-L65
+        const exclude = ["@hiogawa/vite-glob-routes"];
+        return {
+          optimizeDeps: {
+            exclude,
+          },
+          ssr: {
+            noExternal: exclude,
+            optimizeDeps: {
+              exclude,
+            },
+          },
+        };
+      },
 
       async resolveId(source, _importer, _options) {
         if (
@@ -27,12 +37,6 @@ export default function globRoutesPlugin(options: { root: string }): Plugin[] {
         ) {
           return source;
         }
-        // if (
-        //   source === PAGE_ROUTES_REACT_ROUTER ||
-        //   source === API_ROUTES_HATTIP
-        // ) {
-        //   return TAG + source;
-        // }
         return;
       },
 
@@ -60,26 +64,6 @@ export default function globRoutesPlugin(options: { root: string }): Plugin[] {
           `;
         }
         return;
-
-        // if (id === TAG + PAGE_ROUTES_REACT_ROUTER) {
-        //   return `
-        //     import { createGlobPageRoutes } from "@hiogawa/vite-glob-routes/dist/internal";
-        //     // TODO: non-eager import to code split?
-        //     const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true });
-        //     const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true });
-        //     export const globPageRoutes = () => createGlobPageRoutes("${root}", globPage, globLayout);
-        //   `;
-        // }
-
-        // if (id === TAG + API_ROUTES_HATTIP) {
-        //   return `
-        //     import { createGlobApiRoutes } from "@hiogawa/vite-glob-routes/dist/internal";
-        //     // TODO: import only "get/post/put/delete" to tree shake other exports?
-        //     const globApi = import.meta.glob("${root}/**/*.api.(js|jsx|ts|tsx)", { eager: true });
-        //     export const globApiRoutes = () => createGlobApiRoutes("${root}", globApi);
-        //   `;
-        // }
-        // return;
       },
     },
   ];
