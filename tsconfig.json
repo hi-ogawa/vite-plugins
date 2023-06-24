@@ -3,6 +3,12 @@
   "references": [
     {
       "path": "./packages/demo/tsconfig.json"
+    },
+    {
+      "path": "./packages/vite-glob-routes/tsconfig.json"
+    },
+    {
+      "path": "./packages/vite-index-html-middleware/tsconfig.json"
     }
   ]
 }
