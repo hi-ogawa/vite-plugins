@@ -1,7 +1,7 @@
 import type { Plugin } from "vite";
 
-const EXPORT_HATTIP = "@hiogawa/vite-index-html-middleware/dist/hattip";
-const TAG = "virtual:";
+// pass internal runtime data via virtual module
+const VIRTUAL_INTERNAL = "virtual:@hiogawa/vite-index-html-middleware/internal";
 
 const globalViteDevServerKey =
   "__indexHtmlMiddlewarePlugin_globalViteDevServerKey";
@@ -9,7 +9,6 @@ const globalViteDevServerKey =
 export default function indexHtmlMiddlewarePlugin(): Plugin {
   return {
     name: "@hiogawa/vite-index-html-middleware",
-    enforce: "pre", // required to intercept `resolveId`
 
     // expose dev server to access "transformIndexHtml"
     // https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts
@@ -23,21 +22,19 @@ export default function indexHtmlMiddlewarePlugin(): Plugin {
     },
 
     async resolveId(source, _importer, options) {
-      if (options.ssr && source === EXPORT_HATTIP) {
-        return TAG + EXPORT_HATTIP;
+      if (options.ssr && source == VIRTUAL_INTERNAL) {
+        return source;
       }
       return;
     },
 
     load(id, _options) {
-      // TODO: configurable index.html entry?
-      if (id === TAG + EXPORT_HATTIP) {
+      if (id === VIRTUAL_INTERNAL) {
         return `
-          import { createIndexHtmlMiddleware } from "@hiogawa/vite-index-html-middleware/dist/internal";
-          export const indexHtmlMiddleware = createIndexHtmlMiddleware({
+          export default {
             server: globalThis[${JSON.stringify(globalViteDevServerKey)}],
             importIndexHtml: () => (import.meta.env.DEV ? import("/index.html?raw") : import("/dist/client/index.html?raw")),
-          });
+          }
         `;
       }
       return;

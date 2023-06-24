@@ -15,11 +15,6 @@
       "import": "./dist/hattip.js",
       "require": "./dist/hattip.cjs",
       "types": "./dist/hattip.d.ts"
-    },
-    "./dist/internal": {
-      "import": "./dist/internal.js",
-      "require": "./dist/internal.cjs",
-      "types": "./dist/internal.d.ts"
     }
   },
   "files": [

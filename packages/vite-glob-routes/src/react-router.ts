@@ -1,7 +1,7 @@
-import type { createGlobPageRoutes } from "./internal/react-router";
+import internal from "virtual:@hiogawa/vite-index-html-middleware/internal/page-routes";
+import { createGlobPageRoutes } from "./react-router-utils";
 
-export const globPageRoutes = (() => {
-  throw new Error(
-    "@hiogawa/vite-glob-routes plugin might not be configured properly"
-  );
-}) as () => ReturnType<typeof createGlobPageRoutes>;
+export function globPageRoutes() {
+  const { root, globPage, globLayout } = internal;
+  return createGlobPageRoutes(root, globPage, globLayout);
+}
