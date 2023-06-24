@@ -24,7 +24,7 @@ function PageInner() {
 
 function Header() {
   return (
-    <header className="flex items-center p-2 px-4 gap-4 shadow-md shadow-black/[0.05] dark:shadow-black/[0.7] z-1">
+    <header className="top-0 sticky antd-body flex items-center p-2 px-4 gap-4 shadow-md shadow-black/[0.05] dark:shadow-black/[0.7] z-1">
       <div>Example</div>
       <ul className="flex gap-2 text-sm font-mono">
         {ROUTES.map((href) => (
