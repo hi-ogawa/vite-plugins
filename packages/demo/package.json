@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "dev": "vite",
+    "dev": "run-p dev:*",
+    "dev:vite": "vite",
+    "dev:tsc": "tsc -b --watch --preserveWatchOutput",
     "build": "run-s build:*",
     "build:vite": "vite build && vite build --ssr",
     "build:vercel": "bash misc/vercel/build.sh",
@@ -14,6 +16,7 @@
     "@hiogawa/isort-ts": "1.0.2-pre.1",
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.3",
     "@hiogawa/utils": "1.4.2-pre.12",
+    "@hiogawa/utils-experimental": "^0.0.1",
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-index-html-middleware": "workspace:*",
     "@iconify-json/ri": "^1.1.9",

@@ -65,6 +65,9 @@ importers:
       '@hiogawa/utils':
         specifier: 1.4.2-pre.12
         version: 1.4.2-pre.12
+      '@hiogawa/utils-experimental':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../vite-glob-routes
@@ -814,6 +817,10 @@ packages:
       '@unocss/reset': 0.48.5
       local-pkg: 0.4.3
       unocss: 0.53.1(postcss@8.4.24)(vite@4.3.9)
+    dev: true
+
+  /@hiogawa/utils-experimental@0.0.1:
+    resolution: {integrity: sha512-7YNq6WRghFuuZYRK1FvSWlL4w9Qu32OE40FgBpxQjrwaXw9U5efU/jyZI7WaJ/RbqL3PCHr2InFc2SVpyXHG9g==}
     dev: true
 
   /@hiogawa/utils@1.4.2-pre.12:
