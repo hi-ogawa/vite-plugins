@@ -41,8 +41,8 @@ function Header() {
       </ul>
       <div className="flex-1"></div>
       <a
-        className="antd-btn antd-btn-ghost i-ri-github-line w-5 h-5"
-        href="https://github.com/hi-ogawa/vite-server-build-example"
+        className="antd-btn antd-btn-ghost i-ri-github-line w-6 h-6"
+        href="https://github.com/hi-ogawa/vite-plugins"
         target="_blank"
       ></a>
     </header>
