@@ -2,6 +2,7 @@ import { test } from "@playwright/test";
 
 test("basic", async ({ page }) => {
   await page.goto("/");
+  await page.getByTestId("hydrated").waitFor({ state: "attached" });
 
   await page.getByRole("button", { name: "Fetch API" }).click();
   await page.getByText('{ "env": ').click();
