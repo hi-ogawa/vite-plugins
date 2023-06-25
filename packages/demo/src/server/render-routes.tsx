@@ -1,3 +1,4 @@
+import type { RequestContext } from "@hattip/compose";
 import type { QueryClient } from "@tanstack/react-query";
 import React from "react";
 import { renderToString } from "react-dom/server";
@@ -12,16 +13,15 @@ import { ReactQueryWrapper } from "../utils/react-query-utils";
 // cf. https://reactrouter.com/en/main/routers/static-router-provider
 
 export async function renderRoutes(
-  request: Request,
+  hattipContext: RequestContext,
   routes: RouteObject[],
   queryClient: QueryClient
 ): Promise<string | Response> {
   const handler = createStaticHandler(routes);
 
-  // since we don't have any loader side-effect, this context construction should be simple.
-  // still this probably handles "not found" error.
-  // https://github.com/remix-run/react-router/blob/bc2552840147206716544e5cdcdb54f649f9193f/packages/router/router.ts#L2608
-  const context = await handler.query(request);
+  const context = await handler.query(hattipContext.request, {
+    requestContext: hattipContext,
+  });
   if (context instanceof Response) {
     return context;
   }
@@ -34,7 +34,9 @@ export async function renderRoutes(
         <StaticRouterProvider
           router={router}
           context={context}
-          // there should be no data for server to pass https://github.com/remix-run/react-router/blob/bc2552840147206716544e5cdcdb54f649f9193f/packages/react-router-dom/server.tsx#L114-L126
+          // currently "loader" is used only for `queryClient.prefetchQuery`, which allows passing data during SSR and hydration.
+          // thus, from react-router context point of view, there should be no data to pass.
+          // https://github.com/remix-run/react-router/blob/bc2552840147206716544e5cdcdb54f649f9193f/packages/react-router-dom/server.tsx#L114-L126
           hydrate={false}
         />
       </ReactQueryWrapper>

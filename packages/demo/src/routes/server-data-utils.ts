@@ -1,14 +1,21 @@
 import { tinyassert } from "@hiogawa/utils";
 import type { QueryObserverOptions } from "@tanstack/react-query";
+import { z } from "zod";
 
-interface PokemonOutput {
-  sprites?: { front_default?: string };
-}
+const Z_POKOMON_OUTPUT = z.object({
+  types: z.any().array(),
+  stats: z.any().array(),
+  sprites: z.object({
+    front_default: z.string(),
+  }),
+});
+
+type PokemonOutput = z.infer<typeof Z_POKOMON_OUTPUT>;
 
 async function fetchPokomonApi(): Promise<PokemonOutput> {
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/pikachu`);
   tinyassert(res.ok);
-  return res.json();
+  return Z_POKOMON_OUTPUT.parse(await res.json());
 }
 
 export function pokomenQueryOption() {

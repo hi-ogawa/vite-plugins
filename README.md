@@ -6,13 +6,13 @@ miscellaneous plugins to experiment with Vite's SSR build ideas.
 
 ### `@hiogawa/vite-glob-routes`
 
-- employ [`rakkasjs`](https://github.com/rakkasjs/rakkasjs)-like file-system route convension
-- generate [`react-router`](https://github.com/remix-run/react-router) nested routes based on `**/*.page.tsx` and `**/layout.tsx`
+- file-system route conventioin inspired by [`rakkasjs`](https://github.com/rakkasjs/rakkasjs) and [`vite-plugin-ssr`](https://github.com/brillout/vite-plugin-ssr)
+- generate [`react-router`](https://github.com/remix-run/react-router) nested routes based on `**/*.page.tsx`, `**/*.page.server.tsx` and `**/layout.tsx`
 - generate [`hattip`](https://github.com/hattipjs/hattip) middleware based on `**/*.api.ts`
 
-### `@hiogawa/vite-index-html-middleware`
+### `@hiogawa/vite-expose-index-html`
 
-- generate `hattip` middleware to render `index.html` with the ability to inject code during runtime (e.g. server handing-off public configuration to client)
+- expose `index.html` for both development and production so that it can be used as a basic template of SSR
 
 ## development
 

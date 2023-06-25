@@ -1,17 +1,24 @@
 import { mapRegExp, tinyassert } from "@hiogawa/utils";
 import type React from "react";
-import type { RouteObject } from "react-router";
+import type { LoaderFunction, RouteObject } from "react-router";
 import { mapKeys } from "./utils";
 
 type PageModule = {
   Page?: React.ComponentType;
+  loader?: LoaderFunction;
 };
 
-export function createGlobPageRoutes(
-  root: string,
-  globPage: Record<string, PageModule>,
-  globLayout: Record<string, PageModule>
-): RouteObject[] {
+export function createGlobPageRoutes({
+  root,
+  globPage,
+  globPageServer,
+  globLayout,
+}: {
+  root: string;
+  globPage: Record<string, PageModule>;
+  globPageServer: Record<string, PageModule>; // only for SSR
+  globLayout: Record<string, PageModule>;
+}): RouteObject[] {
   // TODO: warn invalid usage
   // - no `Page` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
@@ -23,6 +30,14 @@ export function createGlobPageRoutes(
     globLayout,
     (k) => k.slice(root.length).match(/^(.*)layout\./)![1]!
   );
+  globPageServer = mapKeys(
+    globPageServer,
+    (k) => k.slice(root.length).match(/^(.*)\.page\.server\./)![1]!
+  );
+  for (const [k, v] of Object.entries(globPageServer)) {
+    tinyassert(globPage[k]);
+    globPage[k] = { ...globPage[k], ...v };
+  }
   return createGlobPageRoutesInner({ ...globPage, ...globLayout });
 }
 
@@ -41,19 +56,22 @@ function createGlobPageRoutesInner(
     children: Record<string, TreeNode<PageModule>>
   ): RouteObject[] {
     return Object.entries(children).map(([path, node]) => {
-      const index = path === "index";
-      const Component = node.value?.Page ?? null;
-      const children = recurse(node.children ?? {});
-      return index
-        ? {
-            index,
-            Component,
-          }
-        : {
-            path: formatPath(path),
-            Component,
-            children,
-          };
+      const route: RouteObject = {
+        path: formatPath(path),
+        Component: node.value?.Page ?? null,
+      };
+      if (node.children) {
+        route.children = recurse(node.children);
+      }
+      if (node.value?.loader) {
+        route.loader = node.value?.loader;
+      }
+      if (path === "index") {
+        // silence convoluted "index: true" typing
+        route.index = true as false;
+        delete route.path;
+      }
+      return route;
     });
   }
   return recurse(tree.children ?? {});
