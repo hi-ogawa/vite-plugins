@@ -1,15 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { ReactQueryWrapper } from "../utils/react-query-utils";
 
 export function Page() {
-  return (
-    <ReactQueryWrapper>
-      <PageInner />
-    </ReactQueryWrapper>
-  );
-}
-
-function PageInner() {
   return (
     <div className="flex flex-col">
       <Header />
@@ -50,7 +41,14 @@ function Header() {
   );
 }
 
-const ROUTES = ["/", "/other", "/some-dynamic-id", "/subdir", "/subdir/other"];
+const ROUTES = [
+  "/",
+  "/other",
+  "/some-dynamic-id",
+  "/server-data",
+  "/subdir",
+  "/subdir/other",
+];
 
 declare let __themeSet: (theme: string) => void;
 declare let __themeGet: () => string;

@@ -5,6 +5,12 @@ import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
+import { onBeforeServerRender } from "../routes/server-data.page.server";
+import {
+  __QUERY_CLIENT_STATE,
+  createQueryClient,
+  getQueryClientStateScript,
+} from "../utils/react-query-utils";
 import { renderRoutes } from "./render-routes";
 
 export function createHattipApp() {
@@ -19,14 +25,28 @@ function globPageRoutesHandler(): RequestHandler {
   const routes = globPageRoutes();
 
   return async (ctx) => {
-    const res = await renderRoutes(ctx.request, routes);
+    // initialize queryClient
+    const queryClient = createQueryClient();
+    ctx.locals.queryClient = queryClient;
+
+    // call per-page SSR hook for query prefetch etc... (TODO: server callback convention)
+    await onBeforeServerRender(ctx);
+
+    // SSR
+    const res = await renderRoutes(ctx.request, routes, queryClient);
     if (res instanceof Response) {
       return res;
     }
 
+    // inject to html
     let html = await indexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", res);
-    html = html.replace("<!--@INJECT_HEAD@-->", injectToHead());
+
+    // pass query client state to client
+    html = html.replace(
+      "<!--@INJECT_HEAD@-->",
+      injectToHead() + getQueryClientStateScript(queryClient)
+    );
 
     return new Response(html, {
       headers: [["content-type", "text/html"]],
