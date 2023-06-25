@@ -1,4 +1,7 @@
 {
-  "runtime": "edge",
-  "entrypoint": "index.js"
+  "runtime": "nodejs18.x",
+  "handler": "index.js",
+  "launcherType": "Nodejs",
+  "supportsResponseStreaming": true,
+  "regions": ["hnd1"]
 }
