@@ -34,7 +34,9 @@ export async function renderRoutes(
         <StaticRouterProvider
           router={router}
           context={context}
-          // there should be no data for server to pass https://github.com/remix-run/react-router/blob/bc2552840147206716544e5cdcdb54f649f9193f/packages/react-router-dom/server.tsx#L114-L126
+          // currently "loader" is used only for `queryClient.prefetchQuery`, which allows passing data during SSR and hydration.
+          // thus, from react-router context point of view, there should be no data to pass.
+          // https://github.com/remix-run/react-router/blob/bc2552840147206716544e5cdcdb54f649f9193f/packages/react-router-dom/server.tsx#L114-L126
           hydrate={false}
         />
       </ReactQueryWrapper>
