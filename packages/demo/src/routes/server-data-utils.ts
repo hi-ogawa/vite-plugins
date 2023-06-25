@@ -26,8 +26,9 @@ export function pokomenQueryOption() {
   } satisfies QueryObserverOptions;
 }
 
-// in this special rare case, the query is already isomprhic.
-// it would probably require more trick to achive such SSR version
+// in this simple case, the query is already isomporhic.
+// in really, such case is too rare, and usually we would use one more fetching abstraction (e.g. trpc)
+// so that client facing API and server call can be reasonably uniformized.
 export function pokomenQueryOptionSSR() {
   return pokomenQueryOption();
 }
