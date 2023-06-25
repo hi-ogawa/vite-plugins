@@ -11,7 +11,7 @@ set -eu -o pipefail
 #     functions/
 #       index.func/
 #         .vc-config.json
-#         index.js         = dist/server/index.js (bundled)
+#         index.js         = dist/server/index.mjs (bundled)
 
 # clean
 rm -rf .vercel/output
@@ -24,5 +24,5 @@ cp misc/vercel/config.json .vercel/output/config.json
 cp -r dist/client .vercel/output/static
 
 # serverless
-npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --platform=neutral
+npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --platform=node
 cp misc/vercel/.vc-config.json .vercel/output/functions/index.func/.vc-config.json
