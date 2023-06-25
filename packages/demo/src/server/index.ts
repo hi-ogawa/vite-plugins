@@ -1,11 +1,16 @@
 import { type RequestHandler, compose } from "@hattip/compose";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
+import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { indexHtmlMiddleware } from "@hiogawa/vite-index-html-middleware/dist/hattip";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
 
 export function createHattipApp() {
+  // recipe for
+  //   [vite] hot updated: /__uno.css
+  globPageRoutes();
+
   return compose(
     hattipHonoCompat(logger()),
     globApiRoutes(),
