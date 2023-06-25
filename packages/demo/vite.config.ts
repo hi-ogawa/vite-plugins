@@ -8,8 +8,8 @@ import { defineConfig } from "vite";
 
 export default defineConfig((ctx) => ({
   plugins: [
-    unocss(),
     react(),
+    unocss(),
     globRoutesPlugin({ root: "/src/routes" }),
     indexHtmlMiddlewarePlugin(),
     vaviteConnect({
