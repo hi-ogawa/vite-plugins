@@ -16,7 +16,7 @@ export function Page() {
                 src={query.data.sprites?.front_default}
               />
               <pre className="overflow-auto p-1 border text-sm">
-                {JSON.stringify(query.data.sprites, null, 2)}
+                {JSON.stringify(query.data, null, 2)}
               </pre>
             </>
           )}
