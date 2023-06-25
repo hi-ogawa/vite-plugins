@@ -1,9 +1,8 @@
 import { type RequestHandler, compose } from "@hattip/compose";
-import { tinyassert } from "@hiogawa/utils";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
+import { indexHtml } from "@hiogawa/vite-expose-index-html/dist/index-html";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
-import { indexHtmlMiddleware } from "@hiogawa/vite-index-html-middleware/dist/hattip";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
 import { renderRoutes } from "./render-routes";
@@ -19,19 +18,15 @@ export function createHattipApp() {
 function globPageRoutesHandler(): RequestHandler {
   const routes = globPageRoutes();
 
-  // TODO: abstract indexHtmlMiddleware into virtual export instead for flexibility
-  const handleIndexHtml = indexHtmlMiddleware({ injectToHead });
-
   return async (ctx) => {
     const res = await renderRoutes(ctx.request, routes);
     if (res instanceof Response) {
       return res;
     }
 
-    const htmlRes = await handleIndexHtml(ctx);
-    tinyassert(htmlRes instanceof Response);
-    let html = await htmlRes.text();
+    let html = await indexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", res);
+    html = html.replace("<!--@INJECT_HEAD@-->", injectToHead());
 
     return new Response(html, {
       headers: [["content-type", "text/html"]],
