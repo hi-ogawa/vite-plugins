@@ -1,6 +1,5 @@
 import type { RequestContext } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
-import type { QueryOptions } from "@tanstack/react-query";
 
 // global "process.env" in vercel edge
 // https://vercel.com/docs/concepts/functions/edge-functions/edge-runtime#environment-variables
@@ -26,11 +25,4 @@ export async function fetchDevDebug(): Promise<unknown> {
   const res = await fetch("/dev/debug");
   tinyassert(res.ok);
   return res.json();
-}
-
-export function devDebugQueryOption() {
-  return {
-    queryKey: ["/dev/debug"],
-    queryFn: () => fetchDevDebug(),
-  } satisfies QueryOptions;
 }
