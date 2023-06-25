@@ -8,7 +8,8 @@ import { defineConfig } from "vite";
 
 export default defineConfig((ctx) => ({
   plugins: [
-    unocss(),
+    // this doesn't matter either
+    !ctx.ssrBuild && unocss(),
     react(),
     globRoutesPlugin({ root: "/src/routes" }),
     indexHtmlMiddlewarePlugin(),
