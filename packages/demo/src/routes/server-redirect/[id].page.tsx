@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { dummyCheckQueryOptions } from "./[id].page.server";
 
-export function Page() {
+export function Component() {
   const params = useParams();
 
   // check server and redirect on error

@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { createGlobPageRoutes, splitPathSegment } from "./react-router-utils";
+import {
+  type PageModule,
+  createGlobPageRoutes,
+  splitPathSegment,
+} from "./react-router-utils";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
-    const Page = () => null;
-    const Module = { Page };
+    const Module: PageModule = { Component: () => null };
     const tree = createGlobPageRoutes({
       root: "(root)",
       globPage: {

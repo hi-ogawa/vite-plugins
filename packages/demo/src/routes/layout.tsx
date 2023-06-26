@@ -1,7 +1,7 @@
 import { Toaster } from "react-hot-toast";
 import { NavLink, Outlet } from "react-router-dom";
 
-export function Page() {
+export function Component() {
   return (
     <>
       <Toaster
