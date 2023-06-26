@@ -24,5 +24,7 @@ cp misc/vercel/config.json .vercel/output/config.json
 cp -r dist/client .vercel/output/static
 
 # serverless
-npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --platform=node --metafile=dist/server/esbuild-metafile.json
+npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --minify --platform=node \
+  '--external:*.development.js' \
+  --metafile=dist/server/esbuild-metafile.json
 cp misc/vercel/.vc-config.json .vercel/output/functions/index.func/.vc-config.json
