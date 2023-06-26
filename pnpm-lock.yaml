@@ -50,6 +50,9 @@ importers:
       '@hattip/adapter-node':
         specifier: ^0.0.34
         version: 0.0.34
+      '@hattip/adapter-vercel-edge':
+        specifier: ^0.0.34
+        version: 0.0.34
       '@hattip/compose':
         specifier: ^0.0.34
         version: 0.0.34
@@ -774,6 +777,12 @@ packages:
     dependencies:
       '@hattip/core': 0.0.34
       '@hattip/polyfills': 0.0.34
+    dev: true
+
+  /@hattip/adapter-vercel-edge@0.0.34:
+    resolution: {integrity: sha512-c50G3Jq4TCmu5MjcQU/hoOCZGOMSDPE4+pm+/2Mn7lbqHEy2hxP852fpGGHOdBYSNh3ZfGuR9c4K99GxX8FwEA==}
+    dependencies:
+      '@hattip/core': 0.0.34
     dev: true
 
   /@hattip/compose@0.0.34:
