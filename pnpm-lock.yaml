@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@hattip/adapter-node@0.0.34':
+    hash: 63rj2xdicuvvpcjbd4ybclgele
+    path: patches/@hattip__adapter-node@0.0.34.patch
+
 importers:
 
   .:
@@ -49,7 +54,7 @@ importers:
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.34
-        version: 0.0.34
+        version: 0.0.34(patch_hash=63rj2xdicuvvpcjbd4ybclgele)
       '@hattip/compose':
         specifier: ^0.0.34
         version: 0.0.34
@@ -769,12 +774,13 @@ packages:
     dev: true
     optional: true
 
-  /@hattip/adapter-node@0.0.34:
+  /@hattip/adapter-node@0.0.34(patch_hash=63rj2xdicuvvpcjbd4ybclgele):
     resolution: {integrity: sha512-saEmf4Wh0KwXTm44sjvTcBOe8znPHBGtKhQOJVfafUgZ9OkXGTd9A8wdi6cO9b9HZFJm+JkQu/UVb4p0vccRmQ==}
     dependencies:
       '@hattip/core': 0.0.34
       '@hattip/polyfills': 0.0.34
     dev: true
+    patched: true
 
   /@hattip/compose@0.0.34:
     resolution: {integrity: sha512-faW5gIvyDmut3/lUWslHitH2+rrtkM9IQvBOmdTjS7r9vaADVh2t/M+MgitTzsSavfQUbP+uCbTPQ+ffrUhceA==}

@@ -1,0 +1,18 @@
+diff --git a/dist/index.js b/dist/index.js
+index 6f2d86baa67f9b8cf3346889d94ff77bba2d7dd1..6565efa1e7ed9a758255c396ac1f256b5dbb0877 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -4,10 +4,11 @@ import {
+ } from "./chunk-NY3T7LPC.js";
+ 
+ // src/index.ts
+-import installNodeFetch from "@hattip/polyfills/node-fetch";
++// (PATCH: remove heavy bundle of "node-fetch-native" (~300KB))
++// import installNodeFetch from "@hattip/polyfills/node-fetch";
+ import installGetSetCookie from "@hattip/polyfills/get-set-cookie";
+ import installCrypto from "@hattip/polyfills/crypto";
+-installNodeFetch();
++// installNodeFetch();
+ installGetSetCookie();
+ installCrypto();
+ export {
