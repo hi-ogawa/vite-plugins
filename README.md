@@ -10,9 +10,11 @@ miscellaneous plugins to experiment with Vite's SSR build ideas.
 - generate [`react-router`](https://github.com/remix-run/react-router) nested routes based on `**/*.page.tsx`, `**/*.page.server.tsx` and `**/layout.tsx`
 - generate [`hattip`](https://github.com/hattipjs/hattip) middleware based on `**/*.api.ts`
 
-### `@hiogawa/vite-expose-index-html`
+### `@hiogawa/vite-import-index-html`
 
-- expose `index.html` for both development and production so that it can be used as a basic template of SSR
+- it allows importing `index.html` for both development and production uniformly.
+- [`ViteDevServer.transformIndexHtml`](https://vitejs.dev/guide/api-javascript.html#vitedevserver) is applied during development so HMR should work in a same way as normal `vite dev`.
+- for example, it can be used as simple document template for SPA or SSR server.
 
 ## development
 

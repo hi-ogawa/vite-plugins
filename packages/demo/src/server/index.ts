@@ -1,8 +1,8 @@
 import { type RequestHandler, compose } from "@hattip/compose";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
-import { indexHtml } from "@hiogawa/vite-expose-index-html/dist/index-html";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
+import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
 import {
@@ -34,8 +34,7 @@ function globPageRoutesHandler(): RequestHandler {
       return res;
     }
 
-    // inject to html
-    let html = await indexHtml();
+    let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", res);
 
     // pass query client state to client
