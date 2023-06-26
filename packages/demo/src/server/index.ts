@@ -40,7 +40,7 @@ function globPageRoutesHandler(): RequestHandler {
     // pass query client state to client
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      injectToHead() + getQueryClientStateScript(queryClient)
+      getThemeScript() + getQueryClientStateScript(queryClient)
     );
 
     return new Response(html, {
@@ -49,7 +49,7 @@ function globPageRoutesHandler(): RequestHandler {
   };
 }
 
-function injectToHead() {
+function getThemeScript() {
   return `
     <script>
       globalThis.__themeStorageKey = "vite-plugins:theme";
