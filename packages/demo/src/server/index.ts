@@ -3,8 +3,12 @@ import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.j
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
+import { TRPC_ENDPOINT } from "../trpc/common";
+import { createTrpcContext } from "../trpc/init";
+import { trpcRouter } from "../trpc/router";
 import {
   __QUERY_CLIENT_STATE,
   createQueryClient,
@@ -15,6 +19,7 @@ import { renderRoutes } from "./render-routes";
 export function createHattipApp() {
   return compose(
     hattipHonoCompat(logger()),
+    trpcHandler(),
     globApiRoutes(),
     globPageRoutesHandler()
   );
@@ -76,5 +81,22 @@ function hattipHonoCompat(hono: MiddlewareHandler): RequestHandler {
       }
     );
     return res;
+  };
+}
+
+function trpcHandler(): RequestHandler {
+  return (ctx) => {
+    if (ctx.url.pathname.startsWith(TRPC_ENDPOINT)) {
+      return fetchRequestHandler({
+        endpoint: TRPC_ENDPOINT,
+        req: ctx.request,
+        router: trpcRouter,
+        createContext: createTrpcContext,
+        onError: (e) => {
+          console.error(e);
+        },
+      });
+    }
+    return ctx.next();
   };
 }
