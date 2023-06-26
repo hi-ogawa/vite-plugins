@@ -5,9 +5,9 @@ describe(createGlobPageRoutes, () => {
   it("basic", () => {
     const Page = () => null;
     const Module = { Page };
-    const tree = createGlobPageRoutes(
-      "(root)",
-      {
+    const tree = createGlobPageRoutes({
+      root: "(root)",
+      globPage: {
         "(root)/index.page.js": Module,
         "(root)/other.page.jsx": Module,
         "(root)/[dynamic].page.ts": Module,
@@ -16,11 +16,14 @@ describe(createGlobPageRoutes, () => {
         "(root)/abc/[dynsub].page.tsx": Module,
         "(root)/abc/[dynsub]/new.page.tsx": Module,
       },
-      {
+      globPageServer: {
+        "(root)/other.page.server.jsx": { loader: () => null },
+      },
+      globLayout: {
         "(root)/layout.tsx": Module,
         "(root)/subdir/layout.jsx": Module,
-      }
-    );
+      },
+    });
     expect(tree).toMatchInlineSnapshot(`
       [
         {
@@ -32,12 +35,11 @@ describe(createGlobPageRoutes, () => {
             },
             {
               "Component": [Function],
-              "children": [],
+              "loader": [Function],
               "path": "other",
             },
             {
               "Component": [Function],
-              "children": [],
               "path": ":dynamic",
             },
             {
@@ -49,7 +51,6 @@ describe(createGlobPageRoutes, () => {
                 },
                 {
                   "Component": [Function],
-                  "children": [],
                   "path": "other",
                 },
               ],
@@ -60,7 +61,6 @@ describe(createGlobPageRoutes, () => {
               "children": [
                 {
                   "Component": [Function],
-                  "children": [],
                   "path": ":dynsub",
                 },
                 {
@@ -68,7 +68,6 @@ describe(createGlobPageRoutes, () => {
                   "children": [
                     {
                       "Component": [Function],
-                      "children": [],
                       "path": "new",
                     },
                   ],

@@ -1,11 +1,16 @@
+import { Toaster } from "react-hot-toast";
 import { NavLink, Outlet } from "react-router-dom";
-import { ReactQueryWrapper } from "../utils/react-query-utils";
 
 export function Page() {
   return (
-    <ReactQueryWrapper>
+    <>
+      <Toaster
+        toastOptions={{
+          className: "!bg-colorBgElevated !text-colorText",
+        }}
+      />
       <PageInner />
-    </ReactQueryWrapper>
+    </>
   );
 }
 
@@ -26,11 +31,11 @@ function Header() {
   return (
     <header className="top-0 sticky antd-body flex items-center p-2 px-4 gap-3 shadow-md shadow-black/[0.05] dark:shadow-black/[0.7] z-1">
       <div>Example</div>
-      <ul className="flex gap-2 text-sm font-mono">
+      <ul className="flex gap-2 text-xs font-mono">
         {ROUTES.map((href) => (
           <li key={href} className="flex">
             <NavLink
-              className="border antd-menu-item aria-[current=page]:antd-menu-item-active px-2"
+              className="border antd-menu-item aria-[current=page]:antd-menu-item-active px-2 py-0.5"
               to={href}
               end
             >
@@ -50,7 +55,15 @@ function Header() {
   );
 }
 
-const ROUTES = ["/", "/other", "/some-dynamic-id", "/subdir", "/subdir/other"];
+const ROUTES = [
+  "/",
+  "/other",
+  "/some-dynamic-id",
+  "/server-data",
+  "/server-redirect",
+  "/subdir",
+  "/subdir/other",
+];
 
 declare let __themeSet: (theme: string) => void;
 declare let __themeGet: () => string;

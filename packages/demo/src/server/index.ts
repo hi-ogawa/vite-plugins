@@ -5,6 +5,11 @@ import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
+import {
+  __QUERY_CLIENT_STATE,
+  createQueryClient,
+  getQueryClientStateScript,
+} from "../utils/react-query-utils";
 import { renderRoutes } from "./render-routes";
 
 export function createHattipApp() {
@@ -19,14 +24,24 @@ function globPageRoutesHandler(): RequestHandler {
   const routes = globPageRoutes();
 
   return async (ctx) => {
-    const res = await renderRoutes(ctx.request, routes);
+    // initialize queryClient in hattip/react-router context
+    const queryClient = createQueryClient();
+    ctx.locals.queryClient = queryClient;
+
+    // SSR
+    const res = await renderRoutes(ctx, routes, queryClient);
     if (res instanceof Response) {
       return res;
     }
 
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", res);
-    html = html.replace("<!--@INJECT_HEAD@-->", injectToHead());
+
+    // pass query client state to client
+    html = html.replace(
+      "<!--@INJECT_HEAD@-->",
+      getThemeScript() + getQueryClientStateScript(queryClient)
+    );
 
     return new Response(html, {
       headers: [["content-type", "text/html"]],
@@ -34,7 +49,7 @@ function globPageRoutesHandler(): RequestHandler {
   };
 }
 
-function injectToHead() {
+function getThemeScript() {
   return `
     <script>
       globalThis.__themeStorageKey = "vite-plugins:theme";
