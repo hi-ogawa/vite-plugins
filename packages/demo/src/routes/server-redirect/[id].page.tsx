@@ -7,7 +7,11 @@ export function Component() {
   const params = useParams();
 
   // check server and redirect on error
-  const checkQuery = useQuery(dummyCheckQueryOptions(params["id"]!));
+  const checkQuery = useQuery({
+    ...dummyCheckQueryOptions(params["id"]!),
+    // TODO: need to handle error via ErrorBoundary
+    suspense: true,
+  });
 
   const navigate = useNavigate();
 

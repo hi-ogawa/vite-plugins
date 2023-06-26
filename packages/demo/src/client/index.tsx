@@ -18,7 +18,7 @@ function main() {
   const root = (
     <React.StrictMode>
       <ReactQueryWrapper queryClient={queryClient}>
-        <RouterProvider router={router} />
+        <RouterProvider router={router} future={{ v7_startTransition: true }} />
       </ReactQueryWrapper>
     </React.StrictMode>
   );

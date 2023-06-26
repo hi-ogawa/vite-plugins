@@ -2,7 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { pokomenQueryOption } from "./server-data-utils";
 
 export function Component() {
-  const query = useQuery(pokomenQueryOption());
+  const query = useQuery({
+    ...pokomenQueryOption(),
+    suspense: true,
+  });
 
   return (
     <div className="flex flex-col items-center">
