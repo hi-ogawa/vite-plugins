@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { cls } from "../utils/misc";
 import { fetchDevDebug } from "./dev/debug.api";
 
-export function Page() {
+export function Component() {
   const debugMutation = useMutation({
     mutationFn: () => fetchDevDebug(),
   });

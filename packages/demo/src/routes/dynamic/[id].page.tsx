@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-export function Page() {
+export function Component() {
   const params = useParams();
   return (
     <div className="flex flex-col items-center">

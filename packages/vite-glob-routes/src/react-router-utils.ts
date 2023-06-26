@@ -3,9 +3,9 @@ import type React from "react";
 import type { LoaderFunction, RouteObject } from "react-router";
 import { mapKeys } from "./utils";
 
-// TODO: just reuse exact RouteObject convention? (e.g. `Component` instead of `Page`)
-type PageModule = {
-  Page?: React.ComponentType;
+// Pick<RouteObject, "Component" | "loader" | ...>
+export type PageModule = {
+  Component?: React.ComponentType;
   loader?: LoaderFunction;
 };
 
@@ -21,7 +21,7 @@ export function createGlobPageRoutes({
   globLayout: Record<string, PageModule>;
 }): RouteObject[] {
   // TODO: warn invalid usage
-  // - no `Page` export
+  // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
   globPage = mapKeys(
     globPage,
@@ -59,7 +59,7 @@ function createGlobPageRoutesInner(
     return Object.entries(children).map(([path, node]) => {
       const route: RouteObject = {
         path: formatPath(path),
-        Component: node.value?.Page ?? null,
+        Component: node.value?.Component ?? null,
       };
       if (node.children) {
         route.children = recurse(node.children);

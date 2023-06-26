@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { pokomenQueryOption } from "./server-data-utils";
 
-export function Page() {
+export function Component() {
   const query = useQuery(pokomenQueryOption());
 
   return (
