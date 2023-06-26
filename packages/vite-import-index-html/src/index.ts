@@ -6,9 +6,9 @@ const VIRTUAL_INTERNAL = "virtual:@hiogawa/vite-import-index-html/internal";
 // expose ViteDevServer to access "transformIndexHtml" during `vite dev`
 // https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts
 // https://github.com/brillout/vite-plugin-ssr/blob/906bd4d0cba2c4eff519ef5622f0dc10128b484a/vite-plugin-ssr/node/runtime/html/injectAssets/getViteDevScripts.ts#L16
-const GLOABL_KEY = `__${exposeIndexHtmlPlugin.name}_viteDevServer`;
+const GLOABL_KEY = `__${importIndexHtmlPlugin.name}_viteDevServer`;
 
-export default function exposeIndexHtmlPlugin(): Plugin {
+export default function importIndexHtmlPlugin(): Plugin {
   return {
     name: "@hiogawa/vite-import-index-html",
 
