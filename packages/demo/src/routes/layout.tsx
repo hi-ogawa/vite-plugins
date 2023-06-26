@@ -1,6 +1,20 @@
+import { Toaster } from "react-hot-toast";
 import { NavLink, Outlet } from "react-router-dom";
 
 export function Page() {
+  return (
+    <>
+      <Toaster
+        toastOptions={{
+          className: "!bg-colorBgElevated !text-colorText",
+        }}
+      />
+      <PageInner />
+    </>
+  );
+}
+
+function PageInner() {
   return (
     <div className="flex flex-col">
       <Header />

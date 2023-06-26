@@ -9,6 +9,9 @@ export function Page() {
       <div className="w-full p-6">
         <div className="flex flex-col gap-4">
           <h1>Server data</h1>
+          {query.isLoading && (
+            <div className="mt-4 mx-auto antd-spin w-10 h-10"></div>
+          )}
           {query.isSuccess && (
             <>
               <img

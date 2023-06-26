@@ -13,7 +13,11 @@ const Z_POKOMON_OUTPUT = z.object({
 type PokemonOutput = z.infer<typeof Z_POKOMON_OUTPUT>;
 
 async function fetchPokomonApi(): Promise<PokemonOutput> {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/pikachu`);
+  // fake 1 second to see spinner
+  const [res] = await Promise.all([
+    fetch(`https://pokeapi.co/api/v2/pokemon/pikachu`),
+    sleep(1000),
+  ]);
   tinyassert(res.ok);
   return Z_POKOMON_OUTPUT.parse(await res.json());
 }
@@ -31,4 +35,8 @@ export function pokomenQueryOption() {
 // so that client facing API and server call can be reasonably uniformized.
 export function pokomenQueryOptionSSR() {
   return pokomenQueryOption();
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(() => resolve(null), ms));
 }
