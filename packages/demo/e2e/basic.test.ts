@@ -11,9 +11,9 @@ test("basic", async ({ page }) => {
   await page.waitForURL("/other");
   await page.getByText("Other page").click();
 
-  await page.getByRole("link", { name: "/some-dynamic-id" }).click();
-  await page.waitForURL("/some-dynamic-id");
-  await page.getByText('params = { "dynamic": "some-dynamic-id" }').click();
+  await page.getByRole("link", { name: "/dynamic/any" }).click();
+  await page.waitForURL("/dynamic/any");
+  await page.getByText('params = { "id": "any" }').click();
 
   await page.getByRole("link", { name: "/subdir", exact: true }).click();
   await page.waitForURL("/subdir");
@@ -24,9 +24,9 @@ test("basic", async ({ page }) => {
   await page.getByText("Sub directory (other)").click();
 
   // SPA can load non root url
-  await page.goto("/some-dynamic-id");
-  await page.waitForURL("/some-dynamic-id");
-  await page.getByText('params = { "dynamic": "some-dynamic-id" }').click();
+  await page.goto("/dynamic/any");
+  await page.waitForURL("/dynamic/any");
+  await page.getByText('params = { "id": "any" }').click();
 });
 
 test.describe("server-data", () => {
