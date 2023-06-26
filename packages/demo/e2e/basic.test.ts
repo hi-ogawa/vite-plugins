@@ -67,7 +67,7 @@ test.describe("server-redirect", () => {
   test("server-side-good", async ({ page }) => {
     await page.goto("/server-redirect/good");
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"message":"success!"}').click();
+    await page.getByText('{"message":"success on server!"}').click();
   });
 
   test("server-side-bad", async ({ page }) => {
@@ -80,7 +80,7 @@ test.describe("server-redirect", () => {
     await isPageReady(page);
     await page.getByRole("link", { name: "good link" }).click();
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"message":"success!"}').click();
+    await page.getByText('{"message":"success on client!"}').click();
   });
 
   test("client-side-bad", async ({ page }) => {

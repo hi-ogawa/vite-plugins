@@ -3,11 +3,14 @@ import type { QueryObserverOptions } from "@tanstack/react-query";
 import { type LoaderFunction, redirect } from "react-router-dom";
 import { sleep } from "../../utils/misc";
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, context }) => {
   const id = params["id"]!;
   try {
-    // TODO: client ends up doing `dummyCheck` again unless we queryClient.prefetch here.
     await dummyCheck(id);
+    context.locals.queryClient.setQueryData(
+      dummyCheckQueryOptions(id).queryKey,
+      { message: "success on server!" }
+    );
     return null;
   } catch {
     throw redirect("/server-redirect?error=server");
@@ -17,12 +20,14 @@ export const loader: LoaderFunction = async ({ params }) => {
 async function dummyCheck(id: string) {
   await sleep(1000);
   tinyassert(id === "good");
-  return { message: "success!" };
 }
 
 export function dummyCheckQueryOptions(id: string) {
   return {
     queryKey: ["server-redirect-check", id],
-    queryFn: async () => dummyCheck(id),
+    queryFn: async () => {
+      await dummyCheck(id);
+      return { message: "success on client!" };
+    },
   } satisfies QueryObserverOptions;
 }
