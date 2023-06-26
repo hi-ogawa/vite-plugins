@@ -9,9 +9,6 @@
     },
     {
       "path": "./packages/vite-import-index-html/tsconfig.json"
-    },
-    {
-      "path": "./packages/vite-index-html-middleware/tsconfig.json"
     }
   ]
 }
