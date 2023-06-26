@@ -1,6 +1,5 @@
 {
   "name": "@hiogawa/vite-expose-index-html",
-  "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -11,10 +10,10 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
-    "./dist/index-html": {
-      "import": "./dist/index-html.js",
-      "require": "./dist/index-html.cjs",
-      "types": "./dist/index-html.d.ts"
+    "./dist/runtime": {
+      "import": "./dist/runtime.js",
+      "require": "./dist/runtime.cjs",
+      "types": "./dist/runtime.d.ts"
     }
   },
   "files": [

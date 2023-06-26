@@ -1,6 +1,6 @@
 import { type RequestHandler, compose } from "@hattip/compose";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
-import { indexHtml } from "@hiogawa/vite-expose-index-html/dist/index-html";
+import { importIndexHtml } from "@hiogawa/vite-expose-index-html/dist/runtime";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import type { Context, MiddlewareHandler } from "hono";
@@ -24,7 +24,7 @@ function globPageRoutesHandler(): RequestHandler {
       return res;
     }
 
-    let html = await indexHtml();
+    let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", res);
     html = html.replace("<!--@INJECT_HEAD@-->", injectToHead());
 
