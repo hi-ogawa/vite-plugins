@@ -1,6 +1,6 @@
 # vite-index-html-middleware
 
-TODO: deprecate in favor of `vite-expose-index-html`
+TODO: deprecate in favor of `vite-import-index-html`
 
 ```sh
 pnpm build

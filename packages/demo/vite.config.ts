@@ -1,5 +1,5 @@
 import process from "node:process";
-import exposeIndexHtml from "@hiogawa/vite-expose-index-html";
+import exposeIndexHtml from "@hiogawa/vite-import-index-html";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import vaviteConnect from "@vavite/connect";
 import react from "@vitejs/plugin-react";

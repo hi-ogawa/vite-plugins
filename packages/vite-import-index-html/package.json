@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/vite-expose-index-html",
+  "name": "@hiogawa/vite-import-index-html",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

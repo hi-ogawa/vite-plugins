@@ -1,6 +1,6 @@
 import { type RequestHandler, compose } from "@hattip/compose";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
-import { importIndexHtml } from "@hiogawa/vite-expose-index-html/dist/runtime";
+import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import type { Context, MiddlewareHandler } from "hono";

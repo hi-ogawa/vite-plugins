@@ -1,4 +1,4 @@
-declare module "virtual:@hiogawa/vite-expose-index-html/internal" {
+declare module "virtual:@hiogawa/vite-import-index-html/internal" {
   const value: {
     server?: import("vite").ViteDevServer;
     importIndexHtmlRaw: () => Promise<{ default: string }>;

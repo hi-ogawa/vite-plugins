@@ -1,7 +1,7 @@
 import type { Plugin } from "vite";
 
 // pass internal runtime data via virtual module
-const VIRTUAL_INTERNAL = "virtual:@hiogawa/vite-expose-index-html/internal";
+const VIRTUAL_INTERNAL = "virtual:@hiogawa/vite-import-index-html/internal";
 
 // expose ViteDevServer to access "transformIndexHtml" during `vite dev`
 // https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts
@@ -10,7 +10,7 @@ const GLOABL_KEY = `__${exposeIndexHtmlPlugin.name}_viteDevServer`;
 
 export default function exposeIndexHtmlPlugin(): Plugin {
   return {
-    name: "@hiogawa/vite-expose-index-html",
+    name: "@hiogawa/vite-import-index-html",
 
     configureServer: (server) => {
       (globalThis as any)[GLOABL_KEY] = server;
@@ -23,7 +23,7 @@ export default function exposeIndexHtmlPlugin(): Plugin {
     config(_config, _env) {
       // vite has to handle internal "virtual" modules
       // cf. https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts#L49-L65
-      const exclude = ["@hiogawa/vite-expose-index-html"];
+      const exclude = ["@hiogawa/vite-import-index-html"];
       return {
         optimizeDeps: {
           exclude,
