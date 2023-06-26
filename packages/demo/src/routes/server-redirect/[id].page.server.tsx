@@ -6,7 +6,7 @@ import { sleep } from "../../utils/misc";
 export const loader: LoaderFunction = async ({ params }) => {
   const id = params["id"]!;
   try {
-    // TODO: client ends up doing `dummyCheck` gain unless we queryClient.prefetch here.
+    // TODO: client ends up doing `dummyCheck` again unless we queryClient.prefetch here.
     await dummyCheck(id);
     return null;
   } catch {
