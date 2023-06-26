@@ -3,6 +3,7 @@ import type React from "react";
 import type { LoaderFunction, RouteObject } from "react-router";
 import { mapKeys } from "./utils";
 
+// TODO: just reuse exact RouteObject convention? (e.g. `Component` instead of `Page`)
 type PageModule = {
   Page?: React.ComponentType;
   loader?: LoaderFunction;
