@@ -61,7 +61,6 @@ const ROUTES = [
   "/some-dynamic-id",
   "/server-data",
   "/server-redirect",
-  "/client-redirect",
   "/subdir",
   "/subdir/other",
 ];

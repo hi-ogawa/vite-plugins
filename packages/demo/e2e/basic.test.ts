@@ -1,8 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { Page, expect, test } from "@playwright/test";
 
 test("basic", async ({ page }) => {
   await page.goto("/");
-  await page.getByTestId("hydrated").waitFor({ state: "attached" });
+  await isPageReady(page);
 
   await page.getByRole("button", { name: "Fetch API" }).click();
   await page.getByText('{ "env": ').click();
@@ -62,3 +62,38 @@ test.describe("server-data", () => {
     );
   });
 });
+
+test.describe("server-redirect", () => {
+  test("server-side-good", async ({ page }) => {
+    await page.goto("/server-redirect/good");
+    await page.waitForURL("/server-redirect/good");
+    await page.getByText('{"message":"success!"}').click();
+  });
+
+  test("server-side-bad", async ({ page }) => {
+    await page.goto("/server-redirect/forbidden");
+    await page.waitForURL("/server-redirect?error=server");
+  });
+
+  test("client-side-good", async ({ page }) => {
+    await page.goto("/server-redirect");
+    await isPageReady(page);
+    await page.getByRole("link", { name: "good link" }).click();
+    await page.waitForURL("/server-redirect/good");
+    await page.getByText('{"message":"success!"}').click();
+  });
+
+  test("client-side-bad", async ({ page }) => {
+    await page.goto("/server-redirect");
+    await isPageReady(page);
+    await page.getByRole("link", { name: "forbidden link" }).click();
+    // TODO: if we suspend the query, will react-router doesn't update url until resolution?
+    await page.waitForURL("/server-redirect/forbidden");
+    await page.getByText("something went wrong...").click();
+    await page.waitForURL("/server-redirect?error=client");
+  });
+});
+
+async function isPageReady(page: Page) {
+  await page.getByTestId("hydrated").waitFor({ state: "attached" });
+}

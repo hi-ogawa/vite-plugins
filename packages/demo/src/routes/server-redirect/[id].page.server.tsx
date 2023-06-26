@@ -6,6 +6,7 @@ import { sleep } from "../../utils/misc";
 export const loader: LoaderFunction = async ({ params }) => {
   const id = params["id"]!;
   try {
+    // TODO: client ends up doing `dummyCheck` gain unless we queryClient.prefetch here.
     await dummyCheck(id);
     return null;
   } catch {
@@ -16,7 +17,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 async function dummyCheck(id: string) {
   await sleep(1000);
   tinyassert(id === "good");
-  return { message: "secret" };
+  return { message: "success!" };
 }
 
 export function dummyCheckQueryOptions(id: string) {
