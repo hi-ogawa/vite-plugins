@@ -1,6 +1,6 @@
 import process from "node:process";
-import exposeIndexHtml from "@hiogawa/vite-expose-index-html";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
+import importIndexHtmlPlugin from "@hiogawa/vite-import-index-html";
 import vaviteConnect from "@vavite/connect";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
@@ -11,7 +11,7 @@ export default defineConfig((ctx) => ({
     react(),
     unocss(),
     globRoutesPlugin({ root: "/src/routes" }),
-    exposeIndexHtml(),
+    importIndexHtmlPlugin(),
     vaviteConnect({
       standalone: false,
       serveClientAssetsInDev: true,

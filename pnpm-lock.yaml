@@ -65,15 +65,12 @@ importers:
       '@hiogawa/utils-experimental':
         specifier: ^0.0.1
         version: 0.0.1
-      '@hiogawa/vite-expose-index-html':
-        specifier: workspace:*
-        version: link:../vite-expose-index-html
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../vite-glob-routes
-      '@hiogawa/vite-index-html-middleware':
+      '@hiogawa/vite-import-index-html':
         specifier: workspace:*
-        version: link:../vite-index-html-middleware
+        version: link:../vite-import-index-html
       '@iconify-json/ri':
         specifier: ^1.1.9
         version: 1.1.9
@@ -135,12 +132,6 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
 
-  packages/vite-expose-index-html:
-    dependencies:
-      vite:
-        specifier: '*'
-        version: 4.3.9(@types/node@18.16.18)
-
   packages/vite-glob-routes:
     dependencies:
       vite:
@@ -157,15 +148,11 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react@18.2.0)
 
-  packages/vite-index-html-middleware:
+  packages/vite-import-index-html:
     dependencies:
       vite:
         specifier: '*'
         version: 4.3.9(@types/node@18.16.18)
-    devDependencies:
-      '@hattip/compose':
-        specifier: ^0.0.34
-        version: 0.0.34
 
 packages:
 
