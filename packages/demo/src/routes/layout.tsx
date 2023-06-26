@@ -58,7 +58,7 @@ function Header() {
 const ROUTES = [
   "/",
   "/other",
-  "/some-dynamic-id",
+  "/dynamic/any",
   "/server-data",
   "/server-redirect",
   "/subdir",
