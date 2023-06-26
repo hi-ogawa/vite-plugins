@@ -1,0 +1,32 @@
+diff --git a/dist/index.js b/dist/index.js
+index 1e7a41694489afd0fcc8da1e02937017d4c79783..c9bdc99092a7792af73583faa1d902064aaa681b 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -853,6 +853,7 @@ function warningOnce(key, cond, message) {
+  */
+ function RouterProvider(_ref) {
+   let {
++    PATCH_startTransition,
+     fallbackElement,
+     router,
+     future
+@@ -860,12 +861,13 @@ function RouterProvider(_ref) {
+   // Need to use a layout effect here so we are subscribed early enough to
+   // pick up on any render-driven redirects/navigations (useEffect/<Navigate>)
+   let [state, setStateImpl] = React.useState(router.state);
+-  let {
+-    v7_startTransition
+-  } = future || {};
+-  let setState = React.useCallback(newState => {
+-    v7_startTransition && startTransitionImpl ? startTransitionImpl(() => setStateImpl(newState)) : setStateImpl(newState);
+-  }, [setStateImpl, v7_startTransition]);
++  // let {
++  //   v7_startTransition
++  // } = future || {};
++  // let setState = React.useCallback(newState => {
++  //   v7_startTransition && startTransitionImpl ? startTransitionImpl(() => setStateImpl(newState)) : setStateImpl(newState);
++  // }, [setStateImpl, v7_startTransition]);
++  let setState = React.useCallback(newState => PATCH_startTransition(() => setStateImpl(newState)), [PATCH_startTransition, setStateImpl]);
+   React.useLayoutEffect(() => router.subscribe(setState), [router, setState]);
+   let navigator = React.useMemo(() => {
+     return {

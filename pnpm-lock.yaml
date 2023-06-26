@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  react-router@6.13.0:
+    hash: ipsrv7bz7bb2exbmqqe4myhadu
+    path: patches/react-router@6.13.0.patch
+
 importers:
 
   .:
@@ -119,6 +124,9 @@ importers:
       react-hot-toast:
         specifier: ^2.4.1
         version: 2.4.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
+      react-router:
+        specifier: ^6.13.0
+        version: 6.13.0(patch_hash=ipsrv7bz7bb2exbmqqe4myhadu)(react@18.2.0)
       react-router-dom:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
@@ -146,7 +154,7 @@ importers:
         version: 18.2.14
       react-router:
         specifier: ^6.13.0
-        version: 6.13.0(react@18.2.0)
+        version: 6.13.0(patch_hash=ipsrv7bz7bb2exbmqqe4myhadu)(react@18.2.0)
 
   packages/vite-import-index-html:
     dependencies:
@@ -3016,10 +3024,10 @@ packages:
       '@remix-run/router': 1.6.3
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.13.0(react@18.2.0)
+      react-router: 6.13.0(patch_hash=ipsrv7bz7bb2exbmqqe4myhadu)(react@18.2.0)
     dev: true
 
-  /react-router@6.13.0(react@18.2.0):
+  /react-router@6.13.0(patch_hash=ipsrv7bz7bb2exbmqqe4myhadu)(react@18.2.0):
     resolution: {integrity: sha512-Si6KnfEnJw7gUQkNa70dlpI1bul46FuSxX5t5WwlUBxE25DAz2BjVkwaK8Y2s242bQrZPXCpmwLPtIO5pv4tXg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -3028,6 +3036,7 @@ packages:
       '@remix-run/router': 1.6.3
       react: 18.2.0
     dev: true
+    patched: true
 
   /react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}

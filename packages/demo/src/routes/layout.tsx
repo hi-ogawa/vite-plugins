@@ -1,5 +1,6 @@
 import { Toaster } from "react-hot-toast";
 import { NavLink, Outlet } from "react-router-dom";
+import { useIsPending } from "../client/react-transition";
 
 export function Component() {
   return (
@@ -15,11 +16,13 @@ export function Component() {
 }
 
 function PageInner() {
+  const isPending = useIsPending();
   return (
     <div className="flex flex-col">
       <Header />
       <div className="flex flex-col items-center">
         <div className="w-full max-w-2xl">
+          <pre className="my-2">{JSON.stringify({ isPending })}</pre>
           <Outlet />
         </div>
       </div>

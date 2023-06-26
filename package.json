@@ -27,5 +27,10 @@
   },
   "volta": {
     "node": "18.16.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "react-router@6.13.0": "patches/react-router@6.13.0.patch"
+    }
   }
 }

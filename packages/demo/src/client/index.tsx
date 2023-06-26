@@ -3,11 +3,12 @@ import { tinyassert } from "@hiogawa/utils";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import {
   ReactQueryWrapper,
   createQueryClientWithState,
 } from "../utils/react-query-utils";
+import { RouterProviderWithTransition } from "./react-transition";
 
 function main() {
   const el = document.getElementById("root");
@@ -18,7 +19,7 @@ function main() {
   const root = (
     <React.StrictMode>
       <ReactQueryWrapper queryClient={queryClient}>
-        <RouterProvider router={router} future={{ v7_startTransition: true }} />
+        <RouterProviderWithTransition router={router} />
       </ReactQueryWrapper>
     </React.StrictMode>
   );
