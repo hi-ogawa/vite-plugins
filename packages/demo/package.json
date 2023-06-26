@@ -21,7 +21,6 @@
     "@hiogawa/utils-experimental": "^0.0.1",
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-import-index-html": "workspace:*",
-    "@hiogawa/vite-index-html-middleware": "workspace:*",
     "@iconify-json/ri": "^1.1.9",
     "@playwright/test": "^1.35.1",
     "@tanstack/react-query": "^4.29.14",

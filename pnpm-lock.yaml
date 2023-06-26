@@ -71,9 +71,6 @@ importers:
       '@hiogawa/vite-import-index-html':
         specifier: workspace:*
         version: link:../vite-import-index-html
-      '@hiogawa/vite-index-html-middleware':
-        specifier: workspace:*
-        version: link:../vite-index-html-middleware
       '@iconify-json/ri':
         specifier: ^1.1.9
         version: 1.1.9
@@ -156,16 +153,6 @@ importers:
       vite:
         specifier: '*'
         version: 4.3.9(@types/node@18.16.18)
-
-  packages/vite-index-html-middleware:
-    dependencies:
-      vite:
-        specifier: '*'
-        version: 4.3.9(@types/node@18.16.18)
-    devDependencies:
-      '@hattip/compose':
-        specifier: ^0.0.34
-        version: 0.0.34
 
 packages:
 
