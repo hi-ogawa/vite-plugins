@@ -1,6 +1,8 @@
 import { Toaster } from "react-hot-toast";
 import { NavLink, Outlet } from "react-router-dom";
 
+export const handle = "root-handle";
+
 export function Component() {
   return (
     <>
