@@ -6,3 +6,12 @@ export function mapKeys<T>(
     Object.entries(record).map(([k, v]) => [f(k), v] as const)
   );
 }
+
+export function mapValues<T, T2>(
+  record: Record<string, T>,
+  f: (v: T) => T2
+): Record<string, T2> {
+  return Object.fromEntries(
+    Object.entries(record).map(([k, v]) => [k, f(v)] as const)
+  );
+}

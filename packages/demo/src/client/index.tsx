@@ -15,7 +15,8 @@ async function main() {
 
   // need to wait for fetching initial lazy route before hydration to match SSR
   // https://github.com/remix-run/react-router/blob/bc2552840147206716544e5cdcdb54f649f9193f/packages/router/router.ts#L757-L762
-  const router = createBrowserRouter(globPageRoutes());
+  const { routes } = globPageRoutes();
+  const router = createBrowserRouter(routes);
   tinyassert(!router.state.initialized);
   await waitForRouterInitialized(router);
   tinyassert(router.state.initialized);

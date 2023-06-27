@@ -1,7 +1,6 @@
 import { type RequestHandler, compose } from "@hattip/compose";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
-import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
@@ -21,15 +20,13 @@ export function createHattipApp() {
 }
 
 function globPageRoutesHandler(): RequestHandler {
-  const routes = globPageRoutes();
-
   return async (ctx) => {
     // initialize queryClient in hattip/react-router context
     const queryClient = createQueryClient();
     ctx.locals.queryClient = queryClient;
 
     // SSR
-    const res = await renderRoutes(ctx, routes, queryClient);
+    const res = await renderRoutes(ctx, queryClient);
     if (res instanceof Response) {
       return res;
     }

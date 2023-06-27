@@ -2,19 +2,20 @@ import type { RequestContext } from "@hattip/compose";
 import type { QueryClient } from "@tanstack/react-query";
 import React from "react";
 import { renderToString } from "react-dom/server";
-import type { RouteObject } from "react-router-dom";
 import {
   StaticRouterProvider,
   createStaticHandler,
   createStaticRouter,
 } from "react-router-dom/server";
 import { ReactQueryWrapper } from "../utils/react-query-utils";
+import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 
 // cf. https://reactrouter.com/en/main/routers/static-router-provider
 
+const { routes, mapping } = globPageRoutes();
+
 export async function renderRoutes(
   hattipContext: RequestContext,
-  routes: RouteObject[],
   queryClient: QueryClient
 ): Promise<string | Response> {
   const handler = createStaticHandler(routes);
@@ -35,6 +36,7 @@ export async function renderRoutes(
   //       which then can be resolved to actual client asset path based on vite's client manifest.
   // TODO: or we can probably export this "path mapping" separately from `globPageRoutes`.
   console.log(context.matches);
+  mapping;
 
   const router = createStaticRouter(handler.dataRoutes, context);
 

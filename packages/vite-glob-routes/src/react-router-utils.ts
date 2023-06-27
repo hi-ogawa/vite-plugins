@@ -1,58 +1,64 @@
 import { mapRegExp, tinyassert } from "@hiogawa/utils";
 import type { RouteObject } from "react-router";
-import { mapKeys } from "./utils";
+import { mapValues } from "./utils";
 
 // mirror everything from react-router and used as `RouteObject.lazy`.
-export type PageModule = Omit<
-  RouteObject,
-  "index" | "path" | "children" | "lazy"
->;
+type PageModule = Omit<RouteObject, "index" | "path" | "children" | "lazy">;
 
 export type LazyPageModule = () => Promise<PageModule>;
 
-export function createGlobPageRoutes({
-  root,
-  globPage,
-  globPageServer,
-  globLayout,
-  globLayoutServer,
-}: {
+// provided by plugin's virtual module based on glob import
+export type GlobPageRoutesInternal = {
   root: string;
   globPage: Record<string, LazyPageModule>;
   globPageServer: Record<string, LazyPageModule>;
   globLayout: Record<string, LazyPageModule>;
   globLayoutServer: Record<string, LazyPageModule>;
-}): RouteObject[] {
+};
+
+export function createGlobPageRoutes(internal: GlobPageRoutesInternal) {
   // TODO: warn invalid usage
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
-  globPage = mapKeys(
-    globPage,
-    (k) => k.slice(root.length).match(/^(.*)\.page\./)![1]!
-  );
-  globLayout = mapKeys(
-    globLayout,
-    (k) => k.slice(root.length).match(/^(.*)layout\./)![1]!
-  );
-  globPageServer = mapKeys(
-    globPageServer,
-    (k) => k.slice(root.length).match(/^(.*)\.page\.server\./)![1]!
-  );
-  globLayoutServer = mapKeys(
-    globLayoutServer,
-    (k) => k.slice(root.length).match(/^(.*)layout\.server\./)![1]!
-  );
-  for (const [k, v1] of Object.entries(globPageServer)) {
-    const v2 = globPage[k];
-    tinyassert(v2);
-    globPage[k] = async () => ({ ...(await v2()), ...(await v1()) });
+
+  const mapping = createGlobPageMapping(internal);
+
+  const pageModules = mapValues(mapping, (entries) => async () => {
+    const resolved = await Promise.all(entries.map((e) => e.lazy));
+    return Object.assign({}, ...resolved);
+  });
+
+  const routes = createGlobPageRoutesInner(pageModules);
+  return { routes, mapping };
+}
+
+// provide mapping from file system path to module path
+// (urlpath => filepath => module)
+type GlobPageMapping = Record<
+  string,
+  { filepath: string; lazy: LazyPageModule }[]
+>;
+
+function createGlobPageMapping(
+  internal: GlobPageRoutesInternal
+): GlobPageMapping {
+  const patterns = [
+    [internal.globPage, /^(.*)\.page\./],
+    [internal.globPageServer, /^(.*)\.page\.server\./],
+    [internal.globLayout, /^(.*)layout\./],
+    [internal.globLayoutServer, /^(.*)layout\.server\./],
+  ] as const;
+
+  const result: GlobPageMapping = {};
+
+  for (const [glob, regex] of patterns) {
+    for (const [filepath, lazy] of Object.entries(glob)) {
+      const urlpath = filepath.slice(internal.root.length).match(regex)![1]!;
+      (result[urlpath] ??= []).push({ filepath, lazy });
+    }
   }
-  for (const [k, v1] of Object.entries(globLayoutServer)) {
-    const v2 = globLayout[k];
-    tinyassert(v2);
-    globLayout[k] = async () => ({ ...(await v2()), ...(await v1()) });
-  }
-  return createGlobPageRoutesInner({ ...globPage, ...globLayout });
+
+  return result;
 }
 
 function createGlobPageRoutesInner(

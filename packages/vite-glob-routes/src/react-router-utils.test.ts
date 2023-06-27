@@ -28,12 +28,11 @@ describe(createGlobPageRoutes, () => {
       },
       globLayoutServer: {},
     });
-    expect(tree).toMatchInlineSnapshot(`
+    expect(tree.routes).toMatchInlineSnapshot(`
       [
         {
           "children": [
             {
-              "children": [],
               "index": true,
               "lazy": [Function],
             },
@@ -50,7 +49,6 @@ describe(createGlobPageRoutes, () => {
             {
               "children": [
                 {
-                  "children": [],
                   "index": true,
                   "lazy": [Function],
                 },
@@ -90,6 +88,68 @@ describe(createGlobPageRoutes, () => {
           "path": "/",
         },
       ]
+    `);
+    expect(tree.mapping).toMatchInlineSnapshot(`
+      {
+        "/": [
+          {
+            "filepath": "(root)/layout.tsx",
+            "lazy": [Function],
+          },
+        ],
+        "/[dynamic]": [
+          {
+            "filepath": "(root)/[dynamic].page.ts",
+            "lazy": [Function],
+          },
+        ],
+        "/abc/[dynsub]": [
+          {
+            "filepath": "(root)/abc/[dynsub].page.tsx",
+            "lazy": [Function],
+          },
+        ],
+        "/abc/[dynsub]/new": [
+          {
+            "filepath": "(root)/abc/[dynsub]/new.page.tsx",
+            "lazy": [Function],
+          },
+        ],
+        "/index": [
+          {
+            "filepath": "(root)/index.page.js",
+            "lazy": [Function],
+          },
+        ],
+        "/other": [
+          {
+            "filepath": "(root)/other.page.jsx",
+            "lazy": [Function],
+          },
+          {
+            "filepath": "(root)/other.page.server.jsx",
+            "lazy": [Function],
+          },
+        ],
+        "/subdir/": [
+          {
+            "filepath": "(root)/subdir/layout.jsx",
+            "lazy": [Function],
+          },
+        ],
+        "/subdir/index": [
+          {
+            "filepath": "(root)/subdir/index.page.tsx",
+            "lazy": [Function],
+          },
+        ],
+        "/subdir/other": [
+          {
+            "filepath": "(root)/subdir/other.page.tsx",
+            "lazy": [Function],
+          },
+        ],
+      }
     `);
   });
 });
