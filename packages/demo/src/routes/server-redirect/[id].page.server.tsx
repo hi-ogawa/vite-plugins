@@ -9,10 +9,9 @@ export const loader: LoaderFunction = async ({ params, context }) => {
     // note that `prefetchQuery(...queryFn)` would swallow errors from `queryFn`
     // so here the logic is a little convoluted
     await dummyCheck(id);
-    context.locals.queryClient.setQueryData(
-      dummyCheckQueryOptions(id).queryKey,
-      { message: "success on server!" }
-    );
+    context.queryClient.setQueryData(dummyCheckQueryOptions(id).queryKey, {
+      message: "success on server!",
+    });
     return null;
   } catch {
     throw redirect("/server-redirect?error=server");

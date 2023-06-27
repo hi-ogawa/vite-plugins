@@ -30,36 +30,28 @@ test("basic", async ({ page }) => {
 });
 
 test.describe("server-data", () => {
-  test("server-side", async ({ page }) => {
+  test("ssr", async ({ page }) => {
     await page.goto("/server-data");
-    await page.getByRole("img").click();
-    await page
-      .getByText(
-        '{ "types": [ { "slot": 1, "type": { "name": "electric", "url": "https://pokeapi.'
-      )
-      .click();
+    await page.getByText("counter = 0").click();
   });
 
-  test("client-side-navigation", async ({ page }) => {
+  test("csr", async ({ page, request }) => {
     await page.goto("/");
     await page.getByTestId("hydrated").waitFor({ state: "attached" });
 
-    await page.getByRole("link", { name: "/server-data", exact: true }).click();
+    await page.getByRole("link", { name: "/server-data" }).click();
     await page.waitForURL("/server-data");
-    await page.getByRole("img").click();
-    await page
-      .getByText(
-        '{ "types": [ { "slot": 1, "type": { "name": "electric", "url": "https://pokeapi.'
-      )
-      .click();
-  });
+    await page.getByText("counter = 0").click();
+    await page.getByRole("button", { name: "+1" }).click();
+    await page.getByText("counter = 1").click();
 
-  test("ssr", async ({ request }) => {
+    // verify ssr prefetch
     const res = await request.get("/server-data");
     const resText = await res.text();
-    expect(resText).toContain(
-      `src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"`
-    );
+    expect(resText).toContain("<span>counter = <!-- -->1</span>");
+
+    await page.getByRole("button", { name: "-1" }).click();
+    await page.getByText("counter = 0").click();
   });
 });
 

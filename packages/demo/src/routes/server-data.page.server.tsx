@@ -1,10 +1,8 @@
 import type { LoaderFunction } from "react-router-dom";
-import { pokomenQueryOption } from "./server-data-utils";
+import { getCounterQueryOptions } from "./server-data-counter.api";
 
-// for the ease of tree-shake, employ explicit "page.server.ts" convention.
-// for the ease of react-router integration, loader is used only during initial SSR and "loader data" is not passed to client.
-// this very simplified architecture, however, allows mutating `queryClient` to implicitly pass data during SSR and hydration.
+// prefetch query
 export const loader: LoaderFunction = async ({ context }) => {
-  await context.locals.queryClient.prefetchQuery(pokomenQueryOption());
+  await context.queryClient.prefetchQuery(getCounterQueryOptions());
   return null;
 };
