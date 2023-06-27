@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { sleep } from "../utils/misc";
 import { trpcProcedureBuilder, trpcRouterFactory } from "./init";
 
 let counter = 0;
 
 export const trpcRouter = trpcRouterFactory({
-  getCounter: trpcProcedureBuilder.query(() => {
+  getCounter: trpcProcedureBuilder.query(async () => {
+    await sleep(500);
     return counter;
   }),
 
@@ -14,7 +16,8 @@ export const trpcRouter = trpcRouterFactory({
         delta: z.number(),
       })
     )
-    .mutation(({ input }) => {
+    .mutation(async ({ input }) => {
+      await sleep(500);
       counter += input.delta;
       return counter;
     }),

@@ -1,32 +1,46 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { pokomenQueryOption } from "./server-data-utils";
-import { trpcRQ } from "../trpc/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import { trpcQ } from "../trpc/client-react-query";
 
 export function Component() {
-  const query = useQuery(pokomenQueryOption());
+  const counterQuery = useQuery(trpcQ.getCounter.queryOptions());
 
-  const counterQuery = useQuery(trpcRQ.getCounter.queryOptions());
-  const updateMutation = useMutation(trpcRQ.updateCounter.mutationOptions());
+  const queryClient = useQueryClient();
+  const counterMutation = useMutation({
+    ...trpcQ.updateCounter.mutationOptions(),
+    onSuccess: (data) => {
+      toast.success("Successfully updated", { id: "counter-mutation-success" });
+      queryClient.setQueryData(trpcQ.getCounter.queryOptions().queryKey, data);
+    },
+  });
+
+  const loading = counterQuery.isFetching || counterMutation.isLoading;
 
   return (
     <div className="flex flex-col items-center">
       <div className="w-full p-6">
         <div className="flex flex-col gap-4">
           <h1>Server data</h1>
-          {counterQuery.isLoading && (
-            <div className="mt-4 mx-auto antd-spin w-10 h-10"></div>
-          )}
-          {query.isSuccess && (
-            <>
-              <img
-                className="self-center w-30 h-30"
-                src={query.data.sprites?.front_default}
-              />
-              <pre className="overflow-auto p-1 border text-sm">
-                {JSON.stringify(query.data, null, 2)}
-              </pre>
-            </>
-          )}
+          <div className="flex items-center gap-3">
+            <span>counter = {counterQuery.data ?? "..."}</span>
+            {loading && <div className="antd-spin w-4 h-4"></div>}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              className="antd-btn antd-btn-default px-2"
+              disabled={loading}
+              onClick={() => counterMutation.mutate({ delta: -1 })}
+            >
+              -1
+            </button>
+            <button
+              className="antd-btn antd-btn-default px-2"
+              disabled={loading}
+              onClick={() => counterMutation.mutate({ delta: +1 })}
+            >
+              +1
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -3,12 +3,11 @@ import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.j
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
-import { TRPC_ENDPOINT } from "../trpc/common";
-import { createTrpcContext } from "../trpc/init";
-import { trpcRouter } from "../trpc/router";
+import { createTrpcCaller } from "../trpc/caller";
+import { createTrpcCallerQ } from "../trpc/caller-react-query";
+import { trpcHattipHandler } from "../trpc/hattip";
 import {
   __QUERY_CLIENT_STATE,
   createQueryClient,
@@ -19,21 +18,23 @@ import { renderRoutes } from "./render-routes";
 export function createHattipApp() {
   return compose(
     hattipHonoCompat(logger()),
-    trpcHandler(),
+    trpcHattipHandler(),
     globApiRoutes(),
-    globPageRoutesHandler()
+    ssrHandler()
   );
 }
 
-function globPageRoutesHandler(): RequestHandler {
+function ssrHandler(): RequestHandler {
   const routes = globPageRoutes();
 
   return async (ctx) => {
-    // initialize queryClient in hattip/react-router context
+    // initialize request context for server loaders to prefetch queries
     const queryClient = createQueryClient();
     ctx.locals.queryClient = queryClient;
+    ctx.locals.trpcCaller = await createTrpcCaller(ctx);
+    ctx.locals.trpcCallerQ = createTrpcCallerQ(ctx.locals.trpcCaller);
 
-    // SSR
+    // react-router ssr
     const res = await renderRoutes(ctx, routes, queryClient);
     if (res instanceof Response) {
       return res;
@@ -42,7 +43,7 @@ function globPageRoutesHandler(): RequestHandler {
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", res);
 
-    // pass query client state to client
+    // pass QueryClient state to client for hydration
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       getThemeScript() + getQueryClientStateScript(queryClient)
@@ -81,22 +82,5 @@ function hattipHonoCompat(hono: MiddlewareHandler): RequestHandler {
       }
     );
     return res;
-  };
-}
-
-function trpcHandler(): RequestHandler {
-  return (ctx) => {
-    if (ctx.url.pathname.startsWith(TRPC_ENDPOINT)) {
-      return fetchRequestHandler({
-        endpoint: TRPC_ENDPOINT,
-        req: ctx.request,
-        router: trpcRouter,
-        createContext: createTrpcContext,
-        onError: (e) => {
-          console.error(e);
-        },
-      });
-    }
-    return ctx.next();
   };
 }
