@@ -1,4 +1,5 @@
 import type { RequestContext } from "@hattip/compose";
+import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import type { QueryClient } from "@tanstack/react-query";
 import React from "react";
 import { renderToString } from "react-dom/server";
@@ -8,7 +9,6 @@ import {
   createStaticRouter,
 } from "react-router-dom/server";
 import { ReactQueryWrapper } from "../utils/react-query-utils";
-import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 
 // cf. https://reactrouter.com/en/main/routers/static-router-provider
 
