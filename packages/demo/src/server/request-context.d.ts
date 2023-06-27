@@ -4,8 +4,7 @@ import "react-router-dom";
 // provide access to QueryClient during request lifecycle
 
 declare module "@hattip/compose" {
-  // TODO: use RequestContextExtensions instead?
-  interface Locals {
+  interface RequestContextExtensions {
     queryClient: import("@tanstack/react-query").QueryClient;
     trpcCaller: import("../trpc/caller").TrpcCaller;
     trpcCallerQ: import("../trpc/caller-react-query").TrpcCallerQ;

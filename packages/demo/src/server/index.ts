@@ -30,9 +30,9 @@ function ssrHandler(): RequestHandler {
   return async (ctx) => {
     // initialize request context for server loaders to prefetch queries
     const queryClient = createQueryClient();
-    ctx.locals.queryClient = queryClient;
-    ctx.locals.trpcCaller = await createTrpcCaller(ctx);
-    ctx.locals.trpcCallerQ = createTrpcCallerQ(ctx.locals.trpcCaller);
+    ctx.queryClient = queryClient;
+    ctx.trpcCaller = await createTrpcCaller(ctx);
+    ctx.trpcCallerQ = createTrpcCallerQ(ctx.trpcCaller);
 
     // react-router ssr
     const res = await renderRoutes(ctx, routes, queryClient);
