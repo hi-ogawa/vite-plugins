@@ -14,7 +14,7 @@ export function Component() {
     },
   });
 
-  const loading = counterQuery.isFetching || counterMutation.isLoading;
+  const loading = counterQuery.isInitialLoading || counterMutation.isLoading;
 
   return (
     <div className="flex flex-col items-center">
