@@ -5,9 +5,6 @@ import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
-import { createTrpcCaller } from "../trpc/caller";
-import { createTrpcCallerQ } from "../trpc/caller-react-query";
-import { trpcHattipHandler } from "../trpc/hattip";
 import {
   __QUERY_CLIENT_STATE,
   createQueryClient,
@@ -16,12 +13,7 @@ import {
 import { renderRoutes } from "./render-routes";
 
 export function createHattipApp() {
-  return compose(
-    hattipHonoCompat(logger()),
-    trpcHattipHandler(),
-    globApiRoutes(),
-    ssrHandler()
-  );
+  return compose(hattipHonoCompat(logger()), globApiRoutes(), ssrHandler());
 }
 
 function ssrHandler(): RequestHandler {
@@ -31,8 +23,6 @@ function ssrHandler(): RequestHandler {
     // initialize request context for server loaders to prefetch queries
     const queryClient = createQueryClient();
     ctx.queryClient = queryClient;
-    ctx.trpcCaller = await createTrpcCaller(ctx);
-    ctx.trpcCallerQ = createTrpcCallerQ(ctx.trpcCaller);
 
     // react-router ssr
     const res = await renderRoutes(ctx, routes, queryClient);
