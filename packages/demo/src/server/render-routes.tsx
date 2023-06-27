@@ -26,6 +26,16 @@ export async function renderRoutes(
     return context;
   }
 
+  // TODO: "prefetch" link for code-split assets of current matching route? (probe vite manifest?)
+  // - https://github.com/remix-run/remix/blob/40a4d7d5e25eb5edc9a622278ab111d881c7c155/packages/remix-react/components.tsx#L885-L895
+  // - https://github.com/remix-run/remix/blob/40a4d7d5e25eb5edc9a622278ab111d881c7c155/packages/remix-react/components.tsx#L470-L479
+  // - https://github.com/remix-run/remix/pull/3200
+
+  // TODO: we could use "internal handle" to keep the original "module page path",
+  //       which then can be resolved to actual client asset path based on vite's client manifest.
+  // TODO: or we can probably export this "path mapping" separately from `globPageRoutes`.
+  console.log(context.matches);
+
   const router = createStaticRouter(handler.dataRoutes, context);
 
   const root = (

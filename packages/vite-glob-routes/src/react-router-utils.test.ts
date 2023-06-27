@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-  type PageModule,
+  type LazyPageModule,
   createGlobPageRoutes,
   splitPathSegment,
 } from "./react-router-utils";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
-    const Module: PageModule = { Component: () => null };
+    const Module: LazyPageModule = async () => ({ Component: () => null });
     const tree = createGlobPageRoutes({
       root: "(root)",
       globPage: {
@@ -20,66 +20,73 @@ describe(createGlobPageRoutes, () => {
         "(root)/abc/[dynsub]/new.page.tsx": Module,
       },
       globPageServer: {
-        "(root)/other.page.server.jsx": { loader: () => null },
+        "(root)/other.page.server.jsx": async () => ({ loader: () => null }),
       },
       globLayout: {
         "(root)/layout.tsx": Module,
         "(root)/subdir/layout.jsx": Module,
       },
+      globLayoutServer: {},
     });
     expect(tree).toMatchInlineSnapshot(`
       [
         {
-          "Component": [Function],
           "children": [
             {
-              "Component": [Function],
+              "children": [],
               "index": true,
+              "lazy": [Function],
             },
             {
-              "Component": [Function],
-              "loader": [Function],
+              "children": [],
+              "lazy": [Function],
               "path": "other",
             },
             {
-              "Component": [Function],
+              "children": [],
+              "lazy": [Function],
               "path": ":dynamic",
             },
             {
-              "Component": [Function],
               "children": [
                 {
-                  "Component": [Function],
+                  "children": [],
                   "index": true,
+                  "lazy": [Function],
                 },
                 {
-                  "Component": [Function],
+                  "children": [],
+                  "lazy": [Function],
                   "path": "other",
                 },
               ],
+              "lazy": [Function],
               "path": "subdir/",
             },
             {
-              "Component": null,
               "children": [
                 {
-                  "Component": [Function],
+                  "children": [],
+                  "lazy": [Function],
                   "path": ":dynsub",
                 },
                 {
-                  "Component": null,
                   "children": [
                     {
-                      "Component": [Function],
+                      "children": [],
+                      "lazy": [Function],
                       "path": "new",
                     },
                   ],
+                  "lazy": undefined,
                   "path": ":dynsub/",
                 },
               ],
+              "lazy": undefined,
               "path": "abc/",
             },
           ],
+          "lazy": [Function],
           "path": "/",
         },
       ]

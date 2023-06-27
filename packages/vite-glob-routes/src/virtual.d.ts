@@ -4,6 +4,7 @@ declare module "virtual:@hiogawa/vite-glob-routes/internal/page-routes" {
     globPage: Record<string, any>;
     globPageServer: Record<string, any>;
     globLayout: Record<string, any>;
+    globLayoutServer: Record<string, any>;
   };
   export default value;
 }

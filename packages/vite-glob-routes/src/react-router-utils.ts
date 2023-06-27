@@ -1,24 +1,27 @@
 import { mapRegExp, tinyassert } from "@hiogawa/utils";
-import type React from "react";
-import type { LoaderFunction, RouteObject } from "react-router";
+import type { RouteObject } from "react-router";
 import { mapKeys } from "./utils";
 
-// Pick<RouteObject, "Component" | "loader" | ...>
-export type PageModule = {
-  Component?: React.ComponentType;
-  loader?: LoaderFunction;
-};
+// mirror everything from react-router and used as `RouteObject.lazy`.
+export type PageModule = Omit<
+  RouteObject,
+  "index" | "path" | "children" | "lazy"
+>;
+
+export type LazyPageModule = () => Promise<PageModule>;
 
 export function createGlobPageRoutes({
   root,
   globPage,
   globPageServer,
   globLayout,
+  globLayoutServer,
 }: {
   root: string;
-  globPage: Record<string, PageModule>;
-  globPageServer: Record<string, PageModule>; // only for SSR
-  globLayout: Record<string, PageModule>;
+  globPage: Record<string, LazyPageModule>;
+  globPageServer: Record<string, LazyPageModule>;
+  globLayout: Record<string, LazyPageModule>;
+  globLayoutServer: Record<string, LazyPageModule>;
 }): RouteObject[] {
   // TODO: warn invalid usage
   // - ensure `Component` export
@@ -35,15 +38,25 @@ export function createGlobPageRoutes({
     globPageServer,
     (k) => k.slice(root.length).match(/^(.*)\.page\.server\./)![1]!
   );
-  for (const [k, v] of Object.entries(globPageServer)) {
-    tinyassert(globPage[k]);
-    globPage[k] = { ...globPage[k], ...v };
+  globLayoutServer = mapKeys(
+    globLayoutServer,
+    (k) => k.slice(root.length).match(/^(.*)layout\.server\./)![1]!
+  );
+  for (const [k, v1] of Object.entries(globPageServer)) {
+    const v2 = globPage[k];
+    tinyassert(v2);
+    globPage[k] = async () => ({ ...(await v2()), ...(await v1()) });
+  }
+  for (const [k, v1] of Object.entries(globLayoutServer)) {
+    const v2 = globLayout[k];
+    tinyassert(v2);
+    globLayout[k] = async () => ({ ...(await v2()), ...(await v1()) });
   }
   return createGlobPageRoutesInner({ ...globPage, ...globLayout });
 }
 
 function createGlobPageRoutesInner(
-  pageModules: Record<string, PageModule>
+  pageModules: Record<string, LazyPageModule>
 ): RouteObject[] {
   // construct general tree structure
   const pathEntries = Object.entries(pageModules).map(([k, v]) => ({
@@ -54,23 +67,19 @@ function createGlobPageRoutesInner(
 
   // transform to react-router's nested RouteObject array
   function recurse(
-    children: Record<string, TreeNode<PageModule>>
+    children: Record<string, TreeNode<LazyPageModule>>
   ): RouteObject[] {
     return Object.entries(children).map(([path, node]) => {
       const route: RouteObject = {
         path: formatPath(path),
-        Component: node.value?.Component ?? null,
+        children: recurse(node.children ?? {}),
+        lazy: node.value,
       };
-      if (node.children) {
-        route.children = recurse(node.children);
-      }
-      if (node.value?.loader) {
-        route.loader = node.value?.loader;
-      }
       if (path === "index") {
         // silence convoluted "index: true" typing
         route.index = true as false;
         delete route.path;
+        delete route.children;
       }
       return route;
     });

@@ -48,14 +48,13 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
       // cf. https://github.com/rakkasjs/rakkasjs/blob/18ba680d18f776acf2dedd44444873433552f4e3/packages/rakkasjs/src/features/api-routes/vite-plugin.ts#L8
 
       if (id === VIRTUAL_INTERNAL_PAGE_ROUTES) {
-        // TODO: non-eager import to code split with lazy route?
         return `
             const root = "${root}";
-            const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true });
-            const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true });
-            // TODO: same for layout?
-            const globPageServer = import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: true }) : {};
-            export default { root, globPage, globPageServer, globLayout };
+            const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)");
+            const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)");
+            const globPageServer = import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)") : {};
+            const globLayoutServer = import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)") : {};
+            export default { root, globPage, globPageServer, globLayout, globLayoutServer };
           `;
       }
 
