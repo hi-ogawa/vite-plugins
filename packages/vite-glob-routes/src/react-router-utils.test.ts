@@ -39,12 +39,10 @@ describe(createGlobPageRoutes, () => {
               "lazy": [Function],
             },
             {
-              "children": [],
               "lazy": [Function],
               "path": "other",
             },
             {
-              "children": [],
               "lazy": [Function],
               "path": ":dynamic",
             },
@@ -55,7 +53,6 @@ describe(createGlobPageRoutes, () => {
                   "lazy": [Function],
                 },
                 {
-                  "children": [],
                   "lazy": [Function],
                   "path": "other",
                 },
@@ -66,14 +63,12 @@ describe(createGlobPageRoutes, () => {
             {
               "children": [
                 {
-                  "children": [],
                   "lazy": [Function],
                   "path": ":dynsub",
                 },
                 {
                   "children": [
                     {
-                      "children": [],
                       "lazy": [Function],
                       "path": "new",
                     },
@@ -87,7 +82,6 @@ describe(createGlobPageRoutes, () => {
             },
           ],
           "lazy": [Function],
-          "loader": [Function],
           "path": "/",
         },
       ]
@@ -97,6 +91,10 @@ describe(createGlobPageRoutes, () => {
         "/": [
           {
             "filepath": "(root)/layout.tsx",
+            "lazy": [Function],
+          },
+          {
+            "filepath": "(root)/layout.server.tsx",
             "lazy": [Function],
           },
         ],
