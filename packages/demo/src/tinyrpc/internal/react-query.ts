@@ -5,19 +5,24 @@ import { createGetterProxy } from "./utils";
 //
 
 type FnRecord = Record<string, (...args: any[]) => unknown>;
-type FnOutput<F extends (input: any) => unknown> = Awaited<ReturnType<F>>;
+type FnInput<F extends (...args: any[]) => unknown> = Parameters<F> extends [
+  infer I
+]
+  ? I
+  : void;
+type FnOutput<F extends (...args: any[]) => unknown> = Awaited<ReturnType<F>>;
 
 export type ReactQueryOptionsProxy<T extends FnRecord> = {
   [K in keyof T]: {
     queryKey: unknown[];
-    queryOptions: (...args: Parameters<T[K]>) => {
+    queryOptions: (input: FnInput<T[K]>) => {
       queryKey: unknown[];
       queryFn: () => Promise<FnOutput<T[K]>>;
     };
     mutationKey: unknown[];
     mutationOptions: () => {
       mutationKey: unknown[];
-      mutationFn: (...args: Parameters<T[K]>) => Promise<FnOutput<T[K]>>;
+      mutationFn: (input: FnInput<T[K]>) => Promise<FnOutput<T[K]>>;
     };
   };
 };
