@@ -1,10 +1,5 @@
 declare module "virtual:@hiogawa/vite-glob-routes/internal/page-routes" {
-  const value: {
-    root: string;
-    globPage: Record<string, any>;
-    globPageServer: Record<string, any>;
-    globLayout: Record<string, any>;
-  };
+  const value: import("./react-router-utils").GlobPageRoutesInternal;
   export default value;
 }
 

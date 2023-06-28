@@ -1,6 +1,8 @@
 import { Toaster } from "react-hot-toast";
 import { NavLink, Outlet } from "react-router-dom";
 
+export const handle = "root-handle";
+
 export function Component() {
   return (
     <>
@@ -63,6 +65,7 @@ const ROUTES = [
   "/server-redirect",
   "/subdir",
   "/subdir/other",
+  "/error",
 ];
 
 declare let __themeSet: (theme: string) => void;

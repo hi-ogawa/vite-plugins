@@ -8,6 +8,7 @@ import {
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
     const Module: PageModule = { Component: () => null };
+    const Module2: PageModule = { loader: () => null };
     const tree = createGlobPageRoutes({
       root: "(root)",
       globPage: {
@@ -20,11 +21,14 @@ describe(createGlobPageRoutes, () => {
         "(root)/abc/[dynsub]/new.page.tsx": Module,
       },
       globPageServer: {
-        "(root)/other.page.server.jsx": { loader: () => null },
+        "(root)/other.page.server.jsx": Module2,
       },
       globLayout: {
         "(root)/layout.tsx": Module,
         "(root)/subdir/layout.jsx": Module,
+      },
+      globLayoutServer: {
+        "(root)/layout.server.tsx": Module2,
       },
     });
     expect(tree).toMatchInlineSnapshot(`
@@ -60,14 +64,12 @@ describe(createGlobPageRoutes, () => {
               "path": "subdir/",
             },
             {
-              "Component": null,
               "children": [
                 {
                   "Component": [Function],
                   "path": ":dynsub",
                 },
                 {
-                  "Component": null,
                   "children": [
                     {
                       "Component": [Function],
@@ -80,6 +82,7 @@ describe(createGlobPageRoutes, () => {
               "path": "abc/",
             },
           ],
+          "loader": [Function],
           "path": "/",
         },
       ]
