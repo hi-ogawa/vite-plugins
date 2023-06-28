@@ -1,5 +1,5 @@
 import type { RequestContext } from "@hattip/compose";
-import { typedBoolean } from "@hiogawa/utils";
+import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import {
   type RouteObjectWithGlobInfo,
   globPageRoutes,
@@ -14,6 +14,7 @@ import {
   createStaticHandler,
   createStaticRouter,
 } from "react-router-dom/server";
+import type { Manifest } from "vite";
 import { ReactQueryWrapper } from "../utils/react-query-utils";
 
 // cf. https://reactrouter.com/en/main/routers/static-router-provider
@@ -75,7 +76,7 @@ export async function renderRoutes(
     type: "render",
     html,
     statusCode: getResponseStatusCode(context),
-    routeFiles: getMatchedRouteFiles(context),
+    routeFiles: await getMatchedRouteFiles(context),
   };
 }
 
@@ -96,12 +97,44 @@ function getResponseStatusCode(context: StaticHandlerContext): number {
 // - https://github.com/remix-run/remix/blob/40a4d7d5e25eb5edc9a622278ab111d881c7c155/packages/remix-react/components.tsx#L885-L895
 // - https://github.com/remix-run/remix/blob/40a4d7d5e25eb5edc9a622278ab111d881c7c155/packages/remix-react/components.tsx#L470-L479
 // - https://github.com/remix-run/remix/pull/3200
-function getMatchedRouteFiles(context: StaticHandlerContext): string[] {
-  // TODO: use vite manifest to map file path to production asset path
+// - https://github.com/remix-run/remix/discussions/5378
+async function getMatchedRouteFiles(
+  context: StaticHandlerContext
+): Promise<string[]> {
+  // use "globInfo" to collect local file paths
   const matchedFiles = context.matches
     .flatMap((m) =>
       (m.route as RouteObjectWithGlobInfo).globInfo?.entries.map((e) => e.file)
     )
     .filter(typedBoolean);
-  return matchedFiles;
+
+  if (!import.meta.env.PROD) {
+    return matchedFiles;
+  }
+
+  // use vite manifest to further map local file path to production asset path
+  // @ts-expect-error
+  const manifest: Manifest = (await import("/dist/client/manifest.json"))
+    .default;
+
+  // collect manifest entries
+  const entryKeys = new Set<string>();
+
+  function collectEnryKeysRecursive(key: string) {
+    if (!entryKeys.has(key)) {
+      const e = manifest[key];
+      tinyassert(e);
+      entryKeys.add(key);
+      for (const nextKey of e.imports ?? []) {
+        collectEnryKeysRecursive(nextKey);
+      }
+    }
+  }
+
+  for (const file of matchedFiles) {
+    // strip "/"
+    collectEnryKeysRecursive(file.slice(1));
+  }
+
+  return [...entryKeys].map((key) => "/" + manifest[key]!.file);
 }
