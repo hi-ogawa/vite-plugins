@@ -7,7 +7,7 @@ import {
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
-    const Module: LazyPageModule = async () => ({ Component: () => null });
+    const Module: LazyPageModule = async () => ({});
     const tree = createGlobPageRoutes({
       root: "(root)",
       globPage: {
