@@ -1,7 +1,8 @@
 import type { LoaderFunction } from "react-router-dom";
-import { getCounterQueryOptions } from "./server-data-counter.api";
 
 export const loader: LoaderFunction = async ({ context }) => {
-  await context.queryClient.fetchQuery(getCounterQueryOptions());
+  await context.queryClient.fetchQuery(
+    context.rpcQuery.getCounter.queryOptions()
+  );
   return null;
 };

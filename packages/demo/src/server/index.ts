@@ -5,6 +5,7 @@ import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
+import { rpcHandler } from "../tinyrpc/server";
 import {
   __QUERY_CLIENT_STATE,
   createQueryClient,
@@ -13,7 +14,12 @@ import {
 import { renderRoutes } from "./render-routes";
 
 export function createHattipApp() {
-  return compose(hattipHonoCompat(logger()), globApiRoutes(), ssrHandler());
+  return compose(
+    hattipHonoCompat(logger()),
+    rpcHandler(),
+    globApiRoutes(),
+    ssrHandler()
+  );
 }
 
 function ssrHandler(): RequestHandler {

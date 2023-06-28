@@ -6,6 +6,8 @@ import "react-router-dom";
 declare module "@hattip/compose" {
   interface RequestContextExtensions {
     queryClient: import("@tanstack/react-query").QueryClient;
+    rpcCaller: import("../tinyrpc/server").RpcProxy;
+    rpcQuery: import("../tinyrpc/server").RpcQuery;
   }
 }
 

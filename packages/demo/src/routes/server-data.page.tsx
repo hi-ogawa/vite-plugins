@@ -1,17 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import {
-  getCounterQueryOptions,
-  updateCounterMutationOptions,
-} from "./server-data-counter.api";
+import { rpcQuery } from "../tinyrpc/client";
 
 export function Component() {
-  const counterQueryOptions = getCounterQueryOptions();
+  const counterQueryOptions = rpcQuery.getCounter.queryOptions();
   const counterQuery = useQuery(counterQueryOptions);
 
   const queryClient = useQueryClient();
   const counterMutation = useMutation({
-    ...updateCounterMutationOptions(),
+    ...rpcQuery.updateCounter.mutationOptions(),
     onSuccess: (data) => {
       toast.success("Successfully updated", { id: "counter-mutation-success" });
       queryClient.setQueryData(counterQueryOptions.queryKey, data);
@@ -33,14 +30,14 @@ export function Component() {
             <button
               className="antd-btn antd-btn-default px-2"
               disabled={loading}
-              onClick={() => counterMutation.mutate(-1)}
+              onClick={() => counterMutation.mutate({ delta: -1 })}
             >
               -1
             </button>
             <button
               className="antd-btn antd-btn-default px-2"
               disabled={loading}
-              onClick={() => counterMutation.mutate(+1)}
+              onClick={() => counterMutation.mutate({ delta: +1 })}
             >
               +1
             </button>
