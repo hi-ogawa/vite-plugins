@@ -1,4 +1,4 @@
-import { Page, expect, test } from "@playwright/test";
+import { type Page, expect, test } from "@playwright/test";
 
 test("basic", async ({ page }) => {
   await page.goto("/");
@@ -27,6 +27,18 @@ test("basic", async ({ page }) => {
   await page.goto("/dynamic/any");
   await page.waitForURL("/dynamic/any");
   await page.getByText('params = { "id": "any" }').click();
+});
+
+test.describe("response-status-code", () => {
+  test("200", async ({ request }) => {
+    const res = await request.get("/");
+    expect(res.status()).toBe(200);
+  });
+
+  test("404", async ({ request }) => {
+    const res = await request.get("/noooooo");
+    expect(res.status()).toBe(404);
+  });
 });
 
 test.describe("server-data", () => {
@@ -65,6 +77,14 @@ test.describe("server-redirect", () => {
   test("server-side-bad", async ({ page }) => {
     await page.goto("/server-redirect/forbidden");
     await page.waitForURL("/server-redirect?error=server");
+  });
+
+  test("status-code", async ({ request }) => {
+    const res = await request.get("/server-redirect/forbidden", {
+      maxRedirects: 0,
+    });
+    expect(res.status()).toBe(302);
+    expect(res.headers()["location"]).toBe("/server-redirect?error=server");
   });
 
   test("client-side-good", async ({ page }) => {
