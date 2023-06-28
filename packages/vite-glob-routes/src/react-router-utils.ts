@@ -77,12 +77,15 @@ function createGlobPageRoutesInner(
   ): RouteObject[] {
     return Object.entries(children).map(([path, node]) => {
       const route: RouteObject = {
+        ...node.value,
         path: formatPath(path),
-        children: recurse(node.children ?? {}),
         lazy: node.value,
       };
+      if (node.children) {
+        route.children = recurse(node.children);
+      }
       if (path === "index") {
-        // silence convoluted "index: true" typing
+        // silence tricky "index: true" typing
         route.index = true as false;
         delete route.path;
         delete route.children;
@@ -90,7 +93,7 @@ function createGlobPageRoutesInner(
       return route;
     });
   }
-  return recurse(tree.children ?? {});
+  return tree.children ? recurse(tree.children) : [];
 }
 
 //

@@ -23,12 +23,12 @@ function ssrHandler(): RequestHandler {
 
     // react-router ssr
     const res = await renderRoutes(ctx, queryClient);
-    if (res instanceof Response) {
-      return res;
+    if (res.type === "response") {
+      return res.response;
     }
 
     let html = await importIndexHtml();
-    html = html.replace("<!--@INJECT_SSR@-->", res);
+    html = html.replace("<!--@INJECT_SSR@-->", res.html);
 
     // pass QueryClient state to client for hydration
     html = html.replace(
@@ -37,6 +37,7 @@ function ssrHandler(): RequestHandler {
     );
 
     return new Response(html, {
+      status: res.statusCode,
       headers: [["content-type", "text/html"]],
     });
   };

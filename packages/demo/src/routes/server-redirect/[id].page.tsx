@@ -1,21 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { dummyCheckQueryOptions } from "./[id].page.server";
+import { serverRedirectCheckQueryOptions } from "./check.api";
 
 export function Component() {
   const params = useParams();
 
-  // check server and redirect on error
-  const checkQuery = useQuery(dummyCheckQueryOptions(params["id"]!));
+  // fetch on client only when it's not prefetched during SSR
+  const checkQuery = useQuery(serverRedirectCheckQueryOptions(params["id"]!));
 
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (checkQuery.error) {
+    if (checkQuery.data && !checkQuery.data.ok) {
       navigate("/server-redirect?error=client");
     }
-  }, [checkQuery.error]);
+  }, [checkQuery.data]);
 
   if (checkQuery.isLoading) {
     return <div className="mt-10 mx-auto antd-spin w-10 h-10"></div>;

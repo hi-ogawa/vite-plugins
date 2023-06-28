@@ -20,13 +20,15 @@ describe(createGlobPageRoutes, () => {
         "(root)/abc/[dynsub]/new.page.tsx": Module,
       },
       globPageServer: {
-        "(root)/other.page.server.jsx": async () => ({ loader: () => null }),
+        "(root)/other.page.server.jsx": Module,
       },
       globLayout: {
         "(root)/layout.tsx": Module,
         "(root)/subdir/layout.jsx": Module,
       },
-      globLayoutServer: {},
+      globLayoutServer: {
+        "(root)/layout.server.tsx": Module,
+      },
     });
     expect(tree.routes).toMatchInlineSnapshot(`
       [
@@ -85,6 +87,7 @@ describe(createGlobPageRoutes, () => {
             },
           ],
           "lazy": [Function],
+          "loader": [Function],
           "path": "/",
         },
       ]

@@ -1,4 +1,4 @@
-import { Page, expect, test } from "@playwright/test";
+import { type Page, expect, test } from "@playwright/test";
 
 test("basic", async ({ page }) => {
   await page.goto("/");
@@ -27,6 +27,18 @@ test("basic", async ({ page }) => {
   await page.goto("/dynamic/any");
   await page.waitForURL("/dynamic/any");
   await page.getByText('params = { "id": "any" }').click();
+});
+
+test.describe("response-status-code", () => {
+  test("200", async ({ request }) => {
+    const res = await request.get("/");
+    expect(res.status()).toBe(200);
+  });
+
+  test("404", async ({ request }) => {
+    const res = await request.get("/noooooo");
+    expect(res.status()).toBe(404);
+  });
 });
 
 test.describe("server-data", () => {
@@ -59,7 +71,7 @@ test.describe("server-redirect", () => {
   test("server-side-good", async ({ page }) => {
     await page.goto("/server-redirect/good");
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"message":"success on server!"}').click();
+    await page.getByText('{"ok":true,"message":"ssr"}').click();
   });
 
   test("server-side-bad", async ({ page }) => {
@@ -67,22 +79,43 @@ test.describe("server-redirect", () => {
     await page.waitForURL("/server-redirect?error=server");
   });
 
+  test("status-code", async ({ request }) => {
+    const res = await request.get("/server-redirect/forbidden", {
+      maxRedirects: 0,
+    });
+    expect(res.status()).toBe(302);
+    expect(res.headers()["location"]).toBe("/server-redirect?error=server");
+  });
+
   test("client-side-good", async ({ page }) => {
     await page.goto("/server-redirect");
     await isPageReady(page);
     await page.getByRole("link", { name: "good link" }).click();
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"message":"success on client!"}').click();
+    await page.getByText('{"ok":true,"message":"api"}').click();
   });
 
   test("client-side-bad", async ({ page }) => {
     await page.goto("/server-redirect");
     await isPageReady(page);
     await page.getByRole("link", { name: "forbidden link" }).click();
-    // TODO: if we suspend the query, will react-router doesn't update url until resolution?
     await page.waitForURL("/server-redirect/forbidden");
-    await page.getByText("something went wrong...").click();
     await page.waitForURL("/server-redirect?error=client");
+  });
+});
+
+test.describe("ErrorBoundary", () => {
+  test("basic", async ({ page }) => {
+    await page.goto("/error");
+    await isPageReady(page);
+    await page.getByRole("heading", { name: "Page Component" }).click();
+    await page.getByRole("button", { name: "Throw" }).click();
+    await page
+      .getByRole("heading", { name: "ErrorBoundary Component" })
+      .click();
+    await page.getByText("Error: hey render eror! at onClick").click();
+    await page.getByRole("button", { name: "Reset" }).click();
+    await page.getByRole("heading", { name: "Page Component" }).click();
   });
 });
 
