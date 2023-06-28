@@ -7,7 +7,8 @@ set -eu -o pipefail
 #   project.json
 #   output/
 #     config.json
-#     static/              = dist/client
+#     static/
+#       assets/            = dist/client/assets
 #     functions/
 #       index.func/
 #         .vc-config.json
@@ -15,13 +16,14 @@ set -eu -o pipefail
 
 # clean
 rm -rf .vercel/output
+mkdir -p .vercel/output/static
 mkdir -p .vercel/output/functions/index.func
 
 # config.json
 cp misc/vercel/config.json .vercel/output/config.json
 
 # static
-cp -r dist/client .vercel/output/static
+cp -r dist/client/assets .vercel/output/static/assets
 
 # serverless
 npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --minify --format=esm --platform=browser --metafile=dist/server/esbuild-metafile.json
