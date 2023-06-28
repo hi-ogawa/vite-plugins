@@ -14,4 +14,10 @@ export const tinyRpcRoutes = {
     counter += input.delta;
     return counter;
   },
+
+  checkId: async ({ input }: { input: { id: string } }) => {
+    await sleep(500);
+    const ok = input.id === "good";
+    return { ok, message: "rpc" };
+  },
 } satisfies TinyRpcRoutesBase;

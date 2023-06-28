@@ -1,9 +1,12 @@
-import { type LoaderFunction } from "react-router-dom";
-import { serverRedirectCheckQueryOptions } from "./check.api";
+import { type LoaderFunction, redirect } from "react-router-dom";
 
 export const loader: LoaderFunction = async ({ params, context }) => {
   const id = params["id"] ?? "";
-  // note that we don't use `prefetchQuery` since it would swallow "throw redirect inside `queryFn`.
-  await context.queryClient.fetchQuery(serverRedirectCheckQueryOptions(id));
+  const data = await context.queryClient.fetchQuery(
+    context.rpcQuery.checkId.queryOptions({ id })
+  );
+  if (!data.ok) {
+    throw redirect("/server-redirect?error=server");
+  }
   return null;
 };
