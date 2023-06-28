@@ -15,8 +15,8 @@ export const tinyRpcRoutes = {
     return counter;
   },
 
-  checkId: async ({ input }: { input: { id: string; message: string } }) => {
+  checkId: async ({ input }: { input: { id: string } }) => {
     await sleep(500);
-    return { ok: input.id === "good", message: input.message };
+    return { ok: input.id === "good", message: "rpc" };
   },
 } satisfies TinyRpcRoutesBase;
