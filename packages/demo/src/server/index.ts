@@ -30,12 +30,12 @@ function globPageRoutesHandler(): RequestHandler {
 
     // SSR
     const res = await renderRoutes(ctx, routes, queryClient);
-    if (res instanceof Response) {
-      return res;
+    if (res.type === "response") {
+      return res.response;
     }
 
     let html = await importIndexHtml();
-    html = html.replace("<!--@INJECT_SSR@-->", res);
+    html = html.replace("<!--@INJECT_SSR@-->", res.html);
 
     // pass query client state to client
     html = html.replace(
@@ -44,6 +44,7 @@ function globPageRoutesHandler(): RequestHandler {
     );
 
     return new Response(html, {
+      status: res.statusCode,
       headers: [["content-type", "text/html"]],
     });
   };
