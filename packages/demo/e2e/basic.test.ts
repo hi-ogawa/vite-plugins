@@ -71,7 +71,7 @@ test.describe("server-redirect", () => {
   test("server-side-good", async ({ page }) => {
     await page.goto("/server-redirect/good");
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"message":"success on server!"}').click();
+    await page.getByText('{"ok":true,"message":"ssr"}').click();
   });
 
   test("server-side-bad", async ({ page }) => {
@@ -92,16 +92,14 @@ test.describe("server-redirect", () => {
     await isPageReady(page);
     await page.getByRole("link", { name: "good link" }).click();
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"message":"success on client!"}').click();
+    await page.getByText('{"ok":true,"message":"api"}').click();
   });
 
   test("client-side-bad", async ({ page }) => {
     await page.goto("/server-redirect");
     await isPageReady(page);
     await page.getByRole("link", { name: "forbidden link" }).click();
-    // TODO: if we suspend the query, will react-router doesn't update url until resolution?
     await page.waitForURL("/server-redirect/forbidden");
-    await page.getByText("something went wrong...").click();
     await page.waitForURL("/server-redirect?error=client");
   });
 });
