@@ -1,34 +1,33 @@
 import type { RequestContext } from "@hattip/compose";
+import { tinyassert } from "@hiogawa/utils";
 import type {
   MutationObserverOptions,
   QueryObserverOptions,
 } from "@tanstack/react-query";
+import { json } from "react-router-dom";
 import { z } from "zod";
 import { sleep } from "../utils/misc";
+
+// Note that the logic here to achieve "ssr-prefetchable" data loading may look too verbose,
+// but it could be greatly simplified and organized by relying on data fetching layer,
+// which provides somewhat "uniform" way of treating "client-side" fetching and "server-side" loading.
+// See this proof-of-concept PR which uses tRPC https://github.com/hi-ogawa/vite-plugins/pull/30
 
 //
 // endpoint
 //
 
 export async function get() {
-  return jsonResponse(await getCounter());
+  return json(await getCounter());
 }
 
 export async function put(ctx: RequestContext) {
   const delta = z.coerce.number().parse(ctx.url.searchParams.get("delta"));
-  return jsonResponse(await updateCounter(delta));
-}
-
-function jsonResponse(data: unknown) {
-  return new Response(JSON.stringify(data), {
-    headers: {
-      "content-type": "application/json",
-    },
-  });
+  return json(await updateCounter(delta));
 }
 
 //
-// server counter
+// server logic
 //
 
 let counter = 0;
@@ -60,13 +59,14 @@ async function updateCounterClient(delta: number) {
 
 async function fetchJson(...args: Parameters<typeof fetch>): Promise<unknown> {
   const res = await fetch(...args);
+  tinyassert(res.ok);
   return res.json();
 }
 
-// SSR-enabled query
 export function getCounterQueryOptions() {
   return {
     queryKey: ["getCounter"],
+    // SSR-enabled query
     queryFn: async () =>
       import.meta.env.SSR ? getCounter() : getCounterClient(),
   } satisfies QueryObserverOptions;

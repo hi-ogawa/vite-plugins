@@ -1,34 +1,26 @@
-import { tinyassert } from "@hiogawa/utils";
-import type { QueryObserverOptions } from "@tanstack/react-query";
 import { type LoaderFunction, redirect } from "react-router-dom";
-import { sleep } from "../../utils/misc";
+import {
+  type CheckOutput,
+  serverRedirectCheck,
+  serverRedirectCheckQueryOptions,
+} from "./check.api";
 
 export const loader: LoaderFunction = async ({ params, context }) => {
-  const id = params["id"]!;
-  try {
-    // note that `prefetchQuery(...queryFn)` would swallow errors from `queryFn`
-    // so here the logic is a little convoluted
-    await dummyCheck(id);
-    context.queryClient.setQueryData(dummyCheckQueryOptions(id).queryKey, {
-      message: "success on server!",
-    });
-    return null;
-  } catch {
+  const id = params["id"] ?? "";
+  const ok = await serverRedirectCheck(id);
+  if (!ok) {
     throw redirect("/server-redirect?error=server");
   }
+
+  // note that `prefetchQuery(...queryFn)` swallows errors from `queryFn`
+  // so `throw redirect` logic has to come outside of `queryFn`
+  await context.queryClient.prefetchQuery({
+    ...serverRedirectCheckQueryOptions(id),
+    queryFn: () =>
+      ({
+        ok,
+        message: "ssr prefetch",
+      } satisfies CheckOutput),
+  });
+  return null;
 };
-
-async function dummyCheck(id: string) {
-  await sleep(1000);
-  tinyassert(id === "good");
-}
-
-export function dummyCheckQueryOptions(id: string) {
-  return {
-    queryKey: ["server-redirect-check", id],
-    queryFn: async () => {
-      await dummyCheck(id);
-      return { message: "success on client!" };
-    },
-  } satisfies QueryObserverOptions;
-}
