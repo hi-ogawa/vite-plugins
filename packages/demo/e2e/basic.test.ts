@@ -106,6 +106,21 @@ test.describe("server-redirect", () => {
   });
 });
 
+test.describe.only("ErrorBoundary", () => {
+  test("basic", async ({ page }) => {
+    await page.goto("/error");
+    await isPageReady(page);
+    await page.getByRole("heading", { name: "Page Component" }).click();
+    await page.getByRole("button", { name: "Throw" }).click();
+    await page
+      .getByRole("heading", { name: "ErrorBoundary Component" })
+      .click();
+    await page.getByText("Error: hey render eror! at onClick").click();
+    await page.getByRole("button", { name: "Reset" }).click();
+    await page.getByRole("heading", { name: "Page Component" }).click();
+  });
+});
+
 async function isPageReady(page: Page) {
   await page.getByTestId("hydrated").waitFor({ state: "attached" });
 }
