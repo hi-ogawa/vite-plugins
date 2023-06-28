@@ -77,7 +77,6 @@ function createGlobPageRoutesInner(
   ): RouteObject[] {
     return Object.entries(children).map(([path, node]) => {
       const route: RouteObject = {
-        ...node.value,
         path: formatPath(path),
         lazy: node.value,
       };
