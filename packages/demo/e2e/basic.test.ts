@@ -106,7 +106,7 @@ test.describe("server-redirect", () => {
   });
 });
 
-test.describe.only("ErrorBoundary", () => {
+test.describe("ErrorBoundary", () => {
   test("basic", async ({ page }) => {
     await page.goto("/error");
     await isPageReady(page);
