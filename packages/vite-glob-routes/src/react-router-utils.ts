@@ -1,6 +1,5 @@
 import { mapRegExp, tinyassert } from "@hiogawa/utils";
 import type { RouteObject } from "react-router";
-import { mapValues } from "./utils";
 
 // mirror everything from react-router and used as `RouteObject.lazy`.
 type PageModule = Omit<RouteObject, "index" | "path" | "children" | "lazy">;
@@ -16,25 +15,32 @@ export type GlobPageRoutesInternal = {
   globLayoutServer: Record<string, LazyPageModule>;
 };
 
-export function createGlobPageRoutes(internal: GlobPageRoutesInternal) {
+// expose extra data for the use of modulepreload etc...
+export type RouteObjectWithGlobInfo = RouteObject & {
+  globInfo?: {
+    entries: GlobPageMappingEntry[];
+  };
+};
+
+export type GlobPageRoutesResult = {
+  routes: RouteObjectWithGlobInfo[];
+};
+
+export function createGlobPageRoutes(
+  internal: GlobPageRoutesInternal
+): GlobPageRoutesResult {
   // TODO: warn invalid usage
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
-
   const mapping = createGlobPageMapping(internal);
-
-  const pageModules = mapValues(mapping, (entries) => async () => {
-    const resolved = await Promise.all(entries.map((e) => e.mod));
-    return Object.assign({}, ...resolved);
-  });
-
-  const routes = createGlobPageRoutesInner(pageModules);
-  return { routes, mapping };
+  const routes = createGlobPageRoutesInner(mapping);
+  return { routes };
 }
 
-// provide mapping from file system path to module path
+// mapping between url path and file system path
 // (urlpath => filepath => module)
-type GlobPageMapping = Record<string, { file: string; mod: LazyPageModule }[]>;
+type GlobPageMapping = Record<string, GlobPageMappingEntry[]>;
+type GlobPageMappingEntry = { file: string; mod: LazyPageModule };
 
 function createGlobPageMapping(
   internal: GlobPageRoutesInternal
@@ -59,10 +65,10 @@ function createGlobPageMapping(
 }
 
 function createGlobPageRoutesInner(
-  pageModules: Record<string, LazyPageModule>
-): RouteObject[] {
+  mapping: GlobPageMapping
+): RouteObjectWithGlobInfo[] {
   // construct general tree structure
-  const pathEntries = Object.entries(pageModules).map(([k, v]) => ({
+  const pathEntries = Object.entries(mapping).map(([k, v]) => ({
     keys: splitPathSegment(k),
     value: v,
   }));
@@ -70,13 +76,20 @@ function createGlobPageRoutesInner(
 
   // transform to react-router's nested RouteObject array
   function recurse(
-    children: Record<string, TreeNode<LazyPageModule>>
-  ): RouteObject[] {
+    children: Record<string, TreeNode<GlobPageMappingEntry[]>>
+  ): RouteObjectWithGlobInfo[] {
     return Object.entries(children).map(([path, node]) => {
-      const route: RouteObject = {
+      const route: RouteObjectWithGlobInfo = {
         path: formatPath(path),
-        lazy: node.value,
       };
+      if (node.value) {
+        const entries = node.value;
+        route.lazy = async () => {
+          const mods = await Promise.all(entries.map((e) => e.mod()));
+          return Object.assign({}, ...mods);
+        };
+        route.globInfo = { entries };
+      }
       if (node.children) {
         route.children = recurse(node.children);
       }

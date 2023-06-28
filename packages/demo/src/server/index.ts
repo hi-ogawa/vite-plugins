@@ -33,7 +33,11 @@ function ssrHandler(): RequestHandler {
     // pass QueryClient state to client for hydration
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      getThemeScript() + getQueryClientStateScript(queryClient)
+      [
+        ...res.routeFiles.map((f) => getPreloadLink(f)),
+        getThemeScript(),
+        getQueryClientStateScript(queryClient),
+      ].join("\n")
     );
 
     return new Response(html, {
@@ -41,6 +45,10 @@ function ssrHandler(): RequestHandler {
       headers: [["content-type", "text/html"]],
     });
   };
+}
+
+function getPreloadLink(href: string) {
+  return `<link rel="modulepreload" href="${href}" />`;
 }
 
 function getThemeScript() {
