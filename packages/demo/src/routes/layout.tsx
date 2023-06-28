@@ -65,6 +65,7 @@ const ROUTES = [
   "/server-redirect",
   "/subdir",
   "/subdir/other",
+  "/error",
 ];
 
 declare let __themeSet: (theme: string) => void;
