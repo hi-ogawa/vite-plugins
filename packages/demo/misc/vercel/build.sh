@@ -16,15 +16,16 @@ set -eu -o pipefail
 
 # clean
 rm -rf .vercel/output
-mkdir -p .vercel/output/static
-mkdir -p .vercel/output/functions/index.func
+mkdir -p .vercel/output
 
 # config.json
 cp misc/vercel/config.json .vercel/output/config.json
 
 # static
+mkdir -p .vercel/output/static
 cp -r dist/client/assets .vercel/output/static/assets
 
 # serverless
+mkdir -p .vercel/output/functions/index.func
 npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --minify --format=esm --platform=browser --metafile=dist/server/esbuild-metafile.json
 cp misc/vercel/.vc-config.json .vercel/output/functions/index.func/.vc-config.json
