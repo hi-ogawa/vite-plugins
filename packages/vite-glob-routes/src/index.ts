@@ -53,9 +53,9 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
             const root = "${root}";
             const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true });
             const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true });
-            // TODO: same for layout?
             const globPageServer = import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: true }) : {};
-            export default { root, globPage, globPageServer, globLayout };
+            const globLayoutServer = import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: true }) : {};
+            export default { root, globPage, globPageServer, globLayout, globLayoutServer };
           `;
       }
 
