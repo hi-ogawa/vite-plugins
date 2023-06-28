@@ -24,7 +24,7 @@ export function createGlobPageRoutes(internal: GlobPageRoutesInternal) {
   const mapping = createGlobPageMapping(internal);
 
   const pageModules = mapValues(mapping, (entries) => async () => {
-    const resolved = await Promise.all(entries.map((e) => e.lazy));
+    const resolved = await Promise.all(entries.map((e) => e.mod));
     return Object.assign({}, ...resolved);
   });
 
@@ -34,10 +34,7 @@ export function createGlobPageRoutes(internal: GlobPageRoutesInternal) {
 
 // provide mapping from file system path to module path
 // (urlpath => filepath => module)
-type GlobPageMapping = Record<
-  string,
-  { filepath: string; lazy: LazyPageModule }[]
->;
+type GlobPageMapping = Record<string, { file: string; mod: LazyPageModule }[]>;
 
 function createGlobPageMapping(
   internal: GlobPageRoutesInternal
@@ -52,9 +49,9 @@ function createGlobPageMapping(
   const result: GlobPageMapping = {};
 
   for (const [glob, regex] of patterns) {
-    for (const [filepath, lazy] of Object.entries(glob)) {
-      const urlpath = filepath.slice(internal.root.length).match(regex)![1]!;
-      (result[urlpath] ??= []).push({ filepath, lazy });
+    for (const [file, mod] of Object.entries(glob)) {
+      const urlpath = file.slice(internal.root.length).match(regex)![1]!;
+      (result[urlpath] ??= []).push({ file, mod });
     }
   }
 

@@ -7,27 +7,27 @@ import {
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
-    const Module: LazyPageModule = async () => ({});
+    const mod: LazyPageModule = async () => ({});
     const tree = createGlobPageRoutes({
       root: "(root)",
       globPage: {
-        "(root)/index.page.js": Module,
-        "(root)/other.page.jsx": Module,
-        "(root)/[dynamic].page.ts": Module,
-        "(root)/subdir/index.page.tsx": Module,
-        "(root)/subdir/other.page.tsx": Module,
-        "(root)/abc/[dynsub].page.tsx": Module,
-        "(root)/abc/[dynsub]/new.page.tsx": Module,
+        "(root)/index.page.js": mod,
+        "(root)/other.page.jsx": mod,
+        "(root)/[dynamic].page.ts": mod,
+        "(root)/subdir/index.page.tsx": mod,
+        "(root)/subdir/other.page.tsx": mod,
+        "(root)/abc/[dynsub].page.tsx": mod,
+        "(root)/abc/[dynsub]/new.page.tsx": mod,
       },
       globPageServer: {
-        "(root)/other.page.server.jsx": Module,
+        "(root)/other.page.server.jsx": mod,
       },
       globLayout: {
-        "(root)/layout.tsx": Module,
-        "(root)/subdir/layout.jsx": Module,
+        "(root)/layout.tsx": mod,
+        "(root)/subdir/layout.jsx": mod,
       },
       globLayoutServer: {
-        "(root)/layout.server.tsx": Module,
+        "(root)/layout.server.tsx": mod,
       },
     });
     expect(tree.routes).toMatchInlineSnapshot(`
@@ -90,64 +90,64 @@ describe(createGlobPageRoutes, () => {
       {
         "/": [
           {
-            "filepath": "(root)/layout.tsx",
-            "lazy": [Function],
+            "file": "(root)/layout.tsx",
+            "mod": [Function],
           },
           {
-            "filepath": "(root)/layout.server.tsx",
-            "lazy": [Function],
+            "file": "(root)/layout.server.tsx",
+            "mod": [Function],
           },
         ],
         "/[dynamic]": [
           {
-            "filepath": "(root)/[dynamic].page.ts",
-            "lazy": [Function],
+            "file": "(root)/[dynamic].page.ts",
+            "mod": [Function],
           },
         ],
         "/abc/[dynsub]": [
           {
-            "filepath": "(root)/abc/[dynsub].page.tsx",
-            "lazy": [Function],
+            "file": "(root)/abc/[dynsub].page.tsx",
+            "mod": [Function],
           },
         ],
         "/abc/[dynsub]/new": [
           {
-            "filepath": "(root)/abc/[dynsub]/new.page.tsx",
-            "lazy": [Function],
+            "file": "(root)/abc/[dynsub]/new.page.tsx",
+            "mod": [Function],
           },
         ],
         "/index": [
           {
-            "filepath": "(root)/index.page.js",
-            "lazy": [Function],
+            "file": "(root)/index.page.js",
+            "mod": [Function],
           },
         ],
         "/other": [
           {
-            "filepath": "(root)/other.page.jsx",
-            "lazy": [Function],
+            "file": "(root)/other.page.jsx",
+            "mod": [Function],
           },
           {
-            "filepath": "(root)/other.page.server.jsx",
-            "lazy": [Function],
+            "file": "(root)/other.page.server.jsx",
+            "mod": [Function],
           },
         ],
         "/subdir/": [
           {
-            "filepath": "(root)/subdir/layout.jsx",
-            "lazy": [Function],
+            "file": "(root)/subdir/layout.jsx",
+            "mod": [Function],
           },
         ],
         "/subdir/index": [
           {
-            "filepath": "(root)/subdir/index.page.tsx",
-            "lazy": [Function],
+            "file": "(root)/subdir/index.page.tsx",
+            "mod": [Function],
           },
         ],
         "/subdir/other": [
           {
-            "filepath": "(root)/subdir/other.page.tsx",
-            "lazy": [Function],
+            "file": "(root)/subdir/other.page.tsx",
+            "mod": [Function],
           },
         ],
       }
