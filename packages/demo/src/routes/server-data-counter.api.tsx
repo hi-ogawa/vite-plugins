@@ -1,12 +1,11 @@
 import type { RequestContext } from "@hattip/compose";
-import { tinyassert } from "@hiogawa/utils";
 import type {
   MutationObserverOptions,
   QueryObserverOptions,
 } from "@tanstack/react-query";
 import { json } from "react-router-dom";
 import { z } from "zod";
-import { sleep } from "../utils/misc";
+import { fetchJson, sleep } from "../utils/misc";
 
 // Note that the logic here to achieve "ssr-prefetchable" data loading may look too verbose,
 // but it could be greatly simplified and organized by relying on data fetching layer,
@@ -55,12 +54,6 @@ async function updateCounterClient(delta: number) {
   return fetchJson(`/server-data-counter?delta=${delta}`, {
     method: "PUT",
   }).then(z.number().parse);
-}
-
-async function fetchJson(...args: Parameters<typeof fetch>): Promise<unknown> {
-  const res = await fetch(...args);
-  tinyassert(res.ok);
-  return res.json();
 }
 
 export function getCounterQueryOptions() {
