@@ -39,6 +39,7 @@ describe(createGlobPageRoutes, () => {
                 "entries": [
                   {
                     "file": "(root)/index.page.js",
+                    "isServer": false,
                     "mod": [Function],
                   },
                 ],
@@ -51,10 +52,12 @@ describe(createGlobPageRoutes, () => {
                 "entries": [
                   {
                     "file": "(root)/other.page.jsx",
+                    "isServer": false,
                     "mod": [Function],
                   },
                   {
                     "file": "(root)/other.page.server.jsx",
+                    "isServer": true,
                     "mod": [Function],
                   },
                 ],
@@ -67,6 +70,7 @@ describe(createGlobPageRoutes, () => {
                 "entries": [
                   {
                     "file": "(root)/[dynamic].page.ts",
+                    "isServer": false,
                     "mod": [Function],
                   },
                 ],
@@ -81,6 +85,7 @@ describe(createGlobPageRoutes, () => {
                     "entries": [
                       {
                         "file": "(root)/subdir/index.page.tsx",
+                        "isServer": false,
                         "mod": [Function],
                       },
                     ],
@@ -93,6 +98,7 @@ describe(createGlobPageRoutes, () => {
                     "entries": [
                       {
                         "file": "(root)/subdir/other.page.tsx",
+                        "isServer": false,
                         "mod": [Function],
                       },
                     ],
@@ -105,6 +111,7 @@ describe(createGlobPageRoutes, () => {
                 "entries": [
                   {
                     "file": "(root)/subdir/layout.jsx",
+                    "isServer": false,
                     "mod": [Function],
                   },
                 ],
@@ -119,6 +126,7 @@ describe(createGlobPageRoutes, () => {
                     "entries": [
                       {
                         "file": "(root)/abc/[dynsub].page.tsx",
+                        "isServer": false,
                         "mod": [Function],
                       },
                     ],
@@ -133,6 +141,7 @@ describe(createGlobPageRoutes, () => {
                         "entries": [
                           {
                             "file": "(root)/abc/[dynsub]/new.page.tsx",
+                            "isServer": false,
                             "mod": [Function],
                           },
                         ],
@@ -151,10 +160,12 @@ describe(createGlobPageRoutes, () => {
             "entries": [
               {
                 "file": "(root)/layout.tsx",
+                "isServer": false,
                 "mod": [Function],
               },
               {
                 "file": "(root)/layout.server.tsx",
+                "isServer": true,
                 "mod": [Function],
               },
             ],
