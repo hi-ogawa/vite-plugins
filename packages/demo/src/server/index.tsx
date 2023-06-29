@@ -58,7 +58,7 @@ function ssrHandler(): RequestHandler {
       context: routerResult.context,
       manifest: import.meta.env.PROD
         ? // @ts-ignore
-          await import("/dist/client/manifest.json")
+          (await import("/dist/client/manifest.json")).default
         : undefined,
     });
 

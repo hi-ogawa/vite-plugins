@@ -88,7 +88,7 @@ export function getCurrentRouteAssets({
   // use "globInfo" to collect local file paths
   const matchedRoutes = matchRoutes(routes, context.location) ?? [];
   const files = matchedRoutes
-    .flatMap((m) => m.route.globInfo?.entries.map((e) => e.file))
+    .flatMap((m) => m.route.globInfo?.entries.map((e) => !e.isServer && e.file))
     .filter(typedBoolean);
 
   // use vite manifest to further map local file path to production asset path

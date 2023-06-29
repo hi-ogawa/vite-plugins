@@ -40,24 +40,28 @@ export function createGlobPageRoutes(
 // mapping between url path and file system path
 // (urlpath => filepath => module)
 type GlobPageMapping = Record<string, GlobPageMappingEntry[]>;
-type GlobPageMappingEntry = { file: string; mod: LazyPageModule };
+type GlobPageMappingEntry = {
+  file: string;
+  mod: LazyPageModule;
+  isServer: boolean;
+};
 
 function createGlobPageMapping(
   internal: GlobPageRoutesInternal
 ): GlobPageMapping {
   const patterns = [
-    [internal.globPage, /^(.*)\.page\./],
-    [internal.globPageServer, /^(.*)\.page\.server\./],
-    [internal.globLayout, /^(.*)layout\./],
-    [internal.globLayoutServer, /^(.*)layout\.server\./],
+    [internal.globPage, /^(.*)\.page\./, false],
+    [internal.globPageServer, /^(.*)\.page\.server\./, true],
+    [internal.globLayout, /^(.*)layout\./, false],
+    [internal.globLayoutServer, /^(.*)layout\.server\./, true],
   ] as const;
 
   const result: GlobPageMapping = {};
 
-  for (const [glob, regex] of patterns) {
+  for (const [glob, regex, isServer] of patterns) {
     for (const [file, mod] of Object.entries(glob)) {
       const urlpath = file.slice(internal.root.length).match(regex)![1]!;
-      (result[urlpath] ??= []).push({ file, mod });
+      (result[urlpath] ??= []).push({ file, mod, isServer });
     }
   }
 
