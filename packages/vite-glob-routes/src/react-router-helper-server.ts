@@ -99,7 +99,6 @@ export function getCurrentRouteAssets({
 }
 
 function resolveManifestAssets(files: string[], manifest: Manifest) {
-  // collect manifest entries
   const entryKeys = new Set<string>();
 
   function collectEnryKeysRecursive(key: string) {
