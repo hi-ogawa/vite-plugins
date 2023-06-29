@@ -1,14 +1,11 @@
 import { describe, expect, it } from "vitest";
-import {
-  type LazyPageModule,
-  createGlobPageRoutes,
-  splitPathSegment,
-} from "./react-router-utils";
+import { createGlobPageRoutes, splitPathSegment } from "./react-router-utils";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
-    const mod: LazyPageModule = async () => ({});
+    const mod = async () => ({});
     const tree = createGlobPageRoutes({
+      eager: false,
       root: "(root)",
       globPage: {
         "(root)/index.page.js": mod,

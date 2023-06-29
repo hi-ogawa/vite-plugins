@@ -3,6 +3,11 @@ declare module "virtual:@hiogawa/vite-glob-routes/internal/page-routes" {
   export default value;
 }
 
+declare module "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy" {
+  const value: import("./react-router-utils").GlobPageRoutesInternal;
+  export default value;
+}
+
 declare module "virtual:@hiogawa/vite-glob-routes/internal/api-routes" {
   const value: {
     root: string;

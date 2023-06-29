@@ -3,16 +3,17 @@ import type { RouteObject } from "react-router";
 
 // mirror everything from react-router and used as `RouteObject.lazy`.
 type PageModule = Omit<RouteObject, "index" | "path" | "children" | "lazy">;
-
-export type LazyPageModule = () => Promise<PageModule>;
+type LazyPageModule = () => Promise<PageModule>;
+type GlobImporModule = PageModule | LazyPageModule;
 
 // provided by plugin's virtual module based on glob import
 export type GlobPageRoutesInternal = {
+  eager: boolean;
   root: string;
-  globPage: Record<string, LazyPageModule>;
-  globPageServer: Record<string, LazyPageModule>;
-  globLayout: Record<string, LazyPageModule>;
-  globLayoutServer: Record<string, LazyPageModule>;
+  globPage: Record<string, GlobImporModule>;
+  globPageServer: Record<string, GlobImporModule>;
+  globLayout: Record<string, GlobImporModule>;
+  globLayoutServer: Record<string, GlobImporModule>;
 };
 
 // expose extra data for the use of modulepreload etc...
@@ -22,7 +23,7 @@ export type RouteObjectWithGlobInfo = RouteObject & {
   };
 };
 
-export type GlobPageRoutesResult = {
+type GlobPageRoutesResult = {
   routes: RouteObjectWithGlobInfo[];
 };
 
@@ -33,7 +34,7 @@ export function createGlobPageRoutes(
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
   const mapping = createGlobPageMapping(internal);
-  const routes = createGlobPageRoutesInner(mapping);
+  const routes = createGlobPageRoutesInner(internal.eager, mapping);
   return { routes };
 }
 
@@ -42,7 +43,7 @@ export function createGlobPageRoutes(
 type GlobPageMapping = Record<string, GlobPageMappingEntry[]>;
 type GlobPageMappingEntry = {
   file: string;
-  mod: LazyPageModule;
+  mod: GlobImporModule;
   isServer: boolean;
 };
 
@@ -69,6 +70,7 @@ function createGlobPageMapping(
 }
 
 function createGlobPageRoutesInner(
+  eager: boolean,
   mapping: GlobPageMapping
 ): RouteObjectWithGlobInfo[] {
   // construct general tree structure
@@ -88,11 +90,24 @@ function createGlobPageRoutesInner(
       };
       if (node.value) {
         const entries = node.value;
-        route.lazy = async () => {
-          const mods = await Promise.all(entries.map((e) => e.mod()));
-          return Object.assign({}, ...mods);
-        };
         route.globInfo = { entries };
+        if (eager) {
+          const mods = entries.map((e) => {
+            tinyassert(typeof e.mod !== "function");
+            return e.mod satisfies PageModule;
+          });
+          Object.assign(route, ...mods);
+        } else {
+          route.lazy = async () => {
+            const mods = await Promise.all(
+              entries.map((e) => {
+                tinyassert(typeof e.mod === "function");
+                return (e.mod satisfies LazyPageModule)();
+              })
+            );
+            return Object.assign({}, ...mods);
+          };
+        }
       }
       if (node.children) {
         route.children = recurse(node.children);

@@ -3,6 +3,8 @@ import type { Plugin } from "vite";
 // pass internal runtime data via virtual module
 const VIRTUAL_INTERNAL_PAGE_ROUTES =
   "virtual:@hiogawa/vite-glob-routes/internal/page-routes";
+const VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY =
+  "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy";
 const VIRTUAL_INTERNAL_API_ROUTES =
   "virtual:@hiogawa/vite-glob-routes/internal/api-routes";
 
@@ -35,6 +37,7 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
     async resolveId(source, _importer, _options) {
       if (
         source === VIRTUAL_INTERNAL_PAGE_ROUTES ||
+        source === VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY ||
         source === VIRTUAL_INTERNAL_API_ROUTES
       ) {
         return source;
@@ -49,13 +52,28 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
 
       if (id === VIRTUAL_INTERNAL_PAGE_ROUTES) {
         return `
-            const root = "${root}";
-            const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)");
-            const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)");
-            const globPageServer = import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)") : {};
-            const globLayoutServer = import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)") : {};
-            export default { root, globPage, globPageServer, globLayout, globLayoutServer };
-          `;
+          export default {
+            eager: true,
+            root: "${root}",
+            globPage:         import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true }),
+            globLayout:       import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true }),
+            globPageServer:   import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: true }) : {},
+            globLayoutServer: import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: true }) : {},
+          };
+        `;
+      }
+
+      if (id === VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY) {
+        return `
+          export default {
+            eager: false,
+            root: "${root}",
+            globPage:         import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)"),
+            globLayout:       import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)"),
+            globPageServer:   import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)") : {},
+            globLayoutServer: import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)") : {},
+          };
+        `;
       }
 
       if (id === VIRTUAL_INTERNAL_API_ROUTES) {
