@@ -17,29 +17,45 @@ import {
   createQueryClient,
   getQueryClientStateScript,
 } from "../utils/react-query-utils";
+import {
+  type ServerContext,
+  getServerContext,
+  serverContextStorage,
+} from "./server-context";
 
 export function createHattipApp() {
-  return compose(hattipHonoCompat(logger()), globApiRoutes(), ssrHandler());
+  return compose(
+    serverContextProvider(),
+    hattipHonoCompat(logger()),
+    globApiRoutes(),
+    ssrHandler()
+  );
+}
+
+function serverContextProvider(): RequestHandler {
+  return async (ctx) => {
+    const serverContext: ServerContext = {
+      queryClient: createQueryClient(),
+      requestContext: ctx,
+    };
+    return serverContextStorage.run(serverContext, () => ctx.next());
+  };
 }
 
 function ssrHandler(): RequestHandler {
   const routes = globPageRoutes();
 
   return async (ctx) => {
-    // initialize request context for server loaders to prefetch queries
-    const queryClient = createQueryClient();
-    ctx.queryClient = queryClient;
-
     const routerResult = await handleReactRouterServer({
       routes,
       request: ctx.request,
-      requestContext: ctx,
     });
     if (routerResult.type === "response") {
       return routerResult.response;
     }
 
     // TODO: streaming?
+    const { queryClient } = getServerContext();
     const ssrHtml = renderToString(
       <React.StrictMode>
         <ReactQueryWrapper queryClient={queryClient}>

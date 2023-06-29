@@ -24,15 +24,13 @@ type ServerRouterResult =
 export async function handleReactRouterServer({
   routes,
   request,
-  requestContext,
 }: {
   routes: RouteObject[];
   request: Request;
-  requestContext: unknown; // provide app local context to server loader
 }): Promise<ServerRouterResult> {
   const handler = createStaticHandler(routes);
 
-  const context = await handler.query(request, { requestContext });
+  const context = await handler.query(request);
 
   // handle direct loader repsonse e.g. redirection
   if (context instanceof Response) {
