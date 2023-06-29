@@ -47,6 +47,9 @@ importers:
 
   packages/demo:
     devDependencies:
+      '@badrap/bar-of-progress':
+        specifier: ^0.2.2
+        version: 0.2.2
       '@hattip/adapter-node':
         specifier: ^0.0.34
         version: 0.0.34
@@ -399,6 +402,10 @@ packages:
       '@babel/helper-string-parser': 7.22.5
       '@babel/helper-validator-identifier': 7.22.5
       to-fast-properties: 2.0.0
+    dev: true
+
+  /@badrap/bar-of-progress@0.2.2:
+    resolution: {integrity: sha512-Ig7MdFQM3OA7Ror5UB1ZutXNZFwxh6YExZvcd6EZloOgcXUR8PKNLH2wUVoeh92NMPnPWr6J/l9Mp+f3z7O7MQ==}
     dev: true
 
   /@esbuild/android-arm64@0.17.19:
