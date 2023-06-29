@@ -10,5 +10,8 @@ export function globPageRoutes() {
 }
 
 // provide helpers for standard SSR setup (depends on "react-router-dom")
-export { handleReactRouterServer } from "./react-router-helper-server";
+export {
+  handleReactRouterServer,
+  getCurrentRouteAssets,
+} from "./react-router-helper-server";
 export { initializeReactRouterClient } from "./react-router-helper-client";

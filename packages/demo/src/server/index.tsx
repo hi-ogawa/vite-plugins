@@ -2,6 +2,7 @@ import { type RequestHandler, compose } from "@hattip/compose";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
+  getCurrentRouteAssets,
   globPageRoutes,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
@@ -23,7 +24,7 @@ export function createHattipApp() {
 }
 
 function ssrHandler(): RequestHandler {
-  const routes = globPageRoutes();
+  const { routes } = globPageRoutes();
 
   return async (ctx) => {
     // initialize request context for server loaders to prefetch queries
@@ -51,6 +52,16 @@ function ssrHandler(): RequestHandler {
       </React.StrictMode>
     );
 
+    // collect preload link
+    const routeAssets = getCurrentRouteAssets({
+      routes,
+      context: routerResult.context,
+      manifest: import.meta.env.PROD
+        ? // @ts-ignore
+          await import("/dist/client/manifest.json")
+        : undefined,
+    });
+
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
 
@@ -58,7 +69,7 @@ function ssrHandler(): RequestHandler {
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       [
-        // ...res.routeFiles.map((f) => getPreloadLink(f)),
+        ...routeAssets.map((f) => getPreloadLink(f)),
         getThemeScript(),
         getQueryClientStateScript(queryClient),
       ].join("\n")
@@ -71,9 +82,9 @@ function ssrHandler(): RequestHandler {
   };
 }
 
-// function getPreloadLink(href: string) {
-//   return `<link rel="modulepreload" href="${href}" />`;
-// }
+function getPreloadLink(href: string) {
+  return `<link rel="modulepreload" href="${href}" />`;
+}
 
 function getThemeScript() {
   return `

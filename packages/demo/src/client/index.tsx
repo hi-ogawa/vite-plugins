@@ -16,7 +16,7 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  const routes = globPageRoutes();
+  const { routes } = globPageRoutes();
   const { router } = await initializeReactRouterClient({ routes });
   const queryClient = createQueryClientWithState();
   const root = (
