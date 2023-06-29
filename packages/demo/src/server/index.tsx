@@ -5,12 +5,15 @@ import { globPageRoutes } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "hono/logger";
+import React from "react";
+import { renderToString } from "react-dom/server";
 import {
+  ReactQueryWrapper,
   __QUERY_CLIENT_STATE,
   createQueryClient,
   getQueryClientStateScript,
 } from "../utils/react-query-utils";
-import { renderRoutes } from "./render-routes";
+import { handleServerRouter } from "./render-routes";
 
 export function createHattipApp() {
   return compose(hattipHonoCompat(logger()), globApiRoutes(), ssrHandler());
@@ -25,13 +28,26 @@ function ssrHandler(): RequestHandler {
     ctx.queryClient = queryClient;
 
     // react-router ssr
-    const res = await renderRoutes(ctx, routes, queryClient);
-    if (res.type === "response") {
-      return res.response;
+    const routerResult = await handleServerRouter({
+      routes,
+      request: ctx.request,
+      requestContext: ctx,
+    });
+    if (routerResult.type === "response") {
+      return routerResult.response;
     }
 
+    // TODO: streaming?
+    const ssrHtml = renderToString(
+      <React.StrictMode>
+        <ReactQueryWrapper queryClient={queryClient}>
+          {routerResult.element}
+        </ReactQueryWrapper>
+      </React.StrictMode>
+    );
+
     let html = await importIndexHtml();
-    html = html.replace("<!--@INJECT_SSR@-->", res.html);
+    html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
 
     // pass QueryClient state to client for hydration
     html = html.replace(
@@ -40,7 +56,7 @@ function ssrHandler(): RequestHandler {
     );
 
     return new Response(html, {
-      status: res.statusCode,
+      status: routerResult.statusCode,
       headers: [["content-type", "text/html"]],
     });
   };
