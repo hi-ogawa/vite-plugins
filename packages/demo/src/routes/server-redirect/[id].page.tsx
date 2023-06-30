@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { rpcQuery } from "../../tinyrpc/client";
+import { rpcClientQuery } from "../../tinyrpc/client";
 
 export function Component() {
   const params = useParams();
 
   // fetch on client only when it's not prefetched during SSR
   const checkQuery = useQuery(
-    rpcQuery.checkId.queryOptions({ id: params["id"]! })
+    rpcClientQuery.checkId.queryOptions(params["id"]!)
   );
 
   const navigate = useNavigate();

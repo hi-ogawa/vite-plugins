@@ -11,7 +11,7 @@ import { logger } from "hono/logger";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouterProvider } from "react-router-dom/server";
-import { rpcHandler } from "../tinyrpc/server";
+import { tinyRpcHandler } from "../tinyrpc/server";
 import {
   ReactQueryWrapper,
   __QUERY_CLIENT_STATE,
@@ -22,7 +22,7 @@ import {
 export function createHattipApp() {
   return compose(
     hattipHonoCompat(logger()),
-    rpcHandler(),
+    tinyRpcHandler(),
     globApiRoutes(),
     ssrHandler()
   );

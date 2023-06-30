@@ -4,13 +4,18 @@ import { createGetterProxy } from "./utils";
 // generate type-safe react-query options wrapper from a record of async functions
 //
 
-type FnRecord = Record<string, (...args: any[]) => unknown>;
-type FnInput<F extends (...args: any[]) => unknown> = Parameters<F> extends [
-  infer I
-]
-  ? I
-  : void;
-type FnOutput<F extends (...args: any[]) => unknown> = Awaited<ReturnType<F>>;
+type FnAny = (...args: any[]) => any;
+type FnAnyToAsync<F extends FnAny> = (
+  ...args: Parameters<F>
+) => Promise<Awaited<ReturnType<F>>>;
+
+export type FnRecord = Record<string, FnAny>;
+export type FnRecordToAsync<R extends FnRecord> = {
+  [K in keyof R]: FnAnyToAsync<R[K]>;
+};
+
+type FnInput<F extends FnAny> = Parameters<F> extends [infer I] ? I : void;
+type FnOutput<F extends FnAny> = Awaited<ReturnType<F>>;
 
 export type ReactQueryOptionsProxy<T extends FnRecord> = {
   [K in keyof T]: {

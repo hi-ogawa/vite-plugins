@@ -1,17 +1,13 @@
 import { tinyassert } from "@hiogawa/utils";
-import {
-  type TinyRpcProxy,
-  type TinyRpcRequest,
-  type TinyRpcRoutesBase,
-  Z_TINY_RPC_RESPONSE,
-} from "./common";
+import { type TinyRpcRequest, Z_TINY_RPC_RESPONSE } from "./common";
+import type { FnRecord, FnRecordToAsync } from "./react-query";
 import { createGetterProxy } from "./utils";
 
-export function createTinyRpcFetchProxy<R extends TinyRpcRoutesBase>({
+export function createTinyRpcFetchProxy<R extends FnRecord>({
   endpoint,
 }: {
   endpoint: string;
-}): TinyRpcProxy<R> {
+}): FnRecordToAsync<R> {
   return createGetterProxy((path) => {
     tinyassert(typeof path === "string");
     return async (input: unknown) => {
@@ -25,7 +21,7 @@ export function createTinyRpcFetchProxy<R extends TinyRpcRoutesBase>({
       });
       tinyassert(res.ok);
       const response = Z_TINY_RPC_RESPONSE.parse(await res.json());
-      return response.data;
+      return response.output;
     };
   }) as any;
 }

@@ -1,9 +1,10 @@
 import { type LoaderFunction, redirect } from "react-router-dom";
+import { rpcRoutesQuery } from "../../tinyrpc/routes";
 
 export const loader: LoaderFunction = async ({ params, context }) => {
   const id = params["id"] ?? "";
   const data = await context.queryClient.fetchQuery(
-    context.rpcQuery.checkId.queryOptions({ id })
+    rpcRoutesQuery.checkId.queryOptions(id)
   );
   if (!data.ok) {
     throw redirect("/server-redirect?error=server");

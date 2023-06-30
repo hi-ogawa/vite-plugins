@@ -1,22 +1,29 @@
 import { sleep } from "../utils/misc";
-import type { TinyRpcRoutesBase } from "./internal/common";
+import {
+  type FnRecord,
+  createReactQueryOptionsProxy,
+} from "./internal/react-query";
 
 let counter = 0;
 
-export const tinyRpcRoutes = {
+// use AsyncLocalStorage to share/access request context
+
+export const rpcRoutes = {
   getCounter: async () => {
     await sleep(500);
     return counter;
   },
 
-  updateCounter: async ({ input }: { input: { delta: number } }) => {
+  updateCounter: async (delta: number) => {
     await sleep(500);
-    counter += input.delta;
+    counter += delta;
     return counter;
   },
 
-  checkId: async ({ input }: { input: { id: string } }) => {
+  checkId: async (id: string) => {
     await sleep(500);
-    return { ok: input.id === "good", message: "rpc" };
+    return { ok: id === "good", message: "rpc" };
   },
-} satisfies TinyRpcRoutesBase;
+} satisfies FnRecord;
+
+export const rpcRoutesQuery = createReactQueryOptionsProxy(rpcRoutes);
