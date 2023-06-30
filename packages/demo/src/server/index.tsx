@@ -11,6 +11,7 @@ import { logger } from "hono/logger";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouterProvider } from "react-router-dom/server";
+import { trpcHattipHandler } from "../trpc/hattip";
 import {
   ReactQueryWrapper,
   __QUERY_CLIENT_STATE,
@@ -27,6 +28,7 @@ export function createHattipApp() {
   return compose(
     serverContextProvider(),
     hattipHonoCompat(logger()),
+    trpcHattipHandler(),
     globApiRoutes(),
     ssrHandler()
   );
@@ -37,6 +39,7 @@ function serverContextProvider(): RequestHandler {
     const serverContext: ServerContext = {
       queryClient: createQueryClient(),
       requestContext: ctx,
+      trpcResponseHeaders: undefined!, // injected in trpcHattipHandler
     };
     return serverContextStorage.run(serverContext, () => ctx.next());
   };

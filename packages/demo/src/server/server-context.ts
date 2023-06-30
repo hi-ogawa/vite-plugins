@@ -6,6 +6,7 @@ import type { QueryClient } from "@tanstack/react-query";
 export interface ServerContext {
   queryClient: QueryClient;
   requestContext: RequestContext;
+  trpcResponseHeaders: Headers;
 }
 
 export const serverContextStorage = new AsyncLocalStorage<ServerContext>();
