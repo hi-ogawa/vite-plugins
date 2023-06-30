@@ -1,6 +1,6 @@
+import crypto from "node:crypto";
 import { type LoaderFunction } from "react-router-dom";
 import { serverRedirectCheckQueryOptions } from "./check.api";
-import crypto from "node:crypto";
 
 export const loader: LoaderFunction = async ({ params, context }) => {
   console.log(crypto.randomBytes(8).toString("hex"));
