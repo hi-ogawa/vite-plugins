@@ -20,7 +20,7 @@ export const rpcRoutes = {
     return counter;
   },
 
-  checkId: async (id: string) => {
+  checkId_GET: async (id: string) => {
     await sleep(500);
     return { ok: id === "good", message: "rpc" };
   },

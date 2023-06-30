@@ -8,7 +8,7 @@ export function Component() {
 
   // fetch on client only when it's not prefetched during SSR
   const checkQuery = useQuery(
-    rpcClientQuery.checkId.queryOptions(params["id"]!)
+    rpcClientQuery.checkId_GET.queryOptions(params["id"]!)
   );
 
   const navigate = useNavigate();

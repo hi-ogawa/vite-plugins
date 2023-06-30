@@ -4,7 +4,7 @@ import { rpcRoutesQuery } from "../../tinyrpc/routes";
 export const loader: LoaderFunction = async ({ params, context }) => {
   const id = params["id"] ?? "";
   const data = await context.queryClient.fetchQuery(
-    rpcRoutesQuery.checkId.queryOptions(id)
+    rpcRoutesQuery.checkId_GET.queryOptions(id)
   );
   if (!data.ok) {
     throw redirect("/server-redirect?error=server");
