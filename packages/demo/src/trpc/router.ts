@@ -6,8 +6,9 @@ import { $t } from "./init";
 let counter = 0;
 
 export const trpcRouter = $t.router({
-  checkId: $t.procedure.input(z.string()).query(({ input }) => {
-    return { ok: input === "good", message: "trpc" };
+  checkId: $t.procedure.input(z.string()).query(async ({ input }) => {
+    await sleep(500);
+    return { ok: input === "good", message: "api" };
   }),
 
   getCounter: $t.procedure.query(async () => {

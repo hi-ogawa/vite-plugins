@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { trpcClientQuery } from "../trpc/client";
 
 export function Component() {
-  const counterQueryOptions = trpcClientQuery.getCounter.queryOptions()
+  const counterQueryOptions = trpcClientQuery.getCounter.queryOptions();
   const counterQuery = useQuery(counterQueryOptions);
 
   const queryClient = useQueryClient();
