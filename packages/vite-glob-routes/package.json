@@ -38,12 +38,14 @@
   "devDependencies": {
     "@hattip/compose": "^0.0.34",
     "@types/react": "^18.2.14",
-    "react-router": "^6.13.0"
+    "react-router": "^6.13.0",
+    "react-router-dom": "^6.13.0"
   },
   "peerDependencies": {
     "@hattip/compose": "*",
     "@types/react": "*",
     "react-router": "*",
+    "react-router-dom": "*",
     "vite": "*"
   },
   "peerDependenciesMeta": {
@@ -51,6 +53,9 @@
       "optional": true
     },
     "react-router": {
+      "optional": true
+    },
+    "react-router-dom": {
       "optional": true
     }
   }
