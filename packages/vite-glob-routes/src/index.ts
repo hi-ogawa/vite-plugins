@@ -42,30 +42,39 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
       return;
     },
 
-    load(id, _options) {
+    load(id, options) {
       // NOTE
       // instead of completely relying on vite's glob import, we could also manually probe files and setup watcher etc...
       // cf. https://github.com/rakkasjs/rakkasjs/blob/18ba680d18f776acf2dedd44444873433552f4e3/packages/rakkasjs/src/features/api-routes/vite-plugin.ts#L8
 
       if (id === VIRTUAL_INTERNAL_PAGE_ROUTES) {
-        // TODO: non-eager import to code split with lazy route?
-        return `
+        if (options?.ssr) {
+          return `
             const root = "${root}";
             const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true });
             const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true });
-            const globPageServer = import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: true }) : {};
-            const globLayoutServer = import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: true }) : {};
+            const globPageServer = import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: true });
+            const globLayoutServer = import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: true });
             export default { root, globPage, globPageServer, globLayout, globLayoutServer };
           `;
+        }
+        return `
+          const root = "${root}";
+          const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true });
+          const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true });
+          const globPageServer = {};
+          const globLayoutServer = {};
+          export default { root, globPage, globPageServer, globLayout, globLayoutServer };
+        `;
       }
 
-      if (id === VIRTUAL_INTERNAL_API_ROUTES) {
+      if (id === VIRTUAL_INTERNAL_API_ROUTES && options?.ssr) {
         // TODO: import only "get/post/put/delete" to tree shake other exports?
         return `
-            const root = "${root}";
-            const globApi = import.meta.glob("${root}/**/*.api.(js|jsx|ts|tsx)", { eager: true });
-            export default { root, globApi };
-          `;
+          const root = "${root}";
+          const globApi = import.meta.glob("${root}/**/*.api.(js|jsx|ts|tsx)", { eager: true });
+          export default { root, globApi };
+        `;
       }
       return;
     },
