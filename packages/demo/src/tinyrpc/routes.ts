@@ -4,9 +4,9 @@ import {
   createReactQueryOptionsProxy,
 } from "./internal/react-query";
 
-let counter = 0;
+// can use AsyncLocalStorage to share/access request context
 
-// use AsyncLocalStorage to share/access request context
+let counter = 0;
 
 export const rpcRoutes = {
   getCounter: async () => {

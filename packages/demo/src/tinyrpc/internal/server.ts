@@ -12,11 +12,12 @@ export function createTinyRpcHandler({
   routes: FnRecord;
 }): RequestHandler {
   return async (ctx) => {
-    if (ctx.url.pathname !== endpoint) {
+    if (!ctx.url.pathname.startsWith(endpoint)) {
       return ctx.next();
     }
     tinyassert(ctx.method === "POST");
-    const { path, input } = Z_TINY_RPC_REQUEST.parse(await ctx.request.json());
+    const path = ctx.url.pathname.slice(endpoint.length + 1);
+    const { input } = Z_TINY_RPC_REQUEST.parse(await ctx.request.json());
     const route = routes[path];
     tinyassert(route);
     const output = await route(input);

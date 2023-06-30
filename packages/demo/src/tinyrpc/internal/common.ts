@@ -1,7 +1,10 @@
 import { z } from "zod";
 
+// TODO:
+// - support GET
+// - error convention
+
 export const Z_TINY_RPC_REQUEST = z.object({
-  path: z.string(),
   input: z.unknown(),
 });
 

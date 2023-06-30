@@ -11,11 +11,9 @@ export function createTinyRpcFetchProxy<R extends FnRecord>({
   return createGetterProxy((path) => {
     tinyassert(typeof path === "string");
     return async (input: unknown) => {
-      const request: TinyRpcRequest = {
-        path,
-        input,
-      };
-      const res = await fetch(endpoint, {
+      const url = [endpoint, path].join("/");
+      const request: TinyRpcRequest = { input };
+      const res = await fetch(url, {
         method: "POST",
         body: JSON.stringify(request),
       });
