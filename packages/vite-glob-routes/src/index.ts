@@ -45,46 +45,61 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
       return;
     },
 
-    load(id, _options) {
+    load(id, options) {
       // NOTE
       // instead of completely relying on vite's glob import, we could also manually probe files and setup watcher etc...
       // cf. https://github.com/rakkasjs/rakkasjs/blob/18ba680d18f776acf2dedd44444873433552f4e3/packages/rakkasjs/src/features/api-routes/vite-plugin.ts#L8
 
       if (id === VIRTUAL_INTERNAL_PAGE_ROUTES) {
-        return `
-          export default {
-            eager: true,
-            root: "${root}",
-            globPage:         import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true }),
-            globLayout:       import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true }),
-            globPageServer:   import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: true }) : {},
-            globLayoutServer: import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: true }) : {},
-          };
-        `;
+        return generatePageRoutesCode({ root, eager: true, ssr: options?.ssr });
       }
 
       if (id === VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY) {
-        return `
-          export default {
-            eager: false,
-            root: "${root}",
-            globPage:         import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)"),
-            globLayout:       import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)"),
-            globPageServer:   import.meta.env.SSR ? import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)") : {},
-            globLayoutServer: import.meta.env.SSR ? import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)") : {},
-          };
-        `;
+        return generatePageRoutesCode({
+          root,
+          eager: false,
+          ssr: options?.ssr,
+        });
       }
 
-      if (id === VIRTUAL_INTERNAL_API_ROUTES) {
+      if (id === VIRTUAL_INTERNAL_API_ROUTES && options?.ssr) {
         // TODO: import only "get/post/put/delete" to tree shake other exports?
         return `
-            const root = "${root}";
-            const globApi = import.meta.glob("${root}/**/*.api.(js|jsx|ts|tsx)", { eager: true });
-            export default { root, globApi };
-          `;
+          const root = "${root}";
+          const globApi = import.meta.glob("${root}/**/*.api.(js|jsx|ts|tsx)", { eager: true });
+          export default { root, globApi };
+        `;
       }
       return;
     },
   };
+}
+
+function generatePageRoutesCode({
+  root,
+  eager,
+  ssr,
+}: {
+  root: string;
+  eager: boolean;
+  ssr?: boolean;
+}) {
+  const serverCode = ssr
+    ? `
+    globPageServer:   import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: ${eager} }),
+    globLayoutServer: import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: ${eager} }),
+  `
+    : `
+    globPageServer:   {},
+    globLayoutServer: {},
+  `;
+  return `
+    export default {
+      eager: ${eager},
+      root: "${root}",
+      globPage:         import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: ${eager} }),
+      globLayout:       import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: ${eager} }),
+      ${serverCode}
+    };
+  `;
 }

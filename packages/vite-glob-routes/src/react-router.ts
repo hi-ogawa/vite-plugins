@@ -2,7 +2,7 @@ import internalEager from "virtual:@hiogawa/vite-glob-routes/internal/page-route
 import internalLazy from "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy";
 import { createGlobPageRoutes } from "./react-router-utils";
 
-// TODO: proepr peer-dependency version range
+// TODO: proper peer-dependency version range
 
 // provide "react-router" RouterObject (only type dependency)
 export function globPageRoutes() {
