@@ -1,17 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import {
-  getCounterQueryOptions,
-  updateCounterMutationOptions,
-} from "./server-data-counter.api";
+import { trpcClientQuery } from "../trpc/client";
 
 export function Component() {
-  const counterQueryOptions = getCounterQueryOptions();
+  const counterQueryOptions = trpcClientQuery.getCounter.queryOptions()
   const counterQuery = useQuery(counterQueryOptions);
 
   const queryClient = useQueryClient();
   const counterMutation = useMutation({
-    ...updateCounterMutationOptions(),
+    ...trpcClientQuery.updateCounter.mutationOptions(),
     onSuccess: (data) => {
       toast.success("Successfully updated", { id: "counter-mutation-success" });
       queryClient.setQueryData(counterQueryOptions.queryKey, data);

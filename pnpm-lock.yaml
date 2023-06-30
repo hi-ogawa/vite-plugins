@@ -59,6 +59,9 @@ importers:
       '@hiogawa/isort-ts':
         specifier: 1.0.2-pre.1
         version: 1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.3)
+      '@hiogawa/query-proxy':
+        specifier: ^0.1.0
+        version: 0.1.0(@tanstack/query-core@4.29.14)(@trpc/server@10.32.0)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
         version: 2.2.1-pre.3(@unocss/preset-uno@0.53.3)(unocss@0.53.1)
@@ -822,6 +825,19 @@ packages:
       consola: 2.15.3
       prettier: 2.8.8
       typescript: 5.1.3
+    dev: true
+
+  /@hiogawa/query-proxy@0.1.0(@tanstack/query-core@4.29.14)(@trpc/server@10.32.0):
+    resolution: {integrity: sha512-AMIXTZq26fgJ291se+TgIBUeK2Fcm6aT+AJ7olBc2ExSfy6Ihd+0+/yOtTEE5fdQ3vHWIZTr9m0hjgjDU60S/Q==}
+    peerDependencies:
+      '@tanstack/query-core': '*'
+      '@trpc/server': '*'
+    peerDependenciesMeta:
+      '@trpc/server':
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.29.14
+      '@trpc/server': 10.32.0
     dev: true
 
   /@hiogawa/unocss-preset-antd@2.2.1-pre.3(@unocss/preset-uno@0.53.3)(unocss@0.53.1):

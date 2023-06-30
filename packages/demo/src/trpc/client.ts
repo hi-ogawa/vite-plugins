@@ -1,6 +1,7 @@
+import { createTrpcClientQueryProxy } from "@hiogawa/query-proxy";
 import { createTRPCProxyClient, httpLink } from "@trpc/client";
 import { TRPC_ENDPOINT } from "./common";
-import type { trpcRouter } from "./router";
+import { trpcRouter } from "./router";
 
 export const trpcClient = createTRPCProxyClient<typeof trpcRouter>({
   links: [
@@ -9,3 +10,6 @@ export const trpcClient = createTRPCProxyClient<typeof trpcRouter>({
     }),
   ],
 });
+
+export const trpcClientQuery =
+  createTrpcClientQueryProxy<typeof trpcRouter>(trpcClient);

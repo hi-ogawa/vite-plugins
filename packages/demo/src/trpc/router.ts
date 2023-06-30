@@ -1,26 +1,27 @@
+import { createFnRecordQueryProxy } from "@hiogawa/query-proxy";
 import { z } from "zod";
 import { sleep } from "../utils/misc";
-import { trpcProcedureBuilder, trpcRouterFactory } from "./init";
+import { $t } from "./init";
 
 let counter = 0;
 
-export const trpcRouter = trpcRouterFactory({
-  getCounter: trpcProcedureBuilder.query(async () => {
+export const trpcRouter = $t.router({
+  checkId: $t.procedure.input(z.string()).query(({ input }) => {
+    return { ok: input === "good", message: "trpc" };
+  }),
+
+  getCounter: $t.procedure.query(async () => {
     await sleep(500);
     return counter;
   }),
 
-  updateCounter: trpcProcedureBuilder
-    .input(z.number())
-    .mutation(async ({ input }) => {
-      await sleep(500);
-      counter += input;
-      return counter;
-    }),
+  updateCounter: $t.procedure.input(z.number()).mutation(async ({ input }) => {
+    await sleep(500);
+    counter += input;
+    return counter;
+  }),
 });
 
 // expose trpc caller for server loader
 export const trpcCaller = trpcRouter.createCaller({});
-
-// TODO
-// export const trpcCallerQuery = ...
+export const trpcCallerQuery = createFnRecordQueryProxy(trpcCaller);
