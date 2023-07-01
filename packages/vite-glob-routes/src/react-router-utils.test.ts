@@ -1,78 +1,149 @@
 import { describe, expect, it } from "vitest";
-import {
-  type PageModule,
-  createGlobPageRoutes,
-  splitPathSegment,
-} from "./react-router-utils";
+import { createGlobPageRoutes, splitPathSegment } from "./react-router-utils";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
-    const Module: PageModule = { Component: () => null };
-    const Module2: PageModule = { loader: () => null };
+    const mod = async () => ({});
     const tree = createGlobPageRoutes({
+      eager: false,
       root: "(root)",
       globPage: {
-        "(root)/index.page.js": Module,
-        "(root)/other.page.jsx": Module,
-        "(root)/[dynamic].page.ts": Module,
-        "(root)/subdir/index.page.tsx": Module,
-        "(root)/subdir/other.page.tsx": Module,
-        "(root)/abc/[dynsub].page.tsx": Module,
-        "(root)/abc/[dynsub]/new.page.tsx": Module,
+        "(root)/index.page.js": mod,
+        "(root)/other.page.jsx": mod,
+        "(root)/[dynamic].page.ts": mod,
+        "(root)/subdir/index.page.tsx": mod,
+        "(root)/subdir/other.page.tsx": mod,
+        "(root)/abc/[dynsub].page.tsx": mod,
+        "(root)/abc/[dynsub]/new.page.tsx": mod,
       },
       globPageServer: {
-        "(root)/other.page.server.jsx": Module2,
+        "(root)/other.page.server.jsx": mod,
       },
       globLayout: {
-        "(root)/layout.tsx": Module,
-        "(root)/subdir/layout.jsx": Module,
+        "(root)/layout.tsx": mod,
+        "(root)/subdir/layout.jsx": mod,
       },
       globLayoutServer: {
-        "(root)/layout.server.tsx": Module2,
+        "(root)/layout.server.tsx": mod,
       },
     });
-    expect(tree).toMatchInlineSnapshot(`
+    expect(tree.routes).toMatchInlineSnapshot(`
       [
         {
-          "Component": [Function],
           "children": [
             {
-              "Component": [Function],
+              "globInfo": {
+                "entries": [
+                  {
+                    "file": "(root)/index.page.js",
+                    "isServer": false,
+                    "mod": [Function],
+                  },
+                ],
+              },
               "index": true,
+              "lazy": [Function],
             },
             {
-              "Component": [Function],
-              "loader": [Function],
+              "globInfo": {
+                "entries": [
+                  {
+                    "file": "(root)/other.page.jsx",
+                    "isServer": false,
+                    "mod": [Function],
+                  },
+                  {
+                    "file": "(root)/other.page.server.jsx",
+                    "isServer": true,
+                    "mod": [Function],
+                  },
+                ],
+              },
+              "lazy": [Function],
               "path": "other",
             },
             {
-              "Component": [Function],
+              "globInfo": {
+                "entries": [
+                  {
+                    "file": "(root)/[dynamic].page.ts",
+                    "isServer": false,
+                    "mod": [Function],
+                  },
+                ],
+              },
+              "lazy": [Function],
               "path": ":dynamic",
             },
             {
-              "Component": [Function],
               "children": [
                 {
-                  "Component": [Function],
+                  "globInfo": {
+                    "entries": [
+                      {
+                        "file": "(root)/subdir/index.page.tsx",
+                        "isServer": false,
+                        "mod": [Function],
+                      },
+                    ],
+                  },
                   "index": true,
+                  "lazy": [Function],
                 },
                 {
-                  "Component": [Function],
+                  "globInfo": {
+                    "entries": [
+                      {
+                        "file": "(root)/subdir/other.page.tsx",
+                        "isServer": false,
+                        "mod": [Function],
+                      },
+                    ],
+                  },
+                  "lazy": [Function],
                   "path": "other",
                 },
               ],
+              "globInfo": {
+                "entries": [
+                  {
+                    "file": "(root)/subdir/layout.jsx",
+                    "isServer": false,
+                    "mod": [Function],
+                  },
+                ],
+              },
+              "lazy": [Function],
               "path": "subdir/",
             },
             {
               "children": [
                 {
-                  "Component": [Function],
+                  "globInfo": {
+                    "entries": [
+                      {
+                        "file": "(root)/abc/[dynsub].page.tsx",
+                        "isServer": false,
+                        "mod": [Function],
+                      },
+                    ],
+                  },
+                  "lazy": [Function],
                   "path": ":dynsub",
                 },
                 {
                   "children": [
                     {
-                      "Component": [Function],
+                      "globInfo": {
+                        "entries": [
+                          {
+                            "file": "(root)/abc/[dynsub]/new.page.tsx",
+                            "isServer": false,
+                            "mod": [Function],
+                          },
+                        ],
+                      },
+                      "lazy": [Function],
                       "path": "new",
                     },
                   ],
@@ -82,7 +153,21 @@ describe(createGlobPageRoutes, () => {
               "path": "abc/",
             },
           ],
-          "loader": [Function],
+          "globInfo": {
+            "entries": [
+              {
+                "file": "(root)/layout.tsx",
+                "isServer": false,
+                "mod": [Function],
+              },
+              {
+                "file": "(root)/layout.server.tsx",
+                "isServer": true,
+                "mod": [Function],
+              },
+            ],
+          },
+          "lazy": [Function],
           "path": "/",
         },
       ]

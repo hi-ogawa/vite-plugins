@@ -6,6 +6,7 @@ export default defineConfig({
   dts: true,
   external: [
     "virtual:@hiogawa/vite-glob-routes/internal/page-routes",
+    "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy",
     "virtual:@hiogawa/vite-glob-routes/internal/api-routes",
   ],
 });

@@ -1,66 +1,80 @@
 import { mapRegExp, tinyassert } from "@hiogawa/utils";
 import type { RouteObject } from "react-router";
-import { mapKeys } from "./utils";
 
-// mirror everything from react-router
-export type PageModule = Omit<
-  RouteObject,
-  "index" | "path" | "children" | "lazy"
->;
+// mirror everything from react-router and used as `RouteObject.lazy`.
+type PageModule = Omit<RouteObject, "index" | "path" | "children" | "lazy">;
+type LazyPageModule = () => Promise<PageModule>;
+type GlobImporModule = PageModule | LazyPageModule;
 
 // provided by plugin's virtual module based on glob import
 export type GlobPageRoutesInternal = {
+  eager: boolean;
   root: string;
-  globPage: Record<string, PageModule>;
-  globPageServer: Record<string, PageModule>;
-  globLayout: Record<string, PageModule>;
-  globLayoutServer: Record<string, PageModule>;
+  globPage: Record<string, GlobImporModule>;
+  globPageServer: Record<string, GlobImporModule>;
+  globLayout: Record<string, GlobImporModule>;
+  globLayoutServer: Record<string, GlobImporModule>;
 };
 
-export function createGlobPageRoutes({
-  root,
-  globPage,
-  globPageServer,
-  globLayout,
-  globLayoutServer,
-}: GlobPageRoutesInternal): RouteObject[] {
+// expose extra data for the use of modulepreload etc...
+export type RouteObjectWithGlobInfo = RouteObject & {
+  globInfo?: {
+    entries: GlobPageMappingEntry[];
+  };
+};
+
+type GlobPageRoutesResult = {
+  routes: RouteObjectWithGlobInfo[];
+};
+
+export function createGlobPageRoutes(
+  internal: GlobPageRoutesInternal
+): GlobPageRoutesResult {
   // TODO: warn invalid usage
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
-  globPage = mapKeys(
-    globPage,
-    (k) => k.slice(root.length).match(/^(.*)\.page\./)![1]!
-  );
-  globLayout = mapKeys(
-    globLayout,
-    (k) => k.slice(root.length).match(/^(.*)layout\./)![1]!
-  );
-  globPageServer = mapKeys(
-    globPageServer,
-    (k) => k.slice(root.length).match(/^(.*)\.page\.server\./)![1]!
-  );
-  globLayoutServer = mapKeys(
-    globLayoutServer,
-    (k) => k.slice(root.length).match(/^(.*)layout\.server\./)![1]!
-  );
-  for (const [k, v] of Object.entries(globPageServer)) {
-    const v2 = globPage[k];
-    tinyassert(v2);
-    globPage[k] = { ...v2, ...v };
+  const mapping = createGlobPageMapping(internal);
+  const routes = createGlobPageRoutesInner(internal.eager, mapping);
+  return { routes };
+}
+
+// mapping between url path and file system path
+// (urlpath => filepath => module)
+type GlobPageMapping = Record<string, GlobPageMappingEntry[]>;
+type GlobPageMappingEntry = {
+  file: string;
+  mod: GlobImporModule;
+  isServer: boolean;
+};
+
+function createGlobPageMapping(
+  internal: GlobPageRoutesInternal
+): GlobPageMapping {
+  const patterns = [
+    [internal.globPage, /^(.*)\.page\./, false],
+    [internal.globPageServer, /^(.*)\.page\.server\./, true],
+    [internal.globLayout, /^(.*)layout\./, false],
+    [internal.globLayoutServer, /^(.*)layout\.server\./, true],
+  ] as const;
+
+  const result: GlobPageMapping = {};
+
+  for (const [glob, regex, isServer] of patterns) {
+    for (const [file, mod] of Object.entries(glob)) {
+      const urlpath = file.slice(internal.root.length).match(regex)![1]!;
+      (result[urlpath] ??= []).push({ file, mod, isServer });
+    }
   }
-  for (const [k, v] of Object.entries(globLayoutServer)) {
-    const v2 = globLayout[k];
-    tinyassert(v2);
-    globLayout[k] = { ...v2, ...v };
-  }
-  return createGlobPageRoutesInner({ ...globPage, ...globLayout });
+
+  return result;
 }
 
 function createGlobPageRoutesInner(
-  pageModules: Record<string, PageModule>
-): RouteObject[] {
+  eager: boolean,
+  mapping: GlobPageMapping
+): RouteObjectWithGlobInfo[] {
   // construct general tree structure
-  const pathEntries = Object.entries(pageModules).map(([k, v]) => ({
+  const pathEntries = Object.entries(mapping).map(([k, v]) => ({
     keys: splitPathSegment(k),
     value: v,
   }));
@@ -68,13 +82,33 @@ function createGlobPageRoutesInner(
 
   // transform to react-router's nested RouteObject array
   function recurse(
-    children: Record<string, TreeNode<PageModule>>
-  ): RouteObject[] {
+    children: Record<string, TreeNode<GlobPageMappingEntry[]>>
+  ): RouteObjectWithGlobInfo[] {
     return Object.entries(children).map(([path, node]) => {
-      const route: RouteObject = {
-        ...node.value,
+      const route: RouteObjectWithGlobInfo = {
         path: formatPath(path),
       };
+      if (node.value) {
+        const entries = node.value;
+        route.globInfo = { entries };
+        if (eager) {
+          const mods = entries.map((e) => {
+            tinyassert(typeof e.mod !== "function");
+            return e.mod satisfies PageModule;
+          });
+          Object.assign(route, ...mods);
+        } else {
+          route.lazy = async () => {
+            const mods = await Promise.all(
+              entries.map((e) => {
+                tinyassert(typeof e.mod === "function");
+                return (e.mod satisfies LazyPageModule)();
+              })
+            );
+            return Object.assign({}, ...mods);
+          };
+        }
+      }
       if (node.children) {
         route.children = recurse(node.children);
       }
