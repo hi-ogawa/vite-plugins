@@ -1,9 +1,14 @@
+import BarOfProgress from "@badrap/bar-of-progress";
+import React from "react";
 import { Toaster } from "react-hot-toast";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigation } from "react-router-dom";
+import { useEffectNoStrict } from "../utils/misc-react";
 
 export const handle = "root-handle";
 
 export function Component() {
+  useTopProgressBar();
+
   return (
     <>
       <Toaster
@@ -68,6 +73,10 @@ const ROUTES = [
   "/error",
 ];
 
+//
+// ThemeSelect
+//
+
 declare let __themeSet: (theme: string) => void;
 declare let __themeGet: () => string;
 
@@ -82,4 +91,22 @@ export function ThemeSelect() {
       <span className="dark:i-ri-sun-line light:i-ri-moon-line !w-5 !h-5"></span>
     </button>
   );
+}
+
+//
+// navigation progress bar
+//
+
+function useTopProgressBar() {
+  const navigation = useNavigation();
+  const loading = navigation.state !== "idle";
+  const [progress] = React.useState(() => new BarOfProgress({ size: 3 }));
+
+  useEffectNoStrict(() => {
+    if (loading) {
+      progress.start();
+    } else {
+      progress.finish();
+    }
+  }, [loading]);
 }

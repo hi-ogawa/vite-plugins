@@ -13,6 +13,7 @@
     "release-production": "vercel deploy --prebuilt . --prod"
   },
   "devDependencies": {
+    "@badrap/bar-of-progress": "^0.2.2",
     "@hattip/adapter-node": "^0.0.34",
     "@hattip/adapter-vercel-edge": "^0.0.34",
     "@hattip/compose": "^0.0.34",

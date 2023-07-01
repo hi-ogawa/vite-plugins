@@ -3,6 +3,8 @@ import type { Plugin } from "vite";
 // pass internal runtime data via virtual module
 const VIRTUAL_INTERNAL_PAGE_ROUTES =
   "virtual:@hiogawa/vite-glob-routes/internal/page-routes";
+const VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY =
+  "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy";
 const VIRTUAL_INTERNAL_API_ROUTES =
   "virtual:@hiogawa/vite-glob-routes/internal/api-routes";
 
@@ -35,6 +37,7 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
     async resolveId(source, _importer, _options) {
       if (
         source === VIRTUAL_INTERNAL_PAGE_ROUTES ||
+        source === VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY ||
         source === VIRTUAL_INTERNAL_API_ROUTES
       ) {
         return source;
@@ -48,24 +51,15 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
       // cf. https://github.com/rakkasjs/rakkasjs/blob/18ba680d18f776acf2dedd44444873433552f4e3/packages/rakkasjs/src/features/api-routes/vite-plugin.ts#L8
 
       if (id === VIRTUAL_INTERNAL_PAGE_ROUTES) {
-        if (options?.ssr) {
-          return `
-            const root = "${root}";
-            const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true });
-            const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true });
-            const globPageServer = import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: true });
-            const globLayoutServer = import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: true });
-            export default { root, globPage, globPageServer, globLayout, globLayoutServer };
-          `;
-        }
-        return `
-          const root = "${root}";
-          const globPage = import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: true });
-          const globLayout = import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: true });
-          const globPageServer = {};
-          const globLayoutServer = {};
-          export default { root, globPage, globPageServer, globLayout, globLayoutServer };
-        `;
+        return generatePageRoutesCode({ root, eager: true, ssr: options?.ssr });
+      }
+
+      if (id === VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY) {
+        return generatePageRoutesCode({
+          root,
+          eager: false,
+          ssr: options?.ssr,
+        });
       }
 
       if (id === VIRTUAL_INTERNAL_API_ROUTES && options?.ssr) {
@@ -79,4 +73,33 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
       return;
     },
   };
+}
+
+function generatePageRoutesCode({
+  root,
+  eager,
+  ssr,
+}: {
+  root: string;
+  eager: boolean;
+  ssr?: boolean;
+}) {
+  const serverCode = ssr
+    ? `
+    globPageServer:   import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: ${eager} }),
+    globLayoutServer: import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: ${eager} }),
+  `
+    : `
+    globPageServer:   {},
+    globLayoutServer: {},
+  `;
+  return `
+    export default {
+      eager: ${eager},
+      root: "${root}",
+      globPage:         import.meta.glob("${root}/**/*.page.(js|jsx|ts|tsx)", { eager: ${eager} }),
+      globLayout:       import.meta.glob("${root}/**/layout.(js|jsx|ts|tsx)", { eager: ${eager} }),
+      ${serverCode}
+    };
+  `;
 }

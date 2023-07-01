@@ -21,6 +21,7 @@ export default defineConfig((ctx) => ({
   ],
   build: {
     outDir: ctx.ssrBuild ? "dist/server" : "dist/client",
+    manifest: true,
     sourcemap: true,
   },
   clearScreen: false,

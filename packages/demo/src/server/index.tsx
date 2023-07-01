@@ -2,6 +2,7 @@ import { type RequestHandler, compose } from "@hattip/compose";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
+  getCurrentRouteAssets,
   globPageRoutes,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
@@ -43,7 +44,7 @@ function serverContextProvider(): RequestHandler {
 }
 
 function ssrHandler(): RequestHandler {
-  const routes = globPageRoutes();
+  const { routes } = globPageRoutes();
 
   return async (ctx) => {
     const routerResult = await handleReactRouterServer({
@@ -67,13 +68,27 @@ function ssrHandler(): RequestHandler {
       </React.StrictMode>
     );
 
+    // collect preload link
+    const routeAssets = getCurrentRouteAssets({
+      routes,
+      context: routerResult.context,
+      manifest: import.meta.env.PROD
+        ? // @ts-ignore
+          (await import("/dist/client/manifest.json")).default
+        : undefined,
+    });
+
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
 
     // pass QueryClient state to client for hydration
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      getThemeScript() + getQueryClientStateScript(queryClient)
+      [
+        ...routeAssets.map((f) => getPreloadLink(f)),
+        getThemeScript(),
+        getQueryClientStateScript(queryClient),
+      ].join("\n")
     );
 
     return new Response(html, {
@@ -81,6 +96,10 @@ function ssrHandler(): RequestHandler {
       headers: [["content-type", "text/html"]],
     });
   };
+}
+
+function getPreloadLink(href: string) {
+  return `<link rel="modulepreload" href="${href}" />`;
 }
 
 function getThemeScript() {
