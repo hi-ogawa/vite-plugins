@@ -34,7 +34,7 @@ export async function handleReactRouterServer({
 }: {
   routes: RouteObject[];
   request: Request;
-  requestContext: unknown; // provide app local context to server loader
+  requestContext?: unknown; // provide app local context to server loader
 }): Promise<ServerRouterResult> {
   const handler = createStaticHandler(routes);
 
