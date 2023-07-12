@@ -66,6 +66,7 @@ const ROUTES = [
   "/",
   "/other",
   "/dynamic/any",
+  "/loader-data",
   "/server-data",
   "/server-redirect",
   "/subdir",

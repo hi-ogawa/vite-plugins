@@ -1,5 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
 
+// TODO: should add a marker at the url level (e.g. remix's "_data" params)
+//       so that http caching naturally works.
 export const LOADER_REQUEST_HEADER = "x-loader-request";
 
 // TODO

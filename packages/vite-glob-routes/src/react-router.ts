@@ -18,5 +18,10 @@ export {
   handleReactRouterServer,
   getCurrentRouteAssets,
 } from "./react-router-helper-server";
-export { initializeReactRouterClient } from "./react-router-helper-client";
+
+export {
+  initializeReactRouterClient,
+  proxyServerLoader,
+} from "./react-router-helper-client";
+
 export type { RouteObjectWithGlobInfo } from "./react-router-utils";
