@@ -1,9 +1,5 @@
 import { useLoaderData } from "react-router-dom";
 
-// TODO: how to avoid calling on initial render after SSR?
-//       this might be relevant
-//       https://github.com/remix-run/react-router/blob/9c1892ac4d222135a0d1a5033aad4f1fcfab11df/packages/router/router.ts#L791-L796
-//       https://github.com/remix-run/react-router/blob/9c1892ac4d222135a0d1a5033aad4f1fcfab11df/packages/router/router.ts#L942-L949
 export { proxyServerLoader as loader } from "@hiogawa/vite-glob-routes/dist/react-router";
 
 export function Component() {
