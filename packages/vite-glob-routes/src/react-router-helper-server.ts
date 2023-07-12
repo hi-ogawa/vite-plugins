@@ -10,6 +10,10 @@ import {
   createStaticRouter,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
+import {
+  LOADER_REQUEST_HEADER,
+  wrapLoaderResult,
+} from "./react-router-helper-shared";
 import type { RouteObjectWithGlobInfo } from "./react-router-utils";
 
 // why is this not exposed?
@@ -38,6 +42,16 @@ export async function handleReactRouterServer({
 }): Promise<ServerRouterResult> {
   const handler = createStaticHandler(routes);
 
+  // direct server loader request handling
+  // cf. https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-server-runtime/server.ts#L136-L139
+  if (request.headers.get(LOADER_REQUEST_HEADER)) {
+    const loaderResult = await handler.queryRoute(request, { requestContext });
+    return {
+      type: "response",
+      response: wrapLoaderResult(loaderResult),
+    };
+  }
+
   const context = await handler.query(request, { requestContext });
 
   // handle direct loader repsonse e.g. redirection
@@ -47,6 +61,9 @@ export async function handleReactRouterServer({
       response: context,
     };
   }
+
+  // TODO: apply server loader headers?
+  context.loaderHeaders;
 
   return {
     type: "render",

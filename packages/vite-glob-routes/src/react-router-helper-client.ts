@@ -1,5 +1,9 @@
-import { type RouteObject } from "react-router";
+import { type LoaderFunction, type RouteObject } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
+import {
+  LOADER_REQUEST_HEADER,
+  unwrapLoaderResult,
+} from "./react-router-helper-shared";
 
 // why is this not exposed?
 type RemixRouter = ReturnType<typeof createBrowserRouter>;
@@ -34,3 +38,13 @@ async function routerInitializedPromise(
     });
   });
 }
+
+// client loader to proxy server loaders (aka data request)
+export const proxyServerLoader: LoaderFunction = async (args) => {
+  const res = await fetch(args.request.url, {
+    headers: {
+      [LOADER_REQUEST_HEADER]: "1",
+    },
+  });
+  return unwrapLoaderResult(res);
+};
