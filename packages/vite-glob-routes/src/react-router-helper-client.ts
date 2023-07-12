@@ -1,8 +1,8 @@
 import { type LoaderFunction, type RouteObject } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import {
-  LOADER_REQUEST_HEADER,
   unwrapLoaderResult,
+  wrapLoaderRequest,
 } from "./react-router-helper-shared";
 
 // why is this not exposed?
@@ -45,10 +45,7 @@ async function routerInitializedPromise(
 
 // client loader to proxy server loaders (aka data request)
 export const proxyServerLoader: LoaderFunction = async (args) => {
-  const res = await fetch(args.request.url, {
-    headers: {
-      [LOADER_REQUEST_HEADER]: "1",
-    },
-  });
+  const req = wrapLoaderRequest(args.request);
+  const res = await fetch(req);
   return unwrapLoaderResult(res);
 };

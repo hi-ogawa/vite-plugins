@@ -1,8 +1,22 @@
 import { tinyassert } from "@hiogawa/utils";
 
-// TODO: should add a marker at the url level (e.g. remix's "_data" params)
-//       so that http caching naturally works.
-export const LOADER_REQUEST_HEADER = "x-loader-request";
+// special marker for server to differentiate direct loader request
+const LODER_MARKER = "_data.json";
+
+export function wrapLoaderRequest(req: Request): Request {
+  const url = new URL(req.url);
+  url.pathname += LODER_MARKER;
+  return new Request(url);
+}
+
+export function unwrapLoaderRequest(req: Request): Request | undefined {
+  const url = new URL(req.url);
+  if (url.pathname.endsWith(LODER_MARKER)) {
+    url.pathname = url.pathname.slice(0, -LODER_MARKER.length);
+    return new Request(url, req);
+  }
+  return;
+}
 
 // TODO
 // convention to wrap/unwrap response to propagate redirection/error on client
