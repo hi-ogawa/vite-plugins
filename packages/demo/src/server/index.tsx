@@ -24,7 +24,7 @@ export function createHattipApp() {
 }
 
 function ssrHandler(): RequestHandler {
-  const { routes } = globPageRoutes();
+  const { routes, manifest } = globPageRoutes();
 
   return async (ctx) => {
     // initialize request context for server loaders to prefetch queries
@@ -52,9 +52,24 @@ function ssrHandler(): RequestHandler {
       </React.StrictMode>
     );
 
-    // pass `matches` to client to help router initialization?
-    // (see TODOs in packages/vite-glob-routes/src/react-router-helper-client.ts)
-    routerResult.context.matches;
+    // pass extra router information to client for legitimate SSR experience
+    // TODO: move inside `handleReactRouterServer`?
+    const serverRouterInfo: ServerRouterInfo = {
+      // need to resolve lazy route before hydration on client
+      matchRouteIds: routerResult.context.matches.map((v) => v.route.id),
+      // for example, client can use this to auto inject `proxyServerLoader` (via `transformRoute`) for the page with server loader
+      serverPageExports: Object.fromEntries(
+        Object.entries(manifest).map(([id, route]) => [
+          id,
+          route.globInfo?.entries.flatMap((e) =>
+            e.isServer ? Object.keys(e.mod) : []
+          ) ?? [],
+        ])
+      ),
+    };
+    const serverRouterInfoScript = `<script>window.__serverRouterInfo = ${JSON.stringify(
+      serverRouterInfo
+    )}</script>`;
 
     // collect preload link
     const routeAssets = getCurrentRouteAssets({
@@ -76,6 +91,7 @@ function ssrHandler(): RequestHandler {
         ...routeAssets.map((f) => getPreloadLink(f)),
         getThemeScript(),
         getQueryClientStateScript(queryClient),
+        serverRouterInfoScript,
       ].join("\n")
     );
 
@@ -85,6 +101,11 @@ function ssrHandler(): RequestHandler {
     });
   };
 }
+
+type ServerRouterInfo = {
+  matchRouteIds: string[];
+  serverPageExports: Record<string, string[]>;
+};
 
 function getPreloadLink(href: string) {
   return `<link rel="modulepreload" href="${href}" />`;
