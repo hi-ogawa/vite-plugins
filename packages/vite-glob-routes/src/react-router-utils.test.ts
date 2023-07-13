@@ -4,29 +4,32 @@ import { createGlobPageRoutes, splitPathSegment } from "./react-router-utils";
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
     const mod = async () => ({});
-    const tree = createGlobPageRoutes({
-      eager: false,
-      root: "(root)",
-      globPage: {
-        "(root)/index.page.js": mod,
-        "(root)/other.page.jsx": mod,
-        "(root)/[dynamic].page.ts": mod,
-        "(root)/subdir/index.page.tsx": mod,
-        "(root)/subdir/other.page.tsx": mod,
-        "(root)/abc/[dynsub].page.tsx": mod,
-        "(root)/abc/[dynsub]/new.page.tsx": mod,
+    const tree = createGlobPageRoutes(
+      {
+        eager: false,
+        root: "(root)",
+        globPage: {
+          "(root)/index.page.js": mod,
+          "(root)/other.page.jsx": mod,
+          "(root)/[dynamic].page.ts": mod,
+          "(root)/subdir/index.page.tsx": mod,
+          "(root)/subdir/other.page.tsx": mod,
+          "(root)/abc/[dynsub].page.tsx": mod,
+          "(root)/abc/[dynsub]/new.page.tsx": mod,
+        },
+        globPageServer: {
+          "(root)/other.page.server.jsx": mod,
+        },
+        globLayout: {
+          "(root)/layout.tsx": mod,
+          "(root)/subdir/layout.jsx": mod,
+        },
+        globLayoutServer: {
+          "(root)/layout.server.tsx": mod,
+        },
       },
-      globPageServer: {
-        "(root)/other.page.server.jsx": mod,
-      },
-      globLayout: {
-        "(root)/layout.tsx": mod,
-        "(root)/subdir/layout.jsx": mod,
-      },
-      globLayoutServer: {
-        "(root)/layout.server.tsx": mod,
-      },
-    });
+      {}
+    );
     expect(tree.routes).toMatchInlineSnapshot(`
       [
         {
