@@ -42,6 +42,7 @@ export function createGlobPageRoutes(
   // TODO: warn invalid usage
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
+  // - `hello.page.server.tsx` without `hello.page.tsx`
   const mapping = createGlobPageMapping(internal);
   const routes = createGlobPageRoutesInner(internal.eager, mapping, options);
   return { routes };
