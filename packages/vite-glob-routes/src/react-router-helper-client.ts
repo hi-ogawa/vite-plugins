@@ -53,9 +53,7 @@ export async function initializeReactRouterClient({
   return { router };
 }
 
-async function routerInitializedPromise(
-  router: ReturnType<typeof createBrowserRouter>
-) {
+async function routerInitializedPromise(router: RemixRouter) {
   await new Promise<void>((resolve) => {
     const unsubscribe = router.subscribe((state) => {
       if (state.initialized) {
