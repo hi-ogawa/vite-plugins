@@ -17,6 +17,7 @@ export type GlobPageRoutesInternal = {
 };
 
 // expose extra data for the use of modulepreload etc...
+// note that the entries are different between client and server build since client doesn't include "*.page.server.js"
 export type RouteObjectWithGlobInfo = RouteObject & {
   globInfo?: {
     entries: GlobPageMappingEntry[];
