@@ -25,6 +25,7 @@ export type GlobPageRoutesUserOptions = {
 
 // expose extra data for the use of modulepreload etc...
 // note that the entries are different between client and server build since client doesn't include "*.page.server.js"
+// TODO: rename to `GlobPageRouteObject`?
 export type RouteObjectWithGlobInfo = RouteObject & {
   id: string;
   globInfo?: {
@@ -33,7 +34,7 @@ export type RouteObjectWithGlobInfo = RouteObject & {
 };
 
 // routes and manifest references same "RouteObject" so mutating one will affect another.
-type GlobPageRoutesResult = {
+export type GlobPageRoutesResult = {
   routes: RouteObjectWithGlobInfo[];
   // provide "RouteObject.id"-based manifest similar to @remix-run/router's convertRoutesToDataRoutes (which is currently exposed as UNSAFE api)
   // https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389

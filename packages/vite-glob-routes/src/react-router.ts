@@ -27,4 +27,7 @@ export {
   proxyServerLoader,
 } from "./react-router-helper-client";
 
-export type { RouteObjectWithGlobInfo } from "./react-router-utils";
+export type {
+  RouteObjectWithGlobInfo,
+  GlobPageRoutesResult,
+} from "./react-router-utils";
