@@ -16,6 +16,13 @@ export type GlobPageRoutesInternal = {
   globLayoutServer: Record<string, GlobImporModule>;
 };
 
+export type GlobPageRoutesUserOptions = {
+  // allow patching each route e.g.
+  // - for auto injecting `proxyServerLoader` as client loader
+  // - for wrapping server loader with consistent error handling
+  transformRoute?: (route: RouteObjectWithGlobInfo) => RouteObjectWithGlobInfo;
+};
+
 // expose extra data for the use of modulepreload etc...
 // note that the entries are different between client and server build since client doesn't include "*.page.server.js"
 export type RouteObjectWithGlobInfo = RouteObject & {
@@ -29,13 +36,14 @@ type GlobPageRoutesResult = {
 };
 
 export function createGlobPageRoutes(
-  internal: GlobPageRoutesInternal
+  internal: GlobPageRoutesInternal,
+  options: GlobPageRoutesUserOptions
 ): GlobPageRoutesResult {
   // TODO: warn invalid usage
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
   const mapping = createGlobPageMapping(internal);
-  const routes = createGlobPageRoutesInner(internal.eager, mapping);
+  const routes = createGlobPageRoutesInner(internal.eager, mapping, options);
   return { routes };
 }
 
@@ -72,7 +80,8 @@ function createGlobPageMapping(
 
 function createGlobPageRoutesInner(
   eager: boolean,
-  mapping: GlobPageMapping
+  mapping: GlobPageMapping,
+  options: GlobPageRoutesUserOptions
 ): RouteObjectWithGlobInfo[] {
   // construct general tree structure
   const pathEntries = Object.entries(mapping).map(([k, v]) => ({
@@ -118,6 +127,9 @@ function createGlobPageRoutesInner(
         route.index = true as false;
         delete route.path;
         delete route.children;
+      }
+      if (options.transformRoute) {
+        return options.transformRoute(route);
       }
       return route;
     });

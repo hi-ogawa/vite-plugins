@@ -26,6 +26,7 @@ export async function initializeReactRouterClient({
   // > For SSR it's expected that lazy modules are
   // > resolved prior to router creation since we can't go into a fallbackElement
   // > UI for SSR'd apps
+  // TODO: what if "Not found"?
   const matchedRoutes = matchRoutes(routes, window.location);
   if (matchedRoutes) {
     // mutating RouteObject directly works for now...
