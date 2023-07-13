@@ -1,10 +1,11 @@
+import { objectPick } from "@hiogawa/utils";
 import { describe, expect, it } from "vitest";
 import { createGlobPageRoutes, splitPathSegment } from "./react-router-utils";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
     const mod = async () => ({});
-    const tree = createGlobPageRoutes(
+    const result = createGlobPageRoutes(
       {
         eager: false,
         root: "(root)",
@@ -30,7 +31,7 @@ describe(createGlobPageRoutes, () => {
       },
       {}
     );
-    expect(tree.routes).toMatchInlineSnapshot(`
+    expect(result.routes).toMatchInlineSnapshot(`
       [
         {
           "children": [
@@ -44,6 +45,7 @@ describe(createGlobPageRoutes, () => {
                   },
                 ],
               },
+              "id": "0-0",
               "index": true,
               "lazy": [Function],
             },
@@ -62,6 +64,7 @@ describe(createGlobPageRoutes, () => {
                   },
                 ],
               },
+              "id": "0-1",
               "lazy": [Function],
               "path": "other",
             },
@@ -75,6 +78,7 @@ describe(createGlobPageRoutes, () => {
                   },
                 ],
               },
+              "id": "0-2",
               "lazy": [Function],
               "path": ":dynamic",
             },
@@ -90,6 +94,7 @@ describe(createGlobPageRoutes, () => {
                       },
                     ],
                   },
+                  "id": "0-3-0",
                   "index": true,
                   "lazy": [Function],
                 },
@@ -103,6 +108,7 @@ describe(createGlobPageRoutes, () => {
                       },
                     ],
                   },
+                  "id": "0-3-1",
                   "lazy": [Function],
                   "path": "other",
                 },
@@ -116,6 +122,7 @@ describe(createGlobPageRoutes, () => {
                   },
                 ],
               },
+              "id": "0-3",
               "lazy": [Function],
               "path": "subdir/",
             },
@@ -131,6 +138,7 @@ describe(createGlobPageRoutes, () => {
                       },
                     ],
                   },
+                  "id": "0-4-0",
                   "lazy": [Function],
                   "path": ":dynsub",
                 },
@@ -146,13 +154,16 @@ describe(createGlobPageRoutes, () => {
                           },
                         ],
                       },
+                      "id": "0-4-1-0",
                       "lazy": [Function],
                       "path": "new",
                     },
                   ],
+                  "id": "0-4-1",
                   "path": ":dynsub/",
                 },
               ],
+              "id": "0-4",
               "path": "abc/",
             },
           ],
@@ -170,10 +181,54 @@ describe(createGlobPageRoutes, () => {
               },
             ],
           },
+          "id": "0",
           "lazy": [Function],
           "path": "/",
         },
       ]
+    `);
+    const manifestSlim = Object.fromEntries(
+      Object.entries(result.manifest).map(([k, v]) => [
+        k,
+        objectPick(v, ["path", "index"]),
+      ])
+    );
+    expect(manifestSlim).toMatchInlineSnapshot(`
+      {
+        "0": {
+          "path": "/",
+        },
+        "0-0": {
+          "index": true,
+        },
+        "0-1": {
+          "path": "other",
+        },
+        "0-2": {
+          "path": ":dynamic",
+        },
+        "0-3": {
+          "path": "subdir/",
+        },
+        "0-3-0": {
+          "index": true,
+        },
+        "0-3-1": {
+          "path": "other",
+        },
+        "0-4": {
+          "path": "abc/",
+        },
+        "0-4-0": {
+          "path": ":dynsub",
+        },
+        "0-4-1": {
+          "path": ":dynsub/",
+        },
+        "0-4-1-0": {
+          "path": "new",
+        },
+      }
     `);
   });
 });

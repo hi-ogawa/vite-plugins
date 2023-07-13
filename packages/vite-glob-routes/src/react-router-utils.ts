@@ -26,13 +26,21 @@ export type GlobPageRoutesUserOptions = {
 // expose extra data for the use of modulepreload etc...
 // note that the entries are different between client and server build since client doesn't include "*.page.server.js"
 export type RouteObjectWithGlobInfo = RouteObject & {
+  id: string;
   globInfo?: {
     entries: GlobPageMappingEntry[];
   };
 };
 
+// routes and manifest references same "RouteObject" so mutating one will affect another.
 type GlobPageRoutesResult = {
   routes: RouteObjectWithGlobInfo[];
+  // provide "RouteObject.id"-based manifest similar to @remix-run/router's convertRoutesToDataRoutes (which is currently exposed as UNSAFE api)
+  // https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
+  // note that usually "id" is assigned during router instantiation (cf. https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/router.ts#L742-L750)
+  // but here we do it by ourselves so that we can do some processing before router instantiation,
+  // which is currently necessary to provide legitimate SSR system (see e.g. `initializeReactRouterClient`)
+  manifest: Record<string, RouteObjectWithGlobInfo>;
 };
 
 export function createGlobPageRoutes(
@@ -44,8 +52,7 @@ export function createGlobPageRoutes(
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
   // - `hello.page.server.tsx` without `hello.page.tsx`
   const mapping = createGlobPageMapping(internal);
-  const routes = createGlobPageRoutesInner(internal.eager, mapping, options);
-  return { routes };
+  return createGlobPageRoutesInner(internal.eager, mapping, options);
 }
 
 // mapping between url path and file system path
@@ -83,7 +90,7 @@ function createGlobPageRoutesInner(
   eager: boolean,
   mapping: GlobPageMapping,
   options: GlobPageRoutesUserOptions
-): RouteObjectWithGlobInfo[] {
+): GlobPageRoutesResult {
   // construct general tree structure
   const pathEntries = Object.entries(mapping).map(([k, v]) => ({
     keys: splitPathSegment(k),
@@ -92,13 +99,24 @@ function createGlobPageRoutesInner(
   const tree = createTree(pathEntries);
 
   // transform to react-router's nested RouteObject array
+  // with also assigning "id" to provide "manifest"
+  const manifest: GlobPageRoutesResult["manifest"] = {};
+
   function recurse(
-    children: Record<string, TreeNode<GlobPageMappingEntry[]>>
+    children: Record<string, TreeNode<GlobPageMappingEntry[]>>,
+    idPath: string[]
   ): RouteObjectWithGlobInfo[] {
-    return Object.entries(children).map(([path, node]) => {
+    return Object.entries(children).map(([path, node], i) => {
+      // do same logic as convertRoutesToDataRoutes https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
+      const idPathNext = [...idPath, String(i)];
+      const id = idPathNext.join("-");
+
       const route: RouteObjectWithGlobInfo = {
+        id,
         path: formatPath(path),
       };
+      manifest[id] = route;
+
       if (node.value) {
         const entries = node.value;
         route.globInfo = { entries };
@@ -121,7 +139,7 @@ function createGlobPageRoutesInner(
         }
       }
       if (node.children) {
-        route.children = recurse(node.children);
+        route.children = recurse(node.children, idPathNext);
       }
       if (path === "index") {
         // silence tricky "index: true" typing
@@ -135,7 +153,9 @@ function createGlobPageRoutesInner(
       return route;
     });
   }
-  return tree.children ? recurse(tree.children) : [];
+
+  const routes = tree.children ? recurse(tree.children, []) : [];
+  return { routes, manifest };
 }
 
 //
