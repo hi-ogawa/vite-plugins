@@ -26,7 +26,8 @@ export async function initializeReactRouterClient({
   // > For SSR it's expected that lazy modules are
   // > resolved prior to router creation since we can't go into a fallbackElement
   // > UI for SSR'd apps
-  // TODO: what if "Not found"?
+
+  // TODO: for "Not found" error, there's no match but it has to load relevant `ErrorBoundary` to avoid hydration mismatch...
   const matchedRoutes = matchRoutes(routes, window.location);
   if (matchedRoutes) {
     // mutating RouteObject directly works for now...
@@ -39,11 +40,10 @@ export async function initializeReactRouterClient({
     }
   }
 
-  const router = createBrowserRouter(routes);
-
-  // after resolving lazy routes above, router should be synchronously initialized.
+  // after resolving lazy routes above, router should be able to initialize synchronously.
   // otherwise, there is probably something wrong in either server or client setup.
   // https://github.com/remix-run/react-router/blob/9c1892ac4d222135a0d1a5033aad4f1fcfab11df/packages/router/router.ts#L791-L796
+  const router = createBrowserRouter(routes);
   if (!router.state.initialized) {
     console.warn("[vite-glob-routes] client router is in unexpected state");
     await routerInitializedPromise(router);
