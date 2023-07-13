@@ -28,6 +28,8 @@ export async function initializeReactRouterClient({
   // > UI for SSR'd apps
 
   // TODO: for "Not found" error, there's no match but it has to load relevant `ErrorBoundary` to avoid hydration mismatch...
+  //       `StaticHandlerContext.matches` will include such routes, so probably server should pass that to client
+  //       since, in general, it already feels weird to do `matchRoutes` for both server and client.
   const matchedRoutes = matchRoutes(routes, window.location);
   if (matchedRoutes) {
     // mutating RouteObject directly works for now...

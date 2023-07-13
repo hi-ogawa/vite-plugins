@@ -52,6 +52,10 @@ function ssrHandler(): RequestHandler {
       </React.StrictMode>
     );
 
+    // pass `matches` to client to help router initialization?
+    // (see TODOs in packages/vite-glob-routes/src/react-router-helper-client.ts)
+    routerResult.context.matches;
+
     // collect preload link
     const routeAssets = getCurrentRouteAssets({
       routes,
