@@ -29,6 +29,8 @@ export type GlobPageRoutesUserOptions = {
 // expose extra data for the use of modulepreload etc...
 // note that the entries are different between client and server build since client doesn't include "*.page.server.js"
 // TODO: rename to `GlobPageRouteObject`?
+// TODO: actually we should move `globInfo` off too `manifest` so that we don't disturb react-router typing too much.
+//       we should replace this with `DataRouteObject` structure which ensures "id" already.
 export type RouteObjectWithGlobInfo = RouteObject & {
   id: string;
   globInfo?: {
@@ -191,6 +193,40 @@ function createTree<T>(entries: { value: T; keys: string[] }[]): TreeNode<T> {
   }
 
   return root;
+}
+
+//
+// it can be used to create "route manifest" on your own e.g. by
+//
+//   const manifest = {};
+//   walkArrayTree(routes as DataRouteObject[], (route) => {
+//     manifest[route.id] = route;
+//   });
+//
+export function walkArrayTree<T extends { children?: T[] }>(
+  roots: T[],
+  // TODO: support "afterFn" too?
+  beforeFn: (v: T) => void
+) {
+  for (const node of roots) {
+    beforeFn(node);
+    if (node.children) {
+      walkArrayTree(node.children, beforeFn);
+    }
+  }
+}
+
+// async version might be convenient, for example, for resolving `lazy` routes
+export async function walkArrayTreeAsync<T extends { children: T[] }>(
+  roots: T[],
+  beforeFn: (v: T) => Promise<void>
+) {
+  for (const node of roots) {
+    await beforeFn(node);
+    if (node.children) {
+      await walkArrayTreeAsync(node.children, beforeFn);
+    }
+  }
 }
 
 // "/" => ["/"]

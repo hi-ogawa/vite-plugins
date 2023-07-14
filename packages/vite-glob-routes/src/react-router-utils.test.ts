@@ -1,6 +1,11 @@
 import { objectPick } from "@hiogawa/utils";
+import type { DataRouteObject } from "react-router";
 import { describe, expect, it } from "vitest";
-import { createGlobPageRoutes, splitPathSegment } from "./react-router-utils";
+import {
+  createGlobPageRoutes,
+  splitPathSegment,
+  walkArrayTree,
+} from "./react-router-utils";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {
@@ -187,13 +192,12 @@ describe(createGlobPageRoutes, () => {
         },
       ]
     `);
-    const manifestSlim = Object.fromEntries(
-      Object.entries(result.manifest).map(([k, v]) => [
-        k,
-        objectPick(v, ["path", "index"]),
-      ])
-    );
-    expect(manifestSlim).toMatchInlineSnapshot(`
+
+    const manifest: Record<string, unknown> = {};
+    walkArrayTree(result.routes as DataRouteObject[], (route) => {
+      manifest[route.id] = objectPick(route, ["path", "index"]);
+    });
+    expect(manifest).toMatchInlineSnapshot(`
       {
         "0": {
           "path": "/",

@@ -35,4 +35,6 @@ export {
 export type {
   RouteObjectWithGlobInfo,
   GlobPageRoutesResult,
+  walkArrayTree,
+  walkArrayTreeAsync,
 } from "./react-router-utils";
