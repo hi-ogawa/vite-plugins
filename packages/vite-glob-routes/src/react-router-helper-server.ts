@@ -64,9 +64,6 @@ export async function handleReactRouterServer({
     };
   }
 
-  // TODO: apply server loader headers?
-  context.loaderHeaders;
-
   return {
     type: "render",
     context,

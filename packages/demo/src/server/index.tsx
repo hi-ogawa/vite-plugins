@@ -96,6 +96,11 @@ function ssrHandler(): RequestHandler {
       ].join("\n")
     );
 
+    // TODO: apply server loader headers?
+    // remix employs `export const header = ...`
+    // https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-server-runtime/headers.ts#L65-L76
+    routerResult.context.loaderHeaders;
+
     return new Response(html, {
       status: routerResult.statusCode,
       headers: [["content-type", "text/html"]],
