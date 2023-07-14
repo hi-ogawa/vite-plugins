@@ -102,7 +102,7 @@ function ssrHandler(): RequestHandler {
   };
 }
 
-type ServerRouterInfo = {
+export type ServerRouterInfo = {
   matchRouteIds: string[];
   serverPageExports: Record<string, string[]>;
 };

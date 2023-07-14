@@ -41,7 +41,11 @@ export function ErrorBoundary() {
             </a>
           </div>
         )}
-        <pre className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder">
+        {/* slightly different error internal on server/client? */}
+        <pre
+          suppressHydrationWarning
+          className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder"
+        >
           {error instanceof Error
             ? error.stack ?? error.message
             : JSON.stringify(error, null, 2)}

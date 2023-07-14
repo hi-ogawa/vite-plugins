@@ -17,6 +17,9 @@ export type GlobPageRoutesInternal = {
 };
 
 export type GlobPageRoutesUserOptions = {
+  // TODO: actually this can be done by mutating `routes` directly outside of plugin, so remove this.
+  //       also `manifest` might not available at the time of `transformRoute` so it's rather useless.
+
   // allow patching each route e.g.
   // - for auto injecting `proxyServerLoader` as client loader
   // - for wrapping server loader with consistent error handling

@@ -7,6 +7,11 @@ import {
 
 // TODO: proper peer-dependency version range
 
+// TODO: rename exports to
+// globPageRoutesClient
+// globPageRoutesClientLazy
+// globPageRoutesServer
+
 // provide "react-router" RouterObject (only type dependency)
 export function globPageRoutes(options?: GlobPageRoutesUserOptions) {
   return createGlobPageRoutes(internalEager, options ?? {});
