@@ -24,7 +24,7 @@ export function createHattipApp() {
 }
 
 function ssrHandler(): RequestHandler {
-  const { routes, manifest } = globPageRoutes();
+  const { routes, routesMeta } = globPageRoutes();
 
   return async (ctx) => {
     // initialize request context for server loaders to prefetch queries
@@ -60,14 +60,14 @@ function ssrHandler(): RequestHandler {
       // for example, client can use this to auto inject `proxyServerLoader` (via `transformRoute`) for the page with server loader.
       // note that client cannot known this during "build" time since we build client before server.
       serverPageExports: Object.fromEntries(
-        Object.entries(manifest).map(([id, route]) => [
+        Object.entries(routesMeta).map(([id, meta]) => [
           id,
-          route.globInfo?.entries.flatMap((e) =>
-            e.isServer ? Object.keys(e.mod) : []
-          ) ?? [],
+          meta.entries.flatMap((e) => (e.isServer ? Object.keys(e.mod) : [])) ??
+            [],
         ])
       ),
     };
+
     const serverRouterInfoScript = `<script>window.__serverRouterInfo = ${JSON.stringify(
       serverRouterInfo
     )}</script>`;

@@ -1,5 +1,5 @@
 import { mapRegExp, tinyassert } from "@hiogawa/utils";
-import type { RouteObject } from "react-router";
+import type { DataRouteObject, RouteObject } from "react-router";
 
 // mirror everything from react-router and used as `RouteObject.lazy`.
 type PageModule = Omit<RouteObject, "index" | "path" | "children" | "lazy">;
@@ -31,8 +31,7 @@ export type GlobPageRoutesUserOptions = {
 // TODO: rename to `GlobPageRouteObject`?
 // TODO: actually we should move `globInfo` off too `manifest` so that we don't disturb react-router typing too much.
 //       we should replace this with `DataRouteObject` structure which ensures "id" already.
-export type RouteObjectWithGlobInfo = RouteObject & {
-  id: string;
+export type RouteObjectWithGlobInfo = DataRouteObject & {
   globInfo?: {
     entries: GlobPageMappingEntry[];
   };
@@ -41,6 +40,14 @@ export type RouteObjectWithGlobInfo = RouteObject & {
 // routes and manifest references same "RouteObject" so mutating one will affect another.
 export type GlobPageRoutesResult = {
   routes: RouteObjectWithGlobInfo[];
+  routesMeta: {
+    [routeId: string]: {
+      // TODO: it should one or two entries, so make it more explicit like `page/pageServer`
+      entries: GlobPageMappingEntry[];
+      // page: GlobPageMappingEntry; // for xxx.page.ts, layout.ts
+      // pageServer?: GlobPageMappingEntry; // for xxx.page.server.ts, layout.server.ts
+    };
+  };
   // TODO: actually having "manifest" is not important since we can just walk the tree to get mapping easily.
   //       we could just provide simple utility like `walkRouteTree: (routes: RouteObject[], fn: (route: RouteObject) => void) => void`.
   //       manifest can be generated easily using such utility.
@@ -111,6 +118,7 @@ function createGlobPageRoutesInner(
   // transform to react-router's nested RouteObject array
   // with also assigning "id" to provide "manifest"
   const manifest: GlobPageRoutesResult["manifest"] = {};
+  const routesMeta: GlobPageRoutesResult["routesMeta"] = {};
 
   function recurse(
     children: Record<string, TreeNode<GlobPageMappingEntry[]>>,
@@ -130,6 +138,7 @@ function createGlobPageRoutesInner(
       if (node.value) {
         const entries = node.value;
         route.globInfo = { entries };
+        routesMeta[id] = { entries };
         if (eager) {
           const mods = entries.map((e) => {
             tinyassert(typeof e.mod !== "function");
@@ -165,7 +174,7 @@ function createGlobPageRoutesInner(
   }
 
   const routes = tree.children ? recurse(tree.children, []) : [];
-  return { routes, manifest };
+  return { routes, manifest, routesMeta: routesMeta };
 }
 
 //
@@ -217,7 +226,7 @@ export function walkArrayTree<T extends { children?: T[] }>(
 }
 
 // async version might be convenient, for example, for resolving `lazy` routes
-export async function walkArrayTreeAsync<T extends { children: T[] }>(
+export async function walkArrayTreeAsync<T extends { children?: T[] }>(
   roots: T[],
   beforeFn: (v: T) => Promise<void>
 ) {

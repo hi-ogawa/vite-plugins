@@ -3,10 +3,15 @@ import { tinyassert } from "@hiogawa/utils";
 import {
   globPageRoutesLazy,
   proxyServerLoader,
+  walkArrayTreeAsync,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  type DataRouteObject,
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
 import type { ServerRouterInfo } from "../server";
 import {
   ReactQueryWrapper,
@@ -17,7 +22,7 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  const { routes, manifest } = globPageRoutesLazy();
+  const { routes } = globPageRoutesLazy();
 
   //
   // Resolve "lazy" route for current matching routes. otherwise it will leads to hydration mismatch and redundant initial client loader call.
@@ -32,37 +37,63 @@ async function main() {
   //
   const serverRouterInfo: ServerRouterInfo = (window as any).__serverRouterInfo;
 
-  // for example, we could also implement the convention of auto injecting `proxyServerLoader` for the pages with server loader
-  for (const [id, serverExports] of Object.entries(
-    serverRouterInfo.serverPageExports
-  )) {
-    if (serverExports.includes("loader")) {
-      const route = manifest[id];
-      tinyassert(route);
-      tinyassert(route.lazy);
-      // currently such convention should be applied only for "/loader-data"
-      if (!route.path?.includes("loader-data")) {
-        continue;
-      }
-      const oldLazy = route.lazy;
-      route.lazy = async () => {
-        const resolved = await oldLazy();
-        tinyassert(!resolved.loader);
-        resolved.loader = proxyServerLoader;
-        return resolved;
-      };
-    }
-  }
-
-  for (const id of serverRouterInfo.matchRouteIds) {
-    // mutating RouteObject in `manifest` will affect `routes`
-    const route = manifest[id];
-    tinyassert(route);
+  await walkArrayTreeAsync(routes as DataRouteObject[], async (route) => {
     tinyassert(route.lazy);
-    const resolved = await route.lazy();
-    delete route.lazy;
-    Object.assign(route, resolved);
-  }
+
+    // implement the convention of auto injecting `proxyServerLoader` for the pages with server loader
+    const serverExports = serverRouterInfo.serverPageExports[route.id];
+    if (serverExports?.includes("loader")) {
+      // currently such convention should be applied only for "/loader-data"
+      if (route.path?.includes("loader-data")) {
+        const oldLazy = route.lazy;
+        route.lazy = async () => {
+          const resolved = await oldLazy();
+          tinyassert(!resolved.loader);
+          resolved.loader = proxyServerLoader;
+          return resolved;
+        };
+      }
+    }
+
+    // resolve lazy of initial routes
+    if (serverRouterInfo.matchRouteIds.includes(route.id)) {
+      const resolved = await route.lazy();
+      delete route.lazy;
+      Object.assign(route, resolved);
+    }
+  });
+
+  // for example, we could also implement the convention of auto injecting `proxyServerLoader` for the pages with server loader
+  // for (const [id, serverExports] of Object.entries(
+  //   serverRouterInfo.serverPageExports
+  // )) {
+  //   if (serverExports.includes("loader")) {
+  //     const route = manifest[id];
+  //     tinyassert(route);
+  //     tinyassert(route.lazy);
+  //     // currently such convention should be applied only for "/loader-data"
+  //     if (!route.path?.includes("loader-data")) {
+  //       continue;
+  //     }
+  //     const oldLazy = route.lazy;
+  //     route.lazy = async () => {
+  //       const resolved = await oldLazy();
+  //       tinyassert(!resolved.loader);
+  //       resolved.loader = proxyServerLoader;
+  //       return resolved;
+  //     };
+  //   }
+  // }
+
+  // for (const id of serverRouterInfo.matchRouteIds) {
+  //   // mutating RouteObject in `manifest` will affect `routes`
+  //   const route = manifest[id];
+  //   tinyassert(route);
+  //   tinyassert(route.lazy);
+  //   const resolved = await route.lazy();
+  //   delete route.lazy;
+  //   Object.assign(route, resolved);
+  // }
 
   const router = createBrowserRouter(routes);
   const queryClient = createQueryClientWithState();
