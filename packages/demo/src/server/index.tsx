@@ -1,10 +1,11 @@
 import { type RequestHandler, compose } from "@hattip/compose";
+import { typedBoolean } from "@hiogawa/utils";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
-  getCurrentRouteAssets,
   globPageRoutes,
   handleReactRouterServer,
+  resolveManifestAssets,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
@@ -72,15 +73,19 @@ function ssrHandler(): RequestHandler {
       serverRouterInfo
     )}</script>`;
 
-    // collect preload link
-    const routeAssets = getCurrentRouteAssets({
-      routes,
-      context: routerResult.context,
-      manifest: import.meta.env.PROD
-        ? // @ts-ignore
-          (await import("/dist/client/manifest.json")).default
-        : undefined,
-    });
+    // collect assets for initial routes to preload (TODO: move to handleReactRouterServer?)
+    let routeAssets = serverRouterInfo.matchRouteIds
+      .flatMap((id) =>
+        routesMeta[id]?.entries.map((e) => !e.isServer && e.file)
+      )
+      .filter(typedBoolean);
+
+    // map to production asset path
+    if (import.meta.env.PROD) {
+      // @ts-ignore
+      const { default: manifest } = await import("/dist/client/manifest.json");
+      routeAssets = resolveManifestAssets(routeAssets, manifest);
+    }
 
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);

@@ -24,7 +24,8 @@ export function globPageRoutesLazy(options?: GlobPageRoutesUserOptions) {
 // provide helpers for standard SSR setup (depends on "react-router-dom")
 export {
   handleReactRouterServer,
-  getCurrentRouteAssets,
+  getCurrentRouteAssets, // TODO: remove?
+  resolveManifestAssets,
 } from "./react-router-helper-server";
 
 export {
@@ -35,6 +36,6 @@ export {
 export type {
   RouteObjectWithGlobInfo,
   GlobPageRoutesResult,
-  walkArrayTree,
-  walkArrayTreeAsync,
 } from "./react-router-utils";
+
+export { walkArrayTree, walkArrayTreeAsync } from "./react-router-utils";

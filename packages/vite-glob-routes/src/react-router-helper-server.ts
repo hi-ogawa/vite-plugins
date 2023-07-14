@@ -110,7 +110,7 @@ export function getCurrentRouteAssets({
   return files;
 }
 
-function resolveManifestAssets(files: string[], manifest: Manifest) {
+export function resolveManifestAssets(files: string[], manifest: Manifest) {
   const entryKeys = new Set<string>();
 
   function collectEnryKeysRecursive(key: string) {
