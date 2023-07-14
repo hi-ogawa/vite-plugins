@@ -48,16 +48,6 @@ export type GlobPageRoutesResult = {
       // pageServer?: GlobPageMappingEntry; // for xxx.page.server.ts, layout.server.ts
     };
   };
-  // TODO: actually having "manifest" is not important since we can just walk the tree to get mapping easily.
-  //       we could just provide simple utility like `walkRouteTree: (routes: RouteObject[], fn: (route: RouteObject) => void) => void`.
-  //       manifest can be generated easily using such utility.
-
-  // provide "RouteObject.id"-based manifest similar to @remix-run/router's convertRoutesToDataRoutes (which is currently exposed as UNSAFE api)
-  // https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
-  // note that usually "id" is assigned during router instantiation (cf. https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/router.ts#L742-L750)
-  // but here we do it by ourselves so that we can do some processing before router instantiation,
-  // which is currently necessary to provide legitimate SSR system (see e.g. `initializeReactRouterClient`)
-  manifest: Record<string, RouteObjectWithGlobInfo>;
 };
 
 export function createGlobPageRoutes(
@@ -116,8 +106,7 @@ function createGlobPageRoutesInner(
   const tree = createTree(pathEntries);
 
   // transform to react-router's nested RouteObject array
-  // with also assigning "id" to provide "manifest"
-  const manifest: GlobPageRoutesResult["manifest"] = {};
+  // with assigning "id" on our own to manipulate route easily
   const routesMeta: GlobPageRoutesResult["routesMeta"] = {};
 
   function recurse(
@@ -133,7 +122,6 @@ function createGlobPageRoutesInner(
         id,
         path: formatPath(path),
       };
-      manifest[id] = route;
 
       if (node.value) {
         const entries = node.value;
@@ -174,7 +162,7 @@ function createGlobPageRoutesInner(
   }
 
   const routes = tree.children ? recurse(tree.children, []) : [];
-  return { routes, manifest, routesMeta: routesMeta };
+  return { routes, routesMeta };
 }
 
 //
