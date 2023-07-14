@@ -1,9 +1,5 @@
 import { tinyassert, typedBoolean } from "@hiogawa/utils";
-import {
-  type RouteObject,
-  isRouteErrorResponse,
-  matchRoutes,
-} from "react-router";
+import { isRouteErrorResponse, matchRoutes } from "react-router";
 import {
   type StaticHandlerContext,
   createStaticHandler,
@@ -36,7 +32,7 @@ export async function handleReactRouterServer({
   request,
   requestContext,
 }: {
-  routes: RouteObject[];
+  routes: RouteObjectWithGlobInfo[];
   request: Request;
   requestContext?: unknown; // provide app local context to server loader
 }): Promise<ServerRouterResult> {
