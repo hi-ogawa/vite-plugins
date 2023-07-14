@@ -1,6 +1,9 @@
 import "virtual:uno.css";
 import { tinyassert } from "@hiogawa/utils";
-import { globPageRoutesLazy } from "@hiogawa/vite-glob-routes/dist/react-router";
+import {
+  globPageRoutesLazy,
+  proxyServerLoader,
+} from "@hiogawa/vite-glob-routes/dist/react-router";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -28,6 +31,29 @@ async function main() {
   // Note that doing `matchRoutes` on client seems to have a slightly different behavior regarding error/not-found compared to server's `StaticHandler.query`.
   //
   const serverRouterInfo: ServerRouterInfo = (window as any).__serverRouterInfo;
+
+  // for example, we could also implement the convention of auto injecting `proxyServerLoader` for the pages with server loader
+  for (const [id, serverExports] of Object.entries(
+    serverRouterInfo.serverPageExports
+  )) {
+    if (serverExports.includes("loader")) {
+      const route = manifest[id];
+      tinyassert(route);
+      tinyassert(route.lazy);
+      // currently such convention should be applied only for "/loader-data"
+      if (!route.path?.includes("loader-data")) {
+        continue;
+      }
+      const oldLazy = route.lazy;
+      route.lazy = async () => {
+        const resolved = await oldLazy();
+        tinyassert(!resolved.loader);
+        resolved.loader = proxyServerLoader;
+        return resolved;
+      };
+    }
+  }
+
   for (const id of serverRouterInfo.matchRouteIds) {
     // mutating RouteObject in `manifest` will affect `routes`
     const route = manifest[id];

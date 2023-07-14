@@ -57,7 +57,8 @@ function ssrHandler(): RequestHandler {
     const serverRouterInfo: ServerRouterInfo = {
       // need to resolve lazy route before hydration on client
       matchRouteIds: routerResult.context.matches.map((v) => v.route.id),
-      // for example, client can use this to auto inject `proxyServerLoader` (via `transformRoute`) for the page with server loader
+      // for example, client can use this to auto inject `proxyServerLoader` (via `transformRoute`) for the page with server loader.
+      // note that client cannot known this during "build" time since we build client before server.
       serverPageExports: Object.fromEntries(
         Object.entries(manifest).map(([id, route]) => [
           id,
