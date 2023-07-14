@@ -1,9 +1,6 @@
 import internalEager from "virtual:@hiogawa/vite-glob-routes/internal/page-routes";
 import internalLazy from "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy";
-import {
-  type GlobPageRoutesUserOptions,
-  createGlobPageRoutes,
-} from "./react-router-utils";
+import { createGlobPageRoutes } from "./react-router-utils";
 
 // TODO: proper peer-dependency version range
 
@@ -13,18 +10,17 @@ import {
 // globPageRoutesServer
 
 // provide "react-router" RouterObject (only type dependency)
-export function globPageRoutes(options?: GlobPageRoutesUserOptions) {
-  return createGlobPageRoutes(internalEager, options ?? {});
+export function globPageRoutes() {
+  return createGlobPageRoutes(internalEager);
 }
 
-export function globPageRoutesLazy(options?: GlobPageRoutesUserOptions) {
-  return createGlobPageRoutes(internalLazy, options ?? {});
+export function globPageRoutesLazy() {
+  return createGlobPageRoutes(internalLazy);
 }
 
 // provide helpers for standard SSR setup (depends on "react-router-dom")
 export {
   handleReactRouterServer,
-  getCurrentRouteAssets, // TODO: remove?
   resolveManifestAssets,
 } from "./react-router-helper-server";
 
@@ -33,9 +29,6 @@ export {
   proxyServerLoader,
 } from "./react-router-helper-client";
 
-export type {
-  RouteObjectWithGlobInfo,
-  GlobPageRoutesResult,
-} from "./react-router-utils";
+export type { GlobPageRoutesResult } from "./react-router-utils";
 
 export { walkArrayTree, walkArrayTreeAsync } from "./react-router-utils";

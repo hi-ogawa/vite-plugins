@@ -16,50 +16,25 @@ export type GlobPageRoutesInternal = {
   globLayoutServer: Record<string, GlobImporModule>;
 };
 
-export type GlobPageRoutesUserOptions = {
-  // TODO: actually this can be done by mutating `routes` directly outside of plugin, so remove this.
-  //       also `manifest` might not available at the time of `transformRoute` so it's rather useless.
-
-  // allow patching each route e.g.
-  // - for auto injecting `proxyServerLoader` as client loader
-  // - for wrapping server loader with consistent error handling
-  transformRoute?: (route: RouteObjectWithGlobInfo) => RouteObjectWithGlobInfo;
-};
-
-// expose extra data for the use of modulepreload etc...
-// note that the entries are different between client and server build since client doesn't include "*.page.server.js"
-// TODO: rename to `GlobPageRouteObject`?
-// TODO: actually we should move `globInfo` off too `manifest` so that we don't disturb react-router typing too much.
-//       we should replace this with `DataRouteObject` structure which ensures "id" already.
-export type RouteObjectWithGlobInfo = DataRouteObject & {
-  globInfo?: {
-    entries: GlobPageMappingEntry[];
-  };
-};
-
-// routes and manifest references same "RouteObject" so mutating one will affect another.
 export type GlobPageRoutesResult = {
-  routes: RouteObjectWithGlobInfo[];
+  routes: DataRouteObject[];
   routesMeta: {
     [routeId: string]: {
       // TODO: it should one or two entries, so make it more explicit like `page/pageServer`
       entries: GlobPageMappingEntry[];
-      // page: GlobPageMappingEntry; // for xxx.page.ts, layout.ts
-      // pageServer?: GlobPageMappingEntry; // for xxx.page.server.ts, layout.server.ts
     };
   };
 };
 
 export function createGlobPageRoutes(
-  internal: GlobPageRoutesInternal,
-  options: GlobPageRoutesUserOptions
+  internal: GlobPageRoutesInternal
 ): GlobPageRoutesResult {
   // TODO: warn invalid usage
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
   // - `hello.page.server.tsx` without `hello.page.tsx`
   const mapping = createGlobPageMapping(internal);
-  return createGlobPageRoutesInner(internal.eager, mapping, options);
+  return createGlobPageRoutesInner(internal.eager, mapping);
 }
 
 // mapping between url path and file system path
@@ -95,8 +70,7 @@ function createGlobPageMapping(
 
 function createGlobPageRoutesInner(
   eager: boolean,
-  mapping: GlobPageMapping,
-  options: GlobPageRoutesUserOptions
+  mapping: GlobPageMapping
 ): GlobPageRoutesResult {
   // construct general tree structure
   const pathEntries = Object.entries(mapping).map(([k, v]) => ({
@@ -106,26 +80,25 @@ function createGlobPageRoutesInner(
   const tree = createTree(pathEntries);
 
   // transform to react-router's nested RouteObject array
-  // with assigning "id" on our own to manipulate route easily
+  // with assigning "id" on our own to allow manipulating routes easily
   const routesMeta: GlobPageRoutesResult["routesMeta"] = {};
 
   function recurse(
     children: Record<string, TreeNode<GlobPageMappingEntry[]>>,
     idPath: string[]
-  ): RouteObjectWithGlobInfo[] {
+  ): DataRouteObject[] {
     return Object.entries(children).map(([path, node], i) => {
       // do same logic as convertRoutesToDataRoutes https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
       const idPathNext = [...idPath, String(i)];
       const id = idPathNext.join("-");
 
-      const route: RouteObjectWithGlobInfo = {
+      const route: DataRouteObject = {
         id,
         path: formatPath(path),
       };
 
       if (node.value) {
         const entries = node.value;
-        route.globInfo = { entries };
         routesMeta[id] = { entries };
         if (eager) {
           const mods = entries.map((e) => {
@@ -153,9 +126,6 @@ function createGlobPageRoutesInner(
         route.index = true as false;
         delete route.path;
         delete route.children;
-      }
-      if (options.transformRoute) {
-        return options.transformRoute(route);
       }
       return route;
     });
