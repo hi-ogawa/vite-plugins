@@ -183,22 +183,6 @@ export function walkArrayTree<T extends { children?: T[] }>(
   }
 }
 
-// async version might be convenient, for example, for resolving `lazy` routes
-// TODO: actually probably not necessary since, for example, users can use walkArrayTree first
-//       to collect all the lazy synchronously then resolve everything after that...
-//       so remove it.
-export async function walkArrayTreeAsync<T extends { children?: T[] }>(
-  roots: T[],
-  beforeFn: (v: T) => Promise<void>
-) {
-  for (const node of roots) {
-    await beforeFn(node);
-    if (node.children) {
-      await walkArrayTreeAsync(node.children, beforeFn);
-    }
-  }
-}
-
 // "/" => ["/"]
 // "/xyz" => ["/", "xyz"]
 // "/abc/def" => ["/", "abc/", "def"]

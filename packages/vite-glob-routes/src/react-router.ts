@@ -21,11 +21,7 @@ export function globPageRoutesLazy() {
   return createGlobPageRoutes(internalLazy);
 }
 
-export {
-  type GlobPageRoutesResult,
-  walkArrayTree,
-  walkArrayTreeAsync,
-} from "./react-router-utils";
+export { type GlobPageRoutesResult, walkArrayTree } from "./react-router-utils";
 
 //
 // provide helpers for standard SSR setup (depends on "react-router-dom")
@@ -36,10 +32,4 @@ export {
   resolveManifestAssets,
 } from "./react-router-helper-server";
 
-export {
-  initializeClientRoutes,
-  initializeReactRouterClient,
-  proxyServerLoader,
-} from "./react-router-helper-client";
-
-export { type ExtraRouterInfo as RuntimeRouterInfo } from "./react-router-helper-shared";
+export { initializeClientRoutes } from "./react-router-helper-client";
