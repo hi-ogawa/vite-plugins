@@ -10,9 +10,14 @@ export function Component() {
       <div className="w-full p-6">
         <div className="flex flex-col gap-2">
           Sub directory (other)
-          <pre className="text-sm border p-2">
-            useMatches() = {JSON.stringify(matches, null, 2)}
-          </pre>
+          <div className="flex flex-col gap-2 p-2 border text-sm">
+            <pre>useMatches()</pre>
+            {matches.map((m) => (
+              <pre key={m.id} data-testid={m.id}>
+                {JSON.stringify(m, null, 2)}
+              </pre>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -57,6 +57,47 @@ test.describe("loader-data", () => {
   });
 });
 
+test.describe("layout-loader", () => {
+  async function assetUseMatches(page: Page) {
+    await expect(page.getByTestId("/")).toHaveText(`{
+      "id": "/",
+      "pathname": "/",
+      "params": {},
+      "data": null,
+      "handle": "root-handle"
+    }`);
+    await expect(page.getByTestId("/subdir/")).toHaveText(`{
+      "id": "/subdir/",
+      "pathname": "/subdir",
+      "params": {},
+      "data": {
+        "message": "for layout"
+      },
+      "handle": "subdir-handle"
+    }`);
+    await expect(page.getByTestId("/subdir/other")).toHaveText(`{
+      "id": "/subdir/other",
+      "pathname": "/subdir/other",
+      "params": {},
+      "data": {
+        "message": "for other"
+      },
+      "handle": "subdir-other-handle"
+    }`);
+  }
+
+  test("ssr", async ({ page }) => {
+    await page.goto("/subdir/other");
+    await assetUseMatches(page);
+  });
+
+  test("navigation", async ({ page }) => {
+    await page.goto("/");
+    await isPageReady(page);
+    await page.getByRole("link", { name: "/subdir/other" }).click();
+  });
+});
+
 test.describe("server-data", () => {
   test("ssr", async ({ page }) => {
     await page.goto("/server-data");
