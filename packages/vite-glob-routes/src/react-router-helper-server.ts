@@ -19,7 +19,7 @@ import {
 } from "./react-router-helper-shared";
 import type { GlobPageRoutesResult } from "./react-router-utils";
 
-// why is this not exposed?
+// this type not expose?
 type RemixRouter = ReturnType<typeof createStaticRouter>;
 
 type ServerRouterResult =
