@@ -1,5 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import { type DataRouteMatch } from "react-router";
+import type { Manifest } from "vite";
 import type { RoutesMeta } from "./react-router-utils";
 import { mapValues } from "./utils";
 
@@ -51,6 +52,8 @@ export interface ExtraRouterInfo {
   // note that client cannot known this during "build" time since we build client before server.
   // also "file" mapping data will be needed to implement client-side link prefetching.
   routesMeta: SerializedRoutesMeta;
+  // for release build, extra mapping is required e.g. for link prefetching.
+  manifest?: Manifest;
 }
 
 export const KEY_extraRouterInfo = "__globRoutes__ExtraRouterInfo";
@@ -89,4 +92,18 @@ export function createGlobalScript(key: string, data: unknown) {
 export function getGlobalScriptData(key: string): unknown {
   tinyassert(typeof window !== "undefined");
   return (window as any)[key];
+}
+
+//
+// asset prefetching
+//
+
+export function getPreloadLink(href: string) {
+  return `<link rel="modulepreload" href="${href}" />`;
+}
+
+// TODO
+export function resolveRouteAssetPaths(routeId: string, info: ExtraRouterInfo) {
+  routeId;
+  info;
 }

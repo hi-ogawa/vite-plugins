@@ -4,7 +4,6 @@ import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
   globPageRoutes,
   handleReactRouterServer,
-  resolveManifestAssets,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import type { Context, MiddlewareHandler } from "hono";
@@ -12,6 +11,7 @@ import { logger } from "hono/logger";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouterProvider } from "react-router-dom/server";
+import type { Manifest } from "vite";
 import {
   ReactQueryWrapper,
   __QUERY_CLIENT_STATE,
@@ -34,6 +34,7 @@ function ssrHandler(): RequestHandler {
     const routerResult = await handleReactRouterServer({
       routes,
       routesMeta,
+      manifest: await getClientManifest(),
       request: ctx.request,
       requestContext: ctx,
     });
@@ -53,14 +54,6 @@ function ssrHandler(): RequestHandler {
       </React.StrictMode>
     );
 
-    // map to production asset path
-    let assetPaths = routerResult.assetPaths;
-    if (import.meta.env.PROD) {
-      // @ts-ignore
-      const { default: manifest } = await import("/dist/client/manifest.json");
-      assetPaths = resolveManifestAssets(assetPaths, manifest);
-    }
-
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
 
@@ -68,8 +61,7 @@ function ssrHandler(): RequestHandler {
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       [
-        ...assetPaths.map((f) => getPreloadLink(f)),
-        routerResult.extraRouterInfoScript,
+        routerResult.injectToHtml,
         getThemeScript(),
         getQueryClientStateScript(queryClient),
       ].join("\n")
@@ -87,8 +79,13 @@ function ssrHandler(): RequestHandler {
   };
 }
 
-function getPreloadLink(href: string) {
-  return `<link rel="modulepreload" href="${href}" />`;
+async function getClientManifest(): Promise<Manifest | undefined> {
+  if (import.meta.env.PROD) {
+    // @ts-ignore
+    const lib = await import("/dist/client/manifest.json");
+    return lib.default;
+  }
+  return;
 }
 
 function getThemeScript() {

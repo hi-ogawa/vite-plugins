@@ -10,6 +10,7 @@ import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
   createGlobalScript,
+  getPreloadLink,
   serializeMatch,
   serializeRoutesMata,
   unwrapLoaderRequest,
@@ -26,9 +27,7 @@ type ServerRouterResult =
       context: StaticHandlerContext;
       router: RemixRouter;
       statusCode: number;
-      extraRouterInfo: ExtraRouterInfo;
-      extraRouterInfoScript: string;
-      assetPaths: string[];
+      injectToHtml: string;
     }
   | {
       type: "response";
@@ -38,11 +37,13 @@ type ServerRouterResult =
 export async function handleReactRouterServer({
   routes,
   routesMeta,
+  manifest,
   request,
   requestContext,
 }: {
   routes: GlobPageRoutesResult["routes"];
   routesMeta: GlobPageRoutesResult["routesMeta"];
+  manifest?: Manifest;
   request: Request;
   requestContext?: unknown; // provide app local context to server loader
 }): Promise<ServerRouterResult> {
@@ -74,29 +75,33 @@ export async function handleReactRouterServer({
   // extra runtime info
   const extraRouterInfo: ExtraRouterInfo = {
     matches: context.matches.map((m) => serializeMatch(m)),
-    routesMeta: serializeRoutesMata(routesMeta), // TODO: this doesn't change on each render. so we could cache it?
+    routesMeta: serializeRoutesMata(routesMeta),
+    manifest,
   };
 
-  // collect asset paths for initial routes for assets preloading
-  // (for production, it further needs to map via "dist/client/manifest.json")
-  // (this matters only when users chose to use `globPageRoutesLazy` instead of `globPageRoutes`)
-  const assetPaths = extraRouterInfo.matches
+  // collect asset paths of initial routes for assets preloading
+  // (this matters only when users chose to use `globPageRoutesLazy` instead of `globPageRoutes` for per-page code-spliting)
+  let assetPaths = extraRouterInfo.matches
     .flatMap((m) =>
       routesMeta[m.route.id]?.entries.map((e) => !e.isServer && e.file)
     )
     .filter(typedBoolean);
+
+  if (manifest) {
+    assetPaths = resolveManifestAssets(assetPaths, manifest);
+  }
 
   return {
     type: "render",
     context,
     router: createStaticRouter(handler.dataRoutes, context),
     statusCode: getResponseStatusCode(context),
-    extraRouterInfo,
-    extraRouterInfoScript: createGlobalScript(
-      KEY_extraRouterInfo,
-      extraRouterInfo
-    ),
-    assetPaths,
+    injectToHtml: [
+      assetPaths.map((f) => getPreloadLink(f)),
+      createGlobalScript(KEY_extraRouterInfo, extraRouterInfo),
+    ]
+      .flat()
+      .join("\n"),
   };
 }
 
