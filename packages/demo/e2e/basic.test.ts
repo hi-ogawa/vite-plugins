@@ -41,6 +41,22 @@ test.describe("response-status-code", () => {
   });
 });
 
+test.describe("loader-data", () => {
+  test("ssr", async ({ page }) => {
+    // TOOD: assert there's no client request to "/loader-data_data.json"?
+    await page.goto("/loader-data");
+    await page.getByText('{ "message": "hello loader data" }').click();
+  });
+
+  test("navigation", async ({ page }) => {
+    await page.goto("/");
+    await isPageReady(page);
+
+    await page.getByRole("link", { name: "/loader-data" }).click();
+    await page.getByText('{ "message": "hello loader data" }').click();
+  });
+});
+
 test.describe("server-data", () => {
   test("ssr", async ({ page }) => {
     await page.goto("/server-data");
