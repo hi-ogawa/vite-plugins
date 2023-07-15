@@ -30,6 +30,9 @@
     "build": "tsup",
     "release": "pnpm publish --no-git-checks --access public"
   },
+  "devDependencies": {
+    "vite": "^4.4.4"
+  },
   "peerDependencies": {
     "vite": "*"
   }

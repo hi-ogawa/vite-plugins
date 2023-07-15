@@ -39,7 +39,8 @@
     "@hattip/compose": "^0.0.34",
     "@types/react": "^18.2.14",
     "react-router": "^6.13.0",
-    "react-router-dom": "^6.13.0"
+    "react-router-dom": "^6.13.0",
+    "vite": "^4.4.4"
   },
   "peerDependencies": {
     "@hattip/compose": "*",
