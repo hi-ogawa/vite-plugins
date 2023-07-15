@@ -27,9 +27,5 @@ export { type GlobPageRoutesResult, walkArrayTree } from "./react-router-utils";
 // provide helpers for standard SSR setup (depends on "react-router-dom")
 //
 
-export {
-  handleReactRouterServer,
-  resolveManifestAssets,
-} from "./react-router-helper-server";
-
+export { handleReactRouterServer } from "./react-router-helper-server";
 export { initializeClientRoutes } from "./react-router-helper-client";

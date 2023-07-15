@@ -1,4 +1,4 @@
-import { tinyassert, typedBoolean } from "@hiogawa/utils";
+import { typedBoolean } from "@hiogawa/utils";
 import { isRouteErrorResponse } from "react-router";
 import {
   type StaticHandlerContext,
@@ -11,6 +11,7 @@ import {
   KEY_extraRouterInfo,
   createGlobalScript,
   getPreloadLink,
+  resolveAssetPathsByRouteId,
   serializeMatch,
   serializeRoutesMata,
   unwrapLoaderRequest,
@@ -81,15 +82,9 @@ export async function handleReactRouterServer({
 
   // collect asset paths of initial routes for assets preloading
   // (this matters only when users chose to use `globPageRoutesLazy` instead of `globPageRoutes` for per-page code-spliting)
-  let assetPaths = extraRouterInfo.matches
-    .flatMap((m) =>
-      routesMeta[m.route.id]?.entries.map((e) => !e.isServer && e.file)
-    )
-    .filter(typedBoolean);
-
-  if (manifest) {
-    assetPaths = resolveManifestAssets(assetPaths, manifest);
-  }
+  const assetPaths = extraRouterInfo.matches.flatMap((m) =>
+    resolveAssetPathsByRouteId(m.route.id, extraRouterInfo)
+  );
 
   return {
     type: "render",
@@ -117,28 +112,4 @@ function getResponseStatusCode(context: StaticHandlerContext): number {
     return 500;
   }
   return 200;
-}
-
-// general vite manifest utility to map production asset
-// we don't do this inside the plugin since it's tricky to have a hard dependency on client manifest on server build
-export function resolveManifestAssets(files: string[], manifest: Manifest) {
-  const entryKeys = new Set<string>();
-
-  function collectEnryKeysRecursive(key: string) {
-    if (!entryKeys.has(key)) {
-      const e = manifest[key];
-      tinyassert(e);
-      entryKeys.add(key);
-      for (const nextKey of e.imports ?? []) {
-        collectEnryKeysRecursive(nextKey);
-      }
-    }
-  }
-
-  for (const file of files) {
-    // strip "/"
-    collectEnryKeysRecursive(file.slice(1));
-  }
-
-  return [...entryKeys].map((key) => "/" + manifest[key]!.file);
 }

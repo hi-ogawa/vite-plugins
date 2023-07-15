@@ -1,4 +1,4 @@
-import { tinyassert } from "@hiogawa/utils";
+import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import { type DataRouteMatch } from "react-router";
 import type { Manifest } from "vite";
 import type { RoutesMeta } from "./react-router-utils";
@@ -53,6 +53,7 @@ export interface ExtraRouterInfo {
   // also "file" mapping data will be needed to implement client-side link prefetching.
   routesMeta: SerializedRoutesMeta;
   // for release build, extra mapping is required e.g. for link prefetching.
+  // (TODO: technically such mapping can be done only once on server, so passing whole manifest is not necessary.)
   manifest?: Manifest;
 }
 
@@ -102,8 +103,43 @@ export function getPreloadLink(href: string) {
   return `<link rel="modulepreload" href="${href}" />`;
 }
 
-// TODO
-export function resolveRouteAssetPaths(routeId: string, info: ExtraRouterInfo) {
-  routeId;
-  info;
+export function resolveAssetPathsByRouteId(
+  routeId: string,
+  extraRouterInfo: ExtraRouterInfo
+) {
+  const { routesMeta, manifest } = extraRouterInfo;
+
+  let files =
+    routesMeta[routeId]?.entries
+      .map((e) => !e.isServer && e.file)
+      .filter(typedBoolean) ?? [];
+
+  if (manifest) {
+    files = resolveManifestAssets(files, manifest);
+  }
+
+  return files;
+}
+
+// general vite manifest utility to map production asset
+function resolveManifestAssets(files: string[], manifest: Manifest) {
+  const entryKeys = new Set<string>();
+
+  function collectEnryKeysRecursive(key: string) {
+    if (!entryKeys.has(key)) {
+      const e = manifest[key];
+      tinyassert(e);
+      entryKeys.add(key);
+      for (const nextKey of e.imports ?? []) {
+        collectEnryKeysRecursive(nextKey);
+      }
+    }
+  }
+
+  for (const file of files) {
+    // strip "/"
+    collectEnryKeysRecursive(file.slice(1));
+  }
+
+  return [...entryKeys].map((key) => "/" + manifest[key]!.file);
 }
