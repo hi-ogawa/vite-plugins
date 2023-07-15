@@ -1,4 +1,4 @@
-import { tinyassert, typedBoolean } from "@hiogawa/utils";
+import { type Result, tinyassert, typedBoolean } from "@hiogawa/utils";
 import { type DataRouteMatch } from "react-router";
 import type { Manifest } from "vite";
 import type { RoutesMeta } from "./react-router-utils";
@@ -38,11 +38,43 @@ const LOCATION = "location";
 const LOADER_REDIRECT_URL = "x-loader-redirect-url";
 const LOADER_REDIRECT_STATUS = "x-loader-redirect-status";
 
-// cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-server-runtime/server.ts#L127
-export function wrapLoaderResult(res: unknown): Response {
-  tinyassert(res instanceof Response);
+// error `Response`
+const LOADER_ERROR_RESPONSE = "x-loader-error-response"; // aka x-remix-catch
 
-  // redirect
+// exception (to propagate runtime `Error` to client)
+const LOADER_EXCEPTION = "x-loader-exception"; // aka x-remix-error
+
+// cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-server-runtime/server.ts#L127
+export function wrapLoaderResult(result: Result<unknown, unknown>): Response {
+  try {
+    return wrapLoaderResultInner(result);
+  } catch (e) {
+    return wrapLoaderException(e);
+  }
+}
+
+function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
+  // note that "thrown redirect response" is already caught in `handler.queryRoute`
+  // https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L2748-L2764
+
+  // exception or error response
+  if (!result.ok) {
+    const res = result.value;
+    // exception
+    if (!(res instanceof Response)) {
+      throw res instanceof Error
+        ? res
+        : new Error("loader must throw 'Response' or 'Error'");
+    }
+    // error response
+    res.headers.set(LOADER_ERROR_RESPONSE, "1");
+    return res;
+  }
+
+  const res = result.value;
+  tinyassert(res instanceof Response, "loader must return 'Response'");
+
+  // redirect response
   if ([301, 302, 303, 307, 308].includes(res.status)) {
     const headers = new Headers(res.headers);
     const location = headers.get(LOCATION);
@@ -60,7 +92,17 @@ export function wrapLoaderResult(res: unknown): Response {
 }
 
 // cf. https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-react/routes.tsx#L210
-export function unwrapLoaderResult(res: Response): unknown {
+export async function unwrapLoaderResult(res: Response): Promise<Response> {
+  // exception
+  if (res.headers.get(LOADER_EXCEPTION)) {
+    throw await unwrapLoaderException(res);
+  }
+
+  // error response
+  if (res.headers.get(LOADER_ERROR_RESPONSE)) {
+    throw res;
+  }
+
   // redirect
   const redirectUrl = res.headers.get(LOADER_REDIRECT_URL);
   if (redirectUrl) {
@@ -77,6 +119,31 @@ export function unwrapLoaderResult(res: Response): unknown {
   }
 
   return res;
+}
+
+function wrapLoaderException(e: unknown) {
+  const error =
+    e instanceof Error ? e : new Error("unknown loader request exception");
+  if (import.meta.env.PROD) {
+    error.stack = `${String(error)} [STACK REDUCTED]`;
+  }
+  return new Response(
+    JSON.stringify({
+      message: error.message,
+      stack: error.stack,
+    }),
+    {
+      status: 500,
+      headers: {
+        [LOADER_EXCEPTION]: "1",
+        "content-type": "application/json",
+      },
+    }
+  );
+}
+
+async function unwrapLoaderException(res: Response) {
+  return Object.assign(new Error(), await res.json());
 }
 
 //

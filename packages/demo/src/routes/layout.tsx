@@ -106,6 +106,9 @@ const ROUTES = [
   "/subdir",
   "/subdir/other",
   "/error",
+  "/error-loader",
+  // TODO
+  // "/error-ssr",
 ];
 
 //
