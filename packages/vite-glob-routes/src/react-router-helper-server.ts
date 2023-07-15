@@ -10,12 +10,12 @@ import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
   createGlobalScript,
-  stripMatch,
+  serializeMatch,
+  serializeRoutesMata,
   unwrapLoaderRequest,
   wrapLoaderResult,
 } from "./react-router-helper-shared";
 import type { GlobPageRoutesResult } from "./react-router-utils";
-import { mapValues } from "./utils";
 
 // why is this not exposed?
 type RemixRouter = ReturnType<typeof createStaticRouter>;
@@ -73,10 +73,8 @@ export async function handleReactRouterServer({
 
   // extra runtime info
   const extraRouterInfo: ExtraRouterInfo = {
-    matches: context.matches.map((m) => stripMatch(m)),
-    // TODO: probably we have to pass complete "manifest" anyways to implement e.g. client-initiated link prefetching.
-    // TODO: this doesn't change on each render. so we could cache it?
-    serverPageExports: mapValues(routesMeta, (v) => Object.keys(v.route)),
+    matches: context.matches.map((m) => serializeMatch(m)),
+    routesMeta: serializeRoutesMata(routesMeta), // TODO: this doesn't change on each render. so we could cache it?
   };
 
   // collect asset paths for initial routes for assets preloading

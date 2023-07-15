@@ -1,5 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
 import { type DataRouteMatch } from "react-router";
+import type { RoutesMeta } from "./react-router-utils";
+import { mapValues } from "./utils";
 
 //
 // server proxy loader convention (aka data request)
@@ -44,15 +46,18 @@ export function unwrapLoaderResult(res: Response): unknown {
 
 export interface ExtraRouterInfo {
   // need to resolve lazy route of initial routes before hydration on client (cf. initializeClientRoutes)
-  matches: StrippedMatch[];
-  // for example, client can use this to auto inject `proxyServerLoader` for the page with server loader.
+  matches: SerializedMatch[];
+  // client can use this to auto inject `proxyServerLoader` for the page with server loader.
   // note that client cannot known this during "build" time since we build client before server.
-  serverPageExports: { [routeId: string]: string[] };
+  // also "file" mapping data will be needed to implement client-side link prefetching.
+  routesMeta: SerializedRoutesMeta;
 }
 
-type StrippedMatch = ReturnType<typeof stripMatch>;
+export const KEY_extraRouterInfo = "__globRoutes__ExtraRouterInfo";
 
-export function stripMatch(match: DataRouteMatch) {
+type SerializedMatch = ReturnType<typeof serializeMatch>;
+
+export function serializeMatch(match: DataRouteMatch) {
   return {
     route: {
       id: match.route.id,
@@ -60,7 +65,17 @@ export function stripMatch(match: DataRouteMatch) {
   };
 }
 
-export const KEY_extraRouterInfo = "__globRoutes__ExtraRouterInfo";
+type SerializedRoutesMeta = ReturnType<typeof serializeRoutesMata>;
+
+export function serializeRoutesMata(routesMeta: RoutesMeta) {
+  return mapValues(routesMeta, (v) => ({
+    exports: Object.keys(v.route),
+    entries: v.entries.map((e) => ({
+      file: e.file,
+      isServer: e.isServer,
+    })),
+  }));
+}
 
 //
 // server handing-off data to client via global script

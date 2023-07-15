@@ -56,8 +56,8 @@ export async function initializeClientRoutes({
   // auto setup `proxyServerLoader` for the pages with server loader but without client loader as extra convenient convention
   if (!noAutoProxyServerLoader) {
     for (const [id, route] of routeIdMap) {
-      const server = extraRouterInfo.serverPageExports[id];
-      if (server?.includes("loader")) {
+      const meta = extraRouterInfo.routesMeta[id];
+      if (meta?.exports.includes("loader")) {
         mutateRouteObject(route, (route) => {
           if (!route.loader) {
             route.loader = proxyServerLoader;

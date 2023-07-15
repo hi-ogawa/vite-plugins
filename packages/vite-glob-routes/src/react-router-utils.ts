@@ -18,11 +18,13 @@ export type GlobPageRoutesInternal = {
 
 export type GlobPageRoutesResult = {
   routes: DataRouteObject[];
-  routesMeta: {
-    [routeId: string]: {
-      route: DataRouteObject;
-      entries: GlobPageMappingEntry[];
-    };
+  routesMeta: RoutesMeta;
+};
+
+export type RoutesMeta = {
+  [routeId: string]: {
+    route: DataRouteObject;
+    entries: GlobPageMappingEntry[];
   };
 };
 
