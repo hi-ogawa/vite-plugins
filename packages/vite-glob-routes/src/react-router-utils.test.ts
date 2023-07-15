@@ -33,8 +33,6 @@ describe(createGlobPageRoutes, () => {
         "(root)/layout.server.tsx": mod,
       },
     });
-    // TODO
-    result.routesMeta;
 
     expect(result.routes).toMatchInlineSnapshot(`
       [
@@ -100,6 +98,108 @@ describe(createGlobPageRoutes, () => {
           "path": "/",
         },
       ]
+    `);
+
+    expect(result.routesMeta).toMatchInlineSnapshot(`
+      {
+        "0": {
+          "entries": [
+            {
+              "file": "(root)/layout.tsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+            {
+              "file": "(root)/layout.server.tsx",
+              "isServer": true,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-0": {
+          "entries": [
+            {
+              "file": "(root)/index.page.js",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-1": {
+          "entries": [
+            {
+              "file": "(root)/other.page.jsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+            {
+              "file": "(root)/other.page.server.jsx",
+              "isServer": true,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-2": {
+          "entries": [
+            {
+              "file": "(root)/[dynamic].page.ts",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-3": {
+          "entries": [
+            {
+              "file": "(root)/subdir/layout.jsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-3-0": {
+          "entries": [
+            {
+              "file": "(root)/subdir/index.page.tsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-3-1": {
+          "entries": [
+            {
+              "file": "(root)/subdir/other.page.tsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-4": {
+          "entries": [],
+        },
+        "0-4-0": {
+          "entries": [
+            {
+              "file": "(root)/abc/[dynsub].page.tsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+        },
+        "0-4-1": {
+          "entries": [],
+        },
+        "0-4-1-0": {
+          "entries": [
+            {
+              "file": "(root)/abc/[dynsub]/new.page.tsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+        },
+      }
     `);
 
     const manifest: Record<string, unknown> = {};

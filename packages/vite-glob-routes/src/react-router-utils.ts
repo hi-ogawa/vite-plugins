@@ -96,6 +96,7 @@ function createGlobPageRoutesInner(
         id,
         path: formatPath(path),
       };
+      routesMeta[id] = { entries: [] };
 
       if (node.value) {
         const entries = node.value;
