@@ -1,11 +1,5 @@
 import { useLoaderData } from "react-router-dom";
 
-// TODO: auto inject via plugin option?
-//       or allow customizing `RouteObject` when calling `globPageRoutes()`?
-//       then client build has to be aware of existance of server loader for given page?
-//       which could be achieved by server passing "route manifest" during runtime?
-// export { proxyServerLoader as loader } from "@hiogawa/vite-glob-routes/dist/react-router";
-
 export function Component() {
   const loaderData = useLoaderData();
 
