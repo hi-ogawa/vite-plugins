@@ -4,10 +4,19 @@ import {
   useLoaderData,
   useNavigate,
   useRouteError,
+  useSearchParams,
 } from "react-router-dom";
+
+// TODO: replace error.page.tsx
 
 export function Component() {
   const loaderData = useLoaderData();
+  const [searchParams] = useSearchParams();
+
+  // TODO: ErrorBoundary doesn't catch it during SSR?
+  if (searchParams.get("id") === "exception-render") {
+    throw new Error("render boom!");
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -29,9 +38,15 @@ export function Component() {
             </Link>
             <Link
               className="antd-btn antd-btn-default px-2"
-              to="/error-loader?id=exception"
+              to="/error-loader?id=exception-loader"
             >
-              exception
+              exception (loader)
+            </Link>
+            <Link
+              className="antd-btn antd-btn-default px-2"
+              to="/error-loader?id=exception-render"
+            >
+              exception (render)
             </Link>
           </div>
           <pre className="border p-2 text-sm">

@@ -6,8 +6,8 @@ export const loader: LoaderFunction = ({ request }) => {
   if (id === "error-response") {
     throw json({ message: "custom error message" }, { status: 400 });
   }
-  if (id === "exception") {
-    throw new Error("boom!");
+  if (id === "exception-loader") {
+    throw new Error("loader boom!");
   }
   return json({ id });
 };
