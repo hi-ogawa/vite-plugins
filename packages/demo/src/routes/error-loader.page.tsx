@@ -44,7 +44,7 @@ export function Component() {
 }
 
 export function ErrorBoundary() {
-  const error = useRouteError(); // TODO: exception becomes empty on hydration?
+  const error = useRouteError();
   const navigate = useNavigate();
 
   return (
