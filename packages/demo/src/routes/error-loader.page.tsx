@@ -65,9 +65,21 @@ export function ErrorBoundary() {
             className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder"
           >
             {error instanceof Error
-              ? error.stack ?? error.message
+              ? error.message
               : JSON.stringify(error, null, 2)}
           </pre>
+          {error instanceof Error && (
+            <div className="flex flex-col gap-2 text-sm">
+              <pre>error.stack</pre>
+              <pre
+                suppressHydrationWarning
+                className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder"
+              >
+                {/* cf. https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/react-router-dom/index.tsx#L282-L284 */}
+                {error.stack || "(reducted by react-router hydration?)"}
+              </pre>
+            </div>
+          )}
         </div>
       </div>
     </div>
