@@ -53,7 +53,8 @@ export async function handleReactRouterServer({
   // handle direct server loader request (aka data request) https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-server-runtime/server.ts#L136-L139
   const loaderRequest = unwrapLoaderRequest(request);
   if (loaderRequest) {
-    const loaderResult = await handler.queryRoute(loaderRequest, {
+    const loaderResult = await handler.queryRoute(loaderRequest.request, {
+      routeId: loaderRequest.routeId,
       requestContext,
     });
     return {
