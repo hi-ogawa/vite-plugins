@@ -8,20 +8,27 @@ import { mapValues } from "./utils";
 // server proxy loader convention (aka data request)
 //
 
-// special marker for server to differentiate direct loader request
-const LODER_MARKER = "_data.json";
+// special marker for server to tell loader request routeId cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-react/routes.tsx#L210
+// I don't feel this convention is DX friendly since request path doesn't tell the loader
+const LOADER_ROUTE_ID = "_data";
 
-export function wrapLoaderRequest(req: Request): Request {
+export function wrapLoaderRequest(req: Request, routeId: string): Request {
   const url = new URL(req.url);
-  url.pathname += LODER_MARKER;
+  url.searchParams.set(LOADER_ROUTE_ID, routeId);
   return new Request(url);
 }
 
-export function unwrapLoaderRequest(req: Request): Request | undefined {
+export function unwrapLoaderRequest(
+  req: Request
+): { request: Request; routeId: string } | undefined {
   const url = new URL(req.url);
-  if (url.pathname.endsWith(LODER_MARKER)) {
-    url.pathname = url.pathname.slice(0, -LODER_MARKER.length);
-    return new Request(url, req);
+  const routeId = url.searchParams.get(LOADER_ROUTE_ID);
+  if (routeId) {
+    url.searchParams.delete(LOADER_ROUTE_ID);
+    return {
+      request: new Request(url, req),
+      routeId,
+    };
   }
   return;
 }

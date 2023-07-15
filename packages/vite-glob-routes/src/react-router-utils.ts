@@ -89,10 +89,12 @@ function createGlobPageRoutesInner(
     children: Record<string, TreeNode<GlobPageMappingEntry[]>>,
     idPath: string[]
   ): DataRouteObject[] {
-    return Object.entries(children).map(([path, node], i) => {
-      // do same logic as convertRoutesToDataRoutes https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
-      const idPathNext = [...idPath, String(i)];
-      const id = idPathNext.join("-");
+    return Object.entries(children).map(([path, node]) => {
+      // similar to convertRoutesToDataRoutes https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
+      // but we use "file path" directly instead of index based encoding
+      // since this would help DX for internal debugging (e.g. data request encoding in wrapLoaderRequest)
+      const idPathNext = [...idPath, path];
+      const id = idPathNext.join("");
 
       const route: DataRouteObject = {
         id,

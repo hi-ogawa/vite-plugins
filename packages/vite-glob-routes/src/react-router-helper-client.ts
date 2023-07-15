@@ -58,9 +58,9 @@ export async function initializeClientRoutes({
     for (const [id, route] of routeIdMap) {
       const meta = extraRouterInfo.routesMeta[id];
       if (meta?.exports.includes("loader")) {
-        mutateRouteObject(route, (route) => {
-          if (!route.loader) {
-            route.loader = proxyServerLoader;
+        mutateRouteObject(route, (resolved) => {
+          if (!resolved.loader) {
+            resolved.loader = createProxyServerLoader(route.id);
           }
         });
       }
@@ -102,8 +102,10 @@ function mutateRouteObject(
 //
 
 // client loader to proxy server loaders (aka data request)
-export const proxyServerLoader: LoaderFunction = async (args) => {
-  const req = wrapLoaderRequest(args.request);
-  const res = await fetch(req);
-  return unwrapLoaderResult(res);
-};
+function createProxyServerLoader(routeId: string): LoaderFunction {
+  return async (args) => {
+    const req = wrapLoaderRequest(args.request, routeId);
+    const res = await fetch(req);
+    return unwrapLoaderResult(res);
+  };
+}
