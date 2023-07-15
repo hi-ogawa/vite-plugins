@@ -5,6 +5,9 @@ import {
   updateCounterMutationOptions,
 } from "./server-data-counter.api";
 
+// no-op client loader to trigger server loader only on SSR
+export const loader = () => null;
+
 export function Component() {
   const counterQueryOptions = getCounterQueryOptions();
   const counterQuery = useQuery(counterQueryOptions);

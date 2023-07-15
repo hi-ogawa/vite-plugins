@@ -2,11 +2,11 @@ import "virtual:uno.css";
 import { tinyassert } from "@hiogawa/utils";
 import {
   globPageRoutesLazy,
-  initializeReactRouterClient,
+  initializeClientRoutes,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import {
   ReactQueryWrapper,
   createQueryClientWithState,
@@ -17,7 +17,9 @@ async function main() {
   tinyassert(el);
 
   const { routes } = globPageRoutesLazy();
-  const { router } = await initializeReactRouterClient({ routes });
+  await initializeClientRoutes({ routes });
+
+  const router = createBrowserRouter(routes);
   const queryClient = createQueryClientWithState();
   const root = (
     <React.StrictMode>

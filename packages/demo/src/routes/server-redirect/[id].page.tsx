@@ -3,6 +3,9 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { serverRedirectCheckQueryOptions } from "./check.api";
 
+// no-op client loader to trigger server loader only on SSR
+export const loader = () => null;
+
 export function Component() {
   const params = useParams();
 

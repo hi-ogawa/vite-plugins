@@ -1,5 +1,5 @@
 import { mapRegExp, tinyassert } from "@hiogawa/utils";
-import type { RouteObject } from "react-router";
+import type { DataRouteObject, RouteObject } from "react-router";
 
 // mirror everything from react-router and used as `RouteObject.lazy`.
 type PageModule = Omit<RouteObject, "index" | "path" | "children" | "lazy">;
@@ -16,15 +16,16 @@ export type GlobPageRoutesInternal = {
   globLayoutServer: Record<string, GlobImporModule>;
 };
 
-// expose extra data for the use of modulepreload etc...
-export type RouteObjectWithGlobInfo = RouteObject & {
-  globInfo?: {
-    entries: GlobPageMappingEntry[];
-  };
+export type GlobPageRoutesResult = {
+  routes: DataRouteObject[];
+  routesMeta: RoutesMeta;
 };
 
-type GlobPageRoutesResult = {
-  routes: RouteObjectWithGlobInfo[];
+export type RoutesMeta = {
+  [routeId: string]: {
+    route: DataRouteObject;
+    entries: GlobPageMappingEntry[];
+  };
 };
 
 export function createGlobPageRoutes(
@@ -33,9 +34,9 @@ export function createGlobPageRoutes(
   // TODO: warn invalid usage
   // - ensure `Component` export
   // - conflicting page/layout e.g. "/hello.page.tsx" and "/hello/layout.tsx"
+  // - `hello.page.server.tsx` without `hello.page.tsx`
   const mapping = createGlobPageMapping(internal);
-  const routes = createGlobPageRoutesInner(internal.eager, mapping);
-  return { routes };
+  return createGlobPageRoutesInner(internal.eager, mapping);
 }
 
 // mapping between url path and file system path
@@ -72,7 +73,7 @@ function createGlobPageMapping(
 function createGlobPageRoutesInner(
   eager: boolean,
   mapping: GlobPageMapping
-): RouteObjectWithGlobInfo[] {
+): GlobPageRoutesResult {
   // construct general tree structure
   const pathEntries = Object.entries(mapping).map(([k, v]) => ({
     keys: splitPathSegment(k),
@@ -81,16 +82,28 @@ function createGlobPageRoutesInner(
   const tree = createTree(pathEntries);
 
   // transform to react-router's nested RouteObject array
+  // with assigning "id" on our own to allow manipulating routes easily
+  const routesMeta: GlobPageRoutesResult["routesMeta"] = {};
+
   function recurse(
-    children: Record<string, TreeNode<GlobPageMappingEntry[]>>
-  ): RouteObjectWithGlobInfo[] {
+    children: Record<string, TreeNode<GlobPageMappingEntry[]>>,
+    idPath: string[]
+  ): DataRouteObject[] {
     return Object.entries(children).map(([path, node]) => {
-      const route: RouteObjectWithGlobInfo = {
+      // similar to convertRoutesToDataRoutes https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
+      // but we use "file path" directly instead of index based encoding
+      // since this would help DX for internal debugging (e.g. data request encoding in wrapLoaderRequest)
+      const idPathNext = [...idPath, path];
+      const id = idPathNext.join("");
+
+      const route: DataRouteObject = {
+        id,
         path: formatPath(path),
       };
+      let entries: GlobPageMappingEntry[] = [];
+
       if (node.value) {
-        const entries = node.value;
-        route.globInfo = { entries };
+        entries = node.value;
         if (eager) {
           const mods = entries.map((e) => {
             tinyassert(typeof e.mod !== "function");
@@ -110,7 +123,7 @@ function createGlobPageRoutesInner(
         }
       }
       if (node.children) {
-        route.children = recurse(node.children);
+        route.children = recurse(node.children, idPathNext);
       }
       if (path === "index") {
         // silence tricky "index: true" typing
@@ -118,10 +131,16 @@ function createGlobPageRoutesInner(
         delete route.path;
         delete route.children;
       }
+      routesMeta[id] = {
+        route,
+        entries,
+      };
       return route;
     });
   }
-  return tree.children ? recurse(tree.children) : [];
+
+  const routes = tree.children ? recurse(tree.children, []) : [];
+  return { routes, routesMeta };
 }
 
 //
@@ -149,6 +168,27 @@ function createTree<T>(entries: { value: T; keys: string[] }[]): TreeNode<T> {
   }
 
   return root;
+}
+
+//
+// it can be used to create "route manifest" on your own e.g. by
+//
+//   const manifest = {};
+//   walkArrayTree(routes as DataRouteObject[], (route) => {
+//     manifest[route.id] = route;
+//   });
+//
+export function walkArrayTree<T extends { children?: T[] }>(
+  roots: T[],
+  // TODO: support "afterFn" too?
+  beforeFn: (v: T) => void
+) {
+  for (const node of roots) {
+    beforeFn(node);
+    if (node.children) {
+      walkArrayTree(node.children, beforeFn);
+    }
+  }
 }
 
 // "/" => ["/"]

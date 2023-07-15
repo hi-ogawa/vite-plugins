@@ -41,6 +41,63 @@ test.describe("response-status-code", () => {
   });
 });
 
+test.describe("loader-data", () => {
+  test("ssr", async ({ page }) => {
+    // TOOD: assert there's no client request to "/loader-data_data.json"?
+    await page.goto("/loader-data");
+    await page.getByText('{ "message": "hello loader data" }').click();
+  });
+
+  test("navigation", async ({ page }) => {
+    await page.goto("/");
+    await isPageReady(page);
+
+    await page.getByRole("link", { name: "/loader-data" }).click();
+    await page.getByText('{ "message": "hello loader data" }').click();
+  });
+});
+
+test.describe("layout-loader", () => {
+  async function assetUseMatches(page: Page) {
+    await expect(page.getByTestId("/")).toHaveText(`{
+      "id": "/",
+      "pathname": "/",
+      "params": {},
+      "data": null,
+      "handle": "root-handle"
+    }`);
+    await expect(page.getByTestId("/subdir/")).toHaveText(`{
+      "id": "/subdir/",
+      "pathname": "/subdir",
+      "params": {},
+      "data": {
+        "message": "for layout"
+      },
+      "handle": "subdir-handle"
+    }`);
+    await expect(page.getByTestId("/subdir/other")).toHaveText(`{
+      "id": "/subdir/other",
+      "pathname": "/subdir/other",
+      "params": {},
+      "data": {
+        "message": "for other"
+      },
+      "handle": "subdir-other-handle"
+    }`);
+  }
+
+  test("ssr", async ({ page }) => {
+    await page.goto("/subdir/other");
+    await assetUseMatches(page);
+  });
+
+  test("navigation", async ({ page }) => {
+    await page.goto("/");
+    await isPageReady(page);
+    await page.getByRole("link", { name: "/subdir/other" }).click();
+  });
+});
+
 test.describe("server-data", () => {
   test("ssr", async ({ page }) => {
     await page.goto("/server-data");
@@ -116,6 +173,18 @@ test.describe("ErrorBoundary", () => {
     await page.getByText("Error: hey render eror! at onClick").click();
     await page.getByRole("button", { name: "Reset" }).click();
     await page.getByRole("heading", { name: "Page Component" }).click();
+  });
+
+  test("ssr", async ({ page, request }) => {
+    await page.goto("/no-such-route");
+    await page
+      .getByText(
+        '{ "status": 404, "statusText": "Not Found", "internal": true, "data": "Error: No'
+      )
+      .click();
+
+    const res = await request.get("/no-such-route");
+    expect(res.status()).toBe(404);
   });
 });
 

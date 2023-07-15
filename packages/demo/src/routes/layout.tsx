@@ -1,7 +1,13 @@
 import BarOfProgress from "@badrap/bar-of-progress";
 import React from "react";
 import { Toaster } from "react-hot-toast";
-import { NavLink, Outlet, useNavigation } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigation,
+  useRouteError,
+} from "react-router-dom";
 import { useEffectNoStrict } from "../utils/misc-react";
 
 export const handle = "root-handle";
@@ -18,6 +24,34 @@ export function Component() {
       />
       <PageInner />
     </>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  const location = useLocation();
+
+  return (
+    <div className="flex flex-col items-center p-4">
+      <div className="flex flex-col gap-3 w-full max-w-2xl">
+        {location.pathname !== "/" && (
+          <div>
+            <a href="/" className="antd-btn antd-btn-default px-2 py-1">
+              Back to Home
+            </a>
+          </div>
+        )}
+        {/* slightly different error internal on server/client? */}
+        <pre
+          suppressHydrationWarning
+          className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder"
+        >
+          {error instanceof Error
+            ? error.stack ?? error.message
+            : JSON.stringify(error, null, 2)}
+        </pre>
+      </div>
+    </div>
   );
 }
 
@@ -66,6 +100,7 @@ const ROUTES = [
   "/",
   "/other",
   "/dynamic/any",
+  "/loader-data",
   "/server-data",
   "/server-redirect",
   "/subdir",
