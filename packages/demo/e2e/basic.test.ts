@@ -117,6 +117,18 @@ test.describe("ErrorBoundary", () => {
     await page.getByRole("button", { name: "Reset" }).click();
     await page.getByRole("heading", { name: "Page Component" }).click();
   });
+
+  test("ssr", async ({ page, request }) => {
+    await page.goto("/no-such-route");
+    await page
+      .getByText(
+        '{ "status": 404, "statusText": "Not Found", "internal": true, "data": "Error: No'
+      )
+      .click();
+
+    const res = await request.get("/no-such-route");
+    expect(res.status()).toBe(404);
+  });
 });
 
 async function isPageReady(page: Page) {
