@@ -33,6 +33,9 @@ describe(createGlobPageRoutes, () => {
         "(root)/layout.server.tsx": mod,
       },
     });
+    // TODO
+    result.routesMeta;
+
     expect(result.routes).toMatchInlineSnapshot(`
       [
         {

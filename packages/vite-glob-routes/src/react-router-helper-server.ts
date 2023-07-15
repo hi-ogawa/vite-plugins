@@ -1,5 +1,5 @@
 import { tinyassert, typedBoolean } from "@hiogawa/utils";
-import { type DataRouteObject, isRouteErrorResponse } from "react-router";
+import { isRouteErrorResponse } from "react-router";
 import {
   type StaticHandlerContext,
   createStaticHandler,
@@ -7,9 +7,13 @@ import {
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
 import {
+  type ExtraRouterInfo,
+  KEY_extraRouterInfo,
+  createGlobalScript,
   unwrapLoaderRequest,
   wrapLoaderResult,
 } from "./react-router-helper-shared";
+import type { GlobPageRoutesResult } from "./react-router-utils";
 
 // why is this not exposed?
 type RemixRouter = ReturnType<typeof createStaticRouter>;
@@ -20,6 +24,9 @@ type ServerRouterResult =
       context: StaticHandlerContext;
       router: RemixRouter;
       statusCode: number;
+      extraRouterInfo: ExtraRouterInfo;
+      extraRouterInfoScript: string;
+      assetPaths: string[];
     }
   | {
       type: "response";
@@ -28,16 +35,18 @@ type ServerRouterResult =
 
 export async function handleReactRouterServer({
   routes,
+  routesMeta,
   request,
   requestContext,
 }: {
-  routes: DataRouteObject[];
+  routes: GlobPageRoutesResult["routes"];
+  routesMeta: GlobPageRoutesResult["routesMeta"];
   request: Request;
   requestContext?: unknown; // provide app local context to server loader
 }): Promise<ServerRouterResult> {
   const handler = createStaticHandler(routes);
 
-  // direct server loader request handling https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-server-runtime/server.ts#L136-L139
+  // handle direct server loader request (aka data request) https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-server-runtime/server.ts#L136-L139
   const loaderRequest = unwrapLoaderRequest(request);
   if (loaderRequest) {
     const loaderResult = await handler.queryRoute(loaderRequest, {
@@ -49,9 +58,10 @@ export async function handleReactRouterServer({
     };
   }
 
+  // handle react-router SSR request
   const context = await handler.query(request, { requestContext });
 
-  // handle non-render loader repsonse e.g. redirection
+  // handle non-render repsonse by loader (e.g. redirection)
   if (context instanceof Response) {
     return {
       type: "response",
@@ -59,11 +69,38 @@ export async function handleReactRouterServer({
     };
   }
 
+  // extra runtime info
+  const extraRouterInfo: ExtraRouterInfo = {
+    matchRouteIds: context.matches.map((v) => v.route.id),
+    // TODO: probably we have to pass complete "manifest" anyways to implement e.g. client-initiated link prefetching.
+    // TODO: this doesn't change on each render.
+    serverPageExports: Object.fromEntries(
+      Object.entries(routesMeta).map(([id, meta]) => [
+        id,
+        meta.entries.flatMap((e) => (e.isServer ? Object.keys(e.mod) : [])) ??
+          [],
+      ])
+    ),
+  };
+
+  // collect asset paths for initial routes for assets preloading
+  // (for production, it further needs to map via "dist/client/manifest.json")
+  // (this matters only when users chose to use `globPageRoutesLazy` instead of `globPageRoutes`)
+  const assetPaths = extraRouterInfo.matchRouteIds
+    .flatMap((id) => routesMeta[id]?.entries.map((e) => !e.isServer && e.file))
+    .filter(typedBoolean);
+
   return {
     type: "render",
     context,
     router: createStaticRouter(handler.dataRoutes, context),
     statusCode: getResponseStatusCode(context),
+    extraRouterInfo,
+    extraRouterInfoScript: createGlobalScript(
+      KEY_extraRouterInfo,
+      extraRouterInfo
+    ),
+    assetPaths,
   };
 }
 
@@ -81,6 +118,8 @@ function getResponseStatusCode(context: StaticHandlerContext): number {
   return 200;
 }
 
+// general vite manifest utility to map production asset
+// we don't do this inside the plugin since it's tricky to have a hard dependency on client manifest on server build
 export function resolveManifestAssets(files: string[], manifest: Manifest) {
   const entryKeys = new Set<string>();
 

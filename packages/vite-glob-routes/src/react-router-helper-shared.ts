@@ -1,5 +1,9 @@
 import { tinyassert } from "@hiogawa/utils";
 
+//
+// server proxy loader convention (aka data request)
+//
+
 // special marker for server to differentiate direct loader request
 const LODER_MARKER = "_data.json";
 
@@ -30,4 +34,33 @@ export function wrapLoaderResult(res: unknown): Response {
 
 export function unwrapLoaderResult(res: Response): unknown {
   return res;
+}
+
+//
+// extra runtime route data to pass from server to client
+// for complete SSR experience (which are not provided by react-router yet)
+//
+
+export interface ExtraRouterInfo {
+  // need to resolve lazy route before hydration on client (cf. initializeClientRoutes)
+  matchRouteIds: string[];
+  // for example, client can use this to auto inject `proxyServerLoader` for the page with server loader.
+  // note that client cannot known this during "build" time since we build client before server.
+  serverPageExports: { [routeId: string]: string[] };
+}
+
+export const KEY_extraRouterInfo = "__globRoutes__ExtraRouterInfo";
+
+//
+// server handing-off data to client via global script
+//
+
+export function createGlobalScript(key: string, data: unknown) {
+  // TODO: need more intricate escape? cf. https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/react-router-dom/server.tsx#L120-L125
+  return `<script>window.${key} = ${JSON.stringify(data)}</script>`;
+}
+
+export function getGlobalScriptData(key: string): unknown {
+  tinyassert(typeof window !== "undefined");
+  return (window as any)[key];
 }
