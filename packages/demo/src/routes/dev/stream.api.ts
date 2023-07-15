@@ -1,5 +1,5 @@
 import type { RequestContext } from "@hattip/compose";
-import { range, tinyassert } from "@hiogawa/utils";
+import { newPromiseWithResolvers, range, tinyassert } from "@hiogawa/utils";
 import { z } from "zod";
 import { sleep } from "../../utils/misc";
 
@@ -7,6 +7,9 @@ const Z_N = z.coerce.number().max(10).default(5);
 
 export function get(ctx: RequestContext) {
   const n = Z_N.parse(ctx.url.searchParams.get("n") ?? undefined);
+
+  const channel = newPromiseWithResolvers<void>();
+  ctx.waitUntil(channel.promise);
 
   const readableStream = new ReadableStream<string>({
     async start(controller) {
@@ -16,6 +19,7 @@ export function get(ctx: RequestContext) {
         controller.enqueue(`${i}\n`);
       }
       controller.close();
+      channel.resolve();
     },
   });
 

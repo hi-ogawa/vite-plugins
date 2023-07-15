@@ -1,4 +1,5 @@
 {
   "runtime": "edge",
-  "entrypoint": "index.js"
+  "entrypoint": "index.js",
+  "supportsResponseStreaming": true
 }
