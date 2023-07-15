@@ -51,7 +51,7 @@ export async function handleReactRouterServer({
 
   const context = await handler.query(request, { requestContext });
 
-  // handle direct loader repsonse e.g. redirection
+  // handle non-render loader repsonse e.g. redirection
   if (context instanceof Response) {
     return {
       type: "response",
