@@ -1,39 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { serverRedirectCheckQueryOptions } from "./check.api";
-
-// no-op client loader to trigger server loader only on SSR
-export const loader = () => null;
+import { useLoaderData } from "react-router-dom";
 
 export function Component() {
-  const params = useParams();
-
-  // fetch on client only when it's not prefetched during SSR
-  const checkQuery = useQuery(serverRedirectCheckQueryOptions(params["id"]!));
-
-  const navigate = useNavigate();
-
-  React.useEffect(() => {
-    if (checkQuery.data && !checkQuery.data.ok) {
-      navigate("/server-redirect?error=client");
-    }
-  }, [checkQuery.data]);
-
-  if (checkQuery.isLoading) {
-    return <div className="mt-10 mx-auto antd-spin w-10 h-10"></div>;
-  }
-
-  return <PageInner data={checkQuery.data} />;
-}
-
-function PageInner(props: { data: unknown }) {
+  const loaderData = useLoaderData();
   return (
     <div className="flex flex-col items-center">
       <div className="w-full p-6">
         <div className="flex flex-col gap-4">
           <h1>Server redirect</h1>
-          <pre>{JSON.stringify(props.data)}</pre>
+          <pre>{JSON.stringify(loaderData)}</pre>
         </div>
       </div>
     </div>

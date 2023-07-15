@@ -1,6 +1,8 @@
 {
   "scripts": {
     "build": "pnpm -r build",
+    "dev": "run-p dev:*",
+    "dev:demo": "pnpm -C packages/demo dev:vite",
     "tsc": "tsc -b",
     "dev:tsc": "pnpm tsc --watch --preserveWatchOutput",
     "test": "vitest",

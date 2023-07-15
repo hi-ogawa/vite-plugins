@@ -128,12 +128,12 @@ test.describe("server-redirect", () => {
   test("server-side-good", async ({ page }) => {
     await page.goto("/server-redirect/good");
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"ok":true,"message":"ssr"}').click();
+    await page.getByText('{"ok":true,"message":"good"}').click();
   });
 
   test("server-side-bad", async ({ page }) => {
     await page.goto("/server-redirect/forbidden");
-    await page.waitForURL("/server-redirect?error=server");
+    await page.waitForURL("/server-redirect?loader-throw");
   });
 
   test("status-code", async ({ request }) => {
@@ -141,7 +141,7 @@ test.describe("server-redirect", () => {
       maxRedirects: 0,
     });
     expect(res.status()).toBe(302);
-    expect(res.headers()["location"]).toBe("/server-redirect?error=server");
+    expect(res.headers()["location"]).toBe("/server-redirect?loader-throw");
   });
 
   test("client-side-good", async ({ page }) => {
@@ -149,15 +149,14 @@ test.describe("server-redirect", () => {
     await isPageReady(page);
     await page.getByRole("link", { name: "good link" }).click();
     await page.waitForURL("/server-redirect/good");
-    await page.getByText('{"ok":true,"message":"api"}').click();
+    await page.getByText('{"ok":true,"message":"good"}').click();
   });
 
   test("client-side-bad", async ({ page }) => {
     await page.goto("/server-redirect");
     await isPageReady(page);
     await page.getByRole("link", { name: "forbidden link" }).click();
-    await page.waitForURL("/server-redirect/forbidden");
-    await page.waitForURL("/server-redirect?error=client");
+    await page.waitForURL("/server-redirect?loader-throw");
   });
 });
 

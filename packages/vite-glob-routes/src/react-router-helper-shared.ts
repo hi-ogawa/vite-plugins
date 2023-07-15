@@ -9,7 +9,7 @@ import { mapValues } from "./utils";
 //
 
 // special marker for server to tell loader request routeId cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-react/routes.tsx#L210
-// I don't feel this convention is DX friendly since request path doesn't tell the loader
+// I don't feel this convention is DX friendly since request path doesn't tell which loader is called exactly
 const LOADER_ROUTE_ID = "_data";
 
 export function wrapLoaderRequest(req: Request, routeId: string): Request {
@@ -33,17 +33,49 @@ export function unwrapLoaderRequest(
   return;
 }
 
-// TODO
-// convention to wrap/unwrap response to propagate redirection/error on client
-// e.g. x-loader-status, x-loader-redirect, etc...
-// cf. https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-react/routes.tsx#L210
+// redirect response
+const LOCATION = "location";
+const LOADER_REDIRECT_URL = "x-loader-redirect-url";
+const LOADER_REDIRECT_STATUS = "x-loader-redirect-status";
 
+// cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-server-runtime/server.ts#L127
 export function wrapLoaderResult(res: unknown): Response {
   tinyassert(res instanceof Response);
+
+  // redirect
+  if ([301, 302, 303, 307, 308].includes(res.status)) {
+    const headers = new Headers(res.headers);
+    const location = headers.get(LOCATION);
+    tinyassert(location);
+    headers.delete(LOCATION);
+    headers.set(LOADER_REDIRECT_URL, location);
+    headers.set(LOADER_REDIRECT_STATUS, String(res.status));
+    return new Response(null, {
+      status: 204,
+      headers,
+    });
+  }
+
   return res;
 }
 
+// cf. https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-react/routes.tsx#L210
 export function unwrapLoaderResult(res: Response): unknown {
+  // redirect
+  const redirectUrl = res.headers.get(LOADER_REDIRECT_URL);
+  if (redirectUrl) {
+    const headers = new Headers(res.headers);
+    const redirectStatus = headers.get(LOADER_REDIRECT_STATUS);
+    tinyassert(redirectStatus);
+    headers.delete(LOADER_REDIRECT_URL);
+    headers.delete(LOADER_REDIRECT_STATUS);
+    headers.set(LOCATION, redirectUrl);
+    return new Response(null, {
+      status: Number(redirectStatus),
+      headers,
+    });
+  }
+
   return res;
 }
 

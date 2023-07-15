@@ -25,7 +25,7 @@ See `./packages/demo` for basic usage.
 # develop demo
 pnpm i
 pnpm build
-pnpm -C packages/demo dev
+pnpm dev
 
 # release demo
 pnpm -C packages/demo build
