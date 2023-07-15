@@ -1,4 +1,5 @@
 import { type RequestHandler, compose } from "@hattip/compose";
+import { loggerMiddleware } from "@hiogawa/utils-experimental";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
@@ -6,8 +7,6 @@ import {
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
-import type { Context, MiddlewareHandler } from "hono";
-import { logger } from "hono/logger";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouterProvider } from "react-router-dom/server";
@@ -20,7 +19,7 @@ import {
 } from "../utils/react-query-utils";
 
 export function createHattipApp() {
-  return compose(hattipHonoCompat(logger()), globApiRoutes(), ssrHandler());
+  return compose(loggerMiddleware(), globApiRoutes(), ssrHandler());
 }
 
 function ssrHandler(): RequestHandler {
@@ -96,24 +95,4 @@ function getThemeScript() {
       ${THEME_SCRIPT}
     </script>
   `;
-}
-
-// minimal compatibility to use hono's logger in hattip
-// https://github.com/honojs/hono/blob/0ffd795ec6cfb67d38ab902197bb5461a4740b8f/src/middleware/logger/index.ts
-function hattipHonoCompat(hono: MiddlewareHandler): RequestHandler {
-  return async (ctx) => {
-    let res!: Response;
-    await hono(
-      {
-        req: { method: ctx.method, raw: ctx.request },
-        get res() {
-          return res;
-        },
-      } as Context,
-      async () => {
-        res = await ctx.next();
-      }
-    );
-    return res;
-  };
 }
