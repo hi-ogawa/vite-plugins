@@ -39,61 +39,61 @@ describe(createGlobPageRoutes, () => {
         {
           "children": [
             {
-              "id": "0-0",
+              "id": "/index",
               "index": true,
               "lazy": [Function],
             },
             {
-              "id": "0-1",
+              "id": "/other",
               "lazy": [Function],
               "path": "other",
             },
             {
-              "id": "0-2",
+              "id": "/[dynamic]",
               "lazy": [Function],
               "path": ":dynamic",
             },
             {
               "children": [
                 {
-                  "id": "0-3-0",
+                  "id": "/subdir/index",
                   "index": true,
                   "lazy": [Function],
                 },
                 {
-                  "id": "0-3-1",
+                  "id": "/subdir/other",
                   "lazy": [Function],
                   "path": "other",
                 },
               ],
-              "id": "0-3",
+              "id": "/subdir/",
               "lazy": [Function],
               "path": "subdir/",
             },
             {
               "children": [
                 {
-                  "id": "0-4-0",
+                  "id": "/abc/[dynsub]",
                   "lazy": [Function],
                   "path": ":dynsub",
                 },
                 {
                   "children": [
                     {
-                      "id": "0-4-1-0",
+                      "id": "/abc/[dynsub]/new",
                       "lazy": [Function],
                       "path": "new",
                     },
                   ],
-                  "id": "0-4-1",
+                  "id": "/abc/[dynsub]/",
                   "path": ":dynsub/",
                 },
               ],
-              "id": "0-4",
+              "id": "/abc/",
               "path": "abc/",
             },
           ],
-          "id": "0",
+          "id": "/",
           "lazy": [Function],
           "path": "/",
         },
@@ -102,7 +102,7 @@ describe(createGlobPageRoutes, () => {
 
     expect(result.routesMeta).toMatchInlineSnapshot(`
       {
-        "0": {
+        "/": {
           "entries": [
             {
               "file": "(root)/layout.tsx",
@@ -118,66 +118,147 @@ describe(createGlobPageRoutes, () => {
           "route": {
             "children": [
               {
-                "id": "0-0",
+                "id": "/index",
                 "index": true,
                 "lazy": [Function],
               },
               {
-                "id": "0-1",
+                "id": "/other",
                 "lazy": [Function],
                 "path": "other",
               },
               {
-                "id": "0-2",
+                "id": "/[dynamic]",
                 "lazy": [Function],
                 "path": ":dynamic",
               },
               {
                 "children": [
                   {
-                    "id": "0-3-0",
+                    "id": "/subdir/index",
                     "index": true,
                     "lazy": [Function],
                   },
                   {
-                    "id": "0-3-1",
+                    "id": "/subdir/other",
                     "lazy": [Function],
                     "path": "other",
                   },
                 ],
-                "id": "0-3",
+                "id": "/subdir/",
                 "lazy": [Function],
                 "path": "subdir/",
               },
               {
                 "children": [
                   {
-                    "id": "0-4-0",
+                    "id": "/abc/[dynsub]",
                     "lazy": [Function],
                     "path": ":dynsub",
                   },
                   {
                     "children": [
                       {
-                        "id": "0-4-1-0",
+                        "id": "/abc/[dynsub]/new",
                         "lazy": [Function],
                         "path": "new",
                       },
                     ],
-                    "id": "0-4-1",
+                    "id": "/abc/[dynsub]/",
                     "path": ":dynsub/",
                   },
                 ],
-                "id": "0-4",
+                "id": "/abc/",
                 "path": "abc/",
               },
             ],
-            "id": "0",
+            "id": "/",
             "lazy": [Function],
             "path": "/",
           },
         },
-        "0-0": {
+        "/[dynamic]": {
+          "entries": [
+            {
+              "file": "(root)/[dynamic].page.ts",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+          "route": {
+            "id": "/[dynamic]",
+            "lazy": [Function],
+            "path": ":dynamic",
+          },
+        },
+        "/abc/": {
+          "entries": [],
+          "route": {
+            "children": [
+              {
+                "id": "/abc/[dynsub]",
+                "lazy": [Function],
+                "path": ":dynsub",
+              },
+              {
+                "children": [
+                  {
+                    "id": "/abc/[dynsub]/new",
+                    "lazy": [Function],
+                    "path": "new",
+                  },
+                ],
+                "id": "/abc/[dynsub]/",
+                "path": ":dynsub/",
+              },
+            ],
+            "id": "/abc/",
+            "path": "abc/",
+          },
+        },
+        "/abc/[dynsub]": {
+          "entries": [
+            {
+              "file": "(root)/abc/[dynsub].page.tsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+          "route": {
+            "id": "/abc/[dynsub]",
+            "lazy": [Function],
+            "path": ":dynsub",
+          },
+        },
+        "/abc/[dynsub]/": {
+          "entries": [],
+          "route": {
+            "children": [
+              {
+                "id": "/abc/[dynsub]/new",
+                "lazy": [Function],
+                "path": "new",
+              },
+            ],
+            "id": "/abc/[dynsub]/",
+            "path": ":dynsub/",
+          },
+        },
+        "/abc/[dynsub]/new": {
+          "entries": [
+            {
+              "file": "(root)/abc/[dynsub]/new.page.tsx",
+              "isServer": false,
+              "mod": [Function],
+            },
+          ],
+          "route": {
+            "id": "/abc/[dynsub]/new",
+            "lazy": [Function],
+            "path": "new",
+          },
+        },
+        "/index": {
           "entries": [
             {
               "file": "(root)/index.page.js",
@@ -186,12 +267,12 @@ describe(createGlobPageRoutes, () => {
             },
           ],
           "route": {
-            "id": "0-0",
+            "id": "/index",
             "index": true,
             "lazy": [Function],
           },
         },
-        "0-1": {
+        "/other": {
           "entries": [
             {
               "file": "(root)/other.page.jsx",
@@ -205,26 +286,12 @@ describe(createGlobPageRoutes, () => {
             },
           ],
           "route": {
-            "id": "0-1",
+            "id": "/other",
             "lazy": [Function],
             "path": "other",
           },
         },
-        "0-2": {
-          "entries": [
-            {
-              "file": "(root)/[dynamic].page.ts",
-              "isServer": false,
-              "mod": [Function],
-            },
-          ],
-          "route": {
-            "id": "0-2",
-            "lazy": [Function],
-            "path": ":dynamic",
-          },
-        },
-        "0-3": {
+        "/subdir/": {
           "entries": [
             {
               "file": "(root)/subdir/layout.jsx",
@@ -235,22 +302,22 @@ describe(createGlobPageRoutes, () => {
           "route": {
             "children": [
               {
-                "id": "0-3-0",
+                "id": "/subdir/index",
                 "index": true,
                 "lazy": [Function],
               },
               {
-                "id": "0-3-1",
+                "id": "/subdir/other",
                 "lazy": [Function],
                 "path": "other",
               },
             ],
-            "id": "0-3",
+            "id": "/subdir/",
             "lazy": [Function],
             "path": "subdir/",
           },
         },
-        "0-3-0": {
+        "/subdir/index": {
           "entries": [
             {
               "file": "(root)/subdir/index.page.tsx",
@@ -259,12 +326,12 @@ describe(createGlobPageRoutes, () => {
             },
           ],
           "route": {
-            "id": "0-3-0",
+            "id": "/subdir/index",
             "index": true,
             "lazy": [Function],
           },
         },
-        "0-3-1": {
+        "/subdir/other": {
           "entries": [
             {
               "file": "(root)/subdir/other.page.tsx",
@@ -273,76 +340,9 @@ describe(createGlobPageRoutes, () => {
             },
           ],
           "route": {
-            "id": "0-3-1",
+            "id": "/subdir/other",
             "lazy": [Function],
             "path": "other",
-          },
-        },
-        "0-4": {
-          "entries": [],
-          "route": {
-            "children": [
-              {
-                "id": "0-4-0",
-                "lazy": [Function],
-                "path": ":dynsub",
-              },
-              {
-                "children": [
-                  {
-                    "id": "0-4-1-0",
-                    "lazy": [Function],
-                    "path": "new",
-                  },
-                ],
-                "id": "0-4-1",
-                "path": ":dynsub/",
-              },
-            ],
-            "id": "0-4",
-            "path": "abc/",
-          },
-        },
-        "0-4-0": {
-          "entries": [
-            {
-              "file": "(root)/abc/[dynsub].page.tsx",
-              "isServer": false,
-              "mod": [Function],
-            },
-          ],
-          "route": {
-            "id": "0-4-0",
-            "lazy": [Function],
-            "path": ":dynsub",
-          },
-        },
-        "0-4-1": {
-          "entries": [],
-          "route": {
-            "children": [
-              {
-                "id": "0-4-1-0",
-                "lazy": [Function],
-                "path": "new",
-              },
-            ],
-            "id": "0-4-1",
-            "path": ":dynsub/",
-          },
-        },
-        "0-4-1-0": {
-          "entries": [
-            {
-              "file": "(root)/abc/[dynsub]/new.page.tsx",
-              "isServer": false,
-              "mod": [Function],
-            },
-          ],
-          "route": {
-            "id": "0-4-1-0",
-            "lazy": [Function],
-            "path": "new",
           },
         },
       }
@@ -355,38 +355,38 @@ describe(createGlobPageRoutes, () => {
     });
     expect(manifest).toMatchInlineSnapshot(`
       {
-        "0": {
+        "/": {
           "path": "/",
         },
-        "0-0": {
-          "index": true,
-        },
-        "0-1": {
-          "path": "other",
-        },
-        "0-2": {
+        "/[dynamic]": {
           "path": ":dynamic",
         },
-        "0-3": {
-          "path": "subdir/",
-        },
-        "0-3-0": {
-          "index": true,
-        },
-        "0-3-1": {
-          "path": "other",
-        },
-        "0-4": {
+        "/abc/": {
           "path": "abc/",
         },
-        "0-4-0": {
+        "/abc/[dynsub]": {
           "path": ":dynsub",
         },
-        "0-4-1": {
+        "/abc/[dynsub]/": {
           "path": ":dynsub/",
         },
-        "0-4-1-0": {
+        "/abc/[dynsub]/new": {
           "path": "new",
+        },
+        "/index": {
+          "index": true,
+        },
+        "/other": {
+          "path": "other",
+        },
+        "/subdir/": {
+          "path": "subdir/",
+        },
+        "/subdir/index": {
+          "index": true,
+        },
+        "/subdir/other": {
+          "path": "other",
         },
       }
     `);
