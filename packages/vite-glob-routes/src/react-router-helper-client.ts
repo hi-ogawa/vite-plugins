@@ -47,8 +47,8 @@ export async function initializeClientRoutes({
 
   // resolve lazy
   await Promise.all(
-    extraRouterInfo.matchRouteIds
-      .map((id) => routeIdMap.get(id))
+    extraRouterInfo.matches
+      .map((m) => routeIdMap.get(m.route.id))
       .filter(typedBoolean)
       .map((route) => resolveLazyRouteObject(route))
   );

@@ -1,4 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
+import { type DataRouteMatch } from "react-router";
 
 //
 // server proxy loader convention (aka data request)
@@ -42,11 +43,21 @@ export function unwrapLoaderResult(res: Response): unknown {
 //
 
 export interface ExtraRouterInfo {
-  // need to resolve lazy route before hydration on client (cf. initializeClientRoutes)
-  matchRouteIds: string[];
+  // need to resolve lazy route of initial routes before hydration on client (cf. initializeClientRoutes)
+  matches: StrippedMatch[];
   // for example, client can use this to auto inject `proxyServerLoader` for the page with server loader.
   // note that client cannot known this during "build" time since we build client before server.
   serverPageExports: { [routeId: string]: string[] };
+}
+
+type StrippedMatch = ReturnType<typeof stripMatch>;
+
+export function stripMatch(match: DataRouteMatch) {
+  return {
+    route: {
+      id: match.route.id,
+    },
+  };
 }
 
 export const KEY_extraRouterInfo = "__globRoutes__ExtraRouterInfo";

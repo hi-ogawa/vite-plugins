@@ -10,6 +10,7 @@ import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
   createGlobalScript,
+  stripMatch,
   unwrapLoaderRequest,
   wrapLoaderResult,
 } from "./react-router-helper-shared";
@@ -72,7 +73,7 @@ export async function handleReactRouterServer({
 
   // extra runtime info
   const extraRouterInfo: ExtraRouterInfo = {
-    matchRouteIds: context.matches.map((v) => v.route.id),
+    matches: context.matches.map((m) => stripMatch(m)),
     // TODO: probably we have to pass complete "manifest" anyways to implement e.g. client-initiated link prefetching.
     // TODO: this doesn't change on each render. so we could cache it?
     serverPageExports: mapValues(routesMeta, (v) => Object.keys(v.route)),
@@ -81,8 +82,10 @@ export async function handleReactRouterServer({
   // collect asset paths for initial routes for assets preloading
   // (for production, it further needs to map via "dist/client/manifest.json")
   // (this matters only when users chose to use `globPageRoutesLazy` instead of `globPageRoutes`)
-  const assetPaths = extraRouterInfo.matchRouteIds
-    .flatMap((id) => routesMeta[id]?.entries.map((e) => !e.isServer && e.file))
+  const assetPaths = extraRouterInfo.matches
+    .flatMap((m) =>
+      routesMeta[m.route.id]?.entries.map((e) => !e.isServer && e.file)
+    )
     .filter(typedBoolean);
 
   return {
