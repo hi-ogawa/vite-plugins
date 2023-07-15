@@ -38,62 +38,20 @@ async function main() {
   const serverRouterInfo: ServerRouterInfo = (window as any).__serverRouterInfo;
 
   await walkArrayTreeAsync(routes as DataRouteObject[], async (route) => {
-    tinyassert(route.lazy);
-
     // implement the convention of auto injecting `proxyServerLoader` for the pages with server loader
     const serverExports = serverRouterInfo.serverPageExports[route.id];
     if (serverExports?.includes("loader")) {
-      // currently such convention should be applied only for "/loader-data"
+      // currently apply such convention only for "/loader-data"
       if (route.path?.includes("loader-data")) {
-        const oldLazy = route.lazy;
-        route.lazy = async () => {
-          const resolved = await oldLazy();
-          tinyassert(!resolved.loader);
-          resolved.loader = proxyServerLoader;
-          return resolved;
-        };
+        mergeRouteObject(route, { loader: proxyServerLoader });
       }
     }
 
-    // resolve lazy of initial routes
+    // resolve lazy of initial routes (TODO: Promise.all?)
     if (serverRouterInfo.matchRouteIds.includes(route.id)) {
-      const resolved = await route.lazy();
-      delete route.lazy;
-      Object.assign(route, resolved);
+      await resolveLazyRouteObject(route);
     }
   });
-
-  // for example, we could also implement the convention of auto injecting `proxyServerLoader` for the pages with server loader
-  // for (const [id, serverExports] of Object.entries(
-  //   serverRouterInfo.serverPageExports
-  // )) {
-  //   if (serverExports.includes("loader")) {
-  //     const route = manifest[id];
-  //     tinyassert(route);
-  //     tinyassert(route.lazy);
-  //     // currently such convention should be applied only for "/loader-data"
-  //     if (!route.path?.includes("loader-data")) {
-  //       continue;
-  //     }
-  //     const oldLazy = route.lazy;
-  //     route.lazy = async () => {
-  //       const resolved = await oldLazy();
-  //       tinyassert(!resolved.loader);
-  //       resolved.loader = proxyServerLoader;
-  //       return resolved;
-  //     };
-  //   }
-  // }
-
-  // for (const id of serverRouterInfo.matchRouteIds) {
-  //   // mutating RouteObject in `manifest` will affect `routes`
-  //   const route = manifest[id];
-  //   tinyassert(route);
-  //   tinyassert(route.lazy);
-  //   const resolved = await route.lazy();
-  //   delete route.lazy;
-  //   Object.assign(route, resolved);
-  // }
 
   const router = createBrowserRouter(routes);
   const queryClient = createQueryClientWithState();
@@ -106,6 +64,33 @@ async function main() {
   );
   hydrateRoot(el, root);
   el.dataset["testid"] = "hydrated"; // for e2e
+}
+
+// TODO: to utils
+
+// merge route properties while keeping lazy-ness
+function mergeRouteObject(
+  r1: DataRouteObject, // mutated
+  r2: Partial<DataRouteObject> // assume non-lazy
+) {
+  tinyassert(!r2.lazy);
+  const oldLazy = r1.lazy;
+  if (oldLazy) {
+    r1.lazy = async () => {
+      const resolved = await oldLazy();
+      return { ...resolved, ...r2 };
+    };
+  } else {
+    Object.assign(r1, r2);
+  }
+}
+
+async function resolveLazyRouteObject(
+  route: DataRouteObject // mutated
+) {
+  if (route.lazy) {
+    Object.assign(route, await route.lazy(), { lazy: undefined });
+  }
 }
 
 main();
