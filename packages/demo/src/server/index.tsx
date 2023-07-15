@@ -1,5 +1,4 @@
 import { type RequestHandler, compose } from "@hattip/compose";
-import { typedBoolean } from "@hiogawa/utils";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
@@ -54,38 +53,12 @@ function ssrHandler(): RequestHandler {
       </React.StrictMode>
     );
 
-    // pass extra router information to client for legitimate SSR experience
-    // TODO: move inside `handleReactRouterServer`?
-    // const serverRouterInfo: ServerRouterInfo = {
-    //   // need to resolve lazy route before hydration on client
-    //   matchRouteIds: routerResult.context.matches.map((v) => v.route.id),
-    //   // for example, client can use this to auto inject `proxyServerLoader` (via `transformRoute`) for the page with server loader.
-    //   // note that client cannot known this during "build" time since we build client before server.
-    //   serverPageExports: Object.fromEntries(
-    //     Object.entries(routesMeta).map(([id, meta]) => [
-    //       id,
-    //       meta.entries.flatMap((e) => (e.isServer ? Object.keys(e.mod) : [])) ??
-    //         [],
-    //     ])
-    //   ),
-    // };
-
-    // const serverRouterInfoScript = `<script>window.__serverRouterInfo = ${JSON.stringify(
-    //   serverRouterInfo
-    // )}</script>`;
-
-    // collect assets for initial routes to preload (TODO: move to handleReactRouterServer?)
-    let routeAssets = routerResult.extraRouterInfo.matchRouteIds
-      .flatMap((id) =>
-        routesMeta[id]?.entries.map((e) => !e.isServer && e.file)
-      )
-      .filter(typedBoolean);
-
     // map to production asset path
+    let assetPaths = routerResult.assetPaths;
     if (import.meta.env.PROD) {
       // @ts-ignore
       const { default: manifest } = await import("/dist/client/manifest.json");
-      routeAssets = resolveManifestAssets(routeAssets, manifest);
+      assetPaths = resolveManifestAssets(assetPaths, manifest);
     }
 
     let html = await importIndexHtml();
@@ -95,11 +68,10 @@ function ssrHandler(): RequestHandler {
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       [
-        ...routeAssets.map((f) => getPreloadLink(f)),
+        ...assetPaths.map((f) => getPreloadLink(f)),
         routerResult.extraRouterInfoScript,
         getThemeScript(),
         getQueryClientStateScript(queryClient),
-        // serverRouterInfoScript,
       ].join("\n")
     );
 
@@ -114,11 +86,6 @@ function ssrHandler(): RequestHandler {
     });
   };
 }
-
-export type ServerRouterInfo = {
-  matchRouteIds: string[];
-  serverPageExports: Record<string, string[]>;
-};
 
 function getPreloadLink(href: string) {
   return `<link rel="modulepreload" href="${href}" />`;
