@@ -18,7 +18,7 @@ export async function initializeClientRoutes({
   extraRouterInfo,
   noAutoProxyServerLoader,
 }: {
-  routes: DataRouteObject[];
+  routes: DataRouteObject[]; // mutated
   extraRouterInfo?: ExtraRouterInfo; // user can pass directly without relying on global script
   noAutoProxyServerLoader?: boolean;
 }) {
