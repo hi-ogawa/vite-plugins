@@ -20,7 +20,7 @@ export type GlobPageRoutesResult = {
   routes: DataRouteObject[];
   routesMeta: {
     [routeId: string]: {
-      // TODO: it should one or two entries, so make it more explicit like `page/pageServer`
+      route: DataRouteObject;
       entries: GlobPageMappingEntry[];
     };
   };
@@ -96,11 +96,10 @@ function createGlobPageRoutesInner(
         id,
         path: formatPath(path),
       };
-      routesMeta[id] = { entries: [] };
+      let entries: GlobPageMappingEntry[] = [];
 
       if (node.value) {
-        const entries = node.value;
-        routesMeta[id] = { entries };
+        entries = node.value;
         if (eager) {
           const mods = entries.map((e) => {
             tinyassert(typeof e.mod !== "function");
@@ -128,6 +127,10 @@ function createGlobPageRoutesInner(
         delete route.path;
         delete route.children;
       }
+      routesMeta[id] = {
+        route,
+        entries,
+      };
       return route;
     });
   }

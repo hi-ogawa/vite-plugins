@@ -115,6 +115,67 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "children": [
+              {
+                "id": "0-0",
+                "index": true,
+                "lazy": [Function],
+              },
+              {
+                "id": "0-1",
+                "lazy": [Function],
+                "path": "other",
+              },
+              {
+                "id": "0-2",
+                "lazy": [Function],
+                "path": ":dynamic",
+              },
+              {
+                "children": [
+                  {
+                    "id": "0-3-0",
+                    "index": true,
+                    "lazy": [Function],
+                  },
+                  {
+                    "id": "0-3-1",
+                    "lazy": [Function],
+                    "path": "other",
+                  },
+                ],
+                "id": "0-3",
+                "lazy": [Function],
+                "path": "subdir/",
+              },
+              {
+                "children": [
+                  {
+                    "id": "0-4-0",
+                    "lazy": [Function],
+                    "path": ":dynsub",
+                  },
+                  {
+                    "children": [
+                      {
+                        "id": "0-4-1-0",
+                        "lazy": [Function],
+                        "path": "new",
+                      },
+                    ],
+                    "id": "0-4-1",
+                    "path": ":dynsub/",
+                  },
+                ],
+                "id": "0-4",
+                "path": "abc/",
+              },
+            ],
+            "id": "0",
+            "lazy": [Function],
+            "path": "/",
+          },
         },
         "0-0": {
           "entries": [
@@ -124,6 +185,11 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "id": "0-0",
+            "index": true,
+            "lazy": [Function],
+          },
         },
         "0-1": {
           "entries": [
@@ -138,6 +204,11 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "id": "0-1",
+            "lazy": [Function],
+            "path": "other",
+          },
         },
         "0-2": {
           "entries": [
@@ -147,6 +218,11 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "id": "0-2",
+            "lazy": [Function],
+            "path": ":dynamic",
+          },
         },
         "0-3": {
           "entries": [
@@ -156,6 +232,23 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "children": [
+              {
+                "id": "0-3-0",
+                "index": true,
+                "lazy": [Function],
+              },
+              {
+                "id": "0-3-1",
+                "lazy": [Function],
+                "path": "other",
+              },
+            ],
+            "id": "0-3",
+            "lazy": [Function],
+            "path": "subdir/",
+          },
         },
         "0-3-0": {
           "entries": [
@@ -165,6 +258,11 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "id": "0-3-0",
+            "index": true,
+            "lazy": [Function],
+          },
         },
         "0-3-1": {
           "entries": [
@@ -174,9 +272,36 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "id": "0-3-1",
+            "lazy": [Function],
+            "path": "other",
+          },
         },
         "0-4": {
           "entries": [],
+          "route": {
+            "children": [
+              {
+                "id": "0-4-0",
+                "lazy": [Function],
+                "path": ":dynsub",
+              },
+              {
+                "children": [
+                  {
+                    "id": "0-4-1-0",
+                    "lazy": [Function],
+                    "path": "new",
+                  },
+                ],
+                "id": "0-4-1",
+                "path": ":dynsub/",
+              },
+            ],
+            "id": "0-4",
+            "path": "abc/",
+          },
         },
         "0-4-0": {
           "entries": [
@@ -186,9 +311,25 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "id": "0-4-0",
+            "lazy": [Function],
+            "path": ":dynsub",
+          },
         },
         "0-4-1": {
           "entries": [],
+          "route": {
+            "children": [
+              {
+                "id": "0-4-1-0",
+                "lazy": [Function],
+                "path": "new",
+              },
+            ],
+            "id": "0-4-1",
+            "path": ":dynsub/",
+          },
         },
         "0-4-1-0": {
           "entries": [
@@ -198,10 +339,16 @@ describe(createGlobPageRoutes, () => {
               "mod": [Function],
             },
           ],
+          "route": {
+            "id": "0-4-1-0",
+            "lazy": [Function],
+            "path": "new",
+          },
         },
       }
     `);
 
+    // walkArrayTree usage example
     const manifest: Record<string, unknown> = {};
     walkArrayTree(result.routes as DataRouteObject[], (route) => {
       manifest[route.id] = objectPick(route, ["path", "index"]);
