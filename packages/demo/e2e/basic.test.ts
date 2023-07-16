@@ -164,17 +164,9 @@ test.describe("ErrorBoundary", () => {
   test("basic", async ({ page }) => {
     await page.goto("/error");
     await isPageReady(page);
-    await page.getByRole("heading", { name: "Page Component" }).click();
-    await page.getByRole("button", { name: "Throw" }).click();
-    await page
-      .getByRole("heading", { name: "ErrorBoundary Component" })
-      .click();
-    await page.getByText("Error: hey render eror! at onClick").click();
-    await page.getByRole("button", { name: "Reset" }).click();
-    await page.getByRole("heading", { name: "Page Component" }).click();
   });
 
-  test("ssr", async ({ page, request }) => {
+  test("404", async ({ page, request }) => {
     await page.goto("/no-such-route");
     await page
       .getByText(

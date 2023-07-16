@@ -1,26 +1,52 @@
 import React from "react";
-import { useNavigate, useRouteError } from "react-router-dom";
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useRouteError,
+  useSearchParams,
+} from "react-router-dom";
 
 export function Component() {
-  const [error, setError] = React.useState<Error>();
+  const loaderData = useLoaderData();
+  const [searchParams] = useSearchParams();
 
-  if (error) {
-    throw error;
+  // TODO: ErrorBoundary doesn't catch it during SSR?
+  if (searchParams.get("id") === "exception-render") {
+    throw new Error("render boom!");
   }
 
   return (
     <div className="flex flex-col items-center">
       <div className="w-full p-6">
-        <div className="flex flex-col gap-2">
-          <h1>Page Component</h1>
-          <button
-            className="antd-btn antd-btn-default"
-            onClick={() => {
-              setError(new Error("hey render eror!"));
-            }}
-          >
-            Throw
-          </button>
+        <div className="flex flex-col gap-4">
+          <h1>Loader error test</h1>
+          <div className="flex gap-2">
+            <Link className="antd-btn antd-btn-default px-2" to="/error?id=ok">
+              ok
+            </Link>
+            <Link
+              className="antd-btn antd-btn-default px-2"
+              to="/error?id=error-response"
+            >
+              error response
+            </Link>
+            <Link
+              className="antd-btn antd-btn-default px-2"
+              to="/error?id=exception-loader"
+            >
+              exception (loader)
+            </Link>
+            <Link
+              className="antd-btn antd-btn-default px-2"
+              to="/error?id=exception-render"
+            >
+              exception (render)
+            </Link>
+          </div>
+          <pre className="border p-2 text-sm">
+            loaderData = {JSON.stringify(loaderData, null, 2)}
+          </pre>
         </div>
       </div>
     </div>
@@ -35,22 +61,35 @@ export function ErrorBoundary() {
     <div className="flex flex-col items-center">
       <div className="w-full p-6">
         <div className="flex flex-col gap-2">
-          <h1>ErrorBoundary Component</h1>
+          <h1>Loader error test (ErrorBoundary)</h1>
           <button
             className="antd-btn antd-btn-default"
             onClick={() => {
-              // trick to reset error
-              // https://github.com/remix-run/react-router/blob/bc2552840147206716544e5cdcdb54f649f9193f/packages/react-router/lib/hooks.tsx#L575-L583
-              navigate("", { replace: true });
+              navigate("/error", { replace: true });
             }}
           >
             Reset
           </button>
-          <pre className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder">
+          <pre
+            suppressHydrationWarning
+            className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder"
+          >
             {error instanceof Error
-              ? error.stack ?? error.message
+              ? error.message
               : JSON.stringify(error, null, 2)}
           </pre>
+          {error instanceof Error && (
+            <div className="flex flex-col gap-2 text-sm">
+              <pre>error.stack</pre>
+              <pre
+                suppressHydrationWarning
+                className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder"
+              >
+                {/* cf. https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/react-router-dom/index.tsx#L282-L284 */}
+                {error.stack || "(reducted by react-router hydration?)"}
+              </pre>
+            </div>
+          )}
         </div>
       </div>
     </div>
