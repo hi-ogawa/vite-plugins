@@ -8,7 +8,7 @@ import {
 } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import React from "react";
-import { renderToString } from "react-dom/server";
+// import { renderToReadableStream, renderToString } from "react-dom/server";
 import { StaticRouterProvider } from "react-router-dom/server";
 import type { Manifest } from "vite";
 import {
@@ -41,8 +41,7 @@ function ssrHandler(): RequestHandler {
       return routerResult.response;
     }
 
-    // TODO: streaming?
-    const ssrHtml = renderToString(
+    const ssrHtml = await renderToStreamToString(
       <React.StrictMode>
         <ReactQueryWrapper queryClient={queryClient}>
           <StaticRouterProvider
@@ -76,6 +75,29 @@ function ssrHandler(): RequestHandler {
       headers: [["content-type", "text/html"]],
     });
   };
+}
+
+// just for enabling `ErrorBoundary` during SSR
+async function renderToStreamToString(
+  reactEl: React.ReactElement
+): Promise<string> {
+  // workaround import error
+  const { renderToReadableStream }: typeof import("react-dom/server") =
+    await import("react-dom/server.browser" as string);
+
+  const reactStream = await renderToReadableStream(reactEl, {
+    onError(error, errorInfo) {
+      console.error(error, errorInfo);
+    },
+  });
+  await reactStream.allReady;
+
+  let result = "";
+  const stringStream = reactStream.pipeThrough(new TextDecoderStream());
+  for await (const chunk of stringStream as any as AsyncIterable<string>) {
+    result += chunk;
+  }
+  return result;
 }
 
 async function getClientManifest(): Promise<Manifest | undefined> {

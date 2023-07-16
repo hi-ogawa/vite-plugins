@@ -47,10 +47,48 @@ export function Component() {
           <pre className="border p-2 text-sm">
             loaderData = {JSON.stringify(loaderData, null, 2)}
           </pre>
+          <React.Suspense fallback={<div>boom caught</div>}>
+            {searchParams.get("id") === "exception-render" && <Boom />}
+          </React.Suspense>
+          <SimpleErrorBoundary>
+            {searchParams.get("id") === "exception-render" && <Boom />}
+          </SimpleErrorBoundary>
         </div>
       </div>
     </div>
   );
+}
+
+class SimpleErrorBoundary extends React.Component {
+  constructor(props: {}) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error: unknown) {
+    return { error };
+  }
+
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+    console.error("SimpleErrorBoundary/componentDidCatch", error, errorInfo);
+  }
+
+  override render(): React.ReactNode {
+    // @ts-ignore
+    if (this.state.error) {
+      return <div>SimpleErrorBoundary/fallback</div>;
+    }
+
+    // @ts-ignore
+    return this.props.children;
+  }
+}
+
+function Boom() {
+  if (true as boolean) {
+    throw new Error("render boom!");
+  }
+  return null;
 }
 
 export function ErrorBoundary() {
