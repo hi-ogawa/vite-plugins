@@ -12,8 +12,8 @@ importers:
         specifier: 1.0.2-pre.1
         version: 1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.6)
       '@hiogawa/utils':
-        specifier: 1.4.2-pre.14
-        version: 1.4.2-pre.14
+        specifier: 1.4.2-pre.15
+        version: 1.4.2-pre.15
       '@tsconfig/strictest':
         specifier: ^2.0.1
         version: 2.0.1
@@ -873,8 +873,8 @@ packages:
     resolution: {integrity: sha512-YkNSrK+h1/iFeshHC+9YAhux1kUO0JJ+hjZdlcT5gJR8hW9GJpOK8xwOpAE1fVjRE+QWupKwPx33tJUXCGPoPA==}
     dev: true
 
-  /@hiogawa/utils@1.4.2-pre.14:
-    resolution: {integrity: sha512-u/UgRWPeShoCbiB7RwbfujF083QzXvO3K2YWM7AnfFuKM78PM3DVAqEqBjgvoMMJmdnEpUGnBnIzShmy0zZabA==}
+  /@hiogawa/utils@1.4.2-pre.15:
+    resolution: {integrity: sha512-xmtMIyYasg92WGwA8Vk7gVRntsuTfpYX7bPy3nZvUGzaRHM2DxuKJF5oH7ZhI+MGR6E8dWFMEZ5rgyjPW3lMGw==}
     dev: true
 
   /@iconify-json/ri@1.1.9:

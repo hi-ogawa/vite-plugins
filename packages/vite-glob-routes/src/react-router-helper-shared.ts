@@ -1,4 +1,9 @@
-import { type Result, tinyassert, typedBoolean } from "@hiogawa/utils";
+import {
+  type Result,
+  arrayToEnum,
+  tinyassert,
+  typedBoolean,
+} from "@hiogawa/utils";
 import { type DataRouteMatch } from "react-router";
 import type { Manifest } from "vite";
 import type { RoutesMeta } from "./react-router-utils";
@@ -8,13 +13,26 @@ import { mapValues } from "./utils";
 // server proxy loader convention (aka data request)
 //
 
-// special marker for server to tell loader request routeId cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-react/routes.tsx#L210
-// I don't feel this convention is DX friendly since request path doesn't tell which loader is called exactly
-const LOADER_ROUTE_ID = "_data";
+const ENUM = arrayToEnum([
+  // url param for server to tell loader request routeId cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-react/routes.tsx#L210
+  // this convention might not be DX friendly since request path doesn't tell which loader is called exactly
+  "x-loader-route-id",
+
+  // redirect response
+  "location",
+  "x-loader-redirect-url",
+  "x-loader-redirect-status",
+
+  // error `Response`
+  "x-loader-error-response", // aka x-remix-catch
+
+  // exception (runtime server `Error` propagated to client)
+  "x-loader-exception", // aka x-remix-error
+]);
 
 export function wrapLoaderRequest(req: Request, routeId: string): Request {
   const url = new URL(req.url);
-  url.searchParams.set(LOADER_ROUTE_ID, routeId);
+  url.searchParams.set(ENUM["x-loader-route-id"], routeId);
   return new Request(url);
 }
 
@@ -22,9 +40,9 @@ export function unwrapLoaderRequest(
   req: Request
 ): { request: Request; routeId: string } | undefined {
   const url = new URL(req.url);
-  const routeId = url.searchParams.get(LOADER_ROUTE_ID);
+  const routeId = url.searchParams.get(ENUM["x-loader-route-id"]);
   if (routeId) {
-    url.searchParams.delete(LOADER_ROUTE_ID);
+    url.searchParams.delete(ENUM["x-loader-route-id"]);
     return {
       request: new Request(url, req),
       routeId,
@@ -32,17 +50,6 @@ export function unwrapLoaderRequest(
   }
   return;
 }
-
-// redirect response
-const LOCATION = "location";
-const LOADER_REDIRECT_URL = "x-loader-redirect-url";
-const LOADER_REDIRECT_STATUS = "x-loader-redirect-status";
-
-// error `Response`
-const LOADER_ERROR_RESPONSE = "x-loader-error-response"; // aka x-remix-catch
-
-// exception (to propagate runtime `Error` to client)
-const LOADER_EXCEPTION = "x-loader-exception"; // aka x-remix-error
 
 // cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-server-runtime/server.ts#L127
 export function wrapLoaderResult(result: Result<unknown, unknown>): Response {
@@ -67,7 +74,7 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
         : new Error("loader must throw 'Response' or 'Error'");
     }
     // error response
-    res.headers.set(LOADER_ERROR_RESPONSE, "1");
+    res.headers.set(ENUM["x-loader-error-response"], "1");
     return res;
   }
 
@@ -77,11 +84,11 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
   // redirect response
   if ([301, 302, 303, 307, 308].includes(res.status)) {
     const headers = new Headers(res.headers);
-    const location = headers.get(LOCATION);
+    const location = headers.get(ENUM.location);
     tinyassert(location);
-    headers.delete(LOCATION);
-    headers.set(LOADER_REDIRECT_URL, location);
-    headers.set(LOADER_REDIRECT_STATUS, String(res.status));
+    headers.delete(ENUM.location);
+    headers.set(ENUM["x-loader-redirect-url"], location);
+    headers.set(ENUM["x-loader-redirect-status"], String(res.status));
     return new Response(null, {
       status: 204,
       headers,
@@ -94,24 +101,24 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
 // cf. https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-react/routes.tsx#L210
 export async function unwrapLoaderResult(res: Response): Promise<Response> {
   // exception
-  if (res.headers.get(LOADER_EXCEPTION)) {
+  if (res.headers.get(ENUM["x-loader-exception"])) {
     throw await unwrapLoaderException(res);
   }
 
   // error response
-  if (res.headers.get(LOADER_ERROR_RESPONSE)) {
+  if (res.headers.get(ENUM["x-loader-error-response"])) {
     throw res;
   }
 
   // redirect
-  const redirectUrl = res.headers.get(LOADER_REDIRECT_URL);
+  const redirectUrl = res.headers.get(ENUM["x-loader-redirect-url"]);
   if (redirectUrl) {
     const headers = new Headers(res.headers);
-    const redirectStatus = headers.get(LOADER_REDIRECT_STATUS);
+    const redirectStatus = headers.get(ENUM["x-loader-redirect-status"]);
     tinyassert(redirectStatus);
-    headers.delete(LOADER_REDIRECT_URL);
-    headers.delete(LOADER_REDIRECT_STATUS);
-    headers.set(LOCATION, redirectUrl);
+    headers.delete(ENUM["x-loader-redirect-url"]);
+    headers.delete(ENUM["x-loader-redirect-status"]);
+    headers.set(ENUM.location, redirectUrl);
     return new Response(null, {
       status: Number(redirectStatus),
       headers,
@@ -135,7 +142,7 @@ function wrapLoaderException(e: unknown) {
     {
       status: 500,
       headers: {
-        [LOADER_EXCEPTION]: "1",
+        [ENUM["x-loader-exception"]]: "1",
         "content-type": "application/json",
       },
     }
