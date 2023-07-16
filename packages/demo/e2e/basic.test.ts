@@ -186,7 +186,7 @@ test.describe("ErrorBoundary", () => {
     await page.getByText("render boom!", { exact: true }).click();
   });
 
-  test.describe.only("ssr", () => {
+  test.describe("ssr", () => {
     test("error-response", async ({ page }) => {
       const res = await page.goto("/error?id=error-response");
       tinyassert(res);
