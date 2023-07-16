@@ -47,7 +47,7 @@ function ssrHandler(): RequestHandler {
       );
     } catch (e) {
       // cf. https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3034
-      const newContext = {
+      routerResult.context = {
         ...routerResult.context,
         statusCode: 500,
         errors: {
@@ -56,13 +56,17 @@ function ssrHandler(): RequestHandler {
         },
       };
       // router also needs to be re-created
-      const newRouter = createStaticRouter(
+      routerResult.router = createStaticRouter(
         routerResult.router.routes,
-        newContext
+        routerResult.context
       );
+      routerResult.statusCode = routerResult.context.statusCode;
       ssrHtml = renderToString(
         <React.StrictMode>
-          <StaticRouterProvider router={newRouter} context={newContext} />
+          <StaticRouterProvider
+            router={routerResult.router}
+            context={routerResult.context}
+          />
         </React.StrictMode>
       );
     }
