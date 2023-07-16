@@ -11,12 +11,6 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouterProvider } from "react-router-dom/server";
 import type { Manifest } from "vite";
-import {
-  ReactQueryWrapper,
-  __QUERY_CLIENT_STATE,
-  createQueryClient,
-  getQueryClientStateScript,
-} from "../utils/react-query-utils";
 
 export function createHattipApp() {
   return compose(loggerMiddleware(), globApiRoutes(), ssrHandler());
@@ -26,16 +20,11 @@ function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutes();
 
   return async (ctx) => {
-    // initialize request context for server loaders to prefetch queries
-    const queryClient = createQueryClient();
-    ctx.queryClient = queryClient;
-
     const routerResult = await handleReactRouterServer({
       routes,
       routesMeta,
       manifest: await getClientManifest(),
       request: ctx.request,
-      requestContext: ctx,
     });
     if (routerResult.type === "response") {
       return routerResult.response;
@@ -44,12 +33,10 @@ function ssrHandler(): RequestHandler {
     // TODO: streaming?
     const ssrHtml = renderToString(
       <React.StrictMode>
-        <ReactQueryWrapper queryClient={queryClient}>
-          <StaticRouterProvider
-            router={routerResult.router}
-            context={routerResult.context}
-          />
-        </ReactQueryWrapper>
+        <StaticRouterProvider
+          router={routerResult.router}
+          context={routerResult.context}
+        />
       </React.StrictMode>
     );
 
@@ -59,11 +46,7 @@ function ssrHandler(): RequestHandler {
     // pass QueryClient state to client for hydration
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      [
-        routerResult.injectToHtml,
-        getThemeScript(),
-        getQueryClientStateScript(queryClient),
-      ].join("\n")
+      [routerResult.injectToHtml, getThemeScript()].join("\n")
     );
 
     // TODO: apply server loader headers?

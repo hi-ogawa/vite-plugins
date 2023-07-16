@@ -7,10 +7,6 @@ import {
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import {
-  ReactQueryWrapper,
-  createQueryClientWithState,
-} from "../utils/react-query-utils";
 
 async function main() {
   const el = document.getElementById("root");
@@ -20,12 +16,9 @@ async function main() {
   await initializeClientRoutes({ routes });
 
   const router = createBrowserRouter(routes);
-  const queryClient = createQueryClientWithState();
   const root = (
     <React.StrictMode>
-      <ReactQueryWrapper queryClient={queryClient}>
-        <RouterProvider router={router} />
-      </ReactQueryWrapper>
+      <RouterProvider router={router} />
     </React.StrictMode>
   );
   hydrateRoot(el, root);
