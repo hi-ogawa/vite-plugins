@@ -12,8 +12,8 @@ importers:
         specifier: 1.0.2-pre.1
         version: 1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.6)
       '@hiogawa/utils':
-        specifier: 1.4.2-pre.12
-        version: 1.4.2-pre.12
+        specifier: 1.4.2-pre.14
+        version: 1.4.2-pre.14
       '@tsconfig/strictest':
         specifier: ^2.0.1
         version: 2.0.1
@@ -61,7 +61,7 @@ importers:
         version: 0.0.34
       '@hiogawa/isort-ts':
         specifier: 1.0.2-pre.1
-        version: 1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.6)
+        version: 1.0.2-pre.1(prettier@3.0.0)(typescript@5.1.6)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
         version: 2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.53.1)
@@ -840,6 +840,19 @@ packages:
       typescript: 5.1.6
     dev: true
 
+  /@hiogawa/isort-ts@1.0.2-pre.1(prettier@3.0.0)(typescript@5.1.6):
+    resolution: {integrity: sha512-b7UnS5rxTkyNbdVkfKjDLRffl3Ut2OmYm41lPa+TwxR2jtAuE1lxTj9x16GH26FUik5VSb/uiY6W7zWBcQT71Q==}
+    hasBin: true
+    peerDependencies:
+      prettier: '*'
+      typescript: '*'
+    dependencies:
+      cac: 6.7.14
+      consola: 2.15.3
+      prettier: 3.0.0
+      typescript: 5.1.6
+    dev: true
+
   /@hiogawa/unocss-preset-antd@2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.53.1):
     resolution: {integrity: sha512-NjJ0uKIA6tqmDTXQkO52Hb83tBJjwjOCUx9cgodxiROjTCuEP+yfkmJyzMlDzfxRUl8DnHd8IijnZl2cAX7s9Q==}
     peerDependencies:
@@ -858,6 +871,10 @@ packages:
 
   /@hiogawa/utils@1.4.2-pre.12:
     resolution: {integrity: sha512-YkNSrK+h1/iFeshHC+9YAhux1kUO0JJ+hjZdlcT5gJR8hW9GJpOK8xwOpAE1fVjRE+QWupKwPx33tJUXCGPoPA==}
+    dev: true
+
+  /@hiogawa/utils@1.4.2-pre.14:
+    resolution: {integrity: sha512-u/UgRWPeShoCbiB7RwbfujF083QzXvO3K2YWM7AnfFuKM78PM3DVAqEqBjgvoMMJmdnEpUGnBnIzShmy0zZabA==}
     dev: true
 
   /@iconify-json/ri@1.1.9:
@@ -2957,6 +2974,12 @@ packages:
   /prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
+  /prettier@3.0.0:
+    resolution: {integrity: sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==}
+    engines: {node: '>=14'}
     hasBin: true
     dev: true
 

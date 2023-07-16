@@ -16,7 +16,7 @@ export default defineConfig({
         // https://github.com/microsoft/playwright/issues/1086#issuecomment-592227413
         viewport: null,
         launchOptions: {
-          args: ["--window-size=800,800"],
+          args: ["--window-size=1200,800"],
         },
       },
     },
