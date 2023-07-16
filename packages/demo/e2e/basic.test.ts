@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import { type Page, expect, test } from "@playwright/test";
 
 test("basic", async ({ page }) => {
@@ -30,14 +31,17 @@ test("basic", async ({ page }) => {
 });
 
 test.describe("response-status-code", () => {
-  test("200", async ({ request }) => {
-    const res = await request.get("/");
+  test("200", async ({ page }) => {
+    const res = await page.goto("/");
+    tinyassert(res);
     expect(res.status()).toBe(200);
   });
 
-  test("404", async ({ request }) => {
-    const res = await request.get("/noooooo");
+  test("404", async ({ page }) => {
+    const res = await page.goto("/no-such-route");
+    tinyassert(res);
     expect(res.status()).toBe(404);
+    await page.getByText('{ "status": 404, "statusText": "Not Found"').click();
   });
 });
 
@@ -161,21 +165,49 @@ test.describe("server-redirect", () => {
 });
 
 test.describe("ErrorBoundary", () => {
-  test("basic", async ({ page }) => {
+  test("navigation", async ({ page }) => {
     await page.goto("/error");
     await isPageReady(page);
+
+    await page.getByRole("link", { name: "ok" }).click();
+    await page.getByText('loaderData = { "id": "ok" }').click();
+
+    await page.getByRole("link", { name: "error response" }).click();
+    await page
+      .getByText('{ "status": 400, "statusText": "Bad Request"')
+      .click();
+    await page.getByRole("button", { name: "Reset" }).click();
+
+    await page.getByRole("link", { name: "exception (loader)" }).click();
+    await page.getByText("loader boom!", { exact: true }).click();
+    await page.getByRole("button", { name: "Reset" }).click();
+
+    await page.getByRole("link", { name: "exception (render)" }).click();
+    await page.getByText("render boom!", { exact: true }).click();
   });
 
-  test("404", async ({ page, request }) => {
-    await page.goto("/no-such-route");
-    await page
-      .getByText(
-        '{ "status": 404, "statusText": "Not Found", "internal": true, "data": "Error: No'
-      )
-      .click();
+  test.describe.only("ssr", () => {
+    test("error-response", async ({ page }) => {
+      const res = await page.goto("/error?id=error-response");
+      tinyassert(res);
+      expect(res.status()).toBe(400);
+      await page.getByText('{ "status": 400').click();
+    });
 
-    const res = await request.get("/no-such-route");
-    expect(res.status()).toBe(404);
+    test("exception-loader", async ({ page }) => {
+      const res = await page.goto("/error?id=exception-loader");
+      tinyassert(res);
+      expect(res.status()).toBe(500);
+      await page.getByText("loader boom!", { exact: true }).click();
+    });
+
+    test("exception-render", async ({ page }) => {
+      const res = await page.goto("/error?id=exception-render");
+      tinyassert(res);
+      expect(res.status()).toBe(500);
+      // TODO: no error boundary?
+      await page.getByText("Internal Server Error").click();
+    });
   });
 });
 
