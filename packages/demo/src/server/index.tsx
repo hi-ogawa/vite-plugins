@@ -9,7 +9,10 @@ import {
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
-import { StaticRouterProvider } from "react-router-dom/server";
+import {
+  StaticRouterProvider,
+  createStaticRouter,
+} from "react-router-dom/server";
 import type { Manifest } from "vite";
 
 export function createHattipApp() {
@@ -30,6 +33,7 @@ function ssrHandler(): RequestHandler {
       return routerResult.response;
     }
 
+    // TODO: how to abstract two pass error handling logic inside "handleReactRouterServer"?
     let ssrHtml: string;
     try {
       // TODO: streaming?
@@ -42,25 +46,23 @@ function ssrHandler(): RequestHandler {
         </React.StrictMode>
       );
     } catch (e) {
-      console.log(
-        "== 2nd pass",
-        e,
-        routerResult.context._deepestRenderedBoundaryId
+      // cf. https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3034
+      const newContext = {
+        ...routerResult.context,
+        statusCode: 500,
+        errors: {
+          [routerResult.context._deepestRenderedBoundaryId ||
+          routerResult.router.routes[0]!.id]: e,
+        },
+      };
+      // router also needs to be re-created
+      const newRouter = createStaticRouter(
+        routerResult.router.routes,
+        newContext
       );
       ssrHtml = renderToString(
         <React.StrictMode>
-          <StaticRouterProvider
-            router={routerResult.router}
-            context={{
-              ...routerResult.context,
-              // cf. https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3034
-              statusCode: 500,
-              errors: {
-                [routerResult.context._deepestRenderedBoundaryId ||
-                routerResult.router.routes[0]!.id]: e,
-              },
-            }}
-          />
+          <StaticRouterProvider router={newRouter} context={newContext} />
         </React.StrictMode>
       );
     }
