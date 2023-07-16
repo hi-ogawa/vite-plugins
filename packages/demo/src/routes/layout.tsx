@@ -9,6 +9,7 @@ import {
   useRouteError,
 } from "react-router-dom";
 import { useEffectNoStrict } from "../utils/misc-react";
+import { ReactQueryWrapper } from "../utils/react-query-utils";
 
 export const handle = "root-handle";
 
@@ -16,14 +17,14 @@ export function Component() {
   useTopProgressBar();
 
   return (
-    <>
+    <ReactQueryWrapper>
       <Toaster
         toastOptions={{
           className: "!bg-colorBgElevated !text-colorText",
         }}
       />
       <PageInner />
-    </>
+    </ReactQueryWrapper>
   );
 }
 
@@ -101,7 +102,6 @@ const ROUTES = [
   "/other",
   "/dynamic/any",
   "/loader-data",
-  "/server-data",
   "/server-redirect",
   "/subdir",
   "/subdir/other",

@@ -2,14 +2,12 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
-  dehydrate,
-  hydrate,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React from "react";
 import { toast } from "react-hot-toast";
 
-export function createQueryClient() {
+function createQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
@@ -33,30 +31,10 @@ export function createQueryClient() {
   });
 }
 
-export const __QUERY_CLIENT_STATE = "__QUERY_CLIENT_STATE";
-
-// client
-export function createQueryClientWithState() {
-  const queryClient = createQueryClient();
-  hydrate(queryClient, (window as any)[__QUERY_CLIENT_STATE]);
-  return queryClient;
-}
-
-// server
-export function getQueryClientStateScript(queryClient: QueryClient) {
-  const queryClientState = dehydrate(queryClient);
-  return `
-    <script>
-      globalThis.${__QUERY_CLIENT_STATE} = ${JSON.stringify(queryClientState)}
-    </script>
-  `;
-}
-
-export function ReactQueryWrapper(
-  props: React.PropsWithChildren<{ queryClient: QueryClient }>
-) {
+export function ReactQueryWrapper(props: React.PropsWithChildren) {
+  const [queryClient] = React.useState(() => createQueryClient());
   return (
-    <QueryClientProvider client={props.queryClient}>
+    <QueryClientProvider client={queryClient}>
       {props.children}
       {import.meta.env.DEV && <ReactQueryDevtools />}
     </QueryClientProvider>
