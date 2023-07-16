@@ -11,11 +11,6 @@ export function Component() {
   const loaderData = useLoaderData();
   const [searchParams] = useSearchParams();
 
-  // TODO: ErrorBoundary doesn't catch it during SSR?
-  if (searchParams.get("id") === "exception-render") {
-    throw new Error("render boom!");
-  }
-
   return (
     <div className="flex flex-col items-center">
       <div className="w-full p-6">
@@ -47,9 +42,10 @@ export function Component() {
           <pre className="border p-2 text-sm">
             loaderData = {JSON.stringify(loaderData, null, 2)}
           </pre>
-          <React.Suspense fallback={<div>boom caught</div>}>
-            {searchParams.get("id") === "exception-render" && <Boom />}
-          </React.Suspense>
+          {/* TODO: ErrorBoundary doesn't catch it during SSR? */}
+          {/* <SimpleErrorBoundary>
+            <Boom />
+          </SimpleErrorBoundary> */}
           <SimpleErrorBoundary>
             {searchParams.get("id") === "exception-render" && <Boom />}
           </SimpleErrorBoundary>
@@ -70,20 +66,22 @@ class SimpleErrorBoundary extends React.Component {
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    console.error("SimpleErrorBoundary/componentDidCatch", error, errorInfo);
+    console.error("== SimpleErrorBoundary.componentDidCatch", error, errorInfo);
   }
 
   override render(): React.ReactNode {
     // @ts-ignore
     if (this.state.error) {
-      return <div>SimpleErrorBoundary/fallback</div>;
+      return <div>SimpleErrorBoundary.fallback</div>;
     }
 
     // @ts-ignore
     return this.props.children;
   }
 }
+SimpleErrorBoundary;
 
+Boom;
 function Boom() {
   if (true as boolean) {
     throw new Error("render boom!");
