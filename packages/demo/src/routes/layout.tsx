@@ -99,7 +99,6 @@ function Header() {
 
 const ROUTES = [
   "/",
-  "/other",
   "/dynamic/any",
   "/loader-data",
   "/server-redirect",

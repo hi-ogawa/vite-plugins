@@ -8,10 +8,6 @@ test("basic", async ({ page }) => {
   await page.getByRole("button", { name: "Fetch API" }).click();
   await page.getByText('{ "env": ').click();
 
-  await page.getByRole("link", { name: "/other", exact: true }).click();
-  await page.waitForURL("/other");
-  await page.getByText("Other page").click();
-
   await page.getByRole("link", { name: "/dynamic/any" }).click();
   await page.waitForURL("/dynamic/any");
   await page.getByText('params = { "id": "any" }').click();
@@ -47,17 +43,27 @@ test.describe("response-status-code", () => {
 
 test.describe("loader-data", () => {
   test("ssr", async ({ page }) => {
-    // TOOD: assert there's no client request to "/loader-data_data.json"?
     await page.goto("/loader-data");
-    await page.getByText('{ "message": "hello loader data" }').click();
+    await page.getByText("counter = 0").click();
   });
 
-  test("navigation", async ({ page }) => {
+  test("csr", async ({ page, request }) => {
     await page.goto("/");
-    await isPageReady(page);
+    await page.getByTestId("hydrated").waitFor({ state: "attached" });
 
     await page.getByRole("link", { name: "/loader-data" }).click();
-    await page.getByText('{ "message": "hello loader data" }').click();
+    await page.waitForURL("/loader-data");
+    await page.getByText("counter = 0").click();
+    await page.getByRole("button", { name: "+1" }).click();
+    await page.getByText("counter = 1").click();
+
+    // verify ssr loader data
+    const res = await request.get("/loader-data");
+    const resText = await res.text();
+    expect(resText).toContain("<span>counter = <!-- -->1</span>");
+
+    await page.getByRole("button", { name: "-1" }).click();
+    await page.getByText("counter = 0").click();
   });
 });
 
@@ -99,32 +105,6 @@ test.describe("layout-loader", () => {
     await page.goto("/");
     await isPageReady(page);
     await page.getByRole("link", { name: "/subdir/other" }).click();
-  });
-});
-
-test.describe("server-data", () => {
-  test("ssr", async ({ page }) => {
-    await page.goto("/server-data");
-    await page.getByText("counter = 0").click();
-  });
-
-  test("csr", async ({ page, request }) => {
-    await page.goto("/");
-    await page.getByTestId("hydrated").waitFor({ state: "attached" });
-
-    await page.getByRole("link", { name: "/server-data" }).click();
-    await page.waitForURL("/server-data");
-    await page.getByText("counter = 0").click();
-    await page.getByRole("button", { name: "+1" }).click();
-    await page.getByText("counter = 1").click();
-
-    // verify ssr prefetch
-    const res = await request.get("/server-data");
-    const resText = await res.text();
-    expect(resText).toContain("<span>counter = <!-- -->1</span>");
-
-    await page.getByRole("button", { name: "-1" }).click();
-    await page.getByText("counter = 0").click();
   });
 });
 
