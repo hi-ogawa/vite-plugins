@@ -96,6 +96,7 @@ export async function handleReactRouterServer({
     statusCode: getResponseStatusCode(context),
     injectToHtml: [
       assetPaths.map((f) => getPreloadLink(f)),
+      // TOOD: support nonce for CSP? https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/react-router-dom/server.tsx#L148
       createGlobalScript(KEY_extraRouterInfo, extraRouterInfo),
     ]
       .flat()

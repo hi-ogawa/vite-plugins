@@ -11,7 +11,6 @@ export function Component() {
   const loaderData = useLoaderData();
   const [searchParams] = useSearchParams();
 
-  // TODO: ErrorBoundary doesn't catch it during SSR?
   if (searchParams.get("id") === "exception-render") {
     throw new Error("render boom!");
   }

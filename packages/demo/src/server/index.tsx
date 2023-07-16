@@ -30,15 +30,40 @@ function ssrHandler(): RequestHandler {
       return routerResult.response;
     }
 
-    // TODO: streaming?
-    const ssrHtml = renderToString(
-      <React.StrictMode>
-        <StaticRouterProvider
-          router={routerResult.router}
-          context={routerResult.context}
-        />
-      </React.StrictMode>
-    );
+    let ssrHtml: string;
+    try {
+      // TODO: streaming?
+      ssrHtml = renderToString(
+        <React.StrictMode>
+          <StaticRouterProvider
+            router={routerResult.router}
+            context={routerResult.context}
+          />
+        </React.StrictMode>
+      );
+    } catch (e) {
+      console.log(
+        "== 2nd pass",
+        e,
+        routerResult.context._deepestRenderedBoundaryId
+      );
+      ssrHtml = renderToString(
+        <React.StrictMode>
+          <StaticRouterProvider
+            router={routerResult.router}
+            context={{
+              ...routerResult.context,
+              // cf. https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3034
+              statusCode: 500,
+              errors: {
+                [routerResult.context._deepestRenderedBoundaryId ||
+                routerResult.router.routes[0]!.id]: e,
+              },
+            }}
+          />
+        </React.StrictMode>
+      );
+    }
 
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
@@ -48,11 +73,6 @@ function ssrHandler(): RequestHandler {
       "<!--@INJECT_HEAD@-->",
       [routerResult.injectToHtml, getThemeScript()].join("\n")
     );
-
-    // TODO: apply server loader headers?
-    // remix employs `export const header = ...`
-    // https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-server-runtime/headers.ts#L65-L76
-    routerResult.context.loaderHeaders;
 
     return new Response(html, {
       status: routerResult.statusCode,
