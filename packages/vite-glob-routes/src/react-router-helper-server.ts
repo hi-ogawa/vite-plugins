@@ -23,7 +23,7 @@ import type { GlobPageRoutesResult } from "./react-router-utils";
 type RemixRouter = ReturnType<typeof createStaticRouter>;
 type RemixStaticHandler = ReturnType<typeof createStaticHandler>;
 
-type ServerRouterResult =
+export type ServerRouterResult =
   | {
       type: "render";
       handler: RemixStaticHandler;

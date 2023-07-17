@@ -4,6 +4,7 @@ import { loggerMiddleware } from "@hiogawa/utils-experimental";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
+  type ServerRouterResult,
   globPageRoutes,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
@@ -36,47 +37,21 @@ function ssrHandler(): RequestHandler {
 
     let ssrHtml: string;
     try {
-      ssrHtml = renderToString(
-        <React.StrictMode>
-          <StaticRouterProvider
-            router={createStaticRouter(
-              routerResult.handler.dataRoutes,
-              routerResult.context
-            )}
-            context={routerResult.context}
-          />
-        </React.StrictMode>
-      );
+      ssrHtml = render({ routerResult });
     } catch (e) {
-      // two pass rendering to handle SSR error
-      // cf.
+      // two pass rendering to handle SSR error cf.
       // https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-server-runtime/server.ts#L313-L361
       // https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3033
-      tinyassert(
-        routerResult.context._deepestRenderedBoundaryId,
-        "failed to resolve error route id"
-      );
-      routerResult.context.errors = {
-        [routerResult.context._deepestRenderedBoundaryId]: e,
-      };
+      const errorRouteId = routerResult.context._deepestRenderedBoundaryId;
+      tinyassert(errorRouteId, "failed to resolve 'errorRouteId'");
+      routerResult.context.errors = { [errorRouteId]: e };
       routerResult.context.statusCode = 500;
-      ssrHtml = renderToString(
-        <React.StrictMode>
-          <StaticRouterProvider
-            router={createStaticRouter(
-              routerResult.handler.dataRoutes,
-              routerResult.context
-            )}
-            context={routerResult.context}
-          />
-        </React.StrictMode>
-      );
+      ssrHtml = render({ routerResult });
     }
 
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
 
-    // pass QueryClient state to client for hydration
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       [routerResult.injectToHtml, getThemeScript()].join("\n")
@@ -87,6 +62,25 @@ function ssrHandler(): RequestHandler {
       headers: [["content-type", "text/html"]],
     });
   };
+}
+
+function render({
+  routerResult,
+}: {
+  routerResult: ServerRouterResult & { type: "render" };
+}) {
+  // TODO: streaming?
+  return renderToString(
+    <React.StrictMode>
+      <StaticRouterProvider
+        router={createStaticRouter(
+          routerResult.handler.dataRoutes,
+          routerResult.context
+        )}
+        context={routerResult.context}
+      />
+    </React.StrictMode>
+  );
 }
 
 async function getClientManifest(): Promise<Manifest | undefined> {
