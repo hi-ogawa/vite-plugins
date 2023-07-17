@@ -63,7 +63,7 @@ export async function initializeClientRoutes({
   }
 }
 
-// TODO: avoid global (but would wish to avoid react context either?)
+// TODO: re-think about global
 export function getExtraRouteInfo() {
   const extraRouterInfo = getGlobalScriptData(
     KEY_extraRouterInfo

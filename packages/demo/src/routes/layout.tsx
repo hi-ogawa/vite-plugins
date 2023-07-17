@@ -90,7 +90,8 @@ function Header() {
               className="border antd-menu-item aria-[current=page]:antd-menu-item-active px-2 py-0.5"
               to={href}
               end
-              onMouseEnter={() => injectPrefetch(href)}
+              onMouseOver={() => injectPrefetch(href)}
+              onTouchStart={() => injectPrefetch(href)}
             >
               {href}
             </NavLink>
@@ -129,7 +130,7 @@ const ROUTES = [
 // cf. https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-react/components.tsx#L479
 function useInjectPagePrefetchLinks() {
   const dataRouteContext = React.useContext(UNSAFE_DataRouterContext);
-  tinyassert(dataRouteContext);
+  tinyassert(dataRouteContext, "forgot to render 'RouterProvider'?");
   const routes = dataRouteContext.router.routes;
 
   function inject(page: string) {
@@ -145,7 +146,6 @@ function useInjectPagePrefetchLinks() {
       }
     }
   }
-
   return inject;
 }
 
