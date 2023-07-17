@@ -1,7 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
 import { type Page, expect, test } from "@playwright/test";
 
-test.only("basic", async ({ page }) => {
+test("basic", async ({ page }) => {
   await page.goto("/");
   await isPageReady(page);
 
