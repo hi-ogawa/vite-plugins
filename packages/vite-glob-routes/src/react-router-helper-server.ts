@@ -1,5 +1,4 @@
-import { typedBoolean, wrapErrorAsync } from "@hiogawa/utils";
-import { isRouteErrorResponse } from "react-router";
+import { wrapErrorAsync } from "@hiogawa/utils";
 import {
   type StaticHandlerContext,
   createStaticHandler,
@@ -19,15 +18,17 @@ import {
 } from "./react-router-helper-shared";
 import type { GlobPageRoutesResult } from "./react-router-utils";
 
-// this type not exposed?
+// typings from "@remix-run/router"
+// for now just derive it from "react-router" exports
 type RemixRouter = ReturnType<typeof createStaticRouter>;
+type RemixStaticHandler = ReturnType<typeof createStaticHandler>;
 
-type ServerRouterResult =
+export type ServerRouterResult =
   | {
       type: "render";
+      handler: RemixStaticHandler;
       context: StaticHandlerContext;
       router: RemixRouter;
-      statusCode: number;
       injectToHtml: string;
     }
   | {
@@ -91,28 +92,15 @@ export async function handleReactRouterServer({
 
   return {
     type: "render",
+    handler,
     context,
     router: createStaticRouter(handler.dataRoutes, context),
-    statusCode: getResponseStatusCode(context),
     injectToHtml: [
       assetPaths.map((f) => getPreloadLink(f)),
+      // TOOD: support nonce for CSP? https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/react-router-dom/server.tsx#L148
       createGlobalScript(KEY_extraRouterInfo, extraRouterInfo),
     ]
       .flat()
       .join("\n"),
   };
-}
-
-// probe context for error status (e.g. 404)
-function getResponseStatusCode(context: StaticHandlerContext): number {
-  if (context.errors) {
-    const errorResponses = Object.values(context.errors)
-      .map((e) => isRouteErrorResponse(e) && e)
-      .filter(typedBoolean);
-    if (errorResponses.length) {
-      return Math.max(...errorResponses.map((e) => e.status));
-    }
-    return 500;
-  }
-  return 200;
 }

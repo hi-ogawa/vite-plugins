@@ -185,8 +185,7 @@ test.describe("ErrorBoundary", () => {
       const res = await page.goto("/error?id=exception-render");
       tinyassert(res);
       expect(res.status()).toBe(500);
-      // TODO: no error boundary?
-      await page.getByText("Internal Server Error").click();
+      await page.getByText("render boom!", { exact: true }).click();
     });
   });
 });
