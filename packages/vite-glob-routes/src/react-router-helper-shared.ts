@@ -235,6 +235,7 @@ export function resolveAssetPathsByRouteId(
 }
 
 // general vite manifest utility to map production asset
+// TODO: differentiate asset types? (e.g. css, js, etc..)
 function resolveManifestAssets(files: string[], manifest: Manifest) {
   const entryKeys = new Set<string>();
 

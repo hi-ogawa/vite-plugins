@@ -15,17 +15,12 @@ import { walkArrayTree } from "./react-router-utils";
 
 export async function initializeClientRoutes({
   routes,
-  extraRouterInfo,
   noAutoProxyServerLoader,
 }: {
   routes: DataRouteObject[]; // mutated
-  extraRouterInfo?: ExtraRouterInfo; // user can pass directly without relying on global script
   noAutoProxyServerLoader?: boolean;
 }) {
-  if (!extraRouterInfo) {
-    extraRouterInfo = getGlobalScriptData(KEY_extraRouterInfo) as any;
-    tinyassert(extraRouterInfo);
-  }
+  const extraRouterInfo = getExtraRouteInfo();
 
   //
   // Resolve "lazy" route for current matching routes. otherwise it will leads to hydration mismatch and redundant initial client loader call.
@@ -66,6 +61,18 @@ export async function initializeClientRoutes({
       }
     }
   }
+}
+
+// TODO: avoid global (but would wish to avoid react context either?)
+export function getExtraRouteInfo() {
+  const extraRouterInfo = getGlobalScriptData(
+    KEY_extraRouterInfo
+  ) as ExtraRouterInfo;
+  tinyassert(
+    extraRouterInfo,
+    "did you forget to inject 'extraRouterInfo' global?"
+  );
+  return extraRouterInfo;
 }
 
 async function resolveLazyRouteObject(

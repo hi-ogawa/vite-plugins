@@ -32,4 +32,12 @@ export {
   type ServerRouterResult,
 } from "./react-router-helper-server";
 
-export { initializeClientRoutes } from "./react-router-helper-client";
+export {
+  initializeClientRoutes,
+  getExtraRouteInfo,
+} from "./react-router-helper-client";
+
+export {
+  type ExtraRouterInfo,
+  resolveAssetPathsByRouteId,
+} from "./react-router-helper-shared";
