@@ -1,4 +1,4 @@
-import internal from "virtual:@hiogawa/vite-glob-routes/internal/api-routes";
+import internal from "virtual:@hiogawa/vite-glob-routes/internal/apiRoutes";
 import type { RequestHandler } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
 import { mapKeys } from "./utils";

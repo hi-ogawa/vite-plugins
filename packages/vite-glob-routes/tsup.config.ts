@@ -7,8 +7,9 @@ export default defineConfig({
   format: ["esm", "cjs"],
   dts: true,
   external: [
-    "virtual:@hiogawa/vite-glob-routes/internal/page-routes",
-    "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy",
-    "virtual:@hiogawa/vite-glob-routes/internal/api-routes",
+    "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesServer",
+    "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClient",
+    "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClientLazy",
+    "virtual:@hiogawa/vite-glob-routes/internal/apiRoutes",
   ],
 });
