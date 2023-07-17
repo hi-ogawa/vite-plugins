@@ -21,8 +21,10 @@ async function main() {
       <RouterProvider router={router} />
     </React.StrictMode>
   );
-  hydrateRoot(el, root);
-  el.dataset["testid"] = "hydrated"; // for e2e
+  React.startTransition(() => {
+    hydrateRoot(el, root);
+    el.classList.add("hydrated"); // for spinner and e2e
+  });
 }
 
 main();

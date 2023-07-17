@@ -191,5 +191,5 @@ test.describe("ErrorBoundary", () => {
 });
 
 async function isPageReady(page: Page) {
-  await page.getByTestId("hydrated").waitFor({ state: "attached" });
+  await page.locator("#root.hydrated").waitFor({ state: "attached" });
 }

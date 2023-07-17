@@ -87,6 +87,10 @@ function Header() {
         ))}
       </ul>
       <div className="flex-1"></div>
+      <span
+        className="[.hydrated_&]:hidden antd-spin w-4 h-4"
+        title="hydrating..."
+      ></span>
       <ThemeSelect />
       <a
         className="antd-btn antd-btn-ghost i-ri-github-line w-6 h-6"
