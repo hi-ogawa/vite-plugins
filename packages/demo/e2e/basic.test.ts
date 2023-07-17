@@ -49,7 +49,7 @@ test.describe("loader-data", () => {
 
   test("csr", async ({ page, request }) => {
     await page.goto("/");
-    await page.getByTestId("hydrated").waitFor({ state: "attached" });
+    await isPageReady(page);
 
     await page.getByRole("link", { name: "/loader-data" }).click();
     await page.waitForURL("/loader-data");
@@ -191,5 +191,5 @@ test.describe("ErrorBoundary", () => {
 });
 
 async function isPageReady(page: Page) {
-  await page.getByTestId("hydrated").waitFor({ state: "attached" });
+  await page.locator("#root.hydrated").waitFor({ state: "attached" });
 }
