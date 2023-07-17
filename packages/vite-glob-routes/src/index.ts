@@ -1,12 +1,14 @@
 import type { Plugin } from "vite";
 
 // pass internal runtime data via virtual module
-const VIRTUAL_INTERNAL_PAGE_ROUTES =
-  "virtual:@hiogawa/vite-glob-routes/internal/page-routes";
-const VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY =
-  "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy";
-const VIRTUAL_INTERNAL_API_ROUTES =
-  "virtual:@hiogawa/vite-glob-routes/internal/api-routes";
+// prettier-ignore
+const VIRTUAL = {
+  apiRoutes:            "virtual:@hiogawa/vite-glob-routes/internal/apiRoutes",
+  pageRoutesServer:     "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesServer",
+  pageRoutesClient:     "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClient",
+  pageRoutesClientLazy: "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClientLazy",
+};
+const VIRTUALS = Object.values(VIRTUAL);
 
 export default function globRoutesPlugin(options: { root: string }): Plugin {
   // TODO: escape js string
@@ -35,11 +37,7 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
     },
 
     async resolveId(source, _importer, _options) {
-      if (
-        source === VIRTUAL_INTERNAL_PAGE_ROUTES ||
-        source === VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY ||
-        source === VIRTUAL_INTERNAL_API_ROUTES
-      ) {
+      if (VIRTUALS.includes(source)) {
         return source;
       }
       return;
@@ -50,19 +48,26 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
       // instead of completely relying on vite's glob import, we could also manually probe files and setup watcher etc...
       // cf. https://github.com/rakkasjs/rakkasjs/blob/18ba680d18f776acf2dedd44444873433552f4e3/packages/rakkasjs/src/features/api-routes/vite-plugin.ts#L8
 
-      if (id === VIRTUAL_INTERNAL_PAGE_ROUTES) {
-        return generatePageRoutesCode({ root, eager: true, ssr: options?.ssr });
+      if (id === VIRTUAL.pageRoutesServer) {
+        // TODO: validate with `options.ssr` or silently let module become empty for unintended server import on client build?
+        options?.ssr;
+
+        return generatePageRoutesCode({ root, eager: true, server: true });
       }
 
-      if (id === VIRTUAL_INTERNAL_PAGE_ROUTES_LAZY) {
+      if (id === VIRTUAL.pageRoutesClient) {
+        return generatePageRoutesCode({ root, eager: true, server: false });
+      }
+
+      if (id === VIRTUAL.pageRoutesClientLazy) {
         return generatePageRoutesCode({
           root,
           eager: false,
-          ssr: options?.ssr,
+          server: false,
         });
       }
 
-      if (id === VIRTUAL_INTERNAL_API_ROUTES && options?.ssr) {
+      if (id === VIRTUAL.apiRoutes) {
         // TODO: import only "get/post/put/delete" to tree shake other exports?
         return `
           const root = "${root}";
@@ -78,13 +83,13 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
 function generatePageRoutesCode({
   root,
   eager,
-  ssr,
+  server,
 }: {
   root: string;
   eager: boolean;
-  ssr?: boolean;
+  server: boolean;
 }) {
-  const serverCode = ssr
+  const serverCode = server
     ? `
     globPageServer:   import.meta.glob("${root}/**/*.page.server.(js|jsx|ts|tsx)", { eager: ${eager} }),
     globLayoutServer: import.meta.glob("${root}/**/layout.server.(js|jsx|ts|tsx)", { eager: ${eager} }),

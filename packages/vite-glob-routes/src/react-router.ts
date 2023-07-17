@@ -1,5 +1,6 @@
-import internalEager from "virtual:@hiogawa/vite-glob-routes/internal/page-routes";
-import internalLazy from "virtual:@hiogawa/vite-glob-routes/internal/page-routes/lazy";
+import virtualPageRoutesClient from "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClient";
+import vurtialPageRoutesClientLazy from "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClientLazy";
+import virtualPageRoutesServer from "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesServer";
 import { createGlobPageRoutes } from "./react-router-utils";
 
 // TODO: proper peer-dependency version range
@@ -8,17 +9,16 @@ import { createGlobPageRoutes } from "./react-router-utils";
 // provide "react-router" RouterObject tree (only type dependency)
 //
 
-// TODO: create separate exports for
-// globPageRoutesClient
-// globPageRoutesClientLazy
-// globPageRoutesServer
-
-export function globPageRoutes() {
-  return createGlobPageRoutes(internalEager);
+export function globPageRoutesServer() {
+  return createGlobPageRoutes(virtualPageRoutesServer);
 }
 
-export function globPageRoutesLazy() {
-  return createGlobPageRoutes(internalLazy);
+export function globPageRoutesClient() {
+  return createGlobPageRoutes(virtualPageRoutesClient);
+}
+
+export function globPageRoutesClientLazy() {
+  return createGlobPageRoutes(vurtialPageRoutesClientLazy);
 }
 
 export { type GlobPageRoutesResult, walkArrayTree } from "./react-router-utils";

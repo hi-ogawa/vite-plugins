@@ -5,7 +5,7 @@ import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.j
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
   type ServerRouterResult,
-  globPageRoutes,
+  globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
@@ -22,7 +22,7 @@ export function createHattipApp() {
 }
 
 function ssrHandler(): RequestHandler {
-  const { routes, routesMeta } = globPageRoutes();
+  const { routes, routesMeta } = globPageRoutesServer();
 
   return async (ctx) => {
     const routerResult = await handleReactRouterServer({
