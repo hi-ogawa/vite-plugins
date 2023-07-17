@@ -19,14 +19,17 @@ import {
 } from "./react-router-helper-shared";
 import type { GlobPageRoutesResult } from "./react-router-utils";
 
-// this type not exposed?
+// typings from "@remix-run/router"
+// for now just derive it from "react-router" exports
 type RemixRouter = ReturnType<typeof createStaticRouter>;
+type RemixStaticHandler = ReturnType<typeof createStaticHandler>;
 
 type ServerRouterResult =
   | {
       type: "render";
+      handler: RemixStaticHandler;
       context: StaticHandlerContext;
-      router: RemixRouter;
+      router: RemixRouter; // TODO: remove in favor of `context.statusCode`
       statusCode: number;
       injectToHtml: string;
     }
@@ -91,6 +94,7 @@ export async function handleReactRouterServer({
 
   return {
     type: "render",
+    handler,
     context,
     router: createStaticRouter(handler.dataRoutes, context),
     statusCode: getResponseStatusCode(context),

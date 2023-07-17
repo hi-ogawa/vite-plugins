@@ -1,4 +1,5 @@
 import { type RequestHandler, compose } from "@hattip/compose";
+import { tinyassert } from "@hiogawa/utils";
 import { loggerMiddleware } from "@hiogawa/utils-experimental";
 import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
@@ -33,38 +34,39 @@ function ssrHandler(): RequestHandler {
       return routerResult.response;
     }
 
-    // TODO: how to abstract two pass error handling logic inside "handleReactRouterServer"?
     let ssrHtml: string;
     try {
-      // TODO: streaming?
       ssrHtml = renderToString(
         <React.StrictMode>
           <StaticRouterProvider
-            router={routerResult.router}
+            router={createStaticRouter(
+              routerResult.handler.dataRoutes,
+              routerResult.context
+            )}
             context={routerResult.context}
           />
         </React.StrictMode>
       );
     } catch (e) {
-      // cf. https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3034
-      routerResult.context = {
-        ...routerResult.context,
-        statusCode: 500,
-        errors: {
-          [routerResult.context._deepestRenderedBoundaryId ||
-          routerResult.router.routes[0]!.id]: e,
-        },
-      };
-      // router also needs to be re-created
-      routerResult.router = createStaticRouter(
-        routerResult.router.routes,
-        routerResult.context
+      // two pass rendering to handle SSR error
+      // cf.
+      // https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-server-runtime/server.ts#L313-L361
+      // https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3033
+      tinyassert(
+        routerResult.context._deepestRenderedBoundaryId,
+        "failed to resolve error route id"
       );
-      routerResult.statusCode = routerResult.context.statusCode;
+      routerResult.context.errors = {
+        [routerResult.context._deepestRenderedBoundaryId]: e,
+      };
+      routerResult.context.statusCode = 500;
       ssrHtml = renderToString(
         <React.StrictMode>
           <StaticRouterProvider
-            router={routerResult.router}
+            router={createStaticRouter(
+              routerResult.handler.dataRoutes,
+              routerResult.context
+            )}
             context={routerResult.context}
           />
         </React.StrictMode>
@@ -81,7 +83,7 @@ function ssrHandler(): RequestHandler {
     );
 
     return new Response(html, {
-      status: routerResult.statusCode,
+      status: routerResult.context.statusCode,
       headers: [["content-type", "text/html"]],
     });
   };
