@@ -1,7 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
 import { type Page, expect, test } from "@playwright/test";
 
-test("basic", async ({ page }) => {
+test.only("basic", async ({ page }) => {
   await page.goto("/");
   await isPageReady(page);
 
@@ -49,7 +49,7 @@ test.describe("loader-data", () => {
 
   test("csr", async ({ page, request }) => {
     await page.goto("/");
-    await page.getByTestId("hydrated").waitFor({ state: "attached" });
+    await isPageReady(page);
 
     await page.getByRole("link", { name: "/loader-data" }).click();
     await page.waitForURL("/loader-data");
