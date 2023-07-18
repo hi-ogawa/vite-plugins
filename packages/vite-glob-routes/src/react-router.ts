@@ -5,6 +5,8 @@ import { createGlobPageRoutes } from "./react-router-utils";
 
 // TODO: proper peer-dependency version range
 
+// TODO: separate files for client and server? (currently all exported from "@hiogawa/vite-glob-routes/dist/react-router")
+
 //
 // provide "react-router" RouterObject tree (only type dependency)
 //
@@ -34,7 +36,9 @@ export {
 
 export {
   initializeClientRoutes,
-  getExtraRouteInfo,
+  getClientGlobal,
+  getPagePrefetchLinks,
+  type ClientGlobal,
 } from "./react-router-helper-client";
 
 export {
