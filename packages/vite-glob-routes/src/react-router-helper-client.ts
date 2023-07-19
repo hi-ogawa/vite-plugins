@@ -136,6 +136,7 @@ export function getClientGlobal() {
 //
 
 // TOOD: css? loader data?
+// TODO: rename resolvePageDependencies?
 // cf. https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-react/components.tsx#L479
 export function getPagePrefetchLinks(page: string) {
   const { client, server } = getClientGlobal();

@@ -71,18 +71,7 @@ function PageInner() {
 }
 
 function Header() {
-  // TODO: global hook to monitor events on "data-prefetch" anchor element?
-  useEffectNoStrict(() => {
-    // TODO: not sure perf impact of global "mouseover" handler etc...
-    document.addEventListener("mouseover", (e) => {
-      if (e.target instanceof HTMLAnchorElement) {
-        const dataPrefetch = e.target.getAttribute("data-prefetch");
-        if (dataPrefetch !== null) {
-          console.log(e.target.href);
-        }
-      }
-    });
-  }, []);
+  useGlobalPagePrefetchHandler();
 
   return (
     <header className="top-0 sticky antd-body flex items-center p-2 px-4 gap-3 shadow-md shadow-black/[0.05] dark:shadow-black/[0.7] z-1">
@@ -94,8 +83,6 @@ function Header() {
               className="border antd-menu-item aria-[current=page]:antd-menu-item-active px-2 py-0.5"
               to={href}
               end
-              onMouseOver={() => injectPagePrefetchLinks(href)}
-              onTouchStart={() => injectPagePrefetchLinks(href)}
               data-prefetch
             >
               {href}
@@ -133,9 +120,40 @@ const ROUTES = [
 //
 
 // cf. https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-react/components.tsx#L479
-function injectPagePrefetchLinks(page: string) {
-  const prefetchLinks = getPagePrefetchLinks(page);
-  for (const href of prefetchLinks.modules) {
+function useGlobalPagePrefetchHandler() {
+  React.useEffect(() => {
+    // TODO: not sure perf impact of global "mouseover"
+    function handler(e: MouseEvent | TouchEvent) {
+      if (e.target instanceof HTMLAnchorElement) {
+        const dataPrefetch = e.target.getAttribute("data-prefetch");
+        if (dataPrefetch) {
+          // e.target.href always full url?
+          injectPagePrefetchLinks(e.target.href);
+        }
+      }
+    }
+
+    document.addEventListener("mouseover", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mouseover", handler);
+      document.removeEventListener("touchstart", handler);
+    };
+  }, []);
+}
+
+// TODO: memoize?
+function injectPagePrefetchLinks(href: string) {
+  const url = new URL(href, window.location.href);
+
+  // TODO: prefetch external links?
+  if (url.host !== window.location.host) {
+    return;
+  }
+
+  // resolve page dependencies
+  const links = getPagePrefetchLinks(url.pathname);
+  for (const href of links.modules) {
     // TODO: escapeHtml
     const found = document.body.querySelector(`link[href="${href}"]`);
     if (!found) {
