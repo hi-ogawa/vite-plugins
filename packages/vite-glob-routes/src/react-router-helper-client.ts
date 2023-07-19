@@ -3,11 +3,13 @@ import {
   type DataRouteObject,
   type LazyRouteFunction,
   type LoaderFunction,
+  matchRoutes,
 } from "react-router";
 import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
   getGlobalScriptData,
+  resolveAssetPathsByRouteId,
   unwrapLoaderResult,
   wrapLoaderRequest,
 } from "./react-router-helper-shared";
@@ -15,17 +17,23 @@ import { walkArrayTree } from "./react-router-utils";
 
 export async function initializeClientRoutes({
   routes,
-  extraRouterInfo,
   noAutoProxyServerLoader,
 }: {
   routes: DataRouteObject[]; // mutated
-  extraRouterInfo?: ExtraRouterInfo; // user can pass directly without relying on global script
   noAutoProxyServerLoader?: boolean;
 }) {
-  if (!extraRouterInfo) {
-    extraRouterInfo = getGlobalScriptData(KEY_extraRouterInfo) as any;
-    tinyassert(extraRouterInfo);
-  }
+  // setup client global
+  const extraRouterInfo = getGlobalScriptData(
+    KEY_extraRouterInfo
+  ) as ExtraRouterInfo;
+  tinyassert(extraRouterInfo, "forgot 'extraRouterInfo'?");
+
+  setClientGlobal({
+    client: { routes },
+    server: {
+      extraRouterInfo,
+    },
+  });
 
   //
   // Resolve "lazy" route for current matching routes. otherwise it will leads to hydration mismatch and redundant initial client loader call.
@@ -95,6 +103,48 @@ function mutateRouteObject(
   } else {
     mutateFn(r1);
   }
+}
+
+//
+// client global
+//
+
+// hopefully this is the only nasty global thing we have to do...
+export interface ClientGlobal {
+  client: {
+    routes: DataRouteObject[];
+  };
+  // runtime data passed by server
+  server: {
+    extraRouterInfo: ExtraRouterInfo;
+  };
+}
+
+let __clientGlobal: ClientGlobal;
+
+function setClientGlobal(v: ClientGlobal) {
+  __clientGlobal = v;
+}
+
+export function getClientGlobal() {
+  tinyassert(__clientGlobal, "forgot 'clientGlobal'?");
+  return __clientGlobal;
+}
+
+//
+// prefetching
+//
+
+// TOOD: css? loader data?
+// TODO: rename resolvePageDependencies?
+// cf. https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-react/components.tsx#L479
+export function getPagePrefetchLinks(page: string) {
+  const { client, server } = getClientGlobal();
+  const matches = matchRoutes(client.routes, page) ?? [];
+  const modules = matches.flatMap((m) =>
+    resolveAssetPathsByRouteId(m.route.id, server.extraRouterInfo)
+  );
+  return { modules };
 }
 
 //

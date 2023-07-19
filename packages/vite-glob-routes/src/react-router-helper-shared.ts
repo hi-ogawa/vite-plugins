@@ -246,6 +246,8 @@ function resolveManifestAssets(files: string[], manifest: Manifest) {
       for (const nextKey of e.imports ?? []) {
         collectEnryKeysRecursive(nextKey);
       }
+      // TODO: css?
+      e.css;
     }
   }
 
