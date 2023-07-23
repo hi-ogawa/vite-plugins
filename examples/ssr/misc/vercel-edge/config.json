@@ -8,6 +8,9 @@
       }
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": ".*",
       "dest": "/"
     }
