@@ -56,6 +56,9 @@ importers:
       '@hattip/compose':
         specifier: ^0.0.34
         version: 0.0.34
+      '@hiogawa/utils':
+        specifier: 1.4.2-pre.15
+        version: 1.4.2-pre.15
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../../packages/vite-glob-routes
