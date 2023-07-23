@@ -1,7 +1,3 @@
 export function Component() {
-  return (
-    <div>
-      Index page
-    </div>
-  );
+  return <div>Index page</div>;
 }

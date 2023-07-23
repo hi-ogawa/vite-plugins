@@ -4,8 +4,8 @@ misc script for vercel deployment
 
 ```sh
 # initial project setup
-vercel projects add vite-plugins-demo-hiro18181
-vercel link -p vite-plugins-demo-hiro18181
+vercel projects add (name)
+vercel link -p (name)
 ```
 
 ## references

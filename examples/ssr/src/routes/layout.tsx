@@ -14,7 +14,7 @@ export function Component() {
             <Link to="/loader-data">Loader Data</Link>
           </li>
           <li>
-            <Link to="/hello">Hello API</Link>
+            <a href="/hello">Hello API</a>
           </li>
         </ul>
       </header>
