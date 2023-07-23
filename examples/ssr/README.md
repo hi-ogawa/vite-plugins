@@ -1,5 +1,7 @@
 # examples/ssr
 
+https://vite-plugins-example-ssr-hiro18181.vercel.app/
+
 ```sh
 # development
 pnpm i
