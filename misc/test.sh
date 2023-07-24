@@ -1,17 +1,21 @@
 #!/bin/bash
 set -eu -o pipefail
 
-# test "examples"
+# run e2e for templates
 
+# usage
+#   src_dir=examples/ssr bash misc/test.sh
+
+src_dir="${src_dir}"
+dst_dir="${dst_dir:-$src_dir}"
 export PORT="${PORT:-4456}"
 
 echo "*"
 echo "* testing 'pnpm dev'..."
 echo "*"
-E2E_COMMAND='pnpm -C examples/ssr dev' npx playwright test examples/ssr/e2e
+E2E_COMMAND="pnpm -C ${dst_dir} dev" npx playwright test "$src_dir/e2e"
 
 echo "*"
 echo "* testing 'pnpm preview'..."
 echo "*"
-pnpm -C examples/ssr build-preview
-E2E_COMMAND='pnpm -C examples/ssr preview' npx playwright test examples/ssr/e2e
+E2E_COMMAND="pnpm -C ${dst_dir} preview" npx playwright test "$src_dir/e2e"

@@ -20,4 +20,9 @@ jobs:
       - run: pnpm test
       - run: npx playwright install chromium
       - run: pnpm -C packages/demo test-e2e
-      - run: bash misc/test.sh
+      - name:
+        run: |
+          export src_dir=examples/ssr
+          export dst_dir=$(mktemp -d)
+          bash misc/init.sh
+          bash misc/test.sh

@@ -4,7 +4,7 @@ https://vite-plugins-example-ssr-hiro18181.vercel.app/
 
 ```sh
 # initial setup
-bash init.sh
+bash misc/init.sh
 pnpm update
 
 # development
