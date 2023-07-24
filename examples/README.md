@@ -4,7 +4,7 @@
 
 - [x] e2e
 - [ ] package for `npm create`
-  - just coping the directly `examples/ssr` works for now
+  - just coping a whole directory (e.g. `examples/ssr`) works for now
 - [ ] more build targets
   - [x] vercel edge
   - [ ] vercel serverless
