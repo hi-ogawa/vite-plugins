@@ -4,5 +4,7 @@
 
 - [ ] e2e
 - [ ] package for `npm create`
-  - resolve `workspace:*` deps
-  - gitignore
+- [ ] more build targets
+  - [x] vercel edge
+  - [ ] vercel serverless
+  - [ ] cloudflare workers
