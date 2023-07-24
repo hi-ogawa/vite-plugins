@@ -3,6 +3,9 @@
 https://vite-plugins-example-ssr-hiro18181.vercel.app/
 
 ```sh
+# update dependencies
+pnpm update
+
 # development
 pnpm i
 pnpm dev

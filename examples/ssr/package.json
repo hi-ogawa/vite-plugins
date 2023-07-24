@@ -1,9 +1,7 @@
 {
   "name": "vite-puglins-example-ssr",
   "scripts": {
-    "dev": "run-p dev:*",
-    "dev:vite": "vite",
-    "dev:tsc": "tsc -b --watch --preserveWatchOutput",
+    "dev": "vite",
     "build": "vite build && vite build --ssr",
     "build-vercel-edge": "SERVER_ENTRY=./src/server/adapter-vercel-edge.ts pnpm build && bash misc/vercel-edge/build.sh",
     "build-preview": "SERVER_ENTRY=./src/server/adapter-preview.ts pnpm build",
@@ -27,6 +25,7 @@
     "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.13.0"
+    "react-router-dom": "^6.13.0",
+    "vite": "^4.4.4"
   }
 }
