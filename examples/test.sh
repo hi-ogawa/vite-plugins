@@ -4,7 +4,7 @@ set -eu -o pipefail
 # run e2e for templates
 
 # usage
-#   src_dir=examples/ssr bash misc/test.sh
+#   src_dir=examples/ssr bash examples/test.sh
 
 src_dir="${src_dir}"
 dst_dir="${dst_dir:-$src_dir}"

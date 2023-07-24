@@ -5,8 +5,8 @@ set -eu -o pipefail
 
 # usage
 #   export dst_dir=$(mktemp -d)
-#   src_dir=examples/ssr bash misc/init.sh
-#   src_dir=examples/ssr bash misc/test.sh
+#   src_dir=examples/ssr bash examples/init.sh
+#   src_dir=examples/ssr bash examples/test.sh
 
 echo "*"
 echo "* initializing '${dst_dir}' by'${src_dir}' ..."
