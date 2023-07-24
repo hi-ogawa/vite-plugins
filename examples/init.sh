@@ -15,4 +15,3 @@ cp -r "$src_dir"/. "$dst_dir"
 cd "$dst_dir"
 bash misc/init.sh
 pnpm update
-pnpm build-preview

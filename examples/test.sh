@@ -18,4 +18,5 @@ E2E_COMMAND="pnpm -C ${dst_dir} dev" npx playwright test "$src_dir/e2e"
 echo "*"
 echo "* testing 'pnpm preview'..."
 echo "*"
+pnpm -C "${dst_dir}" build-preview
 E2E_COMMAND="pnpm -C ${dst_dir} preview" npx playwright test "$src_dir/e2e"
