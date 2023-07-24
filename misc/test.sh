@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu -o pipefail
 
-# TODO: test after clean template is copied
+# test "examples"
 
 export PORT="${PORT:-4456}"
 

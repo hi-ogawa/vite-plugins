@@ -20,4 +20,4 @@ jobs:
       - run: pnpm test
       - run: npx playwright install chromium
       - run: pnpm -C packages/demo test-e2e
-      - run: bash misc/test-example.sh
+      - run: bash misc/test.sh
