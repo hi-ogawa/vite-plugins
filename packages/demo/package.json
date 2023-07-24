@@ -1,4 +1,6 @@
 {
+  "name": "@hiogawa/vite-plugins-demo",
+  "private": true,
   "scripts": {
     "dev": "run-p dev:*",
     "dev:vite": "vite",
