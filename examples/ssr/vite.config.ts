@@ -22,5 +22,11 @@ export default defineConfig((ctx) => ({
     manifest: true,
     sourcemap: true,
   },
+  server: process.env["PORT"]
+    ? {
+        port: Number(process.env["PORT"]),
+        strictPort: true,
+      }
+    : undefined,
   clearScreen: false,
 }));

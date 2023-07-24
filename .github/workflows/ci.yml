@@ -18,5 +18,6 @@ jobs:
       - run: pnpm build
       - run: pnpm tsc
       - run: pnpm test
-      - run: npx -C packages/demo playwright install chromium
+      - run: npx playwright install chromium
       - run: pnpm -C packages/demo test-e2e
+      - run: bash misc/test-example.sh
