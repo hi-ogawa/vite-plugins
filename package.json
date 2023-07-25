@@ -19,6 +19,7 @@
     "@changesets/cli": "^2.26.2",
     "@hiogawa/isort-ts": "1.0.2-pre.1",
     "@hiogawa/utils": "1.4.2-pre.15",
+    "@playwright/test": "^1.36.2",
     "@tsconfig/strictest": "^2.0.1",
     "@types/node": "^18.16.18",
     "@vitejs/plugin-react": "^4.0.0",
