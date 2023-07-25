@@ -3,7 +3,7 @@ import type { RequestHandler } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
 import { createParamMatcher, mapKeys } from "./utils";
 
-// does it propagate to user code?
+// cf. https://github.com/hattipjs/hattip/blob/bec153bddec2109507ff385a9db3434718650730/packages/base/router/src/index.ts#L1-L6
 declare module "@hattip/compose" {
   interface RequestContextExtensions {
     params: Record<string, string>;
