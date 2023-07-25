@@ -191,13 +191,13 @@ test.describe("ErrorBoundary", () => {
 });
 
 test("api-dynamic-route", async ({ page }) => {
-  await page.goto("/dev/dynamic/hello");
+  await page.goto("/api/dynamic/hello");
   await page.getByText('{"params":{"hee":"hello"}}').click();
 
-  await page.goto("/dev/dynamic/hello/goodbye");
+  await page.goto("/api/dynamic/hello/goodbye");
   await page.getByText('{"params":{"hey":"hello","foo":"goodbye"}}').click();
 
-  const res = await page.goto("/dev/dynamic/hello/goodbye/again");
+  const res = await page.goto("/api/dynamic/hello/goodbye/again");
   expect(res?.status()).toBe(404);
 });
 
