@@ -1,7 +1,14 @@
 import internal from "virtual:@hiogawa/vite-glob-routes/internal/apiRoutes";
 import type { RequestHandler } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
-import { mapKeys } from "./utils";
+import { createParamMatcher, mapKeys } from "./utils";
+
+// does it propagate to user code?
+declare module "@hattip/compose" {
+  interface RequestContextExtensions {
+    params: Record<string, string>;
+  }
+}
 
 export function globApiRoutes() {
   const { root, globApi } = internal;
@@ -19,14 +26,22 @@ type ApiModule = Partial<
 function createGlobApiRoutesInner(
   apiModules: Record<string, ApiModule>
 ): RequestHandler {
+  const entries = Object.entries(apiModules).map(([apiRoute, apiModule]) => ({
+    matcher: createParamMatcher(apiRoute),
+    apiModule,
+  }));
+
   return async (ctx) => {
-    const apiModule = apiModules[ctx.url.pathname];
-    if (apiModule) {
-      const method = ctx.method.toLowerCase();
-      const handler = apiModule[method as "get"];
-      if (handler) {
-        tinyassert(typeof handler === "function");
-        return handler(ctx);
+    for (const e of entries) {
+      const match = e.matcher(ctx.url.pathname);
+      if (match) {
+        const method = ctx.method.toLowerCase();
+        const handler = e.apiModule[method as "get"];
+        if (handler) {
+          tinyassert(typeof handler === "function");
+          ctx.params = match.params;
+          return handler(ctx);
+        }
       }
     }
     return ctx.next();
