@@ -20,6 +20,8 @@ jobs:
       - run: pnpm test
       - run: npx playwright install chromium
       - run: pnpm -C packages/demo test-e2e
+      - run: pnpm -C packages/demo build-preview
+      - run: E2E_COMMAND='pnpm preview' pnpm -C packages/demo test-e2e
       - name: test template fresh install
         run: |
           export src_dir=examples/ssr

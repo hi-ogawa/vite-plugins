@@ -1,6 +1,6 @@
 import { defineConfig } from "@playwright/test";
 
-// cf. misc/test-example.sh
+// for examples/test.sh
 
 const port = Number(process.env["PORT"] ?? "4456");
 const command = process.env["E2E_COMMAND"] ?? "pnpm dev";
