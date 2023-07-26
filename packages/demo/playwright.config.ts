@@ -1,13 +1,13 @@
 import process from "node:process";
 import { defineConfig } from "@playwright/test";
 
-const port = Number(process.env["PORT"] ?? "4456");
+const PORT = Number(process.env["PORT"] ?? "4456");
 const command = process.env["E2E_COMMAND"] ?? `pnpm dev:vite`;
 
 export default defineConfig({
   testDir: "e2e",
   use: {
-    baseURL: `http://localhost:${port}`,
+    baseURL: `http://localhost:${PORT}`,
   },
   projects: [
     {
@@ -25,10 +25,10 @@ export default defineConfig({
   ],
   webServer: {
     command: command + ` >> dev-e2e.log 2>&1`,
-    port,
+    port: PORT,
     env: {
       ...(process.env as any),
-      PORT: port,
+      PORT,
     },
     reuseExistingServer: true,
   },
