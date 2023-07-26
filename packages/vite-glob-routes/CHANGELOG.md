@@ -1,5 +1,11 @@
 # @hiogawa/vite-glob-routes
 
+## 0.5.0
+
+### Minor Changes
+
+- 14d5e32: feat: support dynamic api route
+
 ## 0.4.0
 
 ### Minor Changes
