@@ -20,6 +20,11 @@ export const rpcRoutes = {
     ctx.session = {};
     ctx.commitSession();
   },
+
+  me: async () => {
+    const ctx = getRequestContext();
+    return ctx.session.user ?? null;
+  },
 } satisfies TinyRpcRoutes;
 
 export function rpcHandler(): RequestHandler {

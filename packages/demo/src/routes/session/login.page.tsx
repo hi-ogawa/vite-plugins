@@ -9,7 +9,7 @@ export function Component() {
   const loginMutation = useMutation({
     ...rpcClientQuery.login.mutationOptions(),
     onSuccess: () => {
-      window.location.href = "/session/me";
+      window.location.href = "/session";
     },
   });
 
