@@ -113,6 +113,7 @@ const ROUTES = [
   "/subdir",
   "/subdir/other",
   "/error",
+  "/session",
 ];
 
 //

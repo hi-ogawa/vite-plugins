@@ -16,6 +16,7 @@ import {
   createStaticRouter,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
+import { rpcHandler } from "../rpc/server";
 import { requestContextStorageHandler } from "./request-context";
 import { sessionHandler } from "./session";
 
@@ -24,6 +25,7 @@ export function createHattipApp() {
     loggerMiddleware(),
     requestContextStorageHandler(),
     sessionHandler(),
+    rpcHandler(),
     globApiRoutes(),
     ssrHandler()
   );

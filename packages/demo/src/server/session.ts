@@ -3,8 +3,14 @@ import { wrapError } from "@hiogawa/utils";
 import * as cookieLib from "cookie";
 import { z } from "zod";
 
+// session api exposed via request context
+
 const Z_SESSION_DATA = z.object({
-  theme: z.string().default("system"),
+  user: z
+    .object({
+      name: z.string(),
+    })
+    .optional(),
 });
 
 const SESSION_DATA_DEFAULT = Z_SESSION_DATA.parse({});

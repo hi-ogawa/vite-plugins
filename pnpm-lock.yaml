@@ -68,6 +68,12 @@ importers:
       '@hiogawa/isort-ts':
         specifier: 1.0.2-pre.1
         version: 1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.6)
+      '@hiogawa/query-proxy':
+        specifier: 0.1.1-pre.3
+        version: 0.1.1-pre.3
+      '@hiogawa/tiny-rpc':
+        specifier: ^0.2.2
+        version: 0.2.2(zod@3.21.4)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
         version: 2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.53.1)
@@ -128,6 +134,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-hook-form:
+        specifier: ^7.45.2
+        version: 7.45.2(react@18.2.0)
       react-hot-toast:
         specifier: ^2.4.1
         version: 2.4.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
@@ -1038,6 +1047,26 @@ packages:
       consola: 2.15.3
       prettier: 2.8.8
       typescript: 5.1.6
+    dev: true
+
+  /@hiogawa/query-proxy@0.1.1-pre.3:
+    resolution: {integrity: sha512-0m7KSB2Tn8eC7rCnzbL3NwuyAgC3HWIweyMkltazGQ0ZMLZTNpIKbIwkaFzRCuZraAw66ysSnU4K0dWL2vLHrg==}
+    peerDependencies:
+      '@trpc/server': '*'
+    peerDependenciesMeta:
+      '@trpc/server':
+        optional: true
+    dev: true
+
+  /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
+    resolution: {integrity: sha512-G+ebk/OV8/i2P/8/QSQTsn94l2gArHUZqc43CPHve4wG3AaIqo34xMgxNQax5kgbwzkK+NusPcbQxBI3mMm0dg==}
+    peerDependencies:
+      zod: '*'
+    peerDependenciesMeta:
+      zod:
+        optional: true
+    dependencies:
+      zod: 3.21.4
     dev: true
 
   /@hiogawa/unocss-preset-antd@2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.53.1):
@@ -3739,6 +3768,15 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: true
+
+  /react-hook-form@7.45.2(react@18.2.0):
+    resolution: {integrity: sha512-9s45OdTaKN+4NSTbXVqeDITd/nwIg++nxJGL8+OD5uf1DxvhsXQ641kaYHk5K28cpIOTYm71O/fYk7rFaygb3A==}
+    engines: {node: '>=12.22.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
     dev: true
 
   /react-hot-toast@2.4.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0):
