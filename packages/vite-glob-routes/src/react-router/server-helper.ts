@@ -4,6 +4,7 @@ import {
   createStaticHandler,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
+import { unwrapLoaderRequest, wrapLoaderResult } from "./loader-utils";
 import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
@@ -12,8 +13,6 @@ import {
   resolveAssetPathsByRouteId,
   serializeMatch,
   serializeRoutesMata,
-  unwrapLoaderRequest,
-  wrapLoaderResult,
 } from "./misc";
 import type { GlobPageRoutesResult } from "./route-utils";
 

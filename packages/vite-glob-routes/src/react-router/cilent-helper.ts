@@ -5,13 +5,12 @@ import {
   type LoaderFunction,
   matchRoutes,
 } from "react-router";
+import { unwrapLoaderResult, wrapLoaderRequest } from "./loader-utils";
 import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
   getGlobalScriptData,
   resolveAssetPathsByRouteId,
-  unwrapLoaderResult,
-  wrapLoaderRequest,
 } from "./misc";
 import { walkArrayTree } from "./route-utils";
 
