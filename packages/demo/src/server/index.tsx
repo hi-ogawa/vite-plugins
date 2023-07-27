@@ -16,11 +16,20 @@ import {
   createStaticRouter,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
+import { requestContextStorageHandler } from "./request-context";
+import { sessionHandler } from "./session";
 
 export function createHattipApp() {
-  return compose(loggerMiddleware(), globApiRoutes(), ssrHandler());
+  return compose(
+    loggerMiddleware(),
+    requestContextStorageHandler(),
+    sessionHandler(),
+    globApiRoutes(),
+    ssrHandler()
+  );
 }
 
+// TODO(refactor): move to a separate file
 function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
 
