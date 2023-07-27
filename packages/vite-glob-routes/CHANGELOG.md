@@ -1,5 +1,11 @@
 # @hiogawa/vite-glob-routes
 
+## 0.6.0
+
+### Major Changes
+
+- 0810f7b: fix: split client/server entries
+
 ## 0.5.0
 
 ### Minor Changes
