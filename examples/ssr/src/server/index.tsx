@@ -5,7 +5,7 @@ import {
   type ServerRouterResult,
   globPageRoutesServer,
   handleReactRouterServer,
-} from "@hiogawa/vite-glob-routes/dist/react-router";
+} from "@hiogawa/vite-glob-routes/dist/react-router/server";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
