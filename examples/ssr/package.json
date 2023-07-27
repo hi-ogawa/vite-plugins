@@ -4,6 +4,7 @@
     "dev": "vite",
     "build": "vite build && vite build --ssr",
     "build-vercel-edge": "SERVER_ENTRY=./src/server/adapter-vercel-edge.ts pnpm build && bash misc/vercel-edge/build.sh",
+    "build-vercel": "pnpm build && bash misc/vercel/build.sh",
     "build-preview": "SERVER_ENTRY=./src/server/adapter-preview.ts pnpm build",
     "preview": "node ./dist/server/index.mjs",
     "release": "vercel deploy --prebuilt .",

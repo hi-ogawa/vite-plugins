@@ -7,5 +7,5 @@
   - just coping a whole directory (e.g. `examples/ssr`) works for now
 - [ ] more build targets
   - [x] vercel edge
-  - [ ] vercel serverless
+  - [x] vercel serverless
   - [ ] cloudflare workers

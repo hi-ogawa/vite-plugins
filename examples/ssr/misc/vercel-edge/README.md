@@ -1,6 +1,6 @@
-# vercel
+# vercel-edge
 
-misc script for vercel deployment
+misc script for vercel-edge deployment
 
 ```sh
 # initial project setup
