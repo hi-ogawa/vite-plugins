@@ -1,6 +1,8 @@
+import process from "node:process";
 import { defineConfig } from "@playwright/test";
 
-const PORT = 4456;
+const PORT = Number(process.env["PORT"] ?? "4456");
+const command = process.env["E2E_COMMAND"] ?? `pnpm dev:vite`;
 
 export default defineConfig({
   testDir: "e2e",
@@ -22,8 +24,12 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `pnpm dev:vite --port ${PORT} >> dev-e2e.log 2>&1`,
+    command: command + ` >> dev-e2e.log 2>&1`,
     port: PORT,
+    env: {
+      ...(process.env as any),
+      PORT,
+    },
     reuseExistingServer: true,
   },
   forbidOnly: Boolean(process.env["CI"]),
