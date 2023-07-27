@@ -6,8 +6,8 @@ import {
 } from "@hiogawa/utils";
 import { type DataRouteMatch } from "react-router";
 import type { Manifest } from "vite";
-import type { RoutesMeta } from "./react-router-utils";
-import { mapValues } from "./utils";
+import { mapValues } from "../utils";
+import type { RoutesMeta } from "./route-utils";
 
 //
 // server proxy loader convention (aka data request)
