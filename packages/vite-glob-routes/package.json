@@ -11,10 +11,15 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
-    "./dist/react-router": {
-      "import": "./dist/react-router.js",
-      "require": "./dist/react-router.cjs",
-      "types": "./dist/react-router.d.ts"
+    "./dist/react-router/client": {
+      "import": "./dist/react-router/client.js",
+      "require": "./dist/react-router/client.cjs",
+      "types": "./dist/react-router/client.d.ts"
+    },
+    "./dist/react-router/server": {
+      "import": "./dist/react-router/server.js",
+      "require": "./dist/react-router/server.cjs",
+      "types": "./dist/react-router/server.d.ts"
     },
     "./dist/hattip": {
       "import": "./dist/hattip.js",
