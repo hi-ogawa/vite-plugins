@@ -9,14 +9,14 @@ import { RPC_ENDPOINT } from "./client";
 export const rpcRoutes = {
   login: zodFn(z.object({ name: z.string() }))(async (input) => {
     const ctx = getRequestContext();
-    tinyassert(!ctx.session.user);
+    tinyassert(!ctx.session.user, "already logged in");
     ctx.session.user = { name: input.name };
     ctx.commitSession();
   }),
 
   logout: async () => {
     const ctx = getRequestContext();
-    tinyassert(ctx.session.user);
+    tinyassert(ctx.session.user, "not logged in");
     ctx.session = {};
     ctx.commitSession();
   },

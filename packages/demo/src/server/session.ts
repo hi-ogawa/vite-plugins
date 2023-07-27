@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@hattip/compose";
-import { wrapError } from "@hiogawa/utils";
+import { tinyassert, wrapError } from "@hiogawa/utils";
 import * as cookieLib from "cookie";
 import { z } from "zod";
 
@@ -26,11 +26,6 @@ declare module "@hattip/compose" {
 
 //
 // toy cookie session
-//
-// TODO:
-// implement simplified version of iron-session https://github.com/vvo/iron-session/blob/70d2ff14aacb51e83284d51832fdcda539b4dabc/src/core.ts
-// - expiration, cookie opitons
-// - sign by server secret
 //
 
 export function sessionHandler(): RequestHandler {
@@ -60,7 +55,9 @@ function readCookieSession(cookie?: string): SessionData {
     const cookieRecord = cookieLib.parse(cookie);
     const value = cookieRecord[COOKIE_SESSION_KEY];
     if (value) {
-      const parsed = wrapError(() => Z_SESSION_DATA.parse(JSON.parse(value)));
+      const parsed = wrapError(() =>
+        Z_SESSION_DATA.parse(JSON.parse(decodeURIComponent(value)))
+      );
       if (parsed.ok) {
         return parsed.value;
       }
@@ -70,5 +67,16 @@ function readCookieSession(cookie?: string): SessionData {
 }
 
 function writeCookieSession(session: SessionData): string {
-  return cookieLib.serialize(COOKIE_SESSION_KEY, JSON.stringify(session));
+  const cookie = cookieLib.serialize(
+    COOKIE_SESSION_KEY,
+    encodeURIComponent(JSON.stringify(session)),
+    {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    }
+  );
+  tinyassert(cookie.length < 2 ** 12, "too large cookie session");
+  return cookie;
 }

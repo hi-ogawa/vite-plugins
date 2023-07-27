@@ -11,5 +11,5 @@ export function getRequestContext() {
 }
 
 export function requestContextStorageHandler(): RequestHandler {
-  return async (ctx) => requestContextStorage.run(ctx, ctx.next);
+  return async (ctx) => requestContextStorage.run(ctx, () => ctx.next());
 }
