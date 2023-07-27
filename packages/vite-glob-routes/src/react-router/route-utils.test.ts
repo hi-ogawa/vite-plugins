@@ -5,7 +5,7 @@ import {
   createGlobPageRoutes,
   splitPathSegment,
   walkArrayTree,
-} from "./react-router-utils";
+} from "./route-utils";
 
 describe(createGlobPageRoutes, () => {
   it("basic", () => {

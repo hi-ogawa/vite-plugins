@@ -14,8 +14,8 @@ import {
   serializeRoutesMata,
   unwrapLoaderRequest,
   wrapLoaderResult,
-} from "./react-router-helper-shared";
-import type { GlobPageRoutesResult } from "./react-router-utils";
+} from "./misc";
+import type { GlobPageRoutesResult } from "./route-utils";
 
 // typings from "@remix-run/router"
 // for now just derive it from "react-router" exports
