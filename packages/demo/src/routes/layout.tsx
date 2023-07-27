@@ -1,5 +1,5 @@
 import BarOfProgress from "@badrap/bar-of-progress";
-import { getPagePrefetchLinks } from "@hiogawa/vite-glob-routes/dist/react-router";
+import { getPagePrefetchLinks } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import {

@@ -3,7 +3,7 @@ import { tinyassert } from "@hiogawa/utils";
 import {
   globPageRoutesClientLazy,
   initializeClientRoutes,
-} from "@hiogawa/vite-glob-routes/dist/react-router";
+} from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";

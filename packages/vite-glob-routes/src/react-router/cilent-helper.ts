@@ -12,8 +12,8 @@ import {
   resolveAssetPathsByRouteId,
   unwrapLoaderResult,
   wrapLoaderRequest,
-} from "./react-router-helper-shared";
-import { walkArrayTree } from "./react-router-utils";
+} from "./misc";
+import { walkArrayTree } from "./route-utils";
 
 export async function initializeClientRoutes({
   routes,
