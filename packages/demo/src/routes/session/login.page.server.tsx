@@ -5,7 +5,7 @@ export const loader: LoaderFunction = () => {
   const ctx = getRequestContext();
   if (ctx.session.user) {
     // TODO: redirect with toast
-    throw redirect("/session");
+    throw redirect("/session/me?redirected");
   }
   return json(null);
 };

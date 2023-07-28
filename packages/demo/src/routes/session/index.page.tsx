@@ -10,7 +10,12 @@ export function Component() {
       <div className="w-full p-6">
         <div className="flex flex-col gap-4">
           <h2>Session test</h2>
-          <div>Is Logged In? ({meQuery.data?.name ? "Yes" : "No"})</div>
+          <div>
+            login name ={" "}
+            {!meQuery.isFetching && meQuery.isSuccess
+              ? meQuery.data?.name ?? "(undefined)"
+              : "..."}
+          </div>
           <div className="flex gap-2">
             <NavLink className="border antd-menu-item px-2" to="/session/login">
               /session/login
