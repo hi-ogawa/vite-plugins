@@ -16,6 +16,9 @@ describe("jws", () => {
     const verified = await jwsVerify({ token, secret, algorithms: ["HS256"] });
     expect(verified).toMatchInlineSnapshot(`
       {
+        "header": {
+          "alg": "HS256",
+        },
         "payload": {
           "hello": "world",
           "utf": "콘솔🐈",
