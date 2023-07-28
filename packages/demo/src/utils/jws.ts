@@ -53,27 +53,32 @@ export async function jwsVerify({
 }) {
   // parse components
   const components = token.split(".");
-  tinyassert(components.length === 3);
+  tinyassert(components.length === 3, "invalid token components");
   const [headerB64, payloadB64, signatureB64] = components;
-  tinyassert(headerB64 && payloadB64 && signatureB64);
+  tinyassert(
+    headerB64 && payloadB64 && signatureB64,
+    "invalid token components (2)"
+  );
 
   // parse header and payload
   const headerResult = jsonFromB64(headerB64);
   const payloadResult = jsonFromB64(payloadB64);
-  tinyassert(headerResult.ok && payloadResult.ok);
+  tinyassert(headerResult.ok, "invalid header");
+  tinyassert(payloadResult.ok, "invalid payload");
   const header = headerResult.data;
   const payload = payloadResult.data;
   tinyassert(
     header &&
       typeof header === "object" &&
       "alg" in header &&
-      typeof header.alg === "string"
+      typeof header.alg === "string",
+    "invalid header 'alg'"
   );
 
   // check algorihtm
   const algorithm = CRYPTO_ALGORITHM_MAP.get(header.alg);
-  tinyassert(algorithm);
-  tinyassert(algorithms.includes(header.alg));
+  tinyassert(algorithm, "unsupported 'alg'");
+  tinyassert(algorithms.includes(header.alg), "disallowed 'alg'");
 
   // verify signature
   const dataB64 = headerB64 + "." + payloadB64;

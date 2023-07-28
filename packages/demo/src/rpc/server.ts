@@ -11,14 +11,14 @@ export const rpcRoutes = {
     const ctx = getRequestContext();
     tinyassert(!ctx.session.user, "already logged in");
     ctx.session.user = { name: input.name };
-    ctx.commitSession();
+    await ctx.commitSession();
   }),
 
   logout: async () => {
     const ctx = getRequestContext();
     tinyassert(ctx.session.user, "not logged in");
     ctx.session = {};
-    ctx.commitSession();
+    await ctx.commitSession();
   },
 
   me: async () => {
