@@ -37,7 +37,7 @@ export async function jwsSign({
     secret: textEncoder.encode(secret),
     algorithm,
   });
-  const signatureB64 = toB64(new Uint8Array(signature));
+  const signatureB64 = toB64(signature);
   const token = dataB64 + "." + signatureB64;
   return token;
 }
@@ -131,14 +131,15 @@ async function cryptoSign({
   secret,
   algorithm,
 }: {
-  data: BufferSource;
-  secret: BufferSource;
+  data: Uint8Array;
+  secret: Uint8Array;
   algorithm: HmacImportParams;
-}): Promise<ArrayBuffer> {
+}): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey("raw", secret, algorithm, false, [
     "sign",
   ]);
-  return await crypto.subtle.sign(key.algorithm.name, key, data);
+  const signature = await crypto.subtle.sign(key.algorithm.name, key, data);
+  return new Uint8Array(signature);
 }
 
 async function cryptoVerify({
@@ -147,9 +148,9 @@ async function cryptoVerify({
   secret,
   algorithm,
 }: {
-  data: BufferSource;
-  signature: BufferSource;
-  secret: BufferSource;
+  data: Uint8Array;
+  signature: Uint8Array;
+  secret: Uint8Array;
   algorithm: HmacImportParams;
 }): Promise<boolean> {
   const key = await crypto.subtle.importKey("raw", secret, algorithm, false, [
