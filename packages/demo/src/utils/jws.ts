@@ -10,25 +10,32 @@ import { tinyassert } from "@hiogawa/utils";
 // https://github.com/panva/jose/blob/e2836e6aaaddecde053018884abb040908f186fd/src/runtime/browser/sign.ts
 //
 
-// hard-code algorithm
-const JWS_ALGORITHM = "HS256";
-const CRYPTO_SUBTLE_ALGORITHM = { name: "HMAC", hash: "SHA-256" };
+const CRYPTO_ALGORITHM_MAP = new Map([
+  ["HS256", { name: "HMAC", hash: "SHA-256" }],
+]);
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
 export async function jwsSign({
+  header,
   payload,
   secret,
 }: {
+  header: { alg: string };
   payload: unknown;
   secret: string;
 }): Promise<string> {
-  const header = { alg: JWS_ALGORITHM };
+  // check algorihtm
+  const algorithm = CRYPTO_ALGORITHM_MAP.get(header.alg);
+  tinyassert(algorithm, "unsupported 'alg'");
+
   const dataB64 = jsonToB64(header) + "." + jsonToB64(payload);
+
   const signature = await cryptoSign({
     data: textEncoder.encode(dataB64),
     secret: textEncoder.encode(secret),
+    algorithm,
   });
   const signatureB64 = toB64(new Uint8Array(signature));
   const token = dataB64 + "." + signatureB64;
@@ -38,9 +45,11 @@ export async function jwsSign({
 export async function jwsVerify({
   token,
   secret,
+  algorithms,
 }: {
   token: string;
   secret: string;
+  algorithms: string[];
 }): Promise<{ payload: unknown }> {
   // parse components
   const components = token.split(".");
@@ -56,8 +65,13 @@ export async function jwsVerify({
     header.data &&
       typeof header.data === "object" &&
       "alg" in header.data &&
-      header.data.alg === JWS_ALGORITHM
+      typeof header.data.alg === "string"
   );
+
+  // check algorihtm
+  const algorithm = CRYPTO_ALGORITHM_MAP.get(header.data.alg);
+  tinyassert(algorithm);
+  tinyassert(algorithms.includes(header.data.alg));
 
   // verify signature
   const dataB64 = headerB64 + "." + payloadB64;
@@ -65,6 +79,7 @@ export async function jwsVerify({
     data: textEncoder.encode(dataB64),
     secret: textEncoder.encode(secret),
     signature: fromB64(signatureB64),
+    algorithm,
   });
   tinyassert(isValid, "invalid signature");
 
@@ -114,11 +129,15 @@ function jsonFromB64(encoded: string): { ok: boolean; data: unknown } {
 async function cryptoSign({
   data,
   secret,
+  algorithm,
 }: {
   data: BufferSource;
   secret: BufferSource;
+  algorithm: HmacImportParams;
 }): Promise<ArrayBuffer> {
-  const key = await cryptoImportKey({ secret, usage: "sign" });
+  const key = await crypto.subtle.importKey("raw", secret, algorithm, false, [
+    "sign",
+  ]);
   return await crypto.subtle.sign(key.algorithm.name, key, data);
 }
 
@@ -126,27 +145,15 @@ async function cryptoVerify({
   data,
   signature,
   secret,
+  algorithm,
 }: {
   data: BufferSource;
   signature: BufferSource;
   secret: BufferSource;
+  algorithm: HmacImportParams;
 }): Promise<boolean> {
-  const key = await cryptoImportKey({ secret, usage: "verify" });
+  const key = await crypto.subtle.importKey("raw", secret, algorithm, false, [
+    "verify",
+  ]);
   return await crypto.subtle.verify(key.algorithm.name, key, signature, data);
-}
-
-async function cryptoImportKey({
-  secret,
-  usage,
-}: {
-  secret: BufferSource;
-  usage: "sign" | "verify";
-}) {
-  return crypto.subtle.importKey(
-    "raw",
-    secret,
-    CRYPTO_SUBTLE_ALGORITHM,
-    false,
-    [usage]
-  );
 }
