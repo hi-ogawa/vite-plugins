@@ -37,7 +37,7 @@ test.describe("session", () => {
     await page.waitForURL("/session/login?redirected");
   });
 
-  test.only("redirect-2", async ({ page }) => {
+  test("redirect-2", async ({ page }) => {
     await page.goto("/session/login");
     await isPageReady(page);
 
