@@ -27,5 +27,10 @@ cp -r dist/client/assets .vercel/output/static/assets
 
 # serverless
 mkdir -p .vercel/output/functions/index.func
-npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --minify --format=esm --platform=browser --metafile=dist/server/esbuild-metafile.json --external:node:async_hooks --external:node:buffer
+npx esbuild dist/server/index.mjs \
+  --outfile=.vercel/output/functions/index.func/index.js \
+  --bundle --minify --format=esm --platform=browser \
+  --metafile=dist/server/esbuild-metafile.json \
+  --external:node:async_hooks \
+  --external:node:buffer
 cp misc/vercel/.vc-config.json .vercel/output/functions/index.func/.vc-config.json
