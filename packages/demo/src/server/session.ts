@@ -25,7 +25,7 @@ declare module "@hattip/compose" {
 }
 
 //
-// toy cookie session
+// toy cookie session (no sign or encryption)
 //
 
 export function sessionHandler(): RequestHandler {
@@ -39,7 +39,6 @@ export function sessionHandler(): RequestHandler {
       setCookie = writeCookieSession(ctx.session);
     };
 
-    // TODO: check status?
     const res = await ctx.next();
     if (setCookie) {
       res.headers.set("set-cookie", setCookie);
