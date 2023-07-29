@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { jwsSign, jwsVerify } from "./jws";
 
-describe("jwsLike", () => {
+describe("jws", () => {
   it("basic", async () => {
     const secret = "asdfjkl;asdfjkl;asdfjkl;";
     const token = await jwsSign({
