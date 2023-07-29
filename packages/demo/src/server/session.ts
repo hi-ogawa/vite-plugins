@@ -14,8 +14,6 @@ const Z_SESSION_DATA = z.object({
     .optional(),
 });
 
-const SESSION_DATA_DEFAULT = Z_SESSION_DATA.parse({});
-
 type SessionData = z.infer<typeof Z_SESSION_DATA>;
 
 declare module "@hattip/compose" {
@@ -68,7 +66,7 @@ async function readCookieSession(cookie?: string): Promise<SessionData> {
       }
     }
   }
-  return SESSION_DATA_DEFAULT;
+  return {};
 }
 
 async function writeCookieSession(session: SessionData): Promise<string> {
