@@ -1,5 +1,14 @@
-import { describe, expect, it } from "vitest";
+import crypto from "node:crypto";
+import { beforeAll, describe, expect, it } from "vitest";
 import { jwsSign, jwsVerify } from "./jws";
+
+// crypto.subtle is globally available on cloudflare workers and "node:crypto" is not import-able.
+beforeAll(async () => {
+  (globalThis as any).crypto = crypto;
+  return () => {
+    delete (globalThis as any).crypto;
+  };
+});
 
 describe("jws", () => {
   it("basic", async () => {

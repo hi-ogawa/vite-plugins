@@ -1,5 +1,5 @@
 //
-// quick-and-dirty jws-like session signing
+// quick-and-dirty jws
 //
 // cf.
 // https://github.com/remix-run/remix/blob/100ecd3ea686eeec14f17fa908116b74aebdb91c/packages/remix-cloudflare/crypto.ts#L14-L21
