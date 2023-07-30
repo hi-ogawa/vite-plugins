@@ -21,8 +21,9 @@ export async function jwsSign({
 }) {
   const headerString = encodeJson(JWS_HEADER);
   const payloadString = encodeJson(payload);
+  const dataString = `${headerString}.${payloadString}`;
   const signatureBin = await cryptoSign({
-    data: encodeUtf8(payloadString),
+    data: encodeUtf8(dataString),
     keyData: encodeUtf8(secret),
     algorithm: CRYPTO_ALGORITHM,
   });
@@ -49,8 +50,9 @@ export async function jwsVerify({
     "invalid token format"
   );
 
+  const dataString = `${headerString}.${payloadString}`;
   const isValid = await cryptoVerify({
-    data: encodeUtf8(payloadString),
+    data: encodeUtf8(dataString),
     keyData: encodeUtf8(secret),
     signature: decodeBase64url(signatureString),
     algorithm: CRYPTO_ALGORITHM,

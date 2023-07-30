@@ -9,7 +9,7 @@ describe("jws", () => {
       secret,
     });
     expect(token).toMatchInlineSnapshot(
-      '"eyJhbGciOiJIUzI1NiJ9.eyJoZWxsbyI6IndvcmxkIiwidXRmIjoi7L2Y7IaU8J-QiCJ9.yzZprGiBk6Jz4b1DRY9fzBkH5FedTp3DqPxZWkFtkso"'
+      '"eyJhbGciOiJIUzI1NiJ9.eyJoZWxsbyI6IndvcmxkIiwidXRmIjoi7L2Y7IaU8J-QiCJ9.1PVKyDo4Ew2zzdR9yUfGic2J8yddS5KJHUrBpYcjtao"'
     );
 
     const verified = await jwsVerify({ token, secret });
