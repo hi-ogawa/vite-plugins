@@ -8,7 +8,7 @@
     "dev:demo": "pnpm -C packages/demo dev:vite",
     "tsc": "tsc -b",
     "dev:tsc": "pnpm tsc --watch --preserveWatchOutput",
-    "test": "vitest",
+    "test": "pnpm -r --seq test run",
     "lint": "run-s lint:*",
     "lint-check": "run-s lint-check:*",
     "lint:isort": "pnpm lint-check:isort --fix",
