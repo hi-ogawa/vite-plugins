@@ -14,7 +14,7 @@ const Z_SESSION_DATA = z.object({
     .optional(),
 });
 
-type SessionData = z.infer<typeof Z_SESSION_DATA>;
+export type SessionData = z.infer<typeof Z_SESSION_DATA>;
 
 declare module "@hattip/compose" {
   interface RequestContextExtensions {
