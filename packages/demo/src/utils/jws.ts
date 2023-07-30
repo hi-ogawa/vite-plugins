@@ -119,6 +119,6 @@ async function getWebcrypto() {
   // webcrypto is globally available from node 20
   // https://nodejs.org/docs/latest-v18.x/api/webcrypto.html
   // https://nodejs.org/docs/latest-v20.x/api/webcrypto.html
-  const nodeCyrpto = await import("node:crypto");
+  const nodeCyrpto = await import("node:crypto".toLowerCase()); // obfuscate to hide from bundler
   return nodeCyrpto.webcrypto;
 }
