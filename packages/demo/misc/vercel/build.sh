@@ -31,6 +31,5 @@ npx esbuild dist/server/index.js \
   --outfile=.vercel/output/functions/index.func/index.js \
   --bundle --minify --format=esm --platform=browser \
   --metafile=dist/server/esbuild-metafile.json \
-  --external:node:async_hooks \
-  --external:node:buffer
+  --external:node:async_hooks
 cp misc/vercel/.vc-config.json .vercel/output/functions/index.func/.vc-config.json

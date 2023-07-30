@@ -7,10 +7,6 @@
 // https://github.com/panva/jose/blob/e2836e6aaaddecde053018884abb040908f186fd/src/runtime/browser/sign.ts
 //
 
-// indulge in cloudflare workers's node compat...
-// https://developers.cloudflare.com/workers/runtime-apis/nodejs/#nodejs-compatibility
-// https://vercel.com/docs/concepts/functions/edge-functions/edge-runtime#supported-apis
-import { Buffer } from "node:buffer";
 import { tinyassert } from "@hiogawa/utils";
 
 const JWS_HEADER = { alg: "HS256" }; // hard-coded header
@@ -23,14 +19,14 @@ export async function jwsSign({
   payload: unknown;
   secret: string;
 }) {
-  const headerString = encodePayload(JWS_HEADER);
-  const payloadString = encodePayload(payload);
+  const headerString = encodeJson(JWS_HEADER);
+  const payloadString = encodeJson(payload);
   const signatureBin = await cryptoSign({
-    data: Buffer.from(payloadString),
-    keyData: Buffer.from(secret),
+    data: encodeUtf8(payloadString),
+    keyData: encodeUtf8(secret),
     algorithm: CRYPTO_ALGORITHM,
   });
-  const signatureString = Buffer.from(signatureBin).toString("base64url");
+  const signatureString = encodeBase64url(new Uint8Array(signatureBin));
   const token = `${headerString}.${payloadString}.${signatureString}`;
   return token;
 }
@@ -54,22 +50,51 @@ export async function jwsVerify({
   );
 
   const isValid = await cryptoVerify({
-    data: Buffer.from(payloadString),
-    keyData: Buffer.from(secret),
-    signature: Buffer.from(signatureString, "base64url"),
+    data: encodeUtf8(payloadString),
+    keyData: encodeUtf8(secret),
+    signature: decodeBase64url(signatureString),
     algorithm: CRYPTO_ALGORITHM,
   });
   tinyassert(isValid, "invalid signature");
 
-  return decodePayload(payloadString);
+  return decodeJson(payloadString);
 }
 
-function encodePayload(payload: unknown) {
-  return Buffer.from(JSON.stringify(payload)).toString("base64url");
+function encodeJson(payload: unknown) {
+  return encodeBase64url(encodeUtf8(JSON.stringify(payload)));
 }
 
-function decodePayload(payloadString: string): unknown {
-  return JSON.parse(Buffer.from(payloadString, "base64url").toString());
+function decodeJson(payloadString: string): unknown {
+  return JSON.parse(decodeUtf8(decodeBase64url(payloadString)));
+}
+
+//
+// string <-> buffer
+//
+
+const encodeUtf8 = (v: string) => new TextEncoder().encode(v);
+const decodeUtf8 = (v: BufferSource) => new TextDecoder().decode(v);
+
+//
+// base64url string <-> buffer (cf. https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem)
+//
+
+function encodeBase64url(buffer: Uint8Array): string {
+  const binString = Array.from(buffer, (c) => String.fromCharCode(c)).join("");
+  const base64 = btoa(binString);
+  const base64url = base64
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+  return base64url;
+}
+
+function decodeBase64url(base64url: string): Uint8Array {
+  // atob can handle without padding
+  const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+  const binString = atob(base64);
+  const buffer = Uint8Array.from(binString, (c) => c.charCodeAt(0)!);
+  return buffer;
 }
 
 //
