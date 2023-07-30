@@ -87,6 +87,7 @@ async function cryptoSign({
   keyData: BufferSource;
   algorithm: HmacImportParams;
 }): Promise<ArrayBuffer> {
+  const crypto = await getWebcrypto();
   const key = await crypto.subtle.importKey("raw", keyData, algorithm, false, [
     "sign",
   ]);
@@ -104,8 +105,20 @@ async function cryptoVerify({
   signature: BufferSource;
   algorithm: HmacImportParams;
 }): Promise<boolean> {
+  const crypto = await getWebcrypto();
   const key = await crypto.subtle.importKey("raw", keyData, algorithm, false, [
     "verify",
   ]);
   return crypto.subtle.verify(key.algorithm.name, key, signature, data);
+}
+
+async function getWebcrypto() {
+  if (typeof crypto !== "undefined") {
+    return crypto;
+  }
+  // webcrypto is globally available from node 20
+  // https://nodejs.org/docs/latest-v18.x/api/webcrypto.html
+  // https://nodejs.org/docs/latest-v20.x/api/webcrypto.html
+  const nodeCyrpto = await import("node:crypto");
+  return nodeCyrpto.webcrypto;
 }

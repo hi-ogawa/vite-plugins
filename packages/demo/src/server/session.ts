@@ -69,7 +69,10 @@ async function readCookieSession(cookie?: string): Promise<SessionData> {
   return {};
 }
 
-async function writeCookieSession(session: SessionData): Promise<string> {
+// also used for testing
+export async function writeCookieSession(
+  session: SessionData
+): Promise<string> {
   const token = await jwsSign({ payload: session, secret: JWS_SECRET });
   const cookie = cookieLib.serialize(COOKIE_SESSION_KEY, token, {
     httpOnly: true,
