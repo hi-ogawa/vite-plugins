@@ -29,7 +29,8 @@ export async function jwsSign({
   const payloadString = encodePayload(payload);
   const signatureBin = await cryptoSign({
     data: Buffer.from(payloadString),
-    secret: Buffer.from(secret),
+    keyData: Buffer.from(secret),
+    algorithm: CRYPTO_ALGORITHM,
   });
   const signatureString = Buffer.from(signatureBin).toString("base64url");
   const token = `${headerString}.${payloadString}.${signatureString}`;
@@ -56,8 +57,9 @@ export async function jwsVerify({
 
   const isValid = await cryptoVerify({
     data: Buffer.from(payloadString),
+    keyData: Buffer.from(secret),
     signature: Buffer.from(signatureString, "base64url"),
-    secret: Buffer.from(secret),
+    algorithm: CRYPTO_ALGORITHM,
   });
   tinyassert(isValid, "invalid signature");
 
@@ -78,37 +80,32 @@ function decodePayload(payloadString: string): unknown {
 
 async function cryptoSign({
   data,
-  secret,
+  keyData,
+  algorithm,
 }: {
-  data: Uint8Array;
-  secret: Uint8Array;
-}): Promise<Uint8Array> {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    secret,
-    CRYPTO_ALGORITHM,
-    false,
-    ["sign"]
-  );
-  const signature = await crypto.subtle.sign(key.algorithm.name, key, data);
-  return new Uint8Array(signature);
+  data: BufferSource;
+  keyData: BufferSource;
+  algorithm: HmacImportParams;
+}): Promise<ArrayBuffer> {
+  const key = await crypto.subtle.importKey("raw", keyData, algorithm, false, [
+    "sign",
+  ]);
+  return crypto.subtle.sign(key.algorithm.name, key, data);
 }
 
 async function cryptoVerify({
   data,
+  keyData,
   signature,
-  secret,
+  algorithm,
 }: {
-  data: Uint8Array;
-  signature: Uint8Array;
-  secret: Uint8Array;
+  data: BufferSource;
+  keyData: BufferSource;
+  signature: BufferSource;
+  algorithm: HmacImportParams;
 }): Promise<boolean> {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    secret,
-    CRYPTO_ALGORITHM,
-    false,
-    ["verify"]
-  );
-  return await crypto.subtle.verify(key.algorithm.name, key, signature, data);
+  const key = await crypto.subtle.importKey("raw", keyData, algorithm, false, [
+    "verify",
+  ]);
+  return crypto.subtle.verify(key.algorithm.name, key, signature, data);
 }
