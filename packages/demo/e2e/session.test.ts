@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { isPageReady } from "./helper";
+import { getSessionCookie, isPageReady } from "./helper";
 
 test.describe("session", () => {
   test("basic", async ({ page }) => {
@@ -51,5 +51,15 @@ test.describe("session", () => {
 
     await page.goto("/session/login");
     await page.waitForURL("/session/me?redirected");
+  });
+
+  test("session-fixture", async ({ page }) => {
+    const cookie = await getSessionCookie("abcd");
+    const [name, value] = cookie.split(";")[0]!.split("=") as any;
+    await page
+      .context()
+      .addCookies([{ name, value, domain: "localhost", path: "/" }]);
+    await page.goto("/session");
+    await page.getByText("login name = abcd").click();
   });
 });
