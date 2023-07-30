@@ -1,3 +1,4 @@
+import "./install-polyfill";
 import process from "node:process";
 import { tinyassert } from "@hiogawa/utils";
 import { writeCookieSession } from "./session";

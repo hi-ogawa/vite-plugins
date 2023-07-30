@@ -11,6 +11,7 @@
     "build:vercel": "bash misc/vercel/build.sh",
     "build-preview": "SERVER_ENTRY=./src/server/adapter-preview.ts run-s build:vite",
     "preview": "node ./dist/server/index.js",
+    "test": "vitest",
     "test-e2e": "playwright test",
     "cli": "tsx ./src/server/cli.ts",
     "release": "vercel deploy --prebuilt .",
