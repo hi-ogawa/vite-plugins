@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import type { RequestContext, RequestHandler } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
 
-const requestContextStorage = new AsyncLocalStorage<RequestContext>();
+export const requestContextStorage = new AsyncLocalStorage<RequestContext>();
 
 export function getRequestContext() {
   const value = requestContextStorage.getStore();
