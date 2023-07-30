@@ -28,6 +28,7 @@ function mockRequestContext(options?: { session?: SessionData }) {
       const cookie = await writeCookieSession(options.session);
       request.headers.set("cookie", cookie);
     }
+    // don't have mock everything yet
     const ctx: Pick<RequestContext, "request" | "session"> = {
       request,
       session: options?.session ?? {},
