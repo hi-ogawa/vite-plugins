@@ -1,5 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import { type Page, expect, test } from "@playwright/test";
+import { isPageReady } from "./helper";
 
 test("basic", async ({ page }) => {
   await page.goto("/");
@@ -200,7 +201,3 @@ test("api-dynamic-route", async ({ page }) => {
   const res = await page.goto("/api/dynamic/hello/goodbye/again");
   expect(res?.status()).toBe(404);
 });
-
-async function isPageReady(page: Page) {
-  await page.locator("#root.hydrated").waitFor({ state: "attached" });
-}
