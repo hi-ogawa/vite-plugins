@@ -1,6 +1,7 @@
 {
   "name": "@hiogawa/vite-plugins-monorepo",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "pnpm -r build",
     "dev": "run-p dev:*",
