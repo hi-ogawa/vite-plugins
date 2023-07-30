@@ -11,8 +11,6 @@
 // https://developers.cloudflare.com/workers/runtime-apis/nodejs/#nodejs-compatibility
 // https://vercel.com/docs/concepts/functions/edge-functions/edge-runtime#supported-apis
 import { Buffer } from "node:buffer";
-// import crypto from "node:crypto"; // crypto.subtle available globally
-
 import { tinyassert } from "@hiogawa/utils";
 
 const JWS_HEADER = { alg: "HS256" }; // hard-coded header
