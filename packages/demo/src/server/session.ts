@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@hattip/compose";
-import { jwsSign, jwsVerify } from "@hiogawa/tiny-jwt";
+import { jweDecrypt, jweEncrypt } from "@hiogawa/tiny-jwt";
 import { tinyassert, wrapErrorAsync } from "@hiogawa/utils";
 import * as cookieLib from "cookie";
 import { z } from "zod";
@@ -24,7 +24,7 @@ declare module "@hattip/compose" {
 }
 
 //
-// jws cookie session
+// jwt cookie session
 //
 
 export function sessionHandler(): RequestHandler {
@@ -47,7 +47,12 @@ export function sessionHandler(): RequestHandler {
 }
 
 const COOKIE_SESSION_KEY = "__session";
-const JWS_SECRET = "__secret";
+
+// npx -C packages/demo tiny-jwt keygen A256GCM
+const JWT_KEY = {
+  kty: "oct",
+  k: "pv0EsIhwGw6d2tdtRJP4DQWLrlr_9H9STjoKyzopONY", // this should be runtime secret
+};
 
 async function readCookieSession(cookie?: string): Promise<SessionData> {
   if (cookie) {
@@ -55,10 +60,9 @@ async function readCookieSession(cookie?: string): Promise<SessionData> {
     const token = cookieRecord[COOKIE_SESSION_KEY];
     if (token) {
       const parsed = await wrapErrorAsync(async () => {
-        const verified = await jwsVerify({
+        const verified = await jweDecrypt({
           token,
-          key: JWS_SECRET,
-          algorithms: ["HS256"],
+          key: JWT_KEY,
         });
         return Z_SESSION_DATA.parse(verified.payload);
       });
@@ -74,10 +78,10 @@ async function readCookieSession(cookie?: string): Promise<SessionData> {
 export async function writeCookieSession(
   session: SessionData
 ): Promise<string> {
-  const token = await jwsSign({
-    header: { alg: "HS256" },
+  const token = await jweEncrypt({
+    header: { alg: "dir", enc: "A256GCM" },
     payload: session,
-    key: JWS_SECRET,
+    key: JWT_KEY,
   });
   const cookie = cookieLib.serialize(COOKIE_SESSION_KEY, token, {
     httpOnly: true,
