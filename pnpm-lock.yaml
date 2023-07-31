@@ -75,8 +75,8 @@ importers:
         specifier: 0.1.1-pre.3
         version: 0.1.1-pre.3
       '@hiogawa/tiny-jwt':
-        specifier: ^0.0.2-pre.1
-        version: 0.0.2-pre.1
+        specifier: ^0.1.0
+        version: 0.1.0
       '@hiogawa/tiny-rpc':
         specifier: ^0.2.2
         version: 0.2.2(zod@3.21.4)
@@ -1280,8 +1280,8 @@ packages:
         optional: true
     dev: true
 
-  /@hiogawa/tiny-jwt@0.0.2-pre.1:
-    resolution: {integrity: sha512-QqF5CQFZ6AfM5JTMqVycuBGTOr7ngo1HcgeXUdHojU+0zjwYEfvXN+hxW3mb43jkTCjjk+juOlwk/wNrrPlqTA==}
+  /@hiogawa/tiny-jwt@0.1.0:
+    resolution: {integrity: sha512-nS7vqunWsXPqEe0hLAsb7JOiUOAsNqkHbdsDpAk3M/cXEgWZqjHNYQCfzQ4/5eY8QFA1CmsR9z1Kh/ApiWYZFA==}
     hasBin: true
     dev: true
 
