@@ -24,7 +24,7 @@ declare module "@hattip/compose" {
 }
 
 //
-// jws cookie session
+// jwt cookie session
 //
 
 export function sessionHandler(): RequestHandler {
@@ -47,7 +47,12 @@ export function sessionHandler(): RequestHandler {
 }
 
 const COOKIE_SESSION_KEY = "__session";
-const JWS_SECRET = "__secret";
+
+// npx -C packages/demo tiny-jwt keygen HS256
+const JWT_KEY = {
+  kty: "oct",
+  k: "UsahhkGSKhgcluJCHWdm2C96SLjxoEKwE8Lpn4CC9rImDC8DzDX30GG4fPimG_mgdlGDleguFEW7p-Qta46kew", // this should be runtime secret
+};
 
 async function readCookieSession(cookie?: string): Promise<SessionData> {
   if (cookie) {
@@ -57,7 +62,7 @@ async function readCookieSession(cookie?: string): Promise<SessionData> {
       const parsed = await wrapErrorAsync(async () => {
         const verified = await jwsVerify({
           token,
-          key: JWS_SECRET,
+          key: JWT_KEY,
           algorithms: ["HS256"],
         });
         return Z_SESSION_DATA.parse(verified.payload);
@@ -77,7 +82,7 @@ export async function writeCookieSession(
   const token = await jwsSign({
     header: { alg: "HS256" },
     payload: session,
-    key: JWS_SECRET,
+    key: JWT_KEY,
   });
   const cookie = cookieLib.serialize(COOKIE_SESSION_KEY, token, {
     httpOnly: true,
