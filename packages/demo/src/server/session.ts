@@ -1,5 +1,10 @@
 import type { RequestHandler } from "@hattip/compose";
-import { jwsSign, jwsVerify } from "@hiogawa/tiny-jwt";
+import {
+  checkExpirationTime,
+  jwsSign,
+  jwsVerify,
+  setExpirationTime,
+} from "@hiogawa/tiny-jwt";
 import { tinyassert, wrapErrorAsync } from "@hiogawa/utils";
 import * as cookieLib from "cookie";
 import { z } from "zod";
@@ -54,6 +59,9 @@ const JWT_KEY = {
   k: "UsahhkGSKhgcluJCHWdm2C96SLjxoEKwE8Lpn4CC9rImDC8DzDX30GG4fPimG_mgdlGDleguFEW7p-Qta46kew", // this should be runtime secret
 };
 
+// two weeks
+const MAX_AGE = 14 * 24 * 60 * 60;
+
 async function readCookieSession(cookie?: string): Promise<SessionData> {
   if (cookie) {
     const cookieRecord = cookieLib.parse(cookie);
@@ -65,6 +73,7 @@ async function readCookieSession(cookie?: string): Promise<SessionData> {
           key: JWT_KEY,
           algorithms: ["HS256"],
         });
+        checkExpirationTime(verified.header);
         return Z_SESSION_DATA.parse(verified.payload);
       });
       if (parsed.ok) {
@@ -80,7 +89,7 @@ export async function writeCookieSession(
   session: SessionData
 ): Promise<string> {
   const token = await jwsSign({
-    header: { alg: "HS256" },
+    header: { alg: "HS256", ...setExpirationTime(MAX_AGE) },
     payload: session,
     key: JWT_KEY,
   });
@@ -89,6 +98,7 @@ export async function writeCookieSession(
     secure: true,
     sameSite: "lax",
     path: "/",
+    maxAge: MAX_AGE,
   });
   tinyassert(cookie.length < 2 ** 12, "too large cookie session");
   return cookie;
