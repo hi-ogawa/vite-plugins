@@ -27,6 +27,8 @@ const ENUM = arrayToEnum([
   "x-loader-error-response", // aka x-remix-catch
 
   // exception (runtime server `Error` propagated to client)
+  // TODO: probably better to reverse the logic.
+  //       maybe "x-loader-handled" to indicate the reverse cf. https://github.com/remix-run/remix/pull/6783
   "x-loader-exception", // aka x-remix-error
 ]);
 
@@ -133,6 +135,10 @@ function wrapLoaderException(e: unknown) {
     e instanceof Error ? e : new Error("unknown loader request exception");
   if (import.meta.env.PROD) {
     error.stack = `${String(error)} [STACK REDUCTED]`;
+  }
+  if (import.meta.env.DEV) {
+    // TODO: expose vite dev server?
+    e;
   }
   return new Response(
     JSON.stringify({

@@ -64,6 +64,7 @@ export async function handleReactRouterServer({
   }
 
   // handle react-router SSR request
+  // TODO: how to intercept react-router error handling/rendering to `ssrFixStacktrace`?
   const context = await handler.query(request, { requestContext });
 
   // handle non-render repsonse by loader (e.g. redirection)
