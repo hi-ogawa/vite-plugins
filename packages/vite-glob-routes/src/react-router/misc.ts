@@ -17,6 +17,7 @@ const ENUM = arrayToEnum([
   // url param for server to tell loader request routeId cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-react/routes.tsx#L210
   // this convention might not be DX friendly since request path doesn't tell which loader is called exactly
   "x-loader-route-id",
+  "x-loader-request-url",
 
   // redirect response
   "location",
@@ -31,8 +32,11 @@ const ENUM = arrayToEnum([
 ]);
 
 export function wrapLoaderRequest(req: Request, routeId: string): Request {
-  const url = new URL(req.url);
-  url.searchParams.set(ENUM["x-loader-route-id"], routeId);
+  // reverse remix data request url convention so that request path itself is loader route
+  const url =
+    routeId +
+    "?" +
+    new URLSearchParams({ [ENUM["x-loader-request-url"]]: req.url });
   return new Request(url);
 }
 
@@ -40,12 +44,11 @@ export function unwrapLoaderRequest(
   req: Request
 ): { request: Request; routeId: string } | undefined {
   const url = new URL(req.url);
-  const routeId = url.searchParams.get(ENUM["x-loader-route-id"]);
-  if (routeId) {
-    url.searchParams.delete(ENUM["x-loader-route-id"]);
+  const loaderRequestUrl = url.searchParams.get(ENUM["x-loader-request-url"]);
+  if (loaderRequestUrl) {
     return {
-      request: new Request(url, req),
-      routeId,
+      request: new Request(loaderRequestUrl, req),
+      routeId: url.pathname,
     };
   }
   return;
