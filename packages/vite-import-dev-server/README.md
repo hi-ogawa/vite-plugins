@@ -1,6 +1,6 @@
 # vite-import-dev-server
 
-For some reason [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/blob/3cf52a5bd25deadde0949a52be31af1ad04c36d8/packages/expose-vite-dev-server/readme.md) is not working, so it's rewritten without virtual module re-mapping in `resolveId`.
+For some reason [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/blob/3cf52a5bd25deadde0949a52be31af1ad04c36d8/packages/expose-vite-dev-server/readme.md) is not working, so this is a simplified version to make the same thing work.
 
 ```sh
 pnpm build
