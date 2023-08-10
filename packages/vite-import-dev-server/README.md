@@ -1,6 +1,6 @@
 # vite-import-dev-server
 
-For some reason [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/blob/3cf52a5bd25deadde0949a52be31af1ad04c36d8/packages/expose-vite-dev-server/readme.md) is not working, so it's rewritten without relying on virtual/real mixed module.
+For some reason [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/blob/3cf52a5bd25deadde0949a52be31af1ad04c36d8/packages/expose-vite-dev-server/readme.md) is not working, so it's rewritten with real module and virtual module separated.
 
 ```sh
 pnpm build

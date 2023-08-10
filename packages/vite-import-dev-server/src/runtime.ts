@@ -1,4 +1,4 @@
-import internal from "virtual:@hiogawa/vite-import-index-html/internal";
+import internal from "virtual:@hiogawa/vite-import-dev-server/internal";
 
 export async function importIndexHtml(): Promise<string> {
   const { server, importIndexHtmlRaw } = internal;
