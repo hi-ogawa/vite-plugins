@@ -7,7 +7,7 @@ const VIRTUAL_MODULE = `virtual:${packageName}`;
 declare let globalThis: {
   __internal__importDevServer: Map<string, ViteDevServer>;
 };
-globalThis.__internal__importDevServer = new Map();
+globalThis.__internal__importDevServer ??= new Map();
 
 export default function importDevServerPlugin(): Plugin {
   let key: string | undefined;
