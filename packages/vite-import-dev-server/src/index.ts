@@ -1,11 +1,11 @@
-import type { Plugin } from "vite";
+import type { Plugin, ViteDevServer } from "vite";
 import { name as packageName } from "../package.json";
 
 const VIRTUAL_MODULE = `virtual:${packageName}`;
 
-// keep multiple servers since plugin users can run multiple vite instances under single js process.
+// keep multiple servers since plugin users could technically run multiple vite instances under single js process
 declare let globalThis: {
-  __internal__importDevServer: Map<string, unknown>;
+  __internal__importDevServer: Map<string, ViteDevServer>;
 };
 globalThis.__internal__importDevServer = new Map();
 
