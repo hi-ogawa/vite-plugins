@@ -1,7 +1,7 @@
 import type { Plugin, ViteDevServer } from "vite";
 import { name as packageName } from "../package.json";
 
-const VIRTUAL_MODULE = `virtual:${packageName}`;
+const MODULE_NAME = `${packageName}/runtime`;
 
 // keep multiple servers since plugin users could technically run multiple vite instances under single js process
 declare let globalThis: {
@@ -14,6 +14,8 @@ export default function importDevServerPlugin(): Plugin {
 
   return {
     name: packageName,
+
+    enforce: "pre",
 
     configureServer: (server) => {
       key = Math.floor(Math.random() * 2 ** 32).toString(16);
@@ -45,17 +47,17 @@ export default function importDevServerPlugin(): Plugin {
     },
 
     async resolveId(source, _importer, options) {
-      if (options.ssr && source == VIRTUAL_MODULE) {
+      if (options.ssr && source == MODULE_NAME) {
         return source;
       }
       return;
     },
 
     load(id, _options) {
-      if (id === VIRTUAL_MODULE) {
+      if (id === MODULE_NAME) {
         return key
-          ? `export default globalThis.__internal__importDevServer.get("${key}");`
-          : "export default undefined";
+          ? `export const viteDevServer = globalThis.__internal__importDevServer.get("${key}");`
+          : "export const viteDevServer = undefined";
       }
       return;
     },

@@ -2,7 +2,7 @@ import { type RequestHandler } from "@hattip/compose";
 import { type TinyRpcRoutes, createTinyRpcHandler } from "@hiogawa/tiny-rpc";
 import { zodFn } from "@hiogawa/tiny-rpc/dist/zod";
 import { tinyassert } from "@hiogawa/utils";
-import viteDevServer from "@hiogawa/vite-import-dev-server/runtime";
+import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
 import { z } from "zod";
 import { getRequestContext } from "../server/request-context";
 import { RPC_ENDPOINT } from "./client";
@@ -24,7 +24,6 @@ export const rpcRoutes = {
 
   me: async () => {
     const ctx = getRequestContext();
-    tinyassert(ctx.session.user?.name === "x");
     return ctx.session.user ?? null;
   },
 } satisfies TinyRpcRoutes;
