@@ -89,6 +89,9 @@ importers:
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../vite-glob-routes
+      '@hiogawa/vite-import-dev-server':
+        specifier: workspace:*
+        version: link:../vite-import-dev-server
       '@hiogawa/vite-import-index-html':
         specifier: workspace:*
         version: link:../vite-import-index-html

@@ -2,7 +2,7 @@ import { type RequestHandler } from "@hattip/compose";
 import { type TinyRpcRoutes, createTinyRpcHandler } from "@hiogawa/tiny-rpc";
 import { zodFn } from "@hiogawa/tiny-rpc/dist/zod";
 import { tinyassert } from "@hiogawa/utils";
-import viteDevServer from "@vavite/expose-vite-dev-server/vite-dev-server";
+import viteDevServer from "@hiogawa/vite-import-dev-server/runtime";
 import { z } from "zod";
 import { getRequestContext } from "../server/request-context";
 import { RPC_ENDPOINT } from "./client";
@@ -34,7 +34,6 @@ export function rpcHandler(): RequestHandler {
     endpoint: RPC_ENDPOINT,
     routes: rpcRoutes,
     onError(e) {
-      console.log(viteDevServer?.ssrFixStacktrace);
       viteDevServer?.ssrFixStacktrace(e as any);
       console.error(e);
     },

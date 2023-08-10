@@ -1,28 +1,34 @@
 import type { Plugin } from "vite";
 import { name as packageName } from "../package.json";
 
-// pass internal runtime data via virtual module
-const VIRTUAL_INTERNAL = `virtual:${packageName}/internal`;
+const VIRTUAL_MODULE = `virtual:${packageName}`;
 
-// expose ViteDevServer to access "transformIndexHtml" during `vite dev`
-// https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts
-// https://github.com/brillout/vite-plugin-ssr/blob/906bd4d0cba2c4eff519ef5622f0dc10128b484a/vite-plugin-ssr/node/runtime/html/injectAssets/getViteDevScripts.ts#L16
-const GLOABL_KEY = `__${importDevServerPlugin.name}_viteDevServer`;
+// keep multiple servers since plugin users can run multiple vite instances under single js process.
+declare let globalThis: {
+  __internal__importDevServer: Map<string, unknown>;
+};
+globalThis.__internal__importDevServer = new Map();
 
 export default function importDevServerPlugin(): Plugin {
+  let key: string | undefined;
+
   return {
     name: packageName,
 
     configureServer: (server) => {
-      (globalThis as any)[GLOABL_KEY] = server;
+      key = Math.floor(Math.random() * 2 ** 32).toString(16);
+      globalThis.__internal__importDevServer.set(key, server);
     },
 
     buildEnd() {
-      delete (globalThis as any)[GLOABL_KEY];
+      if (key) {
+        globalThis.__internal__importDevServer.delete(key);
+        key = undefined;
+      }
     },
 
     config(_config, _env) {
-      // vite has to handle internal "virtual" modules
+      // exclude "virtual" modules from esbuild optimization
       // cf. https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts#L49-L65
       const exclude = [packageName];
       return {
@@ -39,20 +45,17 @@ export default function importDevServerPlugin(): Plugin {
     },
 
     async resolveId(source, _importer, options) {
-      if (options.ssr && source == VIRTUAL_INTERNAL) {
+      if (options.ssr && source == VIRTUAL_MODULE) {
         return source;
       }
       return;
     },
 
     load(id, _options) {
-      if (id === VIRTUAL_INTERNAL) {
-        return `
-          export default {
-            server: globalThis[${JSON.stringify(GLOABL_KEY)}],
-            importIndexHtmlRaw: () => (import.meta.env.DEV ? import("/index.html?raw") : import("/dist/client/index.html?raw")),
-          }
-        `;
+      if (id === VIRTUAL_MODULE) {
+        return key
+          ? `export default globalThis.__internal__importDevServer.get("${key}");`
+          : "export default undefined";
       }
       return;
     },
