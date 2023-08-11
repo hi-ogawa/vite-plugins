@@ -74,9 +74,6 @@ importers:
       '@hiogawa/vite-import-dev-server':
         specifier: workspace:*
         version: link:../../packages/vite-import-dev-server
-      '@hiogawa/vite-import-index-html':
-        specifier: workspace:*
-        version: link:../../packages/vite-import-index-html
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.17
@@ -155,9 +152,6 @@ importers:
       '@hiogawa/vite-import-dev-server':
         specifier: workspace:*
         version: link:../vite-import-dev-server
-      '@hiogawa/vite-import-index-html':
-        specifier: workspace:*
-        version: link:../vite-import-index-html
       '@iconify-json/ri':
         specifier: ^1.1.9
         version: 1.1.9
@@ -238,12 +232,6 @@ importers:
         version: 4.4.4(@types/node@18.16.18)
 
   packages/vite-import-dev-server:
-    devDependencies:
-      vite:
-        specifier: ^4.4.4
-        version: 4.4.4(@types/node@18.16.18)
-
-  packages/vite-import-index-html:
     devDependencies:
       vite:
         specifier: ^4.4.4

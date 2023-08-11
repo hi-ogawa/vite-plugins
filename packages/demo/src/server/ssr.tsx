@@ -6,7 +6,7 @@ import {
   globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
-import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
+import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import {
@@ -67,6 +67,16 @@ export function ssrHandler(): RequestHandler {
       headers: [["content-type", "text/html"]],
     });
   };
+}
+
+async function importIndexHtml() {
+  if (import.meta.env.DEV) {
+    const html = (await import("/index.html?raw")).default;
+    tinyassert(viteDevServer, "forgot 'importDevServerPlugin'?");
+    return viteDevServer.transformIndexHtml("/", html);
+  } else {
+    return (await import("/dist/client/index.html?raw")).default;
+  }
 }
 
 function render({
