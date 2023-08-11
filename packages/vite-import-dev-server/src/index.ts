@@ -9,7 +9,7 @@ declare let globalThis: {
 };
 globalThis.__internal__importDevServer ??= new Map();
 
-export default function importDevServerPlugin(): Plugin {
+export function importDevServerPlugin(): Plugin {
   let key: string | undefined;
 
   return {
