@@ -12,11 +12,11 @@ importers:
         specifier: ^2.26.2
         version: 2.26.2
       '@hiogawa/isort-ts':
-        specifier: 1.0.2-pre.1
-        version: 1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.6)
+        specifier: ^1.1.1
+        version: 1.1.1(prettier@2.8.8)(typescript@5.1.6)
       '@hiogawa/utils':
-        specifier: 1.4.2-pre.15
-        version: 1.4.2-pre.15
+        specifier: ^1.6.0
+        version: 1.6.0
       '@playwright/test':
         specifier: ^1.36.2
         version: 1.36.2
@@ -125,15 +125,15 @@ importers:
       '@hattip/compose':
         specifier: ^0.0.34
         version: 0.0.34
-      '@hiogawa/isort-ts':
-        specifier: 1.0.2-pre.1
-        version: 1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.6)
       '@hiogawa/query-proxy':
         specifier: 0.1.1-pre.3
         version: 0.1.1-pre.3
       '@hiogawa/theme-script':
         specifier: ^0.0.4-pre.3
         version: 0.0.4-pre.3(vite@4.4.4)
+      '@hiogawa/tiny-cli':
+        specifier: ^0.0.4-pre.0
+        version: 0.0.4-pre.0
       '@hiogawa/tiny-jwt':
         specifier: ^0.2.2
         version: 0.2.2
@@ -1318,15 +1318,16 @@ packages:
       node-fetch-native: 1.2.0
     dev: true
 
-  /@hiogawa/isort-ts@1.0.2-pre.1(prettier@2.8.8)(typescript@5.1.6):
-    resolution: {integrity: sha512-b7UnS5rxTkyNbdVkfKjDLRffl3Ut2OmYm41lPa+TwxR2jtAuE1lxTj9x16GH26FUik5VSb/uiY6W7zWBcQT71Q==}
+  /@hiogawa/isort-ts@1.1.1(prettier@2.8.8)(typescript@5.1.6):
+    resolution: {integrity: sha512-nllXA6mxTE79eIQgyAWhrRTCOe73T7+TWv0EdxainODdJp8xyQhdtWWKqdfa7fvHKJzwokQP9NlFts8kci5r2Q==}
     hasBin: true
     peerDependencies:
       prettier: '*'
       typescript: '*'
+    peerDependenciesMeta:
+      prettier:
+        optional: true
     dependencies:
-      cac: 6.7.14
-      consola: 2.15.3
       prettier: 2.8.8
       typescript: 5.1.6
     dev: true
@@ -1349,6 +1350,10 @@ packages:
         optional: true
     dependencies:
       vite: 4.4.4(@types/node@18.16.18)
+    dev: true
+
+  /@hiogawa/tiny-cli@0.0.4-pre.0:
+    resolution: {integrity: sha512-3b/sW6AWVgbm3AFLmuA+fWy7edvFyEb8oU5AHjqWxsMSwPbfV1KOm+5A7Fn724M54U4suyAzG6Fqtggk56+C6A==}
     dev: true
 
   /@hiogawa/tiny-jwt@0.2.2:
@@ -1385,6 +1390,10 @@ packages:
 
   /@hiogawa/utils@1.4.2-pre.15:
     resolution: {integrity: sha512-xmtMIyYasg92WGwA8Vk7gVRntsuTfpYX7bPy3nZvUGzaRHM2DxuKJF5oH7ZhI+MGR6E8dWFMEZ5rgyjPW3lMGw==}
+    dev: true
+
+  /@hiogawa/utils@1.6.0:
+    resolution: {integrity: sha512-xamhJogybsjiUD0qhf84lpOPtHZEAiFR6M8S+A3bLIDg08Z8WhRCujTiDOxoEFTvPpX9yzwhkccaa2sEL5sgfw==}
     dev: true
 
   /@iconify-json/ri@1.1.9:
@@ -2347,10 +2356,6 @@ packages:
       md5-hex: 3.0.1
       semver: 7.5.3
       well-known-symbols: 2.0.0
-    dev: true
-
-  /consola@2.15.3:
-    resolution: {integrity: sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw==}
     dev: true
 
   /consola@3.1.0:
