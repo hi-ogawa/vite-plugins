@@ -1,5 +1,6 @@
 import process from "node:process";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
+import { importDevServerPlugin } from "@hiogawa/vite-import-dev-server";
 import importIndexHtmlPlugin from "@hiogawa/vite-import-index-html";
 import vaviteConnect from "@vavite/connect";
 import react from "@vitejs/plugin-react";
@@ -9,6 +10,7 @@ export default defineConfig((ctx) => ({
   plugins: [
     react(),
     globRoutesPlugin({ root: "/src/routes" }),
+    importDevServerPlugin(),
     importIndexHtmlPlugin(),
     vaviteConnect({
       standalone: false,
