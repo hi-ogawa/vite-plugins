@@ -12,24 +12,26 @@ set -eu -o pipefail
 #     functions/
 #       index.func/
 #         .vc-config.json
-#         index.js         = bundled dist/server/index.js or mjs
+#         index.js         = dist/server/index.js
+
+this_dir="$(dirname "${BASH_SOURCE[0]}")"
 
 # clean
 rm -rf .vercel/output
 mkdir -p .vercel/output
 
 # config.json
-cp misc/vercel/config.json .vercel/output/config.json
+cp "$this_dir/config.json" .vercel/output/config.json
 
 # static
 mkdir -p .vercel/output/static
 cp -r dist/client/assets .vercel/output/static/assets
 
-# serverless
+# functions
 mkdir -p .vercel/output/functions/index.func
+cp "$this_dir/.vc-config.json" .vercel/output/functions/index.func/.vc-config.json
 npx esbuild dist/server/index.js \
   --outfile=.vercel/output/functions/index.func/index.js \
-  --bundle --minify --format=esm --platform=browser \
   --metafile=dist/server/esbuild-metafile.json \
+  --bundle --minify --format=esm --platform=browser \
   --external:node:async_hooks
-cp misc/vercel/.vc-config.json .vercel/output/functions/index.func/.vc-config.json

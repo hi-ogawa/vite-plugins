@@ -9,7 +9,7 @@ set -eu -o pipefail
 #     functions/
 #       index.func/
 #         .vc-config.json
-#         index.js         = dist/server/index.mjs (bundled)
+#         index.js         = dist/server/index.js
 
 this_dir="$(dirname "${BASH_SOURCE[0]}")"
 
@@ -32,4 +32,7 @@ cp "$this_dir/.vc-config.json" .vercel/output/functions/index.func/.vc-config.js
 # TODO: exclude unused deps
 # - react-xxx.development
 # - node-fetch-native
-npx esbuild dist/server/index.mjs --outfile=.vercel/output/functions/index.func/index.js --bundle --minify --format=cjs --platform=node --metafile=dist/server/esbuild-metafile.json
+npx esbuild dist/server/index.js \
+  --outfile=.vercel/output/functions/index.func/index.js \
+  --metafile=dist/server/esbuild-metafile.json \
+  --bundle --minify --format=cjs --platform=node
