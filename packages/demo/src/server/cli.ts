@@ -1,7 +1,6 @@
 import "./install-polyfill";
 import process from "node:process";
-import { TinyCli, TinyCliParseError, arg } from "@hiogawa/tiny-cli";
-import { formatError } from "@hiogawa/utils";
+import { TinyCli, arg, tinyCliMain } from "@hiogawa/tiny-cli";
 import { writeCookieSession } from "./session";
 
 const cli = new TinyCli();
@@ -24,20 +23,5 @@ cli.defineCommand(
   }
 );
 
-//
 // main
-//
-
-async function main() {
-  try {
-    await cli.parse(process.argv.slice(2));
-  } catch (e) {
-    console.error(formatError(e));
-    if (e instanceof TinyCliParseError) {
-      console.error("See '--help' for more info.");
-    }
-    process.exit(1);
-  }
-}
-
-main();
+tinyCliMain(cli);

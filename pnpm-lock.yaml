@@ -132,8 +132,8 @@ importers:
         specifier: ^0.0.4-pre.3
         version: 0.0.4-pre.3(vite@4.4.4)
       '@hiogawa/tiny-cli':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.4-pre.0
+        version: 0.0.4-pre.0
       '@hiogawa/tiny-jwt':
         specifier: ^0.2.2
         version: 0.2.2
@@ -1352,8 +1352,8 @@ packages:
       vite: 4.4.4(@types/node@18.16.18)
     dev: true
 
-  /@hiogawa/tiny-cli@0.0.3:
-    resolution: {integrity: sha512-5ZRDn0XW12mV+rov25z1oksyRP6IeW6ydEki81lHxbDEGrE/IGcrvkGTCXtbeSWIYmclNpVpuLee01KeB2jyvQ==}
+  /@hiogawa/tiny-cli@0.0.4-pre.0:
+    resolution: {integrity: sha512-3b/sW6AWVgbm3AFLmuA+fWy7edvFyEb8oU5AHjqWxsMSwPbfV1KOm+5A7Fn724M54U4suyAzG6Fqtggk56+C6A==}
     dev: true
 
   /@hiogawa/tiny-jwt@0.2.2:
