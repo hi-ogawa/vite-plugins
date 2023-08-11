@@ -12,9 +12,6 @@
     },
     {
       "path": "./packages/vite-import-dev-server/tsconfig.json"
-    },
-    {
-      "path": "./packages/vite-import-index-html/tsconfig.json"
     }
   ]
 }
