@@ -39,7 +39,9 @@ export function ssrHandler(): RequestHandler {
       // two pass rendering to handle SSR error cf.
       // https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-server-runtime/server.ts#L313-L361
       // https://github.com/remix-run/react-router/blob/4e12473040de76abf26e1374c23a19d29d78efc0/packages/router/router.ts#L3021-L3033
-      const errorRouteId = routerResult.context._deepestRenderedBoundaryId;
+      const errorRouteId =
+        routerResult.context._deepestRenderedBoundaryId ??
+        routerResult.handler.dataRoutes[0]?.id;
       tinyassert(errorRouteId, "failed to resolve 'errorRouteId'");
       routerResult.context.errors = { [errorRouteId]: e };
       routerResult.context.statusCode = 500;
