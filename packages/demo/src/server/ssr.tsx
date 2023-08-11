@@ -6,7 +6,6 @@ import {
   globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
-import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
 import { importIndexHtml } from "@hiogawa/vite-import-index-html/dist/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
@@ -15,6 +14,7 @@ import {
   createStaticRouter,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
+import { logError } from "./log";
 
 export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
@@ -34,8 +34,7 @@ export function ssrHandler(): RequestHandler {
     try {
       ssrHtml = render({ routerResult });
     } catch (e) {
-      viteDevServer?.ssrFixStacktrace(e as any);
-      console.error(e);
+      logError(e);
 
       // two pass rendering to handle SSR error cf.
       // https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-server-runtime/server.ts#L313-L361
