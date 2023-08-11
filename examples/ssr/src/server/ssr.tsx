@@ -1,6 +1,5 @@
-import { type RequestHandler, compose } from "@hattip/compose";
+import { type RequestHandler } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
-import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
   type ServerRouterResult,
   globPageRoutesServer,
@@ -15,11 +14,7 @@ import {
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
 
-export function createHattipApp() {
-  return compose(globApiRoutes(), ssrHandler());
-}
-
-function ssrHandler(): RequestHandler {
+export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
 
   return async (ctx) => {
