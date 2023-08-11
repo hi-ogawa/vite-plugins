@@ -13,11 +13,13 @@ See `./packages/demo` for basic usage.
 - generate [`hattip`](https://github.com/hattipjs/hattip) middleware based on `**/*.api.ts`
 - support `loader` for per-page data fetching in both SPA and SSR mode (similar to `loader` in [`remix`](https://github.com/remix-run/remix/) and `load` in [`@sveltejs/kit`](https://github.com/sveltejs/kit))
 
-### `@hiogawa/vite-import-index-html`
+### `@hiogawa/vite-import-dev-server`
 
-- it allows importing `index.html` for both development and production uniformly.
-- [`ViteDevServer.transformIndexHtml`](https://vitejs.dev/guide/api-javascript.html#vitedevserver) is applied during development so HMR should work in a same way as normal `vite dev`.
-- for example, it can be used as simple document template for SPA or SSR server.
+It exposes [`ViteDevServer`](https://vitejs.dev/guide/api-javascript.html#vitedevserver) for server code during development,
+which is essential for:
+
+- `ViteDevServer.transformIndexHtml` to inject HMR-related script
+- `ViteDevServer.ssrFixStacktrace` to fix `Error.stack` from transpiled code
 
 ## development
 
