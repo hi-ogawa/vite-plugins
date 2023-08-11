@@ -1,14 +1,11 @@
 #!/bin/bash
 set -eu -o pipefail
 
-# https://vercel.com/docs/build-output-api/v3/primitives#edge-functions
-
 # .vercel/
 #   project.json
 #   output/
 #     config.json
-#     static/
-#       assets/            = dist/client/assets
+#     static/              = dist/client
 #     functions/
 #       index.func/
 #         .vc-config.json
@@ -25,13 +22,17 @@ cp "$this_dir/config.json" .vercel/output/config.json
 
 # static
 mkdir -p .vercel/output/static
-cp -r dist/client/assets .vercel/output/static/assets
+cp -r dist/client/. .vercel/output/static
+rm .vercel/output/static/{index.html,manifest.json}
 
 # functions
 mkdir -p .vercel/output/functions/index.func
 cp "$this_dir/.vc-config.json" .vercel/output/functions/index.func/.vc-config.json
+
+# TODO: exclude unused deps
+# - react-xxx.development
+# - node-fetch-native
 npx esbuild dist/server/index.js \
   --outfile=.vercel/output/functions/index.func/index.js \
   --metafile=dist/server/esbuild-metafile.json \
-  --bundle --minify --format=esm --platform=browser \
-  --external:node:async_hooks
+  --bundle --minify --format=cjs --platform=node

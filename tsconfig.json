@@ -2,6 +2,9 @@
   "include": [],
   "references": [
     {
+      "path": "./examples/ssr/tsconfig.json"
+    },
+    {
       "path": "./packages/demo/tsconfig.json"
     },
     {

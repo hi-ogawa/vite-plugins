@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>vite-plugins-example-ssr</title>
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, initial-scale=1.0"
+    />
+    <link rel="icon" href="/favicon.ico" />
+    <style>
+      html,
+      body,
+      #root {
+        height: 100%;
+      }
+    </style>
+    <!--@INJECT_HEAD@-->
+  </head>
+  <body>
+    <div id="root"><!--@INJECT_SSR@--></div>
+    <script src="/src/client/index.tsx" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "version": 3,
+  "routes": [
+    {
+      "src": "^/assets/(.*)$",
+      "headers": {
+        "cache-control": "public, immutable, max-age=31536000"
+      }
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": ".*",
+      "dest": "/"
+    }
+  ]
+}
