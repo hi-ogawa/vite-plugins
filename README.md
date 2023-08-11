@@ -19,7 +19,9 @@ It exposes [`ViteDevServer`](https://vitejs.dev/guide/api-javascript.html#vitede
 which is essential for:
 
 - `ViteDevServer.transformIndexHtml` to inject HMR-related script
+  - example: [`importIndexHtml`](https://github.com/hi-ogawa/vite-plugins/blob/be6c3e2976f8768d5a543613edf51f0cbd86b8a0/packages/demo/src/server/ssr.tsx#L72-L80)
 - `ViteDevServer.ssrFixStacktrace` to fix `Error.stack` from transpiled code
+  - example: [`logError`](https://github.com/hi-ogawa/vite-plugins/blob/be6c3e2976f8768d5a543613edf51f0cbd86b8a0/packages/demo/src/server/log.ts#L3-L10)
 
 ## development
 
