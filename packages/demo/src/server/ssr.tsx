@@ -1,6 +1,6 @@
 import { type RequestHandler } from "@hattip/compose";
+import { generateThemeScript } from "@hiogawa/theme-script";
 import { tinyassert } from "@hiogawa/utils";
-import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
 import {
   type ServerRouterResult,
   globPageRoutesServer,
@@ -48,7 +48,13 @@ export function ssrHandler(): RequestHandler {
 
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      [routerResult.injectToHtml, getThemeScript()].join("\n")
+      [
+        routerResult.injectToHtml,
+        generateThemeScript({
+          storageKey: "vite-plugins-demo:theme",
+          defaultTheme: "dark",
+        }),
+      ].join("\n")
     );
 
     return new Response(html, {
@@ -84,14 +90,4 @@ async function getClientManifest(): Promise<Manifest | undefined> {
     return lib.default;
   }
   return;
-}
-
-function getThemeScript() {
-  return `
-    <script>
-      globalThis.__themeStorageKey = "vite-plugins:theme";
-      globalThis.__themeDefault = "dark";
-      ${THEME_SCRIPT}
-    </script>
-  `;
 }

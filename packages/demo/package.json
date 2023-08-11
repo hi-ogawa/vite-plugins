@@ -24,6 +24,7 @@
     "@hattip/compose": "^0.0.34",
     "@hiogawa/isort-ts": "1.0.2-pre.1",
     "@hiogawa/query-proxy": "0.1.1-pre.3",
+    "@hiogawa/theme-script": "^0.0.4-pre.3",
     "@hiogawa/tiny-jwt": "^0.2.2",
     "@hiogawa/tiny-rpc": "^0.2.2",
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.3",
