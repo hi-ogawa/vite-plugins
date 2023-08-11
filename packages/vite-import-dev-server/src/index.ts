@@ -46,11 +46,11 @@ export default function importDevServerPlugin(): Plugin {
       };
     },
 
-    // issue might be remapping the source into virtual module?
+    // same idea as vavite but no idea why vavite is not working
     // https://github.com/cyco130/vavite/blob/3cf52a5bd25deadde0949a52be31af1ad04c36d8/packages/expose-vite-dev-server/src/index.ts#L28
     async resolveId(source, _importer, options) {
-      if (options.ssr && source == MODULE_NAME) {
-        return source;
+      if (options.ssr && source === MODULE_NAME) {
+        return { id: MODULE_NAME };
       }
       return;
     },
