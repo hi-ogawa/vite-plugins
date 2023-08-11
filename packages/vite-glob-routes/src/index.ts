@@ -1,12 +1,13 @@
 import type { Plugin } from "vite";
+import { name as packageName } from "../package.json";
 
 // pass internal runtime data via virtual module
 // prettier-ignore
 const VIRTUAL = {
-  apiRoutes:            "virtual:@hiogawa/vite-glob-routes/internal/apiRoutes",
-  pageRoutesServer:     "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesServer",
-  pageRoutesClient:     "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClient",
-  pageRoutesClientLazy: "virtual:@hiogawa/vite-glob-routes/internal/pageRoutesClientLazy",
+  apiRoutes:            `virtual:${packageName}/internal/apiRoutes`,
+  pageRoutesServer:     `virtual:${packageName}/internal/pageRoutesServer`,
+  pageRoutesClient:     `virtual:${packageName}/internal/pageRoutesClient`,
+  pageRoutesClientLazy: `virtual:${packageName}/internal/pageRoutesClientLazy`,
 };
 const VIRTUALS = Object.values(VIRTUAL);
 
@@ -15,14 +16,14 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
   const root = options.root;
 
   return {
-    name: "@hiogawa/vite-glob-routes",
+    name: packageName,
 
     config(_config, _env) {
       // vite has to handle internal "virtual" modules
       // note that this is not necessary when using this plugin within monorepo (i.e. packages/demo) since vite automatically configures in this way.
       // however the plugin would break without this option when it is used as external dependency.
       // cf. https://github.com/cyco130/vavite/blob/913e066fd557a1720923361db77c195ac237ac26/packages/expose-vite-dev-server/src/index.ts#L49-L65
-      const exclude = ["@hiogawa/vite-glob-routes"];
+      const exclude = [packageName];
       return {
         optimizeDeps: {
           exclude,
