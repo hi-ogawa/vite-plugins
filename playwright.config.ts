@@ -2,13 +2,13 @@ import { defineConfig } from "@playwright/test";
 
 // for examples/test.sh
 
-const port = Number(process.env["PORT"] ?? "4456");
+const PORT = Number((process.env["PORT"] ??= "4456"));
 const command = process.env["E2E_COMMAND"] ?? "pnpm dev";
 
 export default defineConfig({
   testDir: "examples",
   use: {
-    baseURL: `http://localhost:${port}`,
+    baseURL: `http://localhost:${PORT}`,
   },
   projects: [
     {
@@ -19,14 +19,14 @@ export default defineConfig({
         // https://github.com/microsoft/playwright/issues/1086#issuecomment-592227413
         viewport: null,
         launchOptions: {
-          args: ["--window-size=600,800"],
+          args: ["--window-size=1200,800"],
         },
       },
     },
   ],
   webServer: {
     command,
-    port,
+    port: PORT,
     reuseExistingServer: true,
   },
   forbidOnly: Boolean(process.env["CI"]),

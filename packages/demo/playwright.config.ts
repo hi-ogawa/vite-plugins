@@ -1,7 +1,7 @@
 import process from "node:process";
 import { defineConfig } from "@playwright/test";
 
-const PORT = Number((process.env.PORT ??= "4456"));
+const PORT = Number((process.env["PORT"] ??= "4456"));
 const command = process.env["E2E_COMMAND"] ?? `pnpm dev:vite`;
 
 export default defineConfig({
