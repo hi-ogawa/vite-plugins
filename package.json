@@ -1,13 +1,14 @@
 {
   "name": "@hiogawa/vite-plugins-monorepo",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "pnpm -r build",
     "dev": "run-p dev:*",
     "dev:demo": "pnpm -C packages/demo dev:vite",
     "tsc": "tsc -b",
     "dev:tsc": "pnpm tsc --watch --preserveWatchOutput",
-    "test": "vitest",
+    "test": "pnpm -r --seq test run",
     "lint": "run-s lint:*",
     "lint-check": "run-s lint-check:*",
     "lint:isort": "pnpm lint-check:isort --fix",
@@ -28,6 +29,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
     "tsup": "^7.0.0",
+    "tsx": "^3.12.7",
     "typescript": "^5.1.6",
     "vite": "^4.4.4",
     "vitest": "^0.32.2"
