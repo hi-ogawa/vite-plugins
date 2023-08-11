@@ -74,6 +74,9 @@ importers:
       '@hiogawa/query-proxy':
         specifier: 0.1.1-pre.3
         version: 0.1.1-pre.3
+      '@hiogawa/theme-script':
+        specifier: ^0.0.4-pre.3
+        version: 0.0.4-pre.3(vite@4.4.4)
       '@hiogawa/tiny-jwt':
         specifier: ^0.2.2
         version: 0.2.2
@@ -1287,6 +1290,17 @@ packages:
     peerDependenciesMeta:
       '@trpc/server':
         optional: true
+    dev: true
+
+  /@hiogawa/theme-script@0.0.4-pre.3(vite@4.4.4):
+    resolution: {integrity: sha512-2uxVhemdAMUFE/OaUcaTT2QeZsXnxtnF/CLNs+CcrlgwaUXXfsnXUTvUZCz8MTmxzzz4Vp5hfAyi4pp58XHJCQ==}
+    peerDependencies:
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
+    dependencies:
+      vite: 4.4.4(@types/node@18.16.18)
     dev: true
 
   /@hiogawa/tiny-jwt@0.2.2:

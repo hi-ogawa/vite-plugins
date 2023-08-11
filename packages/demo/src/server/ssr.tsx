@@ -1,8 +1,6 @@
-import { type RequestHandler, compose } from "@hattip/compose";
+import { type RequestHandler } from "@hattip/compose";
+import { generateThemeScript } from "@hiogawa/theme-script";
 import { tinyassert } from "@hiogawa/utils";
-import { loggerMiddleware } from "@hiogawa/utils-experimental";
-import THEME_SCRIPT from "@hiogawa/utils-experimental/dist/theme-script.global.js?raw";
-import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import {
   type ServerRouterResult,
   globPageRoutesServer,
@@ -16,23 +14,8 @@ import {
   createStaticRouter,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
-import { rpcHandler } from "../rpc/server";
-import { requestContextStorageHandler } from "./request-context";
-import { sessionHandler } from "./session";
 
-export function createHattipApp() {
-  return compose(
-    loggerMiddleware(),
-    requestContextStorageHandler(),
-    sessionHandler(),
-    rpcHandler(),
-    globApiRoutes(),
-    ssrHandler()
-  );
-}
-
-// TODO(refactor): move to a separate file
-function ssrHandler(): RequestHandler {
+export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
 
   return async (ctx) => {
@@ -65,7 +48,13 @@ function ssrHandler(): RequestHandler {
 
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      [routerResult.injectToHtml, getThemeScript()].join("\n")
+      [
+        routerResult.injectToHtml,
+        generateThemeScript({
+          storageKey: "vite-plugins-demo:theme",
+          defaultTheme: "dark",
+        }),
+      ].join("\n")
     );
 
     return new Response(html, {
@@ -101,14 +90,4 @@ async function getClientManifest(): Promise<Manifest | undefined> {
     return lib.default;
   }
   return;
-}
-
-function getThemeScript() {
-  return `
-    <script>
-      globalThis.__themeStorageKey = "vite-plugins:theme";
-      globalThis.__themeDefault = "dark";
-      ${THEME_SCRIPT}
-    </script>
-  `;
 }
