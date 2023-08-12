@@ -58,13 +58,17 @@ export function wrapLoaderResult(
   result: Result<unknown, unknown>,
   options: { onError?: (e: unknown) => void }
 ): Response {
+  let res: Response;
   try {
-    return wrapLoaderResultInner(result);
+    res = wrapLoaderResultInner(result);
   } catch (e) {
     // https://github.com/remix-run/remix/blob/4e7f2bd55f75f489bc19316a671c9cd6e70bd930/packages/remix-server-runtime/server.ts#L186-L188
     options.onError?.(e);
-    return wrapLoaderException(e);
+    res = wrapLoaderException(e);
   }
+  // explicit flag for valid data request response
+  res.headers.set(ENUM["x-loader-response"], "1");
+  return res;
 }
 
 function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
@@ -107,6 +111,11 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
 
 // cf. https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-react/routes.tsx#L210
 export async function unwrapLoaderResult(res: Response): Promise<Response> {
+  // non data request response (e.g. proxy returning error before reaching server, or simiply client/server code bug)
+  if (!res.headers.get(ENUM["x-loader-response"])) {
+    throw new Error("unexpected data request response", { cause: res });
+  }
+
   // exception
   if (res.headers.get(ENUM["x-loader-exception"])) {
     throw await unwrapLoaderException(res);
