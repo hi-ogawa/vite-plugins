@@ -34,6 +34,9 @@ quick-dirty plugin to mutate Function.name to cheat react-refresh
 - https://github.com/facebook/react/blob/4e3618ae41669c95a3377ae615c727f74f89d141/packages/react-refresh/src/ReactFreshRuntime.js#L713-L715
 - https://github.com/vitejs/vite-plugin-react/blob/4bebe5bd7c0267f6b088005293870cf69953b73a/packages/plugin-react/src/refreshUtils.js#L38
 
+note that when modifying skipped function, the page won't refreshed automatically
+and thus it will require manual reload to update "loader" for example.
+
 we could introduce `*.page.client.ts` convention to separate `loader` exports but that DX feels also clumsy,
 
 ## what it does
