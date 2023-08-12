@@ -6,6 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "build-vercel": "pnpm build && bash misc/vercel/build.sh",
+    "build-preview": "pnpm build",
     "preview": "vite preview",
     "release": "vercel deploy --prebuilt .",
     "release-production": "vercel deploy --prebuilt . --prod"

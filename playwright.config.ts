@@ -1,5 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
+// TODO: restructure examples tests
+
 // run e2e test in examples
 // E2E_COMMAND="pnpm -C examples/spa dev" npx playwright test --headed examples/spa/e2e/basic.test.ts
 
