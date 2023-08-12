@@ -2,7 +2,7 @@
 
 https://vite-plugins-example-spa-hiro18181.vercel.app
 
-Even without SSR features, `@hiogawa/vite-glob-routes` can still provide:
+`@hiogawa/vite-glob-routes` can be used without SSR and it can provide:
 
 - file-system routing convention
 - code spliting per-page
