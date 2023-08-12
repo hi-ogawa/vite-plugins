@@ -4,7 +4,7 @@ import {
   tinyassert,
   typedBoolean,
 } from "@hiogawa/utils";
-import { type DataRouteMatch } from "react-router";
+import { type DataRouteMatch, isRouteErrorResponse, json } from "react-router";
 import type { Manifest } from "vite";
 import { mapValues } from "../utils";
 import type { RoutesMeta } from "./route-utils";
@@ -77,20 +77,34 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
 
   // exception or error response
   if (!result.ok) {
-    const res = result.value;
+    let res = result.value;
+
+    // handler.queryRoute can return "ErrorResponse" instance which is not "Response" instance (for example, when invalid "x-loader-route-id")
+    // https://github.com/remix-run/remix/blob/4e7f2bd55f75f489bc19316a671c9cd6e70bd930/packages/remix-server-runtime/server.ts#L185-L190
+    if (isRouteErrorResponse(res)) {
+      res = json(res.error, {
+        status: res.status,
+        statusText: res.statusText,
+      });
+    }
+
     // exception
     if (!(res instanceof Response)) {
       throw res instanceof Error
         ? res
-        : new Error("loader must throw 'Response' or 'Error'");
+        : new Error("loader must throw 'Response' or 'Error'", { cause: res });
     }
+
     // error response
     res.headers.set(ENUM["x-loader-error-response"], "1");
     return res;
   }
 
+  // for starter, we don't support auto "json" response
   const res = result.value;
-  tinyassert(res instanceof Response, "loader must return 'Response'");
+  if (!(res instanceof Response)) {
+    throw new Error("loader must return 'Response'", { cause: res });
+  }
 
   // redirect response
   if ([301, 302, 303, 307, 308].includes(res.status)) {
@@ -146,7 +160,9 @@ export async function unwrapLoaderResult(res: Response): Promise<Response> {
 
 function wrapLoaderException(e: unknown) {
   const error =
-    e instanceof Error ? e : new Error("unknown loader request exception");
+    e instanceof Error
+      ? e
+      : new Error("unknown loader request exception", { cause: e });
   if (import.meta.env.PROD) {
     error.stack = `${String(error)} [STACK REDUCTED]`;
   }
