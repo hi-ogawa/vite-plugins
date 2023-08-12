@@ -15,7 +15,9 @@ export const loader: LoaderFunction = async (args) => {
 };
 
 // TODO
-// need to cheat react-refresh? https://github.com/facebook/react/blob/4e3618ae41669c95a3377ae615c727f74f89d141/packages/react-refresh/src/ReactFreshRuntime.js#L713-L715
+// mutate Function.name to cheat react-refresh
+// https://github.com/facebook/react/blob/4e3618ae41669c95a3377ae615c727f74f89d141/packages/react-refresh/src/ReactFreshRuntime.js#L713-L715
+// https://github.com/vitejs/vite-plugin-react/blob/4bebe5bd7c0267f6b088005293870cf69953b73a/packages/plugin-react/src/refreshUtils.js#L38
 // we could introduce `*.page.client.ts` convention to separate `loader` exports but that DX feels also clumsy.
 // maybe we could do this "SkipRefresh_xxx" magic via plugin?
 Object.defineProperty(loader, "name", { value: "SkipRefresh_loader" });
