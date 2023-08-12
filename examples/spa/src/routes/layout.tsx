@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
 export function Component() {
   return (
@@ -7,15 +7,16 @@ export function Component() {
       <header>
         <h4>Routes</h4>
         <ul>
-          <li>
-            <Link to="/">Index Page</Link>
-          </li>
-          <li>
-            <Link to="/github">Github API Demo</Link>
-          </li>
-          <li>
-            <Link to="/pokemon">Pokemon API Demo</Link>
-          </li>
+          {LINKS.map(([href, label]) => (
+            <li key={href}>
+              <NavLink
+                to={href}
+                style={(x) => (x.isActive ? { fontWeight: "bold" } : {})}
+              >
+                {label}
+              </NavLink>
+            </li>
+          ))}
         </ul>
       </header>
       <div>
@@ -24,3 +25,8 @@ export function Component() {
     </div>
   );
 }
+
+const LINKS = [
+  ["/", "Index Page"],
+  ["/pokemon", "Pokemon API Demo"],
+] as const;
