@@ -22,9 +22,31 @@ jobs:
       - run: pnpm -C packages/demo test-e2e
       - run: pnpm -C packages/demo build-preview
       - run: E2E_COMMAND='pnpm preview' pnpm -C packages/demo test-e2e
-      - name: test template fresh install
+
+  test-examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
+      - run: pnpm i
+      - run: pnpm lint-check
+      - run: pnpm build
+      - run: npx playwright install chromium
+      - name: test examples/ssr
         run: |
           export src_dir=examples/ssr
+          export dst_dir=$(mktemp -d)
+          bash examples/init.sh
+          bash examples/test.sh
+      - name: test examples/spa
+        run: |
+          export src_dir=examples/spa
           export dst_dir=$(mktemp -d)
           bash examples/init.sh
           bash examples/test.sh
