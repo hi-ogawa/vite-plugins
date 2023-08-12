@@ -5,6 +5,9 @@
       "path": "./examples/ssr/tsconfig.json"
     },
     {
+      "path": "./examples/spa/tsconfig.json"
+    },
+    {
       "path": "./packages/demo/tsconfig.json"
     },
     {

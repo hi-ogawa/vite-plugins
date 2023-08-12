@@ -1,6 +1,11 @@
 import { defineConfig } from "@playwright/test";
 
-// for examples/test.sh
+// TODO: restructure examples tests
+
+// run e2e test in examples
+// E2E_COMMAND="pnpm -C examples/spa dev" npx playwright test --headed examples/spa/e2e/basic.test.ts
+
+// see also examples/test.sh
 
 const PORT = Number((process.env["PORT"] ??= "4456"));
 const command = process.env["E2E_COMMAND"] ?? "pnpm dev";
