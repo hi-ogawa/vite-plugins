@@ -13,6 +13,9 @@ export function Component() {
           <li>
             <Link to="/github">Github API Demo</Link>
           </li>
+          <li>
+            <Link to="/pokemon">Pokemon API Demo</Link>
+          </li>
         </ul>
       </header>
       <div>
