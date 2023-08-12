@@ -16,5 +16,11 @@ export default defineConfig({
         strictPort: true,
       }
     : undefined,
+  preview: process.env["PORT"]
+    ? {
+        port: Number(process.env["PORT"]),
+        strictPort: true,
+      }
+    : undefined,
   clearScreen: false,
 });
