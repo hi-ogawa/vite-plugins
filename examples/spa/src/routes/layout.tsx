@@ -5,13 +5,13 @@ export function Component() {
   return (
     <div>
       <header>
-        Routes
+        <h4>Routes</h4>
         <ul>
           <li>
-            <Link to="/">Index</Link>
+            <Link to="/">Index Page</Link>
           </li>
           <li>
-            <Link to="/loader-data">Loader Data</Link>
+            <Link to="/github">Github API Demo</Link>
           </li>
         </ul>
       </header>
