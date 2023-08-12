@@ -52,10 +52,15 @@ export function unwrapLoaderRequest(
 }
 
 // cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-server-runtime/server.ts#L127
-export function wrapLoaderResult(result: Result<unknown, unknown>): Response {
+export function wrapLoaderResult(
+  result: Result<unknown, unknown>,
+  options: { onError?: (e: unknown) => void }
+): Response {
   try {
     return wrapLoaderResultInner(result);
   } catch (e) {
+    // https://github.com/remix-run/remix/blob/4e7f2bd55f75f489bc19316a671c9cd6e70bd930/packages/remix-server-runtime/server.ts#L186-L188
+    options.onError?.(e);
     return wrapLoaderException(e);
   }
 }

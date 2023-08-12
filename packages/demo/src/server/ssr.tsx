@@ -9,6 +9,7 @@ import {
 import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
+import { isRouteErrorResponse } from "react-router-dom";
 import {
   StaticRouterProvider,
   createStaticRouter,
@@ -25,9 +26,18 @@ export function ssrHandler(): RequestHandler {
       routesMeta,
       manifest: await getClientManifest(),
       request: ctx.request,
+      onError: (e) => logError(e),
     });
     if (routerResult.type === "response") {
       return routerResult.response;
+    }
+
+    // we could move this logic to `handleReactRouterServer.onError`
+    // https://github.com/remix-run/remix/blob/4e7f2bd55f75f489bc19316a671c9cd6e70bd930/packages/remix-server-runtime/server.ts#L275-L283
+    for (const e of Object.values(routerResult.context.errors ?? {})) {
+      if (!isRouteErrorResponse(e)) {
+        logError(e);
+      }
     }
 
     let ssrHtml: string;

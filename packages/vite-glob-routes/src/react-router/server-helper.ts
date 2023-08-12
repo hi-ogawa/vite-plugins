@@ -39,12 +39,14 @@ export async function handleReactRouterServer({
   manifest,
   request,
   requestContext,
+  onError,
 }: {
   routes: GlobPageRoutesResult["routes"];
   routesMeta: GlobPageRoutesResult["routesMeta"];
   manifest?: Manifest;
   request: Request;
   requestContext?: unknown; // provide app local context to server loader
+  onError?: (e: unknown) => void; // for now only for data request loader exception since user code can process `context.errors` on its own.
 }): Promise<ServerRouterResult> {
   const handler = createStaticHandler(routes);
 
@@ -59,7 +61,7 @@ export async function handleReactRouterServer({
     );
     return {
       type: "response",
-      response: wrapLoaderResult(loaderResult),
+      response: wrapLoaderResult(loaderResult, { onError }),
     };
   }
 

@@ -19,7 +19,7 @@ export function Component() {
     <div className="flex flex-col items-center">
       <div className="w-full p-6">
         <div className="flex flex-col gap-4">
-          <h1>Loader error test</h1>
+          <h1>Loader/Render error test</h1>
           <div className="flex gap-2">
             <Link className="antd-btn antd-btn-default px-2" to="/error?id=ok">
               ok
@@ -60,7 +60,7 @@ export function ErrorBoundary() {
     <div className="flex flex-col items-center">
       <div className="w-full p-6">
         <div className="flex flex-col gap-2">
-          <h1>Loader error test (ErrorBoundary)</h1>
+          <h1>Loader/Render error test (ErrorBoundary)</h1>
           <button
             className="antd-btn antd-btn-default"
             onClick={() => {
