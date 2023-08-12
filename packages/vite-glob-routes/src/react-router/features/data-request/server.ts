@@ -1,9 +1,7 @@
 import { type Result, tinyassert, wrapErrorAsync } from "@hiogawa/utils";
 import { isRouteErrorResponse, json } from "react-router";
-import type { createStaticHandler } from "react-router-dom/server";
+import type { RouterStaticHandler } from "../../misc";
 import { LOADER_HEADERS, LOADER_ROUTE_ID_PARAM } from "./shared";
-
-type RemixStaticHandler = ReturnType<typeof createStaticHandler>;
 
 export async function handleDateRequest({
   handler,
@@ -11,7 +9,7 @@ export async function handleDateRequest({
   requestContext,
   onError,
 }: {
-  handler: RemixStaticHandler;
+  handler: RouterStaticHandler;
   request: Request;
   requestContext?: unknown;
   onError?: (e: unknown) => void;
@@ -70,7 +68,7 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
   if (!result.ok) {
     let res = result.value;
 
-    // handler.queryRoute can return "ErrorResponse" instance which is not "Response" instance (for example, when invalid "x-loader-route-id")
+    // handler.queryRoute can return "ErrorResponse" instance which is not "Response" instance (for example, when invalid "loader-route-id")
     // https://github.com/remix-run/remix/blob/4e7f2bd55f75f489bc19316a671c9cd6e70bd930/packages/remix-server-runtime/server.ts#L185-L190
     if (isRouteErrorResponse(res)) {
       res = json(res.error, {

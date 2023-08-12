@@ -1,30 +1,25 @@
-import { wrapErrorAsync } from "@hiogawa/utils";
 import {
   type StaticHandlerContext,
   createStaticHandler,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
+import { handleDateRequest } from "./features/data-request/server";
 import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
+  type RouterStaticHandler,
   createGlobalScript,
   getPreloadLink,
   resolveAssetPathsByRouteId,
   serializeMatch,
   serializeRoutesMata,
-  unwrapLoaderRequest,
-  wrapLoaderResult,
 } from "./misc";
 import type { GlobPageRoutesResult } from "./route-utils";
-
-// typings from "@remix-run/router"
-// for now just derive it from "react-router" exports
-type RemixStaticHandler = ReturnType<typeof createStaticHandler>;
 
 export type ServerRouterResult =
   | {
       type: "render";
-      handler: RemixStaticHandler;
+      handler: RouterStaticHandler;
       context: StaticHandlerContext;
       injectToHtml: string;
     }
@@ -51,17 +46,16 @@ export async function handleReactRouterServer({
   const handler = createStaticHandler(routes);
 
   // handle direct server loader request (aka data request) https://github.com/remix-run/remix/blob/8268142371234795491070bafa23cd4607a36529/packages/remix-server-runtime/server.ts#L136-L139
-  const loaderRequest = unwrapLoaderRequest(request);
-  if (loaderRequest) {
-    const loaderResult = await wrapErrorAsync(() =>
-      handler.queryRoute(loaderRequest.request, {
-        routeId: loaderRequest.routeId,
-        requestContext,
-      })
-    );
+  const dataRequestResponse = await handleDateRequest({
+    handler,
+    request,
+    requestContext,
+    onError,
+  });
+  if (dataRequestResponse) {
     return {
       type: "response",
-      response: wrapLoaderResult(loaderResult, { onError }),
+      response: dataRequestResponse,
     };
   }
 
