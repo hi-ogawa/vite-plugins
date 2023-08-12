@@ -4,10 +4,10 @@ data request aka. proxy `loader` call on client side navigation.
 // client
 // 1. wrapLoaderRequest
 // 2. fetch              --> 3
-// 6. unwrapLoaderResult
+// 6. unwrapLoaderResponse
 
 // server
-// 3. wrapLoaderRequest
+// 3. unwrapLoaderRequest
 // 4. invoke loader
-// 5. unwrapLoaderResult --> 6
+// 5. wrapLoaderResponse --> 6
 ```

@@ -22,7 +22,7 @@ export async function handleDateRequest({
         requestContext,
       })
     );
-    return wrapLoaderResult(loaderResult, { onError });
+    return wrapLoaderResponse(loaderResult, { onError });
   }
   return;
 }
@@ -43,7 +43,7 @@ function unwrapLoaderRequest(
 }
 
 // cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-server-runtime/server.ts#L127
-function wrapLoaderResult(
+function wrapLoaderResponse(
   result: Result<unknown, unknown>,
   options: { onError?: (e: unknown) => void }
 ): Response {
