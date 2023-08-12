@@ -1,18 +1,30 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 
-test.skip("basic", async ({ page }) => {
+test("basic", async ({ page }) => {
   await page.goto("/");
-  await page.locator("#root.hydrated").waitFor({ state: "attached" });
 
-  await page.getByText("Index page").click();
-  await page.getByRole("link", { name: "Loader Data" }).click();
-  await page.getByText('loaderData = { "message": "hello loader" }').click();
-  await page.getByRole("link", { name: "Hello API" }).click();
-  await page.getByText('{"message":"hello api"}').click();
+  // /pokemon
+  await page.getByRole("link", { name: "Pokemon API Demo" }).click();
+  await page.waitForURL("/pokemon");
+  await page.getByText("Choose or input Pokemon above").click();
 
-  const res = await page.goto("/loader-data");
-  expect(res?.status()).toBe(200);
-  expect(await res?.text()).toContain(
-    "&quot;message&quot;: &quot;hello loader&quot"
-  );
+  // /pokemon/pikachu
+  await page.getByRole("link", { name: "pikachu" }).click();
+  await page.waitForURL("/pokemon/pikachu");
+  await page.getByText("type: electric").click();
+
+  // /pokemon/ditto
+  await page.getByPlaceholder("Input...").fill("ditto");
+  await page.getByPlaceholder("Input...").press("Enter");
+  await page.waitForURL("/pokemon/ditto");
+  await page.getByRole("heading", { name: "ditto" }).click();
+  await page.getByText("type: normal").click();
+
+  // /pokemon/no-such-pokemon
+  await page.getByPlaceholder("Input...").fill("no-such-pokemon");
+  await page.getByPlaceholder("Input...").press("Enter");
+  await page.waitForURL("/pokemon/no-such-pokemon");
+  await page
+    .getByRole("heading", { name: "Failed to fetch 'no-such-pokemon'" })
+    .click();
 });
