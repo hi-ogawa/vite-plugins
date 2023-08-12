@@ -11,6 +11,11 @@ export function Component() {
         <h4>Pokemon API Demo</h4>
         {navigation.state === "loading" && "(loading...)"}
       </div>
+      (API provided by{" "}
+      <a href="https://pokeapi.co/" target="_blank">
+        PokéAPI
+      </a>
+      )
       <div>
         <ul>
           {["pikachu", "charizard", "onix"].map((v) => (
