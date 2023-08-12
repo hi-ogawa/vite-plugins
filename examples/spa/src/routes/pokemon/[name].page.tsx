@@ -5,9 +5,6 @@ import {
   useRouteError,
 } from "react-router-dom";
 
-// TODO
-// HMR doesn't work when editing `*.page.tsx` since it includes non-component `loader` export.
-// Maybe better to introduce `*.page.client.ts` convention to workaround it?
 export const loader: LoaderFunction = async (args) => {
   const name = args.params["name"]!;
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
@@ -16,6 +13,12 @@ export const loader: LoaderFunction = async (args) => {
   }
   return res;
 };
+
+// TODO
+// need to cheat react-refresh? https://github.com/facebook/react/blob/4e3618ae41669c95a3377ae615c727f74f89d141/packages/react-refresh/src/ReactFreshRuntime.js#L713-L715
+// we could introduce `*.page.client.ts` convention to separate `loader` exports but that DX feels also clumsy.
+// maybe we could do this "SkipRefresh_xxx" magic via plugin?
+Object.defineProperty(loader, "name", { value: "SkipRefresh_loader" });
 
 export function Component() {
   const loaderData = useLoaderData() as any;
