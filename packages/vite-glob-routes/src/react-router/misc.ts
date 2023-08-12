@@ -113,7 +113,7 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
 export async function unwrapLoaderResult(res: Response): Promise<Response> {
   // non data request response (e.g. proxy returning error before reaching server, or simiply client/server code bug)
   if (!res.headers.get(ENUM["x-loader-response"])) {
-    throw new Error("unexpected data request response", { cause: res });
+    throw new Error("unexpected loader response", { cause: res });
   }
 
   // exception
