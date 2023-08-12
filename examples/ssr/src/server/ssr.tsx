@@ -24,6 +24,7 @@ export function ssrHandler(): RequestHandler {
       routesMeta,
       manifest: await getClientManifest(),
       request: ctx.request,
+      onError: (e) => logError(e),
     });
     if (routerResult.type === "response") {
       return routerResult.response;
