@@ -5,6 +5,7 @@ import {
   useRouteError,
 } from "react-router-dom";
 
+// see reactRefreshSkipPlugin in vite.config.ts
 // @x-refresh-skip loader
 
 export const loader: LoaderFunction = async (args) => {

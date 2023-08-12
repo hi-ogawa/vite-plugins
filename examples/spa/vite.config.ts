@@ -51,6 +51,7 @@ function reactRefreshSkipPlugin(): PluginOption {
 
   return {
     name: "local:" + reactRefreshSkipPlugin.name,
+    apply: "serve",
     enforce: "pre",
     transform(code, id, _options) {
       if (!filter(id)) {
