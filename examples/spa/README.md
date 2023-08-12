@@ -1,5 +1,7 @@
 # examples/spa
 
+https://vite-plugins-example-spa-hiro18181.vercel.app
+
 Even without SSR features, `@hiogawa/vite-glob-routes` can still provide:
 
 - file-system routing convention
