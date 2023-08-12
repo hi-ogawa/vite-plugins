@@ -28,6 +28,8 @@ const ENUM = arrayToEnum([
 
   // exception (runtime server `Error` propagated to client)
   "x-loader-exception", // aka x-remix-error
+
+  "x-loader-response", // x-remix-response https://github.com/remix-run/remix/pull/6783
 ]);
 
 export function wrapLoaderRequest(req: Request, routeId: string): Request {
