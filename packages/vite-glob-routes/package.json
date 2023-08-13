@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-glob-routes",
-  "version": "0.6.1-pre.0",
+  "version": "0.6.1-pre.2",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -23,6 +23,10 @@
       "import": "./dist/react-router/server.js",
       "types": "./dist/react-router/server.d.ts"
     },
+    "./dist/react-router/shared": {
+      "import": "./dist/react-router/shared.js",
+      "types": "./dist/react-router/shared.d.ts"
+    },
     "./dist/hattip": {
       "import": "./dist/hattip.js",
       "types": "./dist/hattip.d.ts"
@@ -44,14 +48,12 @@
   },
   "devDependencies": {
     "@hattip/compose": "^0.0.34",
-    "@types/react": "^18.2.14",
     "react-router": "^6.13.0",
     "react-router-dom": "^6.13.0",
     "vite": "^4.4.4"
   },
   "peerDependencies": {
     "@hattip/compose": "*",
-    "@types/react": "*",
     "react-router": "*",
     "react-router-dom": "*",
     "vite": "*"

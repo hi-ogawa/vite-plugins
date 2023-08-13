@@ -12,17 +12,17 @@ import {
   StaticRouterProvider,
   createStaticRouter,
 } from "react-router-dom/server";
-import type { Manifest } from "vite";
 import { logError } from "./log";
 
 export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
+  const serverLoaderRouteIds = Object.entries(routesMeta)
+    .filter(([_id, meta]) => meta.route.loader)
+    .map(([id]) => id);
 
   return async (ctx) => {
     const routerResult = await handleReactRouterServer({
       routes,
-      routesMeta,
-      manifest: await getClientManifest(),
       request: ctx.request,
     });
     if (routerResult.type === "response") {
@@ -49,9 +49,12 @@ export function ssrHandler(): RequestHandler {
 
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
-
-    html = html.replace("<!--@INJECT_HEAD@-->", routerResult.injectToHtml);
-
+    html = html.replace(
+      "<!--@INJECT_HEAD@-->",
+      `<script>window.__serverLoaderRouteIds = ${JSON.stringify(
+        serverLoaderRouteIds
+      )}</script>`
+    );
     return new Response(html, {
       status: routerResult.context.statusCode,
       headers: [["content-type", "text/html"]],
@@ -86,13 +89,4 @@ function render({
       />
     </React.StrictMode>
   );
-}
-
-async function getClientManifest(): Promise<Manifest | undefined> {
-  if (import.meta.env.PROD) {
-    // @ts-ignore
-    const lib = await import("/dist/client/manifest.json");
-    return lib.default;
-  }
-  return;
 }

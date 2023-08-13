@@ -12,6 +12,7 @@ export function Component() {
               <NavLink
                 to={href}
                 style={(x) => (x.isActive ? { fontWeight: "bold" } : {})}
+                data-preload
               >
                 {label}
               </NavLink>

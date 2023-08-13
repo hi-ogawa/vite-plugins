@@ -1,6 +1,6 @@
 import { type Result, tinyassert, wrapErrorAsync } from "@hiogawa/utils";
 import { isRouteErrorResponse, json } from "react-router";
-import type { RouterStaticHandler } from "../../misc";
+import type { RouterStaticHandler } from "../core/shared";
 import { LOADER_HEADERS, LOADER_ROUTE_ID_PARAM } from "./shared";
 
 export async function handleDateRequest({

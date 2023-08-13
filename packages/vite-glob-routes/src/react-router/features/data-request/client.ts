@@ -1,6 +1,24 @@
 import { tinyassert } from "@hiogawa/utils";
-import { type LoaderFunction } from "react-router";
+import { type DataRouteObject, type LoaderFunction } from "react-router";
+import { walkArrayTree } from "../../route-utils";
+import { mutateRouteObject } from "../core/client";
 import { LOADER_HEADERS, LOADER_ROUTE_ID_PARAM } from "./shared";
+
+export function injectDataRequestLoaders(
+  routes: DataRouteObject[], // mutated
+  selectedRouteIds: string[]
+) {
+  const ids = new Set(selectedRouteIds);
+  walkArrayTree(routes, (route) => {
+    if (ids.has(route.id)) {
+      mutateRouteObject(route, (resolved) => {
+        if (!resolved.loader) {
+          resolved.loader = createDateRequestLoader(route.id);
+        }
+      });
+    }
+  });
+}
 
 export function createDateRequestLoader(routeId: string): LoaderFunction {
   return async (args) => {

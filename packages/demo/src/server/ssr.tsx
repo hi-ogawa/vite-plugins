@@ -6,6 +6,7 @@ import {
   globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
+import { resolveRouteDependenciesByIds } from "@hiogawa/vite-glob-routes/dist/react-router/shared";
 import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
@@ -19,12 +20,14 @@ import { logError } from "./log";
 
 export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
+  const serverLoaderRouteIds = Object.entries(routesMeta)
+    .filter(([_id, meta]) => meta.route.loader)
+    .map(([id]) => id);
 
   return async (ctx) => {
+    const manifest = await getClientManifest();
     const routerResult = await handleReactRouterServer({
       routes,
-      routesMeta,
-      manifest: await getClientManifest(),
       request: ctx.request,
       onError: (e) => logError(e),
     });
@@ -61,15 +64,38 @@ export function ssrHandler(): RequestHandler {
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
 
+    // for initial prefetch link + client side lazy resolution
+    const matchRouteIds = routerResult.context.matches.map((m) => m.route.id);
+    const matchRouteDeps = resolveRouteDependenciesByIds(
+      matchRouteIds,
+      routesMeta,
+      manifest
+    );
+
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
+      // prettier-ignore
       [
-        routerResult.injectToHtml,
         generateThemeScript({
           storageKey: "vite-plugins-demo:theme",
           defaultTheme: "dark",
         }),
-      ].join("\n")
+        // TODO: move this logic to plugin?
+        // server hand-off data to client, which is required for
+        // - setup client loader for data request
+        // - resolve initial lazy route before mount
+        // - page preload logic
+        // (cf. packages/demo/src/client/index.tsx)
+        //
+        // only __initialMatchRouteIds depends on request,
+        // so other data could be hard-coded somewhere after build?
+        matchRouteDeps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
+        `<script>
+          window.__viteManifest = ${JSON.stringify(manifest)};
+          window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
+          window.__initialMatchRouteIds = ${JSON.stringify(matchRouteIds)};
+        </script>`,
+      ].flat().join("\n")
     );
 
     return new Response(html, {
