@@ -1,7 +1,8 @@
-import { tinyassert } from "@hiogawa/utils";
+import { intersection, tinyassert } from "@hiogawa/utils";
 import { type DataRouteObject, matchRoutes } from "react-router";
 import type { Manifest } from "vite";
 import type { RoutesMeta } from "../../route-utils";
+import { LOADER_ROUTE_ID_PARAM } from "../data-request/shared";
 import {
   type RouteDependencies,
   resolveRouteDependenciesByIds,
@@ -14,6 +15,7 @@ interface PreloadContext {
   routes: DataRouteObject[];
   routesMeta: RoutesMeta;
   manifest?: Manifest;
+  serverLoaderRouteIds?: string[];
 }
 
 let __preloadContext: PreloadContext | undefined;
@@ -27,14 +29,22 @@ function getPreloadContext() {
   return __preloadContext;
 }
 
-function getRouteDependencies(page: string): RouteDependencies {
-  const { routes, routesMeta, manifest } = getPreloadContext();
-  const matches = matchRoutes(routes, page) ?? [];
-  return resolveRouteDependenciesByIds(
-    matches.map((m) => m.route.id),
-    routesMeta,
-    manifest
-  );
+function getRouteDependencies(url: URL): RouteDependencies {
+  const { routes, routesMeta, manifest, serverLoaderRouteIds } =
+    getPreloadContext();
+
+  const matches = matchRoutes(routes, url.pathname) ?? [];
+  const routeIds = matches.map((m) => m.route.id);
+  const result = resolveRouteDependenciesByIds(routeIds, routesMeta, manifest);
+
+  if (serverLoaderRouteIds) {
+    result.data = intersection(routeIds, serverLoaderRouteIds).map((id) => {
+      const newUrl = new URL(url);
+      newUrl.searchParams.set(LOADER_ROUTE_ID_PARAM, id);
+      return newUrl.toString().slice(url.origin.length);
+    });
+  }
+  return result;
 }
 
 //
@@ -52,7 +62,8 @@ export function setupGlobalPreloadHandler() {
       const dataPreload = e.target.getAttribute("data-preload");
       if (dataPreload) {
         // e.target.href always full url?
-        injectPreloadLinks(e.target.href);
+        const url = new URL(e.target.href, window.location.origin);
+        injectPreloadLinks(url);
       }
     }
   }
@@ -67,22 +78,36 @@ export function setupGlobalPreloadHandler() {
 }
 
 // TODO: memoize?
-function injectPreloadLinks(href: string) {
-  const url = new URL(href, window.location.href);
-
+function injectPreloadLinks(url: URL) {
   // TODO: prefetch external links?
   if (url.host !== window.location.host) {
     return;
   }
 
   // resolve page dependencies
-  const deps = getRouteDependencies(url.pathname);
+  const deps = getRouteDependencies(url);
   for (const href of deps.js) {
     // TODO: escapeHtml
     const found = document.querySelector(`link[href="${href}"]`);
     if (!found) {
       const el = document.createElement("link");
       el.setAttribute("rel", "modulepreload");
+      el.setAttribute("href", href);
+      document.body.appendChild(el);
+    }
+  }
+
+  for (const href of deps.css) {
+    // TODO
+    href;
+  }
+
+  for (const href of deps.data ?? []) {
+    const found = document.querySelector(`link[href="${href}"]`);
+    if (!found) {
+      const el = document.createElement("link");
+      el.setAttribute("rel", "prefetch");
+      el.setAttribute("as", "fetch");
       el.setAttribute("href", href);
       document.body.appendChild(el);
     }
