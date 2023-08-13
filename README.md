@@ -4,7 +4,7 @@ miscellaneous plugins to experiment with Vite's SSR build ideas.
 
 ## plugins
 
-See `./packages/demo` and `./examples/*` for basic usage.
+See `./packages/demo`, `./examples/ssr`, and `./examples/spa` for basic usage.
 
 ### `@hiogawa/vite-glob-routes`
 
