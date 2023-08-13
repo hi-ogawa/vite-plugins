@@ -1,6 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import {
-  globPageRoutesClientLazy,
+  globPageRoutesClient,
   setPreloadContext,
 } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
@@ -15,7 +15,7 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  const { routes, routesMeta } = globPageRoutesClientLazy();
+  const { routes, routesMeta } = globPageRoutesClient();
   setPreloadContext({ routes, routesMeta, manifest: __viteManifest });
 
   const router = createBrowserRouter(routes);

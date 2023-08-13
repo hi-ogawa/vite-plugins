@@ -9,6 +9,7 @@ export default defineConfig([
   {
     entry: [
       "src/react-router/client.ts",
+      "src/react-router/client-eager.ts",
       "src/react-router/server.ts",
       "src/hattip.ts",
     ],
