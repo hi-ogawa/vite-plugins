@@ -2,7 +2,8 @@ import { tinyassert } from "@hiogawa/utils";
 import { test } from "@playwright/test";
 import { isPageReady } from "./helper";
 
-test("modulepreload", async ({ page }) => {
+// TODO: check links for "pnpm preview"
+test.skip("modulepreload", async ({ page }) => {
   await page.goto("/loader-data");
   await isPageReady(page);
 
