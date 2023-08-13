@@ -15,6 +15,10 @@
       "import": "./dist/react-router/client.js",
       "types": "./dist/react-router/client.d.ts"
     },
+    "./dist/react-router/client-eager": {
+      "import": "./dist/react-router/client-eager.js",
+      "types": "./dist/react-router/client-eager.d.ts"
+    },
     "./dist/react-router/server": {
       "import": "./dist/react-router/server.js",
       "types": "./dist/react-router/server.d.ts"

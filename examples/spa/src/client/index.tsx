@@ -1,5 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import { globPageRoutesClientLazy } from "@hiogawa/vite-glob-routes/dist/react-router/client";
+import { globPageRoutesClient } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -8,7 +8,7 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  const { routes } = globPageRoutesClientLazy();
+  const { routes } = globPageRoutesClient();
   const router = createBrowserRouter(routes);
   const root = (
     <React.StrictMode>
