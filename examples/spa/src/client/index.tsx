@@ -16,10 +16,9 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  setupGlobalPreloadHandler();
-
   const { routes, routesMeta } = globPageRoutesClient();
   setPreloadContext({ routes, routesMeta, manifest: __viteManifest });
+  setupGlobalPreloadHandler();
 
   const router = createBrowserRouter(routes);
   const root = (

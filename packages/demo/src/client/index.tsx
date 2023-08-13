@@ -23,8 +23,6 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  setupGlobalPreloadHandler();
-
   const { routes, routesMeta } = globPageRoutesClient();
   await resolveLazyRoutes(routes, serverHandoff.__initialMatchRouteIds);
   injectDataRequestLoaders(routes, serverHandoff.__serverLoaderRouteIds);
@@ -33,6 +31,7 @@ async function main() {
     routesMeta,
     manifest: serverHandoff.__viteManifest,
   });
+  setupGlobalPreloadHandler();
 
   const router = createBrowserRouter(routes);
   const root = (
