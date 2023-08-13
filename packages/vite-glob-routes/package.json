@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-glob-routes",
-  "version": "0.6.1-pre.1",
+  "version": "0.6.1-pre.2",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
