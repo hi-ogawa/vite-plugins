@@ -30,8 +30,6 @@ async function main() {
   tinyassert(el);
 
   const { routes, routesMeta } = globPageRoutesClient();
-
-  // move these logic to plugin?
   await resolveLazyRoutes(routes, __initialMatchRouteIds);
   injectDataRequestLoaders(routes, __serverLoaderRouteIds);
   setPreloadContext({ routes, routesMeta, manifest: __viteManifest });

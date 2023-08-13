@@ -5,13 +5,6 @@ export function globPageRoutesClient() {
   return createGlobPageRoutes(virtualPageRoutesClientLazy);
 }
 
-export {
-  initializeClientRoutes,
-  getClientGlobal,
-  getPagePrefetchLinks,
-  resolveLazyRoutes,
-  type ClientGlobal,
-} from "./cilent-helper";
-
+export * from "./features/core/client";
 export * from "./features/data-request/client";
 export * from "./features/preload/client";

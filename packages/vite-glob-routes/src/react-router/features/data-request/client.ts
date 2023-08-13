@@ -1,7 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
 import { type DataRouteObject, type LoaderFunction } from "react-router";
-import { mutateRouteObject } from "../../cilent-helper";
 import { walkArrayTree } from "../../route-utils";
+import { mutateRouteObject } from "../core/client";
 import { LOADER_HEADERS, LOADER_ROUTE_ID_PARAM } from "./shared";
 
 export function injectDataRequestLoaders(
