@@ -1,4 +1,4 @@
-import { tinyassert, typedBoolean } from "@hiogawa/utils";
+import { tinyassert, typedBoolean, uniq } from "@hiogawa/utils";
 import type { Manifest } from "vite";
 import type { RoutesMeta } from "../../route-utils";
 
@@ -8,16 +8,24 @@ export type RouteDependencies = {
   // data?: string[]; // TODO: data request too?
 };
 
-export function mergeRouteDependencies(
-  ls: RouteDependencies[]
-): RouteDependencies {
+function mergeRouteDependencies(ls: RouteDependencies[]): RouteDependencies {
   return {
-    js: ls.flatMap((e) => e.js),
-    css: ls.flatMap((e) => e.css),
+    js: uniq(ls.flatMap((e) => e.js)),
+    css: uniq(ls.flatMap((e) => e.css)),
   };
 }
 
-export function resolveRouteDependenciesById(
+export function resolveRouteDependenciesByIds(
+  routeIds: string[],
+  routesMeta: RoutesMeta,
+  manifest?: Manifest
+): RouteDependencies {
+  return mergeRouteDependencies(
+    routeIds.map((id) => resolveRouteDependenciesById(id, routesMeta, manifest))
+  );
+}
+
+function resolveRouteDependenciesById(
   routeId: string,
   routesMeta: RoutesMeta,
   manifest?: Manifest

@@ -4,8 +4,7 @@ import type { Manifest } from "vite";
 import type { RoutesMeta } from "../../route-utils";
 import {
   type RouteDependencies,
-  mergeRouteDependencies,
-  resolveRouteDependenciesById,
+  resolveRouteDependenciesByIds,
 } from "./shared";
 
 // simple global system on our own convention
@@ -31,8 +30,9 @@ export function getPreloadContext() {
 export function getRouteDependencies(page: string): RouteDependencies {
   const { routes, routesMeta, manifest } = getPreloadContext();
   const matches = matchRoutes(routes, page) ?? [];
-  const deps = matches.map((m) =>
-    resolveRouteDependenciesById(m.route.id, routesMeta, manifest)
+  return resolveRouteDependenciesByIds(
+    matches.map((m) => m.route.id),
+    routesMeta,
+    manifest
   );
-  return mergeRouteDependencies(deps);
 }

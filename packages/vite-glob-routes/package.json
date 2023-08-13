@@ -23,6 +23,10 @@
       "import": "./dist/react-router/server.js",
       "types": "./dist/react-router/server.d.ts"
     },
+    "./dist/react-router/shared": {
+      "import": "./dist/react-router/shared.js",
+      "types": "./dist/react-router/shared.d.ts"
+    },
     "./dist/hattip": {
       "import": "./dist/hattip.js",
       "types": "./dist/hattip.d.ts"

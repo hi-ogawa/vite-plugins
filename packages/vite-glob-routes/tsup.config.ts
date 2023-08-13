@@ -11,6 +11,7 @@ export default defineConfig([
       "src/react-router/client.ts",
       "src/react-router/client-eager.ts",
       "src/react-router/server.ts",
+      "src/react-router/shared.ts",
       "src/hattip.ts",
     ],
     format: ["esm"],

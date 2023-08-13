@@ -6,6 +6,7 @@ import {
   globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
+import { resolveRouteDependenciesByIds } from "@hiogawa/vite-glob-routes/dist/react-router/shared";
 import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
@@ -65,22 +66,30 @@ export function ssrHandler(): RequestHandler {
     let html = await importIndexHtml();
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
 
+    // for initial prefetch link + client side lazy resolution
+    const matchRouteIds = routerResult.context.matches.map((m) => m.route.id);
+    const matchRouteDeps = resolveRouteDependenciesByIds(
+      matchRouteIds,
+      routesMeta,
+      manifest
+    );
+
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
+      // prettier-ignore
       [
-        routerResult.injectToHtml,
         generateThemeScript({
           storageKey: "vite-plugins-demo:theme",
           defaultTheme: "dark",
         }),
-        // TODO: move this to utility?
-        // prettier-ignore
+        // TODO: move this logic to plugin?
+        matchRouteDeps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
         `<script>
           window.__viteManifest = ${JSON.stringify(manifest)};
           window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
-          window.__initialMatchRouteIds = ${JSON.stringify(routerResult.context.matches.map(m => m.route.id))};
+          window.__initialMatchRouteIds = ${JSON.stringify(matchRouteIds)};
         </script>`,
-      ].join("\n")
+      ].flat().join("\n")
     );
 
     return new Response(html, {
