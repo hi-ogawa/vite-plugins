@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-glob-routes",
-  "version": "0.6.0",
+  "version": "0.6.1-pre.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -14,6 +14,10 @@
     "./dist/react-router/client": {
       "import": "./dist/react-router/client.js",
       "types": "./dist/react-router/client.d.ts"
+    },
+    "./dist/react-router/client-eager": {
+      "import": "./dist/react-router/client-eager.js",
+      "types": "./dist/react-router/client-eager.d.ts"
     },
     "./dist/react-router/server": {
       "import": "./dist/react-router/server.js",

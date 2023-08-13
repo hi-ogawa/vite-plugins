@@ -1,7 +1,7 @@
 import "virtual:uno.css";
 import { tinyassert } from "@hiogawa/utils";
 import {
-  globPageRoutesClientLazy,
+  globPageRoutesClient,
   initializeClientRoutes,
 } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
@@ -12,7 +12,7 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  const { routes } = globPageRoutesClientLazy();
+  const { routes } = globPageRoutesClient();
   await initializeClientRoutes({ routes });
 
   const router = createBrowserRouter(routes);
