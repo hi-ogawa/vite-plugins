@@ -12,14 +12,8 @@ import { hydrateRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import type { Manifest } from "vite";
 
-// server hand-off data required for
-// - setup client loader for data request
-// - resolve initial lazy route before mount
-// - page preload logic
-// (cf. packages/demo/src/server/ssr.tsx)
+// cf. packages/demo/src/server/ssr.tsx
 const serverHandoff = window as any as {
-  // only __initialMatchRouteIds depends on request,
-  // so other data could be hard-coded somewhere after build?
   __viteManifest?: Manifest;
   __serverLoaderRouteIds: string[];
   __initialMatchRouteIds: string[];

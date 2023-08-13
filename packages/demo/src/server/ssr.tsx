@@ -81,6 +81,14 @@ export function ssrHandler(): RequestHandler {
           defaultTheme: "dark",
         }),
         // TODO: move this logic to plugin?
+        // server hand-off data to client, which is required for
+        // - setup client loader for data request
+        // - resolve initial lazy route before mount
+        // - page preload logic
+        // (cf. packages/demo/src/client/index.tsx)
+        //
+        // only __initialMatchRouteIds depends on request,
+        // so other data could be hard-coded somewhere after build?
         matchRouteDeps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
         `<script>
           window.__viteManifest = ${JSON.stringify(manifest)};
