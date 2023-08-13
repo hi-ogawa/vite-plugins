@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate, useNavigation } from "react-router-dom";
+import { createPreloadHandlerRef } from "../../utils/preload";
 
 export function Component() {
   const navigation = useNavigation();
@@ -23,7 +24,7 @@ export function Component() {
               <NavLink
                 to={`/pokemon/${v}`}
                 style={(x) => (x.isActive ? { fontWeight: "bold" } : {})}
-                data-prefetch
+                ref={createPreloadHandlerRef()}
               >
                 {v}
               </NavLink>
