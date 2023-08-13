@@ -5,6 +5,7 @@ import {
   injectDataRequestLoaders,
   resolveLazyRoutes,
   setPreloadContext,
+  setupGlobalPreloadHandler,
 } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
@@ -27,6 +28,8 @@ const serverHandoff = window as any as {
 async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
+
+  setupGlobalPreloadHandler();
 
   const { routes, routesMeta } = globPageRoutesClient();
   await resolveLazyRoutes(routes, serverHandoff.__initialMatchRouteIds);

@@ -2,6 +2,7 @@ import { tinyassert } from "@hiogawa/utils";
 import {
   globPageRoutesClient,
   setPreloadContext,
+  setupGlobalPreloadHandler,
 } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -14,6 +15,8 @@ const __viteManifest: Manifest | undefined = (window as any).__viteManifest;
 async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
+
+  setupGlobalPreloadHandler();
 
   const { routes, routesMeta } = globPageRoutesClient();
   setPreloadContext({ routes, routesMeta, manifest: __viteManifest });

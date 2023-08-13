@@ -10,7 +10,7 @@ import {
 // simple global system on our own convention
 // instead of using React.Context
 
-export interface PreloadContext {
+interface PreloadContext {
   routes: DataRouteObject[];
   routesMeta: RoutesMeta;
   manifest?: Manifest;
@@ -22,12 +22,12 @@ export function setPreloadContext(v: PreloadContext) {
   __preloadContext = v;
 }
 
-export function getPreloadContext() {
+function getPreloadContext() {
   tinyassert(__preloadContext, "forgot 'setPreloadContext'?");
   return __preloadContext;
 }
 
-export function getRouteDependencies(page: string): RouteDependencies {
+function getRouteDependencies(page: string): RouteDependencies {
   const { routes, routesMeta, manifest } = getPreloadContext();
   const matches = matchRoutes(routes, page) ?? [];
   return resolveRouteDependenciesByIds(
@@ -35,4 +35,56 @@ export function getRouteDependencies(page: string): RouteDependencies {
     routesMeta,
     manifest
   );
+}
+
+//
+// helper to globally setup preload handler for <a href="..." date-preload />
+//
+// cf.
+// https://github.com/remix-run/remix/blob/9ae3cee0e81ccb7259d6103df490b019e8c2fd94/packages/remix-react/components.tsx#L479
+// https://kit.svelte.dev/docs/link-options#data-sveltekit-preload-data
+//
+
+export function setupGlobalPreloadHandler() {
+  // TODO: not sure perf impact of global "mouseover" and "touchstart"
+  function handler(e: MouseEvent | TouchEvent) {
+    if (e.target instanceof HTMLAnchorElement) {
+      const dataPreload = e.target.getAttribute("data-preload");
+      if (dataPreload) {
+        // e.target.href always full url?
+        injectPreloadLinks(e.target.href);
+      }
+    }
+  }
+
+  document.addEventListener("mouseover", handler);
+  document.addEventListener("touchstart", handler);
+
+  return () => {
+    document.removeEventListener("mouseover", handler);
+    document.removeEventListener("touchstart", handler);
+  };
+}
+
+// TODO: memoize?
+function injectPreloadLinks(href: string) {
+  const url = new URL(href, window.location.href);
+
+  // TODO: prefetch external links?
+  if (url.host !== window.location.host) {
+    return;
+  }
+
+  // resolve page dependencies
+  const links = getRouteDependencies(url.pathname);
+  for (const href of links.js) {
+    // TODO: escapeHtml
+    const found = document.body.querySelector(`link[href="${href}"]`);
+    if (!found) {
+      const el = document.createElement("link");
+      el.setAttribute("rel", "modulepreload");
+      el.setAttribute("href", href);
+      document.body.appendChild(el);
+    }
+  }
 }
