@@ -1,4 +1,3 @@
-import { URLSearchParams } from "url";
 import { expect, test } from "@playwright/test";
 
 test("x-loader-response", async ({ request }) => {

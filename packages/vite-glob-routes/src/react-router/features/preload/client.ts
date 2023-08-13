@@ -79,7 +79,7 @@ function injectPreloadLinks(href: string) {
   const links = getRouteDependencies(url.pathname);
   for (const href of links.js) {
     // TODO: escapeHtml
-    const found = document.body.querySelector(`link[href="${href}"]`);
+    const found = document.querySelector(`link[href="${href}"]`);
     if (!found) {
       const el = document.createElement("link");
       el.setAttribute("rel", "modulepreload");
