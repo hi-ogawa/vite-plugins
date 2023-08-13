@@ -1,9 +1,13 @@
+import process from "node:process";
 import { tinyassert } from "@hiogawa/utils";
 import { test } from "@playwright/test";
 import { isPageReady } from "./helper";
 
-// TODO: check links for "pnpm preview"
-test.skip("modulepreload", async ({ page }) => {
+const isPreview = Boolean(process.env["E2E_COMMAND"]?.includes("preview"));
+
+test("modulepreload", async ({ page }) => {
+  test.skip(isPreview);
+
   await page.goto("/loader-data");
   await isPageReady(page);
 
