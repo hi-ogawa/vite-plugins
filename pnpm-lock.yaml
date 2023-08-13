@@ -251,9 +251,6 @@ importers:
       '@hattip/compose':
         specifier: ^0.0.34
         version: 0.0.34
-      '@types/react':
-        specifier: ^18.2.14
-        version: 18.2.14
       react-router:
         specifier: ^6.13.0
         version: 6.13.0(react@18.2.0)

@@ -16,3 +16,5 @@ export {
   getPagePrefetchLinks,
   type ClientGlobal,
 } from "./cilent-helper";
+
+export * from "./features/preload/client";
