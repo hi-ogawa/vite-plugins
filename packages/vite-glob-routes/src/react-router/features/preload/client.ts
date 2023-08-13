@@ -98,15 +98,21 @@ function injectPreloadLinks(url: URL) {
   }
 
   for (const href of deps.css) {
-    // TODO
-    href;
+    const found = document.querySelector(`link[href="${href}"]`);
+    if (!found) {
+      const el = document.createElement("link");
+      el.setAttribute("rel", "preload");
+      el.setAttribute("as", "style");
+      el.setAttribute("href", href);
+      document.body.appendChild(el);
+    }
   }
 
   for (const href of deps.data ?? []) {
     const found = document.querySelector(`link[href="${href}"]`);
     if (!found) {
       const el = document.createElement("link");
-      el.setAttribute("rel", "prefetch");
+      el.setAttribute("rel", "preload");
       el.setAttribute("as", "fetch");
       el.setAttribute("href", href);
       document.body.appendChild(el);
