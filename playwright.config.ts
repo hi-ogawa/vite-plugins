@@ -12,8 +12,10 @@ const command = process.env["E2E_COMMAND"] ?? "pnpm dev";
 
 export default defineConfig({
   testDir: "examples",
+  retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: `http://localhost:${PORT}`,
+    trace: "on-first-retry",
   },
   projects: [
     {
