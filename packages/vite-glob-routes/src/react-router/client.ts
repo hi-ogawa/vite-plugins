@@ -9,7 +9,9 @@ export {
   initializeClientRoutes,
   getClientGlobal,
   getPagePrefetchLinks,
+  resolveLazyRoutes,
   type ClientGlobal,
 } from "./cilent-helper";
 
+export * from "./features/data-request/client";
 export * from "./features/preload/client";

@@ -74,6 +74,22 @@ export async function initializeClientRoutes({
   }
 }
 
+export async function resolveLazyRoutes(
+  routes: DataRouteObject[], // mutated
+  selectedRouteIds: string[]
+) {
+  const ids = new Set(selectedRouteIds);
+  const toResolve: DataRouteObject[] = [];
+  walkArrayTree(routes, (route) => {
+    if (ids.has(route.id)) {
+      toResolve.push(route);
+    }
+  });
+  for (const route of toResolve) {
+    await resolveLazyRouteObject(route);
+  }
+}
+
 async function resolveLazyRouteObject(
   route: DataRouteObject // mutated
 ) {
@@ -87,7 +103,7 @@ type ResolvedRouteObject = Awaited<
 >;
 
 // manipulate route properties while keeping lazy-ness
-function mutateRouteObject(
+export function mutateRouteObject(
   r1: DataRouteObject,
   mutateFn: (resolved: ResolvedRouteObject) => void
 ) {

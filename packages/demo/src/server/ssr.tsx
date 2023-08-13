@@ -19,6 +19,9 @@ import { logError } from "./log";
 
 export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
+  const serverLoaderRouteIds = Object.entries(routesMeta)
+    .filter(([_id, meta]) => meta.route.loader)
+    .map(([id]) => id);
 
   return async (ctx) => {
     const manifest = await getClientManifest();
@@ -70,7 +73,13 @@ export function ssrHandler(): RequestHandler {
           storageKey: "vite-plugins-demo:theme",
           defaultTheme: "dark",
         }),
-        `<script>window.__viteManifest = ${JSON.stringify(manifest)}</script>`,
+        // TODO: move this to utility?
+        // prettier-ignore
+        `<script>
+          window.__viteManifest = ${JSON.stringify(manifest)};
+          window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
+          window.__initialMatchRouteIds = ${JSON.stringify(routerResult.context.matches.map(m => m.route.id))};
+        </script>`,
       ].join("\n")
     );
 
