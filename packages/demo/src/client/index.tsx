@@ -14,25 +14,28 @@ import type { Manifest } from "vite";
 // server hand-off data required for
 // - setup client loader for data request
 // - resolve initial lazy route before mount
-// - page preload
+// - page preload logic
 // (cf. packages/demo/src/server/ssr.tsx)
-const { __viteManifest, __serverLoaderRouteIds, __initialMatchRouteIds } =
-  window as any as {
-    // only __initialMatchRouteIds depends on request,
-    // so other data could be hard-coded somewhere after build?
-    __viteManifest?: Manifest;
-    __serverLoaderRouteIds: string[];
-    __initialMatchRouteIds: string[];
-  };
+const serverHandoff = window as any as {
+  // only __initialMatchRouteIds depends on request,
+  // so other data could be hard-coded somewhere after build?
+  __viteManifest?: Manifest;
+  __serverLoaderRouteIds: string[];
+  __initialMatchRouteIds: string[];
+};
 
 async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
   const { routes, routesMeta } = globPageRoutesClient();
-  await resolveLazyRoutes(routes, __initialMatchRouteIds);
-  injectDataRequestLoaders(routes, __serverLoaderRouteIds);
-  setPreloadContext({ routes, routesMeta, manifest: __viteManifest });
+  await resolveLazyRoutes(routes, serverHandoff.__initialMatchRouteIds);
+  injectDataRequestLoaders(routes, serverHandoff.__serverLoaderRouteIds);
+  setPreloadContext({
+    routes,
+    routesMeta,
+    manifest: serverHandoff.__viteManifest,
+  });
 
   const router = createBrowserRouter(routes);
   const root = (
