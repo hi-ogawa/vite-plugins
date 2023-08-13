@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "pnpm --seq run /^build:/",
+    "build:vite": "vite build",
+    "build:inject-manifest": "node ./misc/inject-global-script.js dist/client/index.html dist/client/manifest.json __viteManifest",
     "build-vercel": "pnpm build && bash misc/vercel/build.sh",
     "build-preview": "pnpm build",
     "preview": "vite preview",

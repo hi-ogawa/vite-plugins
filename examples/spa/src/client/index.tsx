@@ -3,6 +3,11 @@ import { globPageRoutesClientLazy } from "@hiogawa/vite-glob-routes/dist/react-r
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import type { Manifest } from "vite";
+
+// see examples/spa/misc/inject-global-script.js
+const __viteManifest: Manifest | undefined = (window as any).__viteManifest;
+console.log({ __viteManifest });
 
 async function main() {
   const el = document.getElementById("root");
