@@ -1,6 +1,6 @@
 import BarOfProgress from "@badrap/bar-of-progress";
 import { getTheme, setTheme } from "@hiogawa/theme-script";
-import { getPagePrefetchLinks } from "@hiogawa/vite-glob-routes/dist/react-router/client";
+import { getRouteDependencies } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import {
@@ -154,8 +154,8 @@ function injectPagePrefetchLinks(href: string) {
   }
 
   // resolve page dependencies
-  const links = getPagePrefetchLinks(url.pathname);
-  for (const href of links.modules) {
+  const links = getRouteDependencies(url.pathname);
+  for (const href of links.js) {
     // TODO: escapeHtml
     const found = document.body.querySelector(`link[href="${href}"]`);
     if (!found) {

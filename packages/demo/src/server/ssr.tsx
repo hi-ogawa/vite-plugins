@@ -21,10 +21,11 @@ export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
 
   return async (ctx) => {
+    const manifest = await getClientManifest();
     const routerResult = await handleReactRouterServer({
       routes,
       routesMeta,
-      manifest: await getClientManifest(),
+      manifest,
       request: ctx.request,
       onError: (e) => logError(e),
     });
@@ -69,6 +70,7 @@ export function ssrHandler(): RequestHandler {
           storageKey: "vite-plugins-demo:theme",
           defaultTheme: "dark",
         }),
+        `<script>window.__viteManifest = ${JSON.stringify(manifest)}</script>`,
       ].join("\n")
     );
 
