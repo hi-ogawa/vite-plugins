@@ -33,6 +33,7 @@ export default defineConfig({
   clearScreen: false,
 });
 
+// directly expose vite's manifest.json on client for page assets prefetching
 function injectGlobalManifestPlugin(): PluginOption {
   return {
     name: "local:" + injectGlobalManifestPlugin.name,
