@@ -76,8 +76,8 @@ function injectPreloadLinks(href: string) {
   }
 
   // resolve page dependencies
-  const links = getRouteDependencies(url.pathname);
-  for (const href of links.js) {
+  const deps = getRouteDependencies(url.pathname);
+  for (const href of deps.js) {
     // TODO: escapeHtml
     const found = document.querySelector(`link[href="${href}"]`);
     if (!found) {
