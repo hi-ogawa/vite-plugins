@@ -81,7 +81,7 @@ function Header() {
               className="border antd-menu-item aria-[current=page]:antd-menu-item-active px-2 py-0.5"
               to={href}
               end
-              data-prefetch
+              data-preload
             >
               {href}
             </NavLink>

@@ -23,7 +23,7 @@ export function Component() {
               <NavLink
                 to={`/pokemon/${v}`}
                 style={(x) => (x.isActive ? { fontWeight: "bold" } : {})}
-                data-prefetch
+                data-preload
               >
                 {v}
               </NavLink>
