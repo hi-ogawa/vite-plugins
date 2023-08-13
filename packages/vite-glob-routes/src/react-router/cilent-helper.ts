@@ -2,16 +2,14 @@ import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import {
   type DataRouteObject,
   type LazyRouteFunction,
-  type LoaderFunction,
   matchRoutes,
 } from "react-router";
+import { createDateRequestLoader } from "./features/data-request/client";
 import {
   type ExtraRouterInfo,
   KEY_extraRouterInfo,
   getGlobalScriptData,
   resolveAssetPathsByRouteId,
-  unwrapLoaderResult,
-  wrapLoaderRequest,
 } from "./misc";
 import { walkArrayTree } from "./route-utils";
 
@@ -68,7 +66,7 @@ export async function initializeClientRoutes({
       if (meta?.exports.includes("loader")) {
         mutateRouteObject(route, (resolved) => {
           if (!resolved.loader) {
-            resolved.loader = createProxyServerLoader(route.id);
+            resolved.loader = createDateRequestLoader(route.id);
           }
         });
       }
@@ -145,17 +143,4 @@ export function getPagePrefetchLinks(page: string) {
     resolveAssetPathsByRouteId(m.route.id, server.extraRouterInfo)
   );
   return { modules };
-}
-
-//
-// client loader
-//
-
-// client loader to proxy server loaders (aka data request)
-function createProxyServerLoader(routeId: string): LoaderFunction {
-  return async (args) => {
-    const req = wrapLoaderRequest(args.request, routeId);
-    const res = await fetch(req);
-    return unwrapLoaderResult(res);
-  };
 }
