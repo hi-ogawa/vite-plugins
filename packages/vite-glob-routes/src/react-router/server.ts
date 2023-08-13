@@ -5,7 +5,4 @@ export function globPageRoutesServer() {
   return createGlobPageRoutes(virtualPageRoutesServer);
 }
 
-export {
-  handleReactRouterServer,
-  type ServerRouterResult,
-} from "./server-helper";
+export * from "./features/core/server";

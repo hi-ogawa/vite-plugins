@@ -28,8 +28,6 @@ export function ssrHandler(): RequestHandler {
     const manifest = await getClientManifest();
     const routerResult = await handleReactRouterServer({
       routes,
-      routesMeta,
-      manifest,
       request: ctx.request,
       onError: (e) => logError(e),
     });
