@@ -2,7 +2,6 @@ import {
   type StaticHandlerContext,
   createStaticHandler,
 } from "react-router-dom/server";
-import type { Manifest } from "vite";
 import { handleDateRequest } from "./features/data-request/server";
 import { type RouterStaticHandler } from "./misc";
 import type { GlobPageRoutesResult } from "./route-utils";
@@ -25,8 +24,6 @@ export async function handleReactRouterServer({
   onError,
 }: {
   routes: GlobPageRoutesResult["routes"];
-  routesMeta: GlobPageRoutesResult["routesMeta"];
-  manifest?: Manifest;
   request: Request;
   requestContext?: unknown; // provide app local context to server loader
   onError?: (e: unknown) => void; // for now only for data request loader exception since user code can process `context.errors` on its own.
