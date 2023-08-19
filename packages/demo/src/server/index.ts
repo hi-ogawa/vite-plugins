@@ -10,27 +10,7 @@ import { ssrHandler } from "./ssr";
 export function createHattipApp() {
   return compose(
     errorHanlder(),
-    createLoggerHandler({
-      printer(e) {
-        const method = e.request.method;
-        const url = new URL(e.request.url);
-        let pathname = url.pathname;
-        const loader = url.searchParams.get("loader-route-id");
-        if (loader) {
-          pathname = `${pathname}(${loader})`;
-        }
-        if (e.type === "request") {
-          console.log(`  --> ${method} ${pathname}`);
-        }
-        if (e.type === "response") {
-          console.log(
-            `  <-- ${method} ${pathname} ${e.response.status} ${Math.floor(
-              e.duration
-            )}ms`
-          );
-        }
-      },
-    }),
+    createLoggerHandler(),
     requestContextStorageHandler(),
     sessionHandler(),
     rpcHandler(),
