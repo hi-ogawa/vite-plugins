@@ -29,6 +29,7 @@
     "@hiogawa/tiny-rpc": "^0.2.2",
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.3",
     "@hiogawa/utils-experimental": "^0.1.0",
+    "@hiogawa/utils-hattip": "0.0.1-pre.0",
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-import-dev-server": "workspace:*",
     "@iconify-json/ri": "^1.1.9",

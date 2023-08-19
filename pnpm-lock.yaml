@@ -179,6 +179,9 @@ importers:
       '@hiogawa/utils-experimental':
         specifier: ^0.1.0
         version: 0.1.0
+      '@hiogawa/utils-hattip':
+        specifier: 0.0.1-pre.0
+        version: 0.0.1-pre.0
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../vite-glob-routes
@@ -1416,6 +1419,10 @@ packages:
 
   /@hiogawa/utils-experimental@0.1.0:
     resolution: {integrity: sha512-/iXmtdJlhBGfNK+bt4gNipdRPaHGkHeXbW+yY9RLB4dC2kOWoEpKY2aZjFugFRXEGtz3luEYVeLpV4VWEuq5kA==}
+    dev: true
+
+  /@hiogawa/utils-hattip@0.0.1-pre.0:
+    resolution: {integrity: sha512-9JWUwEK0eEhfhxsB9b/33XO+Ol0AevpqD/+dz+NUUxgmnmLPQknscPXr5KzSxnkK5ExA6SBSeWhgr6y9P/t5ig==}
     dev: true
 
   /@hiogawa/utils@1.4.2-pre.15:
