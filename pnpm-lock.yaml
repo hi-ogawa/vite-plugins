@@ -176,9 +176,9 @@ importers:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
         version: 2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.53.1)
-      '@hiogawa/utils-experimental':
-        specifier: ^0.1.0
-        version: 0.1.0
+      '@hiogawa/utils-hattip':
+        specifier: 0.0.1-pre.1
+        version: 0.0.1-pre.1
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../vite-glob-routes
@@ -1414,8 +1414,8 @@ packages:
       unocss: 0.53.1(postcss@8.4.26)(vite@4.4.4)
     dev: true
 
-  /@hiogawa/utils-experimental@0.1.0:
-    resolution: {integrity: sha512-/iXmtdJlhBGfNK+bt4gNipdRPaHGkHeXbW+yY9RLB4dC2kOWoEpKY2aZjFugFRXEGtz3luEYVeLpV4VWEuq5kA==}
+  /@hiogawa/utils-hattip@0.0.1-pre.1:
+    resolution: {integrity: sha512-kzZ6U7PZ0/m+0bYFdG+/o2F73jRgDxf3gO7Ggwr3XxDZMHH22DttQzaPre1v+kxwuSF7MQ/s8DXk5nr1SD+7hQ==}
     dev: true
 
   /@hiogawa/utils@1.4.2-pre.15:
