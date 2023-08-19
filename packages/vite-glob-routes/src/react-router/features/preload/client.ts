@@ -114,6 +114,9 @@ function injectPreloadLinks(url: URL) {
       const el = document.createElement("link");
       el.setAttribute("rel", "preload");
       el.setAttribute("as", "fetch");
+      // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload#cors-enabled_fetches
+      // > even when the fetch is not cross-origin.
+      el.setAttribute("crossorigin", "true");
       el.setAttribute("href", href);
       document.body.appendChild(el);
     }
