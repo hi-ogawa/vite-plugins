@@ -1,0 +1,38 @@
+{
+  "name": "@hiogawa/vite-null-export",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-null-export",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/vite-null-export"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "release": "pnpm publish --no-git-checks --access public"
+  },
+  "dependencies": {
+    "es-module-lexer": "^1.3.1"
+  },
+  "devDependencies": {
+    "vite": "^4.4.4"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}

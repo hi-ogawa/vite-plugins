@@ -9,6 +9,7 @@ import {
   useNavigation,
   useRouteError,
 } from "react-router-dom";
+import { getRequestContext } from "../server/request-context";
 import { useEffectNoStrict } from "../utils/misc-react";
 import { ReactQueryWrapper } from "../utils/react-query-utils";
 
@@ -16,6 +17,9 @@ export const handle = "root-handle";
 
 export function Component() {
   useTopProgressBar();
+
+  // test viteNullExportPlugin
+  import.meta.env.SSR && console.log(getRequestContext().url);
 
   return (
     <ReactQueryWrapper>
