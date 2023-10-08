@@ -1,6 +1,7 @@
 {
   "name": "@hiogawa/vite-glob-routes",
   "version": "0.6.1-pre.2",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-glob-routes",
   "repository": {
     "type": "git",
     "url": "https://github.com/hi-ogawa/vite-plugins",
