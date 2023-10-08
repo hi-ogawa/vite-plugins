@@ -18,7 +18,6 @@
     "release-production": "vercel deploy --prebuilt . --prod"
   },
   "devDependencies": {
-    "@badrap/bar-of-progress": "^0.2.2",
     "@hattip/adapter-node": "^0.0.34",
     "@hattip/adapter-vercel-edge": "^0.0.34",
     "@hattip/compose": "^0.0.34",
@@ -26,7 +25,9 @@
     "@hiogawa/theme-script": "^0.0.4-pre.3",
     "@hiogawa/tiny-cli": "^0.0.4-pre.0",
     "@hiogawa/tiny-jwt": "^0.2.2",
+    "@hiogawa/tiny-progress": "0.0.1-pre.2",
     "@hiogawa/tiny-rpc": "^0.2.2",
+    "@hiogawa/tiny-toast": "0.1.1-pre.7",
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.3",
     "@hiogawa/utils-hattip": "0.0.1-pre.1",
     "@hiogawa/vite-glob-routes": "workspace:*",
@@ -47,7 +48,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.2",
-    "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.13.0",
     "unocss": "^0.53.1",
     "zod": "^3.21.4"

@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "./toast";
 
 function createQueryClient() {
   return new QueryClient({
