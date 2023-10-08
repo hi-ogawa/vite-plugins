@@ -24,6 +24,7 @@
     "@hiogawa/query-proxy": "0.1.1-pre.3",
     "@hiogawa/theme-script": "^0.0.4-pre.3",
     "@hiogawa/tiny-cli": "^0.0.4-pre.0",
+    "@hiogawa/tiny-form": "0.0.1-pre.10",
     "@hiogawa/tiny-jwt": "^0.2.2",
     "@hiogawa/tiny-progress": "0.0.1-pre.2",
     "@hiogawa/tiny-rpc": "^0.2.2",
@@ -47,7 +48,6 @@
     "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.45.2",
     "react-router-dom": "^6.13.0",
     "unocss": "^0.53.1",
     "zod": "^3.21.4"

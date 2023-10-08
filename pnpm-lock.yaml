@@ -164,6 +164,9 @@ importers:
       '@hiogawa/tiny-cli':
         specifier: ^0.0.4-pre.0
         version: 0.0.4-pre.0
+      '@hiogawa/tiny-form':
+        specifier: 0.0.1-pre.10
+        version: 0.0.1-pre.10(react@18.2.0)
       '@hiogawa/tiny-jwt':
         specifier: ^0.2.2
         version: 0.2.2
@@ -233,9 +236,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-hook-form:
-        specifier: ^7.45.2
-        version: 7.45.2(react@18.2.0)
       react-router-dom:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
@@ -1380,6 +1380,17 @@ packages:
 
   /@hiogawa/tiny-cli@0.0.4-pre.0:
     resolution: {integrity: sha512-3b/sW6AWVgbm3AFLmuA+fWy7edvFyEb8oU5AHjqWxsMSwPbfV1KOm+5A7Fn724M54U4suyAzG6Fqtggk56+C6A==}
+    dev: true
+
+  /@hiogawa/tiny-form@0.0.1-pre.10(react@18.2.0):
+    resolution: {integrity: sha512-BIvGs22O+RNCDclikqSAMMxuLTi4Onz0fpMK1qGtxA3ga+jBN3hRfOxUWl1Mei2lPo07ralKGNhKBTxhIlQ3eA==}
+    peerDependencies:
+      react: '*'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
     dev: true
 
   /@hiogawa/tiny-jwt@0.2.2:
@@ -4147,15 +4158,6 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
-    dev: true
-
-  /react-hook-form@7.45.2(react@18.2.0):
-    resolution: {integrity: sha512-9s45OdTaKN+4NSTbXVqeDITd/nwIg++nxJGL8+OD5uf1DxvhsXQ641kaYHk5K28cpIOTYm71O/fYk7rFaygb3A==}
-    engines: {node: '>=12.22.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
-    dependencies:
-      react: 18.2.0
     dev: true
 
   /react-is@17.0.2:
