@@ -10,24 +10,20 @@ import { name as packageName } from "../package.json";
 // similar to remix's https://github.com/remix-run/remix/blob/80c6842f547b7e83b58f1963894b07ad18c2dfe2/packages/remix-dev/compiler/plugins/emptyModules.ts#L10
 // but for vite, we needs to fake esm exports so we use es-module-lexer to extract export names.
 
-export function viteNullExportPlugin(pluginOptions?: {
-  clientOnly?: FilterPattern;
+export function viteNullExportPlugin(pluginOpts?: {
   serverOnly?: FilterPattern;
-  exclude?: FilterPattern;
+  serverOnlyExclude?: FilterPattern;
+  clientOnly?: FilterPattern;
+  clientOnlyExclude?: FilterPattern;
   debug?: boolean;
 }): Plugin {
-  const exclude = pluginOptions?.exclude ?? [
-    "**/node_modules/**",
-    "**/dist/**",
-  ];
-  const serverOnly = createFilter(
-    pluginOptions?.serverOnly ?? ["**/server/**", "**/*.server.*"],
-    exclude
-  );
-  const clientOnly = createFilter(
-    pluginOptions?.clientOnly ?? ["**/client/**", "**/*.client.*"],
-    exclude
-  );
+  const serverOnly = pluginOpts?.serverOnly
+    ? createFilter(pluginOpts?.serverOnly, pluginOpts?.serverOnlyExclude)
+    : () => false;
+  const clientOnly = pluginOpts?.clientOnly
+    ? createFilter(pluginOpts?.clientOnly, pluginOpts?.clientOnlyExclude)
+    : () => false;
+
   let logger!: ResolvedConfig["logger"];
 
   return {
@@ -42,7 +38,7 @@ export function viteNullExportPlugin(pluginOptions?: {
 
     async transform(code, id, options) {
       if (options?.ssr ? clientOnly(id) : serverOnly(id)) {
-        if (pluginOptions?.debug) {
+        if (pluginOpts?.debug) {
           logger.info(
             `[DEBUG:${packageName}:${
               options?.ssr ? "clientOnly" : "serverOnly"
