@@ -19,7 +19,7 @@ export default defineConfig((ctx) => ({
       handlerEntry:
         process.env["SERVER_ENTRY"] ?? "./src/server/adapter-connect.ts",
     }),
-    viteNullExportPlugin(),
+    viteNullExportPlugin({ debug: true }),
   ],
   build: {
     outDir: ctx.ssrBuild ? "dist/server" : "dist/client",
