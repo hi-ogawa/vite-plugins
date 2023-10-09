@@ -26,7 +26,7 @@
     "@hiogawa/tiny-cli": "^0.0.4-pre.0",
     "@hiogawa/tiny-form": "0.0.1-pre.10",
     "@hiogawa/tiny-jwt": "^0.2.2",
-    "@hiogawa/tiny-progress": "0.0.1-pre.2",
+    "@hiogawa/tiny-progress": "0.0.1-pre.3",
     "@hiogawa/tiny-rpc": "^0.2.2",
     "@hiogawa/tiny-toast": "0.1.1-pre.7",
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.3",
