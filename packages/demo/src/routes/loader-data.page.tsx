@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
-import { toast } from "react-hot-toast";
 import { useLoaderData } from "react-router-dom";
+import { toast } from "../utils/toast";
 import { updateCounterClient } from "./loader-data-counter.api";
 import type { LoaderData } from "./loader-data.page.server";
 
@@ -12,7 +12,7 @@ export function Component() {
   const counterMutation = useMutation({
     mutationFn: updateCounterClient,
     onSuccess: (data) => {
-      toast.success("Successfully updated", { id: "counter-mutation-success" });
+      toast.success("Successfully updated");
       setCounter(data);
     },
   });
