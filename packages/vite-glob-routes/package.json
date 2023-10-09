@@ -1,10 +1,14 @@
 {
   "name": "@hiogawa/vite-glob-routes",
   "version": "0.6.1-pre.2",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-glob-routes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/vite-glob-routes"
+  },
+  "license": "MIT",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -32,15 +36,12 @@
       "types": "./dist/hattip.d.ts"
     }
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hi-ogawa/vite-plugins",
-    "directory": "packages/vite-glob-routes"
-  },
   "scripts": {
     "build": "tsup",
     "test": "vitest",

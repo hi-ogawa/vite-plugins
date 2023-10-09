@@ -1,10 +1,14 @@
 {
   "name": "@hiogawa/vite-import-dev-server",
   "version": "0.0.1",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-import-dev-server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/vite-import-dev-server"
+  },
+  "license": "MIT",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -16,17 +20,14 @@
       "types": "./runtime.d.ts"
     }
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "runtime.js",
     "runtime.d.ts",
     "dist"
   ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hi-ogawa/vite-plugins",
-    "directory": "packages/vite-import-dev-server"
-  },
   "scripts": {
     "build": "tsup",
     "release": "pnpm publish --no-git-checks --access public"
