@@ -1,6 +1,7 @@
 import process from "node:process";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import { importDevServerPlugin } from "@hiogawa/vite-import-dev-server";
+import { viteNullExportPlugin } from "@hiogawa/vite-null-export";
 import vaviteConnect from "@vavite/connect";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
@@ -17,6 +18,10 @@ export default defineConfig((ctx) => ({
       serveClientAssetsInDev: true,
       handlerEntry:
         process.env["SERVER_ENTRY"] ?? "./src/server/adapter-connect.ts",
+    }),
+    viteNullExportPlugin({
+      serverOnly: "**/server/**",
+      debug: true,
     }),
   ],
   build: {

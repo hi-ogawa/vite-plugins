@@ -185,6 +185,9 @@ importers:
       '@hiogawa/vite-import-dev-server':
         specifier: workspace:*
         version: link:../vite-import-dev-server
+      '@hiogawa/vite-null-export':
+        specifier: workspace:*
+        version: link:../vite-null-export
       '@iconify-json/ri':
         specifier: ^1.1.9
         version: 1.1.9
@@ -262,6 +265,16 @@ importers:
         version: 4.4.4(@types/node@18.16.18)
 
   packages/vite-import-dev-server:
+    devDependencies:
+      vite:
+        specifier: ^4.4.4
+        version: 4.4.4(@types/node@18.16.18)
+
+  packages/vite-null-export:
+    dependencies:
+      es-module-lexer:
+        specifier: ^1.3.1
+        version: 1.3.1
     devDependencies:
       vite:
         specifier: ^4.4.4
@@ -2658,6 +2671,10 @@ packages:
       unbox-primitive: 1.0.2
       which-typed-array: 1.1.9
     dev: true
+
+  /es-module-lexer@1.3.1:
+    resolution: {integrity: sha512-JUFAyicQV9mXc3YRxPnDlrfBKpqt6hUYzz9/boprUJHs4e4KVr3XwOF70doO6gwXUor6EWZJAyWAfKki84t20Q==}
+    dev: false
 
   /es-set-tostringtag@2.0.1:
     resolution: {integrity: sha512-g3OMbtlwY3QewlqAiMLI47KywjWZoEytKr8pf6iTC8uJq5bIAH52Z9pnQ8pVL6whrCto53JZDuUIsifGeLorTg==}
