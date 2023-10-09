@@ -33,6 +33,7 @@
     "@hiogawa/utils-hattip": "0.0.1-pre.1",
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-import-dev-server": "workspace:*",
+    "@hiogawa/vite-null-export": "workspace:*",
     "@iconify-json/ri": "^1.1.9",
     "@tanstack/react-query": "^4.29.14",
     "@tanstack/react-query-devtools": "^4.29.14",
