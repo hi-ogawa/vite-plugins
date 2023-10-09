@@ -146,9 +146,6 @@ importers:
 
   packages/demo:
     devDependencies:
-      '@badrap/bar-of-progress':
-        specifier: ^0.2.2
-        version: 0.2.2
       '@hattip/adapter-node':
         specifier: ^0.0.34
         version: 0.0.34
@@ -167,12 +164,21 @@ importers:
       '@hiogawa/tiny-cli':
         specifier: ^0.0.4-pre.0
         version: 0.0.4-pre.0
+      '@hiogawa/tiny-form':
+        specifier: 0.0.1-pre.10
+        version: 0.0.1-pre.10(react@18.2.0)
       '@hiogawa/tiny-jwt':
         specifier: ^0.2.2
         version: 0.2.2
+      '@hiogawa/tiny-progress':
+        specifier: 0.0.1-pre.4
+        version: 0.0.1-pre.4(react@18.2.0)
       '@hiogawa/tiny-rpc':
         specifier: ^0.2.2
         version: 0.2.2(zod@3.21.4)
+      '@hiogawa/tiny-toast':
+        specifier: 0.1.1-pre.7
+        version: 0.1.1-pre.7(react@18.2.0)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
         version: 2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.53.1)
@@ -233,12 +239,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-hook-form:
-        specifier: ^7.45.2
-        version: 7.45.2(react@18.2.0)
-      react-hot-toast:
-        specifier: ^2.4.1
-        version: 2.4.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       react-router-dom:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
@@ -526,10 +526,6 @@ packages:
       '@babel/helper-string-parser': 7.22.5
       '@babel/helper-validator-identifier': 7.22.5
       to-fast-properties: 2.0.0
-    dev: true
-
-  /@badrap/bar-of-progress@0.2.2:
-    resolution: {integrity: sha512-Ig7MdFQM3OA7Ror5UB1ZutXNZFwxh6YExZvcd6EZloOgcXUR8PKNLH2wUVoeh92NMPnPWr6J/l9Mp+f3z7O7MQ==}
     dev: true
 
   /@changesets/apply-release-plan@6.1.4:
@@ -1399,9 +1395,31 @@ packages:
     resolution: {integrity: sha512-3b/sW6AWVgbm3AFLmuA+fWy7edvFyEb8oU5AHjqWxsMSwPbfV1KOm+5A7Fn724M54U4suyAzG6Fqtggk56+C6A==}
     dev: true
 
+  /@hiogawa/tiny-form@0.0.1-pre.10(react@18.2.0):
+    resolution: {integrity: sha512-BIvGs22O+RNCDclikqSAMMxuLTi4Onz0fpMK1qGtxA3ga+jBN3hRfOxUWl1Mei2lPo07ralKGNhKBTxhIlQ3eA==}
+    peerDependencies:
+      react: '*'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+    dev: true
+
   /@hiogawa/tiny-jwt@0.2.2:
     resolution: {integrity: sha512-oiRGTrYRIAItIYN9ReESCLszhzL2tPQch3FP5RDMme4+8DKt/Zl0jxlfdhEx5kFagqRe3UbdJaRHkGzh3yIoSg==}
     hasBin: true
+    dev: true
+
+  /@hiogawa/tiny-progress@0.0.1-pre.4(react@18.2.0):
+    resolution: {integrity: sha512-7v367ZbgmJRE4gMGvo7sqwx6eAf5FegipkS6FGCUwZd6iiyfrTVpRYmtg8ITUhkIR2LNnmMRllbVIcebWsD1Og==}
+    peerDependencies:
+      react: '*'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
     dev: true
 
   /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
@@ -1413,6 +1431,17 @@ packages:
         optional: true
     dependencies:
       zod: 3.21.4
+    dev: true
+
+  /@hiogawa/tiny-toast@0.1.1-pre.7(react@18.2.0):
+    resolution: {integrity: sha512-Qjp/sFedLhvhb2B69X/CyaU4d+fd+OWlPCh08WvWL3NUcH1zGbfz7wceLoTNVM7ye8TqtgK5UmjFJ7adeEz14g==}
+    peerDependencies:
+      react: ^18.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
     dev: true
 
   /@hiogawa/unocss-preset-antd@2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.53.1):
@@ -3105,14 +3134,6 @@ packages:
       slash: 3.0.0
     dev: true
 
-  /goober@2.1.13(csstype@3.1.2):
-    resolution: {integrity: sha512-jFj3BQeleOoy7t93E9rZ2de+ScC4lQICLwiAQmKMg9F6roKGaLSHoCDYKkWlSafg138jejvq/mTdvmnwDQgqoQ==}
-    peerDependencies:
-      csstype: ^3.0.10
-    dependencies:
-      csstype: 3.1.2
-    dev: true
-
   /gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
     dependencies:
@@ -4154,29 +4175,6 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
-    dev: true
-
-  /react-hook-form@7.45.2(react@18.2.0):
-    resolution: {integrity: sha512-9s45OdTaKN+4NSTbXVqeDITd/nwIg++nxJGL8+OD5uf1DxvhsXQ641kaYHk5K28cpIOTYm71O/fYk7rFaygb3A==}
-    engines: {node: '>=12.22.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
-    dependencies:
-      react: 18.2.0
-    dev: true
-
-  /react-hot-toast@2.4.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-j8z+cQbWIM5LY37pR6uZR6D4LfseplqnuAO4co4u8917hBUvXlEqyP1ZzqVLcqoyUesZZv/ImreoCeHVDpE5pQ==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: '>=16'
-      react-dom: '>=16'
-    dependencies:
-      goober: 2.1.13(csstype@3.1.2)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    transitivePeerDependencies:
-      - csstype
     dev: true
 
   /react-is@17.0.2:

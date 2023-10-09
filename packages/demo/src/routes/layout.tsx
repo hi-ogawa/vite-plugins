@@ -1,7 +1,6 @@
-import BarOfProgress from "@badrap/bar-of-progress";
 import { getTheme, setTheme } from "@hiogawa/theme-script";
+import { useTinyProgress } from "@hiogawa/tiny-progress/dist/react";
 import React from "react";
-import { Toaster } from "react-hot-toast";
 import {
   NavLink,
   Outlet,
@@ -9,21 +8,17 @@ import {
   useNavigation,
   useRouteError,
 } from "react-router-dom";
-import { useEffectNoStrict } from "../utils/misc-react";
 import { ReactQueryWrapper } from "../utils/react-query-utils";
+import { toast } from "../utils/toast";
 
 export const handle = "root-handle";
 
 export function Component() {
-  useTopProgressBar();
+  React.useEffect(() => toast.render(), []);
+  useTinyProgress({ show: useNavigation().state !== "idle" });
 
   return (
     <ReactQueryWrapper>
-      <Toaster
-        toastOptions={{
-          className: "!bg-colorBgElevated !text-colorText",
-        }}
-      />
       <PageInner />
     </ReactQueryWrapper>
   );
@@ -129,22 +124,4 @@ export function ThemeSelect() {
       <span className="dark:i-ri-sun-line light:i-ri-moon-line !w-5 !h-5"></span>
     </button>
   );
-}
-
-//
-// navigation progress bar
-//
-
-function useTopProgressBar() {
-  const navigation = useNavigation();
-  const loading = navigation.state !== "idle";
-  const [progress] = React.useState(() => new BarOfProgress({ size: 3 }));
-
-  useEffectNoStrict(() => {
-    if (loading) {
-      progress.start();
-    } else {
-      progress.finish();
-    }
-  }, [loading]);
 }
