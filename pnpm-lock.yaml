@@ -56,6 +56,9 @@ importers:
 
   examples/spa:
     devDependencies:
+      '@hiogawa/tiny-refresh':
+        specifier: ^0.0.0
+        version: 0.0.0(react@18.2.0)(vite@4.4.11)
       '@hiogawa/utils':
         specifier: 1.6.0
         version: 1.6.0
@@ -181,7 +184,7 @@ importers:
         version: 0.1.1-pre.7(react@18.2.0)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
-        version: 2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.56.5)
+        version: 2.2.1-pre.3(@unocss/preset-uno@0.56.5)(unocss@0.56.5)
       '@hiogawa/utils-hattip':
         specifier: 0.0.1-pre.1
         version: 0.0.1-pre.1
@@ -244,7 +247,7 @@ importers:
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       unocss:
         specifier: ^0.56.5
-        version: 0.56.5(postcss@8.4.26)(vite@4.4.11)
+        version: 0.56.5(postcss@8.4.31)(vite@4.4.11)
       zod:
         specifier: ^3.21.4
         version: 3.21.4
@@ -1456,6 +1459,21 @@ packages:
       react: 18.2.0
     dev: true
 
+  /@hiogawa/tiny-refresh@0.0.0(react@18.2.0)(vite@4.4.11):
+    resolution: {integrity: sha512-aMnIcyRm1aZw2oBuny1h6CFRS9cOBilyfYp918oktAfZN3B+uJCv/Tw+e/Uo5Vq+gRuPQlKGTmh4KLcOhen1Bw==}
+    peerDependencies:
+      react: '*'
+      vite: '*'
+    peerDependenciesMeta:
+      react:
+        optional: true
+      vite:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      vite: 4.4.11(@types/node@18.16.18)
+    dev: true
+
   /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
     resolution: {integrity: sha512-G+ebk/OV8/i2P/8/QSQTsn94l2gArHUZqc43CPHve4wG3AaIqo34xMgxNQax5kgbwzkK+NusPcbQxBI3mMm0dg==}
     peerDependencies:
@@ -1478,16 +1496,16 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@hiogawa/unocss-preset-antd@2.2.1-pre.3(@unocss/preset-uno@0.53.5)(unocss@0.56.5):
+  /@hiogawa/unocss-preset-antd@2.2.1-pre.3(@unocss/preset-uno@0.56.5)(unocss@0.56.5):
     resolution: {integrity: sha512-NjJ0uKIA6tqmDTXQkO52Hb83tBJjwjOCUx9cgodxiROjTCuEP+yfkmJyzMlDzfxRUl8DnHd8IijnZl2cAX7s9Q==}
     peerDependencies:
       '@unocss/preset-uno': '*'
       unocss: '*'
     dependencies:
-      '@unocss/preset-uno': 0.53.5
+      '@unocss/preset-uno': 0.56.5
       '@unocss/reset': 0.48.5
       local-pkg: 0.4.3
-      unocss: 0.56.5(postcss@8.4.26)(vite@4.4.11)
+      unocss: 0.56.5(postcss@8.4.31)(vite@4.4.11)
     dev: true
 
   /@hiogawa/utils-hattip@0.0.1-pre.1:
@@ -1908,18 +1926,8 @@ packages:
       unconfig: 0.3.11
     dev: true
 
-  /@unocss/core@0.53.5:
-    resolution: {integrity: sha512-jBvk4FeUAALAomGfMFFmrXLy01/5DjugdnWgawFAQpSToFTxbMHS7x+pXKu/18cq+YLS8uyl9S0Ywy1jNbfS3Q==}
-    dev: true
-
   /@unocss/core@0.56.5:
     resolution: {integrity: sha512-fx5VhOjSHn0HdV2D34pEwFMAHJcJQRTCp1xEE4GzxY1irXzaa+m2aYf5PZjmDxehiOC16IH7TO9FOWANXk1E0w==}
-    dev: true
-
-  /@unocss/extractor-arbitrary-variants@0.53.5:
-    resolution: {integrity: sha512-rSS3Q8/+lEwxXfXzEOFuhAQGMpaaZcBAYDiNCYS/9BqKrTzhSYG82Qy80ISpqSZr0BTLET4X3dC6B6Rd4GU5vQ==}
-    dependencies:
-      '@unocss/core': 0.53.5
     dev: true
 
   /@unocss/extractor-arbitrary-variants@0.56.5:
@@ -1936,7 +1944,7 @@ packages:
       sirv: 2.0.3
     dev: true
 
-  /@unocss/postcss@0.56.5(postcss@8.4.26):
+  /@unocss/postcss@0.56.5(postcss@8.4.31):
     resolution: {integrity: sha512-oDY1vCdrCQZx/oxDkq3z77a0RoO+WVQT090oDZzLFO/cPWH3elSOHwnoJU/KzrpJLbUFpyTQKZ/k3VbBaEdGTA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -1948,7 +1956,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.3.1
       magic-string: 0.30.4
-      postcss: 8.4.26
+      postcss: 8.4.31
     dev: true
 
   /@unocss/preset-attributify@0.56.5:
@@ -1965,13 +1973,6 @@ packages:
       ofetch: 1.3.3
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@unocss/preset-mini@0.53.5:
-    resolution: {integrity: sha512-aeVctTW0M41RXyCyQvhRawIh+ylhl7mlWfAjv7cP3ALvIRWbB6jUw1C8Ke6rU2vg0s0yaJKRuFPFmLMqGwzoSg==}
-    dependencies:
-      '@unocss/core': 0.53.5
-      '@unocss/extractor-arbitrary-variants': 0.53.5
     dev: true
 
   /@unocss/preset-mini@0.56.5:
@@ -1995,14 +1996,6 @@ packages:
       '@unocss/preset-mini': 0.56.5
     dev: true
 
-  /@unocss/preset-uno@0.53.5:
-    resolution: {integrity: sha512-DRJMBkSqfz0EOzf5cwefkPF8J6lNvrhBp4ztw9blewDc2wTQqL/lAj/I/nbyOdXhJUOxhj/qj7gJjsNZctud0A==}
-    dependencies:
-      '@unocss/core': 0.53.5
-      '@unocss/preset-mini': 0.53.5
-      '@unocss/preset-wind': 0.53.5
-    dev: true
-
   /@unocss/preset-uno@0.56.5:
     resolution: {integrity: sha512-3hzE0X1oxMbHLvWyTj/4BrJQ7OAL428BpzEJos0RsxifM04vOJX4GC4khIbmTl8KIMECMtATK3ren3JqzD2bFw==}
     dependencies:
@@ -2017,13 +2010,6 @@ packages:
     dependencies:
       '@unocss/core': 0.56.5
       ofetch: 1.3.3
-    dev: true
-
-  /@unocss/preset-wind@0.53.5:
-    resolution: {integrity: sha512-hSMF11Gx8oMDtePvXLmpArSNpQRHb098P8+qYpwvyNfS29i6agfjGBuIDk/f+j8mhqcfrEEuEmPIl2yojT9nxA==}
-    dependencies:
-      '@unocss/core': 0.53.5
-      '@unocss/preset-mini': 0.53.5
     dev: true
 
   /@unocss/preset-wind@0.56.5:
@@ -4160,15 +4146,6 @@ packages:
       yaml: 2.3.1
     dev: true
 
-  /postcss@8.4.26:
-    resolution: {integrity: sha512-jrXHFF8iTloAenySjM/ob3gSj7pCu0Ji49hnjqzsgSRa50hkWCKD0HQ+gMNJkW38jBI68MpAAg7ZWwHwX8NMMw==}
-    engines: {node: ^10 || ^12 || >=14}
-    dependencies:
-      nanoid: 3.3.6
-      picocolors: 1.0.0
-      source-map-js: 1.0.2
-    dev: true
-
   /postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
@@ -4980,7 +4957,7 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
-  /unocss@0.56.5(postcss@8.4.26)(vite@4.4.11):
+  /unocss@0.56.5(postcss@8.4.31)(vite@4.4.11):
     resolution: {integrity: sha512-tO+9St4CntSjHpLXZqBo0/etS06MtvFF1NEny/qFJCL9sCopWwmDKuzW6/LIb4wfqZLdMpVFoEACMNv8nP849A==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -4996,7 +4973,7 @@ packages:
       '@unocss/cli': 0.56.5
       '@unocss/core': 0.56.5
       '@unocss/extractor-arbitrary-variants': 0.56.5
-      '@unocss/postcss': 0.56.5(postcss@8.4.26)
+      '@unocss/postcss': 0.56.5(postcss@8.4.31)
       '@unocss/preset-attributify': 0.56.5
       '@unocss/preset-icons': 0.56.5
       '@unocss/preset-mini': 0.56.5

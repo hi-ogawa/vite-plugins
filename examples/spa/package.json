@@ -12,6 +12,7 @@
     "release-production": "vercel deploy --prebuilt . --prod"
   },
   "devDependencies": {
+    "@hiogawa/tiny-refresh": "^0.0.0",
     "@hiogawa/utils": "1.6.0",
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-import-dev-server": "workspace:*",

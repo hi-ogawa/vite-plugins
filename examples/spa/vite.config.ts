@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { vitePluginTinyRefresh } from "@hiogawa/tiny-refresh/dist/vite";
 import { tinyassert } from "@hiogawa/utils";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import react from "@vitejs/plugin-react";
@@ -9,8 +10,9 @@ import { PluginOption, createFilter, defineConfig } from "vite";
 export default defineConfig({
   plugins: [
     injectGlobalManifestPlugin(),
-    reactRefreshSkipPlugin(),
-    react(),
+    vitePluginTinyRefresh(),
+    // reactRefreshSkipPlugin(),
+    // react(),
     globRoutesPlugin({ root: "/src/routes" }),
   ],
   build: {
