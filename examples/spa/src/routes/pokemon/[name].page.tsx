@@ -28,6 +28,24 @@ export function Component() {
       <span>
         Type: {loaderData.types.map((t: any) => t.type.name).join(", ")}
       </span>
+      <table border={1}>
+        <thead>
+          <tr>
+            <th>stat name</th>
+            <th>base</th>
+            <th>effort</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loaderData.stats.map((stat: any) => (
+            <tr key={stat.stat.name}>
+              <td>{stat.stat.name}</td>
+              <td>{stat.base_stat}</td>
+              <td>{stat.effort}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <details>
         <pre>{JSON.stringify(loaderData, null, 2)}</pre>
       </details>
