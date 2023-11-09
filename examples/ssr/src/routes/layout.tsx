@@ -5,7 +5,16 @@ export function Component() {
   return (
     <div>
       <header>
-        Routes
+        <h4>
+          SSR Demo
+          <a
+            style={{ fontSize: "0.8rem", marginLeft: "0.3rem" }}
+            href="https://github.com/hi-ogawa/vite-plugins/tree/main/examples/ssr"
+            target="_blank"
+          >
+            (source code)
+          </a>
+        </h4>
         <ul>
           <li>
             <Link to="/">Index</Link>
