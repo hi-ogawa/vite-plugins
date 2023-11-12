@@ -5,7 +5,16 @@ export function Component() {
   return (
     <div>
       <header>
-        <h4>Routes</h4>
+        <h4>
+          SPA Demo
+          <a
+            style={{ fontSize: "0.8rem", marginLeft: "0.3rem" }}
+            href="https://github.com/hi-ogawa/vite-plugins/tree/main/examples/spa"
+            target="_blank"
+          >
+            (source code)
+          </a>
+        </h4>
         <ul>
           {LINKS.map(([href, label]) => (
             <li key={href}>
