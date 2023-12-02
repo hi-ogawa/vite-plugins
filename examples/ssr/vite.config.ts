@@ -19,7 +19,7 @@ export default defineConfig((ctx) => ({
   ],
   build: {
     outDir: ctx.ssrBuild ? "dist/server" : "dist/client",
-    manifest: true,
+    manifest: ".vite/manifest.json",
     sourcemap: true,
   },
   server: process.env["PORT"]
