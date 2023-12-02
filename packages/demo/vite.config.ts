@@ -91,7 +91,7 @@ hot.on("vite:afterUpdate", clearCss);
 function clearCss() {
   hot.off("vite:afterUpdate", clearCss);
 
-  document.querySelectorAll("${SSR_INLINE_CSS_ATTR}").forEach(node => {
+  document.querySelectorAll("style[${SSR_INLINE_CSS_ATTR}]").forEach(node => {
     node.remove();
   });
 }
