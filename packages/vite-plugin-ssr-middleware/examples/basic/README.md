@@ -1,5 +1,0 @@
-# basic
-
-```sh
-pnpm dev
-```

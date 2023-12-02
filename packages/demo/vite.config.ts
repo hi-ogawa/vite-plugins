@@ -14,7 +14,7 @@ export default defineConfig((ctx) => ({
     importDevServerPlugin(),
     globRoutesPlugin({ root: "/src/routes" }),
     vitePluginSsrMiddleware({
-      entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-connect.ts",
+      entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
     }),
     viteNullExportPlugin({
       serverOnly: "**/server/**",

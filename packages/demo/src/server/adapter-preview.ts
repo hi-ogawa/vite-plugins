@@ -1,6 +1,6 @@
 import process from "node:process";
 import express from "express";
-import middleware from "./adapter-connect";
+import middleware from "./adapter-node";
 
 function main() {
   const app = express();
