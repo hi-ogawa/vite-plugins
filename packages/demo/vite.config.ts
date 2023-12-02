@@ -39,8 +39,8 @@ export default defineConfig((ctx) => ({
 }));
 
 // for now, this supports only tailwind-like single css entry use case.
-// maybe it can be generalized to support more intricate style collection
-// cf. https://github.com/remix-run/remix/blob/1a8a5216106bd8c3073cc3e5e5399a32c981db74/packages/remix-dev/vite/styles.ts#L162-L171
+// maybe it can be generalized to support more intricate style collection.
+// cf. https://github.com/remix-run/remix/blob/1a8a5216106bd8c3073cc3e5e5399a32c981db74/packages/remix-dev/vite/styles.ts
 function vitePluginSsrInlineCss(pluginOpts: { entry: string }): Plugin {
   let server: ViteDevServer;
 
