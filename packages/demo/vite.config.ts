@@ -59,7 +59,7 @@ function vitePluginSsrInlineCss(pluginOpts: { entry: string }): Plugin {
           {
             tag: "style",
             injectTo: "head",
-            attrs: { "data-vite-ssr-inline-css": true },
+            attrs: { [SSR_INLINE_CSS_ATTR]: true },
             children: mod.default as string,
           },
           {
@@ -74,6 +74,10 @@ function vitePluginSsrInlineCss(pluginOpts: { entry: string }): Plugin {
   };
 }
 
+const SSR_INLINE_CSS_ATTR = "data-vite-ssr-inline-css";
+
+// script to clear inlined css after first hot update
+// since vite should take care css during dev
 const SSR_INLINE_CSS_SCRIPT = /* js */ `
 
 import { createHotContext } from "/@vite/client";
@@ -87,7 +91,7 @@ hot.on("vite:afterUpdate", clearCss);
 function clearCss() {
   hot.off("vite:afterUpdate", clearCss);
 
-  document.querySelectorAll("[data-vite-ssr-inline-css]").forEach(node => {
+  document.querySelectorAll("${SSR_INLINE_CSS_ATTR}").forEach(node => {
     node.remove();
   });
 }
