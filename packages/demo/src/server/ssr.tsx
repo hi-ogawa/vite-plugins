@@ -137,7 +137,7 @@ function render({
 async function getClientManifest(): Promise<Manifest | undefined> {
   if (import.meta.env.PROD) {
     // @ts-ignore
-    const lib = await import("/dist/client/manifest.json");
+    const lib = await import("/dist/client/.vite/manifest.json");
     return lib.default;
   }
   return;
