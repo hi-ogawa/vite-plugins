@@ -4,7 +4,7 @@ Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/mai
 
 ## example
 
-```tsx
+```ts
 //
 // vite.config.ts
 //
@@ -22,7 +22,13 @@ export default defineConfig({
 //
 // server.ts
 //
-export default function handler(req, res, next) {
+import type { IncomingMessage, ServerResponse } from "node:http";
+
+export default function handler(
+  req: IncomingMessage,
+  res: ServerResponse,
+  next: () => void
+) {
   res.end("hello!");
 }
 ```
