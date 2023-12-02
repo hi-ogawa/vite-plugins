@@ -23,7 +23,7 @@ cp "$this_dir/config.json" .vercel/output/config.json
 # static
 mkdir -p .vercel/output/static
 cp -r dist/client/. .vercel/output/static
-rm .vercel/output/static/{index.html,manifest.json}
+rm .vercel/output/static/{index.html,.vite}
 
 # functions
 mkdir -p .vercel/output/functions/index.func

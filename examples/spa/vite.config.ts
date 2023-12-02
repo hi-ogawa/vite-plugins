@@ -15,7 +15,7 @@ export default defineConfig({
   ],
   build: {
     outDir: "dist/client",
-    manifest: true,
+    manifest: ".vite/manifest.json",
     sourcemap: true,
   },
   server: process.env["PORT"]
@@ -42,7 +42,7 @@ function injectGlobalManifestPlugin(): PluginOption {
       async handler(options, bundle) {
         tinyassert(options.dir);
         const indexHtml = bundle["index.html"];
-        const manifestJson = bundle["manifest.json"];
+        const manifestJson = bundle[".vite/manifest.json"];
         tinyassert(indexHtml.type === "asset");
         tinyassert(manifestJson.type === "asset");
         tinyassert(typeof indexHtml.source === "string");
