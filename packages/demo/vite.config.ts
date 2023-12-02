@@ -25,7 +25,7 @@ export default defineConfig((ctx) => ({
     }),
   ],
   build: {
-    outDir: ctx.ssrBuild ? "dist/server" : "dist/client",
+    outDir: ctx.isSsrBuild ? "dist/server" : "dist/client",
     manifest: ".vite/manifest.json", // explicit manifest path for v4/v5 compat
     sourcemap: true,
   },
