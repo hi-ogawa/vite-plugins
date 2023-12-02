@@ -1,0 +1,5 @@
+# basic
+
+```sh
+pnpm dev
+```
