@@ -5,14 +5,7 @@ import { viteNullExportPlugin } from "@hiogawa/vite-null-export";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
-import {
-  FilterPattern,
-  type Plugin,
-  ResolvedConfig,
-  ViteDevServer,
-  createFilter,
-  defineConfig,
-} from "vite";
+import { type Plugin, ViteDevServer, defineConfig } from "vite";
 
 export default defineConfig((ctx) => ({
   plugins: [
