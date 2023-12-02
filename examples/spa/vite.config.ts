@@ -15,7 +15,7 @@ export default defineConfig({
   ],
   build: {
     outDir: "dist/client",
-    manifest: ".vite/manifest.json", // fixed manifest path for v4/v5 compat
+    manifest: ".vite/manifest.json",
     sourcemap: true,
   },
   server: process.env["PORT"]
