@@ -72,14 +72,6 @@ export function ssrHandler(): RequestHandler {
       manifest
     );
 
-    // quick workaround for unocss to prevent FOUC on SSR during dev.
-    // TODO: this initial <style> should be removed after hot css update.
-    let css: string | undefined;
-    if (viteDevServer) {
-      const unocss = await viteDevServer.ssrLoadModule("virtual:uno.css");
-      css = unocss["default"];
-    }
-
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       // prettier-ignore
@@ -88,7 +80,6 @@ export function ssrHandler(): RequestHandler {
           storageKey: "vite-plugins-demo:theme",
           defaultTheme: "dark",
         }),
-        css && `<style>${css}</style>`,
         // TODO: move this logic to plugin?
         // server hand-off data to client, which is required for
         // - setup client loader for data request
@@ -104,7 +95,7 @@ export function ssrHandler(): RequestHandler {
           window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
           window.__initialMatchRouteIds = ${JSON.stringify(matchRouteIds)};
         </script>`,
-      ].filter(Boolean).flat().join("\n")
+      ].flat().join("\n")
     );
 
     return new Response(html, {
