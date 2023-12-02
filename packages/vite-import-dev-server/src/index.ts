@@ -3,6 +3,9 @@ import { name as packageName } from "../package.json";
 
 const MODULE_NAME = `${packageName}/runtime`;
 
+// TODO: can we use "ssrLoadModule" to pass state to user code without globalThis?
+// cf. https://github.com/sveltejs/kit/blob/98e4b8f059d09d57f66a8b513d809867419cc071/packages/kit/src/exports/vite/dev/index.js#L464-L467
+
 // keep multiple servers since plugin users could technically run multiple vite instances under single js process
 declare let globalThis: {
   __internal__importDevServer: Map<string, ViteDevServer>;
