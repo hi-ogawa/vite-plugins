@@ -5,7 +5,14 @@ import { viteNullExportPlugin } from "@hiogawa/vite-null-export";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
-import { type Plugin, ViteDevServer, defineConfig } from "vite";
+import {
+  FilterPattern,
+  type Plugin,
+  ResolvedConfig,
+  ViteDevServer,
+  createFilter,
+  defineConfig,
+} from "vite";
 
 export default defineConfig((ctx) => ({
   plugins: [
@@ -17,7 +24,9 @@ export default defineConfig((ctx) => ({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
     }),
     vitePluginSsrInlineCss({
-      entry: "virtual:uno.css",
+      input: "virtual:uno.css",
+      // entry: "virtual:uno.css",
+      debug: true,
     }),
     viteNullExportPlugin({
       serverOnly: "**/server/**",
@@ -40,27 +49,103 @@ export default defineConfig((ctx) => ({
 
 // for now, this supports only tailwind-like single css entry use case.
 // maybe it can be generalized to support more intricate style collection.
-// cf. https://github.com/remix-run/remix/blob/1a8a5216106bd8c3073cc3e5e5399a32c981db74/packages/remix-dev/vite/styles.ts
-function vitePluginSsrInlineCss(pluginOpts: { entry: string }): Plugin {
+// https://github.com/remix-run/remix/blob/1a8a5216106bd8c3073cc3e5e5399a32c981db74/packages/remix-dev/vite/styles.ts
+// https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts#L7
+function vitePluginSsrInlineCss(pluginOpts: {
+  // entry: string;
+  input: string;
+  include?: FilterPattern;
+  exclude?: FilterPattern;
+  // includeForce?: "",
+  // forceEntry?: string[];
+  debug?: boolean;
+}): Plugin {
   let server: ViteDevServer;
+  const map = new Map<string, string>();
+  const filter = createFilter(
+    pluginOpts.include ?? CSS_LANGS_RE,
+    pluginOpts.exclude
+  );
+
+  let logger!: ResolvedConfig["logger"];
 
   return {
     name: "local:" + vitePluginSsrInlineCss.name,
+
     apply(_config, env) {
       return env.command === "serve";
     },
+
+    configResolved(config) {
+      logger = config.logger;
+    },
+
     configureServer(_server) {
       server = _server;
+      server.transformRequest;
+      if (pluginOpts.input) {
+      }
+      // server.moduleGraph.resolveUrl()
     },
+
+    transform(code, id, options) {
+      // if (options?.ssr) {
+      // }
+      // console.log(filter(id), id);
+      // console.log(id)
+      // if (id.match(CSS_LANGS_RE)) {
+      //   // console.log(id, filter(id));
+      //   console.log({ id, code });
+      // }
+      if (filter(id)) {
+        // accumulate all matching code which is expected to be plain css
+        map.set(id, code);
+      }
+      // if (options?.ssr && filter(id)) {
+      //   // accumulate all matching code which is expected to be plain css
+      //   map.set(id, code);
+      // }
+    },
+
     transformIndexHtml: {
       handler: async () => {
-        const mod = await server.ssrLoadModule(pluginOpts.entry);
+        // const mod = await server.moduleGraph.getModuleByUrl("virtual:uno.css");
+        // if (mod) {
+        //   // mod?.importers
+        //   mod.url
+        // }
+        // const [, resolvedId] = await server.moduleGraph.resolveUrl("virtual:uno.css");
+        // `${resolvedId}?direct`
+        // resolvedId
+        console.log(await server.moduleGraph.resolveUrl("virtual:uno.css"));
+        if (pluginOpts.debug) {
+          logger.info(
+            `[DEBUG:${vitePluginSsrInlineCss.name}] ` +
+              [...map.keys()].join(" ")
+          );
+        }
+        pluginOpts.input;
+        const css = [...map.entries()]
+          .flatMap(([id, code]) => [`/*** ${id} ***/`, code])
+          .join("\n\n");
+
+        // resolveUrl + "?direct"
+        // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts#L7
+        // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets.ts#L83
+        const [, resolvedId] = await server.moduleGraph.resolveUrl(
+          pluginOpts.input
+        );
+        const styleHref = `${resolvedId}?direct`;
+
         return [
           {
-            tag: "style",
+            tag: "link",
             injectTo: "head",
-            attrs: { [SSR_INLINE_CSS_ATTR]: true },
-            children: mod.default as string,
+            attrs: {
+              [SSR_INLINE_CSS_ATTR]: true,
+              rel: "stylesheet",
+              href: styleHref,
+            },
           },
           {
             tag: "script",
@@ -73,6 +158,9 @@ function vitePluginSsrInlineCss(pluginOpts: { entry: string }): Plugin {
     },
   };
 }
+
+// cf. https://github.com/vitejs/vite/blob/7fd7c6cebfcad34ae7021ebee28f97b1f28ef3f3/packages/vite/src/node/constants.ts#L50-L51
+const CSS_LANGS_RE = /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)$/;
 
 const SSR_INLINE_CSS_ATTR = "data-vite-ssr-inline-css";
 
