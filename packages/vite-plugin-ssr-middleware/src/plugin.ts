@@ -19,7 +19,7 @@ export function vitePluginSsrMiddleware({
     config(config, env) {
       if (env.command === "serve") {
         return {
-          // disable HTML middlewares (otherwise `req.url` becomes "/index.html")
+          // disable builtin HTML middleware, which would rewrite `req.url` to "/index.html"
           appType: "custom",
         };
       }
