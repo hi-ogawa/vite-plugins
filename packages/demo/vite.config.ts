@@ -23,10 +23,8 @@ export default defineConfig((ctx) => ({
     vitePluginSsrMiddleware({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
     }),
-    vitePluginSsrInlineCss({
+    vitePluginSsrCss({
       input: "virtual:uno.css",
-      // entry: "virtual:uno.css",
-      debug: true,
     }),
     viteNullExportPlugin({
       serverOnly: "**/server/**",
@@ -51,85 +49,23 @@ export default defineConfig((ctx) => ({
 // maybe it can be generalized to support more intricate style collection.
 // https://github.com/remix-run/remix/blob/1a8a5216106bd8c3073cc3e5e5399a32c981db74/packages/remix-dev/vite/styles.ts
 // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts#L7
-function vitePluginSsrInlineCss(pluginOpts: {
-  // entry: string;
-  input: string;
-  include?: FilterPattern;
-  exclude?: FilterPattern;
-  // includeForce?: "",
-  // forceEntry?: string[];
-  debug?: boolean;
-}): Plugin {
+function vitePluginSsrCss(pluginOpts: { input: string }): Plugin {
   let server: ViteDevServer;
-  const map = new Map<string, string>();
-  const filter = createFilter(
-    pluginOpts.include ?? CSS_LANGS_RE,
-    pluginOpts.exclude
-  );
-
-  let logger!: ResolvedConfig["logger"];
 
   return {
-    name: "local:" + vitePluginSsrInlineCss.name,
+    name: "local:" + vitePluginSsrCss.name,
 
     apply(_config, env) {
       return env.command === "serve";
     },
 
-    configResolved(config) {
-      logger = config.logger;
-    },
-
     configureServer(_server) {
       server = _server;
-      server.transformRequest;
-      if (pluginOpts.input) {
-      }
-      // server.moduleGraph.resolveUrl()
-    },
-
-    transform(code, id, options) {
-      // if (options?.ssr) {
-      // }
-      // console.log(filter(id), id);
-      // console.log(id)
-      // if (id.match(CSS_LANGS_RE)) {
-      //   // console.log(id, filter(id));
-      //   console.log({ id, code });
-      // }
-      if (filter(id)) {
-        // accumulate all matching code which is expected to be plain css
-        map.set(id, code);
-      }
-      // if (options?.ssr && filter(id)) {
-      //   // accumulate all matching code which is expected to be plain css
-      //   map.set(id, code);
-      // }
     },
 
     transformIndexHtml: {
       handler: async () => {
-        // const mod = await server.moduleGraph.getModuleByUrl("virtual:uno.css");
-        // if (mod) {
-        //   // mod?.importers
-        //   mod.url
-        // }
-        // const [, resolvedId] = await server.moduleGraph.resolveUrl("virtual:uno.css");
-        // `${resolvedId}?direct`
-        // resolvedId
-        console.log(await server.moduleGraph.resolveUrl("virtual:uno.css"));
-        if (pluginOpts.debug) {
-          logger.info(
-            `[DEBUG:${vitePluginSsrInlineCss.name}] ` +
-              [...map.keys()].join(" ")
-          );
-        }
-        pluginOpts.input;
-        const css = [...map.entries()]
-          .flatMap(([id, code]) => [`/*** ${id} ***/`, code])
-          .join("\n\n");
-
-        // resolveUrl + "?direct"
+        // resolveUrl + "?direct" tricks from Vike
         // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts#L7
         // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets.ts#L83
         const [, resolvedId] = await server.moduleGraph.resolveUrl(
@@ -159,10 +95,7 @@ function vitePluginSsrInlineCss(pluginOpts: {
   };
 }
 
-// cf. https://github.com/vitejs/vite/blob/7fd7c6cebfcad34ae7021ebee28f97b1f28ef3f3/packages/vite/src/node/constants.ts#L50-L51
-const CSS_LANGS_RE = /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)$/;
-
-const SSR_INLINE_CSS_ATTR = "data-vite-ssr-inline-css";
+const SSR_INLINE_CSS_ATTR = "data-vite-ssr-css";
 
 // script to clear inlined css after first hot update
 // since vite should take care css during dev
@@ -171,7 +104,7 @@ const SSR_INLINE_CSS_SCRIPT = /* js */ `
 import { createHotContext } from "/@vite/client";
 
 // instantiate import.meta.hot with dummy file
-const hot = createHotContext("/__dummy__${vitePluginSsrInlineCss.name}");
+const hot = createHotContext("/__dummy__${vitePluginSsrCss.name}");
 
 // https://vitejs.dev/guide/api-hmr.html#hot-on-event-cb
 hot.on("vite:afterUpdate", clearCss);
