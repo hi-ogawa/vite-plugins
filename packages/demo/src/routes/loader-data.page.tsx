@@ -17,7 +17,7 @@ export function Component() {
     },
   });
 
-  const loading = counterMutation.isLoading;
+  const loading = counterMutation.isPending;
 
   return (
     <div className="flex flex-col items-center">
