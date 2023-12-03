@@ -6,6 +6,7 @@ import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
 import { defineConfig } from "vite";
+import { vitePluginSsrCss } from "./vite-plugin-ssr-css";
 
 export default defineConfig((ctx) => ({
   plugins: [
@@ -15,6 +16,9 @@ export default defineConfig((ctx) => ({
     globRoutesPlugin({ root: "/src/routes" }),
     vitePluginSsrMiddleware({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
+    }),
+    vitePluginSsrCss({
+      entry: ["./src/client/index.tsx"],
     }),
     viteNullExportPlugin({
       serverOnly: "**/server/**",
