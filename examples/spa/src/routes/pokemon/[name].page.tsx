@@ -5,9 +5,6 @@ import {
   useRouteError,
 } from "react-router-dom";
 
-// see reactRefreshSkipPlugin in vite.config.ts
-// @x-refresh-skip loader
-
 export const loader: LoaderFunction = async (args) => {
   const name = args.params["name"]!;
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
