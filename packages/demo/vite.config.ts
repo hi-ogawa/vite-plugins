@@ -5,7 +5,12 @@ import { viteNullExportPlugin } from "@hiogawa/vite-null-export";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
-import { type Plugin, ViteDevServer, defineConfig } from "vite";
+import {
+  HtmlTagDescriptor,
+  type Plugin,
+  ViteDevServer,
+  defineConfig,
+} from "vite";
 
 export default defineConfig((ctx) => ({
   plugins: [
@@ -17,7 +22,7 @@ export default defineConfig((ctx) => ({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
     }),
     vitePluginSsrCss({
-      input: "virtual:uno.css",
+      entry: ["./src/client/index.tsx"],
     }),
     viteNullExportPlugin({
       serverOnly: "**/server/**",
@@ -38,11 +43,10 @@ export default defineConfig((ctx) => ({
   clearScreen: false,
 }));
 
-// for now, this supports only tailwind-like single css entry use case.
-// maybe it can be generalized to support more intricate style collection.
-// https://github.com/remix-run/remix/blob/1a8a5216106bd8c3073cc3e5e5399a32c981db74/packages/remix-dev/vite/styles.ts
-// https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts#L7
-function vitePluginSsrCss(pluginOpts: { input: string }): Plugin {
+function vitePluginSsrCss(pluginOpts: {
+  entry: string[];
+  depth?: number;
+}): Plugin {
   let server: ViteDevServer;
 
   return {
@@ -58,24 +62,20 @@ function vitePluginSsrCss(pluginOpts: { input: string }): Plugin {
 
     transformIndexHtml: {
       handler: async () => {
-        // resolveUrl + "?direct" tricks from Vike
-        // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts#L7
-        // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets.ts#L83
-        const [, resolvedId] = await server.moduleGraph.resolveUrl(
-          pluginOpts.input
-        );
-        const styleHref = `${resolvedId}?direct`;
+        const styleUrls = await collectSsrStyleUrls(server, pluginOpts.entry);
+
+        const styleTags: HtmlTagDescriptor[] = styleUrls.map((href) => ({
+          tag: "link",
+          injectTo: "head",
+          attrs: {
+            [SSR_INLINE_CSS_ATTR]: true,
+            rel: "stylesheet",
+            href,
+          },
+        }));
 
         return [
-          {
-            tag: "link",
-            injectTo: "head",
-            attrs: {
-              [SSR_INLINE_CSS_ATTR]: true,
-              rel: "stylesheet",
-              href: styleHref,
-            },
-          },
+          ...styleTags,
           {
             tag: "script",
             injectTo: "head",
@@ -87,6 +87,49 @@ function vitePluginSsrCss(pluginOpts: { input: string }): Plugin {
     },
   };
 }
+
+// style collection
+// https://github.com/remix-run/remix/blob/1a8a5216106bd8c3073cc3e5e5399a32c981db74/packages/remix-dev/vite/styles.ts
+// https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts
+async function collectSsrStyleUrls(
+  server: ViteDevServer,
+  entries: string[]
+): Promise<string[]> {
+  const visited = new Set<string>();
+
+  async function traverse(url: string) {
+    const [, id] = await server.moduleGraph.resolveUrl(url);
+    if (visited.has(id)) return;
+
+    visited.add(id);
+    if (id.includes("/node_modules/")) return;
+
+    const mod = server.moduleGraph.getModuleById(id);
+    if (!mod) return;
+
+    await Promise.all(
+      [...mod.importedModules].map((childMod) => traverse(childMod.url))
+    );
+  }
+
+  // ensure vite's import analysis is ready only for top entries
+  await Promise.all(entries.map((e) => server.transformRequest(e)));
+
+  // traverse
+  await Promise.all(entries.map((url) => traverse(url)));
+
+  // "?direct" trick from Vike
+  // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets.ts#L83
+  const result = [...visited]
+    .filter((url) => url.match(CSS_LANGS_RE))
+    .map((url) => `${url}?direct`);
+
+  return result;
+}
+
+// cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
+const CSS_LANGS_RE =
+  /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
 
 const SSR_INLINE_CSS_ATTR = "data-vite-ssr-css";
 
