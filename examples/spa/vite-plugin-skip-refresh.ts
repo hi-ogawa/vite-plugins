@@ -19,7 +19,6 @@ export function vitePluginSkipRefreshPlugin(pluginOpts: {
   return {
     name: "local:" + vitePluginSkipRefreshPlugin.name,
     apply: "serve",
-    enforce: "pre",
     transform(code, id, options) {
       if (options?.ssr || !filter(id)) {
         return;
