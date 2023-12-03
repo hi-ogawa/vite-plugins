@@ -201,14 +201,11 @@ importers:
         specifier: ^1.1.9
         version: 1.1.9
       '@tanstack/react-query':
-        specifier: ^4.29.14
-        version: 4.29.14(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^5.12.2
+        version: 5.12.2(react@18.2.0)
       '@tanstack/react-query-devtools':
-        specifier: ^4.29.14
-        version: 4.29.14(@tanstack/react-query@4.29.14)(react-dom@18.2.0)(react@18.2.0)
-      '@tsconfig/strictest':
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^5.12.2
+        version: 5.12.2(@tanstack/react-query@5.12.2)(react@18.2.0)
       '@types/cookie':
         specifier: ^0.5.1
         version: 0.5.1
@@ -244,7 +241,7 @@ importers:
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       unocss:
         specifier: ^0.57.7
-        version: 0.57.7(postcss@8.4.31)(vite@5.0.4)
+        version: 0.57.7(postcss@8.4.32)(vite@5.0.4)
       zod:
         specifier: ^3.21.4
         version: 3.21.4
@@ -1770,7 +1767,7 @@ packages:
       '@unocss/preset-uno': 0.57.7
       '@unocss/reset': 0.48.5
       local-pkg: 0.4.3
-      unocss: 0.57.7(postcss@8.4.31)(vite@5.0.4)
+      unocss: 0.57.7(postcss@8.4.32)(vite@5.0.4)
     dev: true
 
   /@hiogawa/utils-hattip@0.0.1-pre.1:
@@ -2024,48 +2021,32 @@ packages:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
 
-  /@tanstack/match-sorter-utils@8.8.4:
-    resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
-    engines: {node: '>=12'}
-    dependencies:
-      remove-accents: 0.4.2
+  /@tanstack/query-core@5.12.1:
+    resolution: {integrity: sha512-WbZztNmKq0t6QjdNmHzezbi/uifYo9j6e2GLJkodsYaYUlzMbAp91RDyeHkIZrm7EfO4wa6Sm5sxJZm5SPlh6w==}
     dev: true
 
-  /@tanstack/query-core@4.29.14:
-    resolution: {integrity: sha512-ElEAahtLWA7Y7c2Haw10KdEf2tx+XZl/Z8dmyWxZehxWK3TPL5qtXtb7kUEhvt/8u2cSP62fLxgh2qqzMMGnDQ==}
+  /@tanstack/query-devtools@5.12.1:
+    resolution: {integrity: sha512-AUWLgdZEYq/ckMZrtKpofOwqxuFiEIdy3gZOh/ouIBVra9ijXVTxYt5cZFSjXJT4q/o0DMii6xMZuIJx2qXZ6g==}
     dev: true
 
-  /@tanstack/react-query-devtools@4.29.14(@tanstack/react-query@4.29.14)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-2H4otgQiXJSU7z8HIPw6whm7xfaEA3ouoM2PrWTHs+DMFX0BbodhOfQeJxsjw5uq2oV1yln/DABLJjZoQmQbpQ==}
+  /@tanstack/react-query-devtools@5.12.2(@tanstack/react-query@5.12.2)(react@18.2.0):
+    resolution: {integrity: sha512-EpjYxwUBj+CuzAiB++FMeHzNey4TynuudfWVMsZg0uzLrnR5I0j1CWHJkNsTutb/Db9TNG1Ae66n8ywVvPd1gQ==}
     peerDependencies:
-      '@tanstack/react-query': 4.29.14
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@tanstack/react-query': ^5.12.2
+      react: ^18.0.0
     dependencies:
-      '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/react-query': 4.29.14(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/query-devtools': 5.12.1
+      '@tanstack/react-query': 5.12.2(react@18.2.0)
       react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.12.3
-      use-sync-external-store: 1.2.0(react@18.2.0)
     dev: true
 
-  /@tanstack/react-query@4.29.14(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-wh4bd/QIy85YgTDBtj/7/9ZkpRX41QdZuUL8xKoSzuMCukXvAE1/oJ4p0F15lqQq9W3g2pgcbr2Aa+CNvqABhg==}
+  /@tanstack/react-query@5.12.2(react@18.2.0):
+    resolution: {integrity: sha512-BeWZu8zVFH20oRc+S/K9ADPgWjEzP/XQCGBNz5IbApUwPQAdwkQYbXODVL5AyAlWiSxhx+P2xlARPBApj2Yrog==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
+      react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 4.29.14
+      '@tanstack/query-core': 5.12.1
       react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      use-sync-external-store: 1.2.0(react@18.2.0)
     dev: true
 
   /@tsconfig/strictest@2.0.1:
@@ -2296,7 +2277,7 @@ packages:
       sirv: 2.0.3
     dev: true
 
-  /@unocss/postcss@0.57.7(postcss@8.4.31):
+  /@unocss/postcss@0.57.7(postcss@8.4.32):
     resolution: {integrity: sha512-13c9p5ecTvYa6inDky++8dlVuxQ0JuKaKW5A0NW3XuJ3Uz1t8Pguji+NAUddfTYEFF6GHu47L3Aac7vpI8pMcQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -2308,7 +2289,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.5
-      postcss: 8.4.31
+      postcss: 8.4.32
     dev: true
 
   /@unocss/preset-attributify@0.57.7:
@@ -2869,13 +2850,6 @@ packages:
   /cookie@0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
-    dev: true
-
-  /copy-anything@3.0.5:
-    resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
-    engines: {node: '>=12.13'}
-    dependencies:
-      is-what: 4.1.15
     dev: true
 
   /cross-spawn@5.1.0:
@@ -3888,11 +3862,6 @@ packages:
       call-bind: 1.0.2
     dev: true
 
-  /is-what@4.1.15:
-    resolution: {integrity: sha512-uKua1wfy3Yt+YqsD6mTUEa2zSi3G1oPlqTflgaPJ7z63vUGN5pxFpnQfeSLMFnJDEsdvOtkp1rUWkYjB4YfhgA==}
-    engines: {node: '>=12.13'}
-    dev: true
-
   /is-windows@1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
     engines: {node: '>=0.10.0'}
@@ -4237,8 +4206,8 @@ packages:
       thenify-all: 1.6.0
     dev: true
 
-  /nanoid@3.3.6:
-    resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
+  /nanoid@3.3.7:
+    resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
@@ -4571,11 +4540,11 @@ packages:
       yaml: 2.3.1
     dev: true
 
-  /postcss@8.4.31:
-    resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
+  /postcss@8.4.32:
+    resolution: {integrity: sha512-D/kj5JNu6oo2EIy+XL/26JEDTlIbB8hw85G8StOE6L74RQAVVP5rej6wxCNqyMbR4RkPfqvezVbPw81Ngd6Kcw==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
-      nanoid: 3.3.6
+      nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
@@ -4766,10 +4735,6 @@ packages:
       call-bind: 1.0.2
       define-properties: 1.2.0
       functions-have-names: 1.2.3
-    dev: true
-
-  /remove-accents@0.4.2:
-    resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
     dev: true
 
   /require-directory@2.1.1:
@@ -5163,13 +5128,6 @@ packages:
       ts-interface-checker: 0.1.13
     dev: true
 
-  /superjson@1.12.3:
-    resolution: {integrity: sha512-0j+U70KUtP8+roVPbwfqkyQI7lBt7ETnuA7KXbTDX3mCKiD/4fXs2ldKSMdt0MCfpTwiMxo20yFU3vu6ewETpQ==}
-    engines: {node: '>=10'}
-    dependencies:
-      copy-anything: 3.0.5
-    dev: true
-
   /supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -5400,7 +5358,7 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
-  /unocss@0.57.7(postcss@8.4.31)(vite@5.0.4):
+  /unocss@0.57.7(postcss@8.4.32)(vite@5.0.4):
     resolution: {integrity: sha512-Z99ZZPkbkjIUXEM7L+K/7Y5V5yqUS0VigG7ZIFzLf/npieKmXHKlrPyvQWFQaf3OqooMFuKBQivh75TwvSOkcQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -5416,7 +5374,7 @@ packages:
       '@unocss/cli': 0.57.7
       '@unocss/core': 0.57.7
       '@unocss/extractor-arbitrary-variants': 0.57.7
-      '@unocss/postcss': 0.57.7(postcss@8.4.31)
+      '@unocss/postcss': 0.57.7(postcss@8.4.32)
       '@unocss/preset-attributify': 0.57.7
       '@unocss/preset-icons': 0.57.7
       '@unocss/preset-mini': 0.57.7
@@ -5453,14 +5411,6 @@ packages:
       browserslist: 4.21.9
       escalade: 3.1.1
       picocolors: 1.0.0
-    dev: true
-
-  /use-sync-external-store@1.2.0(react@18.2.0):
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
     dev: true
 
   /utils-merge@1.0.1:
@@ -5531,7 +5481,7 @@ packages:
     dependencies:
       '@types/node': 18.16.18
       esbuild: 0.19.8
-      postcss: 8.4.31
+      postcss: 8.4.32
       rollup: 4.6.1
     optionalDependencies:
       fsevents: 2.3.3
