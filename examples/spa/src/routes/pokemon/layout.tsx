@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink, Outlet, useNavigate, useNavigation } from "react-router-dom";
 
 export function Component() {
