@@ -99,14 +99,14 @@ async function collectSsrStyleUrls(
 
   async function traverse(url: string) {
     const [, id] = await server.moduleGraph.resolveUrl(url);
-    if (visited.has(id)) return;
-
+    if (visited.has(id)) {
+      return;
+    }
     visited.add(id);
-    if (id.includes("/node_modules/")) return;
-
     const mod = server.moduleGraph.getModuleById(id);
-    if (!mod) return;
-
+    if (!mod) {
+      return;
+    }
     await Promise.all(
       [...mod.importedModules].map((childMod) => traverse(childMod.url))
     );
