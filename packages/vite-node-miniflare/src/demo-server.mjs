@@ -45,7 +45,7 @@ async function main() {
   const script = await fs.promises.readFile("./dist/demo.js", "utf-8");
 
   const miniflare = new Miniflare({
-    // pass modules explicitly to avoid Miniflare's ModuleLocator error
+    // pass modules explicitly to avoid Miniflare's ModuleLocator analysis error
     modulesRoot: "/",
     modules: [
       {
