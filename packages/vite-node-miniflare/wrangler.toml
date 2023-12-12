@@ -1,0 +1,8 @@
+name = "remix-vite-deploy"
+
+# main = "./src/demo.ts"
+main = "./dist/demo.js"
+workers_dev = true
+compatibility_date = "2023-04-20"
+minify = true
+# node_compat = true
