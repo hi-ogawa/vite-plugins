@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import * as httipAdapterNode from "@hattip/adapter-node";
 import * as httipCompose from "@hattip/compose";
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
@@ -48,7 +47,7 @@ async function main() {
   //
   // miniflare
   //
-  const script = await fs.promises.readFile("./dist/demo.js", "utf-8");
+  const { WORKER_ENTRY_SCRIPT } = await import("../dist/index.js");
 
   const miniflare = new Miniflare({
     // pass modules explicitly to avoid Miniflare's ModuleLocator analysis error
@@ -57,7 +56,7 @@ async function main() {
       {
         type: "ESModule",
         path: "/dummy.js",
-        contents: script,
+        contents: WORKER_ENTRY_SCRIPT,
       },
     ],
     unsafeEvalBinding: "__UNSAFE_EVAL",

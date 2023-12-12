@@ -1,19 +1,21 @@
 {
   "name": "@hiogawa/vite-node-miniflare",
-  "version": "0.0.1",
-  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-ssr-middleware",
+  "version": "0.0.0-pre.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-node-miniflare",
   "repository": {
     "type": "git",
     "url": "https://github.com/hi-ogawa/vite-plugins",
-    "directory": "packages/vite-plugin-ssr-middleware"
+    "directory": "packages/vite-node-miniflare"
   },
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./entry.worker.js": {
+      "default": "./dist/entry.worker.js"
     }
   },
   "main": "./dist/index.js",
@@ -23,7 +25,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "bash build.sh",
+    "build": "BUILD_STEP=0 tsup && BUILD_STEP=1 tsup",
     "dev": "node ./src/demo-server.mjs",
     "release": "pnpm publish --no-git-checks --access public"
   },
