@@ -63,8 +63,8 @@ async function main() {
     unsafeEvalBinding: "__UNSAFE_EVAL",
     // pass config via bindings (aka runtime variables)
     bindings: {
-      __WORKER_ENTRY: "/src/demo/entry.ts",
-      __VITE_NODE_RPC_URL: "http://localhost:8888/vite-node-rpc",
+      __WORKER_ENTRY: "/demo/server.ts",
+      __VITE_NODE_SERVER_RPC_URL: "http://localhost:8888/vite-node-rpc",
       __VITE_NODE_RUNNER_OPTIONS: {
         root: viteDevServer.config.root,
       },
