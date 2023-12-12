@@ -19,7 +19,7 @@ async function main() {
       noExternal: true,
     },
     server: {
-      hmr: false,
+      hmr: true,
     },
     clearScreen: false,
     appType: "custom",
