@@ -5,9 +5,10 @@ import { defineConfig } from "tsup";
 
 export default [
   defineConfig(() => ({
-    entry: ["src/entry.worker.ts"],
+    entry: ["src/worker.ts"],
     format: ["esm"],
     platform: "browser",
+    dts: true,
     esbuildOptions: (options) => {
       // patch to run "vite-node/client" on workerd
       options.define = {
@@ -26,11 +27,12 @@ export default [
   defineConfig(() => ({
     entry: ["src/index.ts"],
     format: ["esm"],
-    platform: "browser",
+    platform: "node",
+    dts: true,
     esbuildOptions: (options) => {
       options.define = {
-        __DEFINE_WORKER_ENTRY_SCRIPT: JSON.stringify(
-          fs.readFileSync("./dist/entry.worker.js", "utf-8")
+        __DEFINE_WORKER_SCRIPT: JSON.stringify(
+          fs.readFileSync("./dist/worker.js", "utf-8")
         ),
       };
     },
