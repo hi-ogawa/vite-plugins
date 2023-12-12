@@ -57,11 +57,12 @@ async function main() {
         contents: script,
       },
     ],
-    unsafeEvalBinding: "UNSAFE_EVAL",
+    unsafeEvalBinding: "__UNSAFE_EVAL",
     // pass config via bindings (aka runtime variables)
     bindings: {
-      // __VITE_NODE_SERVER_URL: "http://localhost:8888",
-      // __VITE_ROOT: "",
+      __WORKER_ENTRY: "/src/demo/entry.ts",
+      __VITE_NODE_RPC_URL: "http://localhost:8888/vite-node-rpc",
+      __VITE_NODE_ROOT: viteDevServer.config.root,
     },
     log: new Log(),
     port: 7777,
