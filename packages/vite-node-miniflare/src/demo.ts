@@ -1,7 +1,7 @@
 import { httpClientAdapter, proxyTinyRpc } from "@hiogawa/tiny-rpc";
 import { ViteNodeRunner } from "vite-node/client";
 import type { ViteNodeServer } from "vite-node/server";
-import { setEnv, env } from "./env";
+import { env, setEnv } from "./env";
 
 export default {
   async fetch(request: Request, env: any) {
@@ -12,7 +12,7 @@ export default {
       const workerEntry = await viteNodeRunner.executeFile(env.__WORKER_ENTRY);
       return workerEntry.default.fetch(request, env);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return new Response("error", { status: 500 });
     }
   },

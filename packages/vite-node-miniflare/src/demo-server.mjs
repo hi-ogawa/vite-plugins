@@ -18,6 +18,9 @@ async function main() {
     ssr: {
       noExternal: true,
     },
+    server: {
+      hmr: false,
+    },
   });
   await viteDevServer.pluginContainer.buildStart({});
   console.log(":: vite dev server ready");
