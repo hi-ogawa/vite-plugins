@@ -1,11 +1,8 @@
 import type nodeModule from "node:module";
+import { createUsageChecker } from "./usage-checker";
 
-export const createRequire: typeof nodeModule.createRequire = () => {
-  return new Proxy(() => {}, {
-    get(_target, p, _receiver) {
-      throw new Error(`todo: createRequire - ${String(p)}`);
-    },
-  }) as any;
+export const createRequire: typeof nodeModule.createRequire = (url) => {
+  return createUsageChecker(`createRequire - ${url}`);
 };
 
 export const builtinModules = [];

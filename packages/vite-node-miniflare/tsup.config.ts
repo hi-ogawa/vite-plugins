@@ -1,5 +1,5 @@
-import { defineConfig } from "tsup";
 import fs from "node:fs";
+import { defineConfig } from "tsup";
 
 // build in two steps to export worker entry script as string
 
