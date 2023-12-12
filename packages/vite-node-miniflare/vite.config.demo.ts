@@ -1,3 +1,4 @@
+import { Log } from "miniflare";
 import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "./dist/index.js";
 
@@ -8,5 +9,12 @@ export default defineConfig({
   ssr: {
     noExternal: true,
   },
-  plugins: [vitePluginViteNodeMiniflare({ entry: "./demo/server.ts" })],
+  plugins: [
+    vitePluginViteNodeMiniflare({
+      entry: "./demo/server.ts",
+      miniflareOptions(options) {
+        options.log = new Log();
+      },
+    }),
+  ],
 });

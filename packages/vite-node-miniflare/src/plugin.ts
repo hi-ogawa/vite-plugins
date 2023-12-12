@@ -1,6 +1,6 @@
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
-import { Log, Miniflare } from "miniflare";
+import { Miniflare, type MiniflareOptions } from "miniflare";
 import type { Plugin } from "vite";
 import { ViteNodeServer } from "vite-node/server";
 import { name as packageName } from "../package.json";
@@ -8,7 +8,13 @@ import { setupViteNodeServerRpc } from "./server";
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
+  // hook to allow customizing miniflare options
+  miniflareOptions?: (options: MiniflareOptions) => void;
 }): Plugin {
+  // initialize miniflare lazily on first request and
+  // dispose on server close (e.g. server restart on user vite config change)
+  let miniflare: Miniflare | undefined;
+
   return {
     name: packageName,
     apply: "serve",
@@ -17,22 +23,18 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       const viteNodeServer = new ViteNodeServer(server);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
 
-      // initialize miniflare lazily on first request
-      let miniflare: Miniflare;
-
       // setup middleware
       const middleware = httipAdapterNode.createMiddleware(
         httipCompose.compose(viteNodeServerRpc.requestHandler, async (ctx) => {
           // TODO: extra bindings from user
           // TODO: or proxy to `wrangler.unstable_dev`
           if (!miniflare) {
-            miniflare = new Miniflare({
-              ...viteNodeServerRpc.generateMiniflareOptions({
-                entry: pluginOptions.entry,
-                rpcOrigin: ctx.url.origin,
-              }),
-              log: new Log(),
+            const options = viteNodeServerRpc.generateMiniflareOptions({
+              entry: pluginOptions.entry,
+              rpcOrigin: ctx.url.origin,
             });
+            pluginOptions.miniflareOptions?.(options);
+            miniflare = new Miniflare(options);
             await miniflare.ready;
           }
 
@@ -43,6 +45,13 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       );
 
       return () => server.middlewares.use(middleware);
+    },
+
+    async buildEnd() {
+      if (miniflare) {
+        await miniflare.dispose();
+        miniflare = undefined;
+      }
     },
   };
 }

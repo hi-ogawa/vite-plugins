@@ -5,8 +5,6 @@ let viteNodeRunner: ViteNodeRunner;
 
 export default {
   async fetch(request: Request, env: any) {
-    console.log(request.url);
-
     viteNodeRunner ??= createViteNodeRunner({
       unsafeEval: env.__UNSAFE_EVAL,
       serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
@@ -14,7 +12,7 @@ export default {
     });
 
     try {
-      // TODO: better invalidation
+      // TODO: refine invalidation
       viteNodeRunner.moduleCache.clear();
 
       const workerEntry = await viteNodeRunner.executeFile(env.__WORKER_ENTRY);
