@@ -2,31 +2,27 @@
 
 Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) on [`miniflare`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare)
 
-## examples
+## usage
 
 ```ts
-import { Miniflare } from "miniflare";
-import { ViteNodeServer } from "vite-node";
-import { generateViteMiniflareScript } from "@hiogawa/vite-miniflare";
-
-const viteNodeServer = new ViteNodeServer({});
-
-const viteMiniflareScript = generateViteMiniflareScript({
-  entry: "./server.ts",
-  // viteNodeServer,
-});
-
-const miniflare = new Miniflare({ script: viteMiniflareScript, ... });
-
-miniflare.dispatchFetch("...");
-```
-
-```ts
-import { vitePluginMiniflareSsr } from "@hiogawa/vite-miniflare/dist/plugin";
+//
+// vite.config.ts
+//
+import { definConfig } from "vite";
+import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 
 export default definConfig({
-  plugins: [vitePluginMiniflareSsr({ script: "..." })],
+  plugins: [vitePluginViteNodeMiniflare({ entry: "./worker-entry.ts" })],
 });
+
+//
+// worker-entry.ts
+//
+export default {
+  async fetch() {
+    return new Response("hello workerd");
+  },
+};
 ```
 
 ## credits
