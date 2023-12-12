@@ -3,8 +3,10 @@ import { vitePluginViteNodeMiniflare } from "./dist/index.js";
 
 export default defineConfig({
   clearScreen: false,
-  plugins: [vitePluginViteNodeMiniflare({ entry: "./demo/server.ts" })],
+  // TODO: force required config from plugin?
+  appType: "custom",
   ssr: {
     noExternal: true,
   },
+  plugins: [vitePluginViteNodeMiniflare({ entry: "./demo/server.ts" })],
 });

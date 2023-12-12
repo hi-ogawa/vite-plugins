@@ -12,45 +12,37 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   return {
     name: packageName,
     apply: "serve",
-    config(_config, _env) {
-      return {
-        appType: "custom",
-        // TODO: how to know port lazily?
-        server: {
-          port: 8888,
-        },
-      };
-    },
     async configureServer(server) {
       // setup vite-node with rpc
       const viteNodeServer = new ViteNodeServer(server);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
 
-      // setup miniflare
-      const miniflare = new Miniflare({
-        ...viteNodeServerRpc.generateMiniflareOptions({
-          entry: pluginOptions.entry,
-          rpcOrigin: "http://localhost:8888",
-        }),
-        log: new Log(),
-      });
-      await miniflare.ready;
+      // initialize miniflare lazily on first request
+      let miniflare: Miniflare;
 
-      // setup as hattip middleware
+      // setup middleware
       const middleware = httipAdapterNode.createMiddleware(
-        httipCompose.compose(viteNodeServerRpc.requestHandler, (ctx) => {
+        httipCompose.compose(viteNodeServerRpc.requestHandler, async (ctx) => {
+          // TODO: extra bindings from user
+          // TODO: or proxy to `wrangler.unstable_dev`
+          if (!miniflare) {
+            miniflare = new Miniflare({
+              ...viteNodeServerRpc.generateMiniflareOptions({
+                entry: pluginOptions.entry,
+                rpcOrigin: ctx.url.origin,
+              }),
+              log: new Log(),
+            });
+            await miniflare.ready;
+          }
+
           // TODO: method, headers, body, etc..
+          // Response typing mismatch
           return miniflare.dispatchFetch(ctx.request.url) as any as Response;
         })
       );
 
-      function use() {
-        server.middlewares.use((req, res, next) => {
-          middleware(req, res, next);
-        });
-      }
-
-      return () => use();
+      return () => server.middlewares.use(middleware);
     },
   };
 }
