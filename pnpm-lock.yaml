@@ -275,6 +275,9 @@ importers:
       '@hattip/compose':
         specifier: ^0.0.34
         version: 0.0.34
+      '@hiogawa/tiny-react':
+        specifier: 0.0.2-pre.3
+        version: 0.0.2-pre.3(vite@5.0.4)
       '@hiogawa/tiny-rpc':
         specifier: ^0.2.3-pre.11
         version: 0.2.3-pre.11
@@ -1841,6 +1844,17 @@ packages:
         optional: true
     dependencies:
       react: 18.2.0
+    dev: true
+
+  /@hiogawa/tiny-react@0.0.2-pre.3(vite@5.0.4):
+    resolution: {integrity: sha512-BQXd9c1jrjM1fwfgkVI/ctDyGOxABr5mSi9P2bJLeFcfiSXKR+6n5YVkM2cHVArA1PzfUsuHTSmMinpLIa8MMQ==}
+    peerDependencies:
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
+    dependencies:
+      vite: 5.0.4(@types/node@18.16.18)
     dev: true
 
   /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
