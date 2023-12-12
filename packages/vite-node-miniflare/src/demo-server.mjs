@@ -65,7 +65,9 @@ async function main() {
     bindings: {
       __WORKER_ENTRY: "/src/demo/entry.ts",
       __VITE_NODE_RPC_URL: "http://localhost:8888/vite-node-rpc",
-      __VITE_NODE_ROOT: viteDevServer.config.root,
+      __VITE_NODE_RUNNER_OPTIONS: {
+        root: viteDevServer.config.root,
+      },
     },
     log: new Log(),
     port: 7777,
