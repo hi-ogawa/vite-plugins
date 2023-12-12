@@ -1,5 +1,3 @@
-// cf. https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation/blob/main/vite-workerd-request-handler/src/miniflare.ts
-
 import fs from "node:fs";
 import * as httipAdapterNode from "@hattip/adapter-node";
 import * as httipCompose from "@hattip/compose";
@@ -7,16 +5,6 @@ import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
 import { Log, Miniflare } from "miniflare";
 import { createServer } from "vite";
 import { ViteNodeServer } from "vite-node/server";
-
-// function createManualPromise<T>() {
-//   let resolve!: (value: T | PromiseLike<T>) => void;
-//   let reject!: (value: unknown) => void;
-//   const p = new Promise<T>((res, rej) => {
-//     resolve = res;
-//     reject = rej;
-//   });
-//   return { p, resolve, reject };
-// }
 
 async function main() {
   //
@@ -82,19 +70,12 @@ async function main() {
   // fetch request
   //
   const res = await miniflare.dispatchFetch("https://dummy.local/");
-  console.log("response", await res.text());
+  const resText = await res.text();
+  console.log("@@@ response @@@");
+  console.log(resText);
 
-  // TODO: process doesn't exit?
+  // TODO: still hanging resource after dispose?
   await miniflare.dispose();
 }
 
 main();
-
-// TODO
-// - rpc for viteNodeRunner/viteNodeServer (tiny-rpc?)
-// - vite server config
-//   - no external
-// - polyfills
-//   - vm via UNSAFE_EVAL
-// - pass config via bindings
-// - demo app
