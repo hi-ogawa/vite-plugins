@@ -20,6 +20,7 @@ async function main() {
     server: {
       hmr: false,
     },
+    clearScreen: false,
   });
   await viteDevServer.pluginContainer.buildStart({});
   console.log(":: vite dev server ready");
@@ -75,26 +76,11 @@ async function main() {
   console.log(":: miniflare ready");
 
   //
-  // miniflare fetch proxy (not necessary to setup by ourselves?)
-  //
-  // const miniflareServer = httipAdapterNode.createServer(
-  //   // @ts-ignore Response type mismatch
-  //   (ctx) => {
-  //     // TODO
-  //     return miniflare.dispatchFetch(ctx.request.url);
-  //   }
-  // );
-  // await new Promise((resolve) => {
-  //   miniflareServer.listen(7777, () => resolve(null));
-  // });
-  // console.log(":: miniflare fetch proxy ready at http://localhost:7777");
-
-  //
   // demo request
   //
   const res = await fetch("http://127.0.0.1:7777");
   const resText = await res.text();
-  console.log("@@@ demo request/response @@@");
+  console.log(":: demo response");
   console.log(resText);
 
   // TODO: still hanging resource after dispose?
