@@ -11,7 +11,6 @@ async function main() {
   // vite dev server
   //
   const viteDevServer = await createServer({
-    root: "/home/hiroshi/code/personal/vite-plugins/packages/vite-node-miniflare",
     configFile: false,
     optimizeDeps: {
       disabled: true,
@@ -38,7 +37,7 @@ async function main() {
       resolve(null);
     });
   });
-  console.log(":: vite node ready");
+  console.log(":: vite node rpc ready");
 
   //
   // miniflare
