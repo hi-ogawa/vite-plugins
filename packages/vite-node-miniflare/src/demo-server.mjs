@@ -15,6 +15,9 @@ async function main() {
     optimizeDeps: {
       disabled: true,
     },
+    ssr: {
+      noExternal: true
+    }
   });
   await viteDevServer.pluginContainer.buildStart({});
   console.log(":: vite dev server ready");
