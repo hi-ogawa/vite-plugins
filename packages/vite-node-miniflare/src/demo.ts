@@ -20,36 +20,17 @@ const viteNodeRunner = new ViteNodeRunner({
 
 export default {
   async fetch(request: Request, env: any) {
-    // quick and dirty
+    // (quick-and-dirty) expose UNSAFE_EVAL to polyfills/node-vm.ts
     Object.assign(globalThis, { env });
 
-    console.log("[workerd] url =", request.url);
-    // console.log(env.UNSAFE_EVAL);
-    // console.log(env.VITE_NODE_SERVER_URL);
-    // console.log(viteNodeRunner);
-
     try {
-      const mod: typeof import("./demo-app") = await viteNodeRunner.executeFile(
-        "/src/demo-app.ts"
+      const entryModule: typeof import("./demo/entry") = await viteNodeRunner.executeFile(
+        "/src/demo/entry.ts"
       );
-      // console.log(mod);
-      return new Response(mod.hi("vite node on workerd"));
-    } catch (e) {}
-
-    // const resolved = await viteNodeServerProxy.resolveId("/src/demo-app.ts");
-    // console.log(resolved);
-    // if (resolved) {
-    //   const fetchedMod = await viteNodeServerProxy.fetchModule(resolved.id);
-    //   console.log(fetchedMod);
-    //   try {
-    //     const mod = await viteNodeRunner.executeId(resolved.id);
-    //     console.log(mod);
-    //     return new Response(mod.hi("vite node on workerd"));
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // }
-
-    return new Response("hello");
+      return entryModule.default.fetch(request, env);
+    } catch (e) {
+      console.log(e);
+      return new Response("error", { status: 500 });
+    }
   },
 };
