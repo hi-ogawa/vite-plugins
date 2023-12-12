@@ -1,6 +1,6 @@
 export const existsSync = () => {
   return false;
-  throw new Error("todo existsSync")
+  throw new Error("todo existsSync");
 };
 
 export const promises = new Proxy(() => {}, {

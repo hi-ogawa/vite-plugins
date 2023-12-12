@@ -27,6 +27,12 @@ export default {
     console.log(env.VITE_NODE_SERVER_URL);
     console.log(viteNodeRunner);
 
+    try {
+      const mod = await viteNodeRunner.executeFile("/src/demo-app.ts");
+      console.log(mod);
+      return new Response(mod.hi("vite node on workerd"));
+    } catch (e) {}
+
     const resolved = await viteNodeServerProxy.resolveId("/src/demo-app.ts");
     console.log(resolved);
     if (resolved) {
@@ -35,6 +41,7 @@ export default {
       try {
         const mod = await viteNodeRunner.executeId(resolved.id);
         console.log(mod);
+        return new Response(mod.hi("vite node on workerd"));
       } catch (e) {
         console.log(e);
       }

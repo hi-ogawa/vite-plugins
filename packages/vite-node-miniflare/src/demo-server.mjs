@@ -45,11 +45,11 @@ async function main() {
     httipCompose.compose(viteNodeRpcHandler)
   );
 
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     viteNodeRpcServer.listen(8888, () => {
       resolve(null);
-    })
-  })
+    });
+  });
   console.log(":: vite node ready");
 
   //
