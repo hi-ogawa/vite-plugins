@@ -8,10 +8,10 @@ Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vi
 //
 // vite.config.ts
 //
-import { definConfig } from "vite";
+import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 
-export default definConfig({
+export default defineConfig({
   plugins: [vitePluginViteNodeMiniflare({ entry: "./worker-entry.ts" })],
 });
 
