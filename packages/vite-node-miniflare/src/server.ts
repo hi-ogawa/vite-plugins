@@ -11,13 +11,9 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
     adapter: httpServerAdapter({ endpoint: rpcBase }),
   });
 
-  function createMiddleware() {
-    // TODO
-  }
-
   function generateMiniflareOptions(options: {
     entry: string;
-    rpcHost: string;
+    rpcOrigin: string;
   }) {
     return {
       // explicitly pass `modules` to avoid Miniflare's ModuleLocator analysis error
@@ -33,7 +29,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
       unsafeEvalBinding: "__UNSAFE_EVAL",
       bindings: {
         __WORKER_ENTRY: options.entry,
-        __VITE_NODE_SERVER_RPC_URL: options.rpcHost + rpcBase,
+        __VITE_NODE_SERVER_RPC_URL: options.rpcOrigin + rpcBase,
         __VITE_NODE_RUNNER_OPTIONS: {
           root: viteNodeServer.server.config.root,
         },
@@ -43,7 +39,6 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
 
   return {
     requestHandler,
-    createMiddleware,
     generateMiniflareOptions,
   };
 }

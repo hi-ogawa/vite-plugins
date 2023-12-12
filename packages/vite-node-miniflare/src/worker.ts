@@ -12,7 +12,9 @@ export default {
     });
 
     try {
-      // TODO: invalidation
+      // TODO: better invalidation
+      viteNodeRunner.moduleCache.clear();
+
       const workerEntry = await viteNodeRunner.executeFile(env.__WORKER_ENTRY);
       return workerEntry.default.fetch(request, env);
     } catch (e) {
