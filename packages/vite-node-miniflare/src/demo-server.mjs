@@ -61,20 +61,36 @@ async function main() {
       // __VITE_ROOT: "",
     },
     log: new Log(),
+    port: 7777,
   });
   await miniflare.ready;
   console.log(":: miniflare ready");
 
   //
-  // fetch request
+  // miniflare fetch proxy (not necessary to setup by ourselves?)
   //
-  const res = await miniflare.dispatchFetch("https://dummy.local/");
+  // const miniflareServer = httipAdapterNode.createServer(
+  //   // @ts-ignore Response type mismatch
+  //   (ctx) => {
+  //     // TODO
+  //     return miniflare.dispatchFetch(ctx.request.url);
+  //   }
+  // );
+  // await new Promise((resolve) => {
+  //   miniflareServer.listen(7777, () => resolve(null));
+  // });
+  // console.log(":: miniflare fetch proxy ready at http://localhost:7777");
+
+  //
+  // demo request
+  //
+  const res = await fetch("http://127.0.0.1:7777");
   const resText = await res.text();
-  console.log("@@@ response @@@");
+  console.log("@@@ demo request/response @@@");
   console.log(resText);
 
   // TODO: still hanging resource after dispose?
-  await miniflare.dispose();
+  // await miniflare.dispose();
 }
 
 main();
