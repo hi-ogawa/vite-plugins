@@ -13,9 +13,6 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./entry.worker.js": {
-      "default": "./dist/entry.worker.js"
     }
   },
   "main": "./dist/index.js",
