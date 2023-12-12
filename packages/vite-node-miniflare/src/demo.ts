@@ -24,9 +24,8 @@ export default {
     Object.assign(globalThis, { env });
 
     try {
-      const entryModule: typeof import("./demo/entry") = await viteNodeRunner.executeFile(
-        "/src/demo/entry.ts"
-      );
+      const entryModule: typeof import("./demo/entry") =
+        await viteNodeRunner.executeFile("/src/demo/entry.ts");
       return entryModule.default.fetch(request, env);
     } catch (e) {
       console.log(e);
