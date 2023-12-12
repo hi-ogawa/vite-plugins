@@ -9,6 +9,7 @@ export default [
     format: ["esm"],
     platform: "browser",
     dts: true,
+    noExternal: [/.*/],
     esbuildOptions: (options) => {
       // patch to run "vite-node/client" on workerd
       options.define = {
