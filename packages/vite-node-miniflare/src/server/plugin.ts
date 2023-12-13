@@ -10,6 +10,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
   // hook to allow customizing miniflare options
   miniflareOptions?: (options: MiniflareOptions) => void;
+  debug?: boolean;
 }): Plugin {
   // initialize miniflare lazily on first request and
   // dispose on server close (e.g. server restart on user vite config change)
@@ -32,6 +33,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             const options = viteNodeServerRpc.generateMiniflareOptions({
               entry: pluginOptions.entry,
               rpcOrigin: ctx.url.origin,
+              debug: pluginOptions.debug,
             });
             pluginOptions.miniflareOptions?.(options);
             miniflare = new Miniflare(options);

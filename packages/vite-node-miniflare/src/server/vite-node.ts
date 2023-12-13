@@ -55,6 +55,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
   function generateMiniflareOptions(options: {
     entry: string;
     rpcOrigin: string;
+    debug?: boolean;
   }) {
     return {
       // explicitly pass `modules` to avoid Miniflare's ModuleLocator analysis error
@@ -75,6 +76,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
           root: viteDevServer.config.root,
           base: viteDevServer.config.base,
         },
+        __VITE_NODE_DEBUG: options.debug ?? false,
       },
     } satisfies MiniflareOptions;
   }

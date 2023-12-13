@@ -7,6 +7,7 @@ interface Env {
   __UNSAFE_EVAL: any;
   __VITE_NODE_SERVER_RPC_URL: string;
   __VITE_NODE_RUNNER_OPTIONS: any;
+  __VITE_NODE_DEBUG: boolean;
   __WORKER_ENTRY: string;
 }
 
@@ -27,11 +28,12 @@ export default {
       const invalidatedModules = await client.rpc.getInvalidatedModules();
       const invalidatedTree =
         client.runner.moduleCache.invalidateDepTree(invalidatedModules);
-      // TODO: log only debug mode
-      console.log("[invalidateDepTree]", {
-        invalidatedModules,
-        invalidatedTree,
-      });
+      if (env.__VITE_NODE_DEBUG) {
+        console.log("[VITE_NODE_DEBUG:invalidateDepTree]", {
+          invalidatedModules,
+          invalidatedTree,
+        });
+      }
 
       const workerEntry = await client.runner.executeId(env.__WORKER_ENTRY);
       return workerEntry.default.fetch(request, {
