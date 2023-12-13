@@ -1,3 +1,4 @@
+import { tinyReactVitePlugin } from "@hiogawa/tiny-react/dist/plugins/vite";
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "../dist/index.js";
@@ -16,5 +17,7 @@ export default defineConfig({
         options.log = new Log();
       },
     }),
+    // for hmr
+    tinyReactVitePlugin(),
   ],
 });
