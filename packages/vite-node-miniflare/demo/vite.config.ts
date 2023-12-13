@@ -23,6 +23,13 @@ export default defineConfig({
           dumpModules: true,
         };
       },
+      viteNodeRunnerOptions(options) {
+        // TODO: vite-node/client debug not working?
+        // probably need to set env var DEBUG=vite-node:client:execute
+        // https://github.com/vitest-dev/vitest/blob/9c552b6f8decb78677b20e870eb430184e0b78ea/packages/vite-node/src/client.ts#L15
+        options.debug = true;
+        // options.interopDefault = true;
+      },
     }),
     // setup component hmr
     tinyReactVitePlugin(),

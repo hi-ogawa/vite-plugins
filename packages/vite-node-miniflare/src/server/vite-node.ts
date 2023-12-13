@@ -1,6 +1,7 @@
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
 import type { MiniflareOptions } from "miniflare";
 import { type ViteDevServer, normalizePath } from "vite";
+import type { ViteNodeRunnerOptions } from "vite-node";
 import type { ViteNodeServer } from "vite-node/server";
 import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
 
@@ -56,6 +57,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
     entry: string;
     rpcOrigin: string;
     debug?: boolean;
+    viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions>;
   }) {
     return {
       // explicitly pass `modules` to avoid Miniflare's ModuleLocator analysis error
@@ -72,10 +74,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
       bindings: {
         __WORKER_ENTRY: options.entry,
         __VITE_NODE_SERVER_RPC_URL: options.rpcOrigin + rpcBase,
-        __VITE_NODE_RUNNER_OPTIONS: {
-          root: viteDevServer.config.root,
-          base: viteDevServer.config.base,
-        },
+        __VITE_NODE_RUNNER_OPTIONS: options.viteNodeRunnerOptions as any,
         __VITE_NODE_DEBUG: options.debug ?? false,
       },
     } satisfies MiniflareOptions;

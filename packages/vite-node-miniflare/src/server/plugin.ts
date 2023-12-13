@@ -2,7 +2,7 @@ import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
 import { Miniflare, type MiniflareOptions } from "miniflare";
 import type { Plugin } from "vite";
-import type { ViteNodeServerOptions } from "vite-node";
+import type { ViteNodeRunnerOptions, ViteNodeServerOptions } from "vite-node";
 import { ViteNodeServer } from "vite-node/server";
 import { name as packageName } from "../../package.json";
 import { setupViteNodeServerRpc } from "./vite-node";
@@ -13,6 +13,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   // hooks to customize options
   miniflareOptions?: (options: MiniflareOptions) => void;
   viteNodeServerOptions?: (options: ViteNodeServerOptions) => void;
+  viteNodeRunnerOptions?: (options: Partial<ViteNodeRunnerOptions>) => void;
 }): Plugin {
   // initialize miniflare lazily on first request and
   // dispose on server close (e.g. server restart on user vite config change)
@@ -34,13 +35,22 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           // TODO: extra bindings from user
           // TODO: or proxy to `wrangler.unstable_dev`
           if (!miniflare) {
-            const options = viteNodeServerRpc.generateMiniflareOptions({
-              entry: pluginOptions.entry,
-              rpcOrigin: ctx.url.origin,
-              debug: pluginOptions.debug,
-            });
-            pluginOptions.miniflareOptions?.(options);
-            miniflare = new Miniflare(options);
+            const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
+              root: server.config.root,
+              base: server.config.base,
+            };
+            pluginOptions.viteNodeRunnerOptions?.(viteNodeRunnerOptions);
+
+            const miniflareOptions = viteNodeServerRpc.generateMiniflareOptions(
+              {
+                entry: pluginOptions.entry,
+                rpcOrigin: ctx.url.origin,
+                debug: pluginOptions.debug,
+                viteNodeRunnerOptions,
+              }
+            );
+            pluginOptions.miniflareOptions?.(miniflareOptions);
+            miniflare = new Miniflare(miniflareOptions);
             await miniflare.ready;
           }
 
