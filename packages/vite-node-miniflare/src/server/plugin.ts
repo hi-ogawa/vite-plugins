@@ -26,7 +26,6 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       // setup vite-node with rpc
       const viteNodeServerOptions: ViteNodeServerOptions = {};
       pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
-
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
 
