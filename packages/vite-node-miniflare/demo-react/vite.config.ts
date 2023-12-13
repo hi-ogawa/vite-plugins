@@ -3,7 +3,7 @@ import { Log } from "miniflare";
 import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "../dist/index.js";
 
-const preBundles = ["react", "react-dom/server", "react-dom/client"];
+const preBundles = ["react", "react-dom/server"];
 const preBundleAlias = Object.fromEntries(
   preBundles.map((mod) => [
     mod,
@@ -18,10 +18,14 @@ export default defineConfig({
     target: "webworker",
     noExternal: true,
   },
-  resolve: {
-    alias: preBundleAlias,
-  },
   plugins: [
+    {
+      name: "local:ssrPrebundlePlugin",
+      enforce: "pre",
+      resolveId(source, _importer, options) {
+        return options.ssr ? preBundleAlias[source] : undefined;
+      },
+    },
     vitePluginViteNodeMiniflare({
       debug: true,
       entry: "./src/worker-entry.tsx",
