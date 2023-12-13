@@ -9,3 +9,18 @@ Pre bundle CJS dependencies since `ssr.optimizeDeps` doesn't seem to work when r
 - [ ] auto generate everything by giving a set of modules (e.g. `react`, `react/jsx-runtime`, `react-dom/server`)
   - https://tsup.egoist.dev/#javascript-api
 - [ ] do all this as vite plugin
+
+### examples
+
+```sh
+$ node --conditions=browser --input-type=module -e 'console.log(Object.keys(await import("react-dom/server")))'
+[
+  'default',
+  'renderToNodeStream',
+  'renderToReadableStream',
+  'renderToStaticMarkup',
+  'renderToStaticNodeStream',
+  'renderToString',
+  'version'
+]
+```
