@@ -1,10 +1,15 @@
 import { h, renderToString } from "@hiogawa/tiny-react";
+import type { ViteNodeMiniflareClient } from "../dist/client/vite-node";
 import { App } from "./app";
 
 export default {
-  async fetch(request: Request, _env: any) {
-    const html = renderToString(h(App, { url: request.url }));
-    const fullHtml = wrapHtml(html);
+  async fetch(request: Request, env: any) {
+    const ssrHtml = renderToString(h(App, { url: request.url }));
+    let fullHtml = wrapHtml(ssrHtml);
+    if (env.__VITE_NODE_CLIENT) {
+      const client: ViteNodeMiniflareClient = env.__VITE_NODE_CLIENT;
+      fullHtml = await client.rpc.transformIndexHtml("/", fullHtml);
+    }
     return new Response(fullHtml, {
       headers: {
         "content-type": "text/html",
@@ -13,12 +18,10 @@ export default {
   },
 };
 
-// TODO: expose ViteDevServer.transformIndexHtml to workered?
 const wrapHtml = (html: string) => `
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="/@vite/client" type="module"></script>
     <meta charset="UTF-8" />
     <title>vite-node-miniflare-demo</title>
     <meta

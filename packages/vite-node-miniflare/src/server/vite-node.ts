@@ -1,13 +1,25 @@
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
 import type { MiniflareOptions } from "miniflare";
+import type { ViteDevServer } from "vite";
 import type { ViteNodeServer } from "vite-node/server";
 import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
+
+// TODO: add endpoint to check module invalidation?
+// TODO: allow expanding API for framework features? (e.g. Remix's DevServerHooks)
+export type ViteNodeRpc = Pick<ViteNodeServer, "fetchModule" | "resolveId"> &
+  Pick<ViteDevServer, "transformIndexHtml">;
 
 export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
   const rpcBase = "/__vite_node_rpc__";
 
+  const rpcRoutes: ViteNodeRpc = {
+    fetchModule: viteNodeServer.fetchModule.bind(viteNodeServer),
+    resolveId: viteNodeServer.resolveId.bind(viteNodeServer),
+    transformIndexHtml: viteNodeServer.server.transformIndexHtml,
+  };
+
   const requestHandler = exposeTinyRpc({
-    routes: viteNodeServer,
+    routes: rpcRoutes,
     adapter: httpServerAdapter({ endpoint: rpcBase }),
   });
 

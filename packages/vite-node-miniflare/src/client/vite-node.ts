@@ -1,27 +1,38 @@
-import { httpClientAdapter, proxyTinyRpc } from "@hiogawa/tiny-rpc";
+import {
+  type TinyRpcProxy,
+  httpClientAdapter,
+  proxyTinyRpc,
+} from "@hiogawa/tiny-rpc";
 import type { ViteNodeRunnerOptions } from "vite-node";
 import { ViteNodeRunner } from "vite-node/client";
-import type { ViteNodeServer } from "vite-node/server";
+import type { ViteNodeRpc } from "..";
 import { __setUnsafeEval } from "./polyfills/node-vm";
 
-export function createViteNodeRunner(options: {
+export interface ViteNodeMiniflareClient {
+  rpc: TinyRpcProxy<ViteNodeRpc>;
+  runner: ViteNodeRunner;
+}
+
+export function createViteNodeClient(options: {
   unsafeEval: any;
   serverRpcUrl: string;
   runnerOptions: Omit<ViteNodeRunnerOptions, "fetchModule" | "resolveId">;
-}): ViteNodeRunner {
+}): ViteNodeMiniflareClient {
   __setUnsafeEval(options.unsafeEval);
 
-  const viteNodeServerProxy = proxyTinyRpc<ViteNodeServer>({
+  const rpc = proxyTinyRpc<ViteNodeRpc>({
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),
   });
 
-  return new ViteNodeRunner({
+  const runner = new ViteNodeRunner({
     ...options.runnerOptions,
     fetchModule(id) {
-      return viteNodeServerProxy.fetchModule(id);
+      return rpc.fetchModule(id);
     },
     resolveId(id, importer) {
-      return viteNodeServerProxy.resolveId(id, importer);
+      return rpc.resolveId(id, importer);
     },
   });
+
+  return { rpc, runner };
 }
