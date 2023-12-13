@@ -34,6 +34,7 @@
     "dev": "cd demo && vite dev",
     "dev-react": "cd demo-react && vite dev",
     "test-e2e": "playwright test",
+    "pre-bundle": "cd pre-bundle && tsup",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {

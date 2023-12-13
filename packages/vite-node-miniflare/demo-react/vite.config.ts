@@ -3,55 +3,23 @@ import { Log } from "miniflare";
 import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "../dist/index.js";
 
+const preBundles = ["react", "react-dom/server"];
+const preBundleAlias = Object.fromEntries(
+  preBundles.map((mod) => [
+    mod,
+    new URL(`../pre-bundle/dist/${mod}/index.js`, import.meta.url).pathname,
+  ])
+);
+
 export default defineConfig({
   clearScreen: false,
   appType: "custom",
-  optimizeDeps: {
-    force: true,
-    include: [
-      "react",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "react-dom/client",
-      "react-dom/server.browser",
-    ],
-    needsInterop: [
-      "react",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "react-dom/client",
-      "react-dom/server.browser",
-    ],
-    disabled: false,
-  },
   ssr: {
     target: "webworker",
     noExternal: true,
-    optimizeDeps: {
-      disabled: false,
-      include: [
-        "react",
-        "react/jsx-runtime",
-        "react/jsx-dev-runtime",
-        "react-dom/client",
-        "react-dom/server.browser",
-      ],
-      needsInterop: [
-        "react",
-        "react/jsx-runtime",
-        "react/jsx-dev-runtime",
-        "react-dom/client",
-        "react-dom/server.browser",
-      ],
-    },
   },
   resolve: {
-    dedupe: [
-      "react",
-      "react-dom",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-    ],
+    alias: preBundleAlias,
   },
   plugins: [
     vitePluginViteNodeMiniflare({

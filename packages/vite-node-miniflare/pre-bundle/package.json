@@ -1,0 +1,11 @@
+{
+  "name": "@hiogawa/pre-bundle",
+  "private": true,
+  "type": "module",
+  "xxxexports": {
+    "./react": "./dist/react/index.js",
+    "./react/jsx-runtime": "./dist/react/jsx-runtime.js",
+    "./react/jsx-dev-runtime": "./dist/react/jsx-dev-runtime.js",
+    "./react-dom/server": "./dist/react-dom/server.js"
+  }
+}
