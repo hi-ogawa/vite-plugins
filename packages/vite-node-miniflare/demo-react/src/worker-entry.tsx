@@ -1,3 +1,4 @@
+import React from "react";
 import { renderToString } from "react-dom/server.browser";
 import type { ViteNodeMiniflareClient } from "../../dist/client/vite-node";
 import { App } from "./app";

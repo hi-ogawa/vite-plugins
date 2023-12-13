@@ -59,16 +59,14 @@ export default defineConfig({
         options.debug = {
           dumpModules: true,
         };
-        // options.deps = {
-        //   inline: true,
-        // }
-        // options.transformMode = { web: [/react\/jsx-dev-runtime/] };
-        options.transformMode = { web: [/.*/] };
+      },
+      viteNodeRunnerOptions(options) {
+        options.interopDefault = true;
       },
       miniflareOptions(options) {
         options.log = new Log();
       },
     }),
-    react(),
+    react({ jsxRuntime: "classic" }),
   ],
 });
