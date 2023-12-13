@@ -4,6 +4,8 @@ Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vi
 
 ## usage
 
+See also [`./demo`](./demo) for SSR + HMR example.
+
 ```ts
 //
 // vite.config.ts
@@ -34,3 +36,4 @@ export default {
 - https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation
 - https://github.com/vitest-dev/vitest/tree/main/packages/vite-node
 - https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare
+- https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/vite-node.ts
