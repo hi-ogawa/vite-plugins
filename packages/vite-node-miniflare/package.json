@@ -32,6 +32,7 @@
   "scripts": {
     "build": "BUILD_STEP=0 tsup && BUILD_STEP=1 tsup",
     "dev": "cd demo && vite dev",
+    "test-e2e": "playwright test",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {
