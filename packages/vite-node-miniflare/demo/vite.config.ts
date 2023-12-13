@@ -1,6 +1,6 @@
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
-import { vitePluginViteNodeMiniflare } from "./dist/index.js";
+import { vitePluginViteNodeMiniflare } from "../dist/index.js";
 
 export default defineConfig({
   clearScreen: false,
@@ -11,7 +11,7 @@ export default defineConfig({
   },
   plugins: [
     vitePluginViteNodeMiniflare({
-      entry: "./demo/worker-entry.ts",
+      entry: "./src/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },

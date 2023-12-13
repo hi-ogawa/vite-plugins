@@ -31,7 +31,7 @@
   ],
   "scripts": {
     "build": "BUILD_STEP=0 tsup && BUILD_STEP=1 tsup",
-    "dev": "vite -c vite.config.demo.ts",
+    "dev": "cd demo && vite dev",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {

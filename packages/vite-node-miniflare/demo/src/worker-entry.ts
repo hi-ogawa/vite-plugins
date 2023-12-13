@@ -1,5 +1,5 @@
 import { h, renderToString } from "@hiogawa/tiny-react";
-import type { ViteNodeMiniflareClient } from "../dist/client/vite-node";
+import type { ViteNodeMiniflareClient } from "../../dist/client/vite-node";
 import { App } from "./app";
 
 export default {
@@ -36,7 +36,7 @@ const wrapHtml = (html: string) => `
   </head>
   <body>
     <div id="root">${html}</div>
-    <script src="/demo/client.ts" type="module"></script>
+    <script src="/src/client.ts" type="module"></script>
   </body>
 </html>
 `;
