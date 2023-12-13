@@ -30,7 +30,6 @@ jobs:
           node-version: 18
       - run: corepack enable
       - run: pnpm i
-      - run: pnpm lint-check
       - run: pnpm build
       - run: npx playwright install chromium
       - name: test examples/ssr

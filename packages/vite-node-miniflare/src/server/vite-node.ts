@@ -1,22 +1,51 @@
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
 import type { MiniflareOptions } from "miniflare";
-import type { ViteDevServer } from "vite";
+import { type ViteDevServer, normalizePath } from "vite";
 import type { ViteNodeServer } from "vite-node/server";
 import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
 
-// TODO: add endpoint to check module invalidation?
 // TODO: allow expanding API for framework features? (e.g. Remix's DevServerHooks)
-export type ViteNodeRpc = Pick<ViteNodeServer, "fetchModule" | "resolveId"> &
-  Pick<ViteDevServer, "transformIndexHtml">;
+// prettier-ignore
+export type ViteNodeRpc =
+  Pick<ViteNodeServer, "fetchModule" | "resolveId"> &
+  Pick<ViteDevServer, "transformIndexHtml"> &
+  {
+    getInvalidatedModules: () => string[];
+  };
 
 export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
   const rpcBase = "/__vite_node_rpc__";
+
+  // keep track of invalidated modules similar to nuxt
+  // https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/vite-node.ts#L62
+  const invalidatedModules = new Set<string>();
 
   const rpcRoutes: ViteNodeRpc = {
     fetchModule: viteNodeServer.fetchModule.bind(viteNodeServer),
     resolveId: viteNodeServer.resolveId.bind(viteNodeServer),
     transformIndexHtml: viteNodeServer.server.transformIndexHtml,
+    getInvalidatedModules: () => {
+      // there must be at most one client to make use of this RPC
+      const result = [...invalidatedModules];
+      invalidatedModules.clear();
+      return result;
+    },
   };
+
+  // TODO: support framework-specific virtual modules invalidation?
+  const viteDevServer = viteNodeServer.server;
+  viteDevServer.watcher.on("all", (_event, filepath) => {
+    const modules = viteDevServer.moduleGraph.getModulesByFile(
+      normalizePath(filepath)
+    );
+    if (modules) {
+      for (const mod of modules) {
+        if (mod.id) {
+          invalidatedModules.add(mod.id);
+        }
+      }
+    }
+  });
 
   const requestHandler = exposeTinyRpc({
     routes: rpcRoutes,
@@ -26,6 +55,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
   function generateMiniflareOptions(options: {
     entry: string;
     rpcOrigin: string;
+    debug?: boolean;
   }) {
     return {
       // explicitly pass `modules` to avoid Miniflare's ModuleLocator analysis error
@@ -43,8 +73,10 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
         __WORKER_ENTRY: options.entry,
         __VITE_NODE_SERVER_RPC_URL: options.rpcOrigin + rpcBase,
         __VITE_NODE_RUNNER_OPTIONS: {
-          root: viteNodeServer.server.config.root,
+          root: viteDevServer.config.root,
+          base: viteDevServer.config.base,
         },
+        __VITE_NODE_DEBUG: options.debug ?? false,
       },
     } satisfies MiniflareOptions;
   }
