@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { TestComponent } from "./component";
 
 export function App(props: { url: string }) {
-  const [input, setInput] = useState("");
-  const [counter, setCounter] = useState(0);
+  const [input, setInput] = React.useState("");
+  const [counter, setCounter] = React.useState(0);
   return (
     <div
       style={{

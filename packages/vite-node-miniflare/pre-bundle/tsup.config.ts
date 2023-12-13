@@ -6,6 +6,7 @@ export default defineConfig(() => ({
     "src/react/jsx-runtime/index.js",
     "src/react/jsx-dev-runtime/index.js",
     "src/react-dom/server/index.js",
+    "src/react-dom/client/index.js",
   ],
   format: ["esm"],
   platform: "browser",

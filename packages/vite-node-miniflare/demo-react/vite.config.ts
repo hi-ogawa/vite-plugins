@@ -3,7 +3,7 @@ import { Log } from "miniflare";
 import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "../dist/index.js";
 
-const preBundles = ["react", "react-dom/server"];
+const preBundles = ["react", "react-dom/server", "react-dom/client"];
 const preBundleAlias = Object.fromEntries(
   preBundles.map((mod) => [
     mod,

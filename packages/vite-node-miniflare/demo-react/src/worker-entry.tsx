@@ -1,11 +1,11 @@
 import React from "react";
-import { renderToString } from "react-dom/server";
+import ReactDomServer from "react-dom/server";
 import type { ViteNodeMiniflareClient } from "../../dist/client/vite-node";
 import { App } from "./app";
 
 export default {
   async fetch(request: Request, env: any) {
-    const ssrHtml = renderToString(<App url={request.url} />);
+    const ssrHtml = ReactDomServer.renderToString(<App url={request.url} />);
     let fullHtml = wrapHtml(ssrHtml);
     if (env.__VITE_NODE_CLIENT) {
       const client: ViteNodeMiniflareClient = env.__VITE_NODE_CLIENT;
