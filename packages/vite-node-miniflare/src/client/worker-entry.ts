@@ -28,7 +28,10 @@ export default {
       const invalidatedTree =
         client.runner.moduleCache.invalidateDepTree(invalidatedModules);
       // TODO: log only debug mode
-      console.log("[invalidateDepTree]", { invalidatedModules, invalidatedTree });
+      console.log("[invalidateDepTree]", {
+        invalidatedModules,
+        invalidatedTree,
+      });
 
       const workerEntry = await client.runner.executeId(env.__WORKER_ENTRY);
       return workerEntry.default.fetch(request, {
