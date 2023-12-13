@@ -16,6 +16,8 @@ export type ViteNodeRpc =
 export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
   const rpcBase = "/__vite_node_rpc__";
 
+  // keep track of invalidated modules similar to nuxt
+  // https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/vite-node.ts#L62
   const invalidatedModules = new Set<string>();
 
   const rpcRoutes: ViteNodeRpc = {
@@ -30,8 +32,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
     },
   };
 
-  // keep track of invalidated modules
-  // TODO: support framework-specific virtual modules invalidation
+  // TODO: support framework-specific virtual modules invalidation?
   const viteDevServer = viteNodeServer.server;
   viteDevServer.watcher.on("all", (_event, filepath) => {
     const modules = viteDevServer.moduleGraph.getModulesByFile(

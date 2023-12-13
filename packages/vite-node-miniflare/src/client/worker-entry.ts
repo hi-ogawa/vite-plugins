@@ -22,8 +22,8 @@ export default {
         runnerOptions: env.__VITE_NODE_RUNNER_OPTIONS,
       });
 
-      // invalidate modules
-      // cf. https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/runtime/vite-node.mjs#L21-L23
+      // invalidate modules similar to nuxt
+      // https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/runtime/vite-node.mjs#L21-L23
       const invalidatedModules = await client.rpc.getInvalidatedModules();
       const invalidatedTree =
         client.runner.moduleCache.invalidateDepTree(invalidatedModules);
