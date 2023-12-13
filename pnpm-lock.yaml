@@ -283,8 +283,8 @@ importers:
         version: 1.0.4(@types/node@18.16.18)
     devDependencies:
       '@hiogawa/tiny-react':
-        specifier: 0.0.2-pre.3
-        version: 0.0.2-pre.3(vite@5.0.4)
+        specifier: 0.0.2-pre.5
+        version: 0.0.2-pre.5(vite@5.0.4)
       '@hiogawa/tiny-rpc':
         specifier: ^0.2.3-pre.11
         version: 0.2.3-pre.11
@@ -1815,8 +1815,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@hiogawa/tiny-react@0.0.2-pre.3(vite@5.0.4):
-    resolution: {integrity: sha512-BQXd9c1jrjM1fwfgkVI/ctDyGOxABr5mSi9P2bJLeFcfiSXKR+6n5YVkM2cHVArA1PzfUsuHTSmMinpLIa8MMQ==}
+  /@hiogawa/tiny-react@0.0.2-pre.5(vite@5.0.4):
+    resolution: {integrity: sha512-ac9Fr+KKaj5BWOqUR0fdGZpy4bDQg+rn+CQbnrB26CZ79qqTkoU/Kzd6pPl4wXzqY9d70bnowKBu/EXM+B2Now==}
     peerDependencies:
       vite: '*'
     peerDependenciesMeta:

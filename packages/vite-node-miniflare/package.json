@@ -42,7 +42,7 @@
     "vite-node": "^1.0.4"
   },
   "devDependencies": {
-    "@hiogawa/tiny-react": "0.0.2-pre.3",
+    "@hiogawa/tiny-react": "0.0.2-pre.5",
     "@hiogawa/tiny-rpc": "^0.2.3-pre.11",
     "@hiogawa/utils": "1.6.1-pre.9",
     "esbuild": "^0.18.6",

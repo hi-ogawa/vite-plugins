@@ -12,13 +12,19 @@ export default defineConfig({
   },
   plugins: [
     vitePluginViteNodeMiniflare({
+      debug: true,
       // TODO: must be a relative url for invalidation to work?
       entry: "./src/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },
+      viteNodeServerOptions(options) {
+        options.debug = {
+          dumpModules: true,
+        };
+      },
     }),
-    // for hmr
+    // setup component hmr
     tinyReactVitePlugin(),
   ],
 });
