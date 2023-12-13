@@ -3,7 +3,11 @@ import { Log } from "miniflare";
 import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "../dist/index.js";
 
-const preBundles = ["react", "react-dom/server"];
+const preBundles = [
+  "react",
+  "react/jsx-dev-runtime",
+  "react-dom/server",
+];
 const preBundleAlias = Object.fromEntries(
   preBundles.map((mod) => [
     mod,
@@ -22,6 +26,7 @@ export default defineConfig({
     {
       name: "local:ssrPrebundlePlugin",
       enforce: "pre",
+      apply: "serve",
       resolveId(source, _importer, options) {
         return options.ssr ? preBundleAlias[source] : undefined;
       },
@@ -41,6 +46,6 @@ export default defineConfig({
         options.log = new Log();
       },
     }),
-    react({ jsxRuntime: "classic" }),
+    react(),
   ],
 });
