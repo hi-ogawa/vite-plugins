@@ -7,7 +7,7 @@ export default defineConfig({
   clearScreen: false,
   appType: "custom",
   optimizeDeps: {
-    // force: true,
+    force: true,
     include: [
       "react",
       "react/jsx-runtime",
@@ -22,11 +22,13 @@ export default defineConfig({
       "react-dom/client",
       "react-dom/server.browser",
     ],
+    disabled: false,
   },
   ssr: {
-    // target: "webworker",
+    target: "webworker",
     noExternal: true,
     optimizeDeps: {
+      disabled: false,
       include: [
         "react",
         "react/jsx-runtime",
