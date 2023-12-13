@@ -11,7 +11,7 @@ export default defineConfig({
   },
   plugins: [
     vitePluginViteNodeMiniflare({
-      entry: "./demo/server.ts",
+      entry: "./demo/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },

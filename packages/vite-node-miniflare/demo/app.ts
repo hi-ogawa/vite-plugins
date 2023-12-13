@@ -1,7 +1,5 @@
 import { h, useState } from "@hiogawa/tiny-react";
 
-console.log("@@ importing app.ts");
-
 export function App(props: { url: string }) {
   const [counter, setCounter] = useState(0);
 
