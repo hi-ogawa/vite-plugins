@@ -62,7 +62,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
       modules: [
         {
           type: "ESModule",
-          path: "/dummy.js",
+          path: "/__vite-node-miniflare-entry.js",
           contents: WORKER_ENTRY_SCRIPT,
         },
       ],

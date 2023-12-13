@@ -1,4 +1,4 @@
-import { useState } from "@hiogawa/tiny-react";
+import { useState } from "react";
 import { TestComponent } from "./component";
 
 export function App(props: { url: string }) {

@@ -36,7 +36,7 @@ const wrapHtml = (html: string) => `
   </head>
   <body>
     <div id="root">${html}</div>
-    <script src="./src/client.ts" type="module"></script>
+    <script src="./src/client.tsx" type="module"></script>
   </body>
 </html>
 `;

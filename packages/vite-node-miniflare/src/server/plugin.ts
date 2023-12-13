@@ -2,6 +2,7 @@ import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
 import { Miniflare, type MiniflareOptions } from "miniflare";
 import type { Plugin } from "vite";
+import type { ViteNodeServerOptions } from "vite-node";
 import { ViteNodeServer } from "vite-node/server";
 import { name as packageName } from "../../package.json";
 import { setupViteNodeServerRpc } from "./vite-node";
@@ -10,6 +11,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
   // hook to allow customizing miniflare options
   miniflareOptions?: (options: MiniflareOptions) => void;
+  viteNodeServerOptions?: (options: ViteNodeServerOptions) => void;
   debug?: boolean;
 }): Plugin {
   // initialize miniflare lazily on first request and
@@ -21,7 +23,15 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
     apply: "serve",
     async configureServer(server) {
       // setup vite-node with rpc
-      const viteNodeServer = new ViteNodeServer(server);
+
+      // force "web" by default?
+      const viteNodeServerOptions = {
+        // transformMode: {
+        //   web: [/.*/]
+        // }
+      };
+      pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
+      const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
 
       // setup middleware

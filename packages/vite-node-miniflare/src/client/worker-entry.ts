@@ -22,7 +22,9 @@ export default {
         serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
         runnerOptions: env.__VITE_NODE_RUNNER_OPTIONS,
       });
-      Object.assign(globalThis, { process: { env: {} } });
+
+      // TODO
+      Object.assign(globalThis, { process: { env: {} }, window: {} });
 
       // invalidate modules similar to nuxt
       // https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/runtime/vite-node.mjs#L21-L23
@@ -43,7 +45,7 @@ export default {
       });
     } catch (e) {
       console.error(e);
-      return new Response("error", { status: 500 });
+      return new Response("vite-node-miniflare error", { status: 500 });
     }
   },
 };
