@@ -5,7 +5,7 @@ import type { RoutesMeta } from "../../route-utils";
 export type RouteDependencies = {
   js: string[];
   css: string[]; // TODO: not tested yet
-  // data?: string[]; // TODO: data request too?
+  data?: string[];
 };
 
 function mergeRouteDependencies(ls: RouteDependencies[]): RouteDependencies {

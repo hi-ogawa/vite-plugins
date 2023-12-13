@@ -30,6 +30,7 @@ async function main() {
     routes,
     routesMeta,
     manifest: serverHandoff.__viteManifest,
+    serverLoaderRouteIds: serverHandoff.__serverLoaderRouteIds,
   });
   setupGlobalPreloadHandler();
 
