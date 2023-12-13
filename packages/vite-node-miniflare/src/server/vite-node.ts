@@ -1,7 +1,7 @@
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
 import type { MiniflareOptions } from "miniflare";
 import type { ViteNodeServer } from "vite-node/server";
-import { WORKER_SCRIPT } from "./worker-script";
+import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
 
 export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
   const rpcBase = "/__vite_node_rpc__";
@@ -21,7 +21,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
         {
           type: "ESModule",
           path: "/dummy.js",
-          contents: WORKER_SCRIPT,
+          contents: WORKER_ENTRY_SCRIPT,
         },
       ],
       modulesRoot: "/",

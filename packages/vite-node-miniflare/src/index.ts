@@ -1,3 +1,3 @@
-export * from "./worker-script";
-export * from "./server";
-export * from "./plugin";
+export * from "./client/worker-entry-script";
+export * from "./server/vite-node";
+export * from "./server/plugin";

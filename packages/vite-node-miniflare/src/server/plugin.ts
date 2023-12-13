@@ -3,8 +3,8 @@ import * as httipCompose from "@hattip/compose";
 import { Miniflare, type MiniflareOptions } from "miniflare";
 import type { Plugin } from "vite";
 import { ViteNodeServer } from "vite-node/server";
-import { name as packageName } from "../package.json";
-import { setupViteNodeServerRpc } from "./server";
+import { name as packageName } from "../../package.json";
+import { setupViteNodeServerRpc } from "./vite-node";
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;

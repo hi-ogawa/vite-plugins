@@ -1,5 +1,5 @@
 import { ViteNodeRunner } from "vite-node/client";
-import { createViteNodeRunner } from "./client";
+import { createViteNodeRunner } from "./vite-node";
 
 let viteNodeRunner: ViteNodeRunner;
 

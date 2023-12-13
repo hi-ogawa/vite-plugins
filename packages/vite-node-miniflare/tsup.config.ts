@@ -5,10 +5,14 @@ import { defineConfig } from "tsup";
 
 export default [
   defineConfig(() => ({
-    entry: ["src/worker.ts"],
+    entry: {
+      "client/worker-entry": "src/client/worker-entry.ts",
+      "client/vite-node": "src/client/vite-node.ts",
+    },
     format: ["esm"],
     platform: "browser",
     dts: true,
+    splitting: false,
     noExternal: [/.*/],
     esbuildOptions: (options) => {
       // patch to run "vite-node/client" on workerd
@@ -16,13 +20,10 @@ export default [
         "process.platform": '"linux"',
         "process.env": "{}",
       };
-      options.alias = {
-        "node:fs": "./src/polyfills/node-fs.ts",
-        "node:module": "./src/polyfills/node-module.ts",
-        "node:path": "./src/polyfills/node-path.ts",
-        "node:url": "./src/polyfills/node-url.ts",
-        "node:vm": "./src/polyfills/node-vm.ts",
-      };
+      options.alias = {};
+      for (const mod of ["fs", "module", "path", "url", "vm"]) {
+        options.alias[`node:${mod}`] = `./src/client/polyfills/node-${mod}.ts`;
+      }
     },
   })),
   defineConfig(() => ({
@@ -32,8 +33,8 @@ export default [
     dts: true,
     esbuildOptions: (options) => {
       options.define = {
-        __DEFINE_WORKER_SCRIPT: JSON.stringify(
-          fs.readFileSync("./dist/worker.js", "utf-8")
+        __DEFINE_WORKER_ENTRY_SCRIPT: JSON.stringify(
+          fs.readFileSync("./dist/client/worker-entry.js", "utf-8")
         ),
       };
     },
