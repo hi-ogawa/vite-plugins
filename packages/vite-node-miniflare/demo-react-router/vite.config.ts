@@ -1,3 +1,4 @@
+import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import react from "@vitejs/plugin-react";
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
@@ -13,12 +14,13 @@ export default defineConfig({
     noExternal: true,
   },
   plugins: [
+    globRoutesPlugin({ root: "/src/routes" }),
     vitePluginPreBundle({
       include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
     }),
     vitePluginViteNodeMiniflare({
       debug: true,
-      entry: "./src/worker-entry.tsx",
+      entry: "./src/server/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },
