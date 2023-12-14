@@ -40,16 +40,16 @@ export async function preBundle(mods: string[], outDir: string) {
   const esbuild = await import("esbuild");
 
   const srcDir = path.join(outDir, ".tmp");
-
   const entries: Record<string, string> = {};
-
+  const alias: Record<string, string> = {};
   for (const mod of mods) {
     const entryCode = await generateEntryCode(mod);
     const entry = path.join(mod, "index.js");
     const entryPath = path.join(srcDir, entry);
     await fs.promises.mkdir(path.dirname(entryPath), { recursive: true });
     await fs.promises.writeFile(entryPath, entryCode);
-    entries[entry] = entryPath;
+    entries[entry.slice(0, -3)] = entryPath;
+    alias[mod] = path.join(outDir, entry);
   }
 
   await esbuild.build({
@@ -63,4 +63,6 @@ export async function preBundle(mods: string[], outDir: string) {
     tsconfigRaw: {},
     logLevel: "info",
   });
+
+  return alias;
 }

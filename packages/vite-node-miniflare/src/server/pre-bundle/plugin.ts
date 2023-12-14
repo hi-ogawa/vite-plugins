@@ -1,20 +1,34 @@
-import { type Plugin } from "vite";
+import path from "node:path";
+import process from "node:process";
+import { colors } from "@hiogawa/utils";
+import { type Plugin, type ResolvedConfig } from "vite";
 import { name as packageName } from "../../../package.json";
+import { preBundle } from "./utils";
 
-// TODO
+// TODO: cache
 
 export function vitePluginPreBundle(pluginOptions: {
   include: string[];
-  force?: boolean;
 }): Plugin {
-  let alias!: Record<string, string>;
+  let alias: Record<string, string>;
+  let config: ResolvedConfig;
+  const name = `${packageName}/pre-bundle`;
 
   return {
-    name: `${packageName}/pre-bundle`,
+    name,
     enforce: "pre",
-    async buildStart(options) {
-      pluginOptions.include;
-      options;
+    configResolved(config_) {
+      config = config_;
+    },
+    async buildStart(_options) {
+      config.logger.info(
+        ["", colors.cyan(`[${name}] pre-bundling...`)].join("\n")
+      );
+      const outDir = path.join(
+        process.cwd(),
+        "node_modules/.cache/@hiogawa/vite-node-miniflare/pre-bundle"
+      );
+      alias = await preBundle(pluginOptions.include, outDir);
     },
     resolveId(source, _importer, options) {
       return options.ssr ? alias[source] : undefined;

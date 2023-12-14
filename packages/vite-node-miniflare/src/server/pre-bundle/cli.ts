@@ -1,3 +1,5 @@
+import path from "node:path";
+import process from "node:process";
 import { parseArgs } from "node:util";
 import { preBundle } from "./utils";
 
@@ -7,7 +9,10 @@ async function main() {
     options: {
       outDir: {
         type: "string",
-        default: "node_modules/.cache/@hiogawa/vite-node-miniflare/pre-bundle",
+        default: path.join(
+          process.cwd(),
+          "node_modules/.cache/@hiogawa/vite-node-miniflare/pre-bundle"
+        ),
       },
     },
   });

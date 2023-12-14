@@ -30,14 +30,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm run /^build:/",
-    "build:vite-node": "BUILD_STEP=0 tsup && BUILD_STEP=1 tsup",
-    "build:pre-bundle": "tsup --config tsup.config.pre-bundle.ts",
+    "build": "BUILD_STEP=0 tsup && BUILD_STEP=1 tsup",
     "dev": "cd demo && vite dev",
     "dev-react": "cd demo-react && vite dev",
     "test-e2e": "playwright test",
     "test-e2e-react": "E2E_COMMAND='pnpm dev-react' playwright test",
-    "pre-bundle": "node --conditions browser ./dist/server/pre-bundle/cli.js react react/jsx-dev-runtime react-dom/server",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {
