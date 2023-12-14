@@ -24,7 +24,11 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
     apply: "serve",
     async configureServer(server) {
       // setup vite-node with rpc
-      const viteNodeServerOptions: ViteNodeServerOptions = {};
+      const viteNodeServerOptions: ViteNodeServerOptions = {
+        debug: {
+          dumpModules: pluginOptions.debug,
+        },
+      };
       pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
@@ -38,7 +42,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
               root: server.config.root,
               base: server.config.base,
-              debug: pluginOptions.debug,
+              debug: !!pluginOptions.debug,
             };
             pluginOptions.viteNodeRunnerOptions?.(viteNodeRunnerOptions);
 

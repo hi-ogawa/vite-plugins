@@ -17,11 +17,6 @@ export default defineConfig({
       miniflareOptions(options) {
         options.log = new Log();
       },
-      viteNodeServerOptions(options) {
-        options.debug = {
-          dumpModules: true,
-        };
-      },
     }),
     tinyReactVitePlugin(),
   ],
