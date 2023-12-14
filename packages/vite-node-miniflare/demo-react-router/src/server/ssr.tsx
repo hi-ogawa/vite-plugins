@@ -98,7 +98,11 @@ const DOCUMENT_HTML_TEMPLATE = `
       name="viewport"
       content="width=device-width, height=device-height, initial-scale=1.0"
     />
-    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="https://iconify-dark-hiro18181.vercel.app/icon/ri/code-s-slash-line"
+    />
     <style>
       html,
       body,
