@@ -20,7 +20,7 @@ export default defineConfig({
     }),
     vitePluginViteNodeMiniflare({
       debug: true,
-      entry: "./src/server/worker-entry.ts",
+      entry: "./src/server/worker-entry-wrapper.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },
