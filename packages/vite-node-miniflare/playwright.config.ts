@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 6173;
+const command = process.env.E2E_COMMAND ?? "pnpm dev";
 
 export default defineConfig({
   testDir: "e2e",
@@ -12,21 +13,11 @@ export default defineConfig({
     {
       name: "chromium",
       use: devices["Desktop Chrome"],
-      // use: {
-      //   browserName: "chromium",
-      //   // adapt viewport size to browser window size specified below. otherwise viewport will get cropped.
-      //   // https://github.com/microsoft/playwright/issues/1086#issuecomment-592227413
-      //   viewport: null,
-      //   launchOptions: {
-      //     args: ["--window-size=1200,800"],
-      //   },
-      // },
     },
   ],
   webServer: {
-    command: `pnpm dev --port ${PORT} --strict-port`,
+    command: `${command} --port ${PORT} --strict-port`,
     port: PORT,
-    reuseExistingServer: true,
   },
   forbidOnly: Boolean(process.env["CI"]),
   retries: process.env.CI ? 2 : 0,
