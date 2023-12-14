@@ -1,10 +1,15 @@
 # examples
 
+```sh
+# use https://github.com/tiged/tiged to copy template
+npm install -g tiged
+tiged hi-ogawa/vite-plugins/examples/spa my-spa-app
+tiged hi-ogawa/vite-plugins/examples/ssr my-ssr-app
+```
+
 ## todo
 
 - [x] e2e
-- [ ] package for `npm create`
-  - just copying a whole directory (e.g. `examples/ssr`) works for now (e.g. by [`git-clone-sparse.sh`](https://github.com/hi-ogawa/misc/blob/908192754160b4c02f68274c9f3152d161de2633/scripts/git-clone-sparse.sh))
 - [ ] more build targets
   - [x] vercel edge
   - [x] vercel serverless
