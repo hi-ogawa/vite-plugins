@@ -1,46 +1,25 @@
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
 import { parseArgs } from "node:util";
 import * as esbuild from "esbuild";
 
-/*
+// quick-and-dirty CJS pre-bundling CLI
+// since `ssr.optimizeDeps` doesn't seem to work when running vite-node client on workered
 
-Quick-and-dirty CJS pre-bundling CLI
-since `ssr.optimizeDeps` doesn't seem to work when running vite-node client on workered
-
-Usage
-  node --conditions browser misc/pre-bundle.mjs react react/jsx-dev-runtime react-dom/server
-
-TODO:
-- as cli package?
-- as vite plugin (with ssr-only resolve.alias)?
-
-*/
-
-/**
- *
- * @param {string} mod
- */
-async function generateCode(mod) {
+async function generateCode(mod: string) {
+  // execute external process to add `--conditions` explicitly?
   const modExports = await import(mod);
   const names = Object.keys(modExports);
-  const specifiers = names.join(", ");
   const code = `\
-export { ${specifiers} } from "${mod}";
+export { ${names.join(", ")} } from "${mod}";
 `;
   return code;
 }
 
-/**
- *
- * @param {string[]} mods
- * @param {string} outDir
- */
-async function preBundle(mods, outDir) {
+async function preBundle(mods: string[], outDir: string) {
   const srcDir = path.join(outDir, ".tmp");
 
-  /** @type {Record<string, string>} */
-  const entries = {};
+  const entries: Record<string, string> = {};
 
   for (const mod of mods) {
     const entryCode = await generateCode(mod);
@@ -70,11 +49,11 @@ async function main() {
     options: {
       outDir: {
         type: "string",
-        default: "node_modules/.cache/@hiogawa/pre-bundle",
+        default: "node_modules/.cache/@hiogawa/vite-node-miniflare/pre-bundle",
       },
     },
   });
-  preBundle(args.positionals, args.values.outDir);
+  await preBundle(args.positionals, args.values.outDir!);
 }
 
 main();

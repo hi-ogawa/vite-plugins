@@ -9,7 +9,7 @@ const preBundleAlias = Object.fromEntries(
   preBundles.map((mod) => [
     mod,
     new URL(
-      `../node_modules/.cache/@hiogawa/pre-bundle/${mod}/index.js`,
+      `../node_modules/.cache/@hiogawa/vite-node-miniflare/pre-bundle/${mod}/index.js`,
       import.meta.url
     ).pathname,
   ])
