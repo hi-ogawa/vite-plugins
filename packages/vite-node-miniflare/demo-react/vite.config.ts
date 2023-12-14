@@ -1,19 +1,10 @@
 import react from "@vitejs/plugin-react";
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
-import { vitePluginViteNodeMiniflare } from "../dist/index.js";
-
-// cf. packages/vite-node-miniflare/misc/pre-bundle.mjs
-const preBundles = ["react", "react/jsx-dev-runtime", "react-dom/server"];
-const preBundleAlias = Object.fromEntries(
-  preBundles.map((mod) => [
-    mod,
-    new URL(
-      `../node_modules/.cache/@hiogawa/pre-bundle/${mod}/index.js`,
-      import.meta.url
-    ).pathname,
-  ])
-);
+import {
+  vitePluginPreBundle,
+  vitePluginViteNodeMiniflare,
+} from "../dist/index.js";
 
 export default defineConfig({
   clearScreen: false,
@@ -23,14 +14,9 @@ export default defineConfig({
     noExternal: true,
   },
   plugins: [
-    {
-      name: "local:ssrPrebundlePlugin",
-      enforce: "pre",
-      apply: "serve",
-      resolveId(source, _importer, options) {
-        return options.ssr ? preBundleAlias[source] : undefined;
-      },
-    },
+    vitePluginPreBundle({
+      include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
+    }),
     vitePluginViteNodeMiniflare({
       debug: true,
       entry: "./src/worker-entry.tsx",

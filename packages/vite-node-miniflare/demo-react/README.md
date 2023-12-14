@@ -1,10 +1,9 @@
 React port of [demo](../demo)
 
-Since React provides only CJS, it doesn't seem to work out-of-the-box of Vite + Vite-Node on Workerd with `ssr.optimizeDeps` etc...
+Since React provides only CJS, it doesn't seem to work out-of-the-box on Vite + Vite-Node on Workerd with `ssr.optimizeDeps` etc...
 
-For now, I created `pre-bundle.mjs` CLI to pre-bundle CJS dependencies into ESM, then in `vite.config.ts`, the pre-bundled versions of packages are used for SSR via custom `resolveId` plugin.
+To workaround this, I created `vitePluginPreBundle` to pre-bundle known CJS dependencies into ESM and then setup custom `resolveId` to swap out CJS version into ESM version.
 
 ```sh
-pnpm pre-bundle
 pnpm dev-react
 ```

@@ -29,7 +29,7 @@ export default {
       const invalidatedTree =
         client.runner.moduleCache.invalidateDepTree(invalidatedModules);
       if (env.__VITE_NODE_DEBUG) {
-        console.log("[VITE_NODE_MINIFLARE_DEBUG:invalidateDepTree]", {
+        console.log("[vite-node-miniflare] invalidateDepTree:", {
           invalidatedModules,
           invalidatedTree,
         });
