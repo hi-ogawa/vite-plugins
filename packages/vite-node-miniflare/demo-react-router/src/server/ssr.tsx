@@ -57,8 +57,8 @@ export function ssrHandler(): RequestHandler {
 
     // apply transformIndexHtml for dev
     const env = (ctx.platform as any).env;
-    if (env.__VITE_NODE_CLIENT) {
-      const client: ViteNodeMiniflareClient = env.__VITE_NODE_CLIENT;
+    if (env.__VITE_NODE_MINIFLARE_CLIENT) {
+      const client: ViteNodeMiniflareClient = env.__VITE_NODE_MINIFLARE_CLIENT;
       html = await client.rpc.transformIndexHtml("/", html);
     }
 

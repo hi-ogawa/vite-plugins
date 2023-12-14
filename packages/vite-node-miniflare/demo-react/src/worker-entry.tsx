@@ -6,8 +6,8 @@ export default {
   async fetch(request: Request, env: any) {
     const ssrHtml = ReactDomServer.renderToString(<App url={request.url} />);
     let fullHtml = wrapHtml(ssrHtml);
-    if (env.__VITE_NODE_CLIENT) {
-      const client: ViteNodeMiniflareClient = env.__VITE_NODE_CLIENT;
+    if (env.__VITE_NODE_MINIFLARE_CLIENT) {
+      const client: ViteNodeMiniflareClient = env.__VITE_NODE_MINIFLARE_CLIENT;
       fullHtml = await client.rpc.transformIndexHtml("/", fullHtml);
     }
     return new Response(fullHtml, {

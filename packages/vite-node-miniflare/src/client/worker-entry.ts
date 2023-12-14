@@ -39,7 +39,7 @@ export default {
       const workerEntry = await client.runner.executeId(env.__WORKER_ENTRY);
       const workerEnv = {
         ...env,
-        __VITE_NODE_CLIENT: client,
+        __VITE_NODE_MINIFLARE_CLIENT: client,
       };
       return workerEntry.default.fetch(request, workerEnv, ctx);
     } catch (e) {
