@@ -9,14 +9,20 @@ import { defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    // vitePluginPreBundle({
-    //   include: ["react", "react/jsx-dev-runtime", "react-dom/server.browser"],
-    // }),
+    vitePluginPreBundle({
+      include: ["react", "react/jsx-dev-runtime", "react-dom", "react-dom/server.browser"],
+    }),
     vitePluginViteNodeMiniflare({
       debug: true,
       entry: "./app/worker-entry-wrapper.ts",
       miniflareOptions(options) {
         options.log = new Log();
+      },
+      viteNodeServerOptions(options) {
+        // TODO: I thought this is the default of vite-node...?
+        options.transformMode = {
+          ssr: [/.*/]
+        };
       },
     }),
     remix(),
