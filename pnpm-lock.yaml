@@ -292,8 +292,8 @@ importers:
         specifier: ^0.2.3-pre.11
         version: 0.2.3-pre.11
       '@hiogawa/utils':
-        specifier: 1.6.1-pre.9
-        version: 1.6.1-pre.9
+        specifier: 1.6.1-pre.10
+        version: 1.6.1-pre.10
       '@types/react':
         specifier: ^18.2.12
         version: 18.2.14
@@ -1869,8 +1869,8 @@ packages:
     resolution: {integrity: sha512-xamhJogybsjiUD0qhf84lpOPtHZEAiFR6M8S+A3bLIDg08Z8WhRCujTiDOxoEFTvPpX9yzwhkccaa2sEL5sgfw==}
     dev: true
 
-  /@hiogawa/utils@1.6.1-pre.9:
-    resolution: {integrity: sha512-9RnMKYYp0BAK4xsRl9V9gxH6J4wQWL9hzFLfREAWiiB6let0csGruGvmXAFu8RKfhG7/0h6xkpg/TrCO1+RsYg==}
+  /@hiogawa/utils@1.6.1-pre.10:
+    resolution: {integrity: sha512-p/KZkDcXCeRKeve3/NlVznFupaNgAZkQkD3q0oU/RpUL8s2j0aFJ/UIvGirp8or2yvnedH3SLYlQST006rVjHQ==}
     dev: true
 
   /@iconify-json/ri@1.1.9:

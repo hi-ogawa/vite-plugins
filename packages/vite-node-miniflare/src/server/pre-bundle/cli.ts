@@ -1,18 +1,40 @@
+import childProcess from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
+import { createManualPromise } from "@hiogawa/utils";
 
-// quick-and-dirty CJS pre-bundling CLI
+// quick-and-dirty CJS pre-bundling
 // since `ssr.optimizeDeps` doesn't seem to work when running vite-node client on workered
 
+async function extractExports(mod: string): Promise<string[]> {
+  const evalCode = `console.log(JSON.stringify(Object.keys(await import("${mod}"))))`;
+  const promise = createManualPromise<void>();
+  const proc = childProcess.spawn(
+    "node",
+    ["--conditions", "browser", "--input-type", "module", "-e", evalCode],
+    {
+      stdio: ["ignore", "pipe", "inherit"],
+    }
+  );
+  let stdout = "";
+  proc.stdout.on("data", (data) => {
+    stdout += data.toString();
+  });
+  proc.on("exit", () => {
+    promise.resolve();
+  });
+  await promise;
+  if (proc.exitCode !== 0) {
+    throw new Error(`Failed to run 'import("${mod}")'`);
+  }
+  const names: string[] = JSON.parse(stdout);
+  return names;
+}
+
 async function generateCode(mod: string) {
-  // execute external process to add `--conditions` explicitly?
-  const modExports = await import(mod);
-  const names = Object.keys(modExports);
-  const code = `\
-export { ${names.join(", ")} } from "${mod}";
-`;
-  return code;
+  const names = await extractExports(mod);
+  return `export { ${names.join(", ")} } from "${mod}"\n`;
 }
 
 async function preBundle(mods: string[], outDir: string) {
