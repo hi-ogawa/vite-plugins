@@ -20,7 +20,9 @@ export default [
         "process.platform": '"linux"',
         "process.env": "{}",
       };
-      options.alias = {};
+      options.alias = {
+        debug: "./src/client/polyfills/debug.ts",
+      };
       for (const mod of ["fs", "module", "path", "url", "vm"]) {
         options.alias[`node:${mod}`] = `./src/client/polyfills/node-${mod}.ts`;
       }

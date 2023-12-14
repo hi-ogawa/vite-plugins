@@ -20,14 +20,6 @@ export default defineConfig({
     vitePluginViteNodeMiniflare({
       debug: true,
       entry: "./src/worker-entry.tsx",
-      viteNodeServerOptions(options) {
-        options.debug = {
-          dumpModules: true,
-        };
-      },
-      viteNodeRunnerOptions(options) {
-        options.interopDefault = true;
-      },
       miniflareOptions(options) {
         options.log = new Log();
       },
