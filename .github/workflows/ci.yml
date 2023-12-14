@@ -16,10 +16,24 @@ jobs:
       - run: pnpm tsc
       - run: pnpm test
       - run: npx playwright install chromium
-      - run: pnpm -C packages/vite-node-miniflare test-e2e
       - run: pnpm -C packages/demo test-e2e
       - run: pnpm -C packages/demo build-preview
       - run: E2E_COMMAND='pnpm preview' pnpm -C packages/demo test-e2e
+
+  test-vite-node-miniflare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: corepack enable
+      - run: pnpm i
+      - run: pnpm build
+      - run: npx playwright install chromium
+      - run: pnpm -C packages/vite-node-miniflare test-e2e
+      - run: pnpm -C packages/vite-node-miniflare pre-bundle
+      - run: pnpm -C packages/vite-node-miniflare test-e2e-react
 
   test-examples:
     runs-on: ubuntu-latest
