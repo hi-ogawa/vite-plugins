@@ -7,7 +7,7 @@ test("basic", async ({ page }) => {
   await page.getByText("Index page").click();
   await page.getByRole("link", { name: "Loader Data" }).click();
   await page.getByText('loaderData = { "message": "hello loader" }').click();
-  await page.getByRole("link", { name: "Hello API" }).click();
+  await page.getByRole("link", { name: "GET API" }).click();
   await page.getByText('{"message":"hello api"}').click();
 
   const res = await page.goto("/loader-data");
