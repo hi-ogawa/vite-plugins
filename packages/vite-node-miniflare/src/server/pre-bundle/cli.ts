@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import * as esbuild from "esbuild";
 
 // quick-and-dirty CJS pre-bundling CLI
 // since `ssr.optimizeDeps` doesn't seem to work when running vite-node client on workered
@@ -17,6 +16,8 @@ export { ${names.join(", ")} } from "${mod}";
 }
 
 async function preBundle(mods: string[], outDir: string) {
+  const esbuild = await import("esbuild");
+
   const srcDir = path.join(outDir, ".tmp");
 
   const entries: Record<string, string> = {};
