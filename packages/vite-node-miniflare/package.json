@@ -34,8 +34,9 @@
     "dev": "cd demo && vite dev",
     "dev-react": "cd demo-react && vite dev",
     "dev-react-router": "cd demo-react-router && vite dev",
-    "test-e2e": "playwright test",
-    "test-e2e-react": "E2E_COMMAND='pnpm dev-react' playwright test",
+    "test-e2e": "playwright test e2e",
+    "test-e2e-react": "E2E_COMMAND='pnpm dev-react' playwright test e2e",
+    "test-e2e-react-router": "E2E_COMMAND='pnpm dev-react-router' playwright test demo-react-router/e2e",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {

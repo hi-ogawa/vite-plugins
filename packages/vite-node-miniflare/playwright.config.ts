@@ -4,7 +4,6 @@ const PORT = 6173;
 const command = process.env.E2E_COMMAND ?? "pnpm dev";
 
 export default defineConfig({
-  testDir: "e2e",
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "on-first-retry",
