@@ -6,7 +6,7 @@ test("basic", async ({ page }) => {
 
   await page.getByText("Index page").click();
 
-  // loader client navigation
+  // loader (client side navigation)
   await page.getByRole("link", { name: "Loader Data" }).click();
   await page.getByText('loaderData = { "message": "hello loader" }').click();
 
@@ -14,7 +14,7 @@ test("basic", async ({ page }) => {
   await page.getByRole("link", { name: "GET API" }).click();
   await page.getByText('{"message":"hello api"}').click();
 
-  // loader SSR
+  // loader (SSR)
   const res = await page.goto("/loader-data");
   expect(res?.status()).toBe(200);
   expect(await res?.text()).toContain(
@@ -22,7 +22,7 @@ test("basic", async ({ page }) => {
   );
 });
 
-test("POST API", async ({ page }) => {
+test("POST api", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("textbox").fill("hello");
   await page.getByRole("button", { name: "POST API" }).click();
