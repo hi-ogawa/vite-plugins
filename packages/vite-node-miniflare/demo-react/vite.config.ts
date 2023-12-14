@@ -3,11 +3,15 @@ import { Log } from "miniflare";
 import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "../dist/index.js";
 
+// cf. packages/vite-node-miniflare/misc/pre-bundle.mjs
 const preBundles = ["react", "react/jsx-dev-runtime", "react-dom/server"];
 const preBundleAlias = Object.fromEntries(
   preBundles.map((mod) => [
     mod,
-    new URL(`../pre-bundle/dist/${mod}/index.js`, import.meta.url).pathname,
+    new URL(
+      `../node_modules/.cache/@hiogawa/pre-bundle/${mod}/index.js`,
+      import.meta.url
+    ).pathname,
   ])
 );
 

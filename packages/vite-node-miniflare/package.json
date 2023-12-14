@@ -34,7 +34,7 @@
     "dev": "cd demo && vite dev",
     "dev-react": "cd demo-react && vite dev",
     "test-e2e": "playwright test",
-    "pre-bundle": "cd pre-bundle && tsup",
+    "pre-bundle": "node --conditions browser ./misc/pre-bundle.mjs react react/jsx-dev-runtime react-dom/server",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {
