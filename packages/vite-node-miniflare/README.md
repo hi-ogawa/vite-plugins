@@ -4,7 +4,7 @@ Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vi
 
 ## usage
 
-See also [`./demo`](./demo) for SSR + HMR example.
+See also [`./demo-react`](./demo-react) for React SSR + Client Side HMR example.
 
 ```ts
 //
