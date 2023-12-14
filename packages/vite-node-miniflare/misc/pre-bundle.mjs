@@ -34,36 +34,6 @@ export { ${specifiers} } from "${mod}";
 /**
  *
  * @param {string[]} mods
- * @param {string} srcDir
- * @param {string} outDir
- */
-async function setupEntries(mods, srcDir, outDir) {
-  /** @type {Record<string, string>} */
-  const entries = {};
-
-  for (const mod of mods) {
-    const entryCode = await generateCode(mod);
-    const entry = path.join(mod, "index.js");
-    const entryPath = path.join(srcDir, entry);
-    fs.mkdirSync(path.dirname(entryPath), { recursive: true });
-    fs.writeFileSync(entryPath, entryCode);
-    entries[entry] = entryPath;
-  }
-
-  await esbuild.build({
-    entryPoints: entries,
-    format: "esm",
-    platform: "browser",
-    conditions: ["browser"],
-    bundle: true,
-    splitting: true,
-    outdir: outDir,
-  });
-}
-
-/**
- *
- * @param {string[]} mods
  * @param {string} outDir
  */
 async function preBundle(mods, outDir) {
@@ -90,6 +60,7 @@ async function preBundle(mods, outDir) {
     splitting: true,
     outdir: outDir,
     tsconfigRaw: {},
+    logLevel: "info",
   });
 }
 
