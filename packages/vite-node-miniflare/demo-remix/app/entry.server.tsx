@@ -1,7 +1,7 @@
 // based on https://github.com/remix-run/remix/blob/bf2feb9bdb292ac6560964d6749b0fcf9a8c784e/templates/cloudflare-workers/app/entry.server.tsx#L13-L20
 
-import type { EntryContext } from "@remix-run/server-runtime";
 import { RemixServer } from "@remix-run/react";
+import type { EntryContext } from "@remix-run/server-runtime";
 import isbot from "isbot";
 
 // force "browser" export on nodejs with manual typing override (see env.d.ts)
