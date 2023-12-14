@@ -14,7 +14,7 @@ interface Env {
 let client: ViteNodeMiniflareClient;
 
 export default {
-  async fetch(request: Request, env: Env) {
+  async fetch(request: Request, env: Env, ctx: unknown) {
     try {
       // initialize vite node client only once
       client ??= createViteNodeClient({
@@ -37,10 +37,11 @@ export default {
       }
 
       const workerEntry = await client.runner.executeId(env.__WORKER_ENTRY);
-      return workerEntry.default.fetch(request, {
+      const workerEnv = {
         ...env,
-        __VITE_NODE_CLIENT: client,
-      });
+        __VITE_NODE_MINIFLARE_CLIENT: client,
+      };
+      return workerEntry.default.fetch(request, workerEnv, ctx);
     } catch (e) {
       console.error(e);
       return new Response("vite-node-miniflare error", { status: 500 });

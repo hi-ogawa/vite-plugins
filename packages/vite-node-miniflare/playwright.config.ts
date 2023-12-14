@@ -1,10 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 6173;
-const command = process.env.E2E_COMMAND ?? "pnpm dev";
+const DEMO_DIR = process.env.DEMO_DIR ?? "demo";
 
 export default defineConfig({
-  testDir: "e2e",
+  testDir: `${DEMO_DIR}/e2e`,
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "on-first-retry",
@@ -16,7 +16,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `${command} --port ${PORT} --strict-port`,
+    command: `cd ${DEMO_DIR} && vite dev --port ${PORT} --strict-port`,
     port: PORT,
   },
   forbidOnly: Boolean(process.env["CI"]),

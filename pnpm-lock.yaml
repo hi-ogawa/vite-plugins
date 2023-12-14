@@ -294,6 +294,9 @@ importers:
       '@hiogawa/utils':
         specifier: 1.6.1-pre.10
         version: 1.6.1-pre.10
+      '@hiogawa/vite-glob-routes':
+        specifier: workspace:*
+        version: link:../vite-glob-routes
       '@types/react':
         specifier: ^18.2.12
         version: 18.2.14
@@ -312,6 +315,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-router-dom:
+        specifier: ^6.13.0
+        version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
         specifier: ^5.0.4
         version: 5.0.8(@types/node@18.16.18)

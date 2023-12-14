@@ -1,6 +1,10 @@
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
-import { Miniflare, type MiniflareOptions } from "miniflare";
+import {
+  Miniflare,
+  type MiniflareOptions,
+  type Request as MiniflareRequest,
+} from "miniflare";
 import type { Plugin } from "vite";
 import type { ViteNodeRunnerOptions, ViteNodeServerOptions } from "vite-node";
 import { ViteNodeServer } from "vite-node/server";
@@ -59,9 +63,14 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             await miniflare.ready;
           }
 
-          // TODO: method, headers, body, etc..
-          // Response typing mismatch
-          return miniflare.dispatchFetch(ctx.request.url) as any as Response;
+          // workaround typing mismatch between "lib.dom" and "miniflare"
+          const request = ctx.request as any as MiniflareRequest;
+          return miniflare.dispatchFetch(request.url, {
+            method: request.method,
+            headers: request.headers,
+            body: request.body,
+            duplex: "half",
+          }) as any as Response;
         })
       );
 
