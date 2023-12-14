@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev"
+    "dev": "vite dev --config vite.config.vite-node.ts",
+    "dev-default": "vite dev"
   },
   "dependencies": {
     "@remix-run/server-runtime": "^2.4.0",
