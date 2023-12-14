@@ -22,7 +22,13 @@ export function Component() {
             <Link to="/loader-data">Loader Data</Link>
           </li>
           <li>
-            <a href="/hello">Hello API</a>
+            <a href="/hello">API GET</a>
+          </li>
+          <li>
+            <form method="post" action="/hello">
+              <input name="input" defaultValue="test" />
+              <button>API POST</button>
+            </form>
           </li>
         </ul>
       </header>
