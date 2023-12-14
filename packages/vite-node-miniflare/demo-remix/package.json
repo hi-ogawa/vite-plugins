@@ -13,8 +13,9 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@hiogawa/vite-node-miniflare": "workspace:*",
     "@remix-run/dev": "^2.4.0",
-    "@types/react": "^18.2.12",
-    "@types/react-dom": "^18.2.5"
+    "@types/react": "18.2.12",
+    "@types/react-dom": "18.2.5"
   }
 }

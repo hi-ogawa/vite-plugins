@@ -14,7 +14,6 @@ export default async function handleRequest(
   remixContext: EntryContext
 ) {
   const body = await renderToReadableStream(
-    // @ts-ignore
     <RemixServer context={remixContext} url={request.url} />,
     {
       signal: request.signal,

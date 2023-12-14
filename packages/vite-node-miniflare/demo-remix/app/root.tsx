@@ -17,7 +17,6 @@ export default function App() {
         <Links />
       </head>
       <body>
-        {/* @ts-ignore TODO: react-route-dom typing mismatch? */}
         <Outlet />
         <ScrollRestoration />
         <Scripts />
