@@ -1,4 +1,5 @@
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -17,6 +18,10 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <Link to="/">Index</Link>
+          <Link to="/demo">Loader/Action Demo</Link>
+        </div>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
