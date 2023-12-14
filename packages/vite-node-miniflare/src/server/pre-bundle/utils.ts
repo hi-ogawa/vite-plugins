@@ -60,8 +60,8 @@ export async function preBundle(mods: string[], outDir: string) {
     bundle: true,
     splitting: true,
     outdir: outDir,
-    tsconfigRaw: {},
     logLevel: "info",
+    tsconfigRaw: {},
   });
 
   return alias;
