@@ -71,7 +71,10 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             body: request.body,
             duplex: "half",
           }) as any as Response;
-        })
+        }),
+        {
+          alwaysCallNext: false,
+        }
       );
 
       return () => server.middlewares.use(middleware);

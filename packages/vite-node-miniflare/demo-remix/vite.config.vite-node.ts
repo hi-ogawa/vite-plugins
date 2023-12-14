@@ -9,9 +9,9 @@ import { defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    vitePluginPreBundle({
-      include: ["react", "react/jsx-dev-runtime", "react-dom/server.browser"],
-    }),
+    // vitePluginPreBundle({
+    //   include: ["react", "react/jsx-dev-runtime", "react-dom/server.browser"],
+    // }),
     vitePluginViteNodeMiniflare({
       debug: true,
       entry: "./app/worker-entry-wrapper.ts",
@@ -20,6 +20,23 @@ export default defineConfig({
       },
     }),
     remix(),
+    {
+      name: "debug-something",
+      enforce: "post",
+      config(config, env) {
+        // DEBUG=vite:deps,vite:transform
+
+        // console.log(":: config.optimizeDeps", config.optimizeDeps);
+        // console.log(":: config.ssr", config.ssr);
+        config.optimizeDeps = {
+          disabled: true,
+        };
+        (config.ssr ??= {}).optimizeDeps = {
+          disabled: true,
+        };
+        (config.server ??= {}).preTransformRequests = false;
+      },
+    },
   ],
   ssr: {
     noExternal: true,
