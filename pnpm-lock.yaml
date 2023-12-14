@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@remix-run/dev@0.0.0-nightly-db4471d-20231214':
-    hash: lpd3fz26i462txgiuo6tbpwspu
+    hash: pbjhnijqotpmrwncwwul3xwu4a
     path: patches/@remix-run__dev@0.0.0-nightly-db4471d-20231214.patch
 
 importers:
@@ -353,7 +353,7 @@ importers:
         version: link:..
       '@remix-run/dev':
         specifier: 0.0.0-nightly-db4471d-20231214
-        version: 0.0.0-nightly-db4471d-20231214(patch_hash=lpd3fz26i462txgiuo6tbpwspu)(@types/node@18.16.18)(typescript@5.1.6)(vite@5.0.8)
+        version: 0.0.0-nightly-db4471d-20231214(patch_hash=pbjhnijqotpmrwncwwul3xwu4a)(@types/node@18.16.18)(typescript@5.1.6)(vite@5.0.8)
       '@types/react':
         specifier: 18.2.12
         version: 18.2.12
@@ -2339,7 +2339,7 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
-  /@remix-run/dev@0.0.0-nightly-db4471d-20231214(patch_hash=lpd3fz26i462txgiuo6tbpwspu)(@types/node@18.16.18)(typescript@5.1.6)(vite@5.0.8):
+  /@remix-run/dev@0.0.0-nightly-db4471d-20231214(patch_hash=pbjhnijqotpmrwncwwul3xwu4a)(@types/node@18.16.18)(typescript@5.1.6)(vite@5.0.8):
     resolution: {integrity: sha512-qAXYdnpG32gLM1tzB/1oAgqedoP0JhnYcyezJawpAeD0xLCLyrtFV+P9uofZohTrOy3+CMtQE8xwDhHtDpdsxA==}
     engines: {node: '>=18.0.0'}
     hasBin: true
