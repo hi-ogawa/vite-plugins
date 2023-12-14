@@ -21,6 +21,7 @@ export default {
         unsafeEval: env.__UNSAFE_EVAL,
         serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
         runnerOptions: env.__VITE_NODE_RUNNER_OPTIONS,
+        debug: env.__VITE_NODE_DEBUG,
       });
 
       // invalidate modules similar to nuxt

@@ -6,6 +6,7 @@ import {
 import type { ViteNodeRunnerOptions } from "vite-node";
 import { ViteNodeRunner } from "vite-node/client";
 import type { ViteNodeRpc } from "..";
+import { __setDebug } from "./polyfills/debug";
 import { __setUnsafeEval } from "./polyfills/node-vm";
 
 export interface ViteNodeMiniflareClient {
@@ -17,8 +18,10 @@ export function createViteNodeClient(options: {
   unsafeEval: any;
   serverRpcUrl: string;
   runnerOptions: Omit<ViteNodeRunnerOptions, "fetchModule" | "resolveId">;
+  debug: boolean;
 }): ViteNodeMiniflareClient {
   __setUnsafeEval(options.unsafeEval);
+  __setDebug(options.debug);
 
   const rpc = proxyTinyRpc<ViteNodeRpc>({
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),

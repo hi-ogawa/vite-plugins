@@ -1,1 +1,1 @@
-Minimal node polyfills to bundle `vite-node/client` for workerd environment
+Minimal patches/polyfills to bundle `vite-node/client` for workerd environment

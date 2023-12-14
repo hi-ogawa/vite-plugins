@@ -38,6 +38,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
               root: server.config.root,
               base: server.config.base,
+              debug: pluginOptions.debug,
             };
             pluginOptions.viteNodeRunnerOptions?.(viteNodeRunnerOptions);
 
