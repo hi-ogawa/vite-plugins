@@ -3,16 +3,17 @@ import process from "node:process";
 import { colors } from "@hiogawa/utils";
 import { type Plugin, type ResolvedConfig } from "vite";
 import { name as packageName } from "../../../package.json";
-import { preBundle } from "./utils";
+import { PreBundler } from "./utils";
 
-// TODO: cache
+// TODO: include this plugin in main one vitePluginViteNodeMiniflare via preBundle options?
 
 export function vitePluginPreBundle(pluginOptions: {
   include: string[];
+  force?: boolean;
 }): Plugin {
-  let alias: Record<string, string>;
-  let config: ResolvedConfig;
   const name = `${packageName}/pre-bundle`;
+  let config: ResolvedConfig;
+  let preBundler: PreBundler;
 
   return {
     name,
@@ -21,17 +22,21 @@ export function vitePluginPreBundle(pluginOptions: {
       config = config_;
     },
     async buildStart(_options) {
-      config.logger.info(
-        ["", colors.cyan(`[${name}] pre-bundling...`)].join("\n")
-      );
       const outDir = path.join(
         process.cwd(),
         "node_modules/.cache/@hiogawa/vite-node-miniflare/pre-bundle"
       );
-      alias = await preBundle(pluginOptions.include, outDir);
+      preBundler = new PreBundler(pluginOptions.include, outDir);
+      if (preBundler.isCached()) {
+        return;
+      }
+      config.logger.info(
+        ["", colors.cyan(`[${name}] pre-bundling...`)].join("\n")
+      );
+      await preBundler.run();
     },
     resolveId(source, _importer, options) {
-      return options.ssr ? alias[source] : undefined;
+      return options.ssr ? preBundler.alias[source] : undefined;
     },
   };
 }
