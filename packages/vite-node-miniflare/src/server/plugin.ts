@@ -36,7 +36,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
 
-            // setup miniflare + proxy
+      // setup miniflare + proxy
       // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
       const miniflareHandler = h3.eventHandler(async (event) => {
         const url = h3.getRequestURL(event);
