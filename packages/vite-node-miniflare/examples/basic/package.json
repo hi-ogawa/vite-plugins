@@ -1,0 +1,15 @@
+{
+  "name": "@hiogawa/vite-node-miniflare-examples-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "test-e2e": "playwright test"
+  },
+  "dependencies": {
+    "@hiogawa/tiny-react": "0.0.2-pre.5",
+    "@hiogawa/vite-node-miniflare": "workspace:*",
+    "miniflare": "^3.20231030.3",
+    "vite": "^5.0.4"
+  }
+}

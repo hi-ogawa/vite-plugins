@@ -1,10 +1,11 @@
-import react from "@vitejs/plugin-react";
-import { Log } from "miniflare";
-import { defineConfig } from "vite";
+import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import {
   vitePluginPreBundle,
   vitePluginViteNodeMiniflare,
-} from "../dist/index.js";
+} from "@hiogawa/vite-node-miniflare";
+import react from "@vitejs/plugin-react";
+import { Log } from "miniflare";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
@@ -13,12 +14,13 @@ export default defineConfig({
     noExternal: true,
   },
   plugins: [
+    globRoutesPlugin({ root: "/src/routes" }),
     vitePluginPreBundle({
       include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
     }),
     vitePluginViteNodeMiniflare({
       debug: true,
-      entry: "./src/worker-entry.tsx",
+      entry: "./src/server/worker-entry-wrapper.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },
