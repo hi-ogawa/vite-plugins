@@ -325,6 +325,21 @@ importers:
         specifier: ^3.19.0
         version: 3.20.0
 
+  packages/vite-node-miniflare/examples/basic:
+    dependencies:
+      '@hiogawa/tiny-react':
+        specifier: 0.0.2-pre.5
+        version: 0.0.2-pre.5(vite@5.0.8)
+      '@hiogawa/vite-node-miniflare':
+        specifier: workspace:*
+        version: link:../..
+      miniflare:
+        specifier: ^3.20231030.3
+        version: 3.20231030.4
+      vite:
+        specifier: ^5.0.4
+        version: 5.0.8(@types/node@18.16.18)
+
   packages/vite-null-export:
     dependencies:
       es-module-lexer:
@@ -1823,7 +1838,6 @@ packages:
         optional: true
     dependencies:
       vite: 5.0.8(@types/node@18.16.18)
-    dev: true
 
   /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
     resolution: {integrity: sha512-G+ebk/OV8/i2P/8/QSQTsn94l2gArHUZqc43CPHve4wG3AaIqo34xMgxNQax5kgbwzkK+NusPcbQxBI3mMm0dg==}
