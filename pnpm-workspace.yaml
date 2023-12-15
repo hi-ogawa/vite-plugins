@@ -1,5 +1,4 @@
 packages:
   - packages/*
-  - packages/vite-node-miniflare/demo-remix
   - packages/*/examples/*
   - examples/*

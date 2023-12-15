@@ -303,37 +303,6 @@ importers:
         specifier: ^5.0.4
         version: 5.0.8(@types/node@18.16.18)
 
-  packages/vite-node-miniflare/demo-remix:
-    dependencies:
-      '@remix-run/react':
-        specifier: 0.0.0-nightly-db4471d-20231214
-        version: 0.0.0-nightly-db4471d-20231214(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)
-      '@remix-run/server-runtime':
-        specifier: 0.0.0-nightly-db4471d-20231214
-        version: 0.0.0-nightly-db4471d-20231214(typescript@5.1.6)
-      isbot:
-        specifier: ^3.6.8
-        version: 3.7.1
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-    devDependencies:
-      '@hiogawa/vite-node-miniflare':
-        specifier: workspace:*
-        version: link:..
-      '@remix-run/dev':
-        specifier: 0.0.0-nightly-db4471d-20231214
-        version: 0.0.0-nightly-db4471d-20231214(patch_hash=pbjhnijqotpmrwncwwul3xwu4a)(@types/node@18.16.18)(typescript@5.1.6)(vite@5.0.8)
-      '@types/react':
-        specifier: 18.2.12
-        version: 18.2.12
-      '@types/react-dom':
-        specifier: 18.2.5
-        version: 18.2.5
-
   packages/vite-node-miniflare/examples/basic:
     dependencies:
       '@hiogawa/tiny-react':
@@ -414,6 +383,37 @@ importers:
       vite:
         specifier: ^5.0.4
         version: 5.0.8(@types/node@18.16.18)
+
+  packages/vite-node-miniflare/examples/remix:
+    dependencies:
+      '@remix-run/react':
+        specifier: 0.0.0-nightly-db4471d-20231214
+        version: 0.0.0-nightly-db4471d-20231214(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)
+      '@remix-run/server-runtime':
+        specifier: 0.0.0-nightly-db4471d-20231214
+        version: 0.0.0-nightly-db4471d-20231214(typescript@5.1.6)
+      isbot:
+        specifier: ^3.6.8
+        version: 3.7.1
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@hiogawa/vite-node-miniflare':
+        specifier: workspace:*
+        version: link:../..
+      '@remix-run/dev':
+        specifier: 0.0.0-nightly-db4471d-20231214
+        version: 0.0.0-nightly-db4471d-20231214(patch_hash=pbjhnijqotpmrwncwwul3xwu4a)(@types/node@18.16.18)(typescript@5.1.6)(vite@5.0.8)
+      '@types/react':
+        specifier: 18.2.12
+        version: 18.2.12
+      '@types/react-dom':
+        specifier: 18.2.5
+        version: 18.2.5
 
   packages/vite-null-export:
     dependencies:
