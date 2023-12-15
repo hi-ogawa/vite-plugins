@@ -1,5 +1,6 @@
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
+import { typedBoolean } from "@hiogawa/utils";
 import {
   Miniflare,
   type MiniflareOptions,
@@ -8,6 +9,7 @@ import {
 import type { Plugin } from "vite";
 import type { ViteNodeRunnerOptions, ViteNodeServerOptions } from "vite-node";
 import { ViteNodeServer } from "vite-node/server";
+import { vitePluginPreBundle } from "..";
 import { name as packageName } from "../../package.json";
 import { setupViteNodeServerRpc } from "./vite-node";
 
@@ -18,12 +20,16 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   miniflareOptions?: (options: MiniflareOptions) => void;
   viteNodeServerOptions?: (options: ViteNodeServerOptions) => void;
   viteNodeRunnerOptions?: (options: Partial<ViteNodeRunnerOptions>) => void;
-}): Plugin {
+  preBundle?: {
+    include: string[];
+    force?: boolean;
+  };
+}): Plugin[] {
   // initialize miniflare lazily on first request and
   // dispose on server close (e.g. server restart on user vite config change)
   let miniflare: Miniflare | undefined;
 
-  return {
+  const middlewarePlugin: Plugin = {
     name: packageName,
     apply: "serve",
     async configureServer(server) {
@@ -88,4 +94,9 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       }
     },
   };
+
+  return [
+    middlewarePlugin,
+    pluginOptions.preBundle && vitePluginPreBundle(pluginOptions.preBundle),
+  ].filter(typedBoolean);
 }

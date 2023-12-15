@@ -5,8 +5,6 @@ import { type Plugin, type ResolvedConfig } from "vite";
 import { name as packageName } from "../../../package.json";
 import { PreBundler } from "./utils";
 
-// TODO: include this plugin in main one vitePluginViteNodeMiniflare via preBundle options?
-
 export function vitePluginPreBundle(pluginOptions: {
   include: string[];
   force?: boolean;
@@ -18,6 +16,7 @@ export function vitePluginPreBundle(pluginOptions: {
   return {
     name,
     enforce: "pre",
+    apply: "serve",
     configResolved(config_) {
       config = config_;
     },
