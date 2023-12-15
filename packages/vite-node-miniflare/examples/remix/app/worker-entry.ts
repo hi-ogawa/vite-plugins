@@ -7,9 +7,10 @@ import {
 // implement DevServerHooks
 unstable_setDevServerHooks({
   async getCriticalCss(_build, _pathname) {
-    const res = await fetch("http://localhost:5173/app/test-style.css?direct");
-    const style = await res.text();
-    return style;
+    return undefined;
+    // const res = await fetch("http://localhost:5173/app/test-style.css?direct");
+    // const style = await res.text();
+    // return style;
   },
 });
 
