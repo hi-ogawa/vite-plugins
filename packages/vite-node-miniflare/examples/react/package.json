@@ -10,6 +10,7 @@
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "@types/react": "^18.2.12",
     "@types/react-dom": "^18.2.5",
+    "@vitejs/plugin-react": "^4.2.0",
     "miniflare": "^3.20231030.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
