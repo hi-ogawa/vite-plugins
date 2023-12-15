@@ -13,6 +13,9 @@ function createFetchHandler() {
   const remixHandler = createRequestHandler(build, mode);
 
   return async (request: Request, env: any) => {
+    // expose env.kv
+    Object.assign(globalThis, { env });
+
     // DevServerHook is implemented via custom rpc
     if (env.__VITE_NODE_MINIFLARE_CLIENT) {
       unstable_setDevServerHooks({
@@ -20,6 +23,7 @@ function createFetchHandler() {
           env.__VITE_NODE_MINIFLARE_CLIENT.rpc.__remixGetCriticalCss,
       });
     }
+
     return remixHandler(request);
   };
 }

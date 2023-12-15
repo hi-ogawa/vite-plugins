@@ -8,13 +8,14 @@
     "test-e2e": "playwright test"
   },
   "dependencies": {
-    "@remix-run/server-runtime": "0.0.0-nightly-db4471d-20231214",
     "@remix-run/react": "0.0.0-nightly-db4471d-20231214",
+    "@remix-run/server-runtime": "0.0.0-nightly-db4471d-20231214",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231121.0",
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "@remix-run/dev": "0.0.0-nightly-db4471d-20231214",
     "@types/react": "18.2.12",

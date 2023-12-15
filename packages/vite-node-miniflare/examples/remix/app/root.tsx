@@ -27,6 +27,7 @@ export default function App() {
           <Link to="/">Index</Link>
           <Link to="/demo">Loader/Action Demo</Link>
           <Link to="/style">Style Demo</Link>
+          <Link to="/demo-kv">KV Demo</Link>
           <input placeholder="debug state" />
         </div>
         <Outlet />
