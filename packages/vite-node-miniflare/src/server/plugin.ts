@@ -24,6 +24,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
     include: string[];
     force?: boolean;
   };
+  customRpc?: Record<string, Function>;
 }): Plugin[] {
   // initialize miniflare lazily on first request and
   // dispose on server close (e.g. server restart on user vite config change)
@@ -46,7 +47,9 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       };
       pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
-      const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
+      const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer, {
+        customRpc: pluginOptions.customRpc,
+      });
 
       // setup miniflare + proxy
       // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
