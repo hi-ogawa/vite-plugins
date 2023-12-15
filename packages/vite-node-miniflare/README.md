@@ -4,7 +4,7 @@ Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vi
 
 ## usage
 
-See also [`./demo-react-router`](./demo-react-router) for sample applicaiton to demonstrate React Router SSR + Client Side HMR.
+See also [`./examples/react-router`](./examples/react-router) for a sample applicaiton to demonstrate React Router SSR + Client Side HMR.
 
 ```ts
 //
@@ -29,6 +29,13 @@ export default {
     return new Response("hello workerd");
   },
 };
+```
+
+## development
+
+```sh
+pnpm build
+pnpm -C examples/react-router dev
 ```
 
 ## credits

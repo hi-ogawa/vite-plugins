@@ -1,7 +1,7 @@
 import childProcess from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { createManualPromise } from "@hiogawa/utils";
+import { createManualPromise, wrapError } from "@hiogawa/utils";
 
 // quick-and-dirty CJS pre-bundling
 // since `ssr.optimizeDeps` doesn't seem to work when running vite-node client on workered
@@ -36,33 +36,60 @@ async function generateEntryCode(mod: string) {
   return `export { ${names.join(", ")} } from "${mod}"\n`;
 }
 
-export async function preBundle(mods: string[], outDir: string) {
-  const esbuild = await import("esbuild");
+export class PreBundler {
+  entries: Record<string, { in: string; out: string }> = {};
+  alias: Record<string, string> = {};
+  hashValue: string;
+  hashPath: string;
 
-  const srcDir = path.join(outDir, ".tmp");
-  const entries: Record<string, string> = {};
-  const alias: Record<string, string> = {};
-  for (const mod of mods) {
-    const entryCode = await generateEntryCode(mod);
-    const entry = path.join(mod, "index.js");
-    const entryPath = path.join(srcDir, entry);
-    await fs.promises.mkdir(path.dirname(entryPath), { recursive: true });
-    await fs.promises.writeFile(entryPath, entryCode);
-    entries[entry.slice(0, -3)] = entryPath;
-    alias[mod] = path.join(outDir, entry);
+  constructor(public mods: string[], public outDir: string) {
+    this.hashValue = JSON.stringify(mods);
+    this.hashPath = path.join(outDir, ".hash");
+
+    for (const mod of mods) {
+      this.entries[mod] = {
+        in: path.join(outDir, ".src", path.join(mod, "index.js")),
+        out: path.join(outDir, path.join(mod, "index")), // esbuild's need extension stripped
+      };
+      this.alias[mod] = path.join(outDir, path.join(mod, "index.js"));
+    }
   }
 
-  await esbuild.build({
-    entryPoints: entries,
-    format: "esm",
-    platform: "browser",
-    conditions: ["browser"],
-    bundle: true,
-    splitting: true,
-    outdir: outDir,
-    logLevel: "info",
-    tsconfigRaw: {},
-  });
+  isCached(): boolean {
+    const result = wrapError(
+      () =>
+        fs.existsSync(this.hashPath) &&
+        fs.readFileSync(this.hashPath, "utf-8") === this.hashValue
+    );
+    return result.ok && result.value;
+  }
 
-  return alias;
+  async run() {
+    const esbuild = await import("esbuild");
+
+    // extract cjs module exports and generate source file to re-export as ESM
+    for (const [mod, entry] of Object.entries(this.entries)) {
+      const entryCode = await generateEntryCode(mod);
+      await fs.promises.mkdir(path.dirname(entry.in), { recursive: true });
+      await fs.promises.writeFile(entry.in, entryCode);
+    }
+
+    // bundle with code splitting
+    const result = await esbuild.build({
+      entryPoints: Object.values(this.entries),
+      format: "esm",
+      platform: "browser",
+      conditions: ["browser"],
+      bundle: true,
+      splitting: true,
+      outdir: this.outDir,
+      logLevel: "info",
+      tsconfigRaw: {},
+    });
+
+    // save bundle hash
+    await fs.promises.writeFile(this.hashPath, this.hashValue);
+
+    return result;
+  }
 }
