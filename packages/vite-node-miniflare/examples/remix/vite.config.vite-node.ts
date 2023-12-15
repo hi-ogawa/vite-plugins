@@ -15,16 +15,6 @@ export default defineConfig({
       entry: "./app/worker-entry-wrapper.ts",
       miniflareOptions(options) {
         options.log = new Log();
-        // TODO: set sensible default from plugin?
-        // > Error: To use the new ReadableStream() constructor, enable the streams_enable_constructors compatibility flag. Refer to the docs for more information: https://developers.cloudflare.com/workers/platform/compatibility-dates/#compatibility-flags
-        // @ts-ignore
-        options.compatibilityFlags = ["streams_enable_constructors"];
-      },
-      viteNodeServerOptions(options) {
-        // TODO: I thought this is the default of vite-node...?
-        options.transformMode = {
-          ssr: [/.*/],
-        };
       },
       preBundle: {
         include: [

@@ -38,6 +38,11 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
         debug: {
           dumpModules: pluginOptions.debug,
         },
+        // I thought this is always the case, but somehow maybe not for virtual modules?
+        // Without this, Remix's "remix-dot-server" plugin will trigger errors.
+        transformMode: {
+          ssr: [/.*/],
+        },
       };
       pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);

@@ -69,7 +69,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
         },
       ],
       modulesRoot: "/",
-      // reasonable default? (ReadableStream etc...)
+      // reasonable default? (for react-dom/server renderToReadableStream)
       compatibilityDate: "2023-08-01",
       // expose to runtime
       unsafeEvalBinding: "__UNSAFE_EVAL",
