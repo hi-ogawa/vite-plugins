@@ -1,5 +1,3 @@
-// import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
-// import * as httipCompose from "@hattip/compose";
 import * as h3 from "h3";
 import {
   Miniflare,
@@ -38,7 +36,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
 
-      // setup miniflare + proxy
+            // setup miniflare + proxy
       // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
       const miniflareHandler = h3.eventHandler(async (event) => {
         const url = h3.getRequestURL(event);
@@ -80,44 +78,6 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
         ),
         miniflareHandler,
       ]);
-      // h3.toNodeListener(app)
-
-      // h3.use;
-
-      // const middleware = httipAdapterNode.createMiddleware(
-      //   httipCompose.compose(viteNodeServerRpc.requestHandler, async (ctx) => {
-      //     // TODO: proxy to `wrangler.unstable_dev`
-      //     if (!miniflare) {
-      //       const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
-      //         root: server.config.root,
-      //         base: server.config.base,
-      //         debug: !!pluginOptions.debug,
-      //       };
-      //       pluginOptions.viteNodeRunnerOptions?.(viteNodeRunnerOptions);
-
-      //       const miniflareOptions = viteNodeServerRpc.generateMiniflareOptions(
-      //         {
-      //           entry: pluginOptions.entry,
-      //           rpcOrigin: ctx.url.origin,
-      //           debug: pluginOptions.debug,
-      //           viteNodeRunnerOptions,
-      //         }
-      //       );
-      //       pluginOptions.miniflareOptions?.(miniflareOptions);
-      //       miniflare = new Miniflare(miniflareOptions);
-      //       await miniflare.ready;
-      //     }
-
-      //     // workaround typing mismatch between "lib.dom" and "miniflare"
-      //     const request = ctx.request as any as MiniflareRequest;
-      //     return miniflare.dispatchFetch(request.url, {
-      //       method: request.method,
-      //       headers: request.headers,
-      //       body: request.body,
-      //       duplex: "half",
-      //     }) as any as Response;
-      //   })
-      // );
 
       return () => server.middlewares.use(h3.toNodeListener(app));
     },
