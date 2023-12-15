@@ -2,9 +2,14 @@
 
 Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) on [`miniflare`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare)
 
-## usage
+## examples
 
-See also [`./examples/react-router`](./examples/react-router) for a sample applicaiton to demonstrate React Router SSR + Client Side HMR.
+- [`./examples/basic`](./examples/basic) : Simple demo of SSR, Hydration and HMR with [`@hiogawa/tiny-react`](https://github.com/hi-ogawa/js-utils/tree/main/packages/tiny-react)
+- [`./examples/react`](./examples/react) : Simple demo with React
+- [`./examples/react-router`](./examples/react-router) : React Router SSR application with [`@hiogawa/vite-glob-routes`](https://github.com/hi-ogawa/vite-plugins)
+- [`./examples/remix`](./examples/remix) : [Remix Vite Plugin](https://remix.run/docs/en/main/future/vite) integration
+
+## usage
 
 ```ts
 //
