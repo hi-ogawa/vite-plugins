@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev"
+    "dev": "vite dev",
+    "test-e2e": "playwright test"
   },
   "dependencies": {
     "@hiogawa/tiny-react": "0.0.2-pre.5",

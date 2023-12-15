@@ -1,7 +1,7 @@
 import { tinyReactVitePlugin } from "@hiogawa/tiny-react/dist/plugins/vite";
+import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
-import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 
 export default defineConfig({
   clearScreen: false,
