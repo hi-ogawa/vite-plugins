@@ -16,3 +16,16 @@ test("basic", async ({ page }) => {
   await page.getByText("counter = 1").click();
   await expect(page.getByPlaceholder("debug state")).toHaveValue("test");
 });
+
+// test style is applied without JS
+test.describe("no-js", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("style", async ({ page }) => {
+    await page.goto("/style");
+    await expect(page.getByText("Some Styled Box")).toHaveCSS(
+      "height",
+      "123px"
+    );
+  });
+});
