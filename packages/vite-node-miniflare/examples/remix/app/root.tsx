@@ -17,10 +17,16 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body
+        ref={(el) => {
+          // for e2e
+          el?.classList.add("hydrated");
+        }}
+      >
         <div style={{ display: "flex", gap: "1rem" }}>
           <Link to="/">Index</Link>
           <Link to="/demo">Loader/Action Demo</Link>
+          <input placeholder="debug state" />
         </div>
         <Outlet />
         <ScrollRestoration />

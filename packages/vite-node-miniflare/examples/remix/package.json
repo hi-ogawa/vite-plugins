@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --config vite.config.vite-node.ts",
-    "dev-default": "vite dev"
+    "dev-default": "vite dev",
+    "test-e2e": "playwright test"
   },
   "dependencies": {
     "@remix-run/server-runtime": "0.0.0-nightly-db4471d-20231214",

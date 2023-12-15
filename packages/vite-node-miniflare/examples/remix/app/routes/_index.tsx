@@ -35,9 +35,6 @@ export default function Index() {
             Remix Docs
           </a>
         </li>
-        <li>
-          <input placeholder="debug hmr..." />
-        </li>
       </ul>
     </div>
   );
