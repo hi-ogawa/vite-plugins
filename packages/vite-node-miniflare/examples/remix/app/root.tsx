@@ -26,6 +26,7 @@ export default function App() {
         <div style={{ display: "flex", gap: "1rem" }}>
           <Link to="/">Index</Link>
           <Link to="/demo">Loader/Action Demo</Link>
+          <Link to="/style">Style Demo</Link>
           <input placeholder="debug state" />
         </div>
         <Outlet />
