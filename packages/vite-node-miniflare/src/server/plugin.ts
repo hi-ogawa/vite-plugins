@@ -37,43 +37,47 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
       const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
 
-      // setup middleware
+      // setup miniflare + proxy
+      // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
+      const miniflareHandler: httipCompose.RequestHandler = async (ctx) => {
+        if (!miniflare) {
+          const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
+            root: server.config.root,
+            base: server.config.base,
+            debug: !!pluginOptions.debug,
+          };
+          pluginOptions.viteNodeRunnerOptions?.(viteNodeRunnerOptions);
+
+          const miniflareOptions = viteNodeServerRpc.generateMiniflareOptions({
+            entry: pluginOptions.entry,
+            rpcOrigin: ctx.url.origin,
+            debug: pluginOptions.debug,
+            viteNodeRunnerOptions,
+          });
+          pluginOptions.miniflareOptions?.(miniflareOptions);
+          miniflare = new Miniflare(miniflareOptions);
+          await miniflare.ready;
+        }
+
+        // workaround typing mismatch between "lib.dom" and "miniflare"
+        const request = ctx.request as any as MiniflareRequest;
+        return miniflare.dispatchFetch(request.url, {
+          method: request.method,
+          headers: request.headers,
+          body: request.body,
+          duplex: "half",
+        }) as any as Response;
+      };
+
       const middleware = httipAdapterNode.createMiddleware(
-        httipCompose.compose(viteNodeServerRpc.requestHandler, async (ctx) => {
-          // TODO: extra bindings from user
-          // TODO: or proxy to `wrangler.unstable_dev`
-          if (!miniflare) {
-            const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
-              root: server.config.root,
-              base: server.config.base,
-              debug: !!pluginOptions.debug,
-            };
-            pluginOptions.viteNodeRunnerOptions?.(viteNodeRunnerOptions);
-
-            const miniflareOptions = viteNodeServerRpc.generateMiniflareOptions(
-              {
-                entry: pluginOptions.entry,
-                rpcOrigin: ctx.url.origin,
-                debug: pluginOptions.debug,
-                viteNodeRunnerOptions,
-              }
-            );
-            pluginOptions.miniflareOptions?.(miniflareOptions);
-            miniflare = new Miniflare(miniflareOptions);
-            await miniflare.ready;
-          }
-
-          // workaround typing mismatch between "lib.dom" and "miniflare"
-          const request = ctx.request as any as MiniflareRequest;
-          return miniflare.dispatchFetch(request.url, {
-            method: request.method,
-            headers: request.headers,
-            body: request.body,
-            duplex: "half",
-          }) as any as Response;
-        })
+        httipCompose.compose(
+          viteNodeServerRpc.requestHandler,
+          miniflareHandler
+        ),
+        {
+          alwaysCallNext: false,
+        }
       );
-
       return () => server.middlewares.use(middleware);
     },
 
