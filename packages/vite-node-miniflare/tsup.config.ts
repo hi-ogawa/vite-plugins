@@ -13,7 +13,8 @@ export default [
     platform: "browser",
     dts: true,
     splitting: false,
-    noExternal: [/.*/],
+    noExternal: ["vite-node/client"],
+    external: ["node:path"],
     esbuildOptions: (options) => {
       // patch to run "vite-node/client" on workerd
       options.define = {
@@ -23,7 +24,7 @@ export default [
       options.alias = {
         debug: "./src/client/polyfills/debug.ts",
       };
-      for (const mod of ["fs", "module", "path", "url", "vm"]) {
+      for (const mod of ["fs", "module", "url", "vm"]) {
         options.alias[`node:${mod}`] = `./src/client/polyfills/node-${mod}.ts`;
       }
     },

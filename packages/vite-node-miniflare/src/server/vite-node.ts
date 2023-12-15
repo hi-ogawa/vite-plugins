@@ -69,6 +69,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
         },
       ],
       modulesRoot: "/",
+      compatibilityFlags: ["nodejs_compat"],
       // expose to runtime
       unsafeEvalBinding: "__UNSAFE_EVAL",
       bindings: {
