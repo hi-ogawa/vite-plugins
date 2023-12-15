@@ -69,6 +69,8 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
         },
       ],
       modulesRoot: "/",
+      // reasonable default? (ReadableStream etc...)
+      compatibilityDate: "2023-08-01",
       // expose to runtime
       unsafeEvalBinding: "__UNSAFE_EVAL",
       bindings: {
