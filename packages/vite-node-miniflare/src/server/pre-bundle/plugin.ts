@@ -27,7 +27,7 @@ export function vitePluginPreBundle(pluginOptions: {
         "node_modules/.cache/@hiogawa/vite-node-miniflare/pre-bundle"
       );
       preBundler = new PreBundler(pluginOptions.include, outDir);
-      if (preBundler.isCached()) {
+      if (!pluginOptions.force && preBundler.isCached()) {
         return;
       }
       config.logger.info(
