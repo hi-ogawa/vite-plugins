@@ -34,6 +34,7 @@ jobs:
       - run: pnpm -C packages/vite-node-miniflare/examples/basic test-e2e
       - run: pnpm -C packages/vite-node-miniflare/examples/react test-e2e
       - run: pnpm -C packages/vite-node-miniflare/examples/react-router test-e2e
+      - run: pnpm -C packages/vite-node-miniflare/examples/remix test-e2e
 
   test-examples:
     runs-on: ubuntu-latest

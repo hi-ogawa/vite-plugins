@@ -1,5 +1,5 @@
+import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare/client/vite-node";
 import ReactDomServer from "react-dom/server";
-import type { ViteNodeMiniflareClient } from "../../dist/client/vite-node";
 import { App } from "./app";
 
 export default {
@@ -7,6 +7,7 @@ export default {
     const ssrHtml = ReactDomServer.renderToString(<App url={request.url} />);
     let fullHtml = wrapHtml(ssrHtml);
     if (env.__VITE_NODE_MINIFLARE_CLIENT) {
+      // TODO: run transformIndexHtml on template https://github.com/vitejs/vite/pull/15345#issuecomment-1855550194
       const client: ViteNodeMiniflareClient = env.__VITE_NODE_MINIFLARE_CLIENT;
       fullHtml = await client.rpc.transformIndexHtml("/", fullHtml);
     }

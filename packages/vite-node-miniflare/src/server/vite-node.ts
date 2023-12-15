@@ -5,7 +5,8 @@ import type { ViteNodeRunnerOptions } from "vite-node";
 import type { ViteNodeServer } from "vite-node/server";
 import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
 
-// TODO: allow expanding API for framework features? (e.g. Remix's DevServerHooks)
+// TODO(refactor): no point to have this file separated. move to plugin.ts
+
 // prettier-ignore
 export type ViteNodeRpc =
   Pick<ViteNodeServer, "fetchModule" | "resolveId"> &
@@ -14,7 +15,10 @@ export type ViteNodeRpc =
     getInvalidatedModules: () => string[];
   };
 
-export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
+export function setupViteNodeServerRpc(
+  viteNodeServer: ViteNodeServer,
+  options: { customRpc?: Record<string, Function> }
+) {
   const rpcBase = "/__vite_node_rpc__";
 
   // keep track of invalidated modules similar to nuxt
@@ -31,6 +35,9 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
       invalidatedModules.clear();
       return result;
     },
+    // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
+    // (e.g. Remix's DevServerHooks)
+    ...options.customRpc,
   };
 
   // TODO: support framework-specific virtual modules invalidation?
@@ -69,7 +76,7 @@ export function setupViteNodeServerRpc(viteNodeServer: ViteNodeServer) {
         },
       ],
       modulesRoot: "/",
-      // reasonable default? (ReadableStream etc...)
+      // reasonable default? (for react-dom/server renderToReadableStream)
       compatibilityDate: "2023-08-01",
       // expose to runtime
       unsafeEvalBinding: "__UNSAFE_EVAL",
