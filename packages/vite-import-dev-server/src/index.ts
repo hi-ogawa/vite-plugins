@@ -53,13 +53,13 @@ export function importDevServerPlugin(): Plugin {
     // https://github.com/cyco130/vavite/blob/3cf52a5bd25deadde0949a52be31af1ad04c36d8/packages/expose-vite-dev-server/src/index.ts#L28
     async resolveId(source, _importer, options) {
       if (options.ssr && source === MODULE_NAME) {
-        return { id: MODULE_NAME };
+        return wrapVmod(MODULE_NAME);
       }
       return;
     },
 
     load(id, _options) {
-      if (id === MODULE_NAME) {
+      if (id === wrapVmod(MODULE_NAME)) {
         return key
           ? `export const viteDevServer = globalThis.__internal__importDevServer.get("${key}");`
           : "export const viteDevServer = undefined";
@@ -68,3 +68,6 @@ export function importDevServerPlugin(): Plugin {
     },
   };
 }
+
+// https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention
+const wrapVmod = (id: string) => "\0" + id;

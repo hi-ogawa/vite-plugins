@@ -39,7 +39,7 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
 
     async resolveId(source, _importer, _options) {
       if (VIRTUALS.includes(source)) {
-        return source;
+        return wrapVmod(source);
       }
       return;
     },
@@ -49,18 +49,18 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
       // instead of completely relying on vite's glob import, we could also manually probe files and setup watcher etc...
       // cf. https://github.com/rakkasjs/rakkasjs/blob/18ba680d18f776acf2dedd44444873433552f4e3/packages/rakkasjs/src/features/api-routes/vite-plugin.ts#L8
 
-      if (id === VIRTUAL.pageRoutesServer) {
+      if (id === wrapVmod(VIRTUAL.pageRoutesServer)) {
         // TODO: validate with `options.ssr` or silently let module become empty for unintended server import on client build?
         options?.ssr;
 
         return generatePageRoutesCode({ root, eager: true, server: true });
       }
 
-      if (id === VIRTUAL.pageRoutesClient) {
+      if (id === wrapVmod(VIRTUAL.pageRoutesClient)) {
         return generatePageRoutesCode({ root, eager: true, server: false });
       }
 
-      if (id === VIRTUAL.pageRoutesClientLazy) {
+      if (id === wrapVmod(VIRTUAL.pageRoutesClientLazy)) {
         return generatePageRoutesCode({
           root,
           eager: false,
@@ -68,7 +68,7 @@ export default function globRoutesPlugin(options: { root: string }): Plugin {
         });
       }
 
-      if (id === VIRTUAL.apiRoutes) {
+      if (id === wrapVmod(VIRTUAL.apiRoutes)) {
         // TODO: import only "get/post/put/delete" to tree shake other exports?
         return `
           const root = "${root}";
@@ -109,3 +109,6 @@ function generatePageRoutesCode({
     };
   `;
 }
+
+// https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention
+const wrapVmod = (id: string) => "\0" + id;
