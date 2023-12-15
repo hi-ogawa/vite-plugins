@@ -31,6 +31,13 @@ export default {
 };
 ```
 
+## development
+
+```sh
+pnpm build
+pnpm -C examples/react-router dev
+```
+
 ## credits
 
 - https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation
