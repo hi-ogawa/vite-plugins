@@ -9,6 +9,7 @@ import {
 import type { Plugin } from "vite";
 import type { ViteNodeRunnerOptions, ViteNodeServerOptions } from "vite-node";
 import { ViteNodeServer } from "vite-node/server";
+import * as wrangler from "wrangler";
 import { vitePluginPreBundle } from "..";
 import { name as packageName } from "../../package.json";
 import { setupViteNodeServerRpc } from "./vite-node";
