@@ -1,3 +1,4 @@
+import { typedBoolean } from "@hiogawa/utils";
 import * as h3 from "h3";
 import {
   Miniflare,
@@ -7,6 +8,7 @@ import {
 import type { Plugin } from "vite";
 import type { ViteNodeRunnerOptions, ViteNodeServerOptions } from "vite-node";
 import { ViteNodeServer } from "vite-node/server";
+import { vitePluginPreBundle } from "..";
 import { name as packageName } from "../../package.json";
 import { setupViteNodeServerRpc } from "./vite-node";
 
@@ -17,12 +19,17 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   miniflareOptions?: (options: MiniflareOptions) => void;
   viteNodeServerOptions?: (options: ViteNodeServerOptions) => void;
   viteNodeRunnerOptions?: (options: Partial<ViteNodeRunnerOptions>) => void;
-}): Plugin {
+  preBundle?: {
+    include: string[];
+    force?: boolean;
+  };
+  customRpc?: Record<string, Function>;
+}): Plugin[] {
   // initialize miniflare lazily on first request and
   // dispose on server close (e.g. server restart on user vite config change)
   let miniflare: Miniflare | undefined;
 
-  return {
+  const middlewarePlugin: Plugin = {
     name: packageName,
     apply: "serve",
     async configureServer(server) {
@@ -31,10 +38,17 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
         debug: {
           dumpModules: pluginOptions.debug,
         },
+        // I thought this is always the case, but somehow maybe not for virtual modules?
+        // Without this, Remix's "remix-dot-server" plugin will trigger errors.
+        transformMode: {
+          ssr: [/.*/],
+        },
       };
       pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
       const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
-      const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer);
+      const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer, {
+        customRpc: pluginOptions.customRpc,
+      });
 
       // setup miniflare + proxy
       // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
@@ -93,4 +107,9 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       }
     },
   };
+
+  return [
+    middlewarePlugin,
+    pluginOptions.preBundle && vitePluginPreBundle(pluginOptions.preBundle),
+  ].filter(typedBoolean);
 }

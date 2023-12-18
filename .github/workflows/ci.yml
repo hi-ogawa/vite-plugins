@@ -31,9 +31,10 @@ jobs:
       - run: pnpm i
       - run: pnpm build
       - run: npx playwright install chromium
-      - run: pnpm -C packages/vite-node-miniflare test-e2e
-      - run: pnpm -C packages/vite-node-miniflare test-e2e-react
-      - run: pnpm -C packages/vite-node-miniflare test-e2e-react-router
+      - run: pnpm -C packages/vite-node-miniflare/examples/basic test-e2e
+      - run: pnpm -C packages/vite-node-miniflare/examples/react test-e2e
+      - run: pnpm -C packages/vite-node-miniflare/examples/react-router test-e2e
+      - run: pnpm -C packages/vite-node-miniflare/examples/remix test-e2e
 
   test-examples:
     runs-on: ubuntu-latest

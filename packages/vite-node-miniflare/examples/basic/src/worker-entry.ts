@@ -1,5 +1,5 @@
 import { h, renderToString } from "@hiogawa/tiny-react";
-import type { ViteNodeMiniflareClient } from "../../dist/client/vite-node";
+import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare/client/vite-node";
 import { App } from "./app";
 
 export default {

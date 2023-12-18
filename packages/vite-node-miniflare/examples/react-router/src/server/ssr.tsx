@@ -5,13 +5,13 @@ import {
   globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
+import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare/client/vite-node";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import {
   StaticRouterProvider,
   createStaticRouter,
 } from "react-router-dom/server";
-import type { ViteNodeMiniflareClient } from "../../../dist/client/vite-node";
 
 export function ssrHandler(): RequestHandler {
   const { routes, routesMeta } = globPageRoutesServer();
