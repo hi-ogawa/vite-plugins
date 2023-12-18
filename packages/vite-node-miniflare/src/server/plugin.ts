@@ -74,14 +74,19 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           await miniflare.ready;
         }
 
-        // workaround typing mismatch between "lib.dom" and "miniflare"
+        // workaround Request/Response polyfills mismatch and typings mismatch between "lib.dom" and "miniflare"
         const request = h3.toWebRequest(event) as any as MiniflareRequest;
-        return miniflare.dispatchFetch(request.url, {
+        const res = await miniflare.dispatchFetch(request.url, {
           method: request.method,
           headers: request.headers,
           body: request.body,
           duplex: "half",
-        }) as any as Response;
+        });
+        return new Response(res.body as any, {
+          status: res.status,
+          statusText: res.statusText,
+          headers: res.headers,
+        });
       });
 
       const app = h3.createApp().use([
