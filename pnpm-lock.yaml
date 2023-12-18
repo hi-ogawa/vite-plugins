@@ -269,12 +269,6 @@ importers:
 
   packages/vite-node-miniflare:
     dependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.34
-        version: 0.0.34
-      '@hattip/compose':
-        specifier: ^0.0.34
-        version: 0.0.34
       esbuild:
         specifier: ^0.18.6
         version: 0.18.13
@@ -1992,6 +1986,7 @@ packages:
     dependencies:
       '@hattip/core': 0.0.34
       '@hattip/polyfills': 0.0.34
+    dev: true
 
   /@hattip/adapter-vercel-edge@0.0.34:
     resolution: {integrity: sha512-c50G3Jq4TCmu5MjcQU/hoOCZGOMSDPE4+pm+/2Mn7lbqHEy2hxP852fpGGHOdBYSNh3ZfGuR9c4K99GxX8FwEA==}
@@ -2012,6 +2007,7 @@ packages:
     dependencies:
       '@hattip/core': 0.0.34
       node-fetch-native: 1.4.0
+    dev: true
 
   /@hiogawa/isort-ts@1.1.1(prettier@2.8.8)(typescript@5.1.6):
     resolution: {integrity: sha512-nllXA6mxTE79eIQgyAWhrRTCOe73T7+TWv0EdxainODdJp8xyQhdtWWKqdfa7fvHKJzwokQP9NlFts8kci5r2Q==}
@@ -6180,6 +6176,7 @@ packages:
 
   /node-fetch-native@1.4.0:
     resolution: {integrity: sha512-F5kfEj95kX8tkDhUCYdV8dg3/8Olx/94zB8+ZNthFs6Bz31UpUi8Xh40TN3thLwXgrwXry1pEg9lJ++tLWTcqA==}
+    dev: true
 
   /node-fetch-native@1.4.1:
     resolution: {integrity: sha512-NsXBU0UgBxo2rQLOeWNZqS3fvflWePMECr8CoSWoSTqCqGbVVsvl9vZu1HfQicYN0g5piV9Gh8RTEvo/uP752w==}
