@@ -91,14 +91,16 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
 
       const app = h3.createApp().use([
         h3.eventHandler((event) => {
-          // workaround double toWebRequest? https://github.com/unjs/h3/issues/570
+          // workaround double toWebRequest https://github.com/unjs/h3/issues/570
           event.web = {
             request: h3.toWebRequest(event),
           };
-          return viteNodeServerRpc.requestHandler({
-            request: h3.toWebRequest(event),
-          });
         }),
+        h3.eventHandler((event) =>
+          viteNodeServerRpc.requestHandler({
+            request: h3.toWebRequest(event),
+          })
+        ),
         miniflareHandler,
       ]);
 
