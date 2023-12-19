@@ -38,7 +38,7 @@ export function createViteNodeClient(options: {
     },
   });
 
-  // TODO: probably this is not enough.
+  // TODO: probably this is not enough. (cf. packages/vite-node-miniflare/src/client/polyfills/node-vm.ts)
   installSourcemapsSupport({
     getSourceMap: (source) => runner.moduleCache.getSourceMap(source),
   });

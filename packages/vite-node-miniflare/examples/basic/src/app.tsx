@@ -5,7 +5,7 @@ export function App(props: { url: string }) {
   const [input, setInput] = useState("");
   const [counter, setCounter] = useState(0);
 
-  if (typeof window === "undefined" && props.url.includes("crash")) {
+  if (typeof window === "undefined" && props.url.includes("crash-ssr")) {
     throw new Error("crash ssr");
   }
 
