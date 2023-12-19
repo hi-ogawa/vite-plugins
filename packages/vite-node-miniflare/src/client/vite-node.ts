@@ -38,6 +38,7 @@ export function createViteNodeClient(options: {
     },
   });
 
+  // TODO: probably this is not enough.
   installSourcemapsSupport({
     getSourceMap: (source) => runner.moduleCache.getSourceMap(source),
   });
