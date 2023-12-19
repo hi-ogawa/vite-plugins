@@ -12,3 +12,12 @@ test("basic", async ({ page }) => {
 
   expect(pageErrors).toEqual([]);
 });
+
+test("server error", async ({ page }) => {
+  await page.goto("/crash-ssr");
+  await page
+    .getByText(
+      "[vite-node-miniflare error] Error: crash ssr at App (eval:11:11) at eval:674:45 "
+    )
+    .click();
+});
