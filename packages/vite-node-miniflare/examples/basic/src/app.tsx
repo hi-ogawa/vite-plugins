@@ -4,6 +4,11 @@ import { TestComponent } from "./component";
 export function App(props: { url: string }) {
   const [input, setInput] = useState("");
   const [counter, setCounter] = useState(0);
+
+  if (import.meta.env.SSR && props.url.includes("crash-ssr")) {
+    throw new Error("crash ssr");
+  }
+
   return (
     <div style="display: flex; flex-direction: column; gap: 0.5rem; max-width: 300px">
       <h4>Vite Node Miniflare Demo</h4>
