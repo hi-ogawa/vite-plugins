@@ -5,6 +5,7 @@ import {
 } from "@hiogawa/tiny-rpc";
 import type { ViteNodeRunnerOptions } from "vite-node";
 import { ViteNodeRunner } from "vite-node/client";
+import { installSourcemapsSupport } from "vite-node/source-map";
 import type { ViteNodeRpc } from "..";
 import { __setDebug } from "./polyfills/debug";
 import { __setUnsafeEval } from "./polyfills/node-vm";
@@ -35,6 +36,10 @@ export function createViteNodeClient(options: {
     resolveId(id, importer) {
       return rpc.resolveId(id, importer);
     },
+  });
+
+  installSourcemapsSupport({
+    getSourceMap: (source) => runner.moduleCache.getSourceMap(source),
   });
 
   return { rpc, runner };
