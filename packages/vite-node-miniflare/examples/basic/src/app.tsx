@@ -1,13 +1,10 @@
 import { useState } from "@hiogawa/tiny-react";
 import { TestComponent } from "./component";
+import { CrashSsr } from "./crash";
 
 export function App(props: { url: string }) {
   const [input, setInput] = useState("");
   const [counter, setCounter] = useState(0);
-
-  if (import.meta.env.SSR && props.url.includes("crash-ssr")) {
-    throw new Error("crash ssr");
-  }
 
   return (
     <div style="display: flex; flex-direction: column; gap: 0.5rem; max-width: 300px">
@@ -27,6 +24,7 @@ export function App(props: { url: string }) {
         <button onclick={() => setCounter(counter + 1)}>+1</button>
       </div>
       <TestComponent />
+      <CrashSsr url={props.url} />
     </div>
   );
 }
