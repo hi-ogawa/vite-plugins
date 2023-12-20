@@ -1,3 +1,4 @@
+import process from "node:process";
 import { expect, test } from "@playwright/test";
 
 test("basic", async ({ page }) => {
@@ -11,4 +12,20 @@ test("basic", async ({ page }) => {
   await page.getByText("Counter: 1").click();
 
   expect(pageErrors).toEqual([]);
+});
+
+test("server error", async ({ request }) => {
+  const res = await request.get("/crash-ssr");
+  expect(res.status()).toBe(500);
+
+  let text = await res.text();
+  text = text.replaceAll(/[/].*node_modules/gm, "__NODE_MODULES__");
+  text = text.replaceAll(process.cwd(), "__CWD__");
+  expect(text).toMatch(`\
+[vite-node-miniflare error]
+Error: crash ssr
+    at Module.crash (__CWD__/src/crash-dep.ts:3:9)
+    at CrashSsr (__CWD__/src/crash.tsx:5:5)
+    at __NODE_MODULES__/@hiogawa/tiny-react/dist/index.js:674:45
+`);
 });

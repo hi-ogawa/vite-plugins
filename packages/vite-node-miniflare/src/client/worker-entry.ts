@@ -41,10 +41,14 @@ export default {
         ...env,
         __VITE_NODE_MINIFLARE_CLIENT: client,
       };
-      return workerEntry.default.fetch(request, workerEnv, ctx);
+      return await workerEntry.default.fetch(request, workerEnv, ctx);
     } catch (e) {
       console.error(e);
-      return new Response("vite-node-miniflare error", { status: 500 });
+      let body = "[vite-node-miniflare error]\n";
+      if (e instanceof Error) {
+        body += `${e.stack ?? e.message}`;
+      }
+      return new Response(body, { status: 500 });
     }
   },
 };
