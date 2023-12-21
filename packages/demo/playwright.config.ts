@@ -6,6 +6,7 @@ const command = process.env["E2E_COMMAND"] ?? `pnpm dev:vite`;
 
 export default defineConfig({
   testDir: "e2e",
+  timeout: 5000,
   retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: `http://localhost:${PORT}`,

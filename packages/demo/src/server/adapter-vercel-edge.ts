@@ -1,3 +1,5 @@
+// TODO: remove
+
 import adapterVercelEdge from "@hattip/adapter-vercel-edge";
 import { createHattipApp } from ".";
 

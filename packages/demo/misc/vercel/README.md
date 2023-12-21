@@ -1,5 +1,7 @@
 # vercel
 
+TODO: remove
+
 misc script for vercel deployment
 
 ```sh
