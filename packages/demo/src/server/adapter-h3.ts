@@ -1,7 +1,7 @@
 import { defineEventHandler, getRequestIP, toWebRequest } from "h3";
 import { createHattipApp } from ".";
 
-// until node 20
+// TODO: node 20
 if (typeof globalThis.crypto === "undefined") {
   const nodeCrypto = await import("node:crypto");
   (globalThis as any).crypto = nodeCrypto.webcrypto;
