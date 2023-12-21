@@ -7,6 +7,8 @@ mkdir -p dist/nitro/routes
 cp -r dist/client dist/nitro/public
 rm -rf dist/nitro/public/{index.html,.vite}
 
+cp misc/nitro/nitro.config.ts dist/nitro
+
 cat > dist/nitro/routes/[...].ts <<EOF
 export { default } from "../../server/index.js";
 EOF
