@@ -32,7 +32,6 @@ export default defineConfig((ctx) => ({
     outDir: ctx.isSsrBuild ? "dist/server" : "dist/client",
     manifest: ".vite/manifest.json", // explicit manifest path for v4/v5 compat
     sourcemap: true,
-    target: "esnext",
   },
   server: process.env["PORT"]
     ? {

@@ -11,7 +11,7 @@
     "build:vercel": "NITRO_PRESET=vercel-edge pnpm run build-nitro && bash misc/nitro/vercel.sh",
     "build-nitro": "bash misc/nitro/build.sh && nitro build dist/nitro",
     "build-preview": "pnpm run build:vite && NITRO_PRESET=node-server pnpm run build-nitro",
-    "preview": "NITRO_HOST=127.0.0.1 NITRO_PORT=$PORT node ./dist/nitro/.output/server/index.mjs",
+    "preview": "NITRO_HOST=127.0.0.1 NITRO_PORT=$PORT node -r @hiogawa/tiny-jwt/dist/polyfill-node ./dist/nitro/.output/server/index.mjs",
     "test": "vitest",
     "test-e2e": "playwright test",
     "cli": "tsx ./src/server/cli.ts",
