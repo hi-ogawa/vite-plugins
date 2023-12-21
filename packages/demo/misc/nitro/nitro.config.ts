@@ -8,8 +8,9 @@ export default defineNitroConfig({
   },
   publicAssets: [
     {
+      baseURL: "assets",
       dir: "public/assets",
-      maxAge: 30 * 24 * 60 * 60,
+      maxAge: 31536000,
     },
   ],
 });
