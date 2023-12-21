@@ -1,6 +1,7 @@
 pnpm-lock.yaml
 node_modules
 dist
+test-results
 .vercel
 .vite-node
 .wrangler
