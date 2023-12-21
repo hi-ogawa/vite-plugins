@@ -7,6 +7,7 @@ const h3Handler = defineEventHandler((event) => {
   return hattipHandler({
     request: toWebRequest(event),
     ip: getRequestIP(event) ?? "127.0.0.1",
+    // TODO: h3 context for worker env etc...?
     platform: {},
     passThrough() {},
     // no API to expose `waitUntil`?
