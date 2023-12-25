@@ -1,0 +1,12 @@
+diff --git a/dist/src/index.js b/dist/src/index.js
+index 99c1c805229b739957066e8b505a3ee4fe4efae0..bafed5367701adfa3f72d68418eabc29d389ffac 100644
+--- a/dist/src/index.js
++++ b/dist/src/index.js
+@@ -4543,6 +4543,7 @@ function headersFromIncomingRequest(req) {
+   return new import_undici4.Headers(Object.fromEntries(entries));
+ }
+ async function fetch2(input, init2) {
++  console.log("[miniflare.fetch]", { input });
+   const requestInit = init2;
+   const request = new Request(input, requestInit);
+   if (request.method === "GET" && request.headers.get("upgrade") === "websocket") {

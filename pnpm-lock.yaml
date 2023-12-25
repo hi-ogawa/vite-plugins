@@ -4,6 +4,14 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  miniflare@3.20231030.4:
+    hash: 3tei2fwpkqg2zedlst7fwxjvza
+    path: patches/miniflare@3.20231030.4.patch
+  wrangler@3.22.1:
+    hash: jigbohugdecwzongopf5egol6i
+    path: patches/wrangler@3.22.1.patch
+
 importers:
 
   .:
@@ -280,13 +288,13 @@ importers:
         version: 0.18.13
       miniflare:
         specifier: ^3.20231030.3
-        version: 3.20231030.4
+        version: 3.20231030.4(patch_hash=3tei2fwpkqg2zedlst7fwxjvza)
       vite-node:
         specifier: ^1.0.4
         version: 1.0.4(@types/node@18.16.18)
       wrangler:
-        specifier: 3.18.0
-        version: 3.18.0
+        specifier: 3.22.1
+        version: 3.22.1(patch_hash=jigbohugdecwzongopf5egol6i)
     devDependencies:
       '@hiogawa/tiny-rpc':
         specifier: ^0.2.3-pre.11
@@ -311,7 +319,7 @@ importers:
         version: link:../..
       miniflare:
         specifier: ^3.20231030.3
-        version: 3.20231030.4
+        version: 3.20231030.4(patch_hash=3tei2fwpkqg2zedlst7fwxjvza)
       vite:
         specifier: ^5.0.4
         version: 5.0.8(@types/node@18.16.18)
@@ -332,7 +340,7 @@ importers:
         version: 4.2.0(vite@5.0.8)
       miniflare:
         specifier: ^3.20231030.3
-        version: 3.20231030.4
+        version: 3.20231030.4(patch_hash=3tei2fwpkqg2zedlst7fwxjvza)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -368,7 +376,7 @@ importers:
         version: 4.2.0(vite@5.0.8)
       miniflare:
         specifier: ^3.20231030.3
-        version: 3.20231030.4
+        version: 3.20231030.4(patch_hash=3tei2fwpkqg2zedlst7fwxjvza)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1016,6 +1024,13 @@ packages:
   /@cloudflare/workers-types@4.20231121.0:
     resolution: {integrity: sha512-+kWfpCkqiepwAKXyHoE0gnkPgkLhz0/9HOBIGhHRsUvUKvhUtm3mbqqoGRWgF1qcjzrDUBbrrOq4MYHfFtc2RA==}
     dev: true
+
+  /@cspotcode/source-map-support@0.8.1:
+    resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.9
+    dev: false
 
   /@emotion/hash@0.9.1:
     resolution: {integrity: sha512-gJB6HLm5rYwSLI6PQa+X1t5CFGrv1J1TWG+sOyMCeKz2ojaj6Fnl/rZEspogG+cvqbt4AE/2eIyD2QfLKTBNlQ==}
@@ -2213,6 +2228,13 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+
+  /@jridgewell/trace-mapping@0.3.9:
+    resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+    dependencies:
+      '@jridgewell/resolve-uri': 3.1.0
+      '@jridgewell/sourcemap-codec': 1.4.15
+    dev: false
 
   /@jspm/core@2.0.1:
     resolution: {integrity: sha512-Lg3PnLp0QXpxwLIAuuJboLeRaIhrgJjeuh797QADg3xz8wGLugQOS5DpsE8A6i6Adgzf+bacllkKZG3J0tGfDw==}
@@ -5995,30 +6017,7 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /miniflare@3.20231030.2:
-    resolution: {integrity: sha512-+DYdMqWlUaY4wBylIjewNu8OVsPFquYjQkxoSb2jGIMBmlKaef65Hn2Bu8sub5tQzQ8tLO0FRklmD2Upx0HCCQ==}
-    engines: {node: '>=16.13'}
-    hasBin: true
-    dependencies:
-      acorn: 8.10.0
-      acorn-walk: 8.3.0
-      capnp-ts: 0.7.0
-      exit-hook: 2.2.1
-      glob-to-regexp: 0.4.1
-      source-map-support: 0.5.21
-      stoppable: 1.1.0
-      undici: 5.28.2
-      workerd: 1.20231030.0
-      ws: 8.15.1
-      youch: 3.3.3
-      zod: 3.21.4
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /miniflare@3.20231030.4:
+  /miniflare@3.20231030.4(patch_hash=3tei2fwpkqg2zedlst7fwxjvza):
     resolution: {integrity: sha512-7MBz0ArLuDop1WJGZC6tFgN6c5MRyDOIlxbm3yp0TRBpvDS/KsTuWCQcCjsxN4QQ5zvL3JTkuIZbQzRRw/j6ow==}
     engines: {node: '>=16.13'}
     hasBin: true
@@ -6040,6 +6039,7 @@ packages:
       - supports-color
       - utf-8-validate
     dev: false
+    patched: true
 
   /minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
@@ -8368,24 +8368,24 @@ packages:
       '@cloudflare/workerd-windows-64': 1.20231030.0
     dev: false
 
-  /wrangler@3.18.0:
-    resolution: {integrity: sha512-3UrmldsD84JDBa7HRZ5ACFr1nH+ZZs+Hth37Iv/mAaW2DiQOGcrevKwn4dofmTQO2qYP01u1vtfVJxLM0mq+1w==}
+  /wrangler@3.22.1(patch_hash=jigbohugdecwzongopf5egol6i):
+    resolution: {integrity: sha512-fN7WOF6Ono/TV5V90PuJQNf0azS7B+5C/N/KRjqhlAIQBz+c0yLOGkF6kC/akxjr1yIAC9AzcPk9+OuTSq0C+g==}
     engines: {node: '>=16.17.0'}
     hasBin: true
     dependencies:
       '@cloudflare/kv-asset-handler': 0.2.0
+      '@cspotcode/source-map-support': 0.8.1
       '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.17.19)
       '@esbuild-plugins/node-modules-polyfill': 0.2.2(esbuild@0.17.19)
       blake3-wasm: 2.1.5
       chokidar: 3.5.3
       esbuild: 0.17.19
-      miniflare: 3.20231030.2
+      miniflare: 3.20231030.4(patch_hash=3tei2fwpkqg2zedlst7fwxjvza)
       nanoid: 3.3.7
       path-to-regexp: 6.2.1
       resolve.exports: 2.0.2
       selfsigned: 2.4.1
       source-map: 0.6.1
-      source-map-support: 0.5.21
       xxhash-wasm: 1.0.2
     optionalDependencies:
       fsevents: 2.3.3
@@ -8394,6 +8394,7 @@ packages:
       - supports-color
       - utf-8-validate
     dev: false
+    patched: true
 
   /wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
