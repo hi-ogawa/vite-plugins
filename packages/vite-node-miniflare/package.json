@@ -33,7 +33,6 @@
     "build": "BUILD_STEP=0 tsup && BUILD_STEP=1 tsup",
     "release": "pnpm publish --no-git-checks --access public"
   },
-  "// TODO: wrangler 3.19 onwards seems broken? https://github.com/cloudflare/workers-sdk/pull/4535": "",
   "dependencies": {
     "@hattip/adapter-node": "^0.0.34",
     "@hattip/compose": "^0.0.34",
