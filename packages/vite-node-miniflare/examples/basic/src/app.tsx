@@ -11,14 +11,14 @@ export function App(props: { url: string }) {
       <h4>Vite Node Miniflare Demo</h4>
       <div>Props</div>
       <pre>{JSON.stringify(props)}</pre>
-      <div>{`Input: ${input}`}</div>
+      <div>Input: {input}</div>
       <input
         value={input}
         oninput={(e) => {
           setInput(e.currentTarget.value);
         }}
       />
-      <div>{`Counter: ${counter}`}</div>
+      <div>Counter: {counter}</div>
       <div style="display: flex; gap: 0.5rem;">
         <button onclick={() => setCounter(counter - 1)}>-1</button>
         <button onclick={() => setCounter(counter + 1)}>+1</button>
