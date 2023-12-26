@@ -26,6 +26,5 @@ test("server error", async ({ request }) => {
 Error: crash ssr
     at Module.crash (__CWD__/src/crash-dep.ts:3:9)
     at CrashSsr (__CWD__/src/crash.tsx:5:5)
-    at __NODE_MODULES__/@hiogawa/tiny-react/dist/index.js:674:45
-`);
+    at __NODE_MODULES__/@hiogawa/tiny-react/dist/index.js`);
 });
