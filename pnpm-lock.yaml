@@ -301,8 +301,8 @@ importers:
   packages/vite-node-miniflare/examples/basic:
     dependencies:
       '@hiogawa/tiny-react':
-        specifier: 0.0.2-pre.5
-        version: 0.0.2-pre.5(vite@5.0.8)
+        specifier: 0.0.2-pre.8
+        version: 0.0.2-pre.8(vite@5.0.8)
       '@hiogawa/vite-node-miniflare':
         specifier: workspace:*
         version: link:../..
@@ -2075,8 +2075,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@hiogawa/tiny-react@0.0.2-pre.5(vite@5.0.8):
-    resolution: {integrity: sha512-ac9Fr+KKaj5BWOqUR0fdGZpy4bDQg+rn+CQbnrB26CZ79qqTkoU/Kzd6pPl4wXzqY9d70bnowKBu/EXM+B2Now==}
+  /@hiogawa/tiny-react@0.0.2-pre.8(vite@5.0.8):
+    resolution: {integrity: sha512-5CD2uM+kO3IfBaJ5ga9iJjK9vTsO35aDQKq7mCeLCW0KIUAeVliLsFZEjpjHA0WN/sceZbSde5uHtz46JnuzQA==}
     peerDependencies:
       vite: '*'
     peerDependenciesMeta:
