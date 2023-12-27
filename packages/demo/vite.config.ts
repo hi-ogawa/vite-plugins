@@ -30,6 +30,13 @@ export default defineConfig((ctx) => ({
     manifest: ".vite/manifest.json", // explicit manifest path for v4/v5 compat
     sourcemap: true,
   },
+  optimizeDeps: {
+    // avoid pre-bundling late discovery which forces browser full reload
+    // debug it by:
+    //   DEBUG=vite:deps pnpm -C packages/demo dev:vite --force
+    entries: ["./src/client/index.tsx", "./src/routes/**/*"],
+    include: ["react-router"], // TODO: probably vite-glob-routes should add it automatically
+  },
   server: process.env["PORT"]
     ? {
         port: Number(process.env["PORT"]),
