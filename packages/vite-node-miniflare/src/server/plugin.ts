@@ -1,11 +1,6 @@
-import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
-import * as httipCompose from "@hattip/compose";
 import { typedBoolean } from "@hiogawa/utils";
-import {
-  Miniflare,
-  type MiniflareOptions,
-  type Request as MiniflareRequest,
-} from "miniflare";
+import * as h3 from "h3";
+import { Miniflare, type MiniflareOptions } from "miniflare";
 import type { Plugin } from "vite";
 import type { ViteNodeRunnerOptions, ViteNodeServerOptions } from "vite-node";
 import { ViteNodeServer } from "vite-node/server";
@@ -53,7 +48,9 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
 
       // setup miniflare + proxy
       // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
-      const miniflareHandler: httipCompose.RequestHandler = async (ctx) => {
+      const miniflareHandler = h3.eventHandler(async (event) => {
+        const request = h3.toWebRequest(event);
+
         if (!miniflare) {
           const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
             root: server.config.root,
@@ -64,7 +61,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
 
           const miniflareOptions = viteNodeServerRpc.generateMiniflareOptions({
             entry: pluginOptions.entry,
-            rpcOrigin: ctx.url.origin,
+            rpcOrigin: new URL(request.url).origin,
             debug: pluginOptions.debug,
             viteNodeRunnerOptions,
           });
@@ -73,26 +70,36 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           await miniflare.ready;
         }
 
-        // workaround typing mismatch between "lib.dom" and "miniflare"
-        const request = ctx.request as any as MiniflareRequest;
-        return miniflare.dispatchFetch(request.url, {
+        // workaround Request/Response polyfills mismatch and typings mismatch between "lib.dom" and "miniflare"
+        const res = await miniflare.dispatchFetch(request.url, {
           method: request.method,
-          headers: request.headers,
-          body: request.body,
+          headers: request.headers as any,
+          body: request.body as any,
           duplex: "half",
-        }) as any as Response;
-      };
+        });
+        return new Response(res.body as any, {
+          status: res.status,
+          statusText: res.statusText,
+          headers: res.headers,
+        });
+      });
 
-      const middleware = httipAdapterNode.createMiddleware(
-        httipCompose.compose(
-          viteNodeServerRpc.requestHandler,
-          miniflareHandler
+      const app = h3.createApp().use([
+        h3.eventHandler((event) => {
+          // workaround double toWebRequest https://github.com/unjs/h3/issues/570
+          event.web = {
+            request: h3.toWebRequest(event),
+          };
+        }),
+        h3.eventHandler((event) =>
+          viteNodeServerRpc.requestHandler({
+            request: h3.toWebRequest(event),
+          })
         ),
-        {
-          alwaysCallNext: false,
-        }
-      );
-      return () => server.middlewares.use(middleware);
+        miniflareHandler,
+      ]);
+
+      return () => server.middlewares.use(h3.toNodeListener(app));
     },
 
     async buildEnd() {
