@@ -1,0 +1,16 @@
+name = "vite-node-dev"
+
+# main = "./dist/packages/vite-node-miniflare/dist/client/worker-entry.js"
+# main = "./demo-entry.mjs"
+# workers_dev = true
+# compatibility_date = "2023-08-01"
+
+# # wrangler dev
+
+[vars]
+SOME_VAR = "YO"
+# __WORKER_ENTRY = ""
+# __VITE_NODE_SERVER_RPC_URL = "http://"
+# __VITE_NODE_DEBUG = "true"
+# __VITE_NODE_RUNNER_OPTIONS: options.viteNodeRunnerOptions as any,
+# __VITE_NODE_DEBUG: options.debug ?? false,
