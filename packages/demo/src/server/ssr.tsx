@@ -66,6 +66,7 @@ export function ssrHandler(): RequestHandler {
 
     // for initial prefetch link + client side lazy resolution
     const matchRouteIds = routerResult.context.matches.map((m) => m.route.id);
+    // TODO: use ssr-manifest.json?
     const matchRouteDeps = resolveRouteDependenciesByIds(
       matchRouteIds,
       routesMeta,
@@ -91,7 +92,6 @@ export function ssrHandler(): RequestHandler {
         // so other data could be hard-coded somewhere after build?
         matchRouteDeps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
         `<script>
-          window.__viteManifest = ${JSON.stringify(manifest)};
           window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
           window.__initialMatchRouteIds = ${JSON.stringify(matchRouteIds)};
         </script>`,

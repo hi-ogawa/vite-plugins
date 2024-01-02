@@ -41,6 +41,7 @@ function resolveRouteDependenciesById(
 }
 
 // need to probe vite client manifest to map production asset url
+// TODO: is it easier with ssrManifest? https://vitejs.dev/guide/ssr.html#generating-preload-directives
 function resolveManifestEntries(
   files: string[],
   manifest: Manifest

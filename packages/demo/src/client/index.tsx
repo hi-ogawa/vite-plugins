@@ -4,17 +4,14 @@ import {
   globPageRoutesClient,
   injectDataRequestLoaders,
   resolveLazyRoutes,
-  setPreloadContext,
-  setupGlobalPreloadHandler,
+  setupPreload,
 } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import type { Manifest } from "vite";
 
 // cf. packages/demo/src/server/ssr.tsx
 const serverHandoff = window as any as {
-  __viteManifest?: Manifest;
   __serverLoaderRouteIds: string[];
   __initialMatchRouteIds: string[];
 };
@@ -23,15 +20,10 @@ async function main() {
   const el = document.getElementById("root");
   tinyassert(el);
 
-  const { routes, routesMeta } = globPageRoutesClient();
+  const { routes } = globPageRoutesClient();
   await resolveLazyRoutes(routes, serverHandoff.__initialMatchRouteIds);
   injectDataRequestLoaders(routes, serverHandoff.__serverLoaderRouteIds);
-  setPreloadContext({
-    routes,
-    routesMeta,
-    manifest: serverHandoff.__viteManifest,
-  });
-  setupGlobalPreloadHandler();
+  setupPreload({ routes });
 
   const router = createBrowserRouter(routes);
   const root = (

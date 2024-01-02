@@ -28,7 +28,7 @@ export default defineConfig((ctx) => ({
   build: {
     outDir: ctx.isSsrBuild ? "dist/server" : "dist/client",
     manifest: ".vite/manifest.json", // explicit manifest path for v4/v5 compat
-    sourcemap: true,
+    ssrManifest: ".vite/ssr-manifest.json",
   },
   optimizeDeps: {
     // avoid pre-bundling late discovery which forces browser full reload
