@@ -3,6 +3,7 @@ import { tinyassert } from "@hiogawa/utils";
 import { test } from "@playwright/test";
 import { isPageReady } from "./helper";
 
+// TODO: test production build
 const isPreview = Boolean(process.env["E2E_COMMAND"]?.includes("preview"));
 
 test("modulepreload", async ({ page }) => {
@@ -18,11 +19,14 @@ test("modulepreload", async ({ page }) => {
   tinyassert(!(await findPreloadLink("/src/routes/subdir/other.page.tsx")));
 
   // preload after mouseover
+  const preloadRequests = Promise.all([
+    page.waitForRequest("/src/routes/subdir/layout.tsx"),
+    page.waitForRequest("/src/routes/subdir/other.page.tsx"),
+  ]);
   await page
     .getByRole("link", { name: "/subdir/other" })
     .dispatchEvent("mouseover");
-  tinyassert(await findPreloadLink("/src/routes/subdir/layout.tsx"));
-  tinyassert(await findPreloadLink("/src/routes/subdir/other.page.tsx"));
+  await preloadRequests;
 
   function findPreloadLink(href: string) {
     return page.evaluate(
