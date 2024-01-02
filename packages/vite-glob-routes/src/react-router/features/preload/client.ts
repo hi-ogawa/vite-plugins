@@ -37,6 +37,14 @@ function getRouteDependencies(page: string): RouteDependencies {
   );
 }
 
+// Vite's production build will wrap each dynamic import with `__vitePreload`,
+// which will inject preload links for asset dependencies when such dynamic import is invoked.
+async function preloadPageAssets(page: string) {
+  const { routes } = getPreloadContext();
+  const matches = matchRoutes(routes, page) ?? [];
+  await Promise.all(matches.map(m => m.route.lazy?.()));
+}
+
 //
 // helper to globally setup preload handler for <a href="..." date-preload />
 //
@@ -72,6 +80,11 @@ function injectPreloadLinks(href: string) {
 
   // TODO: prefetch external links?
   if (url.host !== window.location.host) {
+    return;
+  }
+
+  preloadPageAssets(url.pathname);
+  if (1) {
     return;
   }
 
