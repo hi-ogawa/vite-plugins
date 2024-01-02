@@ -42,7 +42,7 @@ function getRouteDependencies(page: string): RouteDependencies {
 async function preloadPageAssets(page: string) {
   const { routes } = getPreloadContext();
   const matches = matchRoutes(routes, page) ?? [];
-  await Promise.all(matches.map(m => m.route.lazy?.()));
+  await Promise.all(matches.map((m) => m.route.lazy?.()));
 }
 
 //
