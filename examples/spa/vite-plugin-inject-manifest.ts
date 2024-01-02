@@ -4,6 +4,7 @@ import { tinyassert } from "@hiogawa/utils";
 import { type Plugin } from "vite";
 
 // directly expose vite's manifest.json on client for page assets prefetching
+// (TODO: it turns out this is not necessary for client navigation prefetch...)
 
 export function vitePluginInjectManifest(): Plugin {
   return {

@@ -91,7 +91,6 @@ export function ssrHandler(): RequestHandler {
         // so other data could be hard-coded somewhere after build?
         matchRouteDeps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
         `<script>
-          window.__viteManifest = ${JSON.stringify(manifest)};
           window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
           window.__initialMatchRouteIds = ${JSON.stringify(matchRouteIds)};
         </script>`,
