@@ -66,6 +66,7 @@ export function ssrHandler(): RequestHandler {
 
     // for initial prefetch link + client side lazy resolution
     const matchRouteIds = routerResult.context.matches.map((m) => m.route.id);
+    // TODO: use ssr-manifest.json?
     const matchRouteDeps = resolveRouteDependenciesByIds(
       matchRouteIds,
       routesMeta,
