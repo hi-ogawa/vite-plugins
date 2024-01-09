@@ -13,6 +13,7 @@ export default defineConfig({
   ssr: {
     noExternal: true,
     resolve: {
+      // workerd needs "react-dom/server.browser"
       conditions: ["browser", "default"],
     },
     optimizeDeps: {
