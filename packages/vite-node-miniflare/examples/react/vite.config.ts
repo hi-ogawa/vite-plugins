@@ -31,10 +31,6 @@ export default defineConfig({
         options.deps ??= {};
         options.deps.cacheDir = "__disable_externalizing_vite_deps";
       },
-      // preBundle: {
-      //   include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
-      //   force: true,
-      // },
     }),
     react(),
     {
