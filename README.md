@@ -6,22 +6,22 @@ miscellaneous plugins to experiment with Vite SSR ideas.
 
 See `./packages/demo`, `./examples/ssr`, and `./examples/spa` for basic usage.
 
-### `@hiogawa/vite-glob-routes`
+### [`@hiogawa/vite-glob-routes`](./packages/vite-glob-routes)
 
 - file-system route convention inspired by [`rakkasjs`](https://github.com/rakkasjs/rakkasjs), [`vite-plugin-ssr`](https://github.com/brillout/vite-plugin-ssr), [`remix`](https://github.com/remix-run/remix), etc...
 - generate [`react-router`](https://github.com/remix-run/react-router) nested routes based on `**/*.page.tsx`, `**/*.page.server.tsx`, `**/layout.tsx`, and `**/layout.server.tsx`
 - generate [`hattip`](https://github.com/hattipjs/hattip) middleware based on `**/*.api.ts`
 - support `loader` for per-page data fetching in both SPA and SSR mode (similar to `loader` in [`remix`](https://github.com/remix-run/remix/) and `load` in [`@sveltejs/kit`](https://github.com/sveltejs/kit))
 
-### `@hiogawa/vite-node-miniflare`
+### [`@hiogawa/vite-node-miniflare`](./packages/vite-node-miniflare)
 
 Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare) during development via [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node).
 
-### `@hiogawa/vite-plugin-ssr-middleware`
+### [`@hiogawa/vite-plugin-ssr-middleware`](./packages/vite-plugin-ssr-middleware)
 
 Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
 
-### `@hiogawa/vite-import-dev-server`
+### [`@hiogawa/vite-import-dev-server`](./packages/vite-import-dev-server)
 
 It exposes [`ViteDevServer`](https://vitejs.dev/guide/api-javascript.html#vitedevserver) for server code during development,
 which is essential for:
