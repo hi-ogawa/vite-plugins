@@ -12,14 +12,10 @@ export default defineConfig({
   },
   ssr: {
     noExternal: true,
-    resolve: {
-      // workerd needs "react-dom/server.browser"
-      conditions: ["browser", "default"],
-    },
     optimizeDeps: {
       noDiscovery: true,
       disabled: false,
-      include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
+      include: ["react", "react/jsx-dev-runtime", "react-dom/server.browser"],
     },
   },
   plugins: [
