@@ -11,12 +11,13 @@ export default defineConfig({
     force: true,
   },
   ssr: {
+    noExternal: true,
     optimizeDeps: {
       noDiscovery: true,
       disabled: false,
       include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
+      exclude: ["stream"],
     },
-    noExternal: true,
   },
   plugins: [
     vitePluginViteNodeMiniflare({
@@ -35,11 +36,9 @@ export default defineConfig({
       name: "force-ssr-optimize-deps",
       configureServer(server) {
         return async () => {
-          // trigger ssr pre-bundling by dummy ssrLoadModule
+          // trigger ssr pre-bundling by calling ssrLoadModule for any module
           // https://github.com/vitejs/vite/blob/8ccf7222e9ffaa5e97bd0797de101c8bc6ca8d41/packages/vite/src/node/server/index.ts#L472-L475
-          console.log("[trigger ssrLoadModule]");
-          const mod = await server.ssrLoadModule("/package.json");
-          console.log("[mod]", mod);
+          await server.ssrLoadModule("/package.json");
         };
       },
     },
