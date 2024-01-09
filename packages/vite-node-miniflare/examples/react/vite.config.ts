@@ -6,10 +6,6 @@ import { defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   appType: "custom",
-  optimizeDeps: {
-    // for debugging
-    force: true,
-  },
   ssr: {
     // Vite injects "require" banner if `target: "node"`
     // https://github.com/hi-ogawa/vite/blob/a3008671de5b44ced2952f796219c0c4576125ac/packages/vite/src/node/optimizer/index.ts#L824-L830
