@@ -12,11 +12,13 @@ export default defineConfig({
   },
   ssr: {
     noExternal: true,
+    resolve: {
+      conditions: ["browser", "default"],
+    },
     optimizeDeps: {
       noDiscovery: true,
       disabled: false,
       include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
-      exclude: ["stream"],
     },
   },
   plugins: [
