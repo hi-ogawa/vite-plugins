@@ -9,7 +9,7 @@ export default defineConfig({
   optimizeDeps: {
     // for debugging
     // DEBUG=vite:deps pnpm -C examples/react dev
-    // force: true
+    // force: true,
   },
   ssr: {
     // Vite injects "require" banner if `target: "node"`
@@ -18,8 +18,8 @@ export default defineConfig({
     noExternal: true,
     optimizeDeps: {
       include: ["react", "react/jsx-dev-runtime", "react-dom/server.browser"],
-      // these two flags seem necessary to force pre-bundling for ssr?
-      // copied from vitest
+      // these two flag seem necessary to force pre-bundling for ssr?
+      // which is copied from vitest
       // https://github.com/vitest-dev/vitest/blob/043b78f3257b266302cdd68849a76b8ed343bba1/packages/vitest/src/node/plugins/utils.ts#L46-L47
       noDiscovery: true,
       disabled: false,
