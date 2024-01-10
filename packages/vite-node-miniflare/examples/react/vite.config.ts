@@ -6,6 +6,11 @@ import { defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   appType: "custom",
+  optimizeDeps: {
+    // for debugging
+    // DEBUG=vite:deps pnpm -C examples/react dev
+    // force: true
+  },
   ssr: {
     // Vite injects "require" banner if `target: "node"`
     // https://github.com/vitejs/vite/blob/a3008671de5b44ced2952f796219c0c4576125ac/packages/vite/src/node/optimizer/index.ts#L824-L830
@@ -38,6 +43,7 @@ export default defineConfig({
     react(),
     {
       name: "force-ssr-optimize-deps",
+      apply: "serve",
       configureServer(server) {
         return async () => {
           // trigger ssr pre-bundling by calling ssrLoadModule for any module
