@@ -1,6 +1,8 @@
 # vite-node-miniflare
 
-Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) on [`miniflare`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare)
+Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) on [`miniflare`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare).
+
+See https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation/pull/1 for quick summary.
 
 ## examples
 
@@ -43,7 +45,7 @@ pnpm build
 pnpm -C examples/react-router dev
 ```
 
-## credits
+## credits/references
 
 - https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation
 - https://github.com/vitest-dev/vitest/tree/main/packages/vite-node
