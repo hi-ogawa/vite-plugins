@@ -1,5 +1,5 @@
 import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare/client/vite-node";
-import ReactDomServer from "react-dom/server.browser";
+import ReactDomServer from "react-dom/server";
 import { App } from "./app";
 
 export default {
