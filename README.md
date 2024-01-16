@@ -37,7 +37,7 @@ which is essential for:
 # develop demo
 pnpm i
 pnpm build
-pnpm dev
+pnpm -C packages/demo dev
 
 # release demo
 pnpm -C packages/demo build
