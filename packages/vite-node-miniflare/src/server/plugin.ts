@@ -33,6 +33,17 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   const middlewarePlugin: Plugin = {
     name: packageName,
     apply: "serve",
+    config(_config, _env) {
+      return {
+        appType: "custom",
+        ssr: {
+          // force "webworker" since Vite injects "require" banner if `target: "node"`
+          // https://github.com/vitejs/vite/blob/a3008671de5b44ced2952f796219c0c4576125ac/packages/vite/src/node/optimizer/index.ts#L824-L830
+          target: "webworker",
+          noExternal: true,
+        },
+      };
+    },
     async configureServer(server) {
       // setup vite-node with rpc
       const viteNodeServerOptions: ViteNodeServerOptions = {
@@ -43,6 +54,13 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
         // Without this, Remix's "remix-dot-server" plugin will trigger errors.
         transformMode: {
           ssr: [/.*/],
+        },
+        deps: {
+          // vite-node tries to externalize pre-bundled deps by default.
+          // by putting non-existing cacheDir, we disable this heuristics.
+          // https://github.com/vitest-dev/vitest/blob/043b78f3257b266302cdd68849a76b8ed343bba1/packages/vite-node/src/externalize.ts#L104-L106
+          cacheDir: "__disable_externalizing_vite_deps",
+          moduleDirectories: [],
         },
       };
       pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
