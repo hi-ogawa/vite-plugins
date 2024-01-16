@@ -37,16 +37,5 @@ export default defineConfig({
       },
     }),
     react(),
-    {
-      name: "force-ssr-optimize-deps",
-      apply: "serve",
-      configureServer(server) {
-        return async () => {
-          // trigger ssr pre-bundling by calling ssrLoadModule for any module
-          // https://github.com/vitejs/vite/blob/8ccf7222e9ffaa5e97bd0797de101c8bc6ca8d41/packages/vite/src/node/server/index.ts#L472-L475
-          await server.ssrLoadModule("/package.json");
-        };
-      },
-    },
   ],
 });
