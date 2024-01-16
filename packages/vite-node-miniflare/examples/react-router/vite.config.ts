@@ -6,9 +6,11 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
-  appType: "custom",
   ssr: {
-    noExternal: true,
+    optimizeDeps: {
+      include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
+      disabled: false,
+    },
   },
   plugins: [
     globRoutesPlugin({ root: "/src/routes" }),
@@ -17,10 +19,6 @@ export default defineConfig({
       entry: "./src/server/worker-entry-wrapper.ts",
       miniflareOptions(options) {
         options.log = new Log();
-      },
-      preBundle: {
-        include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
-        force: true,
       },
     }),
     react(),
