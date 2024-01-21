@@ -55,7 +55,7 @@ export function createViteNodeClient(options: {
       ...new ESModulesRunner(), // TODO: processImport?
 
       async runViteModule(context, transformed) {
-        // TODO: ssrFetchModule always inline sourcemap, but it doesn't work with unsafeEval?
+        // TODO: inline sourcemap not working with unsafeEval?
 
         if (1) {
           // use newAsyncFunction instead of eval (but this doesn't seems to help)
