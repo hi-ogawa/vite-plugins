@@ -55,7 +55,21 @@ export function createViteNodeClient(options: {
       ...new ESModulesRunner(), // TODO: processImport?
 
       async runViteModule(context, transformed) {
-        // TODO: ssrFetchModule always inline sourcemap, but it doesn't work with eval?
+        // TODO: ssrFetchModule always inline sourcemap, but it doesn't work with unsafeEval?
+
+        if (1) {
+          // use newAsyncFunction instead of eval (but this doesn't seems to help)
+          // https://github.com/cloudflare/workerd/blob/5e2544fd2948b53e68831a9b219dc1e9970cf96f/src/workerd/api/unsafe.c%2B%2B#L48
+          // https://github.com/sapphi-red/vite-envs/blob/9e47653f4cdd557d263fd315d22ccf76d78aa638/packages/cloudflare-pages/src/client/index.ts#L83
+          const initModule = options.unsafeEval.newAsyncFunction(
+            '"use strict";' + transformed,
+            "__filename",
+            ...Object.keys(context)
+          );
+          await initModule(...Object.values(context));
+          Object.freeze(context.__vite_ssr_exports__);
+          return;
+        }
 
         // do same as vite-node/client
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
