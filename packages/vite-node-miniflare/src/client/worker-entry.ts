@@ -1,3 +1,4 @@
+import { handleHMRUpdate } from "vite/runtime";
 import {
   type ViteNodeMiniflareClient,
   createViteNodeClient,
@@ -25,17 +26,12 @@ export default {
       });
 
       if (1) {
-        // TODO: hmr, full-reload
-
-        // for now, invalidate module tree like before
-        const invalidatedModules = await client.rpc.getInvalidatedModules();
-        const invalidatedTree =
-          client.runtime.moduleCache.invalidateDepTree(invalidatedModules);
-        if (env.__VITE_NODE_DEBUG) {
-          console.log("[vite-node-miniflare] invalidateDepTree:", {
-            invalidatedModules,
-            invalidatedTree: [...invalidatedTree],
-          });
+        // poll HMRPayload before execution
+        // TODO: listen HMRPayload event (birpc? websocket? SSE?)
+        const payloads = await client.rpc.getHMRPayloads();
+        for (const payload of payloads) {
+          console.log("[handleHMRUpdate]", payload);
+          await handleHMRUpdate(client.runtime, payload);
         }
 
         const workerEntry = await client.runtime.executeEntrypoint(

@@ -38,8 +38,18 @@ export function createViteNodeClient(options: {
         // console.log({ id, importer });
         return rpc.ssrFetchModule(id, importer);
       },
-      // TODO
-      // hmr: {},
+      // TODO: only for sending custom event to server? (not for listening HMRPayload event?)
+      hmr: {
+        connection: {
+          isReady() {
+            return true;
+          },
+          send(messages) {
+            console.log("[runtime.hmr.connection.send]", messages);
+          },
+        },
+        logger: console,
+      },
     },
     {
       ...new ESModulesRunner(), // TODO: processImport?

@@ -1,6 +1,11 @@
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
 import type { MiniflareOptions } from "miniflare";
-import { type ViteDevServer, normalizePath } from "vite";
+import {
+  type HMRPayload,
+  ServerHMRConnector,
+  type ViteDevServer,
+  normalizePath,
+} from "vite";
 import type { ViteNodeRunnerOptions } from "vite-node";
 import type { ViteNodeServer } from "vite-node/server";
 import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
@@ -13,6 +18,7 @@ export type ViteNodeRpc =
   Pick<ViteDevServer, "transformIndexHtml" | "ssrFetchModule"> &
   {
     getInvalidatedModules: () => string[];
+    getHMRPayloads: () => HMRPayload[];
   };
 
 export function setupViteNodeServerRpc(
@@ -25,6 +31,14 @@ export function setupViteNodeServerRpc(
   // https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/vite-node.ts#L62
   const invalidatedModules = new Set<string>();
 
+  // for starter, collect HMRPayload with builtin ServerHMRConnector
+  // and let client fetch them
+  const connector = new ServerHMRConnector(viteNodeServer.server);
+  let hmrPayloads: HMRPayload[] = [];
+  connector.onUpdate((payload) => {
+    hmrPayloads.push(payload);
+  });
+
   const rpcRoutes: ViteNodeRpc = {
     fetchModule: viteNodeServer.fetchModule.bind(viteNodeServer),
     resolveId: viteNodeServer.resolveId.bind(viteNodeServer),
@@ -34,6 +48,11 @@ export function setupViteNodeServerRpc(
       // there must be at most one client to make use of this RPC
       const result = [...invalidatedModules];
       invalidatedModules.clear();
+      return result;
+    },
+    getHMRPayloads: () => {
+      const result = hmrPayloads;
+      hmrPayloads = [];
       return result;
     },
     // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
