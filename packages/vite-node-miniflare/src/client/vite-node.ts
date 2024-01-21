@@ -35,7 +35,7 @@ export function createViteNodeClient(options: {
     {
       root: options.runnerOptions.root,
       fetchModule(id, importer) {
-        console.log({ id, importer });
+        // console.log({ id, importer });
         return rpc.ssrFetchModule(id, importer);
       },
       // TODO
