@@ -63,6 +63,14 @@ export default {
       };
       return await workerEntry.default.fetch(request, workerEnv, ctx);
     } catch (e) {
+      if (client && e instanceof Error && e.stack) {
+        try {
+          // TODO: not working. maybe inline sourcemap not handled properly with unsafeEval
+          e.stack = await client.rpc.ssrRewriteStacktrace(e.stack);
+        } catch (e) {
+          console.error(e);
+        }
+      }
       console.error(e);
       let body = "[vite-node-miniflare error]\n";
       if (e instanceof Error) {

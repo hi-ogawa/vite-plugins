@@ -15,7 +15,7 @@ import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
 // prettier-ignore
 export type ViteNodeRpc =
   Pick<ViteNodeServer, "fetchModule" | "resolveId"> &
-  Pick<ViteDevServer, "transformIndexHtml" | "ssrFetchModule"> &
+  Pick<ViteDevServer, "transformIndexHtml" | "ssrFetchModule" | "ssrRewriteStacktrace"> &
   {
     getInvalidatedModules: () => string[];
     getHMRPayloads: () => HMRPayload[];
@@ -44,6 +44,7 @@ export function setupViteNodeServerRpc(
     resolveId: viteNodeServer.resolveId.bind(viteNodeServer),
     transformIndexHtml: viteNodeServer.server.transformIndexHtml,
     ssrFetchModule: viteNodeServer.server.ssrFetchModule,
+    ssrRewriteStacktrace: viteNodeServer.server.ssrRewriteStacktrace,
     getInvalidatedModules: () => {
       // there must be at most one client to make use of this RPC
       const result = [...invalidatedModules];
