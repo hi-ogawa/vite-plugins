@@ -16,6 +16,7 @@ export default defineConfig((ctx) => ({
     globRoutesPlugin({ root: "/src/routes" }),
     vitePluginSsrMiddleware({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
+      useViteRuntime: true,
     }),
     vitePluginSsrCss({
       entry: ["./src/client/index.tsx"],
