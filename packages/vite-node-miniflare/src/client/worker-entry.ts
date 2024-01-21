@@ -24,6 +24,22 @@ export default {
         debug: env.__VITE_NODE_DEBUG,
       });
 
+      if (1) {
+        // TODO: hmr, full-reload
+
+        // TODO: for now, invalidate module tree like before?
+        client.runtime.moduleCache;
+
+        const workerEntry = await client.runtime.executeEntrypoint(
+          env.__WORKER_ENTRY
+        );
+        const workerEnv = {
+          ...env,
+          __VITE_NODE_MINIFLARE_CLIENT: client,
+        };
+        return await workerEntry.default.fetch(request, workerEnv, ctx);
+      }
+
       // invalidate modules similar to nuxt
       // https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/runtime/vite-node.mjs#L21-L23
       const invalidatedModules = await client.rpc.getInvalidatedModules();

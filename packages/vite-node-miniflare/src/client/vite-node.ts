@@ -7,6 +7,7 @@ import { tinyassert } from "@hiogawa/utils";
 import type { ViteNodeRunnerOptions } from "vite-node";
 import { ViteNodeRunner } from "vite-node/client";
 import { installSourcemapsSupport } from "vite-node/source-map";
+import { ESModulesRunner, ViteRuntime } from "vite/runtime";
 import type { ViteNodeRpc } from "..";
 import { __setDebug } from "./polyfills/debug";
 import { __setUnsafeEval } from "./polyfills/node-vm";
@@ -14,6 +15,7 @@ import { __setUnsafeEval } from "./polyfills/node-vm";
 export interface ViteNodeMiniflareClient {
   rpc: TinyRpcProxy<ViteNodeRpc>;
   runner: ViteNodeRunner;
+  runtime: ViteRuntime;
 }
 
 export function createViteNodeClient(options: {
@@ -28,6 +30,38 @@ export function createViteNodeClient(options: {
   const rpc = proxyTinyRpc<ViteNodeRpc>({
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),
   });
+
+  const runtime = new ViteRuntime(
+    {
+      root: options.runnerOptions.root,
+      fetchModule(id, importer) {
+        console.log({ id, importer });
+        return rpc.ssrFetchModule(id, importer);
+      },
+      // TODO
+      // hmr: {},
+    },
+    {
+      ...new ESModulesRunner(), // TODO: processImport?
+
+      async runViteModule(context, transformed) {
+        // do same as vite-node/client
+        // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
+        const codeDefinition = `'use strict';async (${Object.keys(context).join(
+          ","
+        )})=>{{`;
+        const code = `${codeDefinition}${transformed}\n}}`;
+        const fn = options.unsafeEval.eval(code, "todo-filename");
+        await fn(...Object.values(context));
+        Object.freeze(context.__vite_ssr_exports__);
+      },
+
+      runExternalModule(filepath, metadata) {
+        console.error("[runExternalModule]", filepath, metadata);
+        throw new Error(`[runExternalModule] ${filepath}`);
+      },
+    }
+  );
 
   const runner = new ViteNodeRunner({
     ...options.runnerOptions,
@@ -53,7 +87,7 @@ export function createViteNodeClient(options: {
     },
   });
 
-  return { rpc, runner };
+  return { rpc, runner, runtime };
 }
 
 function setupBufferPolyfill() {
