@@ -15,6 +15,7 @@ test("basic", async ({ page }) => {
 });
 
 test("server error", async ({ request }) => {
+  // TODO: need ssrFixStacktrace or inline sourcemap for eval is not working?
   test.fail();
 
   const res = await request.get("/crash-ssr");
