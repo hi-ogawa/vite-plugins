@@ -29,7 +29,8 @@ export default {
 
         // for now, invalidate module tree like before
         const invalidatedModules = await client.rpc.getInvalidatedModules();
-        const invalidatedTree = client.runtime.moduleCache.invalidateDepTree(invalidatedModules)
+        const invalidatedTree =
+          client.runtime.moduleCache.invalidateDepTree(invalidatedModules);
         if (env.__VITE_NODE_DEBUG) {
           console.log("[vite-node-miniflare] invalidateDepTree:", {
             invalidatedModules,
