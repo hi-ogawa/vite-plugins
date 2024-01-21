@@ -45,13 +45,15 @@ export function createViteNodeClient(options: {
       ...new ESModulesRunner(), // TODO: processImport?
 
       async runViteModule(context, transformed) {
+        // TODO: ssrFetchModule always inline sourcemap, but it doesn't work with eval?
+
         // do same as vite-node/client
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
         const codeDefinition = `'use strict';async (${Object.keys(context).join(
           ","
         )})=>{{`;
         const code = `${codeDefinition}${transformed}\n}}`;
-        const fn = options.unsafeEval.eval(code, "todo-filename");
+        const fn = options.unsafeEval.eval(code);
         await fn(...Object.values(context));
         Object.freeze(context.__vite_ssr_exports__);
       },
