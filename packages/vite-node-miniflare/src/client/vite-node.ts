@@ -76,16 +76,17 @@ export function createViteNodeClient(options: {
   // Since Vitest's getSourceMap/extractSourceMap relies on `Buffer.from(mapString, 'base64').toString('utf-8')`,
   // we inject minimal Buffer polyfill temporary during this function.
   // https://github.com/vitest-dev/vitest/blob/8dabef860a3f51f5a4c4debc10faa1837fdcdd71/packages/vite-node/src/source-map.ts#L57-L62
-  0 && installSourcemapsSupport({
-    getSourceMap: (source) => {
-      const teardown = setupBufferPolyfill();
-      try {
-        return runner.moduleCache.getSourceMap(source);
-      } finally {
-        teardown();
-      }
-    },
-  });
+  0 &&
+    installSourcemapsSupport({
+      getSourceMap: (source) => {
+        const teardown = setupBufferPolyfill();
+        try {
+          return runner.moduleCache.getSourceMap(source);
+        } finally {
+          teardown();
+        }
+      },
+    });
 
   return { rpc, runner, runtime };
 }
