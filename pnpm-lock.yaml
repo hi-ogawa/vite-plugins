@@ -6,7 +6,7 @@ settings:
 
 overrides:
   miniflare: 3.20231218.2
-  vite: file:./vite-5.1.0-beta.2.3205c5433.tgz
+  vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
 
 importers:
 
@@ -49,8 +49,8 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
       vitest:
         specifier: ^1.0.4
         version: 1.0.4(@types/node@18.16.18)
@@ -85,8 +85,8 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   examples/ssr:
     devDependencies:
@@ -142,8 +142,8 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/demo:
     devDependencies:
@@ -262,14 +262,14 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/vite-import-dev-server:
     devDependencies:
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare:
     dependencies:
@@ -299,8 +299,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/basic:
     dependencies:
@@ -314,8 +314,8 @@ importers:
         specifier: 3.20231218.2
         version: 3.20231218.2
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/react:
     dependencies:
@@ -341,8 +341,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/react-router:
     dependencies:
@@ -380,8 +380,8 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/remix:
     dependencies:
@@ -424,14 +424,14 @@ importers:
         version: 1.3.1
     devDependencies:
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
   packages/vite-plugin-ssr-middleware:
     devDependencies:
       vite:
-        specifier: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
-        version: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+        specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
+        version: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
 
 packages:
 
@@ -2047,12 +2047,12 @@ packages:
   /@hiogawa/theme-script@0.0.4-pre.3(vite@5.1.0-beta.2):
     resolution: {integrity: sha512-2uxVhemdAMUFE/OaUcaTT2QeZsXnxtnF/CLNs+CcrlgwaUXXfsnXUTvUZCz8MTmxzzz4Vp5hfAyi4pp58XHJCQ==}
     peerDependencies:
-      vite: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
+      vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
     peerDependenciesMeta:
       vite:
         optional: true
     dependencies:
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     dev: true
 
   /@hiogawa/tiny-cli@0.0.4-pre.0:
@@ -2089,12 +2089,12 @@ packages:
   /@hiogawa/tiny-react@0.0.2-pre.8(vite@5.1.0-beta.2):
     resolution: {integrity: sha512-5CD2uM+kO3IfBaJ5ga9iJjK9vTsO35aDQKq7mCeLCW0KIUAeVliLsFZEjpjHA0WN/sceZbSde5uHtz46JnuzQA==}
     peerDependencies:
-      vite: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
+      vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
     peerDependenciesMeta:
       vite:
         optional: true
     dependencies:
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     dev: false
 
   /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
@@ -2370,7 +2370,7 @@ packages:
     peerDependencies:
       '@remix-run/serve': ^0.0.0-nightly-db4471d-20231214
       typescript: ^5.1.0
-      vite: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
+      vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
     peerDependenciesMeta:
       '@remix-run/serve':
         optional: true
@@ -2432,7 +2432,7 @@ packages:
       tar-fs: 2.1.1
       tsconfig-paths: 4.2.0
       typescript: 5.1.6
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
       ws: 7.5.9
     transitivePeerDependencies:
       - '@types/node'
@@ -2892,7 +2892,7 @@ packages:
   /@unocss/astro@0.57.7(vite@5.1.0-beta.2):
     resolution: {integrity: sha512-X4KSBdrAADdtS4x7xz02b016xpRDt9mD/d/oq23HyZAZ+sZc4oZs8el9MLSUJgu2okdWzAE62lRRV/oc4HWI1A==}
     peerDependencies:
-      vite: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
+      vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
     peerDependenciesMeta:
       vite:
         optional: true
@@ -2900,7 +2900,7 @@ packages:
       '@unocss/core': 0.57.7
       '@unocss/reset': 0.57.7
       '@unocss/vite': 0.57.7(vite@5.1.0-beta.2)
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - rollup
     dev: true
@@ -3133,7 +3133,7 @@ packages:
   /@unocss/vite@0.57.7(vite@5.1.0-beta.2):
     resolution: {integrity: sha512-SbJrRgfc35MmgMBlHaEK4YpJVD2B0bmxH9PVgHRuDae/hOEOG0VqNP0f2ijJtX9HG3jOpQVlbEoGnUo8jsZtsw==}
     peerDependencies:
-      vite: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
+      vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
     dependencies:
       '@ampproject/remapping': 2.2.1
       '@rollup/pluginutils': 5.0.5
@@ -3145,7 +3145,7 @@ packages:
       chokidar: 3.5.3
       fast-glob: 3.3.2
       magic-string: 0.30.5
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - rollup
     dev: true
@@ -3188,7 +3188,7 @@ packages:
       lodash: 4.17.21
       mlly: 1.4.2
       outdent: 0.8.0
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
       vite-node: 0.28.5(@types/node@18.16.18)
     transitivePeerDependencies:
       - '@types/node'
@@ -3209,14 +3209,14 @@ packages:
     resolution: {integrity: sha512-+MHTH/e6H12kRp5HUkzOGqPMksezRMmW+TNzlh/QXfI8rRf6l2Z2yH/v12no1UvTwhZgEDMuQ7g7rrfMseU6FQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
+      vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
     dependencies:
       '@babel/core': 7.23.5
       '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.23.5)
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.5)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - supports-color
 
@@ -7812,7 +7812,7 @@ packages:
     engines: {node: '>=14'}
     peerDependencies:
       '@unocss/webpack': 0.57.7
-      vite: file:/home/hiroshi/code/personal/vite-plugins/vite-5.1.0-beta.2.3205c5433.tgz
+      vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
     peerDependenciesMeta:
       '@unocss/webpack':
         optional: true
@@ -7839,7 +7839,7 @@ packages:
       '@unocss/transformer-directives': 0.57.7
       '@unocss/transformer-variant-group': 0.57.7
       '@unocss/vite': 0.57.7(vite@5.1.0-beta.2)
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -7938,7 +7938,7 @@ packages:
       picocolors: 1.0.0
       source-map: 0.6.1
       source-map-support: 0.5.21
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -7959,7 +7959,7 @@ packages:
       debug: 4.3.4
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -8014,7 +8014,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.8.1
-      vite: file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18)
+      vite: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
       vite-node: 1.0.4(@types/node@18.16.18)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
@@ -8292,9 +8292,9 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  file:vite-5.1.0-beta.2.3205c5433.tgz(@types/node@18.16.18):
-    resolution: {integrity: sha512-mhO/E8KhDi4TY5QKeZTIQ5pGunM8h2BiAm89Zm/bCb9WnLTs7pN1k74/4m9pQzT8Eo4nBBzdJ216wmc54zH3+g==, tarball: file:vite-5.1.0-beta.2.3205c5433.tgz}
-    id: file:vite-5.1.0-beta.2.3205c5433.tgz
+  '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)':
+    resolution: {tarball: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz}
+    id: '@github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz'
     name: vite
     version: 5.1.0-beta.2
     engines: {node: ^18.0.0 || >=20.0.0}

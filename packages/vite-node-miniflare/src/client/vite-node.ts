@@ -72,11 +72,6 @@ export function createViteNodeClient(options: {
       ...new ESModulesRunner(), // TODO: processImport?
 
       async runViteModule(context, transformed, id) {
-        // TODO: inline sourcemap not working with unsafeEval?
-
-        console.log({ id })
-        console.log(transformed);
-
         if (0) {
           // use newAsyncFunction instead of eval (but this doesn't seems to help)
           // https://github.com/cloudflare/workerd/blob/5e2544fd2948b53e68831a9b219dc1e9970cf96f/src/workerd/api/unsafe.c%2B%2B#L48
@@ -93,7 +88,9 @@ export function createViteNodeClient(options: {
 
         // do same as vite-node/client
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
-        const codeDefinition = `'use strict';async (${Object.keys(context).join(
+        // with magical two empty lines
+        // https://github.com/vitejs/vite/pull/12165#issuecomment-1908535330
+        const codeDefinition = `'use strict';\n\nasync (${Object.keys(context).join(
           ","
         )})=>{{`;
         const code = `${codeDefinition}${transformed}\n}}`;
