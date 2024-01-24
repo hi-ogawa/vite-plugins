@@ -7,7 +7,7 @@ import { tinyassert } from "@hiogawa/utils";
 import type { ViteNodeRunnerOptions } from "vite-node";
 import { ViteNodeRunner } from "vite-node/client";
 import { installSourcemapsSupport } from "vite-node/source-map";
-import { ESModulesRunner, ViteRuntime } from "vite/runtime";
+import { ViteRuntime } from "vite/runtime";
 import type { ViteNodeRpc } from "..";
 import { __setDebug } from "./polyfills/debug";
 import { __setUnsafeEval } from "./polyfills/node-vm";
@@ -35,32 +35,19 @@ export function createViteNodeClient(options: {
     {
       root: options.runnerOptions.root,
       fetchModule(id, importer) {
-        // console.log({ id, importer });
         return rpc.ssrFetchModule(id, importer);
       },
       sourcemapInterceptor: "prepareStackTrace",
-      // irrelevant since ssr.noExternal
-      // sourcemapInterceptor: {
-      //   retrieveFile(path) {
-      //     console.log("[sourcemapInterceptor.retrieveFile]", { path });
-      //     return null;
-      //   },
-      //   retrieveSourceMap(path) {
-      //     console.log("[sourcemapInterceptor.retrieveSourceMap]", { path });
-      //     return null;
-      //   }
-      // },
-      // sourcemapInterceptor: false,
       hmr: {
         connection: {
           isReady() {
             return true;
           },
-          // TODO: only for custom event to server
+          // TODO: only for custom event to server?
           send(messages) {
             console.log("[runtime.hmr.connection.send]", messages);
           },
-          // TODO: for now, we fetch HMRPayload via rpc
+          // TODO: for now, we fetch HMRPayload via rpc, so nothing to register
           onUpdate(callback) {
             console.log("[runtime.hmr.connection.onUpdate]", callback);
           },
@@ -69,13 +56,12 @@ export function createViteNodeClient(options: {
       },
     },
     {
-      ...new ESModulesRunner(), // TODO: processImport?
-
       async runViteModule(context, transformed, id) {
         // do same as vite-node/client
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
-        // with magical two empty lines found by sapphi-red
+        // with magical two empty lines by sapphi-red
         // https://github.com/vitejs/vite/pull/12165#issuecomment-1908535330
+        // https://github.com/vitejs/vite/pull/11780
         const codeDefinition = `'use strict';\n\nasync (${Object.keys(
           context
         ).join(",")})=>{{`;
