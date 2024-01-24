@@ -38,14 +38,18 @@ export function createViteNodeClient(options: {
         // console.log({ id, importer });
         return rpc.ssrFetchModule(id, importer);
       },
-      // TODO: only for sending custom event to server? (not for listening HMRPayload event?)
       hmr: {
         connection: {
           isReady() {
             return true;
           },
+          // TODO: only for custom event to server
           send(messages) {
             console.log("[runtime.hmr.connection.send]", messages);
+          },
+          // TODO: for now, we fetch HMRPayload via rpc
+          onUpdate(callback) {
+            console.log("[runtime.hmr.connection.onUpdate]", callback);
           },
         },
         logger: console,

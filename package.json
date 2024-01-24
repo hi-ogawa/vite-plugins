@@ -39,7 +39,7 @@
   "pnpm": {
     "overrides": {
       "miniflare": "3.20231218.2",
-      "vite": "https://github.com/sapphi-red/vite-envs/raw/use-vite-runtime/vite-5.1.0-beta.2.tgz"
+      "vite": "file:./vite-5.1.0-beta.2.3205c5433.tgz"
     }
   }
 }
