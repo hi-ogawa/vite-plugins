@@ -90,9 +90,9 @@ export function createViteNodeClient(options: {
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
         // with magical two empty lines
         // https://github.com/vitejs/vite/pull/12165#issuecomment-1908535330
-        const codeDefinition = `'use strict';\n\nasync (${Object.keys(context).join(
-          ","
-        )})=>{{`;
+        const codeDefinition = `'use strict';\n\nasync (${Object.keys(
+          context
+        ).join(",")})=>{{`;
         const code = `${codeDefinition}${transformed}\n}}`;
         const fn = options.unsafeEval.eval(code, id);
         await fn(...Object.values(context));
