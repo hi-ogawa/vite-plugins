@@ -39,6 +39,17 @@ export function createViteNodeClient(options: {
         return rpc.ssrFetchModule(id, importer);
       },
       sourcemapInterceptor: "prepareStackTrace",
+      // irrelevant since ssr.noExternal
+      // sourcemapInterceptor: {
+      //   retrieveFile(path) {
+      //     console.log("[sourcemapInterceptor.retrieveFile]", { path });
+      //     return null;
+      //   },
+      //   retrieveSourceMap(path) {
+      //     console.log("[sourcemapInterceptor.retrieveSourceMap]", { path });
+      //     return null;
+      //   }
+      // },
       // sourcemapInterceptor: false,
       hmr: {
         connection: {
