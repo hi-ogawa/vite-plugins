@@ -63,7 +63,7 @@ export default {
       };
       return await workerEntry.default.fetch(request, workerEnv, ctx);
     } catch (e) {
-      if (client && e instanceof Error && e.stack) {
+      if (0 && client && e instanceof Error && e.stack) {
         try {
           // TODO: not working. maybe inline sourcemap not handled properly with unsafeEval
           //   > ERROR: `line` must be greater than 0 (lines start at line 1)

@@ -38,6 +38,8 @@ export function createViteNodeClient(options: {
         // console.log({ id, importer });
         return rpc.ssrFetchModule(id, importer);
       },
+      sourcemapInterceptor: "prepareStackTrace",
+      // sourcemapInterceptor: false,
       hmr: {
         connection: {
           isReady() {
@@ -58,10 +60,13 @@ export function createViteNodeClient(options: {
     {
       ...new ESModulesRunner(), // TODO: processImport?
 
-      async runViteModule(context, transformed) {
+      async runViteModule(context, transformed, id) {
         // TODO: inline sourcemap not working with unsafeEval?
 
-        if (1) {
+        console.log({ id })
+        console.log(transformed);
+
+        if (0) {
           // use newAsyncFunction instead of eval (but this doesn't seems to help)
           // https://github.com/cloudflare/workerd/blob/5e2544fd2948b53e68831a9b219dc1e9970cf96f/src/workerd/api/unsafe.c%2B%2B#L48
           // https://github.com/sapphi-red/vite-envs/blob/9e47653f4cdd557d263fd315d22ccf76d78aa638/packages/cloudflare-pages/src/client/index.ts#L83
@@ -81,7 +86,7 @@ export function createViteNodeClient(options: {
           ","
         )})=>{{`;
         const code = `${codeDefinition}${transformed}\n}}`;
-        const fn = options.unsafeEval.eval(code);
+        const fn = options.unsafeEval.eval(code, id);
         await fn(...Object.values(context));
         Object.freeze(context.__vite_ssr_exports__);
       },
