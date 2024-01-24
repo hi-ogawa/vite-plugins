@@ -5,7 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  miniflare: 3.20231218.2
   vite: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
 
 importers:
@@ -283,7 +282,7 @@ importers:
         specifier: ^0.18.6
         version: 0.18.13
       miniflare:
-        specifier: 3.20231218.2
+        specifier: ^3.20231030.3
         version: 3.20231218.2
       vite-node:
         specifier: ^1.0.4
@@ -311,7 +310,7 @@ importers:
         specifier: workspace:*
         version: link:../..
       miniflare:
-        specifier: 3.20231218.2
+        specifier: ^3.20231030.3
         version: 3.20231218.2
       vite:
         specifier: https://github.com/sapphi-red/vite-envs/raw/1df93407a0053bc838a8cf81753e48bfc912231a/vite-5.1.0-beta.2.tgz
@@ -332,7 +331,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(vite@5.1.0-beta.2)
       miniflare:
-        specifier: 3.20231218.2
+        specifier: ^3.20231030.3
         version: 3.20231218.2
       react:
         specifier: ^18.2.0
@@ -368,7 +367,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(vite@5.1.0-beta.2)
       miniflare:
-        specifier: 3.20231218.2
+        specifier: ^3.20231030.3
         version: 3.20231218.2
       react:
         specifier: ^18.2.0
