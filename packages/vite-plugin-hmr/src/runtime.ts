@@ -19,7 +19,7 @@ interface Registry {
   exports: Record<string, Export>;
   // keep track of all exports of hot update history
   // since currently "writer" is responsible to keep old module up-to-date
-  // while each export could be used by other module at any point in time
+  // where each old export could be used by other modules at any point in time
   // but this approach obviously leaks memory indefinitely
   // (alternative is to let "reader" be responsible for looking up latest module using proxy)
   history: Record<string, Export>[];
