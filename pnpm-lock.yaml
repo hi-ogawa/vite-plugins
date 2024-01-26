@@ -244,7 +244,7 @@ importers:
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       unocss:
         specifier: ^0.57.7
-        version: 0.57.7(postcss@8.4.32)(vite@5.1.0-beta.2)
+        version: 0.57.7(postcss@8.4.33)(vite@5.1.0-beta.2)
       zod:
         specifier: ^3.21.4
         version: 3.21.4
@@ -441,9 +441,6 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
-      '@hiogawa/vite-import-dev-server':
-        specifier: workspace:*
-        version: link:../../../vite-import-dev-server
       '@hiogawa/vite-plugin-hmr':
         specifier: workspace:*
         version: link:../..
@@ -2176,7 +2173,7 @@ packages:
       '@unocss/preset-uno': 0.58.0
       '@unocss/reset': 0.48.5
       local-pkg: 0.4.3
-      unocss: 0.57.7(postcss@8.4.32)(vite@5.1.0-beta.2)
+      unocss: 0.57.7(postcss@8.4.33)(vite@5.1.0-beta.2)
     dev: true
 
   /@hiogawa/utils-hattip@0.0.1-pre.1:
@@ -3001,7 +2998,7 @@ packages:
       sirv: 2.0.3
     dev: true
 
-  /@unocss/postcss@0.57.7(postcss@8.4.32):
+  /@unocss/postcss@0.57.7(postcss@8.4.33):
     resolution: {integrity: sha512-13c9p5ecTvYa6inDky++8dlVuxQ0JuKaKW5A0NW3XuJ3Uz1t8Pguji+NAUddfTYEFF6GHu47L3Aac7vpI8pMcQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -3013,7 +3010,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.5
-      postcss: 8.4.32
+      postcss: 8.4.33
     dev: true
 
   /@unocss/preset-attributify@0.57.7:
@@ -7842,7 +7839,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unocss@0.57.7(postcss@8.4.32)(vite@5.1.0-beta.2):
+  /unocss@0.57.7(postcss@8.4.33)(vite@5.1.0-beta.2):
     resolution: {integrity: sha512-Z99ZZPkbkjIUXEM7L+K/7Y5V5yqUS0VigG7ZIFzLf/npieKmXHKlrPyvQWFQaf3OqooMFuKBQivh75TwvSOkcQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -7858,7 +7855,7 @@ packages:
       '@unocss/cli': 0.57.7
       '@unocss/core': 0.57.7
       '@unocss/extractor-arbitrary-variants': 0.57.7
-      '@unocss/postcss': 0.57.7(postcss@8.4.32)
+      '@unocss/postcss': 0.57.7(postcss@8.4.33)
       '@unocss/preset-attributify': 0.57.7
       '@unocss/preset-icons': 0.57.7
       '@unocss/preset-mini': 0.57.7

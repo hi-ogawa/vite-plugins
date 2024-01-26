@@ -1,4 +1,3 @@
-import { importDevServerPlugin } from "@hiogawa/vite-import-dev-server";
 import { vitePluginHmr } from "@hiogawa/vite-plugin-hmr";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
@@ -11,9 +10,8 @@ export default defineConfig({
     vitePluginHmr({
       include: ["**/*.tsx"],
     }),
-    importDevServerPlugin(),
     vitePluginSsrMiddleware({
-      entry: "/src/server/index.tsx",
+      entry: "/src/entry-server.tsx",
       useViteRuntime: true,
     }),
   ],
