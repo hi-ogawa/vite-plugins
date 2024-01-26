@@ -9,6 +9,15 @@ export default defineConfig((env) => ({
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
     }),
+    {
+      // TODO: move to vitePluginSsrMiddleware? (it's impossible to know ssr build outDir...)
+      name: "preview-ssr-middleware",
+      async configurePreviewServer(server) {
+        // @ts-ignore
+        const mod: any = await import("./dist/server/index.js");
+        return () => server.middlewares.use(mod.default);
+      },
+    },
   ],
   build: {
     outDir: env.isSsrBuild ? "dist/server" : "dist/client",
