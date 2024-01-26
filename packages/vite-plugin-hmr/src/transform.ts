@@ -52,7 +52,7 @@ export function analyzeExports(code: string, ast: Program) {
           errors.push({ node });
         } else {
           //// export { foo, bar }
-          // TODO: support by analyzing scope
+          // TODO: support by analyzing scope?
           errors.push({ node });
         }
       }

@@ -29,10 +29,11 @@ export function vitePluginHmr(pluginOpts: {
 }
 
 export async function hmrTransform(code: string): Promise<string | undefined> {
+  // TODO: magic-string for sourcemap?
+
   const ast = await parseAstAsync(code);
   const result = analyzeExports(code, ast as any);
 
-  // always invalidate for hmr unsupported
   if (result.errors.length > 0) {
     const node = result.errors[0]!.node;
     const message = "unsupported usage: " + code.slice(node.start, node.end);
@@ -68,6 +69,7 @@ ${parts.join("\n")}
 `;
 }
 
+// always invalidate on unsupported usage
 function generateFooterUnsupported(message: string) {
   return `
 if (import.meta.env.SSR && import.meta.hot) {
