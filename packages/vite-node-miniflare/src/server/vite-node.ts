@@ -4,6 +4,7 @@ import {
   type HMRPayload,
   ServerHMRConnector,
   type ViteDevServer,
+  fetchModule,
   normalizePath,
 } from "vite";
 import type { ViteNodeRunnerOptions } from "vite-node";
@@ -43,7 +44,12 @@ export function setupViteNodeServerRpc(
     fetchModule: viteNodeServer.fetchModule.bind(viteNodeServer),
     resolveId: viteNodeServer.resolveId.bind(viteNodeServer),
     transformIndexHtml: viteNodeServer.server.transformIndexHtml,
-    ssrFetchModule: viteNodeServer.server.ssrFetchModule,
+    ssrFetchModule: (id, importer) => {
+      // not using default `viteDevServer.ssrFetchModule` since its source map expects mysterious two empty lines,
+      // which doesn't exist in workerd's unsafe eval
+      // https://github.com/vitejs/vite/pull/12165#issuecomment-1910686678
+      return fetchModule(viteDevServer, id, importer);
+    },
     ssrRewriteStacktrace: viteNodeServer.server.ssrRewriteStacktrace,
     getInvalidatedModules: () => {
       // there must be at most one client to make use of this RPC

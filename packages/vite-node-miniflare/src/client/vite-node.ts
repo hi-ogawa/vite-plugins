@@ -59,12 +59,9 @@ export function createViteNodeClient(options: {
       async runViteModule(context, transformed, id) {
         // do same as vite-node/client
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
-        // with magical two empty lines by sapphi-red
-        // https://github.com/vitejs/vite/pull/12165#issuecomment-1908535330
-        // https://github.com/vitejs/vite/pull/11780
-        const codeDefinition = `'use strict';\n\nasync (${Object.keys(
-          context
-        ).join(",")})=>{{`;
+        const codeDefinition = `'use strict';async (${Object.keys(context).join(
+          ","
+        )})=>{{`;
         const code = `${codeDefinition}${transformed}\n}}`;
         const fn = options.unsafeEval.eval(code, id);
         await fn(...Object.values(context));
