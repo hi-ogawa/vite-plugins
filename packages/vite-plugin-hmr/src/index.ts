@@ -1,1 +1,1 @@
-export * from "./plugin";
+export { vitePluginHmr } from "./plugin";

@@ -4,7 +4,6 @@ import { name as packageName } from "../package.json";
 export function vitePluginHmr(pluginOpts: {
   include?: FilterPattern;
   exclude?: FilterPattern;
-  ssr?: boolean;
 }): Plugin {
   const filter = createFilter(
     pluginOpts.include,
@@ -15,15 +14,15 @@ export function vitePluginHmr(pluginOpts: {
     name: packageName,
     apply: "serve",
     transform(code, id, options) {
-      if ((pluginOpts.ssr ? options?.ssr : true) && filter(id)) {
-        return ssrHmrTransform(code, id);
+      if (options?.ssr && filter(id)) {
+        return hmrTransform(code, id);
       }
       return;
     },
   };
 }
 
-function ssrHmrTransform(code: string, id: string): string | undefined {
+export function hmrTransform(code: string, id: string): string | undefined {
   // transform to inject something like below
   /*
     if (import.meta.env.SSR && import.meta.hot) {
@@ -69,6 +68,7 @@ function ssrHmrTransform(code: string, id: string): string | undefined {
 `
   );
 
+  // need dummy "hot.accept" for vite's detection
   const footer = `
 if (import.meta.env.SSR && import.meta.hot) {
   const $$hmr = await import("@hiogawa/vite-plugin-hmr/runtime");
@@ -77,7 +77,7 @@ if (import.meta.env.SSR && import.meta.hot) {
 ${parts.join("\n")}
 
   $$hmr.setupHot(import.meta.hot, $$registry);
-  import.meta.hot.accept; // dummy code for vite's "hot.accept" detection
+  import.meta.hot.accept;
 }
 `;
   return code + footer;

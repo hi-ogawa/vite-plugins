@@ -15,8 +15,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginHmr({
-      include: ["**/src/**/*.tsx"],
-      ssr: true,
+      include: ["**/*.tsx"],
     }),
   ],
 });

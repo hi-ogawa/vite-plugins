@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`hmrTransform > basic 1 1`] = `
+"
+export function Test1() {
+  return <div>hello</div>;
+}
+
+export let Test2 = () => {
+  return <div>hello</div>;
+}
+
+if (import.meta.env.SSR && import.meta.hot) {
+  const $$hmr = await import("@hiogawa/vite-plugin-hmr/runtime");
+  const $$registry = $$hmr.createRegistry();
+
+
+  $$registry.exports["Test1"] = {
+    value: Test1,
+    update: ($$next) => {
+      Test1 = $$next;
+    }
+  };
+
+
+  $$registry.exports["Test2"] = {
+    value: Test2,
+    update: ($$next) => {
+      Test2 = $$next;
+    }
+  };
+
+
+  $$hmr.setupHot(import.meta.hot, $$registry);
+  import.meta.hot.accept;
+}
+"
+`;
