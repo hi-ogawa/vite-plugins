@@ -2,7 +2,7 @@ import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig((env) => ({
   clearScreen: false,
   plugins: [
     react(),
@@ -10,4 +10,7 @@ export default defineConfig({
       entry: "/src/entry-server.tsx",
     }),
   ],
-});
+  build: {
+    outDir: env.isSsrBuild ? "dist/server" : "dist/client",
+  },
+}));
