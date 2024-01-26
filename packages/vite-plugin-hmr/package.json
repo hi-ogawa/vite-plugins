@@ -30,8 +30,8 @@
     "test": "vitest",
     "release": "pnpm publish --no-git-checks --access public"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/estree": "^1.0.5",
     "vite": "^5.0.8"
   },
   "peerDependencies": {

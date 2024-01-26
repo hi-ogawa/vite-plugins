@@ -428,6 +428,12 @@ importers:
 
   packages/vite-plugin-hmr:
     devDependencies:
+      '@hiogawa/utils':
+        specifier: 1.6.1-pre.10
+        version: 1.6.1-pre.10
+      '@types/estree':
+        specifier: ^1.0.5
+        version: 1.0.5
       vite:
         specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
         version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
@@ -2793,6 +2799,10 @@ packages:
 
   /@types/estree@1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
+    dev: true
+
+  /@types/estree@1.0.5:
+    resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
 
   /@types/express-serve-static-core@4.17.35:

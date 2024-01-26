@@ -1,5 +1,11 @@
-import { type FilterPattern, type Plugin, createFilter } from "vite";
+import {
+  type FilterPattern,
+  type Plugin,
+  createFilter,
+  parseAstAsync,
+} from "vite";
 import { name as packageName } from "../package.json";
+import { analyzeExports } from "./transform";
 
 export function vitePluginHmr(pluginOpts: {
   include?: FilterPattern;
@@ -15,49 +21,29 @@ export function vitePluginHmr(pluginOpts: {
     apply: "serve",
     transform(code, id, options) {
       if (options?.ssr && filter(id)) {
-        return hmrTransform(code, id);
+        return hmrTransform(code);
       }
       return;
     },
   };
 }
 
-export function hmrTransform(code: string, id: string): string | undefined {
-  // transform to inject something like below
-  /*
-    if (import.meta.env.SSR && import.meta.hot) {
-      const $$hmr = await import("@hiogawa/vite-plugin-hmr/runtime");
-      const $$registry = $$hmr.createRegistry();
+export async function hmrTransform(code: string): Promise<string | undefined> {
+  const ast = await parseAstAsync(code);
+  const result = analyzeExports(code, ast as any);
 
-      $$registry.exports["App"] = {
-        value: App,
-        update: ($$next) => {
-          // @ts-ignore
-          App = $$next;
-        }
-      };
-
-      $$hmr.setupHot(import.meta.hot, $$registry);
-    }
-  */
-
-  // TODO: use vite/rollup parser
-  // TODO: replace `export const` with `export let` for reassignment
-  // TODO: magic-string + sourcemap
-
-  // extract named exports
-  const matches = code.matchAll(/export\s+(function|let)\s+(\w+)\b/g);
-  const exportNames = Array.from(matches).map((m) => m[2]);
-  if (0) {
-    console.log({ id }, exportNames);
+  // always invalidate for hmr unsupported
+  if (result.errors.length > 0) {
+    const node = result.errors[0]!.node;
+    const message = "unsupported usage: " + code.slice(node.start, node.end);
+    return code + "\n" + generateFooterUnsupported(message);
   }
 
-  if (exportNames.length === 0) {
-    return;
-  }
+  return result.code + "\n" + generateFooter(result.exportIds);
+}
 
-  // append runtime in footer
-  const parts = exportNames.map(
+function generateFooter(names: string[]) {
+  const parts = names.map(
     (name) => `
   $$registry.exports["${name}"] = {
     value: ${name},
@@ -68,8 +54,8 @@ export function hmrTransform(code: string, id: string): string | undefined {
 `
   );
 
-  // need dummy "hot.accept" for vite's detection
-  const footer = `
+  // requires dummy "hot.accept" for vite to detect
+  return `
 if (import.meta.env.SSR && import.meta.hot) {
   const $$hmr = await import("@hiogawa/vite-plugin-hmr/runtime");
   const $$registry = $$hmr.createRegistry();
@@ -80,5 +66,14 @@ ${parts.join("\n")}
   import.meta.hot.accept;
 }
 `;
-  return code + footer;
+}
+
+function generateFooterUnsupported(message: string) {
+  return `
+if (import.meta.env.SSR && import.meta.hot) {
+  import.meta.hot.accept(() => {
+    import.meta.hot.invalidate(${JSON.stringify(message)})
+  });
+}
+`;
 }
