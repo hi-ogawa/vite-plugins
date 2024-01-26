@@ -23,9 +23,10 @@ export default defineConfig({
 // server.ts
 //
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { ViteDevServer } from "vite";
 
 export default function handler(
-  req: IncomingMessage,
+  req: IncomingMessage & { viteDevServer: ViteDevServer },
   res: ServerResponse,
   next: () => void
 ) {
