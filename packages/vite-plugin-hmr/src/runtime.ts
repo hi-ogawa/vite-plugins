@@ -6,7 +6,7 @@ export interface ViteHot {
   data: {
     [REGISTRY_KEY]?: Registry;
   };
-  accept: (onNewModule: (exports?: unknown) => void) => void;
+  accept: (cb: (exports?: unknown) => void) => void;
   invalidate: (message?: string) => void;
 }
 
@@ -57,8 +57,8 @@ export function setupHot(hot: ViteHot, registry: Registry) {
   hot.data[REGISTRY_KEY] = registry;
 
   hot.accept((newExports) => {
-    const current = hot.data[REGISTRY_KEY];
-    const ok = newExports && current && patchRegistry(registry, current);
+    const next = hot.data[REGISTRY_KEY];
+    const ok = newExports && next && patchRegistry(registry, next);
     if (!ok) {
       hot.invalidate();
     }
