@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-plugin-hmr",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-hmr",
   "repository": {
     "type": "git",

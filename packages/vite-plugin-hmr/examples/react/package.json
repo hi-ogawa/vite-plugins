@@ -1,0 +1,20 @@
+{
+  "name": "@hiogawa/vite-plugin-hmr-example-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@hiogawa/vite-plugin-hmr": "workspace:*",
+    "@hiogawa/vite-import-dev-server": "workspace:*",
+    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18"
+  }
+}

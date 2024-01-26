@@ -37,13 +37,12 @@ export default function handler(
   next: () => void
 ) {
   // TODO
-  res.end("hello!");
 }
 
 //
 // app.tsx
 //
 export function App() {
-  return <div>App</div>
+  return <div>Hello</div>
 }
 ```
