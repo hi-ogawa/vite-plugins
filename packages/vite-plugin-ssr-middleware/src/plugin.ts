@@ -4,9 +4,11 @@ import { name as packageName } from "../package.json";
 export function vitePluginSsrMiddleware({
   entry,
   entryAlias = "index",
+  useViteRuntime,
 }: {
   entry: string;
   entryAlias?: string;
+  useViteRuntime?: boolean;
 }): Plugin {
   return {
     name: packageName,
@@ -37,10 +39,18 @@ export function vitePluginSsrMiddleware({
       return;
     },
 
-    configureServer(server) {
+    async configureServer(server) {
+      // select module loader
+      let loadModule = server.ssrLoadModule;
+      if (useViteRuntime) {
+        const vite = await import("vite");
+        const runtime = await vite.createViteRuntime(server);
+        loadModule = runtime.executeEntrypoint.bind(runtime);
+      }
+
       const handler: Connect.NextHandleFunction = async (req, res, next) => {
         try {
-          const mod = await server.ssrLoadModule(entry);
+          const mod = await loadModule(entry);
           await mod["default"](req, res, next);
         } catch (e) {
           next(e);
