@@ -428,9 +428,6 @@ importers:
 
   packages/vite-plugin-hmr:
     devDependencies:
-      '@hiogawa/utils':
-        specifier: 1.6.1-pre.10
-        version: 1.6.1-pre.10
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
