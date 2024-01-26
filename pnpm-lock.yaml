@@ -429,6 +429,27 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(@types/node@18.16.18)
 
+  packages/vite-plugin-ssr-middleware/examples/react:
+    dependencies:
+      '@hiogawa/vite-plugin-ssr-middleware':
+        specifier: workspace:*
+        version: link:../..
+      '@types/react':
+        specifier: ^18.2.12
+        version: 18.2.12
+      '@types/react-dom':
+        specifier: ^18.2.5
+        version: 18.2.5
+      '@vitejs/plugin-react':
+        specifier: ^4.2.0
+        version: 4.2.0(vite@5.0.8)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+
 packages:
 
   /@ampproject/remapping@2.2.1:
