@@ -13,8 +13,8 @@ export default defineConfig((env) => ({
       // TODO: move to vitePluginSsrMiddleware? (it's impossible to know ssr build outDir...)
       name: "preview-ssr-middleware",
       async configurePreviewServer(server) {
-        // @ts-ignore
-        const mod: any = await import("./dist/server/index.js");
+        // "slice" to avoid esbuild crash when transpiling vite.config.ts
+        const mod = await import("./dist/server/index.js".slice());
         return () => server.middlewares.use(mod.default);
       },
     },
