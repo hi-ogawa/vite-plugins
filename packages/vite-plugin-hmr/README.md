@@ -4,45 +4,20 @@ Simple HMR to reassign all exports, which can be useful for [SSR HMR](https://gi
 
 ## example
 
+See [./examples/react](./examples/react).
+
 ```tsx
-//
-// vite.config.ts
-//
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { vitePluginHmr } from "@hiogawa/vite-plugin-hmr";
-import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-hmr";
 
 export default defineConfig({
   plugins: [
     react(),
     vitePluginHmr({
+      include: ["**/src/**/*.tsx"],
       ssr: true,
-    })
-    vitePluginSsrMiddleware({
-      entry: "./server.ts",
-      useViteRuntime: true,
     }),
   ],
 });
-
-//
-// server.ts
-//
-import type { IncomingMessage, ServerResponse } from "node:http";
-
-export default function handler(
-  req: IncomingMessage,
-  res: ServerResponse,
-  next: () => void
-) {
-  // TODO
-}
-
-//
-// app.tsx
-//
-export function App() {
-  return <div>Hello</div>
-}
 ```

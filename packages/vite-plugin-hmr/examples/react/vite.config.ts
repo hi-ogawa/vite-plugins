@@ -8,7 +8,10 @@ export default defineConfig({
   clearScreen: false,
   plugins: [
     react(),
-    vitePluginHmr({ ssr: true }),
+    vitePluginHmr({
+      include: ["**/src/**/*.tsx"],
+      ssr: true,
+    }),
     importDevServerPlugin(),
     vitePluginSsrMiddleware({
       entry: "/src/server/index.tsx",
