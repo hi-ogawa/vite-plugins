@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --config vite.config.vite-node.ts",
-    "dev-default": "vite dev",
+    "dev": "vite dev",
+    "dev-original": "vite dev --config vite.config.original.ts",
     "test-e2e": "playwright test"
   },
   "dependencies": {
