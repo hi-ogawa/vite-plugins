@@ -2461,7 +2461,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@remix-run/server-runtime': file:../../others/remix/packages/remix-server-runtime(typescript@5.1.6)
+      '@remix-run/server-runtime': 2.5.1(typescript@5.1.6)
       '@remix-run/web-fetch': 4.4.2
       '@remix-run/web-file': 3.1.0
       '@remix-run/web-stream': 1.1.0
@@ -8357,24 +8357,4 @@ packages:
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
-    dev: true
-
-  file:../../others/remix/packages/remix-server-runtime(typescript@5.1.6):
-    resolution: {directory: ../../others/remix/packages/remix-server-runtime, type: directory}
-    id: file:../../others/remix/packages/remix-server-runtime
-    name: '@remix-run/server-runtime'
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      typescript: ^5.1.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@remix-run/router': 1.14.2
-      '@types/cookie': 0.6.0
-      '@web3-storage/multipart-parser': 1.0.0
-      cookie: 0.6.0
-      set-cookie-parser: 2.6.0
-      source-map: 0.7.4
-      typescript: 5.1.6
     dev: true
