@@ -15,7 +15,7 @@ export default defineConfig({
       entry: "./app/worker-entry-wrapper.ts",
       miniflareOptions(options) {
         options.log = new Log();
-        // @ts-ignore why type error
+        // @ts-ignore why type error?
         options.kvNamespaces = { kv: "0".repeat(32) };
         options.kvPersist = ".wrangler/state/v3/kv";
       },
