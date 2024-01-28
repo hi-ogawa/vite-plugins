@@ -4,6 +4,8 @@ Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vi
 
 See https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation/pull/1 for the motivation.
 
+See https://github.com/hi-ogawa/vite-plugins/issues/127 for known limitations.
+
 ## examples
 
 - [`./examples/basic`](./examples/basic) : Simple demo of SSR, Hydration and HMR with [`@hiogawa/tiny-react`](https://github.com/hi-ogawa/js-utils/tree/main/packages/tiny-react)
