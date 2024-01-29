@@ -2,7 +2,9 @@
 
 Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) on [`miniflare`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare).
 
-See https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation/pull/1 for quick summary.
+See https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation/pull/1 for the motivation.
+
+See https://github.com/hi-ogawa/vite-plugins/issues/127 for known limitations.
 
 ## examples
 
@@ -38,16 +40,11 @@ export default {
 };
 ```
 
-## development
-
-```sh
-pnpm build
-pnpm -C examples/react-router dev
-```
-
 ## credits/references
 
 - https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation
 - https://github.com/vitest-dev/vitest/tree/main/packages/vite-node
 - https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare
 - https://github.com/nuxt/nuxt/blob/1de44a5a5ca5757d53a8b52c9809cbc027d2d246/packages/vite/src/vite-node.ts
+- https://github.com/sapphi-red/vite-envs/tree/use-vite-runtime
+- https://github.com/vitejs/vite/discussions/14288
