@@ -68,8 +68,8 @@ export function createViteNodeClient(options: {
         Object.freeze(context.__vite_ssr_exports__);
       },
 
-      runExternalModule(filepath, metadata) {
-        console.error("[runExternalModule]", filepath, metadata);
+      runExternalModule(filepath) {
+        console.error("[runExternalModule]", filepath);
         throw new Error(`[runExternalModule] ${filepath}`);
       },
     }
