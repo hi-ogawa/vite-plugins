@@ -16,7 +16,7 @@ import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
 // prettier-ignore
 export type ViteNodeRpc =
   Pick<ViteNodeServer, "fetchModule" | "resolveId"> &
-  Pick<ViteDevServer, "transformIndexHtml" | "ssrFetchModule" | "ssrRewriteStacktrace"> &
+  Pick<ViteDevServer, "transformIndexHtml" | "ssrFetchModule"> &
   {
     getInvalidatedModules: () => string[];
     getHMRPayloads: () => HMRPayload[];
@@ -50,7 +50,6 @@ export function setupViteNodeServerRpc(
       // https://github.com/vitejs/vite/pull/12165#issuecomment-1910686678
       return fetchModule(viteDevServer, id, importer);
     },
-    ssrRewriteStacktrace: viteNodeServer.server.ssrRewriteStacktrace,
     getInvalidatedModules: () => {
       // there must be at most one client to make use of this RPC
       const result = [...invalidatedModules];
