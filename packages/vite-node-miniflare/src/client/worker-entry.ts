@@ -31,7 +31,9 @@ export default {
         // TODO: listen HMRPayload event (birpc? websocket? SSE?)
         const payloads = await client.rpc.getHMRPayloads();
         for (const payload of payloads) {
-          console.log("[handleHMRUpdate]", payload);
+          if (env.__VITE_NODE_DEBUG) {
+            console.log("[HMRPayload]", payload);
+          }
           // simple module tree invalidation instead of hmr for client-only hmr plugin compatibility
           if (!env.__VITE_RUNTIME_HMR && payload.type === "update") {
             for (const update of payload.updates) {
