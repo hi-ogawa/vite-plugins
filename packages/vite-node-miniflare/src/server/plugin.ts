@@ -6,8 +6,6 @@ import {
   type Request as MiniflareRequest,
 } from "miniflare";
 import type { Plugin } from "vite";
-import type { ViteNodeRunnerOptions, ViteNodeServerOptions } from "vite-node";
-import { ViteNodeServer } from "vite-node/server";
 import { name as packageName } from "../../package.json";
 import { setupViteNodeServerRpc } from "./vite-node";
 
@@ -18,8 +16,6 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   hmr?: boolean;
   // hooks to customize options
   miniflareOptions?: (options: MiniflareOptions) => void;
-  viteNodeServerOptions?: (options: ViteNodeServerOptions) => void;
-  viteNodeRunnerOptions?: (options: Partial<ViteNodeRunnerOptions>) => void;
   preBundle?: {
     include: string[];
     force?: boolean;
@@ -45,27 +41,8 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       };
     },
     async configureServer(server) {
-      // setup vite-node with rpc
-      const viteNodeServerOptions: ViteNodeServerOptions = {
-        debug: {
-          dumpModules: pluginOptions.debug,
-        },
-        // I thought this is always the case, but somehow maybe not for virtual modules?
-        // Without this, Remix's "remix-dot-server" plugin will trigger errors.
-        transformMode: {
-          ssr: [/.*/],
-        },
-        deps: {
-          // vite-node tries to externalize pre-bundled deps by default.
-          // by putting non-existing cacheDir, we disable this heuristics.
-          // https://github.com/vitest-dev/vitest/blob/043b78f3257b266302cdd68849a76b8ed343bba1/packages/vite-node/src/externalize.ts#L104-L106
-          cacheDir: "__disable_externalizing_vite_deps",
-          moduleDirectories: [],
-        },
-      };
-      pluginOptions.viteNodeServerOptions?.(viteNodeServerOptions);
-      const viteNodeServer = new ViteNodeServer(server, viteNodeServerOptions);
-      const viteNodeServerRpc = setupViteNodeServerRpc(viteNodeServer, {
+      // setup rpc for vite runtime
+      const viteNodeServerRpc = setupViteNodeServerRpc(server, {
         customRpc: pluginOptions.customRpc,
       });
 
@@ -73,19 +50,11 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
       const miniflareHandler: httipCompose.RequestHandler = async (ctx) => {
         if (!miniflare) {
-          const viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions> = {
-            root: server.config.root,
-            base: server.config.base,
-            debug: !!pluginOptions.debug,
-          };
-          pluginOptions.viteNodeRunnerOptions?.(viteNodeRunnerOptions);
-
           const miniflareOptions = viteNodeServerRpc.generateMiniflareOptions({
             entry: pluginOptions.entry,
             rpcOrigin: ctx.url.origin,
             debug: pluginOptions.debug,
             hmr: pluginOptions.hmr,
-            viteNodeRunnerOptions,
           });
           pluginOptions.miniflareOptions?.(miniflareOptions);
           miniflare = new Miniflare(miniflareOptions);

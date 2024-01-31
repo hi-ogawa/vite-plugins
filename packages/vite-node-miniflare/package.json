@@ -37,8 +37,7 @@
     "@hattip/adapter-node": "^0.0.34",
     "@hattip/compose": "^0.0.34",
     "esbuild": "^0.18.6",
-    "miniflare": "^3.20231030.3",
-    "vite-node": "^1.0.4"
+    "miniflare": "^3.20231030.3"
   },
   "devDependencies": {
     "@hiogawa/tiny-rpc": "^0.2.3-pre.11",
