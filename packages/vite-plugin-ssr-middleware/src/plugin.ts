@@ -5,10 +5,13 @@ export function vitePluginSsrMiddleware({
   entry,
   entryAlias = "index",
   useViteRuntime,
+  useViteRuntimeHmr = true,
 }: {
   entry: string;
   entryAlias?: string;
   useViteRuntime?: boolean;
+  // allow disabling ssr hmr for client rendering hmr plugin compatibility
+  useViteRuntimeHmr?: boolean;
 }): Plugin {
   return {
     name: packageName,
@@ -43,9 +46,26 @@ export function vitePluginSsrMiddleware({
       // select module loader
       let loadModule = server.ssrLoadModule;
       if (useViteRuntime) {
-        const vite = await import("vite");
-        const runtime = await vite.createViteRuntime(server);
-        loadModule = runtime.executeEntrypoint.bind(runtime);
+        const { createViteRuntime, ServerHMRConnector } = await import("vite");
+        if (useViteRuntimeHmr) {
+          const runtime = await createViteRuntime(server);
+          loadModule = runtime.executeEntrypoint.bind(runtime);
+        } else {
+          // manual invalidation mode without hmr
+          const { handleHMRUpdate } = await import("vite/runtime");
+          const runtime = await createViteRuntime(server, { hmr: false });
+          const connection = new ServerHMRConnector(server);
+          connection.onUpdate(async (payload) => {
+            if (payload.type === "update") {
+              runtime.moduleCache.invalidateDepTree(
+                payload.updates.map((update) => update.path)
+              );
+            } else {
+              await handleHMRUpdate(runtime, payload);
+            }
+          });
+          loadModule = runtime.executeEntrypoint.bind(runtime);
+        }
       }
 
       const handler: Connect.NextHandleFunction = async (req, res, next) => {
