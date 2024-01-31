@@ -31,6 +31,22 @@ export default {
         const payloads = await client.rpc.getHMRPayloads();
         for (const payload of payloads) {
           console.log("[handleHMRUpdate]", payload);
+          // TODO: for now, we do module tree invalidation instead of hmr so that standard react plugin integration works like before.
+          // TODO: make it configurable
+          if (payload.type === "update") {
+            for (const update of payload.updates) {
+              // TODO: unwrapId?
+              const invalidated = client.runtime.moduleCache.invalidateDepTree([
+                update.path,
+              ]);
+              if (env.__VITE_NODE_DEBUG) {
+                console.log("[vite-node-miniflare] invalidateDepTree:", [
+                  ...invalidated,
+                ]);
+              }
+            }
+            continue;
+          }
           await handleHMRUpdate(client.runtime, payload);
         }
 
