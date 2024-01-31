@@ -56,6 +56,7 @@ export function vitePluginSsrMiddleware({
           const connection = new ServerHMRConnector(server);
           connection.onUpdate(async (payload) => {
             if (payload.type === "update") {
+              // unwrapId?
               runtime.moduleCache.invalidateDepTree(
                 payload.updates.map((update) => update.path)
               );
