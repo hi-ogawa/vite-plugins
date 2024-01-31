@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+  vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
 
 importers:
 
@@ -31,7 +31,7 @@ importers:
         version: 18.16.18
       '@vitejs/plugin-react':
         specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.0-beta.2)
+        version: 4.2.0(vite@5.1.0-beta.5)
       esbuild:
         specifier: ^0.18.6
         version: 0.18.6
@@ -48,8 +48,8 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
       vitest:
         specifier: ^1.0.4
         version: 1.0.4(@types/node@18.16.18)
@@ -73,7 +73,7 @@ importers:
         version: 18.2.5
       '@vitejs/plugin-react':
         specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.0-beta.2)
+        version: 4.2.0(vite@5.1.0-beta.5)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -84,8 +84,8 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   examples/ssr:
     devDependencies:
@@ -124,7 +124,7 @@ importers:
         version: 18.2.5
       '@vitejs/plugin-react':
         specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.0-beta.2)
+        version: 4.2.0(vite@5.1.0-beta.5)
       esbuild:
         specifier: ^0.18.6
         version: 0.18.6
@@ -141,8 +141,8 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/demo:
     devDependencies:
@@ -160,7 +160,7 @@ importers:
         version: 0.1.1-pre.3
       '@hiogawa/theme-script':
         specifier: ^0.0.4-pre.3
-        version: 0.0.4-pre.3(vite@5.1.0-beta.2)
+        version: 0.0.4-pre.3(vite@5.1.0-beta.5)
       '@hiogawa/tiny-cli':
         specifier: ^0.0.4-pre.0
         version: 0.0.4-pre.0
@@ -223,7 +223,7 @@ importers:
         version: 18.2.5
       '@vitejs/plugin-react':
         specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.0-beta.2)
+        version: 4.2.0(vite@5.1.0-beta.5)
       cookie:
         specifier: ^0.5.0
         version: 0.5.0
@@ -244,7 +244,7 @@ importers:
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       unocss:
         specifier: ^0.57.7
-        version: 0.57.7(postcss@8.4.32)(vite@5.1.0-beta.2)
+        version: 0.57.7(postcss@8.4.33)(vite@5.1.0-beta.5)
       zod:
         specifier: ^3.21.4
         version: 3.21.4
@@ -261,14 +261,14 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-import-dev-server:
     devDependencies:
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare:
     dependencies:
@@ -298,14 +298,14 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/basic:
     dependencies:
       '@hiogawa/tiny-react':
         specifier: 0.0.2-pre.8
-        version: 0.0.2-pre.8(vite@5.1.0-beta.2)
+        version: 0.0.2-pre.8(vite@5.1.0-beta.5)
       '@hiogawa/vite-node-miniflare':
         specifier: workspace:*
         version: link:../..
@@ -313,8 +313,8 @@ importers:
         specifier: ^3.20231030.3
         version: 3.20231030.4
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/react:
     dependencies:
@@ -329,7 +329,7 @@ importers:
         version: 18.2.5
       '@vitejs/plugin-react':
         specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.0-beta.2)
+        version: 4.2.0(vite@5.1.0-beta.5)
       miniflare:
         specifier: ^3.20231030.3
         version: 3.20231030.4
@@ -340,8 +340,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/react-router:
     dependencies:
@@ -365,7 +365,7 @@ importers:
         version: 18.2.5
       '@vitejs/plugin-react':
         specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.0-beta.2)
+        version: 4.2.0(vite@5.1.0-beta.5)
       miniflare:
         specifier: ^3.20231030.3
         version: 3.20231030.4
@@ -379,17 +379,17 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-node-miniflare/examples/remix:
     dependencies:
       '@remix-run/react':
-        specifier: 0.0.0-nightly-db4471d-20231214
-        version: 0.0.0-nightly-db4471d-20231214(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)
+        specifier: 2.5.1
+        version: 2.5.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)
       '@remix-run/server-runtime':
-        specifier: 0.0.0-nightly-db4471d-20231214
-        version: 0.0.0-nightly-db4471d-20231214(typescript@5.1.6)
+        specifier: 2.5.1
+        version: 2.5.1(typescript@5.1.6)
       isbot:
         specifier: ^3.6.8
         version: 3.7.1
@@ -407,8 +407,8 @@ importers:
         specifier: workspace:*
         version: link:../..
       '@remix-run/dev':
-        specifier: 0.0.0-nightly-db4471d-20231214
-        version: 0.0.0-nightly-db4471d-20231214(@types/node@18.16.18)(typescript@5.1.6)(vite@5.1.0-beta.2)
+        specifier: 2.5.1
+        version: 2.5.1(@types/node@18.16.18)(typescript@5.1.6)(vite@5.1.0-beta.5)
       '@types/react':
         specifier: 18.2.12
         version: 18.2.12
@@ -423,14 +423,14 @@ importers:
         version: 1.3.1
     devDependencies:
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-plugin-ssr-middleware:
     devDependencies:
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
+        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-plugin-ssr-middleware/examples/react:
     dependencies:
@@ -445,7 +445,7 @@ importers:
         version: 18.2.5
       '@vitejs/plugin-react':
         specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.0-beta.2)
+        version: 4.2.0(vite@5.1.0-beta.5)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2057,15 +2057,15 @@ packages:
         optional: true
     dev: true
 
-  /@hiogawa/theme-script@0.0.4-pre.3(vite@5.1.0-beta.2):
+  /@hiogawa/theme-script@0.0.4-pre.3(vite@5.1.0-beta.5):
     resolution: {integrity: sha512-2uxVhemdAMUFE/OaUcaTT2QeZsXnxtnF/CLNs+CcrlgwaUXXfsnXUTvUZCz8MTmxzzz4Vp5hfAyi4pp58XHJCQ==}
     peerDependencies:
-      vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+      vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
     peerDependenciesMeta:
       vite:
         optional: true
     dependencies:
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     dev: true
 
   /@hiogawa/tiny-cli@0.0.4-pre.0:
@@ -2099,15 +2099,15 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@hiogawa/tiny-react@0.0.2-pre.8(vite@5.1.0-beta.2):
+  /@hiogawa/tiny-react@0.0.2-pre.8(vite@5.1.0-beta.5):
     resolution: {integrity: sha512-5CD2uM+kO3IfBaJ5ga9iJjK9vTsO35aDQKq7mCeLCW0KIUAeVliLsFZEjpjHA0WN/sceZbSde5uHtz46JnuzQA==}
     peerDependencies:
-      vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+      vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
     peerDependenciesMeta:
       vite:
         optional: true
     dependencies:
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     dev: false
 
   /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
@@ -2145,7 +2145,7 @@ packages:
       '@unocss/preset-uno': 0.58.0
       '@unocss/reset': 0.48.5
       local-pkg: 0.4.3
-      unocss: 0.57.7(postcss@8.4.32)(vite@5.1.0-beta.2)
+      unocss: 0.57.7(postcss@8.4.33)(vite@5.1.0-beta.5)
     dev: true
 
   /@hiogawa/utils-hattip@0.0.1-pre.1:
@@ -2369,14 +2369,14 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
-  /@remix-run/dev@0.0.0-nightly-db4471d-20231214(@types/node@18.16.18)(typescript@5.1.6)(vite@5.1.0-beta.2):
-    resolution: {integrity: sha512-qAXYdnpG32gLM1tzB/1oAgqedoP0JhnYcyezJawpAeD0xLCLyrtFV+P9uofZohTrOy3+CMtQE8xwDhHtDpdsxA==}
+  /@remix-run/dev@2.5.1(@types/node@18.16.18)(typescript@5.1.6)(vite@5.1.0-beta.5):
+    resolution: {integrity: sha512-IrYhWANubH+WM62Wz55n8NWT5kBqfbyytXDFlP0VoZLrr1IpJf2GtaT4IA+CODMaNoeXeMACOD5Tw5/Y2bO5lA==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
-      '@remix-run/serve': ^0.0.0-nightly-db4471d-20231214
+      '@remix-run/serve': ^2.5.1
       typescript: ^5.1.0
-      vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+      vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
     peerDependenciesMeta:
       '@remix-run/serve':
         optional: true
@@ -2395,9 +2395,9 @@ packages:
       '@babel/types': 7.23.5
       '@mdx-js/mdx': 2.3.0
       '@npmcli/package-json': 4.0.1
-      '@remix-run/node': 0.0.0-nightly-db4471d-20231214(typescript@5.1.6)
-      '@remix-run/router': 1.14.0
-      '@remix-run/server-runtime': 0.0.0-nightly-db4471d-20231214(typescript@5.1.6)
+      '@remix-run/node': 2.5.1(typescript@5.1.6)
+      '@remix-run/router': 1.14.2
+      '@remix-run/server-runtime': 2.5.1(typescript@5.1.6)
       '@types/mdx': 2.0.10
       '@vanilla-extract/integration': 6.2.4(@types/node@18.16.18)
       arg: 5.0.2
@@ -2438,7 +2438,7 @@ packages:
       tar-fs: 2.1.1
       tsconfig-paths: 4.2.0
       typescript: 5.1.6
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
       ws: 7.5.9
     transitivePeerDependencies:
       - '@types/node'
@@ -2455,8 +2455,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@remix-run/node@0.0.0-nightly-db4471d-20231214(typescript@5.1.6):
-    resolution: {integrity: sha512-x/XSJGKu561aGUBAafSsBIYegDoLEdI5Y46gtDl1q72xdtvnogYUR4k+Y9dSuwi8R9mdu+j0XMukg7o0qNE08w==}
+  /@remix-run/node@2.5.1(typescript@5.1.6):
+    resolution: {integrity: sha512-UI442xzHAiokmsfrYOabMQB024+IizmRhZBGcNa42QjJWsNqogy1bNwYhzEpB6oQEB1wF3vwOKK1AD1/iYA/9A==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       typescript: ^5.1.0
@@ -2464,7 +2464,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@remix-run/server-runtime': 0.0.0-nightly-db4471d-20231214(typescript@5.1.6)
+      '@remix-run/server-runtime': 2.5.1(typescript@5.1.6)
       '@remix-run/web-fetch': 4.4.2
       '@remix-run/web-file': 3.1.0
       '@remix-run/web-stream': 1.1.0
@@ -2475,8 +2475,8 @@ packages:
       typescript: 5.1.6
     dev: true
 
-  /@remix-run/react@0.0.0-nightly-db4471d-20231214(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6):
-    resolution: {integrity: sha512-tVifodkN/HD8MEuyIzf4zn4QWpWQkqP2l+x400ObgXyQkNZ/dB6yf+5LVIedOkaSowkJH8IkqVKu8R8tjmiQtw==}
+  /@remix-run/react@2.5.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6):
+    resolution: {integrity: sha512-MNXHLj4Iu9Iyi+3uY61JZJ1Rtx2nM/z11j9AtwQdEADkh1/t9GruhtT/8VLplToOl0qWZKItboWScKf6uRQsrw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0.0
@@ -2486,25 +2486,25 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@remix-run/router': 1.14.0
-      '@remix-run/server-runtime': 0.0.0-nightly-db4471d-20231214(typescript@5.1.6)
+      '@remix-run/router': 1.14.2
+      '@remix-run/server-runtime': 2.5.1(typescript@5.1.6)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.21.0(react@18.2.0)
-      react-router-dom: 6.21.0(react-dom@18.2.0)(react@18.2.0)
+      react-router: 6.21.3(react@18.2.0)
+      react-router-dom: 6.21.3(react-dom@18.2.0)(react@18.2.0)
       typescript: 5.1.6
     dev: false
 
-  /@remix-run/router@1.14.0:
-    resolution: {integrity: sha512-WOHih+ClN7N8oHk9N4JUiMxQJmRVaOxcg8w7F/oHUXzJt920ekASLI/7cYX8XkntDWRhLZtsk6LbGrkgOAvi5A==}
+  /@remix-run/router@1.14.2:
+    resolution: {integrity: sha512-ACXpdMM9hmKZww21yEqWwiLws/UPLhNKvimN8RrYSqPSvB3ov7sLvAcfvaxePeLvccTQKGdkDIhLYApZVDFuKg==}
     engines: {node: '>=14.0.0'}
 
   /@remix-run/router@1.6.3:
     resolution: {integrity: sha512-EXJysQ7J3veRECd0kZFQwYYd5sJMcq2O/m60zu1W2l3oVQ9xtub8jTOtYRE0+M2iomyG/W3Ps7+vp2kna0C27Q==}
     engines: {node: '>=14'}
 
-  /@remix-run/server-runtime@0.0.0-nightly-db4471d-20231214(typescript@5.1.6):
-    resolution: {integrity: sha512-5XMZqA9l/G4Ngkxd9AjasMuLxeCyqRztvQl1N8uMilGjETdAiQvSAu49H5ygStzlPfOM4IC2YtOFhP9yr0uAYQ==}
+  /@remix-run/server-runtime@2.5.1(typescript@5.1.6):
+    resolution: {integrity: sha512-bP31jrVbYTJ2eP5sxZfDgT1YyXzDlzsfMxGYVzpaoLCYDJAekq1QpHLLXKGOXhmyb46O9rdhlQKfwD6WpAxr3A==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       typescript: ^5.1.0
@@ -2512,10 +2512,10 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@remix-run/router': 1.14.0
-      '@types/cookie': 0.5.4
+      '@remix-run/router': 1.14.2
+      '@types/cookie': 0.6.0
       '@web3-storage/multipart-parser': 1.0.0
-      cookie: 0.5.0
+      cookie: 0.6.0
       set-cookie-parser: 2.6.0
       source-map: 0.7.4
       typescript: 5.1.6
@@ -2748,8 +2748,8 @@ packages:
     resolution: {integrity: sha512-COUnqfB2+ckwXXSFInsFdOAWQzCCx+a5hq2ruyj+Vjund94RJQd4LG2u9hnvJrTgunKAaax7ancBYlDrNYxA0g==}
     dev: true
 
-  /@types/cookie@0.5.4:
-    resolution: {integrity: sha512-7z/eR6O859gyWIAjuvBWFzNURmf2oPBmJlfVWkwehU5nzIyjwBsTh7WMmEEV4JFnHuQ3ex4oyTvfKzcyJVDBNA==}
+  /@types/cookie@0.6.0:
+    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
   /@types/debug@4.1.12:
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -2895,18 +2895,18 @@ packages:
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
     dev: true
 
-  /@unocss/astro@0.57.7(vite@5.1.0-beta.2):
+  /@unocss/astro@0.57.7(vite@5.1.0-beta.5):
     resolution: {integrity: sha512-X4KSBdrAADdtS4x7xz02b016xpRDt9mD/d/oq23HyZAZ+sZc4oZs8el9MLSUJgu2okdWzAE62lRRV/oc4HWI1A==}
     peerDependencies:
-      vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+      vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
     peerDependenciesMeta:
       vite:
         optional: true
     dependencies:
       '@unocss/core': 0.57.7
       '@unocss/reset': 0.57.7
-      '@unocss/vite': 0.57.7(vite@5.1.0-beta.2)
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      '@unocss/vite': 0.57.7(vite@5.1.0-beta.5)
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - rollup
     dev: true
@@ -2970,7 +2970,7 @@ packages:
       sirv: 2.0.3
     dev: true
 
-  /@unocss/postcss@0.57.7(postcss@8.4.32):
+  /@unocss/postcss@0.57.7(postcss@8.4.33):
     resolution: {integrity: sha512-13c9p5ecTvYa6inDky++8dlVuxQ0JuKaKW5A0NW3XuJ3Uz1t8Pguji+NAUddfTYEFF6GHu47L3Aac7vpI8pMcQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -2982,7 +2982,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.5
-      postcss: 8.4.32
+      postcss: 8.4.33
     dev: true
 
   /@unocss/preset-attributify@0.57.7:
@@ -3136,10 +3136,10 @@ packages:
       '@unocss/core': 0.57.7
     dev: true
 
-  /@unocss/vite@0.57.7(vite@5.1.0-beta.2):
+  /@unocss/vite@0.57.7(vite@5.1.0-beta.5):
     resolution: {integrity: sha512-SbJrRgfc35MmgMBlHaEK4YpJVD2B0bmxH9PVgHRuDae/hOEOG0VqNP0f2ijJtX9HG3jOpQVlbEoGnUo8jsZtsw==}
     peerDependencies:
-      vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+      vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
     dependencies:
       '@ampproject/remapping': 2.2.1
       '@rollup/pluginutils': 5.0.5
@@ -3151,7 +3151,7 @@ packages:
       chokidar: 3.5.3
       fast-glob: 3.3.2
       magic-string: 0.30.5
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - rollup
     dev: true
@@ -3194,7 +3194,7 @@ packages:
       lodash: 4.17.21
       mlly: 1.4.2
       outdent: 0.8.0
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
       vite-node: 0.28.5(@types/node@18.16.18)
     transitivePeerDependencies:
       - '@types/node'
@@ -3211,18 +3211,18 @@ packages:
     resolution: {integrity: sha512-17kVyLq3ePTKOkveHxXuIJZtGYs+cSoev7BlP+Lf4916qfDhk/HBjvlYDe8egrea7LNPHKwSZJK/bzZC+Q6AwQ==}
     dev: true
 
-  /@vitejs/plugin-react@4.2.0(vite@5.1.0-beta.2):
+  /@vitejs/plugin-react@4.2.0(vite@5.1.0-beta.5):
     resolution: {integrity: sha512-+MHTH/e6H12kRp5HUkzOGqPMksezRMmW+TNzlh/QXfI8rRf6l2Z2yH/v12no1UvTwhZgEDMuQ7g7rrfMseU6FQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+      vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
     dependencies:
       '@babel/core': 7.23.5
       '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.23.5)
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.5)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - supports-color
 
@@ -3802,6 +3802,10 @@ packages:
 
   /cookie@0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
+    engines: {node: '>= 0.6'}
+
+  /cookie@0.6.0:
+    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
   /core-util-is@1.0.3:
@@ -6780,17 +6784,17 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       react-router: 6.13.0(react@18.2.0)
 
-  /react-router-dom@6.21.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-1dUdVj3cwc1npzJaf23gulB562ESNvxf7E4x8upNJycqyUm5BRRZ6dd3LrlzhtLaMrwOCO8R0zoiYxdaJx4LlQ==}
+  /react-router-dom@6.21.3(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-kNzubk7n4YHSrErzjLK72j0B5i969GsuCGazRl3G6j1zqZBLjuSlYBdVdkDOgzGdPIffUOc9nmgiadTEVoq91g==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      '@remix-run/router': 1.14.0
+      '@remix-run/router': 1.14.2
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.21.0(react@18.2.0)
+      react-router: 6.21.3(react@18.2.0)
     dev: false
 
   /react-router@6.13.0(react@18.2.0):
@@ -6802,13 +6806,13 @@ packages:
       '@remix-run/router': 1.6.3
       react: 18.2.0
 
-  /react-router@6.21.0(react@18.2.0):
-    resolution: {integrity: sha512-hGZ0HXbwz3zw52pLZV3j3+ec+m/PQ9cTpBvqjFQmy2XVUWGn5MD+31oXHb6dVTxYzmAeaiUBYjkoNz66n3RGCg==}
+  /react-router@6.21.3(react@18.2.0):
+    resolution: {integrity: sha512-a0H638ZXULv1OdkmiK6s6itNhoy33ywxmUFT/xtSoVyf9VnC7n7+VT4LjVzdIHSaF5TIh9ylUgxMXksHTgGrKg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      '@remix-run/router': 1.14.0
+      '@remix-run/router': 1.14.2
       react: 18.2.0
     dev: false
 
@@ -7811,23 +7815,23 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unocss@0.57.7(postcss@8.4.32)(vite@5.1.0-beta.2):
+  /unocss@0.57.7(postcss@8.4.33)(vite@5.1.0-beta.5):
     resolution: {integrity: sha512-Z99ZZPkbkjIUXEM7L+K/7Y5V5yqUS0VigG7ZIFzLf/npieKmXHKlrPyvQWFQaf3OqooMFuKBQivh75TwvSOkcQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@unocss/webpack': 0.57.7
-      vite: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz
+      vite: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
     peerDependenciesMeta:
       '@unocss/webpack':
         optional: true
       vite:
         optional: true
     dependencies:
-      '@unocss/astro': 0.57.7(vite@5.1.0-beta.2)
+      '@unocss/astro': 0.57.7(vite@5.1.0-beta.5)
       '@unocss/cli': 0.57.7
       '@unocss/core': 0.57.7
       '@unocss/extractor-arbitrary-variants': 0.57.7
-      '@unocss/postcss': 0.57.7(postcss@8.4.32)
+      '@unocss/postcss': 0.57.7(postcss@8.4.33)
       '@unocss/preset-attributify': 0.57.7
       '@unocss/preset-icons': 0.57.7
       '@unocss/preset-mini': 0.57.7
@@ -7842,8 +7846,8 @@ packages:
       '@unocss/transformer-compile-class': 0.57.7
       '@unocss/transformer-directives': 0.57.7
       '@unocss/transformer-variant-group': 0.57.7
-      '@unocss/vite': 0.57.7(vite@5.1.0-beta.2)
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      '@unocss/vite': 0.57.7(vite@5.1.0-beta.5)
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -7942,7 +7946,7 @@ packages:
       picocolors: 1.0.0
       source-map: 0.6.1
       source-map-support: 0.5.21
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -7963,7 +7967,7 @@ packages:
       debug: 4.3.4
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -8018,7 +8022,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.8.1
-      vite: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)'
+      vite: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
       vite-node: 1.0.4(@types/node@18.16.18)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
@@ -8296,11 +8300,11 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz(@types/node@18.16.18)':
-    resolution: {tarball: https://github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz}
-    id: '@github.com/hi-ogawa/vite-plugins/raw/596b232a40f76cde002a778c70b0bb7fab39abaf/vite-5.1.0-beta.2.tgz'
+  '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)':
+    resolution: {tarball: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz}
+    id: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz'
     name: vite
-    version: 5.1.0-beta.2
+    version: 5.1.0-beta.5
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:

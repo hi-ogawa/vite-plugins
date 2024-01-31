@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --config vite.config.vite-node.ts",
-    "dev-default": "vite dev",
+    "dev": "vite dev",
+    "dev-original": "vite dev --config vite.config.original.ts",
     "test-e2e": "playwright test"
   },
   "dependencies": {
-    "@remix-run/react": "0.0.0-nightly-db4471d-20231214",
-    "@remix-run/server-runtime": "0.0.0-nightly-db4471d-20231214",
+    "@remix-run/react": "2.5.1",
+    "@remix-run/server-runtime": "2.5.1",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -17,7 +17,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231121.0",
     "@hiogawa/vite-node-miniflare": "workspace:*",
-    "@remix-run/dev": "0.0.0-nightly-db4471d-20231214",
+    "@remix-run/dev": "2.5.1",
     "@types/react": "18.2.12",
     "@types/react-dom": "18.2.5"
   }
