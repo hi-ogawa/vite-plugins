@@ -52,7 +52,6 @@ export function vitePluginSsrMiddleware({
           loadModule = runtime.executeEntrypoint.bind(runtime);
         } else {
           // manual invalidation mode without hmr
-          const { handleHMRUpdate } = await import("vite/runtime");
           const runtime = await createViteRuntime(server, { hmr: false });
           const connection = new ServerHMRConnector(server);
           connection.onUpdate(async (payload) => {
@@ -60,8 +59,8 @@ export function vitePluginSsrMiddleware({
               runtime.moduleCache.invalidateDepTree(
                 payload.updates.map((update) => update.path)
               );
-            } else {
-              await handleHMRUpdate(runtime, payload);
+            } else if (payload.type === "full-reload") {
+              runtime.moduleCache.clear();
             }
           });
           loadModule = runtime.executeEntrypoint.bind(runtime);
