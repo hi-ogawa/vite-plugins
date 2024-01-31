@@ -48,6 +48,7 @@ export function vitePluginSsrMiddleware({
       if (useViteRuntime) {
         const { createViteRuntime, ServerHMRConnector } = await import("vite");
         if (useViteRuntimeHmr) {
+          // simple default vite runtime
           const runtime = await createViteRuntime(server);
           loadModule = runtime.executeEntrypoint.bind(runtime);
         } else {
