@@ -5,8 +5,6 @@ import {
 } from "@hiogawa/tiny-rpc";
 import { ViteRuntime } from "vite/runtime";
 import type { ViteNodeRpc } from "..";
-import { __setDebug } from "./polyfills/debug";
-import { __setUnsafeEval } from "./polyfills/node-vm";
 
 export interface ViteNodeMiniflareClient {
   rpc: TinyRpcProxy<ViteNodeRpc>;
@@ -19,9 +17,6 @@ export function createViteNodeClient(options: {
   root: string;
   debug: boolean;
 }): ViteNodeMiniflareClient {
-  __setUnsafeEval(options.unsafeEval);
-  __setDebug(options.debug);
-
   const rpc = proxyTinyRpc<ViteNodeRpc>({
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),
   });

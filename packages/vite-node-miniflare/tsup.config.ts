@@ -14,19 +14,6 @@ export default [
     dts: true,
     splitting: false,
     noExternal: [/.*/],
-    esbuildOptions: (options) => {
-      // patch to run "vite-node/client" on workerd
-      options.define = {
-        "process.platform": '"linux"',
-        "process.env": "{}",
-      };
-      options.alias = {
-        debug: "./src/client/polyfills/debug.ts",
-      };
-      for (const mod of ["fs", "module", "path", "url", "vm"]) {
-        options.alias[`node:${mod}`] = `./src/client/polyfills/node-${mod}.ts`;
-      }
-    },
   })),
   defineConfig(() => ({
     entry: ["src/index.ts"],
