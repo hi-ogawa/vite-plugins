@@ -10,7 +10,10 @@ export function vitePluginSsrMiddleware({
   entry: string;
   entryAlias?: string;
   useViteRuntime?: boolean;
-  // allow disabling ssr hmr for client rendering hmr plugin compatibility
+  /**
+   * allow disabling ssr hmr for client rendering hmr plugin compatibility
+   * @default true
+   * */
   useViteRuntimeHmr?: boolean;
 }): Plugin {
   return {
