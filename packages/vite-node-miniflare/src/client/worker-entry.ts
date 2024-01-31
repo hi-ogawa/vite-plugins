@@ -9,6 +9,7 @@ interface Env {
   __VITE_NODE_SERVER_RPC_URL: string;
   __VITE_NODE_RUNNER_OPTIONS: any;
   __VITE_NODE_DEBUG: boolean;
+  __VITE_RUNTIME_HMR: boolean;
   __WORKER_ENTRY: string;
 }
 
@@ -31,9 +32,8 @@ export default {
         const payloads = await client.rpc.getHMRPayloads();
         for (const payload of payloads) {
           console.log("[handleHMRUpdate]", payload);
-          // TODO: for now, we do module tree invalidation instead of hmr so that standard react plugin integration works like before.
-          // TODO: make it configurable
-          if (payload.type === "update") {
+          // simple module tree invalidation instead of hmr for client-only hmr plugin compatibility
+          if (!env.__VITE_RUNTIME_HMR && payload.type === "update") {
             for (const update of payload.updates) {
               // TODO: unwrapId?
               const invalidated = client.runtime.moduleCache.invalidateDepTree([

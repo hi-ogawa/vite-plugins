@@ -90,6 +90,7 @@ export function setupViteNodeServerRpc(
     entry: string;
     rpcOrigin: string;
     debug?: boolean;
+    hmr?: boolean;
     viteNodeRunnerOptions: Partial<ViteNodeRunnerOptions>;
   }) {
     return {
@@ -111,6 +112,7 @@ export function setupViteNodeServerRpc(
         __VITE_NODE_SERVER_RPC_URL: options.rpcOrigin + rpcBase,
         __VITE_NODE_RUNNER_OPTIONS: options.viteNodeRunnerOptions as any,
         __VITE_NODE_DEBUG: options.debug ?? false,
+        __VITE_RUNTIME_HMR: options.hmr ?? false,
       },
     } satisfies MiniflareOptions;
   }

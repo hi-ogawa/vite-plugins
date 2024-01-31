@@ -18,6 +18,8 @@ export default defineConfig({
   },
   plugins: [
     vitePluginViteNodeMiniflare({
+      // TODO: ssr hmr plugin https://github.com/hi-ogawa/vite-plugins/pull/157
+      // hmr: true,
       debug: true,
       entry: "./src/worker-entry.tsx",
       miniflareOptions(options) {

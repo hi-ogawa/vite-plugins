@@ -14,6 +14,8 @@ import { setupViteNodeServerRpc } from "./vite-node";
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
   debug?: boolean;
+  // ssr hmr is disabled by default for normal client-only hmr plugin compatibility
+  hmr?: boolean;
   // hooks to customize options
   miniflareOptions?: (options: MiniflareOptions) => void;
   viteNodeServerOptions?: (options: ViteNodeServerOptions) => void;
@@ -82,6 +84,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             entry: pluginOptions.entry,
             rpcOrigin: ctx.url.origin,
             debug: pluginOptions.debug,
+            hmr: pluginOptions.hmr,
             viteNodeRunnerOptions,
           });
           pluginOptions.miniflareOptions?.(miniflareOptions);
