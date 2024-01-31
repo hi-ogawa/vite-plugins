@@ -33,7 +33,7 @@ export function setupViteNodeServerRpc(
   const invalidatedModules = new Set<string>();
 
   // for starter, collect HMRPayload with builtin ServerHMRConnector
-  // and let worker entry to fetch them via rpc
+  // and let worker entry fetch them via rpc before rendering
   const connector = new ServerHMRConnector(viteNodeServer.server);
   let hmrPayloads: HMRPayload[] = [];
   connector.onUpdate((payload) => {
