@@ -1,4 +1,3 @@
-import { handleHMRUpdate } from "vite/runtime";
 import {
   type ViteNodeMiniflareClient,
   createViteNodeClient,
@@ -49,7 +48,7 @@ export default {
             }
             continue;
           }
-          await handleHMRUpdate(client.runtime, payload);
+          await client.runtimeHMRHandler(payload);
         }
 
         const workerEntry = await client.runtime.executeEntrypoint(
