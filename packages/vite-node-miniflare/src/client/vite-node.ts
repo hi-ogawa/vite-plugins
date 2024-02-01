@@ -17,7 +17,7 @@ export interface ViteNodeMiniflareClient {
   rpc: TinyRpcProxy<ViteNodeRpc>;
   runner: ViteNodeRunner;
   runtime: ViteRuntime;
-  runtimeHMRHandler: (payload: HMRPayload) => Promise<void>;
+  runtimeHMRHandler: (payload: HMRPayload) => void;
 }
 
 export function createViteNodeClient(options: {
@@ -33,7 +33,7 @@ export function createViteNodeClient(options: {
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),
   });
 
-  let runtimeHMRHandler!: (payload: HMRPayload) => Promise<void>;
+  let runtimeHMRHandler!: (payload: HMRPayload) => void;
 
   const runtime = new ViteRuntime(
     {
@@ -54,7 +54,7 @@ export function createViteNodeClient(options: {
           // TODO: for now, we fetch HMRPayload via separate rpc, so we just grab the callback and use it later.
           onUpdate(callback) {
             // this is called during ViteRuntime constructor
-            runtimeHMRHandler = callback as any;
+            runtimeHMRHandler = callback;
           },
         },
         logger: console,
