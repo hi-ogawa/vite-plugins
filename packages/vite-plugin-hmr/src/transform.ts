@@ -80,7 +80,9 @@ export function analyzeExports(code: MagicString, ast: Program) {
       }
     }
 
-    //// export * from './foo'
+    /**
+     * export * from './foo'
+     */
     if (node.type === "ExportAllDeclaration") {
     }
   }
