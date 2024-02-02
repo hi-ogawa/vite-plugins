@@ -436,8 +436,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       vite:
-        specifier: https://github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz
-        version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
+        specifier: 5.1.0-beta.6
+        version: 5.1.0-beta.6(@types/node@18.16.18)
 
   packages/vite-plugin-hmr/examples/react:
     dependencies:
@@ -3130,7 +3130,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       '@unocss/core': 0.58.0
-      magic-string: 0.30.5
+      magic-string: 0.30.6
     dev: true
 
   /@unocss/scope@0.57.7:
@@ -5505,7 +5505,6 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
-    dev: false
 
   /map-obj@1.0.1:
     resolution: {integrity: sha512-7N/q3lyZ+LVCp7PzuxrJr4KMbBE2hW7BT7YNia330OFxIf4d3r5zVpicP2650l7CPN6RM9zOJRl3NGpqSiw3Eg==}
