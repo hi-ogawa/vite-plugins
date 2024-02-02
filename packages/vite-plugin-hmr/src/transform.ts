@@ -1,4 +1,5 @@
 import type { Node, Program } from "estree";
+import type MagicString from "magic-string";
 
 // traverse export declaration statements based on
 // https://github.com/vitejs/vite/blob/fc2bceb09fb65cc6dc843462f51506586251a703/packages/vite/src/node/ssr/ssrTransform.ts#L172
@@ -10,7 +11,7 @@ declare module "estree" {
   }
 }
 
-export function analyzeExports(code: string, ast: Program) {
+export function analyzeExports(code: MagicString, ast: Program) {
   // extract exported top-level identifiers
   const exportIds: string[] = [];
 
@@ -31,12 +32,8 @@ export function analyzeExports(code: string, ast: Program) {
           //// export const foo = 1, bar = 2
           if (node.declaration.kind === "const") {
             // rewrite from "const" to "let"
-            code = edit(
-              code,
-              node.declaration.start,
-              node.declaration.start + 5,
-              "let  "
-            );
+            code.remove(node.declaration.start, node.declaration.start + 5);
+            code.appendLeft(node.declaration.start, "let");
           }
           for (const decl of node.declaration.declarations) {
             if (decl.id.type === "Identifier") {
@@ -80,9 +77,5 @@ export function analyzeExports(code: string, ast: Program) {
     }
   }
 
-  return { code, exportIds, errors };
-}
-
-function edit(s: string, start: number, end: number, insertee: string) {
-  return s.slice(0, start) + insertee + s.slice(end);
+  return { exportIds, errors };
 }

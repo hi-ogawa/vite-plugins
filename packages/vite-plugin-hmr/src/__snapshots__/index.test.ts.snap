@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`hmrTransform > 0 - basic 1`] = `
+exports[`hmrTransform > 0 - basic > analyzeExports 1`] = `
 {
   "errors": [],
   "exportIds": [
@@ -12,13 +12,14 @@ exports[`hmrTransform > 0 - basic 1`] = `
 }
 `;
 
-exports[`hmrTransform > 0 - basic 2`] = `
-"
+exports[`hmrTransform > 0 - basic > hmrTransform 1`] = `
+{
+  "code": "
 export function Test1() {}
 
 export let Test2 = () => {}
 
-export /*some*/ let   /*comment*/ Test3 = () => {}
+export /*some*/ let /*comment*/ Test3 = () => {}
 
 export default function Test4() {}
 
@@ -63,10 +64,21 @@ if (import.meta.env.SSR && import.meta.hot) {
   $$hmr.setupHot(import.meta.hot, $$registry);
   import.meta.hot.accept;
 }
-"
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA,MAAM,CAAC,QAAQ,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC;AAC1B;AACA,MAAM,CAAC,GAAG,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC;AAC3B;AACA,MAAM,CAAC,CAAC,CAAC,IAAI,CAAC,CAAC,IAAM,CAAC,CAAC,CAAC,OAAO,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC;AAClD;AACA,MAAM,CAAC,OAAO,CAAC,QAAQ,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
 `;
 
-exports[`hmrTransform > 1 - unsupported separate named export 1`] = `
+exports[`hmrTransform > 1 - unsupported separate named export > analyzeExports 1`] = `
 {
   "errors": [
     "export { SomeNamed };",
@@ -75,8 +87,9 @@ exports[`hmrTransform > 1 - unsupported separate named export 1`] = `
 }
 `;
 
-exports[`hmrTransform > 1 - unsupported separate named export 2`] = `
-"
+exports[`hmrTransform > 1 - unsupported separate named export > hmrTransform 1`] = `
+{
+  "code": "
 const SomeNamed = () => {};
 export { SomeNamed };
 
@@ -86,10 +99,21 @@ if (import.meta.env.SSR && import.meta.hot) {
     import.meta.hot.invalidate("unsupported usage: export { SomeNamed };")
   });
 }
-"
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA,KAAK,CAAC,SAAS,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC;AAC3B,MAAM,CAAC,CAAC,CAAC,SAAS,CAAC,CAAC,CAAC;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
 `;
 
-exports[`hmrTransform > 2 - unsupported separate default export 1`] = `
+exports[`hmrTransform > 2 - unsupported separate default export > analyzeExports 1`] = `
 {
   "errors": [
     "export default SomeDefault;",
@@ -98,8 +122,9 @@ exports[`hmrTransform > 2 - unsupported separate default export 1`] = `
 }
 `;
 
-exports[`hmrTransform > 2 - unsupported separate default export 2`] = `
-"
+exports[`hmrTransform > 2 - unsupported separate default export > hmrTransform 1`] = `
+{
+  "code": "
 const SomeDeafult = () => {};
 export default SomeDefault;
 
@@ -109,5 +134,16 @@ if (import.meta.env.SSR && import.meta.hot) {
     import.meta.hot.invalidate("unsupported usage: export default SomeDefault;")
   });
 }
-"
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA,KAAK,CAAC,WAAW,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC;AAC7B,MAAM,CAAC,OAAO,CAAC,WAAW,CAAC;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
 `;

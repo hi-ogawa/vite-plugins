@@ -1,3 +1,4 @@
+import MagicString from "magic-string";
 import { parseAstAsync } from "vite";
 import { describe, expect, it } from "vitest";
 import { hmrTransform } from "./plugin";
@@ -34,14 +35,22 @@ export default SomeDefault;
   ] as const;
 
   examples.forEach(([title, code], i) => {
-    it(`${i} - ${title}`, async () => {
-      const ast = await parseAstAsync(code);
-      const { exportIds, errors } = analyzeExports(code, ast as any);
-      expect({
-        exportIds,
-        errors: errors.map((e) => code.slice(e.node.start, e.node.end)),
-      }).toMatchSnapshot();
-      expect(await hmrTransform(code)).toMatchSnapshot();
+    describe(`${i} - ${title}`, () => {
+      it(analyzeExports, async () => {
+        const ast = await parseAstAsync(code);
+        const { exportIds, errors } = analyzeExports(
+          new MagicString(code),
+          ast as any
+        );
+        expect({
+          exportIds,
+          errors: errors.map((e) => code.slice(e.node.start, e.node.end)),
+        }).toMatchSnapshot();
+      });
+
+      it(hmrTransform, async () => {
+        expect(await hmrTransform(code)).toMatchSnapshot();
+      });
     });
   });
 });

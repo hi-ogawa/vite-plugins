@@ -1,3 +1,4 @@
+import MagicString from "magic-string";
 import {
   type FilterPattern,
   type Plugin,
@@ -28,19 +29,24 @@ export function vitePluginHmr(pluginOpts: {
   };
 }
 
-export async function hmrTransform(code: string): Promise<string | undefined> {
-  // TODO: magic-string for sourcemap?
+export async function hmrTransform(code: string) {
+  const magic = new MagicString(code);
 
   const ast = await parseAstAsync(code);
-  const result = analyzeExports(code, ast as any);
+  const result = analyzeExports(magic, ast as any);
 
   if (result.errors.length > 0) {
     const node = result.errors[0]!.node;
     const message = "unsupported usage: " + code.slice(node.start, node.end);
-    return code + "\n" + generateFooterUnsupported(message);
+    magic.append("\n" + generateFooterUnsupported(message));
+  } else {
+    magic.append("\n" + generateFooter(result.exportIds));
   }
 
-  return result.code + "\n" + generateFooter(result.exportIds);
+  return {
+    code: magic.toString(),
+    map: magic.generateMap({ hires: "boundary" }),
+  };
 }
 
 function generateFooter(names: string[]) {
