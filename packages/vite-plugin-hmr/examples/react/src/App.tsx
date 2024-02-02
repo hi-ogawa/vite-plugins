@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AppDep1, AppDep2 } from "./AppDep";
+import { AppDepDep } from "./AppDepDep";
 
 export function App() {
   const [count, setCount] = useState(0);
@@ -15,6 +16,7 @@ export function App() {
       <div>
         <AppDep1 />
         <AppDep2 />
+        <AppDepDep />
       </div>
     </>
   );
