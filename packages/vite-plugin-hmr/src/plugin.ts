@@ -45,7 +45,7 @@ export async function hmrTransform(code: string) {
 
   return {
     code: magic.toString(),
-    map: magic.generateMap({ hires: "boundary" }),
+    map: magic.generateMap(),
   };
 }
 
