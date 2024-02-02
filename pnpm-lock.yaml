@@ -427,6 +427,10 @@ importers:
         version: '@github.com/hi-ogawa/vite-plugins/raw/9702304309795a0559924fe5ed06e67617c9fd21/vite-5.1.0-beta.5.tgz(@types/node@18.16.18)'
 
   packages/vite-plugin-hmr:
+    dependencies:
+      magic-string:
+        specifier: ^0.30.6
+        version: 0.30.6
     devDependencies:
       '@types/estree':
         specifier: ^1.0.5
@@ -5495,6 +5499,13 @@ packages:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
+
+  /magic-string@0.30.6:
+    resolution: {integrity: sha512-n62qCLbPjNjyo+owKtveQxZFZTBm+Ms6YoGD23Wew6Vw337PElFNifQpknPruVRQV57kVShPnLGo9vWxVhpPvA==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.4.15
+    dev: false
 
   /map-obj@1.0.1:
     resolution: {integrity: sha512-7N/q3lyZ+LVCp7PzuxrJr4KMbBE2hW7BT7YNia330OFxIf4d3r5zVpicP2650l7CPN6RM9zOJRl3NGpqSiw3Eg==}
