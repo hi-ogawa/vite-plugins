@@ -26,10 +26,14 @@ export function analyzeExports(code: MagicString, ast: Program) {
           node.declaration.type === "FunctionDeclaration" ||
           node.declaration.type === "ClassDeclaration"
         ) {
-          //// export function foo() {}
+          /**
+           * export function foo() {}
+           */
           exportIds.push(node.declaration.id.name);
         } else if (node.declaration.type === "VariableDeclaration") {
-          //// export const foo = 1, bar = 2
+          /**
+           * export const foo = 1, bar = 2
+           */
           if (node.declaration.kind === "const") {
             // rewrite from "const" to "let"
             code.remove(node.declaration.start, node.declaration.start + 5);
@@ -45,11 +49,14 @@ export function analyzeExports(code: MagicString, ast: Program) {
         }
       } else {
         if (node.source) {
-          //// export { foo, bar } from './foo'
-          errors.push({ node });
+          /**
+           * export { foo, bar } from './foo'
+           */
         } else {
-          //// export { foo, bar }
-          // TODO: support by analyzing scope?
+          /**
+           * export { foo, bar }
+           */
+          // TODO: support by analyzing scope? or just rewrite all top level `const` into `let`?
           errors.push({ node });
         }
       }
@@ -62,8 +69,10 @@ export function analyzeExports(code: MagicString, ast: Program) {
           node.declaration.type === "ClassExpression") &&
         node.declaration.id
       ) {
-        //// export default function foo() {}
-        //// export default class A {}
+        /**
+         * export default function foo() {}
+         * export default class A {}
+         */
         exportIds.push(node.declaration.id.name);
       } else {
         // anonymous default exports
@@ -73,7 +82,6 @@ export function analyzeExports(code: MagicString, ast: Program) {
 
     //// export * from './foo'
     if (node.type === "ExportAllDeclaration") {
-      errors.push({ node });
     }
   }
 

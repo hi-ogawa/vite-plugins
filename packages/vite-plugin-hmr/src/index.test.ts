@@ -19,17 +19,23 @@ export default function Test4() {}
 `,
     ],
     [
-      "unsupported separate named export",
+      "separate named export (unsupported)",
       `
 const SomeNamed = () => {};
 export { SomeNamed };
 `,
     ],
     [
-      "unsupported separate default export",
+      "separate default export (unsupported)",
       `
 const SomeDeafult = () => {};
 export default SomeDefault;
+`,
+    ],
+    [
+      "anonymous default export (unsupported)",
+      `
+export default () => {};
 `,
     ],
   ] as const;

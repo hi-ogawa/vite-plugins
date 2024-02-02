@@ -78,7 +78,7 @@ if (import.meta.env.SSR && import.meta.hot) {
 }
 `;
 
-exports[`hmrTransform > 1 - unsupported separate named export > analyzeExports 1`] = `
+exports[`hmrTransform > 1 - separate named export (unsupported) > analyzeExports 1`] = `
 {
   "errors": [
     "export { SomeNamed };",
@@ -87,7 +87,7 @@ exports[`hmrTransform > 1 - unsupported separate named export > analyzeExports 1
 }
 `;
 
-exports[`hmrTransform > 1 - unsupported separate named export > hmrTransform 1`] = `
+exports[`hmrTransform > 1 - separate named export (unsupported) > hmrTransform 1`] = `
 {
   "code": "
 const SomeNamed = () => {};
@@ -113,7 +113,7 @@ if (import.meta.env.SSR && import.meta.hot) {
 }
 `;
 
-exports[`hmrTransform > 2 - unsupported separate default export > analyzeExports 1`] = `
+exports[`hmrTransform > 2 - separate default export (unsupported) > analyzeExports 1`] = `
 {
   "errors": [
     "export default SomeDefault;",
@@ -122,7 +122,7 @@ exports[`hmrTransform > 2 - unsupported separate default export > analyzeExports
 }
 `;
 
-exports[`hmrTransform > 2 - unsupported separate default export > hmrTransform 1`] = `
+exports[`hmrTransform > 2 - separate default export (unsupported) > hmrTransform 1`] = `
 {
   "code": "
 const SomeDeafult = () => {};
@@ -138,6 +138,40 @@ if (import.meta.env.SSR && import.meta.hot) {
   "map": SourceMap {
     "file": undefined,
     "mappings": "AAAA;AACA,KAAK,CAAC,WAAW,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC;AAC7B,MAAM,CAAC,OAAO,CAAC,WAAW,CAAC;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
+`;
+
+exports[`hmrTransform > 3 - anonymous default export (unsupported) > analyzeExports 1`] = `
+{
+  "errors": [
+    "export default () => {};",
+  ],
+  "exportIds": [],
+}
+`;
+
+exports[`hmrTransform > 3 - anonymous default export (unsupported) > hmrTransform 1`] = `
+{
+  "code": "
+export default () => {};
+
+
+if (import.meta.env.SSR && import.meta.hot) {
+  import.meta.hot.accept(() => {
+    import.meta.hot.invalidate("unsupported usage: export default () => {};")
+  });
+}
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA,MAAM,CAAC,OAAO,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC;",
     "names": [],
     "sources": [
       "",
