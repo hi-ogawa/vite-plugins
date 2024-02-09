@@ -5,9 +5,15 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
-  appType: "custom",
+  optimizeDeps: {
+    // for debugging
+    //   DEBUG=vite:deps pnpm -C examples/react dev
+    // force: true,
+  },
   ssr: {
-    noExternal: true,
+    optimizeDeps: {
+      include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
+    },
   },
   plugins: [
     vitePluginViteNodeMiniflare({
@@ -15,10 +21,6 @@ export default defineConfig({
       entry: "./src/worker-entry.tsx",
       miniflareOptions(options) {
         options.log = new Log();
-      },
-      preBundle: {
-        include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
-        force: true,
       },
     }),
     react(),
