@@ -5,7 +5,7 @@ import {
   globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
-import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare/client/vite-node";
+import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import {

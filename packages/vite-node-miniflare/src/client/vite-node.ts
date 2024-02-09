@@ -5,7 +5,7 @@ import {
 } from "@hiogawa/tiny-rpc";
 import type { HMRPayload } from "vite";
 import { ViteRuntime } from "vite/runtime";
-import type { ViteNodeRpc } from "..";
+import type { ViteNodeRpc } from "../server/vite-node";
 
 export interface ViteNodeMiniflareClient {
   rpc: TinyRpcProxy<ViteNodeRpc>;

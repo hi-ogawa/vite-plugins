@@ -1,4 +1,4 @@
-import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare/client/vite-node";
+import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare";
 import ReactDomServer from "react-dom/server";
 import { App } from "./app";
 
