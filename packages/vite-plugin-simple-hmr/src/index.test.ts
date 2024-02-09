@@ -1,8 +1,7 @@
 import MagicString from "magic-string";
 import { parseAstAsync } from "vite";
 import { describe, expect, it } from "vitest";
-import { hmrTransform } from "./plugin";
-import { analyzeExports } from "./transform";
+import { analyzeExports, hmrTransform } from "./transform";
 
 describe(hmrTransform, () => {
   const examples = [

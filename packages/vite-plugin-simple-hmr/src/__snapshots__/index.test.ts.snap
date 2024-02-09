@@ -25,7 +25,7 @@ export default function Test4() {}
 
 
 if (import.meta.env.SSR && import.meta.hot) {
-  const $$hmr = await import("@hiogawa/vite-plugin-hmr/runtime");
+  const $$hmr = await import("@hiogawa/vite-plugin-simple-hmr/runtime");
   const $$registry = $$hmr.createRegistry();
 
 
