@@ -13,7 +13,6 @@ export default defineConfig({
         "react-dom",
         "react-dom/server.browser",
       ],
-      disabled: false,
     },
   },
   plugins: [
