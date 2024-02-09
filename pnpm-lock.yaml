@@ -423,7 +423,7 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
 
-  packages/vite-plugin-hmr:
+  packages/vite-plugin-simple-hmr:
     dependencies:
       magic-string:
         specifier: ^0.30.6
@@ -433,10 +433,10 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       vite:
-        specifier: ^5.0.8
+        specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
 
-  packages/vite-plugin-hmr/examples/react:
+  packages/vite-plugin-simple-hmr/examples/react:
     dependencies:
       react:
         specifier: ^18.2.0
@@ -445,7 +445,7 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
-      '@hiogawa/vite-plugin-hmr':
+      '@hiogawa/vite-plugin-simple-hmr':
         specifier: workspace:*
         version: link:../..
       '@hiogawa/vite-plugin-ssr-middleware':

@@ -1,11 +1,11 @@
 {
-  "name": "@hiogawa/vite-plugin-hmr",
+  "name": "@hiogawa/vite-plugin-simple-hmr",
   "version": "0.0.0",
-  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-hmr",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-simple-hmr",
   "repository": {
     "type": "git",
     "url": "https://github.com/hi-ogawa/vite-plugins",
-    "directory": "packages/vite-plugin-hmr"
+    "directory": "packages/vite-plugin-simple-hmr"
   },
   "license": "MIT",
   "type": "module",
@@ -30,14 +30,14 @@
     "test": "vitest",
     "release": "pnpm publish --no-git-checks --access public"
   },
+  "dependencies": {
+    "magic-string": "^0.30.6"
+  },
   "devDependencies": {
     "@types/estree": "^1.0.5",
-    "vite": "^5.0.8"
+    "vite": "^5.1.0"
   },
   "peerDependencies": {
     "vite": "*"
-  },
-  "dependencies": {
-    "magic-string": "^0.30.6"
   }
 }

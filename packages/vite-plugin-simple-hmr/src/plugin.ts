@@ -8,7 +8,7 @@ import {
 import { name as packageName } from "../package.json";
 import { analyzeExports } from "./transform";
 
-export function vitePluginHmr(pluginOpts: {
+export function vitePluginSimpleHmr(pluginOpts: {
   include?: FilterPattern;
   exclude?: FilterPattern;
 }): Plugin {
