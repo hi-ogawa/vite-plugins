@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-plugin-ssr-middleware",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-ssr-middleware",
   "repository": {
     "type": "git",
@@ -26,9 +26,8 @@
     "build": "tsup",
     "release": "pnpm publish --no-git-checks --access public"
   },
-  "dependencies": {},
   "devDependencies": {
-    "vite": "^5.0.8"
+    "vite": "^5.1.0"
   },
   "peerDependencies": {
     "vite": "*"

@@ -3,12 +3,14 @@ import {
   httpClientAdapter,
   proxyTinyRpc,
 } from "@hiogawa/tiny-rpc";
+import type { HMRPayload } from "vite";
 import { ViteRuntime } from "vite/runtime";
 import type { ViteNodeRpc } from "..";
 
 export interface ViteNodeMiniflareClient {
   rpc: TinyRpcProxy<ViteNodeRpc>;
   runtime: ViteRuntime;
+  runtimeHMRHandler: (payload: HMRPayload) => void;
 }
 
 export function createViteNodeClient(options: {
@@ -20,6 +22,8 @@ export function createViteNodeClient(options: {
   const rpc = proxyTinyRpc<ViteNodeRpc>({
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),
   });
+
+  let runtimeHMRHandler!: (payload: HMRPayload) => void;
 
   const runtime = new ViteRuntime(
     {
@@ -37,9 +41,10 @@ export function createViteNodeClient(options: {
           send(messages) {
             console.log("[runtime.hmr.connection.send]", messages);
           },
-          // TODO: for now, we fetch HMRPayload via rpc, so nothing to register
+          // TODO: for now, we fetch HMRPayload via separate rpc, so we just grab the callback and use it later.
           onUpdate(callback) {
-            console.log("[runtime.hmr.connection.onUpdate]", callback);
+            // this is called during ViteRuntime constructor
+            runtimeHMRHandler = callback;
           },
         },
         logger: console,

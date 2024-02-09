@@ -12,7 +12,7 @@ import { setupViteNodeServerRpc } from "./vite-node";
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
   debug?: boolean;
-  // ssr hmr is disabled by default for normal client-only hmr plugin compatibility
+  // for now disable ssr hmr by default for react plugin
   hmr?: boolean;
   // hooks to customize options
   miniflareOptions?: (options: MiniflareOptions) => void;

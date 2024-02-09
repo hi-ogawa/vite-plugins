@@ -13,13 +13,10 @@ export default defineConfig({
   ssr: {
     optimizeDeps: {
       include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
-      disabled: false, // disabled for ssr by default
     },
   },
   plugins: [
     vitePluginViteNodeMiniflare({
-      // TODO: ssr hmr plugin https://github.com/hi-ogawa/vite-plugins/pull/157
-      // hmr: true,
       debug: true,
       entry: "./src/worker-entry.tsx",
       miniflareOptions(options) {

@@ -1,4 +1,3 @@
-import { handleHMRUpdate } from "vite/runtime";
 import {
   type ViteNodeMiniflareClient,
   createViteNodeClient,
@@ -34,7 +33,7 @@ export default {
           if (env.__VITE_NODE_DEBUG) {
             console.log("[HMRPayload]", payload);
           }
-          // simple module tree invalidation instead of hmr for client-only hmr plugin compatibility
+          // simple module tree invalidation when ssr hmr is disabled
           if (!env.__VITE_RUNTIME_HMR && payload.type === "update") {
             for (const update of payload.updates) {
               // TODO: unwrapId?
@@ -49,7 +48,7 @@ export default {
             }
             continue;
           }
-          await handleHMRUpdate(client.runtime, payload);
+          await (client.runtimeHMRHandler(payload) as any as Promise<void>);
         }
 
         const workerEntry = await client.runtime.executeEntrypoint(
