@@ -5,9 +5,15 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
-  appType: "custom",
   ssr: {
-    noExternal: true,
+    optimizeDeps: {
+      include: [
+        "react",
+        "react/jsx-dev-runtime",
+        "react-dom",
+        "react-dom/server.browser",
+      ],
+    },
   },
   plugins: [
     vitePluginViteNodeMiniflare({
@@ -18,14 +24,6 @@ export default defineConfig({
         // @ts-ignore why type error?
         options.kvNamespaces = { kv: "0".repeat(32) };
         options.kvPersist = ".wrangler/state/v3/kv";
-      },
-      preBundle: {
-        include: [
-          "react",
-          "react/jsx-dev-runtime",
-          "react-dom",
-          "react-dom/server.browser",
-        ],
       },
       customRpc: {
         // DevServerHook is implemented via custom rpc

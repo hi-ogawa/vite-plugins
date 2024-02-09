@@ -3,6 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { createManualPromise, wrapError } from "@hiogawa/utils";
 
+// TODO: this is not necessary since https://github.com/hi-ogawa/vite-plugins/pull/152
+
 // quick-and-dirty CJS pre-bundling
 // since `ssr.optimizeDeps` doesn't seem to work when running vite-node client on workered
 
