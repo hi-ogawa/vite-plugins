@@ -16,10 +16,6 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   hmr?: boolean;
   // hooks to customize options
   miniflareOptions?: (options: MiniflareOptions) => void;
-  preBundle?: {
-    include: string[];
-    force?: boolean;
-  };
   customRpc?: Record<string, Function>;
 }): Plugin {
   // initialize miniflare lazily on first request and
