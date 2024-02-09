@@ -12,7 +12,6 @@ export default defineConfig({
         "react/jsx-dev-runtime",
         "react-dom",
         "react-dom/server.browser",
-        // TODO: need to fix cjs "cookie". why this wasn't happening before?
         "@remix-run/server-runtime",
       ],
     },
