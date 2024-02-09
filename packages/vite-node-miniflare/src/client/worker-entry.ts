@@ -25,41 +25,39 @@ export default {
         debug: env.__VITE_NODE_DEBUG,
       });
 
-      if (true) {
-        // poll HMRPayload before execution
-        // TODO: listen HMRPayload event (birpc? websocket? SSE?)
-        const payloads = await client.rpc.getHMRPayloads();
-        for (const payload of payloads) {
-          if (env.__VITE_NODE_DEBUG) {
-            console.log("[HMRPayload]", payload);
-          }
-          // simple module tree invalidation when ssr hmr is disabled
-          if (!env.__VITE_RUNTIME_HMR && payload.type === "update") {
-            for (const update of payload.updates) {
-              // TODO: unwrapId?
-              const invalidated = client.runtime.moduleCache.invalidateDepTree([
-                update.path,
-              ]);
-              if (env.__VITE_NODE_DEBUG) {
-                console.log("[vite-node-miniflare] invalidateDepTree:", [
-                  ...invalidated,
-                ]);
-              }
-            }
-            continue;
-          }
-          await (client.runtimeHMRHandler(payload) as any as Promise<void>);
+      // fetch HMRPayload before execution
+      // TODO: listen HMRPayload event (birpc? websocket? SSE?)
+      const payloads = await client.rpc.getHMRPayloads();
+      for (const payload of payloads) {
+        if (env.__VITE_NODE_DEBUG) {
+          console.log("[HMRPayload]", payload);
         }
-
-        const workerEntry = await client.runtime.executeEntrypoint(
-          env.__WORKER_ENTRY
-        );
-        const workerEnv = {
-          ...env,
-          __VITE_NODE_MINIFLARE_CLIENT: client,
-        };
-        return await workerEntry.default.fetch(request, workerEnv, ctx);
+        // simple module tree invalidation when ssr hmr is disabled
+        if (!env.__VITE_RUNTIME_HMR && payload.type === "update") {
+          for (const update of payload.updates) {
+            // TODO: unwrapId?
+            const invalidated = client.runtime.moduleCache.invalidateDepTree([
+              update.path,
+            ]);
+            if (env.__VITE_NODE_DEBUG) {
+              console.log("[vite-node-miniflare] invalidateDepTree:", [
+                ...invalidated,
+              ]);
+            }
+          }
+          continue;
+        }
+        await (client.runtimeHMRHandler(payload) as any as Promise<void>);
       }
+
+      const workerEntry = await client.runtime.executeEntrypoint(
+        env.__WORKER_ENTRY
+      );
+      const workerEnv = {
+        ...env,
+        __VITE_NODE_MINIFLARE_CLIENT: client,
+      };
+      return await workerEntry.default.fetch(request, workerEnv, ctx);
     } catch (e) {
       console.error(e);
       let body = "[vite-node-miniflare error]\n";
