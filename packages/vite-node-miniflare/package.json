@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-node-miniflare",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-node-miniflare",
   "repository": {
     "type": "git",
@@ -36,7 +36,6 @@
     "vite": "^5.1.0"
   },
   "peerDependencies": {
-    "miniflare": "*",
     "vite": "*"
   }
 }
