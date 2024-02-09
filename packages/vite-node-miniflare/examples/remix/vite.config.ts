@@ -26,14 +26,6 @@ export default defineConfig({
         options.kvNamespaces = { kv: "0".repeat(32) };
         options.kvPersist = ".wrangler/state/v3/kv";
       },
-      preBundle: {
-        include: [
-          "react",
-          "react/jsx-dev-runtime",
-          "react-dom",
-          "react-dom/server.browser",
-        ],
-      },
       customRpc: {
         // DevServerHook is implemented via custom rpc
         // https://github.com/remix-run/remix/blob/db4471d2e32a175abdcb907b877f9a510c735d8b/packages/remix-server-runtime/dev.ts#L37-L48
