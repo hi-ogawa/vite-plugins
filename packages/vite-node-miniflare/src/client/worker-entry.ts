@@ -48,7 +48,7 @@ export default {
             }
             continue;
           }
-          client.runtimeHMRHandler(payload);
+          await (client.runtimeHMRHandler(payload) as any as Promise<void>);
         }
 
         const workerEntry = await client.runtime.executeEntrypoint(
