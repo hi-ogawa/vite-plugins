@@ -8,7 +8,7 @@ export default defineConfig((env) => ({
     react(),
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
-      mode: "ViteRuntime",
+      mode: "ViteRuntime-no-hmr",
     }),
     {
       // TODO: move to vitePluginSsrMiddleware? (it's impossible to know ssr build outDir...)
