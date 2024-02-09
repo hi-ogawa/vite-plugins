@@ -1,0 +1,43 @@
+{
+  "name": "@hiogawa/vite-plugin-simple-hmr",
+  "version": "0.0.1-pre.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-simple-hmr",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/vite-plugin-simple-hmr"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.ts",
+      "default": "./dist/runtime.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "release": "pnpm publish --no-git-checks --access public"
+  },
+  "dependencies": {
+    "magic-string": "^0.30.6"
+  },
+  "devDependencies": {
+    "@types/estree": "^1.0.5",
+    "vite": "^5.1.0"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}
