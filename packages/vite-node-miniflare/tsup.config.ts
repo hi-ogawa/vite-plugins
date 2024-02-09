@@ -7,6 +7,7 @@ export default [
   defineConfig(() => ({
     entry: {
       "client/worker-entry": "src/client/worker-entry.ts",
+      "client/vite-node": "src/client/vite-node.ts",
     },
     format: ["esm"],
     platform: "browser",
