@@ -70,5 +70,5 @@ export function createViteNodeClient(options: {
     }
   );
 
-  return { rpc, runtime };
+  return { rpc, runtime, runtimeHMRHandler };
 }
