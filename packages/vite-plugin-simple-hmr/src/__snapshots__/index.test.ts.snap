@@ -1,0 +1,183 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`hmrTransform > 0 - basic > analyzeExports 1`] = `
+{
+  "errors": [],
+  "exportIds": [
+    "Test1",
+    "Test2",
+    "Test3",
+    "Test4",
+  ],
+}
+`;
+
+exports[`hmrTransform > 0 - basic > hmrTransform 1`] = `
+{
+  "code": "
+export function Test1() {}
+
+export let Test2 = () => {}
+
+export /*some*/ let /*comment*/ Test3 = () => {}
+
+export default function Test4() {}
+
+
+if (import.meta.env.SSR && import.meta.hot) {
+  const $$hmr = await import("@hiogawa/vite-plugin-simple-hmr/runtime");
+  const $$registry = $$hmr.createRegistry();
+
+
+  $$registry.exports["Test1"] = {
+    value: Test1,
+    update: ($$next) => {
+      Test1 = $$next;
+    }
+  };
+
+
+  $$registry.exports["Test2"] = {
+    value: Test2,
+    update: ($$next) => {
+      Test2 = $$next;
+    }
+  };
+
+
+  $$registry.exports["Test3"] = {
+    value: Test3,
+    update: ($$next) => {
+      Test3 = $$next;
+    }
+  };
+
+
+  $$registry.exports["Test4"] = {
+    value: Test4,
+    update: ($$next) => {
+      Test4 = $$next;
+    }
+  };
+
+
+  $$hmr.setupHot(import.meta.hot, $$registry);
+  import.meta.hot.accept;
+}
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA;AACA;AACA;AACA;AACA,mBAAqB;AACrB;AACA;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
+`;
+
+exports[`hmrTransform > 1 - separate named export (unsupported) > analyzeExports 1`] = `
+{
+  "errors": [
+    "export { SomeNamed };",
+  ],
+  "exportIds": [],
+}
+`;
+
+exports[`hmrTransform > 1 - separate named export (unsupported) > hmrTransform 1`] = `
+{
+  "code": "
+const SomeNamed = () => {};
+export { SomeNamed };
+
+
+if (import.meta.env.SSR && import.meta.hot) {
+  import.meta.hot.accept(() => {
+    import.meta.hot.invalidate("unsupported usage: export { SomeNamed };")
+  });
+}
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA;AACA;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
+`;
+
+exports[`hmrTransform > 2 - separate default export (unsupported) > analyzeExports 1`] = `
+{
+  "errors": [
+    "export default SomeDefault;",
+  ],
+  "exportIds": [],
+}
+`;
+
+exports[`hmrTransform > 2 - separate default export (unsupported) > hmrTransform 1`] = `
+{
+  "code": "
+const SomeDeafult = () => {};
+export default SomeDefault;
+
+
+if (import.meta.env.SSR && import.meta.hot) {
+  import.meta.hot.accept(() => {
+    import.meta.hot.invalidate("unsupported usage: export default SomeDefault;")
+  });
+}
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA;AACA;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
+`;
+
+exports[`hmrTransform > 3 - anonymous default export (unsupported) > analyzeExports 1`] = `
+{
+  "errors": [
+    "export default () => {};",
+  ],
+  "exportIds": [],
+}
+`;
+
+exports[`hmrTransform > 3 - anonymous default export (unsupported) > hmrTransform 1`] = `
+{
+  "code": "
+export default () => {};
+
+
+if (import.meta.env.SSR && import.meta.hot) {
+  import.meta.hot.accept(() => {
+    import.meta.hot.invalidate("unsupported usage: export default () => {};")
+  });
+}
+",
+  "map": SourceMap {
+    "file": undefined,
+    "mappings": "AAAA;AACA;",
+    "names": [],
+    "sources": [
+      "",
+    ],
+    "sourcesContent": undefined,
+    "version": 3,
+  },
+}
+`;

@@ -1,0 +1,1 @@
+export { vitePluginSimpleHmr } from "./plugin";
