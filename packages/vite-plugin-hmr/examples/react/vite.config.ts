@@ -12,8 +12,7 @@ export default defineConfig({
     }),
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
-      useViteRuntime: true,
-      useViteRuntimeHmr: true,
+      mode: "ViteRuntime",
     }),
   ],
 });
