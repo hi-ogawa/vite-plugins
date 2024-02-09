@@ -4,9 +4,11 @@ import { name as packageName } from "../package.json";
 export function vitePluginSsrMiddleware({
   entry,
   entryAlias = "index",
+  mode = "ssrLoadModule",
 }: {
   entry: string;
   entryAlias?: string;
+  mode?: "ssrLoadModule" | "ViteRuntime" | "ViteRuntime-no-hmr";
 }): Plugin {
   return {
     name: packageName,
@@ -37,13 +39,38 @@ export function vitePluginSsrMiddleware({
       return;
     },
 
-    configureServer(server) {
+    async configureServer(server) {
+      let loadModule = server.ssrLoadModule;
+      if (mode === "ViteRuntime" || mode === "ViteRuntime-no-hmr") {
+        const { createViteRuntime, ServerHMRConnector } = await import("vite");
+        if (mode === "ViteRuntime") {
+          // simple default vite runtime
+          const runtime = await createViteRuntime(server);
+          loadModule = runtime.executeEntrypoint.bind(runtime);
+        } else {
+          // manual invalidation mode without hmr
+          const runtime = await createViteRuntime(server, { hmr: false });
+          const connection = new ServerHMRConnector(server);
+          connection.onUpdate(async (payload) => {
+            if (payload.type === "update") {
+              // unwrapId?
+              runtime.moduleCache.invalidateDepTree(
+                payload.updates.map((update) => update.path)
+              );
+            } else if (payload.type === "full-reload") {
+              runtime.moduleCache.clear();
+            }
+          });
+          loadModule = runtime.executeEntrypoint.bind(runtime);
+        }
+      }
+
       const handler: Connect.NextHandleFunction = async (req, res, next) => {
         // expose ViteDevServer via request
         Object.defineProperty(req, "viteDevServer", { value: server });
 
         try {
-          const mod = await server.ssrLoadModule(entry);
+          const mod = await loadModule(entry);
           await mod["default"](req, res, next);
         } catch (e) {
           next(e);
