@@ -12,8 +12,7 @@ export default defineConfig({
   plugins: [
     vitePluginViteNodeMiniflare({
       debug: true,
-      // TODO: must be a relative url for invalidation to work?
-      entry: "./src/worker-entry.ts",
+      entry: "/src/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },

@@ -26,7 +26,7 @@ import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 
 export default defineConfig({
-  plugins: [vitePluginViteNodeMiniflare({ entry: "./worker-entry.ts" })],
+  plugins: [vitePluginViteNodeMiniflare({ entry: "/worker-entry.ts" })],
 });
 
 //
