@@ -4,14 +4,11 @@ import { name as packageName } from "../package.json";
 export function vitePluginSsrMiddleware({
   entry,
   entryAlias = "index",
-  useViteRuntime,
-  useViteRuntimeHmr = true,
+  mode = "ssrLoadModule",
 }: {
   entry: string;
   entryAlias?: string;
-  useViteRuntime?: boolean;
-  // allow disabling ssr hmr for client rendering hmr plugin compatibility
-  useViteRuntimeHmr?: boolean;
+  mode?: "ssrLoadModule" | "ViteRuntime" | "ViteRuntime-no-hmr";
 }): Plugin {
   return {
     name: packageName,
@@ -43,11 +40,10 @@ export function vitePluginSsrMiddleware({
     },
 
     async configureServer(server) {
-      // select module loader
       let loadModule = server.ssrLoadModule;
-      if (useViteRuntime) {
+      if (mode === "ViteRuntime" || mode === "ViteRuntime-no-hmr") {
         const { createViteRuntime, ServerHMRConnector } = await import("vite");
-        if (useViteRuntimeHmr) {
+        if (mode === "ViteRuntime") {
           // simple default vite runtime
           const runtime = await createViteRuntime(server);
           loadModule = runtime.executeEntrypoint.bind(runtime);
