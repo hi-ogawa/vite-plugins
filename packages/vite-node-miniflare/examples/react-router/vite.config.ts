@@ -15,7 +15,7 @@ export default defineConfig({
     globRoutesPlugin({ root: "/src/routes" }),
     vitePluginViteNodeMiniflare({
       debug: true,
-      entry: "./src/server/worker-entry-wrapper.ts",
+      entry: "/src/server/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
       },

@@ -19,7 +19,7 @@ export default defineConfig({
   plugins: [
     vitePluginViteNodeMiniflare({
       debug: true,
-      entry: "./app/worker-entry-wrapper.ts",
+      entry: "/app/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
         // @ts-ignore why type error?
