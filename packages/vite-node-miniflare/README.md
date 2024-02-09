@@ -1,5 +1,8 @@
 # vite-node-miniflare
 
+> [!note]
+> now it uses `ViteRuntime` introduced by https://github.com/vitejs/vite/pull/12165 instead of `vite-node`
+
 Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) on [`miniflare`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare).
 
 See https://github.com/dario-piotrowicz/vite-workerd-ssr-request-handler-experimentation/pull/1 for the motivation.
@@ -23,11 +26,7 @@ import { defineConfig } from "vite";
 import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 
 export default defineConfig({
-  appType: "custom",
-  ssr: {
-    noExternal: true,
-  },
-  plugins: [vitePluginViteNodeMiniflare({ entry: "./worker-entry.ts" })],
+  plugins: [vitePluginViteNodeMiniflare({ entry: "/worker-entry.ts" })],
 });
 
 //

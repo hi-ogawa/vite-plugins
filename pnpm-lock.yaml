@@ -281,9 +281,6 @@ importers:
       miniflare:
         specifier: ^3.20231030.3
         version: 3.20231030.4
-      vite-node:
-        specifier: ^1.0.4
-        version: 1.0.4(@types/node@18.16.18)
     devDependencies:
       '@hiogawa/tiny-rpc':
         specifier: ^0.2.3-pre.11
@@ -291,9 +288,6 @@ importers:
       '@hiogawa/utils':
         specifier: 1.6.1-pre.10
         version: 1.6.1-pre.10
-      pathe:
-        specifier: ^1.1.1
-        version: 1.1.1
       vite:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
@@ -3598,6 +3592,7 @@ packages:
   /cac@6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
+    dev: true
 
   /cacache@17.1.4:
     resolution: {integrity: sha512-/aJwG2l3ZMJ1xNAnqbMpA40of9dj/pIH3QfiuQSqjfPJF747VR0J/bHn+/KdNnHKc6XQcWt/AfRSBft82W1d2A==}
@@ -6486,6 +6481,7 @@ packages:
 
   /pathe@1.1.1:
     resolution: {integrity: sha512-d+RQGp0MAYTIaDBIMmOfMwz3E+LOZnxx1HZd5R18mmCZY0QBlK0LDZfPc8FW8Ed2DlvsuE6PRjroDY+wg4+j/Q==}
+    dev: true
 
   /pathval@1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
@@ -8028,6 +8024,7 @@ packages:
       - sugarss
       - supports-color
       - terser
+    dev: true
 
   /vite@4.5.1(@types/node@18.16.18):
     resolution: {integrity: sha512-AXXFaAJ8yebyqzoNB9fu2pHoo/nWX+xZlaRwoeYUxEqBO+Zj4msE5G+BhGBll9lYEKv9Hfks52PAF2X7qDYXQA==}
