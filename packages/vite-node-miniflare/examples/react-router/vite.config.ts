@@ -9,7 +9,6 @@ export default defineConfig({
   ssr: {
     optimizeDeps: {
       include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
-      disabled: false,
     },
   },
   plugins: [

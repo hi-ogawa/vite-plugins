@@ -15,7 +15,6 @@ export default defineConfig({
         // TODO: need to fix cjs "cookie". why this wasn't happening before?
         "@remix-run/server-runtime",
       ],
-      disabled: false,
     },
   },
   plugins: [
@@ -27,14 +26,6 @@ export default defineConfig({
         // @ts-ignore why type error?
         options.kvNamespaces = { kv: "0".repeat(32) };
         options.kvPersist = ".wrangler/state/v3/kv";
-      },
-      preBundle: {
-        include: [
-          "react",
-          "react/jsx-dev-runtime",
-          "react-dom",
-          "react-dom/server.browser",
-        ],
       },
       customRpc: {
         // DevServerHook is implemented via custom rpc
