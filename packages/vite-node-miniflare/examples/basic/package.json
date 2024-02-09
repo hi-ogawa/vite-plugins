@@ -10,6 +10,6 @@
     "@hiogawa/tiny-react": "0.0.2-pre.8",
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "miniflare": "^3.20231030.3",
-    "vite": "^5.0.4"
+    "vite": "^5.1.0"
   }
 }
