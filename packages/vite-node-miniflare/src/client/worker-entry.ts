@@ -26,14 +26,14 @@ export default {
       });
 
       if (1) {
-        // poll HMRPayload before execution
+        // fetch HMRPayload before execution
         // TODO: listen HMRPayload event (birpc? websocket? SSE?)
         const payloads = await client.rpc.getHMRPayloads();
         for (const payload of payloads) {
           if (env.__VITE_NODE_DEBUG) {
             console.log("[HMRPayload]", payload);
           }
-          // simple module tree invalidation instead of hmr for client-only hmr plugin compatibility
+          // simple module tree invalidation when ssr hmr is disabled
           if (!env.__VITE_RUNTIME_HMR && payload.type === "update") {
             for (const update of payload.updates) {
               // TODO: unwrapId?
