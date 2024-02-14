@@ -14,7 +14,7 @@ import {
   fetchModule,
 } from "vite";
 import { name as packageName } from "../../package.json";
-import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
+import { fileURLToPath } from "node:url"
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
@@ -154,8 +154,7 @@ export function setupViteNodeServerRpc(
       modules: [
         {
           type: "ESModule",
-          path: "/__vite_node_miniflare_entry.js",
-          contents: WORKER_ENTRY_SCRIPT,
+          path: fileURLToPath(new URL("./worker-entry.js", import.meta.url)),
         },
       ],
       modulesRoot: "/",
