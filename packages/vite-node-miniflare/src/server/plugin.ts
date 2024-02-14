@@ -103,7 +103,7 @@ export type ViteNodeRpc = Pick<
   send: (messages: string) => void;
 };
 
-export function setupViteNodeServerRpc(
+function setupViteNodeServerRpc(
   viteDevServer: ViteDevServer,
   options: { customRpc?: Record<string, Function> }
 ) {
