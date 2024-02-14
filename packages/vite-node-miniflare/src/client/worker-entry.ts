@@ -33,6 +33,7 @@ export default {
         serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
         root: env.__VITE_RUNTIME_ROOT,
         debug: env.__VITE_NODE_DEBUG,
+        hmr: env.__VITE_RUNTIME_HMR,
       });
 
       // fetch HMRPayload before execution
@@ -62,6 +63,7 @@ function createViteNodeClient(options: {
   serverRpcUrl: string;
   root: string;
   debug: boolean;
+  hmr: boolean;
 }): ViteNodeMiniflareClient {
   const rpc = proxyTinyRpc<ViteNodeRpc>({
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),
@@ -73,6 +75,8 @@ function createViteNodeClient(options: {
       getHMRPayloads: rpc.getHMRPayloads,
       send: rpc.send,
     },
+    debug: options.debug,
+    hmr: options.hmr,
   });
 
   const runtime = new ViteRuntime(
