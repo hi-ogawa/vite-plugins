@@ -1,7 +1,7 @@
 # vite-node-miniflare
 
 > [!note]
-> now it uses `ViteRuntime` introduced by https://github.com/vitejs/vite/pull/12165 instead of `vite-node`
+> now it uses [`ViteRuntime`](https://github.com/vitejs/vite/discussions/15774) instead of `vite-node`
 
 Running [`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) on [`miniflare`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare).
 

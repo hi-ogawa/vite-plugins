@@ -15,7 +15,7 @@ See `./packages/demo`, `./examples/ssr`, and `./examples/spa` for basic usage.
 
 ### [`@hiogawa/vite-node-miniflare`](./packages/vite-node-miniflare)
 
-Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare) during development via ~[`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node)~ [`ViteRuntime`](https://github.com/vitejs/vite/pull/12165).
+Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare) during development via ~[`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node)~ [`ViteRuntime`](https://github.com/vitejs/vite/discussions/15774).
 
 ### [`@hiogawa/vite-plugin-ssr-middleware`](./packages/vite-plugin-ssr-middleware)
 
