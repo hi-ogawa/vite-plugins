@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
@@ -14,7 +15,6 @@ import {
   fetchModule,
 } from "vite";
 import { name as packageName } from "../../package.json";
-import { fileURLToPath } from "node:url"
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
