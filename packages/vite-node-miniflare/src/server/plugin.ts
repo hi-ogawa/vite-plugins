@@ -98,7 +98,9 @@ export type ViteNodeRpc = Pick<
   ViteDevServer,
   "transformIndexHtml" | "ssrFetchModule"
 > & {
+  // RPC endpoint to proxy ServerHMRConnector
   getHMRPayloads: () => HMRPayload[];
+  send: (messages: string) => void;
 };
 
 export function setupViteNodeServerRpc(
@@ -127,6 +129,9 @@ export function setupViteNodeServerRpc(
       const result = hmrPayloads;
       hmrPayloads = [];
       return result;
+    },
+    send: (messages: string) => {
+      connector.send(messages);
     },
     // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
     // (e.g. Remix's DevServerHooks)
