@@ -4,7 +4,7 @@ import {
   proxyTinyRpc,
 } from "@hiogawa/tiny-rpc";
 import type { HMRPayload } from "vite";
-import { ViteRuntime } from "vite/runtime";
+import { type HMRRuntimeConnection, ViteRuntime } from "vite/runtime";
 import type { ViteNodeRpc } from "../server/plugin";
 
 interface Env {
@@ -19,7 +19,7 @@ interface Env {
 export interface ViteNodeMiniflareClient {
   rpc: TinyRpcProxy<ViteNodeRpc>;
   runtime: ViteRuntime;
-  runtimeHMRHandler: (payload: HMRPayload) => void;
+  hmrConnection: SimpleHMRConnection;
 }
 
 let client: ViteNodeMiniflareClient;
@@ -33,32 +33,11 @@ export default {
         serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
         root: env.__VITE_RUNTIME_ROOT,
         debug: env.__VITE_NODE_DEBUG,
+        hmr: env.__VITE_RUNTIME_HMR,
       });
 
       // fetch HMRPayload before execution
-      // TODO: listen HMRPayload event (birpc? websocket? SSE?)
-      const payloads = await client.rpc.getHMRPayloads();
-      for (const payload of payloads) {
-        if (env.__VITE_NODE_DEBUG) {
-          console.log("[HMRPayload]", payload);
-        }
-        // simple module tree invalidation when ssr hmr is disabled
-        if (!env.__VITE_RUNTIME_HMR && payload.type === "update") {
-          for (const update of payload.updates) {
-            // TODO: unwrapId?
-            const invalidated = client.runtime.moduleCache.invalidateDepTree([
-              update.path,
-            ]);
-            if (env.__VITE_NODE_DEBUG) {
-              console.log("[vite-node-miniflare] invalidateDepTree:", [
-                ...invalidated,
-              ]);
-            }
-          }
-          continue;
-        }
-        await (client.runtimeHMRHandler(payload) as any as Promise<void>);
-      }
+      await client.hmrConnection.applyHMR();
 
       const workerEntry = await client.runtime.executeEntrypoint(
         env.__WORKER_ENTRY
@@ -84,12 +63,21 @@ function createViteNodeClient(options: {
   serverRpcUrl: string;
   root: string;
   debug: boolean;
+  hmr: boolean;
 }): ViteNodeMiniflareClient {
   const rpc = proxyTinyRpc<ViteNodeRpc>({
     adapter: httpClientAdapter({ url: options.serverRpcUrl }),
   });
 
-  let runtimeHMRHandler!: (payload: HMRPayload) => void;
+  // implement HMRConnectoin based on uni-directional RPC
+  const hmrConnection = new SimpleHMRConnection({
+    rpc: {
+      getHMRPayloads: rpc.getHMRPayloads,
+      send: rpc.send,
+    },
+    debug: options.debug,
+    hmr: options.hmr,
+  });
 
   const runtime = new ViteRuntime(
     {
@@ -99,20 +87,7 @@ function createViteNodeClient(options: {
       },
       sourcemapInterceptor: "prepareStackTrace",
       hmr: {
-        connection: {
-          isReady() {
-            return true;
-          },
-          // TODO: only for custom event to server?
-          send(messages) {
-            console.log("[runtime.hmr.connection.send]", messages);
-          },
-          // TODO: for now, we fetch HMRPayload via separate rpc, so we just grab the callback and use it later.
-          onUpdate(callback) {
-            // this is called during ViteRuntime constructor
-            runtimeHMRHandler = callback;
-          },
-        },
+        connection: hmrConnection,
         logger: console,
       },
     },
@@ -136,5 +111,62 @@ function createViteNodeClient(options: {
     }
   );
 
-  return { rpc, runtime, runtimeHMRHandler };
+  return { rpc, runtime, hmrConnection };
+}
+
+// Making simple HMRConnection based on uni-directional RPC
+class SimpleHMRConnection implements HMRRuntimeConnection {
+  onUpdateCallback!: (payload: HMRPayload) => void;
+
+  constructor(
+    private options: {
+      rpc: {
+        getHMRPayloads: () => Promise<HMRPayload[]>;
+        send: (messages: string) => Promise<void>;
+      };
+      debug?: boolean;
+      hmr?: boolean;
+    }
+  ) {}
+
+  // TODO: queue multiple calls of `applyHMR` to keep last one awaited until all handled
+  async applyHMR() {
+    const payloads = await this.options.rpc.getHMRPayloads();
+    for (const payload of payloads) {
+      if (this.options.debug) {
+        console.log("[HMRPayload]", payload);
+      }
+      // use simple module tree invalidation for non-hmr mode
+      if (!this.options.hmr && payload.type === "update") {
+        for (const update of payload.updates) {
+          const invalidated = client.runtime.moduleCache.invalidateDepTree([
+            update.path,
+          ]);
+          if (this.options.debug) {
+            console.log("[vite-node-miniflare] invalidateDepTree:", [
+              ...invalidated,
+            ]);
+          }
+        }
+        continue;
+      }
+      await (this.onUpdateCallback(payload) as any as Promise<void>);
+    }
+  }
+
+  //
+  // implements HMRRuntimeConnection
+  //
+
+  isReady(): boolean {
+    return true;
+  }
+
+  onUpdate(callback: (payload: HMRPayload) => void): void {
+    this.onUpdateCallback = callback;
+  }
+
+  send(messages: string): void {
+    this.options.rpc.send(messages);
+  }
 }

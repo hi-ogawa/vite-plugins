@@ -297,6 +297,9 @@ importers:
       '@hiogawa/vite-node-miniflare':
         specifier: workspace:*
         version: link:../..
+      '@hiogawa/vite-plugin-simple-hmr':
+        specifier: workspace:*
+        version: link:../../../vite-plugin-simple-hmr
       miniflare:
         specifier: ^3.20231030.3
         version: 3.20231030.4
