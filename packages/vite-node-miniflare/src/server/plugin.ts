@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
 import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
@@ -14,7 +15,6 @@ import {
   fetchModule,
 } from "vite";
 import { name as packageName } from "../../package.json";
-import { WORKER_ENTRY_SCRIPT } from "../client/worker-entry-script";
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
@@ -103,7 +103,7 @@ export type ViteNodeRpc = Pick<
   send: (messages: string) => void;
 };
 
-export function setupViteNodeServerRpc(
+function setupViteNodeServerRpc(
   viteDevServer: ViteDevServer,
   options: { customRpc?: Record<string, Function> }
 ) {
@@ -154,8 +154,7 @@ export function setupViteNodeServerRpc(
       modules: [
         {
           type: "ESModule",
-          path: "/__vite_node_miniflare_entry.js",
-          contents: WORKER_ENTRY_SCRIPT,
+          path: fileURLToPath(new URL("./worker-entry.js", import.meta.url)),
         },
       ],
       modulesRoot: "/",
