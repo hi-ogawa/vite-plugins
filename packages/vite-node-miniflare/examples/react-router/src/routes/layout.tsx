@@ -22,6 +22,13 @@ export function Component() {
             <Link to="/loader-data">Loader Data</Link>
           </li>
           <li>
+            <Link to="/redirect">Redirect to Index</Link>
+          </li>
+          <li>
+            {/* cf. https://github.com/cloudflare/workers-sdk/issues/5018 */}
+            <a href="/redirect" target="_blank">Redirect to index (new tab) (not working)</a>
+          </li>
+          <li>
             <a href="/hello">GET API</a>
           </li>
           <li>
