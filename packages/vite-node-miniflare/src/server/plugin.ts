@@ -72,6 +72,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           headers: request.headers,
           body: request.body,
           duplex: "half",
+          redirect: "manual",
         }) as any as Response;
       };
 
