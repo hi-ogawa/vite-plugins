@@ -105,8 +105,8 @@ function createViteNodeClient(options: {
       },
 
       runExternalModule(filepath) {
-        console.error("[runExternalModule]", filepath);
-        throw new Error(`[runExternalModule] ${filepath}`);
+        console.error("[vite-node-miniflare] runExternalModule:", filepath);
+        throw new Error(`[vite-node-miniflare] runExternalModule: ${filepath}`);
       },
     }
   );
@@ -134,7 +134,7 @@ class SimpleHMRConnection implements HMRRuntimeConnection {
     const payloads = await this.options.rpc.getHMRPayloads();
     for (const payload of payloads) {
       if (this.options.debug) {
-        console.log("[HMRPayload]", payload);
+        console.log("[vite-node-miniflare] HMRPayload:", payload);
       }
       // use simple module tree invalidation for non-hmr mode
       if (!this.options.hmr && payload.type === "update") {
