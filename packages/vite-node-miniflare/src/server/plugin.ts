@@ -23,8 +23,10 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   miniflareOptions?: (options: MiniflareOptions) => void;
   customRpc?: Record<string, Function>;
 }): Plugin {
-  // initialize miniflare lazily on first request and
-  // dispose on server close (e.g. server restart on user vite config change)
+  // Initialize miniflare lazily on first request and
+  // dispose on server close (e.g. server restart on user vite config change).
+  // Otherwise multiple Miniflare could be spawned for example when framework makes use of
+  // multiple ViteDevServer (e.g. Remix).
   let miniflare: Miniflare | undefined;
 
   return {
@@ -70,6 +72,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           headers: request.headers,
           body: request.body,
           duplex: "half",
+          redirect: "manual",
         }) as any as Response;
       };
 
