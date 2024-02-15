@@ -25,9 +25,8 @@ export function Component() {
             <Link to="/redirect">Redirect to Index</Link>
           </li>
           <li>
-            {/* cf. https://github.com/cloudflare/workers-sdk/issues/5018 */}
             <a href="/redirect" target="_blank">
-              Redirect to index (new tab) (not working)
+              Redirect to index (new tab)
             </a>
           </li>
           <li>
