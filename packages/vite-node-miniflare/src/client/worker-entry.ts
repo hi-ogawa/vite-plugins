@@ -44,7 +44,7 @@ export default {
       );
       const workerEnv = {
         ...env,
-        __VITE_NODE_MINIFLARE_CLIENT: client,
+        __VITE_NODE_MINIFLARE_CLIENT: client, // sneak this in for customRpc usage
       };
       return await workerEntry.default.fetch(request, workerEnv, ctx);
     } catch (e) {
