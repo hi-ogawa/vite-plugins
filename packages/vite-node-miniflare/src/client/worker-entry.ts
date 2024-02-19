@@ -105,8 +105,6 @@ async function createViteNodeClient(options: {
     },
     {
       async runViteModule(context, transformed, id) {
-        console.log("[runViteModule]", { id });
-
         // do same as vite-node/client
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
         const codeDefinition = `'use strict';async (${Object.keys(context).join(
