@@ -5,7 +5,8 @@ import {
 } from "@hiogawa/tiny-rpc";
 import type { HMRPayload } from "vite";
 import { type HMRRuntimeConnection, ViteRuntime } from "vite/runtime";
-import type { ViteNodeRpc } from "../server/plugin";
+import type { ServerRpc } from "../server/plugin";
+import { SERVER_RPC_PATH } from "../shared";
 
 interface Env {
   __UNSAFE_EVAL: any;
@@ -17,7 +18,7 @@ interface Env {
 }
 
 export interface ViteNodeMiniflareClient {
-  rpc: TinyRpcProxy<ViteNodeRpc>;
+  rpc: TinyRpcProxy<ServerRpc>;
   runtime: ViteRuntime;
   hmrConnection: SimpleHMRConnection;
 }
@@ -27,10 +28,9 @@ let client: ViteNodeMiniflareClient;
 export default {
   async fetch(request: Request, env: Env, ctx: unknown) {
     try {
-      // initialize vite node client only once
       client ??= createViteNodeClient({
+        baseUrl: new URL(request.url).origin,
         unsafeEval: env.__UNSAFE_EVAL,
-        serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
         root: env.__VITE_RUNTIME_ROOT,
         debug: env.__VITE_NODE_DEBUG,
         hmr: env.__VITE_RUNTIME_HMR,
@@ -59,14 +59,14 @@ export default {
 };
 
 function createViteNodeClient(options: {
+  baseUrl: string;
   unsafeEval: any;
-  serverRpcUrl: string;
   root: string;
   debug: boolean;
   hmr: boolean;
 }): ViteNodeMiniflareClient {
-  const rpc = proxyTinyRpc<ViteNodeRpc>({
-    adapter: httpClientAdapter({ url: options.serverRpcUrl }),
+  const rpc = proxyTinyRpc<ServerRpc>({
+    adapter: httpClientAdapter({ url: options.baseUrl + SERVER_RPC_PATH }),
   });
 
   // implement HMRConnectoin based on uni-directional RPC

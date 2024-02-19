@@ -15,6 +15,7 @@ import {
   fetchModule,
 } from "vite";
 import { name as packageName } from "../../package.json";
+import { SERVER_RPC_PATH } from "../shared";
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
@@ -44,22 +45,64 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       };
     },
     async configureServer(server) {
-      // setup rpc for vite runtime
-      const viteNodeServerRpc = setupViteNodeServerRpc(server, {
-        customRpc: pluginOptions.customRpc,
+      // for now, we collect HMRPayload with builtin ServerHMRConnector
+      // and let worker entry fetch them via rpc before rendering
+      const connector = new ServerHMRConnector(server);
+      let hmrPayloads: HMRPayload[] = [];
+      connector.onUpdate((payload) => {
+        hmrPayloads.push(payload);
       });
 
-      // setup miniflare + proxy
+      const serverRpcHandler = exposeTinyRpc({
+        routes: {
+          transformIndexHtml: server.transformIndexHtml,
+          ssrFetchModule: (id, importer) => {
+            // not using default `viteDevServer.ssrFetchModule` since its source map expects mysterious two empty lines,
+            // which doesn't exist in workerd's unsafe eval
+            // https://github.com/vitejs/vite/pull/12165#issuecomment-1910686678
+            return fetchModule(server, id, importer);
+          },
+          getHMRPayloads: () => {
+            const result = hmrPayloads;
+            hmrPayloads = [];
+            return result;
+          },
+          send: (messages: string) => {
+            connector.send(messages);
+          },
+          // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
+          // (e.g. Remix's DevServerHooks)
+          ...pluginOptions.customRpc,
+        } satisfies ServerRpc,
+        adapter: httpServerAdapter({ endpoint: SERVER_RPC_PATH }),
+      });
+
+      // lazy setup miniflare + proxy
       // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
       const miniflareHandler: httipCompose.RequestHandler = async (ctx) => {
         if (!miniflare) {
           // initialize miniflare on first request
-          const miniflareOptions = viteNodeServerRpc.generateMiniflareOptions({
-            entry: pluginOptions.entry,
-            rpcOrigin: ctx.url.origin,
-            debug: pluginOptions.debug,
-            hmr: pluginOptions.hmr,
-          });
+          const miniflareOptions: MiniflareOptions = {
+            // explicitly pass `modules` to avoid Miniflare's ModuleLocator analysis error
+            modules: [
+              {
+                type: "ESModule",
+                path: fileURLToPath(
+                  new URL("./worker-entry.js", import.meta.url)
+                ),
+              },
+            ],
+            modulesRoot: "/",
+            // reasonable default? (for react-dom/server renderToReadableStream)
+            compatibilityDate: "2023-08-01",
+            unsafeEvalBinding: "__UNSAFE_EVAL",
+            bindings: {
+              __WORKER_ENTRY: pluginOptions.entry,
+              __VITE_NODE_DEBUG: pluginOptions.debug ?? false,
+              __VITE_RUNTIME_ROOT: server.config.root,
+              __VITE_RUNTIME_HMR: pluginOptions.hmr ?? false,
+            },
+          };
           pluginOptions.miniflareOptions?.(miniflareOptions);
           miniflare = new Miniflare(miniflareOptions);
           await miniflare.ready;
@@ -77,10 +120,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       };
 
       const middleware = httipAdapterNode.createMiddleware(
-        httipCompose.compose(
-          viteNodeServerRpc.requestHandler,
-          miniflareHandler
-        ),
+        httipCompose.compose(serverRpcHandler, miniflareHandler),
         {
           alwaysCallNext: false,
         }
@@ -97,86 +137,9 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   };
 }
 
-export type ViteNodeRpc = Pick<
-  ViteDevServer,
-  "transformIndexHtml" | "ssrFetchModule"
-> & {
-  // RPC endpoint to proxy ServerHMRConnector
+export interface ServerRpc {
+  ssrFetchModule: ViteDevServer["ssrFetchModule"];
+  send: ServerHMRConnector["send"];
   getHMRPayloads: () => HMRPayload[];
-  send: (messages: string) => void;
-};
-
-function setupViteNodeServerRpc(
-  viteDevServer: ViteDevServer,
-  options: { customRpc?: Record<string, Function> }
-) {
-  const rpcBase = "/__vite_node_rpc__";
-
-  // for now, we collect HMRPayload with builtin ServerHMRConnector
-  // and let worker entry fetch them via rpc before rendering
-  const connector = new ServerHMRConnector(viteDevServer);
-  let hmrPayloads: HMRPayload[] = [];
-  connector.onUpdate((payload) => {
-    hmrPayloads.push(payload);
-  });
-
-  const rpcRoutes: ViteNodeRpc = {
-    transformIndexHtml: viteDevServer.transformIndexHtml,
-    ssrFetchModule: (id, importer) => {
-      // not using default `viteDevServer.ssrFetchModule` since its source map expects mysterious two empty lines,
-      // which doesn't exist in workerd's unsafe eval
-      // https://github.com/vitejs/vite/pull/12165#issuecomment-1910686678
-      return fetchModule(viteDevServer, id, importer);
-    },
-    getHMRPayloads: () => {
-      const result = hmrPayloads;
-      hmrPayloads = [];
-      return result;
-    },
-    send: (messages: string) => {
-      connector.send(messages);
-    },
-    // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
-    // (e.g. Remix's DevServerHooks)
-    ...options.customRpc,
-  };
-
-  const requestHandler = exposeTinyRpc({
-    routes: rpcRoutes,
-    adapter: httpServerAdapter({ endpoint: rpcBase }),
-  });
-
-  function generateMiniflareOptions(options: {
-    entry: string;
-    rpcOrigin: string;
-    debug?: boolean;
-    hmr?: boolean;
-  }) {
-    return {
-      // explicitly pass `modules` to avoid Miniflare's ModuleLocator analysis error
-      modules: [
-        {
-          type: "ESModule",
-          path: fileURLToPath(new URL("./worker-entry.js", import.meta.url)),
-        },
-      ],
-      modulesRoot: "/",
-      // reasonable default? (for react-dom/server renderToReadableStream)
-      compatibilityDate: "2023-08-01",
-      // expose to runtime
-      unsafeEvalBinding: "__UNSAFE_EVAL",
-      bindings: {
-        __WORKER_ENTRY: options.entry,
-        __VITE_NODE_SERVER_RPC_URL: options.rpcOrigin + rpcBase,
-        __VITE_NODE_DEBUG: options.debug ?? false,
-        __VITE_RUNTIME_ROOT: viteDevServer.config.root,
-        __VITE_RUNTIME_HMR: options.hmr ?? false,
-      },
-    } satisfies MiniflareOptions;
-  }
-
-  return {
-    requestHandler,
-    generateMiniflareOptions,
-  };
+  transformIndexHtml: ViteDevServer["transformIndexHtml"];
 }
