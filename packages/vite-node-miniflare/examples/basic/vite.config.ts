@@ -16,7 +16,6 @@ export default defineConfig({
     }),
     vitePluginViteNodeMiniflare({
       debug: true,
-      // TODO: not working?
       hmr: true,
       entry: "/src/worker-entry.ts",
       miniflareOptions(options) {

@@ -145,7 +145,7 @@ class SimpleHMRConnection implements HMRRuntimeConnection {
     }
   ) {
     const clientRpc: ClientRpc = {
-      onUpdate: (payload) => {
+      onUpdate: async (payload) => {
         // customize onUpdate callback for non-hmr mode and debugging
         if (this.options.debug) {
           console.log("[vite-node-miniflare] HMRPayload:", payload);
@@ -164,9 +164,8 @@ class SimpleHMRConnection implements HMRRuntimeConnection {
           }
           return;
         }
-        // TODO: not working?
-        console.log("[onUpdateCallback]");
-        this.onUpdateCallback(payload);
+        // Workerd needs to wait until promise is resolved
+        await this.onUpdateCallback(payload);
       },
     };
     this.clientRpcHandler = exposeTinyRpc({
