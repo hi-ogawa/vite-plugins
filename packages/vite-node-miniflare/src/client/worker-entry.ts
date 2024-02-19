@@ -1,11 +1,16 @@
 import {
+  type RequestHandler,
   type TinyRpcProxy,
+  exposeTinyRpc,
   httpClientAdapter,
+  httpServerAdapter,
   proxyTinyRpc,
 } from "@hiogawa/tiny-rpc";
+import { once } from "@hiogawa/utils";
 import type { HMRPayload } from "vite";
 import { type HMRRuntimeConnection, ViteRuntime } from "vite/runtime";
-import type { ViteNodeRpc } from "../server/plugin";
+import type { ClientRpc, ServerRpc } from "../server/plugin";
+import { CLIENT_RPC_PATH, SERVER_RPC_PATH } from "../shared";
 
 interface Env {
   __UNSAFE_EVAL: any;
@@ -17,27 +22,36 @@ interface Env {
 }
 
 export interface ViteNodeMiniflareClient {
-  rpc: TinyRpcProxy<ViteNodeRpc>;
+  rpc: TinyRpcProxy<ServerRpc>;
   runtime: ViteRuntime;
   hmrConnection: SimpleHMRConnection;
 }
 
 let client: ViteNodeMiniflareClient;
 
+const initializeOnce = once(async (request: Request, env: Env) => {
+  client = await createViteNodeClient({
+    baseUrl: new URL(request.url).origin,
+    unsafeEval: env.__UNSAFE_EVAL,
+    root: env.__VITE_RUNTIME_ROOT,
+    debug: env.__VITE_NODE_DEBUG,
+    hmr: env.__VITE_RUNTIME_HMR,
+  });
+});
+
 export default {
   async fetch(request: Request, env: Env, ctx: unknown) {
     try {
       // initialize vite node client only once
-      client ??= createViteNodeClient({
-        unsafeEval: env.__UNSAFE_EVAL,
-        serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
-        root: env.__VITE_RUNTIME_ROOT,
-        debug: env.__VITE_NODE_DEBUG,
-        hmr: env.__VITE_RUNTIME_HMR,
-      });
+      await initializeOnce(request, env);
 
-      // fetch HMRPayload before execution
-      await client.hmrConnection.applyHMR();
+      // handle client rpc
+      const clientRpcResponse = await client.hmrConnection.clientRpcHandler({
+        request,
+      });
+      if (clientRpcResponse) {
+        return clientRpcResponse;
+      }
 
       const workerEntry = await client.runtime.executeEntrypoint(
         env.__WORKER_ENTRY
@@ -58,23 +72,22 @@ export default {
   },
 };
 
-function createViteNodeClient(options: {
+async function createViteNodeClient(options: {
+  baseUrl: string;
   unsafeEval: any;
-  serverRpcUrl: string;
   root: string;
   debug: boolean;
   hmr: boolean;
-}): ViteNodeMiniflareClient {
-  const rpc = proxyTinyRpc<ViteNodeRpc>({
-    adapter: httpClientAdapter({ url: options.serverRpcUrl }),
+}): Promise<ViteNodeMiniflareClient> {
+  // ServerRpc proxy
+  const rpc = proxyTinyRpc<ServerRpc>({
+    adapter: httpClientAdapter({ url: options.baseUrl + SERVER_RPC_PATH }),
   });
+  await rpc.setupClient(options.baseUrl);
 
-  // implement HMRConnectoin based on uni-directional RPC
+  // implement HMRConnection by http rpc
   const hmrConnection = new SimpleHMRConnection({
-    rpc: {
-      getHMRPayloads: rpc.getHMRPayloads,
-      send: rpc.send,
-    },
+    rpc: rpc,
     debug: options.debug,
     hmr: options.hmr,
   });
@@ -114,44 +127,50 @@ function createViteNodeClient(options: {
   return { rpc, runtime, hmrConnection };
 }
 
-// Making simple HMRConnection based on uni-directional RPC
+// HMRConnection by proxying ServerHMRConnector
 class SimpleHMRConnection implements HMRRuntimeConnection {
+  clientRpcHandler: RequestHandler;
   onUpdateCallback!: (payload: HMRPayload) => void;
 
   constructor(
     private options: {
       rpc: {
-        getHMRPayloads: () => Promise<HMRPayload[]>;
         send: (messages: string) => Promise<void>;
       };
       debug?: boolean;
       hmr?: boolean;
     }
-  ) {}
-
-  // TODO: queue multiple calls of `applyHMR` to keep last one awaited until all handled
-  async applyHMR() {
-    const payloads = await this.options.rpc.getHMRPayloads();
-    for (const payload of payloads) {
-      if (this.options.debug) {
-        console.log("[vite-node-miniflare] HMRPayload:", payload);
-      }
-      // use simple module tree invalidation for non-hmr mode
-      if (!this.options.hmr && payload.type === "update") {
-        for (const update of payload.updates) {
-          const invalidated = client.runtime.moduleCache.invalidateDepTree([
-            update.path,
-          ]);
-          if (this.options.debug) {
-            console.log("[vite-node-miniflare] invalidateDepTree:", [
-              ...invalidated,
-            ]);
-          }
+  ) {
+    const clientRpc: ClientRpc = {
+      onUpdate: (payload) => {
+        // customize onUpdate callback for non-hmr mode and debugging
+        if (this.options.debug) {
+          console.log("[vite-node-miniflare] HMRPayload:", payload);
         }
-        continue;
-      }
-      await (this.onUpdateCallback(payload) as any as Promise<void>);
-    }
+        // use simple module tree invalidation for non-hmr mode
+        if (!this.options.hmr && payload.type === "update") {
+          for (const update of payload.updates) {
+            const invalidated = client.runtime.moduleCache.invalidateDepTree([
+              update.path,
+            ]);
+            if (this.options.debug) {
+              console.log("[vite-node-miniflare] invalidateDepTree:", [
+                ...invalidated,
+              ]);
+            }
+          }
+          return;
+        }
+        // TODO: not working?
+        this.onUpdateCallback(payload);
+      },
+    };
+    this.clientRpcHandler = exposeTinyRpc({
+      adapter: httpServerAdapter({
+        endpoint: CLIENT_RPC_PATH,
+      }),
+      routes: clientRpc,
+    });
   }
 
   //
@@ -162,11 +181,11 @@ class SimpleHMRConnection implements HMRRuntimeConnection {
     return true;
   }
 
-  onUpdate(callback: (payload: HMRPayload) => void): void {
-    this.onUpdateCallback = callback;
-  }
-
   send(messages: string): void {
     this.options.rpc.send(messages);
+  }
+
+  onUpdate(callback: (payload: HMRPayload) => void): void {
+    this.onUpdateCallback = callback;
   }
 }
