@@ -1,7 +1,14 @@
 import { fileURLToPath } from "node:url";
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
-import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
+import {
+  createTwoWaySseHandler,
+  exposeTinyRpc,
+  // httpServerAdapter,
+  messagePortClientAdapter,
+  messagePortServerAdapter,
+  proxyTinyRpc,
+} from "@hiogawa/tiny-rpc";
 import {
   Miniflare,
   type MiniflareOptions,
@@ -78,7 +85,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
 
       const middleware = httipAdapterNode.createMiddleware(
         httipCompose.compose(
-          viteNodeServerRpc.requestHandler,
+          viteNodeServerRpc.handler,
           miniflareHandler
         ),
         {
@@ -106,11 +113,53 @@ export type ViteNodeRpc = Pick<
   send: (messages: string) => void;
 };
 
+export interface ClientRpc {
+  onUpdate: (payload: HMRPayload) => void;
+}
+
+export interface ServerRpc {
+  transformIndexHtml: ViteDevServer["transformIndexHtml"];
+  ssrFetchModule: ViteDevServer["ssrFetchModule"];
+  send: ServerHMRConnector["send"];
+}
+
 function setupViteNodeServerRpc(
   viteDevServer: ViteDevServer,
   options: { customRpc?: Record<string, Function> }
 ) {
   const rpcBase = "/__vite_node_rpc__";
+
+  // instead of implementing entire HMRChannel
+  // we directly proxy builtin ServerHMRConnector via RPC
+  const { handler } = createTwoWaySseHandler({
+    endpoint: rpcBase,
+    onConnection(client) {
+      // setup ClientRpc
+      const clientRpc = proxyTinyRpc<ClientRpc>({
+        adapter: messagePortClientAdapter({ port: client }),
+      });
+      const connector = new ServerHMRConnector(viteDevServer);
+      connector.onUpdate((payload) => {
+        clientRpc.onUpdate(payload);
+      });
+
+      // setup ServerRpc
+      exposeTinyRpc({
+        adapter: messagePortServerAdapter({ port: client }),
+        routes: {
+          ssrFetchModule: (id, importer) => {
+            console.log("[server]", { id, importer });
+            return fetchModule(viteDevServer, id, importer);
+          },
+          send: (messages: string) => {
+            connector.send(messages);
+          },
+          transformIndexHtml: viteDevServer.transformIndexHtml,
+          ...options.customRpc,
+        } satisfies ServerRpc,
+      });
+    },
+  });
 
   // for now, we collect HMRPayload with builtin ServerHMRConnector
   // and let worker entry fetch them via rpc before rendering
@@ -120,31 +169,31 @@ function setupViteNodeServerRpc(
     hmrPayloads.push(payload);
   });
 
-  const rpcRoutes: ViteNodeRpc = {
-    transformIndexHtml: viteDevServer.transformIndexHtml,
-    ssrFetchModule: (id, importer) => {
-      // not using default `viteDevServer.ssrFetchModule` since its source map expects mysterious two empty lines,
-      // which doesn't exist in workerd's unsafe eval
-      // https://github.com/vitejs/vite/pull/12165#issuecomment-1910686678
-      return fetchModule(viteDevServer, id, importer);
-    },
-    getHMRPayloads: () => {
-      const result = hmrPayloads;
-      hmrPayloads = [];
-      return result;
-    },
-    send: (messages: string) => {
-      connector.send(messages);
-    },
-    // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
-    // (e.g. Remix's DevServerHooks)
-    ...options.customRpc,
-  };
+  // const rpcRoutes: ViteNodeRpc = {
+  //   transformIndexHtml: viteDevServer.transformIndexHtml,
+  //   ssrFetchModule: (id, importer) => {
+  //     // not using default `viteDevServer.ssrFetchModule` since its source map expects mysterious two empty lines,
+  //     // which doesn't exist in workerd's unsafe eval
+  //     // https://github.com/vitejs/vite/pull/12165#issuecomment-1910686678
+  //     return fetchModule(viteDevServer, id, importer);
+  //   },
+  //   getHMRPayloads: () => {
+  //     const result = hmrPayloads;
+  //     hmrPayloads = [];
+  //     return result;
+  //   },
+  //   send: (messages: string) => {
+  //     connector.send(messages);
+  //   },
+  //   // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
+  //   // (e.g. Remix's DevServerHooks)
+  //   ...options.customRpc,
+  // };
 
-  const requestHandler = exposeTinyRpc({
-    routes: rpcRoutes,
-    adapter: httpServerAdapter({ endpoint: rpcBase }),
-  });
+  // const requestHandler = exposeTinyRpc({
+  //   routes: rpcRoutes,
+  //   adapter: httpServerAdapter({ endpoint: rpcBase }),
+  // });
 
   function generateMiniflareOptions(options: {
     entry: string;
@@ -176,7 +225,8 @@ function setupViteNodeServerRpc(
   }
 
   return {
-    requestHandler,
+    handler,
+    // requestHandler,
     generateMiniflareOptions,
   };
 }

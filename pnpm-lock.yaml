@@ -280,11 +280,14 @@ importers:
         version: 3.20231030.4
     devDependencies:
       '@hiogawa/tiny-rpc':
-        specifier: ^0.2.3-pre.11
-        version: 0.2.3-pre.11
+        specifier: ^0.2.3-pre.16
+        version: 0.2.3-pre.16
       '@hiogawa/utils':
         specifier: 1.6.1-pre.10
         version: 1.6.1-pre.10
+      '@microsoft/fetch-event-source':
+        specifier: ^2.0.1
+        version: 2.0.1
       vite:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
@@ -2180,8 +2183,8 @@ packages:
       zod: 3.21.4
     dev: true
 
-  /@hiogawa/tiny-rpc@0.2.3-pre.11:
-    resolution: {integrity: sha512-YYFssKJ+abyHMfYSK1IyuL9NccPWWcziG5xf4HVXHmXuT+nLK402WMheSl5A0qlpCBdaO0obtUZfKPAPQj3GfQ==}
+  /@hiogawa/tiny-rpc@0.2.3-pre.16:
+    resolution: {integrity: sha512-gjJhuZm9v9iNyUAMZDXVM6HjsyQfH3dwN0rWmzCerYK9Pn62rSAiEXAm6t6QHobj3hmht11W3rSKcsozYLWIjQ==}
     dev: true
 
   /@hiogawa/tiny-toast@0.1.1-pre.7(react@18.2.0):
@@ -2338,6 +2341,10 @@ packages:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@microsoft/fetch-event-source@2.0.1:
+    resolution: {integrity: sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==}
     dev: true
 
   /@nodelib/fs.scandir@2.1.5:
