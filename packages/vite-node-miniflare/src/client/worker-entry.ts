@@ -1,5 +1,4 @@
 import {
-  type RequestHandler,
   type TinyRpcProxy,
   exposeTinyRpc,
   httpClientAdapter,
@@ -129,7 +128,9 @@ async function createViteNodeClient(options: {
 
 // HMRConnection by proxying ServerHMRConnector
 class SimpleHMRConnection implements HMRRuntimeConnection {
-  clientRpcHandler: RequestHandler;
+  clientRpcHandler: ReturnType<
+    ReturnType<typeof httpServerAdapter>["register"]
+  >;
   onUpdateCallback!: (payload: HMRPayload) => void;
 
   constructor(
