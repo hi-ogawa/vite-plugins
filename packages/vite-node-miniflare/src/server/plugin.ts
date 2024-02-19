@@ -2,13 +2,15 @@ import { fileURLToPath } from "node:url";
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
 import {
+  WebSocketMessagePort,
   createTwoWaySseHandler,
-  exposeTinyRpc,
   // httpServerAdapter,
+  exposeTinyRpc,
   messagePortClientAdapter,
   messagePortServerAdapter,
   proxyTinyRpc,
 } from "@hiogawa/tiny-rpc";
+import { tinyassert } from "@hiogawa/utils";
 import {
   Miniflare,
   type MiniflareOptions,
@@ -21,6 +23,7 @@ import {
   type ViteDevServer,
   fetchModule,
 } from "vite";
+import * as ws from "ws";
 import { name as packageName } from "../../package.json";
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
@@ -84,10 +87,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       };
 
       const middleware = httipAdapterNode.createMiddleware(
-        httipCompose.compose(
-          viteNodeServerRpc.handler,
-          miniflareHandler
-        ),
+        httipCompose.compose(viteNodeServerRpc.handler, miniflareHandler),
         {
           alwaysCallNext: false,
         }
@@ -128,6 +128,52 @@ function setupViteNodeServerRpc(
   options: { customRpc?: Record<string, Function> }
 ) {
   const rpcBase = "/__vite_node_rpc__";
+
+  // instead of implementing entire HMRChannel
+  // we proxy builtin ServerHMRConnector via RPC
+
+  tinyassert(viteDevServer.httpServer);
+  const wsServer = new ws.WebSocketServer({
+    server: viteDevServer.httpServer as any,
+    path: rpcBase,
+  });
+
+  wsServer.on("connection", (wsClient) => {
+    const connector = new ServerHMRConnector(viteDevServer);
+    const port = new WebSocketMessagePort(wsClient as any);
+
+    // setup ClientRpc proxy
+    const clientRpc = proxyTinyRpc<ClientRpc>({
+      adapter: messagePortClientAdapter({
+        port,
+        serialize: JSON.stringify,
+        deserialize: JSON.parse,
+      }),
+    });
+    connector.onUpdate((payload) => {
+      clientRpc.onUpdate(payload);
+    });
+
+    // implement ServerRpc
+    exposeTinyRpc({
+      adapter: messagePortServerAdapter({
+        port,
+        serialize: JSON.stringify,
+        deserialize: JSON.parse,
+      }),
+      routes: {
+        ssrFetchModule: (id, importer) => {
+          console.log("[server]", { id, importer });
+          return fetchModule(viteDevServer, id, importer);
+        },
+        send: (messages: string) => {
+          connector.send(messages);
+        },
+        transformIndexHtml: viteDevServer.transformIndexHtml,
+        ...options.customRpc,
+      } satisfies ServerRpc,
+    });
+  });
 
   // instead of implementing entire HMRChannel
   // we directly proxy builtin ServerHMRConnector via RPC

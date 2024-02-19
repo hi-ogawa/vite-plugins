@@ -1,20 +1,26 @@
 import {
   type TinyRpcProxy,
-  TwoWaySseClient,
-  exposeTinyRpc,
+  // TwoWaySseClient,
+  WebSocketMessagePort,
   // httpClientAdapter,
+  exposeTinyRpc,
   messagePortClientAdapter,
   messagePortServerAdapter,
   proxyTinyRpc,
 } from "@hiogawa/tiny-rpc";
 // import type { HMRPayload } from "vite";
+import { createManualPromise, once } from "@hiogawa/utils";
+import type { HMRPayload } from "vite";
+// import { FetchEventSource } from "./event-source";
 import {
   // type HMRRuntimeConnection,
-  ViteRuntime } from "vite/runtime";
-import type { ClientRpc, ServerRpc,
+  ViteRuntime,
+} from "vite/runtime";
+import type {
+  ClientRpc,
+  ServerRpc,
   // ViteNodeRpc
 } from "../server/plugin";
-import { FetchEventSource } from "./event-source";
 
 interface Env {
   __UNSAFE_EVAL: any;
@@ -33,18 +39,29 @@ export interface ViteNodeMiniflareClient {
 
 let client: ViteNodeMiniflareClient;
 
+const setupClient = once(async (env: Env) => {
+  client = await createViteNodeClient({
+    unsafeEval: env.__UNSAFE_EVAL,
+    serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
+    root: env.__VITE_RUNTIME_ROOT,
+    debug: env.__VITE_NODE_DEBUG,
+    hmr: env.__VITE_RUNTIME_HMR,
+  });
+});
+
 export default {
   async fetch(request: Request, env: Env, ctx: unknown) {
-    console.log("[worker]", request.url);
+    // console.log("[worker]", request.url);
     try {
-      // initialize vite node client only once
-      client ??= await createViteNodeClient({
-        unsafeEval: env.__UNSAFE_EVAL,
-        serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
-        root: env.__VITE_RUNTIME_ROOT,
-        debug: env.__VITE_NODE_DEBUG,
-        hmr: env.__VITE_RUNTIME_HMR,
-      });
+      await setupClient(env);
+      // // initialize vite node client only once
+      // client ??= await createViteNodeClient({
+      //   unsafeEval: env.__UNSAFE_EVAL,
+      //   serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
+      //   root: env.__VITE_RUNTIME_ROOT,
+      //   debug: env.__VITE_NODE_DEBUG,
+      //   hmr: env.__VITE_RUNTIME_HMR,
+      // });
 
       // fetch HMRPayload before execution
       // await client.hmrConnection.applyHMR();
@@ -76,15 +93,45 @@ async function createViteNodeClient(options: {
   hmr: boolean;
 }): Promise<ViteNodeMiniflareClient> {
   // polyfill EventSource
-  Object.assign(globalThis, { EventSource: FetchEventSource });
+  // Object.assign(globalThis, { EventSource: FetchEventSource });
+
+  // https://developers.cloudflare.com/workers/examples/websockets/#write-a-websocket-client
+  const websocket = new WebSocket(options.serverRpcUrl.replace(/^http/, "ws"));
+  const promise = createManualPromise<void>();
+  websocket.addEventListener("open", (e) => {
+    console.log("[websocket.open]", e);
+    promise.resolve();
+  });
+  await promise;
+
+  const port = new WebSocketMessagePort(websocket);
 
   // HMRConnection based on tiny-rpc + SSE
-  const client = await TwoWaySseClient.create({
-    endpoint: options.serverRpcUrl,
+  // const client = await TwoWaySseClient.create({
+  //   endpoint: options.serverRpcUrl,
+  // });
+
+  // setup ServerRpc proxy
+  const rpc = proxyTinyRpc<ServerRpc>({
+    adapter: messagePortClientAdapter({
+      port,
+      serialize: JSON.stringify,
+      deserialize: JSON.parse,
+    }),
   });
 
-  const rpc = proxyTinyRpc<ServerRpc>({
-    adapter: messagePortClientAdapter({ port: client }),
+  // implement ClientRpc
+  exposeTinyRpc({
+    adapter: messagePortServerAdapter({
+      port,
+      serialize: JSON.stringify,
+      deserialize: JSON.parse,
+    }),
+    routes: {
+      onUpdate(payload) {
+        onUpdateCallback(payload);
+      },
+    } satisfies ClientRpc,
   });
 
   // const rpc = proxyTinyRpc<ViteNodeRpc>({
@@ -101,6 +148,8 @@ async function createViteNodeClient(options: {
   //   hmr: options.hmr,
   // });
 
+  let onUpdateCallback!: (payload: HMRPayload) => void;
+
   const runtime = new ViteRuntime(
     {
       root: options.root,
@@ -115,18 +164,22 @@ async function createViteNodeClient(options: {
             return true;
           },
           onUpdate(callback) {
-            // expose clientRpc.onUpdate
-            exposeTinyRpc({
-              adapter: messagePortServerAdapter({ port: client }),
-              routes: {
-                onUpdate(payload) {
-                  callback(payload);
-                },
-              } satisfies ClientRpc,
-            });
+            onUpdateCallback = callback;
+            // // expose clientRpc.onUpdate
+            // exposeTinyRpc({
+            //   adapter: messagePortServerAdapter({
+            //     port,
+            //     serialize: JSON.stringify,
+            //     deserialize: JSON.parse,
+            //   }),
+            //   routes: {
+            //     onUpdate(payload) {
+            //       callback(payload);
+            //     },
+            //   } satisfies ClientRpc,
+            // });
           },
           send(messages) {
-            console.log("[rpc.send]", { messages });
             rpc.send(messages);
           },
         },
