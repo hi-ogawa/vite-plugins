@@ -1,11 +1,9 @@
-import {
-  type TinyRpcProxy,
-  httpClientAdapter,
-  proxyTinyRpc,
-} from "@hiogawa/tiny-rpc";
+import { httpClientAdapter, proxyTinyRpc } from "@hiogawa/tiny-rpc";
+import { once } from "@hiogawa/utils";
 import type { HMRPayload } from "vite";
 import { type HMRRuntimeConnection, ViteRuntime } from "vite/runtime";
-import type { ViteNodeRpc } from "../server/plugin";
+import type { ServerRpc } from "../server/plugin";
+import { SERVER_RPC_PATH } from "../shared";
 
 interface Env {
   __UNSAFE_EVAL: any;
@@ -16,37 +14,18 @@ interface Env {
   __WORKER_ENTRY: string;
 }
 
-export interface ViteNodeMiniflareClient {
-  rpc: TinyRpcProxy<ViteNodeRpc>;
-  runtime: ViteRuntime;
-  hmrConnection: SimpleHMRConnection;
-}
-
-let client: ViteNodeMiniflareClient;
-
 export default {
   async fetch(request: Request, env: Env, ctx: unknown) {
     try {
-      // initialize vite node client only once
-      client ??= createViteNodeClient({
+      const fetchHandler = createFetchHandlerOnce({
+        workerEntry: env.__WORKER_ENTRY,
+        baseUrl: new URL(request.url).origin,
         unsafeEval: env.__UNSAFE_EVAL,
-        serverRpcUrl: env.__VITE_NODE_SERVER_RPC_URL,
         root: env.__VITE_RUNTIME_ROOT,
         debug: env.__VITE_NODE_DEBUG,
         hmr: env.__VITE_RUNTIME_HMR,
       });
-
-      // fetch HMRPayload before execution
-      await client.hmrConnection.applyHMR();
-
-      const workerEntry = await client.runtime.executeEntrypoint(
-        env.__WORKER_ENTRY
-      );
-      const workerEnv = {
-        ...env,
-        __VITE_NODE_MINIFLARE_CLIENT: client, // sneak this in for customRpc usage
-      };
-      return await workerEntry.default.fetch(request, workerEnv, ctx);
+      return await fetchHandler(request, env, ctx);
     } catch (e) {
       console.error(e);
       let body = "[vite-node-miniflare error]\n";
@@ -58,15 +37,24 @@ export default {
   },
 };
 
-function createViteNodeClient(options: {
+type FetchHandler = (
+  request: Request,
+  env: Env,
+  ctx: unknown
+) => Promise<Response>;
+
+const createFetchHandlerOnce = once(createFetchHandler);
+
+function createFetchHandler(options: {
+  workerEntry: string;
+  baseUrl: string;
   unsafeEval: any;
-  serverRpcUrl: string;
   root: string;
   debug: boolean;
   hmr: boolean;
-}): ViteNodeMiniflareClient {
-  const rpc = proxyTinyRpc<ViteNodeRpc>({
-    adapter: httpClientAdapter({ url: options.serverRpcUrl }),
+}) {
+  const rpc = proxyTinyRpc<ServerRpc>({
+    adapter: httpClientAdapter({ url: options.baseUrl + SERVER_RPC_PATH }),
   });
 
   // implement HMRConnectoin based on uni-directional RPC
@@ -111,7 +99,18 @@ function createViteNodeClient(options: {
     }
   );
 
-  return { rpc, runtime, hmrConnection };
+  const fetchHandler: FetchHandler = async (request, env, ctx) => {
+    await hmrConnection.applyHMR({ runtime });
+
+    const workerEntry = await runtime.executeEntrypoint(options.workerEntry);
+    const workerEnv = {
+      ...env,
+      // extend for customRpc usage
+      __RPC: rpc,
+    };
+    return workerEntry.default.fetch(request, workerEnv, ctx);
+  };
+  return fetchHandler;
 }
 
 // Making simple HMRConnection based on uni-directional RPC
@@ -130,7 +129,7 @@ class SimpleHMRConnection implements HMRRuntimeConnection {
   ) {}
 
   // TODO: queue multiple calls of `applyHMR` to keep last one awaited until all handled
-  async applyHMR() {
+  async applyHMR({ runtime }: { runtime: ViteRuntime }) {
     const payloads = await this.options.rpc.getHMRPayloads();
     for (const payload of payloads) {
       if (this.options.debug) {
@@ -139,7 +138,7 @@ class SimpleHMRConnection implements HMRRuntimeConnection {
       // use simple module tree invalidation for non-hmr mode
       if (!this.options.hmr && payload.type === "update") {
         for (const update of payload.updates) {
-          const invalidated = client.runtime.moduleCache.invalidateDepTree([
+          const invalidated = runtime.moduleCache.invalidateDepTree([
             update.path,
           ]);
           if (this.options.debug) {

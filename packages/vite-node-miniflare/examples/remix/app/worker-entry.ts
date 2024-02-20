@@ -17,10 +17,9 @@ function createFetchHandler() {
     Object.assign(globalThis, { env });
 
     // DevServerHook is implemented via custom rpc
-    if (env.__VITE_NODE_MINIFLARE_CLIENT) {
+    if (import.meta.env.DEV) {
       unstable_setDevServerHooks({
-        getCriticalCss:
-          env.__VITE_NODE_MINIFLARE_CLIENT.rpc.__remixGetCriticalCss,
+        getCriticalCss: env.__RPC.__remixGetCriticalCss,
       });
     }
 
