@@ -1,7 +1,13 @@
 import { fileURLToPath } from "node:url";
 import * as httipAdapterNode from "@hattip/adapter-node/native-fetch";
 import * as httipCompose from "@hattip/compose";
-import { exposeTinyRpc, httpServerAdapter } from "@hiogawa/tiny-rpc";
+import {
+  type TinyRpcProxy,
+  exposeTinyRpc,
+  httpClientAdapter,
+  httpServerAdapter,
+  proxyTinyRpc,
+} from "@hiogawa/tiny-rpc";
 import {
   Miniflare,
   type MiniflareOptions,
@@ -15,7 +21,18 @@ import {
   fetchModule,
 } from "vite";
 import { name as packageName } from "../../package.json";
-import { SERVER_RPC_PATH } from "../shared";
+import { CLIENT_RPC_PATH, SERVER_RPC_PATH } from "../shared";
+
+export interface ServerRpc {
+  ssrFetchModule: ViteDevServer["ssrFetchModule"];
+  send: ServerHMRConnector["send"];
+  transformIndexHtml: ViteDevServer["transformIndexHtml"];
+  setupClient: (baseUrl: string) => void;
+}
+
+export interface ClientRpc {
+  onUpdate: (payload: HMRPayload) => void;
+}
 
 export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
@@ -45,27 +62,31 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       };
     },
     async configureServer(server) {
-      // for now, we collect HMRPayload with builtin ServerHMRConnector
-      // and let worker entry fetch them via rpc before rendering
+      // ClientRpc proxy
+      let clientRpc: TinyRpcProxy<ClientRpc> | undefined;
+
+      // we proxy builtin ServerHMRConnector.send/onUpdate via RPC
+      // instead of implementing entire HMRChannel on our own
       const connector = new ServerHMRConnector(server);
-      let hmrPayloads: HMRPayload[] = [];
       connector.onUpdate((payload) => {
-        hmrPayloads.push(payload);
+        clientRpc?.onUpdate(payload);
       });
 
+      // ServerRpc implementation
       const serverRpcHandler = exposeTinyRpc({
+        adapter: httpServerAdapter({ endpoint: SERVER_RPC_PATH }),
         routes: {
+          setupClient: (baseUrl) => {
+            clientRpc = proxyTinyRpc({
+              adapter: httpClientAdapter({ url: baseUrl + CLIENT_RPC_PATH }),
+            });
+          },
           transformIndexHtml: server.transformIndexHtml,
           ssrFetchModule: (id, importer) => {
             // not using default `viteDevServer.ssrFetchModule` since its source map expects mysterious two empty lines,
             // which doesn't exist in workerd's unsafe eval
             // https://github.com/vitejs/vite/pull/12165#issuecomment-1910686678
             return fetchModule(server, id, importer);
-          },
-          getHMRPayloads: () => {
-            const result = hmrPayloads;
-            hmrPayloads = [];
-            return result;
           },
           send: (messages: string) => {
             connector.send(messages);
@@ -74,11 +95,9 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           // (e.g. Remix's DevServerHooks)
           ...pluginOptions.customRpc,
         } satisfies ServerRpc,
-        adapter: httpServerAdapter({ endpoint: SERVER_RPC_PATH }),
       });
 
       // lazy setup miniflare + proxy
-      // TODO: proxy `wrangler.unstable_dev` to make use of wrangler.toml?
       const miniflareHandler: httipCompose.RequestHandler = async (ctx) => {
         if (!miniflare) {
           // initialize miniflare on first request
@@ -108,7 +127,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           await miniflare.ready;
         }
 
-        // workaround typing mismatch between "lib.dom" and "miniflare"
+        // fix typings between "lib.dom" and "miniflare"
         const request = ctx.request as any as MiniflareRequest;
         return miniflare.dispatchFetch(request.url, {
           method: request.method,
@@ -135,11 +154,4 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
       }
     },
   };
-}
-
-export interface ServerRpc {
-  ssrFetchModule: ViteDevServer["ssrFetchModule"];
-  send: ServerHMRConnector["send"];
-  getHMRPayloads: () => HMRPayload[];
-  transformIndexHtml: ViteDevServer["transformIndexHtml"];
 }
