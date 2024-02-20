@@ -5,7 +5,6 @@ import {
   globPageRoutesServer,
   handleReactRouterServer,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
-import type { ViteNodeMiniflareClient } from "@hiogawa/vite-node-miniflare";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import {
@@ -46,7 +45,18 @@ export function ssrHandler(): RequestHandler {
       ssrHtml = render({ routerResult });
     }
 
-    let html = DOCUMENT_HTML_TEMPLATE;
+    // load tempalte
+    let html: string;
+    if (import.meta.env.DEV) {
+      html = (await import("/index.html?raw")).default;
+      html = await (ctx.platform as any).env.__RPC.transformIndexHtml(
+        "/",
+        html
+      );
+    } else {
+      html = (await import("/dist/client/index.html?raw")).default;
+    }
+
     html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
@@ -54,13 +64,6 @@ export function ssrHandler(): RequestHandler {
         serverLoaderRouteIds
       )}</script>`
     );
-
-    // apply transformIndexHtml for dev
-    const env = (ctx.platform as any).env;
-    if (env.__VITE_NODE_MINIFLARE_CLIENT) {
-      const client: ViteNodeMiniflareClient = env.__VITE_NODE_MINIFLARE_CLIENT;
-      html = await client.rpc.transformIndexHtml("/", html);
-    }
 
     return new Response(html, {
       status: routerResult.context.statusCode,
@@ -87,34 +90,3 @@ function render({
     </React.StrictMode>
   );
 }
-
-const DOCUMENT_HTML_TEMPLATE = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>vite-plugins-example-ssr</title>
-    <meta
-      name="viewport"
-      content="width=device-width, height=device-height, initial-scale=1.0"
-    />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="https://iconify-dark-hiro18181.vercel.app/icon/ri/code-s-slash-line"
-    />
-    <style>
-      html,
-      body,
-      #root {
-        height: 100%;
-      }
-    </style>
-    <!--@INJECT_HEAD@-->
-  </head>
-  <body>
-    <div id="root"><!--@INJECT_SSR@--></div>
-    <script src="./src/client/index.tsx" type="module"></script>
-  </body>
-</html>
-`;
