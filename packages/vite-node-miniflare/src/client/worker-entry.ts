@@ -25,7 +25,7 @@ export default {
         debug: env.__VITE_NODE_DEBUG,
         hmr: env.__VITE_RUNTIME_HMR,
       });
-      return fetchHandler(request, env, ctx);
+      return await fetchHandler(request, env, ctx);
     } catch (e) {
       console.error(e);
       let body = "[vite-node-miniflare error]\n";
@@ -108,7 +108,7 @@ function createFetchHandler(options: {
       // extend for customRpc usage
       __RPC: rpc,
     };
-    return await workerEntry.default.fetch(request, workerEnv, ctx);
+    return workerEntry.default.fetch(request, workerEnv, ctx);
   };
   return fetchHandler;
 }
