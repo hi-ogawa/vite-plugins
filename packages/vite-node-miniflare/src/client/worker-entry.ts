@@ -157,6 +157,7 @@ function customOnUpdateFn(
       }
       return;
     }
+    // Workerd needs to wait until promise is resolved during the request handling
     await originalFn(payload);
   };
 }
