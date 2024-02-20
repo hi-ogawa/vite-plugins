@@ -106,7 +106,7 @@ function createFetchHandler(options: {
     const workerEnv = {
       ...env,
       // extend for customRpc usage
-      __VITE_NODE_MINIFLARE_CLIENT: { rpc, runtime },
+      __RPC: rpc,
     };
     return await workerEntry.default.fetch(request, workerEnv, ctx);
   };

@@ -70,7 +70,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
           send: (messages: string) => {
             connector.send(messages);
           },
-          // framework can utilize custom RPC to implement some features on main Vite process and expose them to Workerd
+          // allow framework to extend RPC to implement some features on main Vite process and expose them to Workerd
           // (e.g. Remix's DevServerHooks)
           ...pluginOptions.customRpc,
         } satisfies ServerRpc,
