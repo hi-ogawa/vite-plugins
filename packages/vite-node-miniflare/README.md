@@ -11,6 +11,7 @@ See https://github.com/hi-ogawa/vite-plugins/issues/127 for known limitations.
 
 ## examples
 
+- [`vite-runtime-workerd-examples`](https://github.com/hi-ogawa/vite-runtime-workerd-examples) : example repository with Cloudflare Pages deployment
 - [`./examples/basic`](./examples/basic) : Simple demo of SSR, Hydration and HMR with [`@hiogawa/tiny-react`](https://github.com/hi-ogawa/js-utils/tree/main/packages/tiny-react)
 - [`./examples/react`](./examples/react) : Simple demo with React
 - [`./examples/react-router`](./examples/react-router) : React Router SSR application with [`@hiogawa/vite-glob-routes`](https://github.com/hi-ogawa/vite-plugins)
