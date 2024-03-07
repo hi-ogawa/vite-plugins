@@ -7,6 +7,7 @@ export async function Root() {
         <script src="/@vite/client" type="module" />
         <script
           dangerouslySetInnerHTML={{
+            // TODO: what's this
             __html: /* js*/ `
               self.__webpack_require__ = () => {};
             `,

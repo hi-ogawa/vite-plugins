@@ -22,6 +22,7 @@ export default async function handler(
   function Content() {
     node ??= reactServerDomClient.createFromReadableStream(rscStream1, {
       ssrManifest: {
+        // TODO: what's this
         moduleLoading: null,
         moduleMap: null,
       },
