@@ -1,6 +1,6 @@
-export async function Root() {
-  const url = "https://unpkg.com/react@18.2.0/package.json";
+import fs from "node:fs";
 
+export async function Root() {
   return (
     <html>
       <head>
@@ -17,9 +17,7 @@ export async function Root() {
       <body>
         <div>Hello RSC</div>
         <div>
-          <pre>
-            fetch({url}) = {(await fetch(url)).text()}
-          </pre>
+          <pre>{await fs.promises.readFile("./package.json", "utf-8")}</pre>
         </div>
         <script src="/src/entry-client.tsx" type="module" />
       </body>
