@@ -1,18 +1,37 @@
-import fs from "node:fs";
+import "./react-fix";
 import type http from "node:http";
-import { renderToString } from "react-dom/server";
-import type { ViteDevServer } from "vite";
-import { App } from "./app";
+import { Readable } from "node:stream";
+import React from "react";
+import reactDomServer from "react-dom/server.edge";
+import reactServerDomClient from "react-server-dom-webpack/client.edge";
+import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import { injectRSCPayload } from "rsc-html-stream/server";
+import { Root } from "./root";
+
+// https://github.com/dai-shi/waku/blob/4d16c28a58204991de2985df0d202f21a48ae1f9/packages/waku/src/lib/renderers/html-renderer.ts
+// https://github.com/devongovett/rsc-html-stream
 
 export default async function handler(
-  req: http.IncomingMessage & { viteDevServer: ViteDevServer },
+  _req: http.IncomingMessage,
   res: http.ServerResponse
 ) {
-  let html = await fs.promises.readFile("./index.html", "utf-8");
-  html = await req.viteDevServer.transformIndexHtml("/", html);
+  const rscStream = reactServerDomServer.renderToReadableStream(<Root />);
+  const [rscStream1, rscStream2] = rscStream.tee();
 
-  const ssrHtml = renderToString(<App />);
-  html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
+  let node: Promise<React.ReactNode>;
+  function Content() {
+    node ??= reactServerDomClient.createFromReadableStream(rscStream1, {
+      ssrManifest: {
+        moduleLoading: null,
+        moduleMap: null,
+      },
+    });
+    return React.use(node);
+  }
 
-  res.setHeader("content-type", "text/html").end(html);
+  const htmlStream = await reactDomServer.renderToReadableStream(<Content />);
+  const resStream = htmlStream.pipeThrough(injectRSCPayload(rscStream2));
+
+  res.setHeader("content-type", "text/html");
+  Readable.fromWeb(resStream as any).pipe(res);
 }

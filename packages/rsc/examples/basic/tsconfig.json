@@ -1,7 +1,7 @@
 {
   "extends": "../../../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["vite/client"],
+    "types": ["vite/client", "react/canary"],
     "jsx": "react-jsx"
   }
 }

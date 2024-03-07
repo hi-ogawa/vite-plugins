@@ -9,11 +9,12 @@
   "dependencies": {
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
-    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226"
+    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
+    "rsc-html-stream": "^0.0.3"
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@types/react": "18.2.12",
-    "@types/react-dom": "18.2.5"
+    "@types/react": "18.2.59",
+    "@types/react-dom": "18.2.19"
   }
 }
