@@ -1,4 +1,6 @@
-export function Root() {
+export async function Root() {
+  const url = "https://unpkg.com/react@18.2.0/package.json";
+
   return (
     <html>
       <head>
@@ -12,7 +14,12 @@ export function Root() {
         ></script>
       </head>
       <body>
-        <div>hello rsc?</div>
+        <div>Hello RSC</div>
+        <div>
+          <pre>
+            fetch({url}) = {(await fetch(url)).text()}
+          </pre>
+        </div>
         <script src="/src/entry-client.tsx" type="module" />
       </body>
     </html>
