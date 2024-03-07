@@ -268,7 +268,7 @@ importers:
         version: 0.0.3
     devDependencies:
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:*
+        specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
         specifier: 18.2.59

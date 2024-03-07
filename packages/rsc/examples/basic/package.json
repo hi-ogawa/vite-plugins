@@ -13,7 +13,7 @@
     "rsc-html-stream": "^0.0.3"
   },
   "devDependencies": {
-    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
+    "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@types/react": "18.2.59",
     "@types/react-dom": "18.2.19"
   }
