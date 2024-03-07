@@ -1,0 +1,30 @@
+{
+  "name": "@hiogawa/rsc",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "release": "pnpm publish --no-git-checks --access public"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^5.1.0"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}

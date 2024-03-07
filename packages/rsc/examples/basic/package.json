@@ -1,0 +1,19 @@
+{
+  "name": "@hiogawa/rsc-example-basic",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev"
+  },
+  "dependencies": {
+    "react": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226"
+  },
+  "devDependencies": {
+    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
+    "@types/react": "18.2.12",
+    "@types/react-dom": "18.2.5"
+  }
+}
