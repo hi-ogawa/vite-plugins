@@ -1,18 +1,15 @@
-import { Counter } from "./components/counter";
+import { once } from "@hiogawa/utils";
 import type { ModuleMap, WebpackRequire } from "./react-types";
 
 // TODO: build?
 
-// TODO: dynamic import?
-const myModules: Record<string, Promise<unknown>> = {
-  "/src/components/counter.tsx": Promise.resolve({
-    Counter,
-  }),
-};
+// __webpack_require__ needs to return stable promise
+// TODO: how to invalidate?
+const importOnce = once((id: string) => import(/* @vite-ignore */ id));
 
 const myWebpackRequire: WebpackRequire = (id) => {
   console.log("[webpackRequire]", { id });
-  return myModules[id]!;
+  return importOnce(id);
 };
 
 export function initDomWebpack() {
@@ -30,8 +27,8 @@ export const myModuleMap: ModuleMap = new Proxy(
           get(_target, name, _receiver) {
             console.log("[moduleMap]", { id, name });
             return {
-              id: "/src/components/counter.tsx",
-              name: "Counter",
+              id,
+              name,
               chunks: [],
             };
           },

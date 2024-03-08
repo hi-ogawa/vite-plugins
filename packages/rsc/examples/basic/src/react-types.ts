@@ -20,4 +20,4 @@ export interface SsrManifest {
   moduleLoading: null;
 }
 
-export type WebpackRequire = (id: string) => Promise<any>;
+export type WebpackRequire = (id: string) => Promise<unknown>;
