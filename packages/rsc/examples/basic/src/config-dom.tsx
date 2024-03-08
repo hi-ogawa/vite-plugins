@@ -10,10 +10,14 @@ const myModules: Record<string, Promise<unknown>> = {
   }),
 };
 
-export const myWebpackRequire: WebpackRequire = (id) => {
+const myWebpackRequire: WebpackRequire = (id) => {
   console.log("[webpackRequire]", { id });
   return myModules[id]!;
 };
+
+export function initDomWebpack() {
+  Object.assign(globalThis, { __webpack_require__: myWebpackRequire });
+}
 
 export const myModuleMap: ModuleMap = new Proxy(
   {

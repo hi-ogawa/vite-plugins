@@ -5,14 +5,12 @@ import reactDomServer from "react-dom/server.edge";
 import reactServerDomClient from "react-server-dom-webpack/client.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { RscServer } from "../vite.config";
-import { myModuleMap, myWebpackRequire } from "./config-dom";
+import { initDomWebpack, myModuleMap } from "./config-dom";
 
 // injected by vitePluginRscServer
 declare let __rscServer: RscServer;
 
-Object.assign(globalThis, {
-  __webpack_require__: myWebpackRequire,
-});
+initDomWebpack();
 
 export default async function handler(
   _req: http.IncomingMessage,
