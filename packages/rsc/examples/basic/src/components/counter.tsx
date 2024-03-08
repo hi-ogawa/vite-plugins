@@ -1,9 +1,12 @@
-import { useState } from "react";
-
-// TODO: use client
+import React from "react";
+import type { ModuleMap } from "react-server-dom-webpack/client.edge";
+import type {
+  BundlerConfig,
+  WebpackRequire,
+} from "react-server-dom-webpack/server.edge";
 
 export function Counter() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = React.useState(0);
 
   return (
     <div>
@@ -13,3 +16,79 @@ export function Counter() {
     </div>
   );
 }
+
+//
+// manually setup client references and module map
+// TODO: use client
+//
+
+// https://github.com/lazarv/react-server/blob/2ff6105e594666065be206729858ecfed6f5e8d8/packages/react-server/client/components.mjs#L15-L25
+export function createClientReference(Component: React.FC): React.FC {
+  Object.defineProperties(Component, {
+    $$typeof: {
+      value: Symbol.for("react.client.reference"),
+    },
+    $$id: {
+      value: `__some_client_id`,
+    },
+    $$async: {
+      value: true,
+    },
+  });
+  return Component;
+}
+
+export const ClientCounter = createClientReference(Counter);
+
+const modules: Record<string, Promise<unknown>> = {
+  __some_module_id: Promise.resolve({
+    __some_module_name: Counter,
+  }),
+};
+
+export const webpackRequire: WebpackRequire = (id) => {
+  console.log("[webpackRequire]", { id });
+  return modules[id]!;
+};
+
+export const bundlerConfig: BundlerConfig = new Proxy(
+  {
+    __some_client_id: {
+      id: "__some_bundler_id",
+      name: "__some_bundler_name",
+      chunks: [],
+    },
+  },
+  {
+    get(_target, p, _receiver) {
+      console.log("[bundlerConfig]", { p });
+      // @ts-ignore
+      return Reflect.get(...arguments);
+    },
+  }
+);
+
+export const moduleMap: ModuleMap = new Proxy(
+  {
+    __some_bundler_id: {
+      __some_bundler_name: {
+        id: "__some_module_id",
+        name: "__some_module_name",
+        chunks: [],
+      },
+    },
+  },
+  {
+    get(_target, id, _receiver) {
+      console.log("[moduleMap]", { id });
+      // @ts-ignore
+      return new Proxy(Reflect.get(...arguments), {
+        get(_target, name, _receiver) {
+          console.log("[moduleMap]", { id, name });
+          // @ts-ignore
+          return Reflect.get(...arguments);
+        },
+      });
+    },
+  }
+);

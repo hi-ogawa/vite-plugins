@@ -5,15 +5,40 @@ declare module "react-dom/server.edge" {
 }
 
 declare module "react-server-dom-webpack/server.edge" {
-  export function renderToReadableStream(node: React.ReactNode): ReadableStream;
+  export interface WebpackRequire {
+    (id: string): Promise<any>;
+  }
+
+  export interface BundlerConfig {
+    [id: string]: {
+      id: string;
+      chunks: string[];
+      name: string;
+    };
+  }
+
+  export function renderToReadableStream(
+    node: React.ReactNode,
+    bundlerConfig: BundlerConfig
+  ): ReadableStream;
 }
 
 declare module "react-server-dom-webpack/client.edge" {
+  export type ModuleMap = {
+    [id: string]: {
+      [exportName: string]: {
+        id: string;
+        chunks: string[];
+        name: string;
+      };
+    };
+  };
+
   export function createFromReadableStream(
     stream: ReadableStream,
     options: {
       ssrManifest: {
-        moduleMap: null;
+        moduleMap: ModuleMap;
         moduleLoading: null;
       };
     }

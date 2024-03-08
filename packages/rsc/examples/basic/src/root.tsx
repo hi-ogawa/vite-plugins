@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { ClientCounter } from "./components/counter";
 
 export async function Root() {
   return (
@@ -9,7 +10,9 @@ export async function Root() {
           dangerouslySetInnerHTML={{
             // TODO: what's this
             __html: /* js*/ `
-              self.__webpack_require__ = () => {};
+              Object.assign(globalThis, {
+                __webpack_require__: () => {}
+              })
             `,
           }}
         ></script>
@@ -19,7 +22,10 @@ export async function Root() {
         <div>
           <pre>{await fs.promises.readFile("./package.json", "utf-8")}</pre>
         </div>
-        <script src="/src/entry-client.tsx" type="module" />
+        <div>
+          <ClientCounter />
+        </div>
+        {/* <script src="/src/entry-client.tsx" type="module" /> */}
       </body>
     </html>
   );
