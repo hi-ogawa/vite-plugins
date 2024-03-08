@@ -1,3 +1,4 @@
+import { vitePluginTinyRefresh } from "@hiogawa/tiny-refresh/dist/vite";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import {
   type Plugin,
@@ -8,13 +9,12 @@ import {
   parseAstAsync,
 } from "vite";
 import type { RenderRsc } from "./src/entry-rsc";
-// import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    // TODO: preamble
-    // react(),
+    // TODO: setup @vitejs/plugin-react preamble
+    vitePluginTinyRefresh({ runtime: "react" }),
 
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
@@ -113,10 +113,13 @@ export const Counter = createClientReference("<id>::Counter");
  */
 function vitePluginRscUseClient(): Plugin {
   const filter = createFilter(/\.[tj]sx$/);
+  const useClientFiles = new Set<string>();
+
   return {
-    name: "rsc-server",
+    name: "rsc-use-client",
     async transform(code, id, _options) {
       if (!filter(id)) {
+        useClientFiles.delete(id);
         return;
       }
       const ast = await parseAstAsync(code);
@@ -127,8 +130,11 @@ function vitePluginRscUseClient(): Plugin {
           node.directive === "use client"
       );
       if (!hasUseClient) {
+        useClientFiles.delete(id);
         return;
       }
+      useClientFiles.add(id);
+      console.log("[rsc-use-client:transform]", { id });
       let result = `
         import { createClientReference } from "/src/utils-rsc";
       `;
@@ -147,6 +153,20 @@ function vitePluginRscUseClient(): Plugin {
         }
       }
       return result;
+    },
+    // TODO: avoid server full-reload on "use client" file change
+    handleHotUpdate(ctx) {
+      console.log("[rsc-use-client:handleHotUpdate]", [
+        ctx.file,
+        useClientFiles.has(ctx.file),
+      ]);
+      if (useClientFiles.has(ctx.file)) {
+        for (const mod of ctx.modules) {
+          ctx.server.moduleGraph.invalidateModule(mod);
+        }
+        return [];
+      }
+      return ctx.modules;
     },
   };
 }

@@ -2,6 +2,7 @@
 
 import React from "react";
 
+// @hmr-unsafe
 export function Counter() {
   const [count, setCount] = React.useState(0);
 
