@@ -1,5 +1,5 @@
-import { vitePluginTinyRefresh } from "@hiogawa/tiny-refresh/dist/vite";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
+import react from "@vitejs/plugin-react";
 import {
   type Plugin,
   type ViteDevServer,
@@ -13,9 +13,7 @@ import type { RenderRsc } from "./src/entry-rsc";
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    // TODO: use official plugin @vitejs/plugin-react
-    vitePluginTinyRefresh({ runtime: "react" }),
-
+    react(),
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
     }),
@@ -67,6 +65,10 @@ export class RscServer {
       configFile: false,
       envFile: false,
       cacheDir: "./node_modules/.vite-rsc",
+      optimizeDeps: {
+        noDiscovery: true,
+        include: [],
+      },
       ssr: {
         resolve: {
           conditions: ["react-server"],

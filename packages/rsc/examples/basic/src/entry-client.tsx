@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
@@ -21,7 +22,9 @@ async function main() {
     return React.use(node);
   }
 
-  const root = hydrateRoot(document, <Content />);
+  const rootEl = document.getElementById("root");
+  tinyassert(rootEl);
+  const root = hydrateRoot(rootEl, <Content />);
   console.log(root);
 }
 
