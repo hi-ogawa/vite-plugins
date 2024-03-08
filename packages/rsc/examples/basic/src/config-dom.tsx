@@ -7,8 +7,8 @@ import { Counter } from "./components/counter";
 // TODO: auto generate
 
 const myModules: Record<string, Promise<unknown>> = {
-  __some_module_id: Promise.resolve({
-    __some_module_name: Counter,
+  moduleId: Promise.resolve({
+    moduleName: Counter,
   }),
 };
 
@@ -23,10 +23,10 @@ export function initDomWebpack() {
 
 export const myModuleMap: ModuleMap = new Proxy(
   {
-    __some_module_id: {
-      __some_module_name: {
-        id: "__some_module_id",
-        name: "__some_module_name",
+    moduleId: {
+      moduleName: {
+        id: "moduleId",
+        name: "moduleName",
         chunks: [],
       },
     },

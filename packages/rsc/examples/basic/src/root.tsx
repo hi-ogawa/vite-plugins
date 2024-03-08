@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { CounterReference } from "./components/counter-reference";
+import { Counter } from "./components/counter-reference";
 
 export async function Root() {
   return (
@@ -14,7 +14,7 @@ export async function Root() {
           <pre>{await fs.promises.readFile("./README.md", "utf-8")}</pre>
         </div>
         <div>
-          <CounterReference />
+          <Counter />
         </div>
         <script src="/src/entry-client.tsx" type="module" />
       </body>

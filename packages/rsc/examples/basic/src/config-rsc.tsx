@@ -4,9 +4,9 @@ import type { BundlerConfig } from "react-server-dom-webpack/server.edge";
 
 export const myBundlerConfig: BundlerConfig = new Proxy(
   {
-    __some_client_id: {
-      id: "__some_module_id",
-      name: "__some_module_name",
+    bundlerId: {
+      id: "moduleId",
+      name: "moduleName",
       chunks: [],
     },
   },
