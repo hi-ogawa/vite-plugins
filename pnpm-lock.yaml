@@ -267,6 +267,9 @@ importers:
         specifier: ^0.0.3
         version: 0.0.3
     devDependencies:
+      '@hiogawa/utils':
+        specifier: ^1.6.2
+        version: 1.6.2
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
@@ -2236,6 +2239,10 @@ packages:
 
   /@hiogawa/utils@1.6.1-pre.10:
     resolution: {integrity: sha512-p/KZkDcXCeRKeve3/NlVznFupaNgAZkQkD3q0oU/RpUL8s2j0aFJ/UIvGirp8or2yvnedH3SLYlQST006rVjHQ==}
+
+  /@hiogawa/utils@1.6.2:
+    resolution: {integrity: sha512-t2xSsf6UZA6Y1NjrV80RUse5cElGTBxZOOs+RLSTI82O5u9yPhPXQ8xlxvExBqlR2SwjBvikCHqs4Oe6waWw1Q==}
+    dev: true
 
   /@iconify-json/ri@1.1.9:
     resolution: {integrity: sha512-YOSBce/bzkORxBI1mYz4b9vidaJDeorwzuddFoIV9ajazncI55VLtQ+puIra0d3HQhYfswNSwRy8PrHTZmvaOg==}

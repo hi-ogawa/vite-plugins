@@ -1,3 +1,4 @@
+import "./globals-server";
 import type http from "node:http";
 import { Readable } from "node:stream";
 import React from "react";
@@ -11,7 +12,7 @@ import { myModuleMap, myWebpackRequire } from "./components/counter";
 declare let __rscServer: RscServer;
 
 Object.assign(globalThis, {
-  __webpack_require__: myWebpackRequire,
+  __webpack_require_ssr__: myWebpackRequire,
 });
 
 export default async function handler(

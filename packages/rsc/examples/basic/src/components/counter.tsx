@@ -5,10 +5,6 @@ import type {
   WebpackRequire,
 } from "react-server-dom-webpack/server.edge";
 
-// TODO: hooks are undefined in react-server exports?
-//       that's why these two usages must live in a different module graph
-//        - main: eact-server-dom-webpack/client + react-dom/server
-//        - rsc: react-server-dom-webpack/server
 export function Counter() {
   const [count, setCount] = React.useState(0);
 
@@ -46,12 +42,13 @@ export const ClientCounter = createClientReference(Counter);
 
 const myModules: Record<string, Promise<unknown>> = {
   __some_module_id: Promise.resolve({
-    __some_module_name: () => <div>todo-client-counter</div>,
+    // __some_module_name: () => <div>todo-client-counter</div>,
+    __some_module_name: Counter,
   }),
 };
 
 export const myWebpackRequire: WebpackRequire = (id) => {
-  console.log("[webpackRequire]", { id });
+  // console.log("[webpackRequire]", { id });
   return myModules[id]!;
 };
 
