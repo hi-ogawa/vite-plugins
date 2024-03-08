@@ -154,19 +154,5 @@ function vitePluginRscUseClient(): Plugin {
       }
       return result;
     },
-    // TODO: avoid server full-reload on "use client" file change
-    handleHotUpdate(ctx) {
-      console.log("[rsc-use-client:handleHotUpdate]", [
-        ctx.file,
-        useClientFiles.has(ctx.file),
-      ]);
-      if (useClientFiles.has(ctx.file)) {
-        for (const mod of ctx.modules) {
-          ctx.server.moduleGraph.invalidateModule(mod);
-        }
-        return [];
-      }
-      return ctx.modules;
-    },
   };
 }
