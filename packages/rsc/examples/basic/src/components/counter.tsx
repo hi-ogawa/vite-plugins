@@ -42,13 +42,12 @@ export const ClientCounter = createClientReference(Counter);
 
 const myModules: Record<string, Promise<unknown>> = {
   __some_module_id: Promise.resolve({
-    // __some_module_name: () => <div>todo-client-counter</div>,
     __some_module_name: Counter,
   }),
 };
 
 export const myWebpackRequire: WebpackRequire = (id) => {
-  // console.log("[webpackRequire]", { id });
+  console.log("[webpackRequire]", { id });
   return myModules[id]!;
 };
 

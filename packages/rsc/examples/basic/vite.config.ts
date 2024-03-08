@@ -5,6 +5,7 @@ import {
   createServer,
   defineConfig,
 } from "vite";
+import type { RenderRsc } from "./src/entry-rsc";
 
 export default defineConfig({
   clearScreen: false,
@@ -34,6 +35,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     },
     async buildEnd(_options) {
       await rscServer?.close();
+      rscServer = undefined;
     },
   };
 }
@@ -80,9 +82,9 @@ export class RscServer {
   }
 
   async render() {
-    console.log("[RscServer] close");
+    console.log("[RscServer] render");
     const mod: any = await this.server.ssrLoadModule(this.options.entry);
-    const rscStream = await mod.default();
+    const rscStream = (mod.default as RenderRsc)();
     return rscStream;
   }
 

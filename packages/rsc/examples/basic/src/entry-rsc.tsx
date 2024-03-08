@@ -1,13 +1,10 @@
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { myBundlerConfig } from "./components/counter";
-import { globalConetxt } from "./globals-server";
 import { Root } from "./root";
 
-export default async function render() {
-  return globalConetxt.run({ isRsc: true }, () => renderInner());
-}
+export type RenderRsc = () => ReadableStream;
 
-function renderInner() {
+export default function renderRsc() {
   console.log("-> reactServerDomServer.renderToReadableStream");
   const rscStream = reactServerDomServer.renderToReadableStream(
     <Root />,
