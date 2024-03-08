@@ -59,28 +59,21 @@ export class RscServer {
       configFile: false,
       envFile: false,
       cacheDir: "./node_modules/.vite-rsc",
-      server: {
-        // TODO: setup fs watcher with full-reload manually?
-        hmr: false,
-      },
       ssr: {
         resolve: {
           conditions: ["react-server"],
         },
 
-        // no external to ensure loading everything with react-server condition
+        // no external to ensure loading all deps with react-server condition
         // TODO: just spawn worker?
         noExternal: true,
-        // noExternal: ["react", "react-server-dom-webpack"],
+        // noExternal: ["react", "react-server-dom-webpack"]
 
         optimizeDeps: {
           // pre-bundle cjs deps
           include: [
             "react",
             "react/jsx-dev-runtime",
-            // "react-dom",
-            // "react-dom/server.edge",
-            // "react-server-dom-webpack/client.edge",
             "react-server-dom-webpack/server.edge",
           ],
         },
