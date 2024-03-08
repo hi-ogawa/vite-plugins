@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev"
+    "dev": "vite dev",
+    "build": "vite build && vite build --ssr"
   },
   "dependencies": {
     "react": "18.3.0-canary-6c3b8dbfe-20240226",

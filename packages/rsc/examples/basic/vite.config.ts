@@ -10,7 +10,7 @@ import {
 } from "vite";
 import type { RenderRsc } from "./src/entry-rsc";
 
-export default defineConfig({
+export default defineConfig((env) => ({
   clearScreen: false,
   plugins: [
     react(),
@@ -21,7 +21,10 @@ export default defineConfig({
       entry: "/src/entry-rsc.tsx",
     }),
   ],
-});
+  build: {
+    outDir: env.isSsrBuild ? "dist/server" : "dist/client",
+  },
+}));
 
 //
 // render RSC on separate module graph with "react-server" conditions
