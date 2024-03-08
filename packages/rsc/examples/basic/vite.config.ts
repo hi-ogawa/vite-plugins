@@ -61,6 +61,9 @@ export class RscServer {
   async setup() {
     console.log("[RscServer] setup");
     this.server = await createServer({
+      // TODO: custom logger
+      // customLogger: undefined,
+
       clearScreen: false,
       configFile: false,
       envFile: false,
@@ -179,7 +182,7 @@ function vitePluginRscUseClient({
         !useClientFiles.has(ctx.file) && ctx.modules.length > 0;
       console.log("[rsc-use-client:handleHotUpdate]", [isRscModule, ctx.file]);
       if (isRscModule) {
-        rscServer.parent?.hot.send({ type: "full-reload" });
+        rscServer.parent?.hot.send({ type: "full-reload", path: ctx.file });
       }
       return ctx.modules;
     },
