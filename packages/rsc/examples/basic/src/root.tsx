@@ -5,6 +5,7 @@ export async function Root() {
   return (
     <html>
       <head>
+        <title>rsc-experiment</title>
         <script src="/@vite/client" type="module" />
       </head>
       <body>
