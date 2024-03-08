@@ -143,23 +143,31 @@ function vitePluginRscUseClient({
         return;
       }
       useClientFiles.add(id);
-      console.log("[rsc-use-client:transform]", { id });
-      let result = `
-        import { createClientReference } from "/src/utils-rsc";
-      `;
+      // for now only handle simple exports
+      //   export function foo() {}
+      //   export const foo = () => {}
+      // cf. https://github.com/hi-ogawa/vite-plugins/blob/aed20d88ae4b1582701795e2079a96d7caeccf89/packages/vite-plugin-simple-hmr/src/transform.ts#L73
+      const exportNames: string[] = [];
       for (const node of ast.body) {
-        // for now only handle this case
-        //   export function foo() {}
         if (node.type === "ExportNamedDeclaration") {
           if (node.declaration) {
             if (node.declaration.type === "FunctionDeclaration") {
-              const name = node.declaration.id.name;
-              result += `
-                export const ${name} = createClientReference("${id}::${name}");
-              `;
+              exportNames.push(node.declaration.id.name);
+            }
+            if (node.declaration.type === "VariableDeclaration") {
+              for (const decl of node.declaration.declarations) {
+                if (decl.id.type === "Identifier") {
+                  exportNames.push(decl.id.name);
+                }
+              }
             }
           }
         }
+      }
+      console.log("[rsc-use-client:transform]", { id, exportNames });
+      let result = `import { createClientReference } from "/src/utils-rsc";\n`;
+      for (const name of exportNames) {
+        result += `export const ${name} = createClientReference("${id}::${name}");\n`;
       }
       return result;
     },
