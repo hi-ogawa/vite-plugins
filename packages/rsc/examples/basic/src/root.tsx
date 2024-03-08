@@ -11,7 +11,7 @@ export async function Root() {
       <body>
         <div>Hello RSC</div>
         <div>
-          <pre>{await fs.promises.readFile("./package.json", "utf-8")}</pre>
+          <pre>{await fs.promises.readFile("./README.md", "utf-8")}</pre>
         </div>
         <div>
           <ClientCounter />

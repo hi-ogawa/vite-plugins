@@ -78,7 +78,6 @@ export class RscServer {
         },
       },
     });
-    await this.server.pluginContainer.buildStart({});
   }
 
   async render() {
