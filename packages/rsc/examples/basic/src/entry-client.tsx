@@ -1,7 +1,7 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { myModuleMap, myWebpackRequire } from "./components/counter";
+import { myModuleMap, myWebpackRequire } from "./config-dom";
 
 async function main() {
   Object.assign(globalThis, {

@@ -1,5 +1,5 @@
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
-import { myBundlerConfig } from "./components/counter";
+import { myBundlerConfig } from "./config-rsc";
 import { Root } from "./root";
 
 export type RenderRsc = () => ReadableStream;

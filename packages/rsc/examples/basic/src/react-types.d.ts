@@ -5,10 +5,6 @@ declare module "react-dom/server.edge" {
 }
 
 declare module "react-server-dom-webpack/server.edge" {
-  export interface WebpackRequire {
-    (id: string): Promise<any>;
-  }
-
   export interface BundlerConfig {
     [id: string]: {
       id: string;
@@ -24,6 +20,10 @@ declare module "react-server-dom-webpack/server.edge" {
 }
 
 declare module "react-server-dom-webpack/client.edge" {
+  export interface WebpackRequire {
+    (id: string): Promise<any>;
+  }
+
   export type ModuleMap = {
     [id: string]: {
       [exportName: string]: {
