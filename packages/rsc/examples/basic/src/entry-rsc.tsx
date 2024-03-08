@@ -2,7 +2,8 @@ import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { myBundlerConfig, myWebpackRequire } from "./components/counter";
 import { Root } from "./root";
 
-// TODO: need different __webpack_require__ for SSR and RSC
+// TODO: need different __webpack_require__ for SSR and RSC.
+//       async context to differentiate async chain?
 Object.assign(globalThis, {
   __webpack_require__: myWebpackRequire,
 });

@@ -59,6 +59,7 @@ export class RscServer {
         },
 
         // no external to ensure loading everything with react-server condition
+        // TODO: just spawn worker?
         noExternal: true,
         // noExternal: ["react", "react-server-dom-webpack"],
 

@@ -7,6 +7,7 @@ import { injectRSCPayload } from "rsc-html-stream/server";
 import type { RscServer } from "../vite.config";
 import { myModuleMap, myWebpackRequire } from "./components/counter";
 
+// injected by vitePluginRscServer
 declare let __rscServer: RscServer;
 
 Object.assign(globalThis, {
