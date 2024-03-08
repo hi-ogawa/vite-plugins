@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import { Counter } from "./components/counter";
 import { Header } from "./components/header";
 
@@ -8,12 +7,21 @@ export async function Root() {
     <div>
       <Header />
       <div>
-        <pre>{await fs.promises.readFile("./README.md", "utf-8")}</pre>
+        <Async />
       </div>
       <div>
         <h4>Client component</h4>
         <Counter defaultValue={1234} />
       </div>
     </div>
+  );
+}
+
+async function Async() {
+  const url =
+    "https://unpkg.com/react@18.3.0-canary-6c3b8dbfe-20240226/package.json";
+  const res = await fetch(url);
+  return (
+    <pre>{`fetch("${url}")\n` + (await res.text()).slice(0, 200) + "..."}</pre>
   );
 }

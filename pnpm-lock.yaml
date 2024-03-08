@@ -267,9 +267,6 @@ importers:
         specifier: ^0.0.3
         version: 0.0.3
     devDependencies:
-      '@hiogawa/tiny-refresh':
-        specifier: 0.0.1-pre.14
-        version: 0.0.1-pre.14(react@18.3.0-canary-6c3b8dbfe-20240226)(vite@5.1.0)
       '@hiogawa/utils':
         specifier: ^1.6.2
         version: 1.6.2
@@ -2189,21 +2186,6 @@ packages:
     dependencies:
       vite: 5.1.0(@types/node@18.16.18)
     dev: false
-
-  /@hiogawa/tiny-refresh@0.0.1-pre.14(react@18.3.0-canary-6c3b8dbfe-20240226)(vite@5.1.0):
-    resolution: {integrity: sha512-s9lHgmkM7VWikQchfyCHti36yYJyu/MHA69vW5WFv1Ueu/UU36TzxIQER2dH3jkMb0/y2vmMyXB3VFs3VysIbA==}
-    peerDependencies:
-      react: '*'
-      vite: '*'
-    peerDependenciesMeta:
-      react:
-        optional: true
-      vite:
-        optional: true
-    dependencies:
-      react: 18.3.0-canary-6c3b8dbfe-20240226
-      vite: 5.1.0(@types/node@18.16.18)
-    dev: true
 
   /@hiogawa/tiny-rpc@0.2.2(zod@3.21.4):
     resolution: {integrity: sha512-G+ebk/OV8/i2P/8/QSQTsn94l2gArHUZqc43CPHve4wG3AaIqo34xMgxNQax5kgbwzkK+NusPcbQxBI3mMm0dg==}
@@ -7257,6 +7239,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
+    dev: false
 
   /read-pkg-up@7.0.1:
     resolution: {integrity: sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==}
