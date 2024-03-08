@@ -55,6 +55,10 @@ export class RscServer {
       configFile: false,
       envFile: false,
       cacheDir: "./node_modules/.vite-rsc",
+      server: {
+        // TODO: setup fs watcher with full-reload manually?
+        hmr: false,
+      },
       ssr: {
         resolve: {
           conditions: ["react-server"],
