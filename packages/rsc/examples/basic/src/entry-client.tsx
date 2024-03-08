@@ -1,10 +1,10 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { initDomWebpack, myModuleMap } from "./config-dom";
+import { initDomCsr, myModuleMap } from "./config-dom";
 
 async function main() {
-  initDomWebpack();
+  initDomCsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.browser"

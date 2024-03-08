@@ -7,13 +7,13 @@ import type { ModuleMap, WebpackRequire } from "./react-types";
 // TODO: how to invalidate?
 const importOnce = once((id: string) => import(/* @vite-ignore */ id));
 
-const myWebpackRequire: WebpackRequire = (id) => {
+const csrWebpackRequire: WebpackRequire = (id) => {
   console.log("[webpackRequire]", { id });
   return importOnce(id);
 };
 
-export function initDomWebpack() {
-  Object.assign(globalThis, { __webpack_require__: myWebpackRequire });
+export function initDomCsr() {
+  Object.assign(globalThis, { __webpack_require__: csrWebpackRequire });
 }
 
 export const myModuleMap: ModuleMap = new Proxy(
