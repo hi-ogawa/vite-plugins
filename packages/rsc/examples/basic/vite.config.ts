@@ -154,5 +154,14 @@ function vitePluginRscUseClient(): Plugin {
       }
       return result;
     },
+    handleHotUpdate(ctx) {
+      const isRscModule =
+        !useClientFiles.has(ctx.file) && ctx.modules.length > 0;
+      console.log("[rsc-use-client:handleHotUpdate]", [isRscModule, ctx.file]);
+      if (isRscModule) {
+        // TODO: full-reload client
+      }
+      return ctx.modules;
+    },
   };
 }

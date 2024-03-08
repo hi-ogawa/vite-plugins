@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { Counter } from "./components/counter";
+import { Header } from "./components/header";
 
 export async function Root() {
   return (
@@ -9,7 +10,7 @@ export async function Root() {
         <script src="/@vite/client" type="module" />
       </head>
       <body>
-        <h4>Hello RSC</h4>
+        <Header />
         <div>
           <pre>{await fs.promises.readFile("./README.md", "utf-8")}</pre>
         </div>
