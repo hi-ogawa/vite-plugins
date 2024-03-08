@@ -1,8 +1,5 @@
-import type {
-  ModuleMap,
-  WebpackRequire,
-} from "react-server-dom-webpack/client.edge";
 import { Counter } from "./components/counter";
+import type { ModuleMap, WebpackRequire } from "./react-types";
 
 // TODO: build?
 
@@ -27,16 +24,19 @@ export const myModuleMap: ModuleMap = new Proxy(
   {
     get(_target, id, _receiver) {
       console.log("[moduleMap]", { id });
-      return new Proxy({}, {
-        get(_target, name, _receiver) {
-          console.log("[moduleMap]", { id, name });
-          return {
-            id: "/src/components/counter.tsx",
-            name: "Counter",
-            chunks: [],
-          }
-        },
-      });
+      return new Proxy(
+        {},
+        {
+          get(_target, name, _receiver) {
+            console.log("[moduleMap]", { id, name });
+            return {
+              id: "/src/components/counter.tsx",
+              name: "Counter",
+              chunks: [],
+            };
+          },
+        }
+      );
     },
   }
 );

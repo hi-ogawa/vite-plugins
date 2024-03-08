@@ -4,42 +4,18 @@ declare module "react-dom/server.edge" {
   export * from "react-dom/server";
 }
 
-interface ImportManifestEntry {
-  id: string;
-  name: string;
-  // TODO: what's this?
-  chunks: string[];
-}
-
 declare module "react-server-dom-webpack/server.edge" {
-  export interface BundlerConfig {
-    [bundlerId: string]: ImportManifestEntry;
-  }
-
   export function renderToReadableStream(
     node: React.ReactNode,
-    bundlerConfig: BundlerConfig
+    bundlerConfig: import("./react-types").BundlerConfig
   ): ReadableStream;
 }
 
 declare module "react-server-dom-webpack/client.edge" {
-  export interface WebpackRequire {
-    (id: string): Promise<any>;
-  }
-
-  export type ModuleMap = {
-    [id: string]: {
-      [exportName: string]: ImportManifestEntry;
-    };
-  };
-
   export function createFromReadableStream(
     stream: ReadableStream,
     options: {
-      ssrManifest: {
-        moduleMap: ModuleMap;
-        moduleLoading: null;
-      };
+      ssrManifest: import("./react-types").SsrManifest;
     }
   ): Promise<React.ReactNode>;
 }

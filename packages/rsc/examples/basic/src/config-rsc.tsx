@@ -1,5 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import type { BundlerConfig } from "react-server-dom-webpack/server.edge";
+import type { BundlerConfig } from "./react-types";
 
 // TODO: build?
 
