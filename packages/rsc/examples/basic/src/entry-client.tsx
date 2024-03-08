@@ -1,15 +1,22 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import reactServerDomClient from "react-server-dom-webpack/client.browser";
 import { rscStream } from "rsc-html-stream/client";
+import { myModuleMap, myWebpackRequire } from "./components/counter";
 
-function main() {
+async function main() {
+  Object.assign(globalThis, {
+    __webpack_require__: myWebpackRequire,
+  });
+  const { default: reactServerDomClient } = await import(
+    "react-server-dom-webpack/client.browser"
+  );
+
   let node: Promise<React.ReactNode>;
   function Content() {
     node ??= reactServerDomClient.createFromReadableStream(rscStream, {
       ssrManifest: {
+        moduleMap: myModuleMap,
         moduleLoading: null,
-        moduleMap: null,
       },
     });
     return React.use(node);

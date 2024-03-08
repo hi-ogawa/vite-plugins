@@ -6,16 +6,6 @@ export async function Root() {
     <html>
       <head>
         <script src="/@vite/client" type="module" />
-        <script
-          dangerouslySetInnerHTML={{
-            // TODO: what's this
-            __html: /* js*/ `
-              Object.assign(globalThis, {
-                __webpack_require__: () => {}
-              })
-            `,
-          }}
-        ></script>
       </head>
       <body>
         <div>Hello RSC</div>
@@ -25,7 +15,7 @@ export async function Root() {
         <div>
           <ClientCounter />
         </div>
-        {/* <script src="/src/entry-client.tsx" type="module" /> */}
+        <script src="/src/entry-client.tsx" type="module" />
       </body>
     </html>
   );
