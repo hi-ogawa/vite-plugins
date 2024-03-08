@@ -6,10 +6,14 @@ import {
   defineConfig,
 } from "vite";
 import type { RenderRsc } from "./src/entry-rsc";
+// import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   clearScreen: false,
   plugins: [
+    // TODO: preamble
+    // react(),
+
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
     }),

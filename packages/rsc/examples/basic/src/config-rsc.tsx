@@ -1,20 +1,23 @@
+import { tinyassert } from "@hiogawa/utils";
 import type { BundlerConfig } from "react-server-dom-webpack/server.edge";
 
-// TODO: auto generate
+// TODO: build?
+
+// bundler id: /src/components/counter.tsx::Counter
+//   ⇓
+// id: /src/components/counter.tsx
+// name: Counter
 
 export const myBundlerConfig: BundlerConfig = new Proxy(
-  {
-    bundlerId: {
-      id: "moduleId",
-      name: "moduleName",
-      chunks: [],
-    },
-  },
+  {},
   {
     get(_target, p, _receiver) {
       console.log("[bundlerConfig]", { p });
-      // @ts-ignore
-      return Reflect.get(...arguments);
+      tinyassert(typeof p === "string");
+      const [id, name] = p.split("::");
+      tinyassert(id);
+      tinyassert(name);
+      return { id, name, chunks: [] };
     },
   }
 );

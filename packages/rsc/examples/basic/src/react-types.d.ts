@@ -4,13 +4,16 @@ declare module "react-dom/server.edge" {
   export * from "react-dom/server";
 }
 
+interface ImportManifestEntry {
+  id: string;
+  name: string;
+  // TODO: what's this?
+  chunks: string[];
+}
+
 declare module "react-server-dom-webpack/server.edge" {
   export interface BundlerConfig {
-    [id: string]: {
-      id: string;
-      chunks: string[];
-      name: string;
-    };
+    [bundlerId: string]: ImportManifestEntry;
   }
 
   export function renderToReadableStream(
@@ -26,11 +29,7 @@ declare module "react-server-dom-webpack/client.edge" {
 
   export type ModuleMap = {
     [id: string]: {
-      [exportName: string]: {
-        id: string;
-        chunks: string[];
-        name: string;
-      };
+      [exportName: string]: ImportManifestEntry;
     };
   };
 

@@ -4,11 +4,12 @@ import type {
 } from "react-server-dom-webpack/client.edge";
 import { Counter } from "./components/counter";
 
-// TODO: auto generate
+// TODO: build?
 
+// TODO: dynamic import?
 const myModules: Record<string, Promise<unknown>> = {
-  moduleId: Promise.resolve({
-    moduleName: Counter,
+  "/src/components/counter.tsx": Promise.resolve({
+    Counter,
   }),
 };
 
@@ -22,24 +23,18 @@ export function initDomWebpack() {
 }
 
 export const myModuleMap: ModuleMap = new Proxy(
-  {
-    moduleId: {
-      moduleName: {
-        id: "moduleId",
-        name: "moduleName",
-        chunks: [],
-      },
-    },
-  },
+  {},
   {
     get(_target, id, _receiver) {
       console.log("[moduleMap]", { id });
-      // @ts-ignore
-      return new Proxy(Reflect.get(...arguments), {
+      return new Proxy({}, {
         get(_target, name, _receiver) {
           console.log("[moduleMap]", { id, name });
-          // @ts-ignore
-          return Reflect.get(...arguments);
+          return {
+            id: "/src/components/counter.tsx",
+            name: "Counter",
+            chunks: [],
+          }
         },
       });
     },
