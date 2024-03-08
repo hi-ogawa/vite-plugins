@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { Counter } from "./components/counter-reference";
+import { Counter } from "./components/counter";
 
 export async function Root() {
   return (
