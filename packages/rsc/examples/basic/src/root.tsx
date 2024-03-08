@@ -16,7 +16,7 @@ export async function Root() {
         </div>
         <div>
           <h4>Client component</h4>
-          <Counter />
+          <Counter defaultValue={1234} />
         </div>
         <script src="/src/entry-client.tsx" type="module" />
       </body>

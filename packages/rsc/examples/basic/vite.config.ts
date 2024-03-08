@@ -13,7 +13,7 @@ import type { RenderRsc } from "./src/entry-rsc";
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    // TODO: setup @vitejs/plugin-react preamble
+    // TODO: use official plugin @vitejs/plugin-react
     vitePluginTinyRefresh({ runtime: "react" }),
 
     vitePluginSsrMiddleware({
