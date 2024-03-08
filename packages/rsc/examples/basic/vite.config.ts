@@ -31,11 +31,15 @@ export default defineConfig({
 
 function vitePluginRscServer(options: { entry: string }): Plugin {
   let rscServer: RscServer | undefined;
+  let parent: ViteDevServer | undefined;
   return {
     name: "rsc-server",
+    async configureServer(server) {
+      parent = server;
+    },
     async buildStart(_options) {
       await rscServer?.close();
-      rscServer = new RscServer(options);
+      rscServer = new RscServer(options, parent);
       await rscServer.setup();
       Object.assign(globalThis, { __rscServer: rscServer });
     },
@@ -52,7 +56,8 @@ export class RscServer {
   constructor(
     private options: {
       entry: string;
-    }
+    },
+    public parent?: ViteDevServer
   ) {}
 
   async setup() {
@@ -81,7 +86,7 @@ export class RscServer {
           ],
         },
       },
-      plugins: [vitePluginRscUseClient()],
+      plugins: [vitePluginRscUseClient({ rscServer: this })],
     });
   }
 
@@ -111,7 +116,11 @@ import { createClientReference } from "/src/utils-rsc"
 export const Counter = createClientReference("<id>::Counter");
 
  */
-function vitePluginRscUseClient(): Plugin {
+function vitePluginRscUseClient({
+  rscServer,
+}: {
+  rscServer: RscServer;
+}): Plugin {
   const filter = createFilter(/\.[tj]sx$/);
   const useClientFiles = new Set<string>();
 
@@ -154,12 +163,13 @@ function vitePluginRscUseClient(): Plugin {
       }
       return result;
     },
+    // full-reload client on rsc module change
     handleHotUpdate(ctx) {
       const isRscModule =
         !useClientFiles.has(ctx.file) && ctx.modules.length > 0;
       console.log("[rsc-use-client:handleHotUpdate]", [isRscModule, ctx.file]);
       if (isRscModule) {
-        // TODO: full-reload client
+        rscServer.parent?.hot.send({ type: "full-reload" });
       }
       return ctx.modules;
     },
