@@ -4,6 +4,8 @@ import type {
 } from "react-server-dom-webpack/client.edge";
 import { Counter } from "./components/counter";
 
+// TODO: auto generate
+
 const myModules: Record<string, Promise<unknown>> = {
   __some_module_id: Promise.resolve({
     __some_module_name: Counter,

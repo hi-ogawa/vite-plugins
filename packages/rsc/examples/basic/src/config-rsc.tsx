@@ -1,5 +1,7 @@
 import type { BundlerConfig } from "react-server-dom-webpack/server.edge";
 
+// TODO: auto generate
+
 export const myBundlerConfig: BundlerConfig = new Proxy(
   {
     __some_client_id: {
