@@ -5,4 +5,4 @@
 - https://github.com/cyco130/vite-rsc
 - https://github.com/nksaraf/vinxi
 - https://github.com/lazarv/react-server
-- facebook/react#26926
+- https://github.com/facebook/react/pull/26926
