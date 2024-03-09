@@ -81,7 +81,7 @@ async function getHtmlTemplate() {
   }
   // make </body></html> trailer
   // https://github.com/devongovett/rsc-html-stream/blob/5c2f058996e42be6120dfaf1df384361331f3ea9/server.js#L2
-  html = html.replace(/<\/body>\s*<\/html>/, "</body></html>");
+  html = html.replace(/<\/body>\s*<\/html>\s*/, "</body></html>");
   return html;
 }
 
