@@ -8,7 +8,7 @@ import type { WebpackRequire } from "./react-types";
 const importOnce = once((id: string) => import(/* @vite-ignore */ id));
 
 const csrWebpackRequire: WebpackRequire = (id) => {
-  console.log("[webpackRequire]", { id });
+  console.log("[__webpack_require__]", { id });
   return importOnce(id);
 };
 

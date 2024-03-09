@@ -1,4 +1,4 @@
-import { once, tinyassert } from "@hiogawa/utils";
+import { tinyassert } from "@hiogawa/utils";
 import type { WebpackRequire } from "./react-types";
 
 // weird trick to make stable import promise during SSR
@@ -25,7 +25,7 @@ const importCache = new Map<string, StablePromise<unknown>>();
 // synchronously return stable promise(like)
 const ssrWebpackRequire: WebpackRequire = (id) => {
   console.log("[__webpack_require__]", { id });
-  const modPromise = import(/* @vite-ignore */ id);
+  const modPromise = ssrImport(/* @vite-ignore */ id);
   let stablePromise = importCache.get(id);
   if (stablePromise) {
     stablePromise.update(modPromise);
@@ -36,20 +36,20 @@ const ssrWebpackRequire: WebpackRequire = (id) => {
   return stablePromise;
 };
 
-export async function initDomWebpackSsr() {
+async function ssrImport(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
-    Object.assign(globalThis, { __webpack_require__: ssrWebpackRequire });
+    return import(/* @vite-ignore */ id);
   } else {
-    if ("__webpack_require__" in globalThis) {
-      return;
-    }
-    // @ts-ignore
-    const clientReferences = await import("/dist/rsc/client-references.js");
-    const webpackRequire: WebpackRequire = (id) => {
-      const dynImport = clientReferences[id];
-      tinyassert(dynImport, `client reference not found '${id}'`);
-      return dynImport();
-    };
-    Object.assign(globalThis, { __webpack_require__: once(webpackRequire) });
+    // `as string` to silence ts error
+    const clientReferences = await import(
+      "/dist/rsc/client-references.js" as string
+    );
+    const dynImport = clientReferences[id];
+    tinyassert(dynImport, `client reference not found '${id}'`);
+    return dynImport();
   }
+}
+
+export function initDomWebpackSsr() {
+  Object.assign(globalThis, { __webpack_require__: ssrWebpackRequire });
 }

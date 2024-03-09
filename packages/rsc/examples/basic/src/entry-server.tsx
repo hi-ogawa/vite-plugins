@@ -34,7 +34,7 @@ async function renderRsc() {
 }
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
-  await initDomWebpackSsr();
+  initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
