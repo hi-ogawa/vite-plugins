@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && vite build --ssr && rm dist/client/index.html",
+    "build": "vite build && vite build --ssr",
     "preview": "vite preview",
-    "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build",
+    "vc-build": "pnpm build && bash misc/vercel-serverless/build.sh",
+    "vc-release": "vercel deploy --prebuilt misc/vercel-serverless",
+    "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && rm dist/client/index.html",
     "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
   },
