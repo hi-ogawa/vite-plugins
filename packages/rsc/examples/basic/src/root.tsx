@@ -2,12 +2,13 @@ import { Counter } from "./components/counter";
 import { Header } from "./components/header";
 
 // TODO: full <html> render?
+
 export async function Root() {
   return (
     <div>
       <Header />
       <div>
-        <Async />
+        <Fetch url="https://unpkg.com/react@18.3.0-canary-6c3b8dbfe-20240226/package.json" />
       </div>
       <div>
         <h4>Client component</h4>
@@ -17,11 +18,8 @@ export async function Root() {
   );
 }
 
-async function Async() {
-  const url =
-    "https://unpkg.com/react@18.3.0-canary-6c3b8dbfe-20240226/package.json";
+async function Fetch({ url }: { url: string }) {
   const res = await fetch(url);
-  return (
-    <pre>{`fetch("${url}")\n` + (await res.text()).slice(0, 200) + "..."}</pre>
-  );
+  const resText = await res.text();
+  return <pre>{`fetch("${url}")\n${resText.slice(0, 200)}...`}</pre>;
 }
