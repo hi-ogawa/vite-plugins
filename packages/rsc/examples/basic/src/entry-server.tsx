@@ -1,5 +1,3 @@
-import type http from "node:http";
-import { Readable } from "node:stream";
 import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
@@ -11,15 +9,14 @@ import { initDomWebpackSsr } from "./config-dom-ssr";
 declare let __devServer: ViteDevServer;
 declare let __rscDevServer: ViteDevServer;
 
-export default async function handler(
-  _req: http.IncomingMessage,
-  res: http.ServerResponse
-) {
+export async function handler(_request: Request): Promise<Response> {
   const { rscStream } = await renderRsc();
   const htmlStream = await renderHtml(rscStream);
-
-  res.setHeader("content-type", "text/html");
-  Readable.fromWeb(htmlStream as any).pipe(res);
+  return new Response(htmlStream, {
+    headers: {
+      "content-type": "text/html",
+    },
+  });
 }
 
 async function renderRsc() {

@@ -21,7 +21,7 @@ export default defineConfig((env) => ({
   plugins: [
     react(),
     vitePluginSsrMiddleware({
-      entry: "/src/entry-server.tsx",
+      entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
     }),
     vitePluginRscServer({
       entry: "/src/entry-rsc.tsx",
