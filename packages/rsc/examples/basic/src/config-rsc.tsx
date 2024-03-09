@@ -8,7 +8,7 @@ import type { BundlerConfig } from "./react-types";
 // id: /src/components/counter.tsx
 // name: Counter
 
-export const myBundlerConfig: BundlerConfig = new Proxy(
+export const devBundlerConfig: BundlerConfig = new Proxy(
   {},
   {
     get(_target, p, _receiver) {

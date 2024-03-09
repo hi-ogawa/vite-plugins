@@ -11,7 +11,7 @@ const ssrWebpackRequire: WebpackRequire = (id) => {
   return store.cachedImport(id);
 };
 
-export function initDomSsr() {
+export function initDomWebpackSsr() {
   Object.assign(globalThis, { __webpack_require__: ssrWebpackRequire });
 }
 

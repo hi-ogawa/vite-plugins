@@ -2,10 +2,11 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { initDomCsr, myModuleMap } from "./config-dom";
+import { devModuleMap } from "./config-dom";
+import { initDomWebpackCsr } from "./config-dom-csr";
 
 async function main() {
-  initDomCsr();
+  initDomWebpackCsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.browser"
@@ -15,7 +16,7 @@ async function main() {
   function Content() {
     node ??= reactServerDomClient.createFromReadableStream(rscStream, {
       ssrManifest: {
-        moduleMap: myModuleMap,
+        moduleMap: devModuleMap,
         moduleLoading: null,
       },
     });
