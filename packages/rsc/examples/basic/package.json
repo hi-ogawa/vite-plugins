@@ -17,6 +17,7 @@
     "@hiogawa/utils": "^1.6.2",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@tsconfig/strictest": "^2.0.1",
+    "@types/estree": "^1.0.5",
     "@types/react": "18.2.59",
     "@types/react-dom": "18.2.19",
     "vite": "^5.1.0"

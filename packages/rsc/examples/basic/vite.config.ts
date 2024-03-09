@@ -1,5 +1,6 @@
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
+import type { Program } from "estree";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -138,7 +139,7 @@ function vitePluginRscUseClient({
         useClientFiles.delete(id);
         return;
       }
-      const ast = await parseAstAsync(code);
+      const ast: Program = await parseAstAsync(code);
       const hasUseClient = ast.body.some(
         (node) =>
           node.type === "ExpressionStatement" &&
