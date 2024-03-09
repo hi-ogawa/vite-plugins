@@ -11,10 +11,10 @@ import type { BundlerConfig, ImportManifestEntry } from "./react-types";
 export const devBundlerConfig: BundlerConfig = new Proxy(
   {},
   {
-    get(_target, p, _receiver) {
-      console.log("[bundlerConfig]", { p });
-      tinyassert(typeof p === "string");
-      const [id, name] = p.split("::");
+    get(_target, $$id, _receiver) {
+      console.log("[bundlerConfig]", { $$id });
+      tinyassert(typeof $$id === "string");
+      const [id, name] = $$id.split("::");
       tinyassert(id);
       tinyassert(name);
       return { id, name, chunks: [] } satisfies ImportManifestEntry;

@@ -5,7 +5,6 @@ export const devModuleMap: ModuleMap = new Proxy(
   {},
   {
     get(_target, id, _receiver) {
-      console.log("[moduleMap]", { id });
       return new Proxy(
         {},
         {
