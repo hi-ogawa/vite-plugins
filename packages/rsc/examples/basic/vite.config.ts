@@ -40,54 +40,52 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
-  let rscConfig: InlineConfig;
+
+  const rscConfig: InlineConfig = {
+    // TODO: custom logger to distinct two server logs easily?
+    // customLogger: undefined,
+    clearScreen: false,
+    configFile: false,
+    cacheDir: "./node_modules/.vite-rsc",
+    optimizeDeps: {
+      noDiscovery: true,
+      include: [],
+    },
+    ssr: {
+      resolve: {
+        conditions: ["react-server"],
+      },
+      // no external to ensure loading all deps with react-server condition
+      noExternal: true,
+      // pre-bundle cjs deps
+      optimizeDeps: {
+        include: [
+          "react",
+          "react/jsx-dev-runtime",
+          "react-server-dom-webpack/server.edge",
+        ],
+      },
+    },
+    plugins: [
+      vitePluginRscUseClient({
+        getParentServer: () => parentServer,
+      }),
+    ],
+    build: {
+      ssr: true,
+      outDir: "dist/rsc",
+      rollupOptions: {
+        input: {
+          index: options.entry,
+        },
+      },
+    },
+  };
 
   return {
     name: vitePluginRscServer.name,
     config(_config, env) {
       parentEnv = env;
-    },
-    configResolved(_config) {
-      rscConfig = {
-        // TODO: custom logger to distinct two server logs easily?
-        // customLogger: undefined,
-        clearScreen: false,
-        configFile: false,
-        cacheDir: "./node_modules/.vite-rsc",
-        optimizeDeps: {
-          noDiscovery: true,
-          include: [],
-        },
-        ssr: {
-          resolve: {
-            conditions: ["react-server"],
-          },
-          // no external to ensure loading all deps with react-server condition
-          noExternal: true,
-          // pre-bundle cjs deps
-          optimizeDeps: {
-            include: [
-              "react",
-              "react/jsx-dev-runtime",
-              "react-server-dom-webpack/server.edge",
-            ],
-          },
-        },
-        plugins: [
-          vitePluginRscUseClient({
-            getParentServer: () => parentServer,
-          }),
-        ],
-        build: {
-          ssr: true,
-          outDir: "dist/rsc",
-          rollupOptions: {
-            input: {
-              index: options.entry,
-            },
-          },
-        },
-      };
     },
     async configureServer(server) {
       parentServer = server;
