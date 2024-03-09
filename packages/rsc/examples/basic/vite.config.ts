@@ -116,6 +116,17 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
         await rscDevServer?.close();
       }
     },
+    // weird trick to silence import analysis error during dev
+    // by pointing to always existing file
+    resolveId(source, _importer, _options) {
+      if (
+        parentEnv.command === "serve" &&
+        source === "/dist/rsc/client-references.js"
+      ) {
+        return "/package.json";
+      }
+      return;
+    },
   };
 }
 

@@ -1,8 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import type { BundlerConfig, ImportManifestEntry } from "./react-types";
 
-// TODO: build?
-
 // bundler id: /src/components/counter.tsx::Counter
 //   ⇓
 // id: /src/components/counter.tsx
