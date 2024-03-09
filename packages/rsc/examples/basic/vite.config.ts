@@ -5,7 +5,6 @@ import {
   type ConfigEnv,
   type InlineConfig,
   type Plugin,
-  type ResolvedConfig,
   type ViteDevServer,
   build,
   createFilter,
@@ -37,7 +36,6 @@ export default defineConfig((env) => ({
 function vitePluginRscServer(options: { entry: string }): Plugin {
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
-  let parentConfig: ResolvedConfig;
   let rscDevServer: ViteDevServer | undefined;
   let rscConfig: InlineConfig;
 
@@ -46,8 +44,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     config(_config, env) {
       parentEnv = env;
     },
-    configResolved(config) {
-      parentConfig = config;
+    configResolved(_config) {
       rscConfig = {
         // TODO: custom logger to distinct two server logs easily
         // customLogger: undefined,
