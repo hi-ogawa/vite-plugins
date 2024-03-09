@@ -8,6 +8,7 @@ export async function Root() {
     <div>
       <Header />
       <div>
+        <pre>Server time: {new Date().toString()}</pre>
         <Fetch url="https://unpkg.com/react@18.3.0-canary-6c3b8dbfe-20240226/package.json" />
       </div>
       <div>
@@ -21,5 +22,5 @@ export async function Root() {
 async function Fetch({ url }: { url: string }) {
   const res = await fetch(url);
   const resText = await res.text();
-  return <pre>{`fetch("${url}")\n${resText.slice(0, 200)}...`}</pre>;
+  return <pre>{`Fetch ${url}\n${resText.slice(0, 200)}...`}</pre>;
 }
