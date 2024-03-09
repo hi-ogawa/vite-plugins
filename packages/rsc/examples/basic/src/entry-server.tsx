@@ -10,18 +10,13 @@ import { initDomWebpackSsr, runWithSsrContext } from "./config-dom-ssr";
 import type { RenderRsc } from "./entry-rsc";
 
 // injected globals during dev
+declare let __devServer: ViteDevServer;
 declare let __rscServer: RscServer;
 
-let __devServer: ViteDevServer;
-
-initDomWebpackSsr();
-
 export default async function handler(
-  req: http.IncomingMessage & { viteDevServer: ViteDevServer },
+  _req: http.IncomingMessage,
   res: http.ServerResponse
 ) {
-  __devServer = req.viteDevServer;
-
   let rscStream: ReadableStream;
   if (import.meta.env.DEV) {
     rscStream = await __rscServer.render();
@@ -37,6 +32,8 @@ export default async function handler(
 }
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
+  initDomWebpackSsr();
+
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
   );

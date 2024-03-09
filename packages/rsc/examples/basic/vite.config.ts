@@ -55,7 +55,10 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       rscServer = new RscServer(options, parentConfig, parent);
       if (parentEnv.command === "serve") {
         await rscServer.createServer();
-        Object.assign(globalThis, { __rscServer: rscServer });
+        Object.assign(globalThis, {
+          __devServer: parent,
+          __rscServer: rscServer,
+        });
       }
       // TODO: rsc build before client and ssr build
       if (parentEnv.command === "build" && !parentEnv.isSsrBuild) {
