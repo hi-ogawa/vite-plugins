@@ -1,3 +1,4 @@
+import { CommonComponent } from "./components/common";
 import { Counter } from "./components/counter";
 import { Header } from "./components/header";
 
@@ -8,6 +9,7 @@ export async function Root() {
   return (
     <div>
       <Header />
+      <CommonComponent />
       <div>
         <pre>Server Time: {new Date().toString()}</pre>
         <Fetch url="https://unpkg.com/react@18.3.0-canary-6c3b8dbfe-20240226/package.json" />
