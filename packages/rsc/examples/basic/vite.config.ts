@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+import { tinyassert } from "@hiogawa/utils";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import type { Program } from "estree";
@@ -71,7 +74,9 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
           },
         },
         plugins: [
-          vitePluginRscUseClient({ getParentServer: () => parentServer }),
+          vitePluginRscUseClient({
+            getParentServer: () => parentServer,
+          }),
         ],
         build: {
           ssr: true,
@@ -109,18 +114,16 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
 }
 
 /*
+transform file with "use client" directive
 
 [input]
-
 "use client"
 export function Counter() {}
 
 [output]
-
 import { createClientReference } from "/src/utils-rsc"
 export const Counter = createClientReference("<id>::Counter");
-
- */
+*/
 function vitePluginRscUseClient({
   getParentServer,
 }: {
@@ -176,6 +179,7 @@ function vitePluginRscUseClient({
       }
       return result;
     },
+
     // full-reload client on rsc module change
     handleHotUpdate(ctx) {
       const isRscModule =
@@ -191,6 +195,28 @@ function vitePluginRscUseClient({
         });
       }
       return ctx.modules;
+    },
+
+    /**
+     * emit client-references as dynamic import map
+     *
+     * export default {
+     *   "some-file1": () => import("some-file1"),
+     * }
+     */
+    writeBundle: {
+      async handler(options, _bundle) {
+        let result = `export default {\n`;
+        for (const file of useClientFiles) {
+          result += `"${file}": () => import("${file}"),\n`;
+        }
+        result += "};\n";
+        tinyassert(options.dir);
+        await fs.promises.writeFile(
+          path.join(options.dir, "client-reference-map.js"),
+          result
+        );
+      },
     },
   };
 }
