@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CounterInner } from "./counter-inner";
+import { CommonComponent } from "./common";
 
 export function Counter(props: { defaultValue: number }) {
   const [count, setCount] = React.useState(props.defaultValue);
@@ -17,7 +17,7 @@ export function Counter(props: { defaultValue: number }) {
         count is {count}
       </button>
       <div>
-        <CounterInner />
+        <CommonComponent />
       </div>
       <div>hydrated: {String(hydrated)}</div>
     </div>

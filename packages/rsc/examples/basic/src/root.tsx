@@ -4,6 +4,7 @@ import { Header } from "./components/header";
 // TODO: full <html> render?
 
 export async function Root() {
+  const counterDefaultValue = Math.floor(Math.random() * 1000);
   return (
     <div>
       <Header />
@@ -12,8 +13,12 @@ export async function Root() {
         <Fetch url="https://unpkg.com/react@18.3.0-canary-6c3b8dbfe-20240226/package.json" />
       </div>
       <div>
+        <div>
+          Counter defaultValue: {counterDefaultValue} (prop from server to
+          client)
+        </div>
         <h4>Client component</h4>
-        <Counter defaultValue={1234} />
+        <Counter defaultValue={counterDefaultValue} />
       </div>
     </div>
   );
