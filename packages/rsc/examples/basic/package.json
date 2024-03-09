@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@hiogawa/utils": "^1.6.2",
-    "@hiogawa/vite-plugin-ssr-middleware": "latest",
+    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@tsconfig/strictest": "^2.0.1",
     "@types/react": "18.2.59",
     "@types/react-dom": "18.2.19",
