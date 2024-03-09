@@ -5,7 +5,7 @@ import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
 import { devModuleMap } from "./config-dom";
-import { initDomWebpackSsr, runWithSsrContext } from "./config-dom-ssr";
+import { initDomWebpackSsr } from "./config-dom-ssr";
 
 // injected globals during dev
 declare let __devServer: ViteDevServer;
@@ -16,7 +16,7 @@ export default async function handler(
   res: http.ServerResponse
 ) {
   const { rscStream } = await renderRsc();
-  const htmlStream = await runWithSsrContext(() => renderHtml(rscStream));
+  const htmlStream = await renderHtml(rscStream);
 
   res.setHeader("content-type", "text/html");
   Readable.fromWeb(htmlStream as any).pipe(res);
