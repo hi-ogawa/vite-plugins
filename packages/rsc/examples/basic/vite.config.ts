@@ -109,8 +109,13 @@ export class RscServer {
       },
       plugins: [vitePluginRscUseClient({ rscServer: this })],
       build: {
+        ssr: true,
         outDir: "dist/rsc",
-        ssr: this.options.entry,
+        rollupOptions: {
+          input: {
+            index: this.options.entry,
+          },
+        },
       },
     };
   }

@@ -7,8 +7,9 @@ import type { ViteDevServer } from "vite";
 import type { RscServer } from "../vite.config";
 import { myModuleMap } from "./config-dom";
 import { initDomSsr, runWithSsrContext } from "./config-dom-ssr";
+import type { RenderRsc } from "./entry-rsc";
 
-// injected by vitePluginRscServer
+// injected globals during dev
 declare let __rscServer: RscServer;
 
 let __devServer: ViteDevServer;
@@ -21,7 +22,14 @@ export default async function handler(
 ) {
   __devServer = req.viteDevServer;
 
-  const rscStream = await __rscServer.render();
+  let rscStream: ReadableStream;
+  if (import.meta.env.DEV) {
+    rscStream = await __rscServer.render();
+  } else {
+    // @ts-ignore
+    const mod = await import("/dist/rsc/index.js");
+    rscStream = (mod.default as RenderRsc)();
+  }
   const htmlStream = await runWithSsrContext(() => renderHtml(rscStream));
 
   res.setHeader("content-type", "text/html");
