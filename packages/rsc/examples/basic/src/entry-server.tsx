@@ -4,31 +4,33 @@ import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
-import type { RscServer } from "../vite.config";
 import { devModuleMap } from "./config-dom";
 import { initDomWebpackSsr, runWithSsrContext } from "./config-dom-ssr";
-import type { RenderRsc } from "./entry-rsc";
 
 // injected globals during dev
 declare let __devServer: ViteDevServer;
-declare let __rscServer: RscServer;
+declare let __rscDevServer: ViteDevServer;
 
 export default async function handler(
   _req: http.IncomingMessage,
   res: http.ServerResponse
 ) {
-  let rscStream: ReadableStream;
-  if (import.meta.env.DEV) {
-    rscStream = await __rscServer.render();
-  } else {
-    // @ts-ignore
-    const mod = await import("/dist/rsc/index.js");
-    rscStream = (mod.default as RenderRsc)();
-  }
+  const rscStream = await renderRsc();
   const htmlStream = await runWithSsrContext(() => renderHtml(rscStream));
 
   res.setHeader("content-type", "text/html");
   Readable.fromWeb(htmlStream as any).pipe(res);
+}
+
+async function renderRsc() {
+  let mod: any;
+  if (import.meta.env.DEV) {
+    mod = await __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx");
+  } else {
+    // @ts-ignore
+    mod = await import("/dist/rsc/index.js");
+  }
+  return (mod as typeof import("./entry-rsc")).default();
 }
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {

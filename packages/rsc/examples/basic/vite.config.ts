@@ -12,7 +12,6 @@ import {
   defineConfig,
   parseAstAsync,
 } from "vite";
-import type { RenderRsc } from "./src/entry-rsc";
 
 export default defineConfig((env) => ({
   clearScreen: false,
@@ -35,10 +34,11 @@ export default defineConfig((env) => ({
 //
 
 function vitePluginRscServer(options: { entry: string }): Plugin {
-  let parent: ViteDevServer | undefined;
+  let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let parentConfig: ResolvedConfig;
-  let rscServer: RscServer;
+  let rscDevServer: ViteDevServer | undefined;
+  let rscConfig: InlineConfig;
 
   return {
     name: vitePluginRscServer.name,
@@ -47,103 +47,67 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     },
     configResolved(config) {
       parentConfig = config;
+      rscConfig = {
+        // TODO: custom logger to distinct two server logs easily
+        // customLogger: undefined,
+        clearScreen: false,
+        configFile: false,
+        cacheDir: "./node_modules/.vite-rsc",
+        optimizeDeps: {
+          noDiscovery: true,
+          include: [],
+        },
+        ssr: {
+          resolve: {
+            conditions: ["react-server"],
+          },
+          // no external to ensure loading all deps with react-server condition
+          noExternal: true,
+          // pre-bundle cjs deps
+          optimizeDeps: {
+            include: [
+              "react",
+              "react/jsx-dev-runtime",
+              "react-server-dom-webpack/server.edge",
+            ],
+          },
+        },
+        plugins: [
+          vitePluginRscUseClient({ getParentServer: () => parentServer }),
+        ],
+        build: {
+          ssr: true,
+          outDir: "dist/rsc",
+          rollupOptions: {
+            input: {
+              index: options.entry,
+            },
+          },
+        },
+      };
     },
     async configureServer(server) {
-      parent = server;
+      parentServer = server;
     },
     async buildStart(_options) {
-      rscServer = new RscServer(options, parentConfig, parent);
       if (parentEnv.command === "serve") {
-        await rscServer.createServer();
+        rscDevServer = await createServer(rscConfig);
         Object.assign(globalThis, {
-          __devServer: parent,
-          __rscServer: rscServer,
+          __devServer: parentServer,
+          __rscDevServer: rscDevServer,
         });
       }
       // TODO: rsc build before client and ssr build
       if (parentEnv.command === "build" && !parentEnv.isSsrBuild) {
-        await rscServer.build();
+        await build(rscConfig);
       }
     },
     async buildEnd(_options) {
       if (parentEnv.command === "serve") {
-        await rscServer.close();
+        await rscDevServer?.close();
       }
     },
   };
-}
-
-export class RscServer {
-  server!: ViteDevServer;
-
-  constructor(
-    private options: {
-      entry: string;
-    },
-    public parentConfig: ResolvedConfig,
-    public parentServer?: ViteDevServer
-  ) {}
-
-  getViteConfig(): InlineConfig {
-    return {
-      // TODO: custom logger to distinct two server logs easily
-      // customLogger: undefined,
-      clearScreen: false,
-      configFile: false,
-      cacheDir: "./node_modules/.vite-rsc",
-      optimizeDeps: {
-        noDiscovery: true,
-        include: [],
-      },
-      ssr: {
-        resolve: {
-          conditions: ["react-server"],
-        },
-        // no external to ensure loading all deps with react-server condition
-        noExternal: true,
-        // pre-bundle cjs deps
-        optimizeDeps: {
-          include: [
-            "react",
-            "react/jsx-dev-runtime",
-            "react-server-dom-webpack/server.edge",
-          ],
-        },
-      },
-      plugins: [vitePluginRscUseClient({ rscServer: this })],
-      build: {
-        ssr: true,
-        outDir: "dist/rsc",
-        rollupOptions: {
-          input: {
-            index: this.options.entry,
-          },
-        },
-      },
-    };
-  }
-
-  async createServer() {
-    console.log("[RscServer] createServer");
-    this.server = await createServer(this.getViteConfig());
-  }
-
-  async build() {
-    console.log("[RscServer] build");
-    await build(this.getViteConfig());
-  }
-
-  async render() {
-    console.log("[RscServer] render");
-    const mod: any = await this.server.ssrLoadModule(this.options.entry);
-    const rscStream = (mod.default as RenderRsc)();
-    return rscStream;
-  }
-
-  async close() {
-    console.log("[RscServer] close");
-    await this.server.close();
-  }
 }
 
 /*
@@ -160,9 +124,9 @@ export const Counter = createClientReference("<id>::Counter");
 
  */
 function vitePluginRscUseClient({
-  rscServer,
+  getParentServer,
 }: {
-  rscServer: RscServer;
+  getParentServer: () => ViteDevServer | undefined;
 }): Plugin {
   const filter = createFilter(/\.[tj]sx$/);
   const useClientFiles = new Set<string>();
@@ -220,7 +184,7 @@ function vitePluginRscUseClient({
         !useClientFiles.has(ctx.file) && ctx.modules.length > 0;
       console.log("[rsc-use-client:handleHotUpdate]", [isRscModule, ctx.file]);
       if (isRscModule) {
-        rscServer.parentServer?.hot.send({
+        getParentServer()?.hot.send({
           type: "full-reload",
           path: ctx.file,
         });

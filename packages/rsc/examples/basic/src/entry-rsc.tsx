@@ -2,9 +2,7 @@ import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { devBundlerConfig } from "./config-rsc";
 import { Root } from "./root";
 
-export type RenderRsc = () => ReadableStream;
-
-export default function renderRsc() {
+export default function renderRsc(): ReadableStream<Uint8Array> {
   console.log("-> reactServerDomServer.renderToReadableStream");
   const rscStream = reactServerDomServer.renderToReadableStream(
     <Root />,

@@ -3,9 +3,13 @@
 import React from "react";
 import { CounterInner } from "./counter-inner";
 
-// @hmr-unsafe
 export function Counter(props: { defaultValue: number }) {
   const [count, setCount] = React.useState(props.defaultValue);
+
+  const [hydrated, setHydrated] = React.useState(false);
+  React.useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   return (
     <div>
@@ -15,6 +19,7 @@ export function Counter(props: { defaultValue: number }) {
       <div>
         <CounterInner />
       </div>
+      <div>hydrated: {String(hydrated)}</div>
     </div>
   );
 }
