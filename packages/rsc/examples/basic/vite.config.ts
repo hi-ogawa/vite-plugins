@@ -46,7 +46,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     },
     configResolved(_config) {
       rscConfig = {
-        // TODO: custom logger to distinct two server logs easily
+        // TODO: custom logger to distinct two server logs easily?
         // customLogger: undefined,
         clearScreen: false,
         configFile: false,
@@ -180,7 +180,10 @@ function vitePluginRscUseClient({
     handleHotUpdate(ctx) {
       const isRscModule =
         !useClientFiles.has(ctx.file) && ctx.modules.length > 0;
-      console.log("[rsc-use-client:handleHotUpdate]", [isRscModule, ctx.file]);
+      console.log("[rsc-use-client:handleHotUpdate]", {
+        isRscModule,
+        file: ctx.file,
+      });
       if (isRscModule) {
         getParentServer()?.hot.send({
           type: "full-reload",
