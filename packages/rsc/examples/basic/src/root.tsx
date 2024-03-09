@@ -8,7 +8,7 @@ export async function Root() {
     <div>
       <Header />
       <div>
-        <pre>Server time: {new Date().toString()}</pre>
+        <pre>Server Time: {new Date().toString()}</pre>
         <Fetch url="https://unpkg.com/react@18.3.0-canary-6c3b8dbfe-20240226/package.json" />
       </div>
       <div>
