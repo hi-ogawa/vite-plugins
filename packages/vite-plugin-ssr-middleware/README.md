@@ -1,6 +1,7 @@
 # vite-plugin-ssr-middleware
 
-Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect) + [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/main/packages/expose-vite-dev-server)
+Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
+and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/main/packages/expose-vite-dev-server)
 
 ## example
 

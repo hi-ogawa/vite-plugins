@@ -8,17 +8,9 @@ export default defineConfig((env) => ({
     react(),
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
+      preview: new URL("./dist/server/index.js", import.meta.url).toString(),
       mode: "ViteRuntime-no-hmr",
     }),
-    {
-      // TODO: move to vitePluginSsrMiddleware? (it's impossible to know ssr build outDir...)
-      name: "preview-ssr-middleware",
-      async configurePreviewServer(server) {
-        // "slice" to avoid esbuild crash when transpiling vite.config.ts
-        const mod = await import("./dist/server/index.js".slice());
-        return () => server.middlewares.use(mod.default);
-      },
-    },
   ],
   build: {
     outDir: env.isSsrBuild ? "dist/server" : "dist/client",
