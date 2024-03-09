@@ -197,6 +197,7 @@ function vitePluginRscUseClient({
 
     /**
      * emit client-references as dynamic import map
+     * TODO: re-export only used exports?
      *
      * export default {
      *   "some-file1": () => import("some-file1"),
@@ -211,7 +212,7 @@ function vitePluginRscUseClient({
         result += "};\n";
         tinyassert(options.dir);
         await fs.promises.writeFile(
-          path.join(options.dir, "client-reference-map.js"),
+          path.join(options.dir, "client-references.js"),
           result
         );
       },
