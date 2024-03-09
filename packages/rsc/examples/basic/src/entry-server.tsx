@@ -15,7 +15,7 @@ export default async function handler(
   _req: http.IncomingMessage,
   res: http.ServerResponse
 ) {
-  const rscStream = await renderRsc();
+  const { rscStream } = await renderRsc();
   const htmlStream = await runWithSsrContext(() => renderHtml(rscStream));
 
   res.setHeader("content-type", "text/html");
@@ -34,7 +34,7 @@ async function renderRsc() {
 }
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
-  initDomWebpackSsr();
+  await initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
