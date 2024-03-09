@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && vite build --ssr"
+    "build": "vite build && vite build --ssr",
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "18.3.0-canary-6c3b8dbfe-20240226",

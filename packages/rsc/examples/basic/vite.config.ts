@@ -26,6 +26,14 @@ export default defineConfig((env) => ({
     vitePluginRscServer({
       entry: "/src/entry-rsc.tsx",
     }),
+    {
+      name: "preview-ssr-middleware",
+      async configurePreviewServer(server) {
+        // "slice" to avoid esbuild crash when transpiling vite.config.ts
+        const mod = await import("./dist/server/index.js".slice());
+        return () => server.middlewares.use(mod.default);
+      },
+    },
   ],
   build: {
     outDir: env.isSsrBuild ? "dist/server" : "dist/client",

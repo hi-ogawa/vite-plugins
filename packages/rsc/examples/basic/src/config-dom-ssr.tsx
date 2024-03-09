@@ -38,13 +38,14 @@ const ssrWebpackRequire: WebpackRequire = (id) => {
 
 async function ssrImport(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
+    // transformed to `ssrLoadModule` during dev
     return import(/* @vite-ignore */ id);
   } else {
     // `as string` to silence ts error
     const clientReferences = await import(
       "/dist/rsc/client-references.js" as string
     );
-    const dynImport = clientReferences[id];
+    const dynImport = clientReferences.default[id];
     tinyassert(dynImport, `client reference not found '${id}'`);
     return dynImport();
   }
