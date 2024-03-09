@@ -1,8 +1,12 @@
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import {
+  type ConfigEnv,
+  type InlineConfig,
   type Plugin,
+  type ResolvedConfig,
   type ViteDevServer,
+  build,
   createFilter,
   createServer,
   defineConfig,
@@ -31,22 +35,37 @@ export default defineConfig((env) => ({
 //
 
 function vitePluginRscServer(options: { entry: string }): Plugin {
-  let rscServer: RscServer | undefined;
   let parent: ViteDevServer | undefined;
+  let parentEnv: ConfigEnv;
+  let parentConfig: ResolvedConfig;
+  let rscServer: RscServer;
+
   return {
-    name: "rsc-server",
+    name: vitePluginRscServer.name,
+    config(_config, env) {
+      parentEnv = env;
+    },
+    configResolved(config) {
+      parentConfig = config;
+    },
     async configureServer(server) {
       parent = server;
     },
     async buildStart(_options) {
-      await rscServer?.close();
-      rscServer = new RscServer(options, parent);
-      await rscServer.setup();
-      Object.assign(globalThis, { __rscServer: rscServer });
+      rscServer = new RscServer(options, parentConfig, parent);
+      if (parentEnv.command === "serve") {
+        await rscServer.createServer();
+        Object.assign(globalThis, { __rscServer: rscServer });
+      }
+      // TODO: rsc build before client and ssr build
+      if (parentEnv.command === "build" && !parentEnv.isSsrBuild) {
+        await rscServer.build();
+      }
     },
     async buildEnd(_options) {
-      await rscServer?.close();
-      rscServer = undefined;
+      if (parentEnv.command === "serve") {
+        await rscServer.close();
+      }
     },
   };
 }
@@ -58,18 +77,16 @@ export class RscServer {
     private options: {
       entry: string;
     },
-    public parent?: ViteDevServer
+    public parentConfig: ResolvedConfig,
+    public parentServer?: ViteDevServer
   ) {}
 
-  async setup() {
-    console.log("[RscServer] setup");
-    this.server = await createServer({
-      // TODO: custom logger
+  getViteConfig(): InlineConfig {
+    return {
+      // TODO: custom logger to distinct two server logs easily
       // customLogger: undefined,
-
       clearScreen: false,
       configFile: false,
-      envFile: false,
       cacheDir: "./node_modules/.vite-rsc",
       optimizeDeps: {
         noDiscovery: true,
@@ -79,14 +96,10 @@ export class RscServer {
         resolve: {
           conditions: ["react-server"],
         },
-
         // no external to ensure loading all deps with react-server condition
-        // TODO: just spawn worker?
         noExternal: true,
-        // noExternal: ["react", "react-server-dom-webpack"]
-
+        // pre-bundle cjs deps
         optimizeDeps: {
-          // pre-bundle cjs deps
           include: [
             "react",
             "react/jsx-dev-runtime",
@@ -95,7 +108,21 @@ export class RscServer {
         },
       },
       plugins: [vitePluginRscUseClient({ rscServer: this })],
-    });
+      build: {
+        outDir: "dist/rsc",
+        ssr: this.options.entry,
+      },
+    };
+  }
+
+  async createServer() {
+    console.log("[RscServer] createServer");
+    this.server = await createServer(this.getViteConfig());
+  }
+
+  async build() {
+    console.log("[RscServer] build");
+    await build(this.getViteConfig());
   }
 
   async render() {
@@ -133,7 +160,7 @@ function vitePluginRscUseClient({
   const useClientFiles = new Set<string>();
 
   return {
-    name: "rsc-use-client",
+    name: vitePluginRscUseClient.name,
     async transform(code, id, _options) {
       if (!filter(id)) {
         useClientFiles.delete(id);
@@ -185,7 +212,10 @@ function vitePluginRscUseClient({
         !useClientFiles.has(ctx.file) && ctx.modules.length > 0;
       console.log("[rsc-use-client:handleHotUpdate]", [isRscModule, ctx.file]);
       if (isRscModule) {
-        rscServer.parent?.hot.send({ type: "full-reload", path: ctx.file });
+        rscServer.parentServer?.hot.send({
+          type: "full-reload",
+          path: ctx.file,
+        });
       }
       return ctx.modules;
     },
