@@ -3,11 +3,11 @@ import { name as packageName } from "../package.json";
 
 export function vitePluginSsrMiddleware({
   entry,
-  entryAlias = "index",
+  preview,
   mode = "ssrLoadModule",
 }: {
   entry: string;
-  entryAlias?: string;
+  preview?: string;
   mode?: "ssrLoadModule" | "ViteRuntime" | "ViteRuntime-no-hmr";
 }): Plugin {
   return {
@@ -30,7 +30,7 @@ export function vitePluginSsrMiddleware({
           build: {
             rollupOptions: {
               input: {
-                [entryAlias]: entry,
+                index: entry,
               },
             },
           },
@@ -77,6 +77,14 @@ export function vitePluginSsrMiddleware({
         }
       };
       return () => server.middlewares.use(handler);
+    },
+
+    async configurePreviewServer(server) {
+      if (preview) {
+        const mod = await import(preview);
+        return () => server.middlewares.use(mod.default);
+      }
+      return;
     },
   };
 }
