@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@hiogawa/vite-plugin-ssr-middleware': workspace:*
+
 importers:
 
   .:
@@ -271,7 +274,7 @@ importers:
         specifier: ^1.6.2
         version: 1.6.2
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: latest
+        specifier: workspace:*
         version: link:../../../vite-plugin-ssr-middleware
       '@tsconfig/strictest':
         specifier: ^2.0.1
