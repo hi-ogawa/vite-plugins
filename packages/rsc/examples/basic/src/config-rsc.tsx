@@ -1,5 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import type { BundlerConfig } from "./react-types";
+import type { BundlerConfig, ImportManifestEntry } from "./react-types";
 
 // TODO: build?
 
@@ -17,7 +17,7 @@ export const devBundlerConfig: BundlerConfig = new Proxy(
       const [id, name] = p.split("::");
       tinyassert(id);
       tinyassert(name);
-      return { id, name, chunks: [] };
+      return { id, name, chunks: [] } satisfies ImportManifestEntry;
     },
   }
 );
