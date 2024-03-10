@@ -12,9 +12,25 @@ test("navigation", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/");
+  await page.getByText("hydrated: true").click();
+
+  // setup client state
+  await page.getByPlaceholder("test-hmr").fill("hello");
+
   await page.getByRole("link", { name: "/other" }).click();
   await page.getByText("Other Page").click();
   await page.waitForURL("/other");
+
+  // verify client state is preserved
+  await expect(page.getByPlaceholder("test-hmr")).toHaveValue("hello");
+});
+
+test("404", async ({ page }) => {
+  checkNoError(page);
+
+  const res = await page.goto("/not-found");
+  expect(res?.status()).toBe(404);
+  await page.getByText("Not Found: /not-found").click();
 });
 
 test("@dev rsc reload", async ({ page }) => {
@@ -38,7 +54,7 @@ test("@dev client hmr", async ({ page }) => {
   await page.getByText("hydrated: true").click();
 
   // setup client state
-  await page.getByPlaceholder("test-hmr-input").fill("hello");
+  await page.getByPlaceholder("test-hmr").fill("hello");
 
   // modify client comopnent
   await page.getByText("test-hmr-div").click();
@@ -48,5 +64,5 @@ test("@dev client hmr", async ({ page }) => {
   await page.getByText("test-hmr-edit-div").click();
 
   // verify client state is preserved
-  await expect(page.getByPlaceholder("test-hmr-input")).toHaveValue("hello");
+  await expect(page.getByPlaceholder("test-hmr")).toHaveValue("hello");
 });

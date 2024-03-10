@@ -17,9 +17,6 @@ export function Counter(props: { defaultValue: number }) {
         Count: {count}
       </button>
       <div>
-        <input placeholder="test-hmr-input" />
-      </div>
-      <div>
         <CommonComponent />
       </div>
       <div>hydrated: {String(hydrated)}</div>
