@@ -12,13 +12,14 @@ test("rsc reload", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/");
-  await page.getByText("hydrated: true").click();
   await page.getByRole("heading", { name: "[RSC Experiment]" }).click();
+  await page.getByText("hydrated: true").click();
 
   await editFile("./src/components/header.tsx", (s) =>
     s.replace("[RSC Experiment]", "[RSC Experiment (EDIT)]")
   );
   await page.getByRole("heading", { name: "[RSC Experiment (EDIT)]" }).click();
+  await page.getByText("hydrated: true").click();
 });
 
 test.skip("client hmr", async ({ page }) => {
