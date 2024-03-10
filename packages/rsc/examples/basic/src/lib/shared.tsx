@@ -1,7 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
-import type { ImportManifestEntry, ModuleMap } from "./react-types";
+import type { ImportManifestEntry, ModuleMap } from "./types";
 
-export const devModuleMap: ModuleMap = new Proxy(
+export const moduleMap: ModuleMap = new Proxy(
   {},
   {
     get(_target, id, _receiver) {

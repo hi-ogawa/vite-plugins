@@ -138,7 +138,7 @@ transform file with "use client" directive
 export function Counter() {}
 
 [output]
-import { createClientReference } from "/src/utils-rsc"
+import { createClientReference } from "/src/runtime/rsc/utils"
 export const Counter = createClientReference("<id>::Counter");
 */
 function vitePluginRscUseClient({
@@ -190,7 +190,7 @@ function vitePluginRscUseClient({
         }
       }
       console.log("[rsc-use-client:transform]", { id, exportNames });
-      let result = `import { createClientReference } from "/src/utils-rsc";\n`;
+      let result = `import { createClientReference } from "/src/lib/rsc";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createClientReference("${id}::${name}");\n`;
       }

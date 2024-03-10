@@ -1,7 +1,10 @@
+// cf.
+// https://github.com/dai-shi/waku/blob/4d16c28a58204991de2985df0d202f21a48ae1f9/packages/waku/src/types.d.ts#L60-L65
+
 export interface ImportManifestEntry {
   id: string;
   name: string;
-  // TODO: what's this?
+  // TODO
   chunks: string[];
 }
 
@@ -17,6 +20,7 @@ export type ModuleMap = {
 
 export interface SsrManifest {
   moduleMap: ModuleMap;
+  // TODO
   moduleLoading: null;
 }
 

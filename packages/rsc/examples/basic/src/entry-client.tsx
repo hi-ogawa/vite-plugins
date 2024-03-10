@@ -1,8 +1,8 @@
 import { tinyassert } from "@hiogawa/utils";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { devModuleMap } from "./config-dom";
-import { initDomWebpackCsr } from "./config-dom-csr";
+import { initDomWebpackCsr } from "./lib/csr";
+import { moduleMap } from "./lib/shared";
 
 async function main() {
   initDomWebpackCsr();
@@ -16,7 +16,7 @@ async function main() {
     rscStream,
     {
       ssrManifest: {
-        moduleMap: devModuleMap,
+        moduleMap: moduleMap,
         moduleLoading: null,
       },
     }

@@ -1,5 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import type { WebpackRequire } from "./react-types";
+import type { WebpackRequire } from "./types";
 
 // weird trick to make stable import promise during SSR
 // https://github.com/facebook/react/pull/26926#discussion_r1236251023

@@ -1,8 +1,8 @@
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
-import { devModuleMap } from "./config-dom";
-import { initDomWebpackSsr } from "./config-dom-ssr";
+import { moduleMap } from "./lib/shared";
+import { initDomWebpackSsr } from "./lib/ssr";
 
 // injected globals during dev
 declare let __devServer: ViteDevServer;
@@ -42,7 +42,7 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
     rscStream1,
     {
       ssrManifest: {
-        moduleMap: devModuleMap,
+        moduleMap: moduleMap,
         moduleLoading: null,
       },
     }
