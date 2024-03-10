@@ -31,7 +31,7 @@ export function NavMenu() {
         </a>
       </li>
       <li>
-        {/* <a
+        <a
           href="/not-found"
           onClick={(e) => {
             e.preventDefault();
@@ -39,7 +39,7 @@ export function NavMenu() {
           }}
         >
           /not-found
-        </a> */}
+        </a>
       </li>
     </ul>
   );
