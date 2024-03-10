@@ -31,15 +31,15 @@ export function NavMenu() {
         </a>
       </li>
       <li>
-        <a
+        {/* <a
           href="/not-found"
           onClick={(e) => {
             e.preventDefault();
             __history.push("/not-found");
           }}
         >
-          /other
-        </a>
+          /not-found
+        </a> */}
       </li>
     </ul>
   );
