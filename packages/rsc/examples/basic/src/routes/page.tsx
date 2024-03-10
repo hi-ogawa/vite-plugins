@@ -1,14 +1,10 @@
 import { CommonComponent } from "../components/common";
 import { Counter } from "../components/counter";
-import { Header } from "../components/header";
-
-// TODO: full <html> render?
 
 export async function Page() {
   const counterDefaultValue = Math.floor(Math.random() * 1000);
   return (
     <div>
-      <Header />
       <CommonComponent />
       <div>
         <pre>Server Time: {new Date().toString()}</pre>
