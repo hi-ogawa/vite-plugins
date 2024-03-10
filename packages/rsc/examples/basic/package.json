@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "vite build && vite build --ssr",
     "preview": "vite preview",
+    "test-e2e": "playwright test",
     "vc-build": "pnpm build && bash misc/vercel-serverless/build.sh",
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel-serverless",
     "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
