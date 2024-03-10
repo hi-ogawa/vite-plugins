@@ -53,19 +53,12 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
   const htmlStream = await reactDomServer.renderToReadableStream(rscNode);
   console.log("<- reactDomServer.renderToReadableStream");
 
-  const htmlTemplate = await getHtmlTemplate();
-  const [pre, post] = htmlTemplate.split("<!--@INJECT_SSR@-->");
-  const htmlStream2 = concatStreams<Uint8Array>([
-    new TextEncoder().encode(pre),
-    htmlStream,
-    new TextEncoder().encode(post),
-  ]);
-
-  const htmlStream3 = htmlStream2.pipeThrough(injectRSCPayload(rscStream2));
-  return htmlStream3;
+  return htmlStream
+    .pipeThrough(await injectToHtmlTempalte())
+    .pipeThrough(injectRSCPayload(rscStream2));
 }
 
-async function getHtmlTemplate() {
+async function injectToHtmlTempalte() {
   let html: string;
   if (import.meta.env.DEV) {
     const mod = await import("/index.html?raw");
@@ -77,30 +70,19 @@ async function getHtmlTemplate() {
   // ensure </body></html> trailer
   // https://github.com/devongovett/rsc-html-stream/blob/5c2f058996e42be6120dfaf1df384361331f3ea9/server.js#L2
   html = html.replace(/<\/body>\s*<\/html>\s*/, "</body></html>");
-  return html;
-}
 
-function concatStreams<T>(
-  streams: (T | ReadableStream<T>)[]
-): ReadableStream<T> {
-  let cancelled = false;
-  return new ReadableStream({
-    async start(controller) {
-      for (const stream of streams) {
-        if (cancelled) return;
-        if (stream instanceof ReadableStream) {
-          for await (const chunk of stream as any as AsyncIterable<T>) {
-            if (cancelled) return;
-            controller.enqueue(chunk);
-          }
-        } else {
-          controller.enqueue(stream);
-        }
-      }
-      controller.close();
+  // transformer to inject SSR stream
+  const [pre, post] = html.split("<!--@INJECT_SSR@-->");
+  const encoder = new TextEncoder();
+  return new TransformStream<Uint8Array, Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode(pre));
     },
-    cancel() {
-      cancelled = true;
+    transform(chunk, controller) {
+      controller.enqueue(chunk);
+    },
+    flush(controller) {
+      controller.enqueue(encoder.encode(post));
     },
   });
 }
