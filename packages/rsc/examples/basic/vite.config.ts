@@ -189,6 +189,7 @@ function vitePluginRscUseClient({
           }
         }
       }
+      // TODO: obfuscate "id" for production?
       console.log("[rsc-use-client:transform]", { id, exportNames });
       let result = `import { createClientReference } from "/src/lib/rsc";\n`;
       for (const name of exportNames) {

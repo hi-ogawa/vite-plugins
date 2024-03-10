@@ -3,8 +3,10 @@ import { unwrapRenderId } from "./shared";
 import type { WebpackRequire } from "./types";
 
 // __webpack_require__ needs to return stable promise during single render.
+//   https://github.com/facebook/react/pull/26985
+//   https://github.com/facebook/react/pull/26926#discussion_r1236251023
 // vite uses import with timestamp paramemter during dev,
-// so manual invalidation is not necessary (hopefully).
+// so manual invalidation doesn't look necessary for client?
 const memeImport = memoize(clientImport);
 
 const csrWebpackRequire: WebpackRequire = (id) => {
