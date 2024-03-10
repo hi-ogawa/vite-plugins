@@ -15,14 +15,14 @@ test("navigation", async ({ page }) => {
   await page.getByText("hydrated: true").click();
 
   // setup client state
-  await page.getByPlaceholder("test-hmr").fill("hello");
+  await page.getByPlaceholder("test-input").fill("hello");
 
   await page.getByRole("link", { name: "/other" }).click();
   await page.getByText("Other Page").click();
   await page.waitForURL("/other");
 
   // verify client state is preserved
-  await expect(page.getByPlaceholder("test-hmr")).toHaveValue("hello");
+  await expect(page.getByPlaceholder("test-input")).toHaveValue("hello");
 });
 
 test("404", async ({ page }) => {
@@ -54,7 +54,7 @@ test("@dev client hmr", async ({ page }) => {
   await page.getByText("hydrated: true").click();
 
   // setup client state
-  await page.getByPlaceholder("test-hmr").fill("hello");
+  await page.getByPlaceholder("test-input").fill("hello");
 
   // modify client comopnent
   await page.getByText("test-hmr-div").click();
@@ -64,7 +64,7 @@ test("@dev client hmr", async ({ page }) => {
   await page.getByText("test-hmr-edit-div").click();
 
   // verify client state is preserved
-  await expect(page.getByPlaceholder("test-hmr")).toHaveValue("hello");
+  await expect(page.getByPlaceholder("test-input")).toHaveValue("hello");
 
   // SSR should also use a fresh module
   const res = await page.request.get("/");

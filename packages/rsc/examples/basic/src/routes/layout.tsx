@@ -6,7 +6,7 @@ export async function Layout(props: React.PropsWithChildren) {
     <div>
       <Header />
       <NavMenu />
-      <input placeholder="test-hmr" />
+      <input placeholder="test-input" />
       {props.children}
     </div>
   );
