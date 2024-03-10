@@ -25,11 +25,17 @@ const pageModules = import.meta.glob("/src/routes/**/page.tsx", {
   eager: true,
 });
 
+/**
+ * {
+ *   "/": { Page: ... },
+ *   "/other": { Page: ... },
+ * }
+ */
 const pageModuleMap = new Map(
   Object.entries(pageModules).map(([path, mod]) => {
     const m = path.match(/\/src\/routes(.*)\/page.tsx/);
     tinyassert(m && typeof m[1] === "string");
     tinyassert(objectHas(mod, "Page"));
-    return [m[1] + "/", mod.Page as React.FC];
+    return [m[1] || "/", mod.Page as React.FC];
   })
 );
