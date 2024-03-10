@@ -1,45 +1,16 @@
-"use client";
-
-import { __history } from "../lib/csr";
-
-// TODO
-// how to setup client-side navigation from server component?
+import { Link } from "./link";
 
 export function NavMenu() {
   return (
     <ul>
       <li>
-        <a
-          href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            __history.push("/");
-          }}
-        >
-          /
-        </a>
+        <Link href="/">/</Link>
       </li>
       <li>
-        <a
-          href="/other"
-          onClick={(e) => {
-            e.preventDefault();
-            __history.push("/other");
-          }}
-        >
-          /other
-        </a>
+        <Link href="/other">/other</Link>
       </li>
       <li>
-        <a
-          href="/not-found"
-          onClick={(e) => {
-            e.preventDefault();
-            __history.push("/not-found");
-          }}
-        >
-          /not-found
-        </a>
+        <Link href="/not-found">/not-found</Link>
       </li>
     </ul>
   );
