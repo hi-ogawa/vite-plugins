@@ -12,8 +12,9 @@ export async function handler(request: Request): Promise<Response> {
   // rsc request
   const rscRequest = unwrapRscRequest(request);
   if (rscRequest) {
-    const { rscStream } = await renderRsc({ request: rscRequest });
+    const { rscStream, status } = await renderRsc({ request: rscRequest });
     return new Response(rscStream, {
+      status,
       headers: {
         "content-type": "text/x-component",
       },
@@ -21,9 +22,10 @@ export async function handler(request: Request): Promise<Response> {
   }
 
   // ssr request
-  const { rscStream } = await renderRsc({ request });
+  const { rscStream, status } = await renderRsc({ request });
   const htmlStream = await renderHtml(rscStream);
   return new Response(htmlStream, {
+    status,
     headers: {
       "content-type": "text/html",
     },
@@ -49,7 +51,6 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
 
   const [rscStream1, rscStream2] = rscStream.tee();
 
-  console.log("-> reactServerDomClient.createFromReadableStream");
   const rscNode = await reactServerDomClient.createFromReadableStream(
     rscStream1,
     {
@@ -59,11 +60,8 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
       },
     }
   );
-  console.log("-> reactServerDomClient.createFromReadableStream");
 
-  console.log("-> reactDomServer.renderToReadableStream");
   const htmlStream = await reactDomServer.renderToReadableStream(rscNode);
-  console.log("<- reactDomServer.renderToReadableStream");
 
   return htmlStream
     .pipeThrough(await injectToHtmlTempalte())

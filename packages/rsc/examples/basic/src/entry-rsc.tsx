@@ -15,7 +15,7 @@ export default function renderRsc({ request }: { request: Request }) {
     rscEl,
     bundlerConfig
   );
-  return { rscStream };
+  return { rscStream, status: Page ? 200 : 404 };
 }
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing

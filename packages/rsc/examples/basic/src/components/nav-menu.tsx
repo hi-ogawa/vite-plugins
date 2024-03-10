@@ -30,6 +30,17 @@ export function NavMenu() {
           /other
         </a>
       </li>
+      <li>
+        <a
+          href="/not-found"
+          onClick={(e) => {
+            e.preventDefault();
+            __history.push("/not-found");
+          }}
+        >
+          /other
+        </a>
+      </li>
     </ul>
   );
 }

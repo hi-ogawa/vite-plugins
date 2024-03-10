@@ -33,21 +33,18 @@ async function main() {
         setRsc(newRsc);
       });
     }, []);
-    return <>{React.use(rsc)}</>;
+    return React.use(rsc);
   }
 
   const rootEl = document.getElementById("root");
   tinyassert(rootEl);
 
-  console.log("-> hydrateRoot");
-  const root = hydrateRoot(
+  hydrateRoot(
     rootEl,
     <React.StrictMode>
       <Root />
     </React.StrictMode>
   );
-  console.log("<- hydrateRoot");
-  console.log({ root });
 }
 
 main();
