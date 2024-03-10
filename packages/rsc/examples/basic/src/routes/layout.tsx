@@ -1,17 +1,11 @@
 import { Header } from "../components/header";
+import { NavMenu } from "../components/nav-menu";
 
 export async function Layout(props: React.PropsWithChildren) {
   return (
     <div>
       <Header />
-      <ul>
-        <li>
-          <a href="/">/</a>
-        </li>
-        <li>
-          <a href="/other">/other</a>
-        </li>
-      </ul>
+      <NavMenu />
       {props.children}
     </div>
   );

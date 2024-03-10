@@ -1,10 +1,10 @@
-import { once, tinyassert } from "@hiogawa/utils";
+import { memoize, tinyassert } from "@hiogawa/utils";
 import type { WebpackRequire } from "./types";
 
 // __webpack_require__ needs to return stable promise during single render.
 // vite uses import with timestamp paramemter during dev,
 // so invalidation is not necessary (hopefully).
-const importOnce = once(clientImport);
+const importOnce = memoize(clientImport);
 
 const csrWebpackRequire: WebpackRequire = (id) => {
   console.log("[__webpack_require__]", { id });
