@@ -23,8 +23,7 @@ async function renderRsc() {
   if (import.meta.env.DEV) {
     mod = await __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx");
   } else {
-    // @ts-ignore
-    mod = await import("/dist/rsc/index.js");
+    mod = await import("/dist/rsc/index.js" as string);
   }
   return (mod as typeof import("./entry-rsc")).default();
 }
