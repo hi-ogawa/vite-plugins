@@ -8,8 +8,8 @@ import { initDomWebpackSsr } from "./lib/ssr";
 declare let __devServer: ViteDevServer;
 declare let __rscDevServer: ViteDevServer;
 
-export async function handler(_request: Request): Promise<Response> {
-  const { rscStream } = await renderRsc();
+export async function handler(request: Request): Promise<Response> {
+  const { rscStream } = await renderRsc({ request });
   const htmlStream = await renderHtml(rscStream);
   return new Response(htmlStream, {
     headers: {
@@ -18,14 +18,14 @@ export async function handler(_request: Request): Promise<Response> {
   });
 }
 
-async function renderRsc() {
+async function renderRsc({ request }: { request: Request }) {
   let mod: typeof import("./entry-rsc");
   if (import.meta.env.DEV) {
     mod = (await __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx")) as any;
   } else {
     mod = await import("/dist/rsc/index.js" as string);
   }
-  return mod.default();
+  return mod.default({ request });
 }
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {

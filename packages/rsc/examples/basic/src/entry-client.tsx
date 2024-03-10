@@ -12,21 +12,18 @@ async function main() {
   );
 
   console.log("-> reactServerDomClient.createFromReadableStream");
-  const rscNode = await reactServerDomClient.createFromReadableStream(
-    rscStream,
-    {
-      ssrManifest: {
-        moduleMap: moduleMap,
-        moduleLoading: null,
-      },
-    }
-  );
+  const rscEl = await reactServerDomClient.createFromReadableStream(rscStream, {
+    ssrManifest: {
+      moduleMap: moduleMap,
+      moduleLoading: null,
+    },
+  });
   console.log("<- reactServerDomClient.createFromReadableStream");
 
   const rootEl = document.getElementById("root");
   tinyassert(rootEl);
   console.log("-> hydrateRoot");
-  const root = hydrateRoot(rootEl, rscNode);
+  const root = hydrateRoot(rootEl, rscEl);
   console.log("<- hydrateRoot");
   console.log({ root });
 }

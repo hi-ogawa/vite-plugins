@@ -5,15 +5,16 @@ import { Layout } from "./routes/layout";
 
 // TODO: full <html> render?
 
-export default function renderRsc() {
-  const pathname = "/";
-  const Page = pageModuleMap.get(pathname);
-  console.log("-> reactServerDomServer.renderToReadableStream");
+export default function renderRsc({ request }: { request: Request }) {
+  const url = new URL(request.url);
+  const Page = pageModuleMap.get(url.pathname);
+  const rscEl = (
+    <Layout>{Page ? <Page /> : <div>Not Found: {url.pathname}</div>}</Layout>
+  );
   const rscStream = reactServerDomServer.renderToReadableStream(
-    <Layout>{Page ? <Page /> : <div>Not Found: {pathname}</div>}</Layout>,
+    rscEl,
     bundlerConfig
   );
-  console.log("<- reactServerDomServer.renderToReadableStream");
   return { rscStream };
 }
 
