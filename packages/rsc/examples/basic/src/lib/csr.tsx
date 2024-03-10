@@ -1,18 +1,20 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
+import { unwrapRenderId } from "./shared";
 import type { WebpackRequire } from "./types";
 
 // __webpack_require__ needs to return stable promise during single render.
 // vite uses import with timestamp paramemter during dev,
-// so invalidation is not necessary (hopefully).
-const importOnce = memoize(clientImport);
+// so manual invalidation is not necessary (hopefully).
+const memeImport = memoize(clientImport);
 
 const csrWebpackRequire: WebpackRequire = (id) => {
-  console.log("[__webpack_require__]", { id });
-  return importOnce(id);
+  id = unwrapRenderId(id)[0];
+  return memeImport(id);
 };
 
 async function clientImport(id: string) {
   if (import.meta.env.DEV) {
+    // transformed to "?import" which always returns latest module
     return import(/* @vite-ignore */ id);
   } else {
     const clientReferences = await import(

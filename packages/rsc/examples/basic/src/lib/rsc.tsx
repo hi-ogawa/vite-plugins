@@ -1,4 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
+import { wrapRenderId } from "./shared";
 import type { BundlerConfig, ImportManifestEntry } from "./types";
 
 // cf.
@@ -21,20 +22,27 @@ export function createClientReference(id: string): React.FC {
   }) as any;
 }
 
+// renderId: xxx (only used for dev)
 // $$id: /src/components/counter.tsx::Counter
 //   ⇕
-// id: /src/components/counter.tsx
+// id: /src/components/counter.tsx?__renderId=xxx
 // name: Counter
-export const bundlerConfig: BundlerConfig = new Proxy(
-  {},
-  {
-    get(_target, $$id, _receiver) {
-      console.log("[bundlerConfig]", { $$id });
-      tinyassert(typeof $$id === "string");
-      const [id, name] = $$id.split("::");
-      tinyassert(id);
-      tinyassert(name);
-      return { id, name, chunks: [] } satisfies ImportManifestEntry;
-    },
-  }
-);
+export function createBundlerConfig({
+  renderId,
+}: {
+  renderId: string;
+}): BundlerConfig {
+  return new Proxy(
+    {},
+    {
+      get(_target, $$id, _receiver) {
+        tinyassert(typeof $$id === "string");
+        let [id, name] = $$id.split("::");
+        tinyassert(id);
+        tinyassert(name);
+        id = wrapRenderId(id, renderId);
+        return { id, name, chunks: [] } satisfies ImportManifestEntry;
+      },
+    }
+  );
+}

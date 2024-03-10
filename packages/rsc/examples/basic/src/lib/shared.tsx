@@ -24,7 +24,7 @@ export const moduleMap: ModuleMap = new Proxy(
   }
 );
 
-const RSC_PARAM = "__rsc__";
+const RSC_PARAM = "__rsc";
 
 export function wrapRscRequestUrl(url: string): string {
   const newUrl = new URL(url, window.location.href);
@@ -34,9 +34,22 @@ export function wrapRscRequestUrl(url: string): string {
 
 export function unwrapRscRequest(request: Request): Request | undefined {
   const url = new URL(request.url);
-  if (url.searchParams.get(RSC_PARAM)) {
+  if (url.searchParams.has(RSC_PARAM)) {
     url.searchParams.delete(RSC_PARAM);
     return new Request(url, request);
   }
   return;
+}
+
+const RENDER_ID_SEP = "?__renderId=";
+
+export function wrapRenderId(id: string, tag: string) {
+  if (import.meta.env.DEV) {
+    return `${id}${RENDER_ID_SEP}${tag}`;
+  }
+  return id;
+}
+
+export function unwrapRenderId(id: string) {
+  return id.split(RENDER_ID_SEP) as [string, string];
 }

@@ -1,39 +1,34 @@
-import { tinyassert } from "@hiogawa/utils";
+import { DefaultMap, memoize, tinyassert } from "@hiogawa/utils";
+import { unwrapRenderId } from "./shared";
 import type { WebpackRequire } from "./types";
 
-// weird trick to make stable import promise during SSR
-// https://github.com/facebook/react/pull/26926#discussion_r1236251023
-// https://github.com/facebook/react/pull/26985
-interface StablePromise<T> extends PromiseLike<T> {
-  update: (next: Promise<T>) => void;
+const memoImport = memoize(ssrImport);
+
+// during dev, import cache needs to be isolated for each RSC + SSR run
+// so that import/ssrLoadModule will load fresh module
+// but keeping Promise stable during the single render.
+// Alternative approach would be to use AsyncLocalStorage to differentiate each run,
+// however it's not supported on Stackblitz, so for now, we avoid relying on it.
+const memoImportByRenderId = new DefaultMap<string, WebpackRequire>(() =>
+  memoize(ssrImport)
+);
+
+// cleanup importCache after render to avoid leaking memory during dev
+export function invalidateImportCacheOnFinish<T>(renderId: string) {
+  return new TransformStream<T, T>({
+    flush() {
+      memoImportByRenderId.delete(renderId);
+    },
+  });
 }
 
-function createStablePromise<T>(initial: Promise<T>): StablePromise<T> {
-  let promise = initial;
-  return {
-    update: (next: Promise<T>) => {
-      promise = next;
-    },
-    then: (onfulfilled, onrejected) => {
-      return promise.then(onfulfilled, onrejected);
-    },
-  };
-}
-
-const importCache = new Map<string, StablePromise<unknown>>();
-
-// synchronously return stable promise(like)
 const ssrWebpackRequire: WebpackRequire = (id) => {
-  console.log("[__webpack_require__]", { id });
-  const modPromise = ssrImport(/* @vite-ignore */ id);
-  let stablePromise = importCache.get(id);
-  if (stablePromise) {
-    stablePromise.update(modPromise);
+  if (import.meta.env.DEV) {
+    const [file, renderId] = unwrapRenderId(id);
+    return memoImportByRenderId.get(renderId)(file);
   } else {
-    stablePromise = createStablePromise(modPromise);
-    importCache.set(id, stablePromise);
+    return memoImport(id);
   }
-  return stablePromise;
 };
 
 async function ssrImport(id: string): Promise<unknown> {

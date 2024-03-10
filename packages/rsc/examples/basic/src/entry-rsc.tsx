@@ -1,11 +1,25 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
-import { bundlerConfig } from "./lib/rsc";
+import { createBundlerConfig } from "./lib/rsc";
 import { Layout } from "./routes/layout";
 
 // TODO: full <html> render?
 
-export default function renderRsc({ request }: { request: Request }) {
+export type RenderRsc = (options: {
+  request: Request;
+  renderId: string;
+}) => Promise<{
+  rscStream: ReadableStream<Uint8Array>;
+  status: number;
+}>;
+
+export default function renderRsc({
+  request,
+  renderId,
+}: {
+  request: Request;
+  renderId: string;
+}) {
   const url = new URL(request.url);
   const Page = pageModuleMap.get(url.pathname);
   const rscEl = (
@@ -13,7 +27,7 @@ export default function renderRsc({ request }: { request: Request }) {
   );
   const rscStream = reactServerDomServer.renderToReadableStream(
     rscEl,
-    bundlerConfig
+    createBundlerConfig({ renderId })
   );
   return { rscStream, status: Page ? 200 : 404 };
 }

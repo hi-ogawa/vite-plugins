@@ -1,18 +1,25 @@
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
+import type { RenderRsc } from "./entry-rsc";
 import { moduleMap, unwrapRscRequest } from "./lib/shared";
-import { initDomWebpackSsr } from "./lib/ssr";
+import { initDomWebpackSsr, invalidateImportCacheOnFinish } from "./lib/ssr";
 
 // injected globals during dev
 declare let __devServer: ViteDevServer;
 declare let __rscDevServer: ViteDevServer;
 
 export async function handler(request: Request): Promise<Response> {
+  // unique id for each render (see src/lib/ssr.tsx for the detail)
+  const renderId = Math.random().toString(36).slice(2);
+
   // rsc request
   const rscRequest = unwrapRscRequest(request);
   if (rscRequest) {
-    const { rscStream, status } = await renderRsc({ request: rscRequest });
+    const { rscStream, status } = await renderRsc({
+      request: rscRequest,
+      renderId,
+    });
     return new Response(rscStream, {
       status,
       headers: {
@@ -22,8 +29,10 @@ export async function handler(request: Request): Promise<Response> {
   }
 
   // ssr request
-  const { rscStream, status } = await renderRsc({ request });
-  const htmlStream = await renderHtml(rscStream);
+  // devRscId
+  const { rscStream, status } = await renderRsc({ request, renderId });
+  let htmlStream = await renderHtml(rscStream);
+  htmlStream = htmlStream.pipeThrough(invalidateImportCacheOnFinish(renderId));
   return new Response(htmlStream, {
     status,
     headers: {
@@ -32,15 +41,15 @@ export async function handler(request: Request): Promise<Response> {
   });
 }
 
-async function renderRsc({ request }: { request: Request }) {
+const renderRsc: RenderRsc = async (options) => {
   let mod: typeof import("./entry-rsc");
   if (import.meta.env.DEV) {
     mod = (await __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx")) as any;
   } else {
     mod = await import("/dist/rsc/index.js" as string);
   }
-  return mod.default({ request });
-}
+  return mod.default(options);
+};
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
   initDomWebpackSsr();
