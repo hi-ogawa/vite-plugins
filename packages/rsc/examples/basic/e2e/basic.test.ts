@@ -1,11 +1,28 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
+import { checkNoError, editFile } from "./helper";
 
 test("basic", async ({ page }) => {
-  const pageErrors: Error[] = [];
-  page.on("pageerror", (e) => pageErrors.push(e));
+  checkNoError(page);
 
   await page.goto("/");
   await page.getByText("hydrated: true").click();
+});
 
-  expect(pageErrors).toEqual([]);
+test("rsc reload", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/");
+  await page.getByText("hydrated: true").click();
+  await page.getByRole("heading", { name: "[RSC Experiment]" }).click();
+
+  await editFile("./src/components/header.tsx", (s) =>
+    s.replace("[RSC Experiment]", "[RSC Experiment (EDIT)]")
+  );
+  await page.getByRole("heading", { name: "[RSC Experiment (EDIT)]" }).click();
+});
+
+test.skip("client hmr", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/");
 });
