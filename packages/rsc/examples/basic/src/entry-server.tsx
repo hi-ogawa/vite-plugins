@@ -41,6 +41,9 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
 
   let node: Promise<React.ReactNode>;
   function Content() {
+    // TODO: refactor memoize?
+    // React.useState(() => ...);
+
     console.log("-> reactServerDomClient.createFromReadableStream");
     node ??= reactServerDomClient.createFromReadableStream(rscStream1, {
       ssrManifest: {
@@ -76,7 +79,7 @@ async function getHtmlTemplate() {
     const mod = await import("/dist/client/index.html?raw");
     html = mod.default;
   }
-  // make </body></html> trailer
+  // ensure </body></html> trailer
   // https://github.com/devongovett/rsc-html-stream/blob/5c2f058996e42be6120dfaf1df384361331f3ea9/server.js#L2
   html = html.replace(/<\/body>\s*<\/html>\s*/, "</body></html>");
   return html;

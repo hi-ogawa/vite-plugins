@@ -4,11 +4,12 @@ scripts for Cloudflare Workers deployment
 
 https://rsc-experiment.hiro18181.workers.dev
 
-TODO
+## todo
 
-both local preview `pnpm cf-preview` and deployed version `pnpm cf-release` are failing.
+local preview shows a following error, but not sure if this is a false alarm
+or actual mis-use of ReadableStream.
 
-Local preview shows a following error:
+cf. https://github.com/cloudflare/workers-sdk/issues/3259
 
 ```
 [wrangler:inf] GET / 200 OK (73ms)
