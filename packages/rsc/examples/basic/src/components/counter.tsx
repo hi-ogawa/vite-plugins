@@ -14,12 +14,16 @@ export function Counter(props: { defaultValue: number }) {
   return (
     <div>
       <button onClick={() => setCount((count) => count + 1)}>
-        count is {count}
+        Count: {count}
       </button>
+      <div>
+        <input placeholder="test-hmr-input" />
+      </div>
       <div>
         <CommonComponent />
       </div>
       <div>hydrated: {String(hydrated)}</div>
+      <div>test-hmr-div</div>
     </div>
   );
 }
