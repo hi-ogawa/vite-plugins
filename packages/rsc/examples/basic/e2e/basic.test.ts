@@ -65,4 +65,8 @@ test("@dev client hmr", async ({ page }) => {
 
   // verify client state is preserved
   await expect(page.getByPlaceholder("test-hmr")).toHaveValue("hello");
+
+  // SSR should also use a fresh module
+  const res = await page.request.get("/");
+  expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
