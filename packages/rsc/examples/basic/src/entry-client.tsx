@@ -26,10 +26,10 @@ async function main() {
     const [rsc, setRsc] = React.useState(initialRsc);
     React.useEffect(() => {
       return __history.subscribe(() => {
-        console.log(__history.location.href);
         const newRsc = reactServerDomClient.createFromFetch(
           fetch(wrapRscRequestUrl(__history.location.href))
         );
+        // TODO: transition?
         setRsc(newRsc);
       });
     }, []);
