@@ -19,13 +19,13 @@ export async function handler(_request: Request): Promise<Response> {
 }
 
 async function renderRsc() {
-  let mod: any;
+  let mod: typeof import("./entry-rsc");
   if (import.meta.env.DEV) {
-    mod = await __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx");
+    mod = (await __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx")) as any;
   } else {
     mod = await import("/dist/rsc/index.js" as string);
   }
-  return (mod as typeof import("./entry-rsc")).default();
+  return mod.default();
 }
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
