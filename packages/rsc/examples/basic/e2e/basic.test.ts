@@ -8,6 +8,15 @@ test("basic", async ({ page }) => {
   await page.getByText("hydrated: true").click();
 });
 
+test("navigation", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/");
+  await page.getByRole("link", { name: "/other" }).click();
+  await page.getByText("Other Page").click();
+  await page.waitForURL("/other");
+});
+
 test("@dev rsc reload", async ({ page }) => {
   checkNoError(page);
 
