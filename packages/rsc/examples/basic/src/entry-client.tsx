@@ -2,19 +2,20 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { initDomWebpackCsr } from "./lib/csr";
-import { moduleMap } from "./lib/shared";
+import { __history, initDomWebpackCsr, initHistory } from "./lib/csr";
+import { moduleMap, wrapRscRequestUrl } from "./lib/shared";
 
 // TODO: root error boundary
 
 async function main() {
   initDomWebpackCsr();
+  initHistory();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.browser"
   );
 
-  const rscPromise = reactServerDomClient.createFromReadableStream(rscStream, {
+  const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
     ssrManifest: {
       moduleMap: moduleMap,
       moduleLoading: null,
@@ -22,7 +23,17 @@ async function main() {
   });
 
   function Root() {
-    return React.use(rscPromise);
+    const [rsc, setRsc] = React.useState(initialRsc);
+    React.useEffect(() => {
+      return __history.subscribe(() => {
+        console.log(__history.location.href);
+        const newRsc = reactServerDomClient.createFromFetch(
+          fetch(wrapRscRequestUrl(__history.location.href))
+        );
+        setRsc(newRsc);
+      });
+    }, []);
+    return <>{React.use(rsc)}</>;
   }
 
   const rootEl = document.getElementById("root");

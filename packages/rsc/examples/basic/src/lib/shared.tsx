@@ -24,22 +24,19 @@ export const moduleMap: ModuleMap = new Proxy(
   }
 );
 
-const RSC_PATH = "/__rsc__";
+const RSC_PARAM = "__rsc__";
 
-export function wrapRscRequest(url: string): string {
-  return RSC_PATH + url;
+export function wrapRscRequestUrl(url: string): string {
+  const newUrl = new URL(url, window.location.href);
+  newUrl.searchParams.set(RSC_PARAM, "1");
+  return newUrl.toString();
 }
 
 export function unwrapRscRequest(request: Request): Request | undefined {
   const url = new URL(request.url);
-  if (url.pathname.startsWith(RSC_PATH)) {
-    const newUrl = new URL(url);
-    newUrl.pathname = url.pathname.slice(RSC_PATH.length);
-    return new Request(newUrl, {
-      method: request.method,
-      headers: request.headers,
-      body: request.body,
-    });
+  if (url.searchParams.get(RSC_PARAM)) {
+    url.searchParams.delete(RSC_PARAM);
+    return new Request(url, request);
   }
   return;
 }

@@ -27,3 +27,15 @@ async function clientImport(id: string) {
 export function initDomWebpackCsr() {
   Object.assign(globalThis, { __webpack_require__: csrWebpackRequire });
 }
+
+//
+// client side navigation
+//
+
+import { type RouterHistory, createBrowserHistory } from "@tanstack/history";
+
+export let __history: RouterHistory;
+
+export function initHistory() {
+  __history = createBrowserHistory();
+}

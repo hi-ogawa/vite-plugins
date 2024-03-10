@@ -254,6 +254,9 @@ importers:
 
   packages/rsc/examples/basic:
     dependencies:
+      '@tanstack/history':
+        specifier: ^1.15.13
+        version: 1.15.13
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226
@@ -2892,6 +2895,11 @@ packages:
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
+
+  /@tanstack/history@1.15.13:
+    resolution: {integrity: sha512-ToaeMtK5S4YaxCywAlYexc7KPFN0esjyTZ4vXzJhXEWAkro9iHgh7m/4ozPJb7oTo65WkHWX0W9GjcZbInSD8w==}
+    engines: {node: '>=12'}
+    dev: false
 
   /@tanstack/query-core@5.12.1:
     resolution: {integrity: sha512-WbZztNmKq0t6QjdNmHzezbi/uifYo9j6e2GLJkodsYaYUlzMbAp91RDyeHkIZrm7EfO4wa6Sm5sxJZm5SPlh6w==}

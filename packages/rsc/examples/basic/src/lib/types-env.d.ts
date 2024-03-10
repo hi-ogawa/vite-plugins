@@ -17,6 +17,11 @@ declare module "react-server-dom-webpack/client.edge" {
       ssrManifest: import("./types").SsrManifest;
     }
   ): Promise<React.ReactNode>;
+
+  export function createFromFetch(
+    promiseForResponse: Promise<Response>,
+    options?: {}
+  ): Promise<React.ReactNode>;
 }
 
 declare module "react-server-dom-webpack/client.browser" {

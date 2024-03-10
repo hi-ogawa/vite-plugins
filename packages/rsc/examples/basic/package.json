@@ -16,6 +16,7 @@
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
   },
   "dependencies": {
+    "@tanstack/history": "^1.15.13",
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
