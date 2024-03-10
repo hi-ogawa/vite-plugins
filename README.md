@@ -20,16 +20,7 @@ Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/clou
 ### [`@hiogawa/vite-plugin-ssr-middleware`](./packages/vite-plugin-ssr-middleware)
 
 Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
-
-### [`@hiogawa/vite-import-dev-server`](./packages/vite-import-dev-server)
-
-It exposes [`ViteDevServer`](https://vitejs.dev/guide/api-javascript.html#vitedevserver) for server code during development,
-which is essential for:
-
-- `ViteDevServer.transformIndexHtml` to inject HMR-related script
-  - demo usage [`importIndexHtml`](https://github.com/hi-ogawa/vite-plugins/blob/be6c3e2976f8768d5a543613edf51f0cbd86b8a0/packages/demo/src/server/ssr.tsx#L72-L80)
-- `ViteDevServer.ssrFixStacktrace` to fix `Error.stack` from transpiled code
-  - demo usage [`logError`](https://github.com/hi-ogawa/vite-plugins/blob/be6c3e2976f8768d5a543613edf51f0cbd86b8a0/packages/demo/src/server/log.ts#L3-L10)
+and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/main/packages/expose-vite-dev-server)
 
 ## development
 
