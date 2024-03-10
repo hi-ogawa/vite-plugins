@@ -1,5 +1,4 @@
 import { tinyassert } from "@hiogawa/utils";
-import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { devModuleMap } from "./config-dom";
@@ -12,21 +11,24 @@ async function main() {
     "react-server-dom-webpack/client.browser"
   );
 
-  let node: Promise<React.ReactNode>;
-  function Content() {
-    node ??= reactServerDomClient.createFromReadableStream(rscStream, {
+  console.log("-> reactServerDomClient.createFromReadableStream");
+  const rscNode = await reactServerDomClient.createFromReadableStream(
+    rscStream,
+    {
       ssrManifest: {
         moduleMap: devModuleMap,
         moduleLoading: null,
       },
-    });
-    return React.use(node);
-  }
+    }
+  );
+  console.log("<- reactServerDomClient.createFromReadableStream");
 
   const rootEl = document.getElementById("root");
   tinyassert(rootEl);
-  const root = hydrateRoot(rootEl, <Content />);
-  console.log(root);
+  console.log("-> hydrateRoot");
+  const root = hydrateRoot(rootEl, rscNode);
+  console.log("<- hydrateRoot");
+  console.log({ root });
 }
 
 main();

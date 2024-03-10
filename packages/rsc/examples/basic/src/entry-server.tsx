@@ -39,23 +39,20 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
 
   const [rscStream1, rscStream2] = rscStream.tee();
 
-  let node: Promise<React.ReactNode>;
-  function Content() {
-    // TODO: refactor memoize?
-    // React.useState(() => ...);
-
-    console.log("-> reactServerDomClient.createFromReadableStream");
-    node ??= reactServerDomClient.createFromReadableStream(rscStream1, {
+  console.log("-> reactServerDomClient.createFromReadableStream");
+  const rscNode = await reactServerDomClient.createFromReadableStream(
+    rscStream1,
+    {
       ssrManifest: {
         moduleMap: devModuleMap,
         moduleLoading: null,
       },
-    });
-    return React.use(node);
-  }
+    }
+  );
+  console.log("-> reactServerDomClient.createFromReadableStream");
 
   console.log("-> reactDomServer.renderToReadableStream");
-  const htmlStream = await reactDomServer.renderToReadableStream(<Content />);
+  const htmlStream = await reactDomServer.renderToReadableStream(rscNode);
   console.log("<- reactDomServer.renderToReadableStream");
 
   const htmlTemplate = await getHtmlTemplate();
