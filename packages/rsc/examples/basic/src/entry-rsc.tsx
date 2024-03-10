@@ -27,7 +27,7 @@ const pageModules = import.meta.glob("/src/routes/**/page.tsx", {
 
 /**
  * {
- *   "/": { Page: ... },
+ *   "/":      { Page: ... },
  *   "/other": { Page: ... },
  * }
  */

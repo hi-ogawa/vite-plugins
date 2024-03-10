@@ -1,7 +1,7 @@
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
-import { moduleMap } from "./lib/shared";
+import { moduleMap, unwrapRscRequest } from "./lib/shared";
 import { initDomWebpackSsr } from "./lib/ssr";
 
 // injected globals during dev
@@ -9,6 +9,18 @@ declare let __devServer: ViteDevServer;
 declare let __rscDevServer: ViteDevServer;
 
 export async function handler(request: Request): Promise<Response> {
+  // rsc request
+  const rscRequest = unwrapRscRequest(request);
+  if (rscRequest) {
+    const { rscStream } = await renderRsc({ request: rscRequest });
+    return new Response(rscStream, {
+      headers: {
+        "content-type": "text/x-component",
+      },
+    });
+  }
+
+  // ssr request
   const { rscStream } = await renderRsc({ request });
   const htmlStream = await renderHtml(rscStream);
   return new Response(htmlStream, {
