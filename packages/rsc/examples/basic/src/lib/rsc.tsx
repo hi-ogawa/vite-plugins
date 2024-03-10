@@ -21,8 +21,8 @@ export function createClientReference(id: string): React.FC {
   }) as any;
 }
 
-// bundler id: /src/components/counter.tsx::Counter
-//   ⇓
+// $$id: /src/components/counter.tsx::Counter
+//   ⇕
 // id: /src/components/counter.tsx
 // name: Counter
 export const bundlerConfig: BundlerConfig = new Proxy(
