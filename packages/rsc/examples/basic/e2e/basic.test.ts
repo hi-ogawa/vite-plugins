@@ -8,7 +8,7 @@ test("basic", async ({ page }) => {
   await page.getByText("hydrated: true").click();
 });
 
-test("rsc reload", async ({ page }) => {
+test("@dev rsc reload", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/");
@@ -22,8 +22,9 @@ test("rsc reload", async ({ page }) => {
   await page.getByText("hydrated: true").click();
 });
 
-test.skip("client hmr", async ({ page }) => {
+test("@dev client hmr", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/");
+  await page.pause();
 });
