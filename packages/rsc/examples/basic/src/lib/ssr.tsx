@@ -6,9 +6,14 @@ const memoImport = memoize(ssrImport);
 
 // during dev, import cache needs to be isolated for each RSC + SSR run
 // so that import/ssrLoadModule will load fresh module
-// but keeping Promise stable during the single render.
-// Alternative approach would be to use AsyncLocalStorage to differentiate each run,
-// however it's not supported on Stackblitz, so for now, we avoid relying on it.
+// while keeping Promise stable during the single render for requireAsyncModule trick:
+//   https://github.com/facebook/react/pull/26985
+//   https://github.com/facebook/react/pull/26926#discussion_r1236251023
+//
+// Alternative:
+//   use AsyncLocalStorage to differentiate each run.
+//   however it's not supported well on Stackblitz, so we avoid relying on it for now.
+//
 const memoImportByRenderId = new DefaultMap<string, WebpackRequire>(() =>
   memoize(ssrImport)
 );
@@ -22,6 +27,8 @@ export function invalidateImportCacheOnFinish<T>(renderId: string) {
   });
 }
 
+// __webpack_require__ is called at least twice for preloadModule and requireModule
+// https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js
 const ssrWebpackRequire: WebpackRequire = (id) => {
   if (import.meta.env.DEV) {
     const [file, renderId] = unwrapRenderId(id);
@@ -47,5 +54,10 @@ async function ssrImport(id: string): Promise<unknown> {
 }
 
 export function initDomWebpackSsr() {
-  Object.assign(globalThis, { __webpack_require__: ssrWebpackRequire });
+  Object.assign(globalThis, {
+    __webpack_require__: ssrWebpackRequire,
+    __webpack_chunk_load__: () => {
+      throw new Error("todo: __webpack_chunk_load__");
+    },
+  });
 }

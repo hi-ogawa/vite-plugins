@@ -9,7 +9,6 @@ export const moduleMap: ModuleMap = new Proxy(
         {},
         {
           get(_target, name, _receiver) {
-            console.log("[moduleMap]", { id, name });
             tinyassert(typeof id === "string");
             tinyassert(typeof name === "string");
             return {

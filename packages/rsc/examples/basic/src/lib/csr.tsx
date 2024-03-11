@@ -7,11 +7,11 @@ import type { WebpackRequire } from "./types";
 //   https://github.com/facebook/react/pull/26926#discussion_r1236251023
 // vite uses import with timestamp paramemter during dev,
 // so manual invalidation doesn't look necessary for client?
-const memeImport = memoize(clientImport);
+const memoImport = memoize(clientImport);
 
 const csrWebpackRequire: WebpackRequire = (id) => {
   id = unwrapRenderId(id)[0];
-  return memeImport(id);
+  return memoImport(id);
 };
 
 async function clientImport(id: string) {
@@ -29,7 +29,12 @@ async function clientImport(id: string) {
 }
 
 export function initDomWebpackCsr() {
-  Object.assign(globalThis, { __webpack_require__: csrWebpackRequire });
+  Object.assign(globalThis, {
+    __webpack_require__: csrWebpackRequire,
+    __webpack_chunk_load__: () => {
+      throw new Error("todo: __webpack_chunk_load__");
+    },
+  });
 }
 
 //
