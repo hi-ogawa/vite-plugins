@@ -12,15 +12,16 @@ export async function handler(request: Request): Promise<Response> {
   // unique id for each render (see src/lib/ssr.tsx for the detail)
   const renderId = Math.random().toString(36).slice(2);
 
-  const entryRsc = await importEntryRsc();
-
-  // rsc request
+  // check rsc-only request
   const rscRequest = unwrapRscRequest(request);
+
+  // rsc
+  const entryRsc = await importEntryRsc();
+  const { rscStream, status } = entryRsc.render({
+    request: rscRequest ?? request,
+    renderId,
+  });
   if (rscRequest) {
-    const { rscStream, status } = entryRsc.render({
-      request: rscRequest,
-      renderId,
-    });
     return new Response(rscStream, {
       status,
       headers: {
@@ -29,8 +30,7 @@ export async function handler(request: Request): Promise<Response> {
     });
   }
 
-  // ssr request
-  const { rscStream, status } = entryRsc.render({ request, renderId });
+  // ssr rsc
   let htmlStream = await renderHtml(rscStream);
   htmlStream = htmlStream.pipeThrough(invalidateImportCacheOnFinish(renderId));
   return new Response(htmlStream, {
