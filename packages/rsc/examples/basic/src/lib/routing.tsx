@@ -1,4 +1,7 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
+import type React from "react";
+
+// TODO: rename to router
 
 // cf. similar to vite-glob-routes
 // https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
@@ -6,10 +9,10 @@ import { objectHas, tinyassert } from "@hiogawa/utils";
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
   page?: {
-    default: React.FC;
+    default: React.FC<PageRouteProps>;
   };
   layout?: {
-    default: React.FC<React.PropsWithChildren>;
+    default: React.FC<LayoutRouteProps>;
   };
 }
 
@@ -34,7 +37,7 @@ export function generateRouteTree(globEntries: Record<string, unknown>) {
   return tree;
 }
 
-type MatchRouteResult = {
+export type MatchRouteResult = {
   nodes: RouteTreeNode[];
   notFound: boolean;
   params: Record<string, string>;
@@ -68,30 +71,40 @@ export function matchRoute(
   return result;
 }
 
+// TODO: separate react code in a different file
 export function renderMatchRoute(
   match: MatchRouteResult,
   fallback: React.ReactNode
 ): React.ReactNode {
   const nodes = [...match.nodes].reverse();
+  const props: RouteProps = { match };
 
   let acc: React.ReactNode = fallback;
   if (!match.notFound) {
     // TODO: assert?
     const Page = nodes[0]?.value?.page?.default;
     if (Page) {
-      acc = <Page />;
+      acc = <Page {...props} />;
     }
   }
 
   for (const node of nodes) {
     const Layout = node.value?.layout?.default;
     if (Layout) {
-      acc = <Layout>{acc}</Layout>;
+      acc = <Layout {...props}>{acc}</Layout>;
     }
   }
 
   return acc;
 }
+
+export interface RouteProps {
+  match: MatchRouteResult;
+}
+
+export interface PageRouteProps extends RouteProps {}
+
+export interface LayoutRouteProps extends React.PropsWithChildren<RouteProps> {}
 
 function matchChild(input: string, node: RouteTreeNode) {
   if (!node.children) {
