@@ -49,6 +49,7 @@ async function importEntryRsc(): Promise<typeof import("./entry-rsc")> {
   }
 }
 
+// TODO: full <html> render by RSC?
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
   initDomWebpackSsr();
 
