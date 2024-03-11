@@ -68,9 +68,9 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
     }
   );
 
-  const htmlStream = await reactDomServer.renderToReadableStream(rscNode);
+  const ssrStream = await reactDomServer.renderToReadableStream(rscNode);
 
-  return htmlStream
+  return ssrStream
     .pipeThrough(await injectToHtmlTempalte())
     .pipeThrough(injectRSCPayload(rscStream2));
 }
