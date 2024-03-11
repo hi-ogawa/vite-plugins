@@ -23,7 +23,6 @@ export async function handler(request: Request): Promise<Response> {
   });
   if (rscRequest) {
     return new Response(rscStream, {
-      status,
       headers: {
         "content-type": "text/x-component",
       },
