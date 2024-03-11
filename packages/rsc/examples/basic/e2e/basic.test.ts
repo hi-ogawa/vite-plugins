@@ -37,13 +37,13 @@ test("@dev rsc reload", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/");
-  await page.getByRole("heading", { name: "[RSC Experiment]" }).click();
+  await page.getByRole("heading", { name: "RSC Experiment" }).click();
   await page.getByText("hydrated: true").click();
 
   await editFile("./src/components/header.tsx", (s) =>
-    s.replace("[RSC Experiment]", "[RSC Experiment (EDIT)]")
+    s.replace("RSC Experiment", "RSC (EDIT) Experiment")
   );
-  await page.getByRole("heading", { name: "[RSC Experiment (EDIT)]" }).click();
+  await page.getByRole("heading", { name: "RSC (EDIT) Experiment" }).click();
   await page.getByText("hydrated: true").click();
 });
 
