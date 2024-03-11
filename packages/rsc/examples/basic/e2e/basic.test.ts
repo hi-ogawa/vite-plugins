@@ -4,22 +4,22 @@ import { checkNoError, editFile } from "./helper";
 test("basic", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/");
+  await page.goto("/test");
   await page.getByText("hydrated: true").click();
 });
 
 test("navigation", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/");
+  await page.goto("/test");
   await page.getByText("hydrated: true").click();
 
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");
 
-  await page.getByRole("link", { name: "/other" }).click();
+  await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByText("Other Page").click();
-  await page.waitForURL("/other");
+  await page.waitForURL("/test/other");
 
   // verify client state is preserved
   await expect(page.getByPlaceholder("test-input")).toHaveValue("hello");
@@ -28,15 +28,15 @@ test("navigation", async ({ page }) => {
 test("404", async ({ page }) => {
   checkNoError(page);
 
-  const res = await page.goto("/not-found");
+  const res = await page.goto("/test/not-found");
   expect(res?.status()).toBe(404);
-  await page.getByText("Not Found: /not-found").click();
+  await page.getByText("Not Found: /test/not-found").click();
 });
 
 test("@dev rsc reload", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/");
+  await page.goto("/test");
   await page.getByRole("heading", { name: "RSC Experiment" }).click();
   await page.getByText("hydrated: true").click();
 
@@ -50,7 +50,7 @@ test("@dev rsc reload", async ({ page }) => {
 test("@dev client hmr", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/");
+  await page.goto("/test");
   await page.getByText("hydrated: true").click();
 
   // setup client state
@@ -67,6 +67,6 @@ test("@dev client hmr", async ({ page }) => {
   await expect(page.getByPlaceholder("test-input")).toHaveValue("hello");
 
   // SSR should also use a fresh module
-  const res = await page.request.get("/");
+  const res = await page.request.get("/test");
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
