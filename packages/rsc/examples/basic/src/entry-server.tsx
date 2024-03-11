@@ -1,7 +1,6 @@
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
-import type { RenderRsc } from "./entry-rsc";
 import { moduleMap, unwrapRscRequest } from "./lib/shared";
 import { initDomWebpackSsr, invalidateImportCacheOnFinish } from "./lib/ssr";
 
@@ -13,10 +12,12 @@ export async function handler(request: Request): Promise<Response> {
   // unique id for each render (see src/lib/ssr.tsx for the detail)
   const renderId = Math.random().toString(36).slice(2);
 
+  const entryRsc = await importEntryRsc();
+
   // rsc request
   const rscRequest = unwrapRscRequest(request);
   if (rscRequest) {
-    const { rscStream, status } = await renderRsc({
+    const { rscStream, status } = entryRsc.render({
       request: rscRequest,
       renderId,
     });
@@ -29,8 +30,7 @@ export async function handler(request: Request): Promise<Response> {
   }
 
   // ssr request
-  // devRscId
-  const { rscStream, status } = await renderRsc({ request, renderId });
+  const { rscStream, status } = entryRsc.render({ request, renderId });
   let htmlStream = await renderHtml(rscStream);
   htmlStream = htmlStream.pipeThrough(invalidateImportCacheOnFinish(renderId));
   return new Response(htmlStream, {
@@ -41,15 +41,13 @@ export async function handler(request: Request): Promise<Response> {
   });
 }
 
-const renderRsc: RenderRsc = async (options) => {
-  let mod: typeof import("./entry-rsc");
+async function importEntryRsc(): Promise<typeof import("./entry-rsc")> {
   if (import.meta.env.DEV) {
-    mod = (await __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx")) as any;
+    return __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx") as any;
   } else {
-    mod = await import("/dist/rsc/index.js" as string);
+    return import("/dist/rsc/index.js" as string);
   }
-  return mod.default(options);
-};
+}
 
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
   initDomWebpackSsr();
@@ -78,17 +76,7 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
 }
 
 async function injectToHtmlTempalte() {
-  let html: string;
-  if (import.meta.env.DEV) {
-    const mod = await import("/index.html?raw");
-    html = await __devServer.transformIndexHtml("/", mod.default);
-  } else {
-    const mod = await import("/dist/client/index.html?raw");
-    html = mod.default;
-  }
-  // ensure </body></html> trailer
-  // https://github.com/devongovett/rsc-html-stream/blob/5c2f058996e42be6120dfaf1df384361331f3ea9/server.js#L2
-  html = html.replace(/<\/body>\s*<\/html>\s*/, "</body></html>");
+  const html = await importHtmlTemplate();
 
   // transformer to inject SSR stream
   const [pre, post] = html.split("<!--@INJECT_SSR@-->");
@@ -104,4 +92,19 @@ async function injectToHtmlTempalte() {
       controller.enqueue(encoder.encode(post));
     },
   });
+}
+
+async function importHtmlTemplate() {
+  let html: string;
+  if (import.meta.env.DEV) {
+    const mod = await import("/index.html?raw");
+    html = await __devServer.transformIndexHtml("/", mod.default);
+  } else {
+    const mod = await import("/dist/client/index.html?raw");
+    html = mod.default;
+  }
+  // ensure </body></html> trailer
+  // https://github.com/devongovett/rsc-html-stream/blob/5c2f058996e42be6120dfaf1df384361331f3ea9/server.js#L2
+  html = html.replace(/<\/body>\s*<\/html>\s*/, "</body></html>");
+  return html;
 }

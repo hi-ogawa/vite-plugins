@@ -5,15 +5,7 @@ import { Layout } from "./routes/layout";
 
 // TODO: full <html> render?
 
-export type RenderRsc = (options: {
-  request: Request;
-  renderId: string;
-}) => Promise<{
-  rscStream: ReadableStream<Uint8Array>;
-  status: number;
-}>;
-
-export default function renderRsc({
+export function render({
   request,
   renderId,
 }: {
