@@ -4,7 +4,6 @@ import { tinyassert } from "@hiogawa/utils";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import type { Program } from "estree";
-import unocss from "unocss/vite";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -21,7 +20,6 @@ export default defineConfig((env) => ({
   clearScreen: false,
   plugins: [
     react(),
-    unocss(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
     }),
@@ -77,14 +75,12 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       },
     },
     plugins: [
-      unocss(),
       vitePluginRscUseClient({
         getParentServer: () => parentServer,
       }),
     ],
     build: {
       ssr: true,
-      ssrEmitAssets: true,
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
@@ -128,24 +124,6 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
         source === "/dist/rsc/client-references.js"
       ) {
         return "/package.json";
-      }
-
-      // pass styles collected in rsc server to client on main server
-      if (source === "virtual:rsc.css") {
-        return "\0virtual:rsc.css.js";
-      }
-      return;
-    },
-    async load(id, _options) {
-      if (id.startsWith("\0virtual:rsc.css")) {
-        if (parentEnv.command === "build") {
-          return `import.meta.glob("/dist/rsc/assets/**/*.css", { eager: true })`;
-        } else {
-          // TODO
-          // during dev, we need to invalidate "virtual:rsc.css" on main server
-          // when "virtual:uno.css" is invalidated on rsc server
-          return "";
-        }
       }
       return;
     },

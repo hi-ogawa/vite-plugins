@@ -1,5 +1,4 @@
-import "virtual:rsc.css";
-import "virtual:uno.css";
+import "./style.css";
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";

@@ -79,25 +79,10 @@ async function injectToHtmlTempalte() {
   let html = await importHtmlTemplate();
 
   if (import.meta.env.DEV) {
-    // quick hack for dev
-    // - unocss FOUC on client (https://github.com/hi-ogawa/vite-plugins/pull/110)
-    // - include unocss from RSC
-    //   - for build, "virtual:rsc.css" is used.
+    // quick fix for dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
     html = html.replace(
       /<\/head>/,
-      `
-        <link rel="stylesheet" href="" />
-        <style>
-          ${
-            ((await __devServer.ssrLoadModule("virtual:uno.css")) as any)
-              .default
-          }
-          ${
-            ((await __rscDevServer.ssrLoadModule("virtual:uno.css")) as any)
-              .default
-          }
-        </style>
-      `
+      `<link rel="stylesheet" href="/src/style.css" />`
     );
   }
 

@@ -1,4 +1,3 @@
-import "virtual:uno.css";
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/routing";

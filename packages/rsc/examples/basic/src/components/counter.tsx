@@ -12,12 +12,12 @@ export function Counter() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col items-start gap-1">
       <button
         className="antd-btn antd-btn-default px-2"
         onClick={() => setCount((count) => count + 1)}
       >
-        Count: {count}
+        Counter: {count}
       </button>
       <div>
         <CommonComponent message="from client" />

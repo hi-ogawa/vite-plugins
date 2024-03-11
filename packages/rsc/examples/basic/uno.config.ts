@@ -8,6 +8,9 @@ import {
 } from "unocss";
 
 export default defineConfig({
+  content: {
+    filesystem: ["src/**/*.tsx"],
+  },
   presets: [antdPreset(), presetUno(), presetIcons()],
   transformers: [transformerDirectives(), transformerVariantGroup()],
 });
