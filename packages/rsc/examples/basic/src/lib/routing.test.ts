@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type RouteNode, generateRouteTree, matchRoute } from "./routing";
+import { generateRouteTree, matchRoute } from "./routing";
 
 describe(generateRouteTree, () => {
   it("basic", () => {
@@ -24,13 +24,19 @@ describe(generateRouteTree, () => {
             "children": {
               "demo": {
                 "value": {
-                  "layout": "/demo/layout.tsx",
-                  "page": "/demo/page.tsx",
+                  "layout": {
+                    "default": "/demo/layout.tsx",
+                  },
+                  "page": {
+                    "default": "/demo/page.tsx",
+                  },
                 },
               },
               "other": {
                 "value": {
-                  "page": "/other/page.tsx",
+                  "page": {
+                    "default": "/other/page.tsx",
+                  },
                 },
               },
               "test": {
@@ -39,29 +45,43 @@ describe(generateRouteTree, () => {
                     "children": {
                       "hello": {
                         "value": {
-                          "page": "/test/[dynamic]/hello/page.tsx",
+                          "page": {
+                            "default": "/test/[dynamic]/hello/page.tsx",
+                          },
                         },
                       },
                     },
                     "value": {
-                      "page": "/test/[dynamic]/page.tsx",
+                      "page": {
+                        "default": "/test/[dynamic]/page.tsx",
+                      },
                     },
                   },
                   "other": {
                     "value": {
-                      "page": "/test/other/page.tsx",
+                      "page": {
+                        "default": "/test/other/page.tsx",
+                      },
                     },
                   },
                 },
                 "value": {
-                  "layout": "/test/layout.tsx",
-                  "page": "/test/page.tsx",
+                  "layout": {
+                    "default": "/test/layout.tsx",
+                  },
+                  "page": {
+                    "default": "/test/page.tsx",
+                  },
                 },
               },
             },
             "value": {
-              "layout": "/layout.tsx",
-              "page": "/page.tsx",
+              "layout": {
+                "default": "/layout.tsx",
+              },
+              "page": {
+                "default": "/page.tsx",
+              },
             },
           },
         },
@@ -69,7 +89,7 @@ describe(generateRouteTree, () => {
     `);
 
     function testMatch(pathname: string) {
-      const result = matchRoute(pathname, tree as RouteNode);
+      const result = matchRoute(pathname, tree);
       return {
         ...result,
         nodes: result.nodes.map((node) => node.value),
@@ -80,8 +100,12 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
         ],
         "notFound": false,
@@ -92,11 +116,17 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
           {
-            "page": "/other/page.tsx",
+            "page": {
+              "default": "/other/page.tsx",
+            },
           },
         ],
         "notFound": false,
@@ -107,8 +137,12 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
         ],
         "notFound": true,
@@ -119,12 +153,20 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
           {
-            "layout": "/test/layout.tsx",
-            "page": "/test/page.tsx",
+            "layout": {
+              "default": "/test/layout.tsx",
+            },
+            "page": {
+              "default": "/test/page.tsx",
+            },
           },
         ],
         "notFound": false,
@@ -135,15 +177,25 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
           {
-            "layout": "/test/layout.tsx",
-            "page": "/test/page.tsx",
+            "layout": {
+              "default": "/test/layout.tsx",
+            },
+            "page": {
+              "default": "/test/page.tsx",
+            },
           },
           {
-            "page": "/test/other/page.tsx",
+            "page": {
+              "default": "/test/other/page.tsx",
+            },
           },
         ],
         "notFound": false,
@@ -154,15 +206,25 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
           {
-            "layout": "/test/layout.tsx",
-            "page": "/test/page.tsx",
+            "layout": {
+              "default": "/test/layout.tsx",
+            },
+            "page": {
+              "default": "/test/page.tsx",
+            },
           },
           {
-            "page": "/test/other/page.tsx",
+            "page": {
+              "default": "/test/other/page.tsx",
+            },
           },
         ],
         "notFound": true,
@@ -173,15 +235,25 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
           {
-            "layout": "/test/layout.tsx",
-            "page": "/test/page.tsx",
+            "layout": {
+              "default": "/test/layout.tsx",
+            },
+            "page": {
+              "default": "/test/page.tsx",
+            },
           },
           {
-            "page": "/test/[dynamic]/page.tsx",
+            "page": {
+              "default": "/test/[dynamic]/page.tsx",
+            },
           },
         ],
         "notFound": false,
@@ -194,15 +266,25 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
           {
-            "layout": "/test/layout.tsx",
-            "page": "/test/page.tsx",
+            "layout": {
+              "default": "/test/layout.tsx",
+            },
+            "page": {
+              "default": "/test/page.tsx",
+            },
           },
           {
-            "page": "/test/[dynamic]/page.tsx",
+            "page": {
+              "default": "/test/[dynamic]/page.tsx",
+            },
           },
         ],
         "notFound": true,
@@ -215,8 +297,12 @@ describe(generateRouteTree, () => {
       {
         "nodes": [
           {
-            "layout": "/layout.tsx",
-            "page": "/page.tsx",
+            "layout": {
+              "default": "/layout.tsx",
+            },
+            "page": {
+              "default": "/page.tsx",
+            },
           },
         ],
         "notFound": true,

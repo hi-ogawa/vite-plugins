@@ -1,6 +1,6 @@
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
-import { generateRouteTree, matchRoute } from "./lib/routing";
+import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/routing";
 import { createBundlerConfig } from "./lib/rsc";
 
 export function render({
@@ -35,24 +35,8 @@ function createRouter() {
 
   function run(pathname: string) {
     const match = matchRoute(pathname, tree);
-    const nodes = [...match.nodes].reverse();
-
-    let acc: React.ReactNode = null;
-    if (match.notFound) {
-      acc = <div>Not Found: {pathname}</div>;
-    } else {
-      const Page = nodes[0]?.value?.page;
-      acc = Page ? <Page /> : null; // TODO: handle as notFound?
-    }
-
-    for (const node of nodes) {
-      const Layout = node.value?.layout;
-      if (Layout) {
-        acc = <Layout>{acc}</Layout>;
-      }
-    }
-
-    return { node: acc, match };
+    const node = renderMatchRoute(match, <div>Not Found: {pathname}</div>);
+    return { node, match };
   }
 
   return { run };

@@ -3,20 +3,27 @@ import { objectHas, tinyassert } from "@hiogawa/utils";
 // cf. similar to vite-glob-routes
 // https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
 
-export type RouteNode = TreeNode<{
-  page?: React.FC;
-  layout?: React.FC<React.PropsWithChildren>;
-}>;
+// cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
+interface RouteEntry {
+  page?: {
+    default: React.FC;
+  };
+  layout?: {
+    default: React.FC<React.PropsWithChildren>;
+  };
+}
+
+type RouteTreeNode = TreeNode<RouteEntry>;
 
 // generate component tree from glob import such as
 //   import.meta.glob("/**/(page|layout).(js|jsx|ts|tsx)"
 export function generateRouteTree(globEntries: Record<string, unknown>) {
-  const entries: Record<string, { page?: React.FC; layout?: React.FC }> = {};
+  const entries: Record<string, RouteEntry> = {};
   for (const [k, v] of Object.entries(globEntries)) {
     const m = k.match(/^(.*)\/(page|layout)\.\w*$/);
     tinyassert(m && 1 in m && 2 in m);
     tinyassert(objectHas(v, "default"), `no deafult export found in '${k}'`);
-    ((entries[m[1]] ??= {}) as any)[m[2]] = v.default;
+    ((entries[m[1]] ??= {}) as any)[m[2]] = v;
   }
 
   const flatTree = Object.entries(entries).map(([k, v]) => ({
@@ -28,14 +35,14 @@ export function generateRouteTree(globEntries: Record<string, unknown>) {
 }
 
 type MatchRouteResult = {
-  nodes: RouteNode[];
+  nodes: RouteTreeNode[];
   notFound: boolean;
   params: Record<string, string>;
 };
 
 export function matchRoute(
   pathname: string,
-  tree: RouteNode
+  tree: RouteTreeNode
 ): MatchRouteResult {
   let node = tree;
   const result: MatchRouteResult = {
@@ -61,7 +68,32 @@ export function matchRoute(
   return result;
 }
 
-function matchChild(input: string, node: RouteNode) {
+export function renderMatchRoute(
+  match: MatchRouteResult,
+  fallback: React.ReactNode
+): React.ReactNode {
+  const nodes = [...match.nodes].reverse();
+
+  let acc: React.ReactNode = fallback;
+  if (!match.notFound) {
+    // TODO: assert?
+    const Page = nodes[0]?.value?.page?.default;
+    if (Page) {
+      acc = <Page />;
+    }
+  }
+
+  for (const node of nodes) {
+    const Layout = node.value?.layout?.default;
+    if (Layout) {
+      acc = <Layout>{acc}</Layout>;
+    }
+  }
+
+  return acc;
+}
+
+function matchChild(input: string, node: RouteTreeNode) {
   if (!node.children) {
     return;
   }
