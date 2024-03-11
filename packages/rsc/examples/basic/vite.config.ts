@@ -4,6 +4,7 @@ import { tinyassert } from "@hiogawa/utils";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import type { Program } from "estree";
+import unocss from "unocss/vite";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -20,6 +21,7 @@ export default defineConfig((env) => ({
   clearScreen: false,
   plugins: [
     react(),
+    unocss(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
     }),

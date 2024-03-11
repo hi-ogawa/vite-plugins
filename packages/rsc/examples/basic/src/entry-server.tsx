@@ -76,7 +76,16 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
 }
 
 async function injectToHtmlTempalte() {
-  const html = await importHtmlTemplate();
+  let html = await importHtmlTemplate();
+
+  if (import.meta.env.DEV) {
+    // quick hack for FOUC
+    // cf. https://github.com/hi-ogawa/vite-plugins/pull/110
+    html = html.replace(
+      /<\/head>/,
+      `<link rel="stylesheet" href="/__uno.css?direct"></link></head>`
+    );
+  }
 
   // transformer to inject SSR stream
   const [pre, post] = html.split("<!--@INJECT_SSR@-->");
