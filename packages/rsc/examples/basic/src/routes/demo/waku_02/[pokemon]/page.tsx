@@ -30,7 +30,7 @@ export default async function Page(props: PageRouteProps) {
             <span>{e.name.japanese}</span>
             <span>Types: {e.type.join(", ")}</span>
             {Object.entries(e.base).map(([k, v]) => (
-              <div id={k}>
+              <div key={k}>
                 {k}: {v}
               </div>
             ))}
