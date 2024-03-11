@@ -82,7 +82,7 @@ async function injectToHtmlTempalte() {
     // quick fix for dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
     html = html.replace(
       /<\/head>/,
-      `<link rel="stylesheet" href="/src/style.css" />`
+      `<link rel="stylesheet" href="/src/style.css?direct" />`
     );
   }
 
