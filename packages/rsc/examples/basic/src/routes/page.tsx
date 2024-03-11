@@ -1,7 +1,7 @@
 import { CommonComponent } from "../components/common";
 import { Counter } from "../components/counter";
 
-export async function Page() {
+export default async function Page() {
   const counterDefaultValue = Math.floor(Math.random() * 1000);
   return (
     <div>

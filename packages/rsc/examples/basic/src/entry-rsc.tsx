@@ -1,7 +1,7 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "./lib/rsc";
-import { Layout } from "./routes/layout";
+import Layout from "./routes/layout";
 
 // TODO: full <html> render?
 
@@ -27,6 +27,7 @@ export function render({
 // cf. https://nextjs.org/docs/app/building-your-application/routing
 // TODO: nesting?
 // TODO: error page?
+// TODO: lazy? (eager: false)
 const pageModules = import.meta.glob("/src/routes/**/page.tsx", {
   eager: true,
 });
@@ -41,7 +42,7 @@ const pageModuleMap = new Map(
   Object.entries(pageModules).map(([path, mod]) => {
     const m = path.match(/\/src\/routes(.*)\/page.tsx/);
     tinyassert(m && typeof m[1] === "string");
-    tinyassert(objectHas(mod, "Page"));
-    return [m[1] || "/", mod.Page as React.FC];
+    tinyassert(objectHas(mod, "default"));
+    return [m[1] || "/", mod.default as React.FC];
   })
 );
