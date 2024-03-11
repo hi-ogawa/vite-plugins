@@ -1,3 +1,4 @@
+import "virtual:uno.css";
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/routing";
@@ -25,7 +26,6 @@ function createRouter() {
   const glob = import.meta.glob(
     "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
     {
-      // TODO: lazy? (eager: false)
       eager: true,
     }
   );

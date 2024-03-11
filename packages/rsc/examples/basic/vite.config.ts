@@ -84,6 +84,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     ],
     build: {
       ssr: true,
+      ssrEmitAssets: true,
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
@@ -110,7 +111,6 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
           __rscDevServer: rscDevServer,
         });
       }
-      // TODO: rsc build before client and ssr build
       if (parentEnv.command === "build" && !parentEnv.isSsrBuild) {
         await build(rscConfig);
       }
@@ -120,14 +120,32 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
         await rscDevServer?.close();
       }
     },
-    // weird trick to silence import analysis error during dev
-    // by pointing to always existing file
     resolveId(source, _importer, _options) {
+      // weird trick to silence import analysis error during dev
+      // by pointing to a file which always exists
       if (
         parentEnv.command === "serve" &&
         source === "/dist/rsc/client-references.js"
       ) {
         return "/package.json";
+      }
+
+      // pass styles collected in rsc server to client on main server
+      if (source === "virtual:rsc.css") {
+        return "\0virtual:rsc.css.js";
+      }
+      return;
+    },
+    async load(id, _options) {
+      if (id.startsWith("\0virtual:rsc.css")) {
+        if (parentEnv.command === "build") {
+          return `import.meta.glob("/dist/rsc/assets/**/*.css", { eager: true })`;
+        } else {
+          // TODO
+          // during dev, we need to invalidate "virtual:rsc.css" on main server
+          // when "virtual:uno.css" is invalidated on rsc server
+          return "";
+        }
       }
       return;
     },

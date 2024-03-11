@@ -1,3 +1,4 @@
+import "virtual:rsc.css";
 import "virtual:uno.css";
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
