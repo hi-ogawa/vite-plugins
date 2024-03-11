@@ -1,17 +1,16 @@
 import { Link } from "./link";
 
-export function NavMenu() {
+export function NavMenu(props: { links: string[] }) {
   return (
-    <ul className="flex flex-col items-start gap-1 ml-5 list-disc">
-      <li className="antd-link">
-        <Link href="/test">/test</Link>
-      </li>
-      <li className="antd-link">
-        <Link href="/test/other">/test/other</Link>
-      </li>
-      <li className="antd-link">
-        <Link href="/test/not-found">/test/not-found</Link>
-      </li>
+    <ul className="flex flex-col items-start gap-1">
+      {props.links.map((e) => (
+        <li key={e} className="antd-link">
+          <Link href={e}>
+            <span className="text-lg pr-2">•</span>
+            {e}
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }
