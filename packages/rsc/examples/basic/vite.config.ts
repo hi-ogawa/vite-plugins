@@ -199,6 +199,7 @@ function vitePluginRscUseClient({
     },
 
     // full-reload client on rsc module change
+    // TODO: re-render RSC stream without reload?
     handleHotUpdate(ctx) {
       const isRscModule =
         !useClientFiles.has(ctx.file) && ctx.modules.length > 0;

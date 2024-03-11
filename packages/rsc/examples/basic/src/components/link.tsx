@@ -2,7 +2,7 @@
 
 import { __history } from "../lib/csr";
 
-export function Link(props: JSX.IntrinsicElements["a"]) {
+export function Link(props: JSX.IntrinsicElements["a"] & { href: string }) {
   return (
     <a
       {...props}

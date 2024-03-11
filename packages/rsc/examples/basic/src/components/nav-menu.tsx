@@ -12,6 +12,9 @@ export function NavMenu() {
       <li className="antd-link">
         <Link href="/not-found">/not-found</Link>
       </li>
+      <li className="antd-link">
+        <Link href="/demo/waku_02">/demo/waku_02</Link>
+      </li>
     </ul>
   );
 }
