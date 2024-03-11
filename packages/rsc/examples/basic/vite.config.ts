@@ -77,6 +77,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       },
     },
     plugins: [
+      unocss(),
       vitePluginRscUseClient({
         getParentServer: () => parentServer,
       }),
@@ -103,6 +104,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     async buildStart(_options) {
       if (parentEnv.command === "serve") {
         rscDevServer = await createServer(rscConfig);
+        rscDevServer.pluginContainer.buildStart({});
         Object.assign(globalThis, {
           __devServer: parentServer,
           __rscDevServer: rscDevServer,
