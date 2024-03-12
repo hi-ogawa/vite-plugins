@@ -138,11 +138,11 @@ test("server action", async ({ page }) => {
 
   const checkClientState = await setupCheckClientState(page);
 
-  await page.getByText('Count: 0').click();
-  await page.getByRole('button', { name: '+1' }).click();
-  await page.getByText('Count: 1').click();
-  await page.getByRole('button', { name: '-1' }).click();
-  await page.getByText('Count: 0').click();
+  await page.getByText("Count: 0").click();
+  await page.getByRole("button", { name: "+1" }).click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "-1" }).click();
+  await page.getByText("Count: 0").click();
 
   await checkClientState();
 });
