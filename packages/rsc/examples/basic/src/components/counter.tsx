@@ -6,11 +6,6 @@ import { CommonComponent } from "./common";
 export function Counter() {
   const [count, setCount] = React.useState(0);
 
-  const [hydrated, setHydrated] = React.useState(false);
-  React.useEffect(() => {
-    setHydrated(true);
-  }, []);
-
   return (
     <div className="flex flex-col items-start gap-1">
       <button
@@ -22,7 +17,6 @@ export function Counter() {
       <div>
         <CommonComponent message="from client" />
       </div>
-      <div>hydrated: {String(hydrated)}</div>
       <div>test-hmr-div</div>
     </div>
   );

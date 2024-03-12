@@ -273,6 +273,9 @@ importers:
       '@hattip/adapter-node':
         specifier: ^0.0.43
         version: 0.0.43
+      '@hiogawa/tiny-rpc':
+        specifier: 0.2.3-pre.18
+        version: 0.2.3-pre.18
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
         version: 2.2.1-pre.3(@unocss/preset-uno@0.58.0)(unocss@0.57.7)
@@ -2333,6 +2336,10 @@ packages:
     resolution: {integrity: sha512-YYFssKJ+abyHMfYSK1IyuL9NccPWWcziG5xf4HVXHmXuT+nLK402WMheSl5A0qlpCBdaO0obtUZfKPAPQj3GfQ==}
     dev: true
 
+  /@hiogawa/tiny-rpc@0.2.3-pre.18:
+    resolution: {integrity: sha512-BiNHrutG9G9yV622QvkxZxF+PhkaH2Aspp4/X1KYTfnaQTcg4fFUTBWf5Kf533swon2SuVJwi6U6H1LQbhVOQQ==}
+    dev: true
+
   /@hiogawa/tiny-toast@0.1.1-pre.7(react@18.2.0):
     resolution: {integrity: sha512-Qjp/sFedLhvhb2B69X/CyaU4d+fd+OWlPCh08WvWL3NUcH1zGbfz7wceLoTNVM7ye8TqtgK5UmjFJ7adeEz14g==}
     peerDependencies:
@@ -3396,7 +3403,7 @@ packages:
     resolution: {integrity: sha512-LBJ9dJ/j5UIMzJF7pmIig55MtJAYtG+tn/zQRveZuPRVahzP+KqwlyB7u3uCUnQhdgo/MJODMcqyr0jl6+kTuA==}
     engines: {node: '>=14'}
     dependencies:
-      '@unocss/core': 0.58.0
+      '@unocss/core': 0.58.5
       magic-string: 0.30.7
     dev: true
 

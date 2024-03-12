@@ -116,6 +116,20 @@ test("@dev css hmr", async ({ page }) => {
   );
 });
 
+test("rpc", async ({ page }) => {
+  await page.goto("/test/rpc");
+  await page.getByText("hydrated: true").click();
+
+  await page.getByText("Server Value: 0").click();
+  await page.getByText("Client Value: 0").click();
+  await page.getByRole("button", { name: "+1" }).click();
+  await page.getByText("Client Value: 1").click();
+  await page.getByText("Server Value: 0").click();
+  await page.getByRole("link", { name: "Reload" }).click();
+  await page.getByText("Server Value: 1").click();
+  await page.getByText("Client Value: 1").click();
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");

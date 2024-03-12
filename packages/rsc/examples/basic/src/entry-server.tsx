@@ -9,6 +9,14 @@ declare let __devServer: ViteDevServer;
 declare let __rscDevServer: ViteDevServer;
 
 export async function handler(request: Request): Promise<Response> {
+  const entryRsc = await importEntryRsc();
+
+  // rpc
+  const rpcResponse = await entryRsc.rpcHandler({ request });
+  if (rpcResponse) {
+    return rpcResponse;
+  }
+
   // unique id for each render (see src/lib/ssr.tsx for the detail)
   const renderId = Math.random().toString(36).slice(2);
 
@@ -16,7 +24,6 @@ export async function handler(request: Request): Promise<Response> {
   const rscRequest = unwrapRscRequest(request);
 
   // rsc
-  const entryRsc = await importEntryRsc();
   const { rscStream, status } = entryRsc.render({
     request: rscRequest ?? request,
     renderId,

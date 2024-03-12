@@ -3,6 +3,9 @@ import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/routing";
 import { createBundlerConfig } from "./lib/rsc";
 
+// re-export rpc handler from RSC build
+export { rpcHandler } from "./rpc/server";
+
 export function render({
   request,
   renderId,
