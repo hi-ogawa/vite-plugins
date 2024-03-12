@@ -80,9 +80,10 @@ async function injectToHtmlTempalte() {
 
   if (import.meta.env.DEV) {
     // quick fix for dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
+    const mod = await __devServer.ssrLoadModule("/src/style.css");
     html = html.replace(
       "</head>",
-      `<link rel="stylesheet" href="/src/style.css?direct" /></head>`
+      `<style>${(mod as any).default}</style></head>`
     );
   }
 
