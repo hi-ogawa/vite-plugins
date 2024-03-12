@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/rsc-example-basic",
+  "name": "@hiogawa/react-server-example-basic",
   "version": "0.0.0",
   "private": true,
   "type": "module",

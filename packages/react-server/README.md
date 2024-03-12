@@ -1,4 +1,4 @@
-# rsc experiment
+# react-server
 
 See [`./examples/basic`](./examples/basic).
 Hopefully some parts will be extraced as a package in the future.

@@ -246,13 +246,13 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
 
-  packages/rsc:
+  packages/react-server:
     devDependencies:
       vite:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
 
-  packages/rsc/examples/basic:
+  packages/react-server/examples/basic:
     dependencies:
       '@tanstack/history':
         specifier: ^1.15.13
@@ -8865,7 +8865,7 @@ packages:
     dependencies:
       '@types/node': 18.16.18
       esbuild: 0.18.13
-      postcss: 8.4.32
+      postcss: 8.4.35
       rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
