@@ -1,5 +1,7 @@
 # rsc experiment
 
+See [`./examples/basic`](./examples/basic)
+
 - https://github.com/dai-shi/waku/
 - https://github.com/devongovett/rsc-html-stream
 - https://github.com/cyco130/vite-rsc
