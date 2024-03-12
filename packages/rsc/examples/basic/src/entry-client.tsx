@@ -4,7 +4,7 @@ import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "./lib/csr";
-import { moduleMap, wrapRscRequestUrl } from "./lib/shared";
+import { wrapRscRequestUrl } from "./lib/shared";
 
 // TODO: root error boundary?
 
@@ -17,9 +17,8 @@ async function main() {
   );
 
   const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
-    ssrManifest: {
-      moduleMap: moduleMap,
-      moduleLoading: null,
+    callServer: async (id, args) => {
+      console.log("[callServer]", { id, args });
     },
   });
 
@@ -27,8 +26,14 @@ async function main() {
     const [rsc, setRsc] = React.useState(initialRsc);
     React.useEffect(() => {
       return __history.subscribe(() => {
+        console.log("[history:change]", __history.location.href);
         const newRsc = reactServerDomClient.createFromFetch(
-          fetch(wrapRscRequestUrl(__history.location.href))
+          fetch(wrapRscRequestUrl(__history.location.href)),
+          {
+            callServer: async (id, args) => {
+              console.log("[callServer]", { id, args });
+            },
+          }
         );
         // TODO: transition?
         setRsc(newRsc);

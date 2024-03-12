@@ -52,3 +52,41 @@ export function wrapRenderId(id: string, tag: string) {
 export function unwrapRenderId(id: string) {
   return id.split(RENDER_ID_SEP) as [string, string];
 }
+
+// https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
+// https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-client/src/ReactFlightReplyClient.js#L671-L678
+export function createServerReference(id: string): React.FC {
+  return Object.defineProperties(
+    () => {
+      console.log("todo: createServerReference.callServer");
+    },
+    {
+      $$typeof: {
+        value: Symbol.for("react.server.reference"),
+      },
+      $$id: {
+        value: id,
+        configurable: true,
+      },
+      $$bound: { value: null, configurable: true },
+      // TODO: progressive enhancement?
+      // https://github.com/facebook/react/pull/26774
+      $$FORM_ACTION: {
+        value: (name: string) => {
+          return {
+            name,
+            method: "POST",
+            encType: "multipart/form-data",
+            data: new FormData(),
+          };
+        },
+      },
+      bind: {
+        value: () => {
+          throw new Error("todo: createServerReference.bind");
+        },
+        configurable: true,
+      },
+    }
+  ) as any;
+}

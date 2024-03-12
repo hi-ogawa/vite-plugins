@@ -26,6 +26,7 @@ export default defineConfig((env) => ({
     vitePluginRscServer({
       entry: "/src/entry-rsc.tsx",
     }),
+    vitePluginUseServer(),
     {
       name: "preview-ssr-middleware",
       async configurePreviewServer(server) {
@@ -96,6 +97,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       },
     },
     plugins: [
+      vitePluginUseServer(),
       vitePluginRscUseClient({
         manager,
       }),
@@ -186,14 +188,14 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
 }
 
 /*
-transform file with "use client" directive
+transform "use client" directive
 
 [input]
 "use client"
 export function Counter() {}
 
-[output]
-import { createClientReference } from "/src/runtime/rsc/utils"
+[output (rsc)]
+import { createClientReference } from "/src/runtime/rsc"
 export const Counter = createClientReference("<id>::Counter");
 */
 function vitePluginRscUseClient({ manager }: { manager: RscManager }): Plugin {
@@ -271,6 +273,64 @@ function vitePluginRscUseClient({ manager }: { manager: RscManager }): Plugin {
           result
         );
       },
+    },
+  };
+}
+
+/*
+transform "use server" directive
+TODO: include all "use server" files for rsc build
+
+[input]
+"use server"
+export function hello() {}
+
+[output] (client / ssr)
+import { createServerReference } from "/src/runtime/shared"
+export const hello = createServerReference("<id>::hello");
+*/
+function vitePluginUseServer(): Plugin {
+  const filter = createFilter(/\.[tj]sx?$/);
+
+  return {
+    name: vitePluginRscUseClient.name,
+    async transform(code, id, _options) {
+      if (!filter(id)) {
+        return;
+      }
+      const ast: Program = await parseAstAsync(code);
+      const hasDirective = ast.body.some(
+        (node) =>
+          node.type === "ExpressionStatement" &&
+          "directive" in node &&
+          node.directive === "use server"
+      );
+      if (!hasDirective) {
+        return;
+      }
+      const exportNames: string[] = [];
+      for (const node of ast.body) {
+        if (node.type === "ExportNamedDeclaration") {
+          if (node.declaration) {
+            if (node.declaration.type === "FunctionDeclaration") {
+              exportNames.push(node.declaration.id.name);
+            }
+            if (node.declaration.type === "VariableDeclaration") {
+              for (const decl of node.declaration.declarations) {
+                if (decl.id.type === "Identifier") {
+                  exportNames.push(decl.id.name);
+                }
+              }
+            }
+          }
+        }
+      }
+      console.log("[rsc-use-server:transform]", { id, exportNames });
+      let result = `import { createServerReference } from "/src/lib/shared";\n`;
+      for (const name of exportNames) {
+        result += `export const ${name} = createServerReference("${id}::${name}");\n`;
+      }
+      return result;
     },
   };
 }

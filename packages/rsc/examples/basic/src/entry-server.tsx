@@ -69,6 +69,8 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
     rscStream1,
     {
       ssrManifest: {
+        // null is fine?
+        // or use this to inject "renderId" for dev?
         moduleMap: moduleMap,
         moduleLoading: null,
       },
