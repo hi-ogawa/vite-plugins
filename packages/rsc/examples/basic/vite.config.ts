@@ -61,7 +61,7 @@ class RscManager {
       id,
     ]);
     return (
-      !this.parentIds.has(id) &&
+      !this.parentIds.has(id) && // TODO: don't need this check to support hot reload common component?
       this.rscIds.has(id) &&
       !this.rscUseClientIds.has(id)
     );
@@ -146,16 +146,25 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
         manager.parentIds.add(id);
       }
     },
-    handleHotUpdate(ctx) {
+    async handleHotUpdate(ctx) {
+      tinyassert(parentServer);
+
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
-        parentServer?.hot.send({
+        // reload all importers since
+        // postcss's creates module dependency from style.css to RSC files
+        for (const m of ctx.modules) {
+          for (const imod of m.importers) {
+            await parentServer.reloadModule(imod);
+          }
+        }
+
+        // re-render RSC with custom event
+        // (see packages/rsc/examples/basic/src/entry-client.tsx)
+        parentServer.hot.send({
           type: "custom",
           event: "rsc:reload",
         });
-        // this is to avoid full-reload due to postcss's module dependency from style.css to RSC files
-        // however, this also prevents full postcss's HMR
-        // TODO: anyways the general solution needs to handle css in RSC server
         return [];
       }
       return ctx.modules;
