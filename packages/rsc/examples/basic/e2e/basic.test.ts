@@ -49,6 +49,24 @@ test("@dev rsc hmr", async ({ page }) => {
   await checkClientState();
 });
 
+test.skip("@dev common hmr", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await page.getByRole("heading", { name: "RSC Experiment" }).click();
+  await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await editFile("./src/components/header.tsx", (s) =>
+    s.replace("RSC Experiment", "RSC (EDIT) Experiment")
+  );
+  await page.getByRole("heading", { name: "RSC (EDIT) Experiment" }).click();
+  await page.getByText("hydrated: true").click();
+
+  await checkClientState();
+});
+
 test("@dev client hmr", async ({ page }) => {
   checkNoError(page);
 

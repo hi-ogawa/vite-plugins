@@ -52,8 +52,8 @@ main();
 
 // custom event for RSC reload
 if (import.meta.hot) {
-  import.meta.hot.on("rsc:reload", () => {
-    console.log("[rsc] reload");
+  import.meta.hot.on("rsc:update", (e) => {
+    console.log("[rsc] hot update", e);
     __history.notify();
   });
 }

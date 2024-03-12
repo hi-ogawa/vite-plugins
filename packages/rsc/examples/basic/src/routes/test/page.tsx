@@ -1,7 +1,6 @@
 import { CommonComponent } from "../../components/common";
 import { Counter } from "../../components/counter";
 
-// TODO(test): hmr rsc
 export default async function Page() {
   return (
     <div className="flex flex-col gap-2">

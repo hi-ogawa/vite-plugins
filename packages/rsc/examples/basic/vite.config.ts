@@ -47,11 +47,11 @@ export default defineConfig((env) => ({
 // convenient singleton to track file ids to decide RSC hot reload
 class RscManager {
   // all files in parent server
-  parentIds = new Set();
+  parentIds = new Set<string>();
   // all files in rsc server
-  rscIds = new Set();
+  rscIds = new Set<string>();
   // "use client" files in rsc server
-  rscUseClientIds = new Set();
+  rscUseClientIds = new Set<string>();
 
   shouldReloadRsc(id: string) {
     console.log("[RscManager.shouldReloadRsc]", [
@@ -60,11 +60,7 @@ class RscManager {
       this.rscUseClientIds.has(id),
       id,
     ]);
-    return (
-      !this.parentIds.has(id) && // TODO: don't need this check to support hot reload common component?
-      this.rscIds.has(id) &&
-      !this.rscUseClientIds.has(id)
-    );
+    return this.rscIds.has(id) && !this.rscUseClientIds.has(id);
   }
 }
 
@@ -151,21 +147,27 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
 
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
-        // reload all importers since
-        // postcss's creates module dependency from style.css to RSC files
-        for (const m of ctx.modules) {
-          for (const imod of m.importers) {
-            await parentServer.reloadModule(imod);
-          }
-        }
-
-        // re-render RSC with custom event
-        // (see packages/rsc/examples/basic/src/entry-client.tsx)
         parentServer.hot.send({
           type: "custom",
-          event: "rsc:reload",
+          event: "rsc:update",
+          data: {
+            file: ctx.file,
+          },
         });
-        return [];
+
+        // some rsc files are included in parent module graph
+        // due to postcss creating dependency from style.css to all source files.
+        // in this case, reload all importers (for css hmr),
+        // and return empty modules to avoid full-reload
+        if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
+          // in this case
+          for (const m of ctx.modules) {
+            for (const imod of m.importers) {
+              await parentServer.reloadModule(imod);
+            }
+          }
+          return [];
+        }
       }
       return ctx.modules;
     },
