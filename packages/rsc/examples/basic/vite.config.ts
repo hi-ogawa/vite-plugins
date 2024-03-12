@@ -155,9 +155,9 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
           },
         });
 
-        // some rsc files are included in parent module graph
+        // Some rsc files are included in parent module graph
         // due to postcss creating dependency from style.css to all source files.
-        // in this case, reload all importers (for css hmr),
+        // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
         if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
           // in this case

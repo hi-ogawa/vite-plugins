@@ -91,12 +91,29 @@ test("@dev client hmr", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
-test.skip("css", async ({ page }) => {
-  page;
+test("css", async ({ page }) => {
+  await page.goto("/test");
+  await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
+    "font-weight",
+    "700"
+  );
 });
 
-test.skip("@dev css hmr", async ({ page }) => {
-  page;
+test("@dev css hmr", async ({ page }) => {
+  await page.goto("/test");
+  await page.getByText("hydrated: true").click();
+
+  await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
+    "font-weight",
+    "700"
+  );
+  await editFile("./src/components/header.tsx", (s) =>
+    s.replace("font-bold", "font-light")
+  );
+  await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
+    "font-weight",
+    "300"
+  );
 });
 
 async function setupCheckClientState(page: Page) {
