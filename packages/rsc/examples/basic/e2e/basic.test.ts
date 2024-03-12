@@ -49,19 +49,21 @@ test("@dev rsc hmr", async ({ page }) => {
   await checkClientState();
 });
 
-test.skip("@dev common hmr", async ({ page }) => {
+test("@dev common hmr", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
-  await page.getByRole("heading", { name: "RSC Experiment" }).click();
+  await page.getByText("Common component (from server)").click();
+  await page.getByText("Common component (from client)").click();
   await page.getByText("hydrated: true").click();
 
   const checkClientState = await setupCheckClientState(page);
 
-  await editFile("./src/components/header.tsx", (s) =>
-    s.replace("RSC Experiment", "RSC (EDIT) Experiment")
+  await editFile("./src/components/common.tsx", (s) =>
+    s.replace("Common component", "Common (EDIT) component")
   );
-  await page.getByRole("heading", { name: "RSC (EDIT) Experiment" }).click();
+  await page.getByText("Common (EDIT) component (from server)").click();
+  await page.getByText("Common (EDIT) component (from client)").click();
   await page.getByText("hydrated: true").click();
 
   await checkClientState();
