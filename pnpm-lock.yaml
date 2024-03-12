@@ -273,9 +273,6 @@ importers:
       '@hattip/adapter-node':
         specifier: ^0.0.43
         version: 0.0.43
-      '@hiogawa/tiny-rpc':
-        specifier: 0.2.3-pre.18
-        version: 0.2.3-pre.18
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.3
         version: 2.2.1-pre.3(@unocss/preset-uno@0.58.0)(unocss@0.57.7)
@@ -2334,10 +2331,6 @@ packages:
 
   /@hiogawa/tiny-rpc@0.2.3-pre.11:
     resolution: {integrity: sha512-YYFssKJ+abyHMfYSK1IyuL9NccPWWcziG5xf4HVXHmXuT+nLK402WMheSl5A0qlpCBdaO0obtUZfKPAPQj3GfQ==}
-    dev: true
-
-  /@hiogawa/tiny-rpc@0.2.3-pre.18:
-    resolution: {integrity: sha512-BiNHrutG9G9yV622QvkxZxF+PhkaH2Aspp4/X1KYTfnaQTcg4fFUTBWf5Kf533swon2SuVJwi6U6H1LQbhVOQQ==}
     dev: true
 
   /@hiogawa/tiny-toast@0.1.1-pre.7(react@18.2.0):

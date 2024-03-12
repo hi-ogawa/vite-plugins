@@ -11,13 +11,6 @@ declare let __rscDevServer: ViteDevServer;
 export async function handler(request: Request): Promise<Response> {
   const entryRsc = await importEntryRsc();
 
-  // rpc
-  // (TODO: remove if server action is implemented)
-  const rpcResponse = await entryRsc.rpcHandler({ request });
-  if (rpcResponse) {
-    return rpcResponse;
-  }
-
   // action
   const actionRequest = unwrapActionRequest(request);
   if (actionRequest) {
