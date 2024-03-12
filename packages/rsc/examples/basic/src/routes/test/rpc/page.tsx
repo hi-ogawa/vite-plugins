@@ -1,6 +1,8 @@
 import { serverRpc } from "../../../rpc/server";
 import { CounterRpc } from "./counter-rpc";
 
+// TODO: server action
+
 export default async function Page() {
   const value = await serverRpc.getCounter();
 
