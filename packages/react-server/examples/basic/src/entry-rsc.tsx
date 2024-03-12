@@ -1,7 +1,7 @@
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import type { ViteDevServer } from "vite";
-import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/routing";
+import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/router";
 import { createBundlerConfig } from "./lib/rsc";
 
 export function render({

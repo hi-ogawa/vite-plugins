@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { generateRouteTree, matchRoute } from "./routing";
+import { generateRouteTree, matchRoute } from "./router";
 
 describe(generateRouteTree, () => {
   it("basic", () => {

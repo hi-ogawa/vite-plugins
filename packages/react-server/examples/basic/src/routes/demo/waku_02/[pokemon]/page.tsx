@@ -1,6 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import { Link } from "../../../../components/link";
-import type { PageRouteProps } from "../../../../lib/routing";
+import type { PageRouteProps } from "../../../../lib/router";
 import { fetchPokemons } from "../utils";
 
 export default async function Page(props: PageRouteProps) {
