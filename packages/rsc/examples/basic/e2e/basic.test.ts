@@ -130,6 +130,23 @@ test("rpc", async ({ page }) => {
   await page.getByText("Client Value: 1").click();
 });
 
+test("server action", async ({ page }) => {
+  await page.goto("/test/action");
+
+  // TODO: should work without hydration (progressive enhancement)
+  await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await page.getByText('Count: 0').click();
+  await page.getByRole('button', { name: '+1' }).click();
+  await page.getByText('Count: 1').click();
+  await page.getByRole('button', { name: '-1' }).click();
+  await page.getByText('Count: 0').click();
+
+  await checkClientState();
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");

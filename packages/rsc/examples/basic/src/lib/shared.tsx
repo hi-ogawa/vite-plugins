@@ -1,5 +1,9 @@
 import { tinyassert } from "@hiogawa/utils";
-import type { ImportManifestEntry, ModuleMap } from "./types";
+import type {
+  CallServerCallback,
+  ImportManifestEntry,
+  ModuleMap,
+} from "./types";
 
 export const moduleMap: ModuleMap = new Proxy(
   {},
@@ -35,7 +39,34 @@ export function unwrapRscRequest(request: Request): Request | undefined {
   const url = new URL(request.url);
   if (url.searchParams.has(RSC_PARAM)) {
     url.searchParams.delete(RSC_PARAM);
-    return new Request(url, request);
+    return new Request(url, {
+      method: request.method,
+      headers: request.headers,
+    });
+  }
+  return;
+}
+
+const ACTION_ID = "x-actioin-id";
+
+export function wrapActionRequest(
+  url: string,
+  id: string,
+  body: BodyInit
+): Request {
+  return new Request(wrapRscRequestUrl(url), {
+    method: "POST",
+    body,
+    headers: {
+      [ACTION_ID]: id,
+    },
+  });
+}
+
+export function unwrapActionRequest(request: Request) {
+  const id = request.headers.get(ACTION_ID);
+  if (id && request.method === "POST") {
+    return { request, id };
   }
   return;
 }
@@ -57,8 +88,10 @@ export function unwrapRenderId(id: string) {
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-client/src/ReactFlightReplyClient.js#L671-L678
 export function createServerReference(id: string): React.FC {
   return Object.defineProperties(
-    () => {
-      console.log("todo: createServerReference.callServer");
+    (...args: unknown[]) => {
+      const callServer: CallServerCallback = (globalThis as any).__callServer;
+      tinyassert(callServer);
+      return callServer(id, args);
     },
     {
       $$typeof: {

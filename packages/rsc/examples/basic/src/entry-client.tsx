@@ -4,7 +4,8 @@ import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "./lib/csr";
-import { wrapRscRequestUrl } from "./lib/shared";
+import { wrapActionRequest, wrapRscRequestUrl } from "./lib/shared";
+import type { CallServerCallback } from "./lib/types";
 
 // TODO: root error boundary?
 
@@ -16,29 +17,49 @@ async function main() {
     "react-server-dom-webpack/client.browser"
   );
 
+  // swtich root rsc on navigaton and server action
+  let __setRsc: (v: Promise<React.ReactNode>) => void;
+
+  function updateRscByFetch(request: Request) {
+    const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+      callServer,
+    });
+    React.startTransition(() => __setRsc(newRsc));
+  }
+
+  // server action callback
+  const callServer: CallServerCallback = async (id, args) => {
+    updateRscByFetch(
+      wrapActionRequest(
+        __history.location.href,
+        id,
+        await reactServerDomClient.encodeReply(args)
+      )
+    );
+  };
+
+  // expose as global to be used for createServerReference
+  // TODO: refactor
+  Object.assign(globalThis, { __callServer: callServer });
+
+  // initial rsc stream from inline <script>
   const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
-    callServer: async (id, args) => {
-      console.log("[callServer]", { id, args });
-    },
+    callServer,
   });
 
   function Root() {
     const [rsc, setRsc] = React.useState(initialRsc);
+    __setRsc = setRsc;
+
     React.useEffect(() => {
       return __history.subscribe(() => {
         console.log("[history:change]", __history.location.href);
-        const newRsc = reactServerDomClient.createFromFetch(
-          fetch(wrapRscRequestUrl(__history.location.href)),
-          {
-            callServer: async (id, args) => {
-              console.log("[callServer]", { id, args });
-            },
-          }
+        updateRscByFetch(
+          new Request(wrapRscRequestUrl(__history.location.href))
         );
-        // TODO: transition?
-        setRsc(newRsc);
       });
     }, []);
+
     return React.use(rsc);
   }
 

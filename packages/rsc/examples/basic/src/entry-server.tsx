@@ -1,7 +1,7 @@
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
-import { moduleMap, unwrapRscRequest } from "./lib/shared";
+import { moduleMap, unwrapActionRequest, unwrapRscRequest } from "./lib/shared";
 import { initDomWebpackSsr, invalidateImportCacheOnFinish } from "./lib/ssr";
 
 // injected globals during dev
@@ -12,9 +12,16 @@ export async function handler(request: Request): Promise<Response> {
   const entryRsc = await importEntryRsc();
 
   // rpc
+  // (TODO: remove if server action is implemented)
   const rpcResponse = await entryRsc.rpcHandler({ request });
   if (rpcResponse) {
     return rpcResponse;
+  }
+
+  // action
+  const actionRequest = unwrapActionRequest(request);
+  if (actionRequest) {
+    await entryRsc.actionHandler(actionRequest);
   }
 
   // unique id for each render (see src/lib/ssr.tsx for the detail)

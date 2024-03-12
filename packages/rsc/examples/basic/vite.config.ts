@@ -97,7 +97,38 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       },
     },
     plugins: [
-      vitePluginUseServer(),
+      // TODO: expose server reference for RSC itself
+      // vitePluginUseServer(),
+
+      // expose "use server" files for RSC build via virtual module
+      {
+        name: "virtual-rsc-use-server",
+        apply: "build",
+        resolveId(source, _importer, _options) {
+          if (source === "virtual:rsc-use-server") {
+            return "\0" + source;
+          }
+          return;
+        },
+        async load(id, _options) {
+          if (id === "\0virtual:rsc-use-server") {
+            // TODO: crawl file system?
+            const files = ["/src/routes/test/action/action.tsx"];
+            let result = `export default {\n`;
+            for (const file of files) {
+              const resolved = await this.resolve(file);
+              tinyassert(resolved);
+              const id = resolved.id;
+              result += `"${id}": () => import("${id}"),\n`;
+            }
+            result += "};\n";
+            return result;
+          }
+          return;
+        },
+      },
+
+      // transform "use client" into client referecnes
       vitePluginRscUseClient({
         manager,
       }),
