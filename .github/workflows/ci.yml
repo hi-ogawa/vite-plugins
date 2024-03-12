@@ -20,6 +20,20 @@ jobs:
       - run: pnpm -C packages/demo build-preview
       - run: E2E_COMMAND='pnpm preview' pnpm -C packages/demo test-e2e
 
+  test-rsc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: corepack enable
+      - run: pnpm i
+      - run: pnpm --filter @hiogawa/rsc-example-basic... build
+      - run: npx playwright install chromium
+      - run: pnpm --filter @hiogawa/rsc-example-basic test-e2e
+      - run: pnpm --filter @hiogawa/rsc-example-basic test-e2e-preview
+
   test-vite-node-miniflare:
     runs-on: ubuntu-latest
     steps:

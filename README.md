@@ -22,6 +22,10 @@ Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/clou
 Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
 and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/main/packages/expose-vite-dev-server)
 
+### [`@hiogawa/react-server`](./packages/react-server)
+
+Work in progress Vite plugin for React Server Component and Server Action
+
 ## development
 
 ```sh
