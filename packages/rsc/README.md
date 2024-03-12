@@ -1,6 +1,7 @@
 # rsc experiment
 
-See [`./examples/basic`](./examples/basic)
+See [`./examples/basic`](./examples/basic).
+Hopefully some parts will be extraced as a package in the future.
 
 - https://github.com/dai-shi/waku/
 - https://github.com/lazarv/react-server
