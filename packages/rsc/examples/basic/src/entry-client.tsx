@@ -6,7 +6,7 @@ import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "./lib/csr";
 import { moduleMap, wrapRscRequestUrl } from "./lib/shared";
 
-// TODO: root error boundary
+// TODO: root error boundary?
 
 async function main() {
   initDomWebpackCsr();
@@ -49,3 +49,11 @@ async function main() {
 }
 
 main();
+
+// custom event for RSC reload
+if (import.meta.hot) {
+  import.meta.hot.on("rsc:reload", () => {
+    console.log("[rsc] reload");
+    __history.notify();
+  });
+}

@@ -44,10 +44,35 @@ export default defineConfig((env) => ({
 // render RSC on separate module graph with "react-server" conditions
 //
 
+// convenient singleton to track file ids to decide RSC hot reload
+class RscManager {
+  // all files in parent server
+  parentIds = new Set();
+  // all files in rsc server
+  rscIds = new Set();
+  // "use client" files in rsc server
+  rscUseClientIds = new Set();
+
+  shouldReloadRsc(id: string) {
+    console.log("[RscManager.shouldReloadRsc]", [
+      this.parentIds.has(id),
+      this.rscIds.has(id),
+      this.rscUseClientIds.has(id),
+      id,
+    ]);
+    return (
+      !this.parentIds.has(id) &&
+      this.rscIds.has(id) &&
+      !this.rscUseClientIds.has(id)
+    );
+  }
+}
+
 function vitePluginRscServer(options: { entry: string }): Plugin {
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
+  let manager = new RscManager();
 
   const rscConfig: InlineConfig = {
     // TODO: custom logger to distinct two server logs easily?
@@ -76,7 +101,7 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     },
     plugins: [
       vitePluginRscUseClient({
-        getParentServer: () => parentServer,
+        manager,
       }),
     ],
     build: {
@@ -116,6 +141,25 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
         await rscDevServer?.close();
       }
     },
+    transform(_code, id, _options) {
+      if (!id.includes("/node_modules/")) {
+        manager.parentIds.add(id);
+      }
+    },
+    handleHotUpdate(ctx) {
+      // re-render RSC with custom event
+      if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
+        parentServer?.hot.send({
+          type: "custom",
+          event: "rsc:reload",
+        });
+        // this is to avoid full-reload due to postcss's module dependency from style.css to RSC files
+        // however, this also prevents full postcss's HMR
+        // TODO: anyways the general solution needs to handle css in RSC server
+        return [];
+      }
+      return ctx.modules;
+    },
     resolveId(source, _importer, _options) {
       // weird trick to silence import analysis error during dev
       // by pointing to a file which always exists
@@ -141,17 +185,14 @@ export function Counter() {}
 import { createClientReference } from "/src/runtime/rsc/utils"
 export const Counter = createClientReference("<id>::Counter");
 */
-function vitePluginRscUseClient({
-  getParentServer,
-}: {
-  getParentServer: () => ViteDevServer | undefined;
-}): Plugin {
+function vitePluginRscUseClient({ manager }: { manager: RscManager }): Plugin {
   const filter = createFilter(/\.[tj]sx$/);
-  const useClientFiles = new Set<string>();
+  const useClientFiles = manager.rscUseClientIds;
 
   return {
     name: vitePluginRscUseClient.name,
     async transform(code, id, _options) {
+      manager.rscIds.add(id);
       if (!filter(id)) {
         useClientFiles.delete(id);
         return;
@@ -196,24 +237,6 @@ function vitePluginRscUseClient({
         result += `export const ${name} = createClientReference("${id}::${name}");\n`;
       }
       return result;
-    },
-
-    // full-reload client on rsc module change
-    // TODO: re-render RSC stream without reload?
-    handleHotUpdate(ctx) {
-      const isRscModule =
-        !useClientFiles.has(ctx.file) && ctx.modules.length > 0;
-      console.log("[rsc-use-client:handleHotUpdate]", {
-        isRscModule,
-        file: ctx.file,
-      });
-      if (isRscModule) {
-        getParentServer()?.hot.send({
-          type: "full-reload",
-          path: ctx.file,
-        });
-      }
-      return ctx.modules;
     },
 
     /**
