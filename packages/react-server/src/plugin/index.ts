@@ -166,6 +166,15 @@ export function vitePluginReactServer(options?: {
     config(_config, env) {
       parentEnv = env;
       return {
+        optimizeDeps: {
+          exclude: ["@hiogawa/react-server"],
+        },
+        ssr: {
+          noExternal: ["@hiogawa/react-server"],
+          optimizeDeps: {
+            exclude: ["@hiogawa/react-server"],
+          },
+        },
         build: {
           outDir: env.isSsrBuild ? "dist/server" : "dist/client",
         },
