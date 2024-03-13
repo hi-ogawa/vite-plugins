@@ -13,6 +13,7 @@ async function clientImport(id: string) {
     // transformed to "?import"
     return import(/* @vite-ignore */ id);
   } else {
+    // TODO: avoid extra round trip for this dynamic import
     const clientReferences = await import(
       "/dist/rsc/client-references.js" as string
     );
