@@ -71,7 +71,7 @@ function wrapLoaderResultInner(result: Result<unknown, unknown>): Response {
     // handler.queryRoute can return "ErrorResponse" instance which is not "Response" instance (for example, when invalid "loader-route-id")
     // https://github.com/remix-run/remix/blob/4e7f2bd55f75f489bc19316a671c9cd6e70bd930/packages/remix-server-runtime/server.ts#L185-L190
     if (isRouteErrorResponse(res)) {
-      res = json(res.error, {
+      res = json(res.data, {
         status: res.status,
         statusText: res.statusText,
       });
