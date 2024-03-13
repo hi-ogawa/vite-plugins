@@ -4,18 +4,12 @@ import type { ViteDevServer } from "vite";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/router";
 import { createBundlerConfig } from "./lib/rsc";
 
-export function render({
-  request,
-  renderId,
-}: {
-  request: Request;
-  renderId: string;
-}) {
+export function render({ request }: { request: Request }) {
   const url = new URL(request.url);
   const result = router.run(url.pathname);
   const rscStream = reactServerDomServer.renderToReadableStream(
     result.node,
-    createBundlerConfig({ renderId })
+    createBundlerConfig()
   );
   return { rscStream, status: result.match.notFound ? 404 : 200 };
 }

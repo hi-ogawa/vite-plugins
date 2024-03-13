@@ -1,5 +1,4 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
-import { unwrapRenderId } from "./shared";
 import type { WebpackRequire } from "./types";
 
 // __webpack_require__ needs to return stable promise during single render.
@@ -7,18 +6,14 @@ import type { WebpackRequire } from "./types";
 //   https://github.com/facebook/react/pull/26926#discussion_r1236251023
 // vite uses import with timestamp paramemter during dev,
 // so manual invalidation doesn't look necessary for client?
-const memoImport = memoize(clientImport);
-
-const csrWebpackRequire: WebpackRequire = (id) => {
-  id = unwrapRenderId(id)[0];
-  return memoImport(id);
-};
+const csrWebpackRequire: WebpackRequire = memoize(clientImport);
 
 async function clientImport(id: string) {
   if (import.meta.env.DEV) {
-    // transformed to "?import" which always returns latest module
+    // transformed to "?import"
     return import(/* @vite-ignore */ id);
   } else {
+    // TODO: avoid extra round trip for this dynamic import
     const clientReferences = await import(
       "/dist/rsc/client-references.js" as string
     );

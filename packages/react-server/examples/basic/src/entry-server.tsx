@@ -1,8 +1,12 @@
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
-import { moduleMap, unwrapActionRequest, unwrapRscRequest } from "./lib/shared";
-import { initDomWebpackSsr, invalidateImportCacheOnFinish } from "./lib/ssr";
+import { unwrapActionRequest, unwrapRscRequest } from "./lib/shared";
+import {
+  createModuleMap,
+  initDomWebpackSsr,
+  invalidateImportCacheOnFinish,
+} from "./lib/ssr";
 
 // injected globals during dev
 declare let __devServer: ViteDevServer;
@@ -17,16 +21,12 @@ export async function handler(request: Request): Promise<Response> {
     await entryRsc.actionHandler(actionRequest);
   }
 
-  // unique id for each render (see src/lib/ssr.tsx for the detail)
-  const renderId = Math.random().toString(36).slice(2);
-
   // check rsc-only request
   const rscRequest = unwrapRscRequest(request);
 
   // rsc
   const { rscStream, status } = entryRsc.render({
     request: rscRequest ?? request,
-    renderId,
   });
   if (rscRequest) {
     return new Response(rscStream, {
@@ -38,7 +38,6 @@ export async function handler(request: Request): Promise<Response> {
 
   // ssr rsc
   let htmlStream = await renderHtml(rscStream);
-  htmlStream = htmlStream.pipeThrough(invalidateImportCacheOnFinish(renderId));
   return new Response(htmlStream, {
     status,
     headers: {
@@ -57,7 +56,7 @@ async function importEntryRsc(): Promise<typeof import("./entry-rsc")> {
 
 // TODO: full <html> render by RSC?
 async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
-  initDomWebpackSsr();
+  await initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
@@ -65,21 +64,28 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
 
   const [rscStream1, rscStream2] = rscStream.tee();
 
+  // use unique id for each render to simplify ssr module invalidation during dev
+  // (see src/lib/ssr.tsx for details)
+  const renderId = Math.random().toString(36).slice(2);
+
   const rscNode = await reactServerDomClient.createFromReadableStream(
     rscStream1,
     {
       ssrManifest: {
-        // null is fine?
-        // or use this to inject "renderId" for dev?
-        moduleMap: moduleMap,
+        moduleMap: createModuleMap({ renderId }),
         moduleLoading: null,
       },
     }
   );
 
-  const ssrStream = await reactDomServer.renderToReadableStream(rscNode);
+  const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+    // TODO
+    bootstrapModules: [],
+    bootstrapScripts: [],
+  });
 
   return ssrStream
+    .pipeThrough(invalidateImportCacheOnFinish(renderId))
     .pipeThrough(await injectToHtmlTempalte())
     .pipeThrough(injectRSCPayload(rscStream2));
 }

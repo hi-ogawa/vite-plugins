@@ -1,31 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import type {
-  CallServerCallback,
-  ImportManifestEntry,
-  ModuleMap,
-} from "./types";
-
-export const moduleMap: ModuleMap = new Proxy(
-  {},
-  {
-    get(_target, id, _receiver) {
-      return new Proxy(
-        {},
-        {
-          get(_target, name, _receiver) {
-            tinyassert(typeof id === "string");
-            tinyassert(typeof name === "string");
-            return {
-              id,
-              name,
-              chunks: [],
-            } satisfies ImportManifestEntry;
-          },
-        }
-      );
-    },
-  }
-);
+import type { CallServerCallback } from "./types";
 
 const RSC_PARAM = "__rsc";
 
@@ -69,19 +43,6 @@ export function unwrapActionRequest(request: Request) {
     return { request, id };
   }
   return;
-}
-
-const RENDER_ID_SEP = "?__renderId=";
-
-export function wrapRenderId(id: string, tag: string) {
-  if (import.meta.env.DEV) {
-    return `${id}${RENDER_ID_SEP}${tag}`;
-  }
-  return id;
-}
-
-export function unwrapRenderId(id: string) {
-  return id.split(RENDER_ID_SEP) as [string, string];
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
