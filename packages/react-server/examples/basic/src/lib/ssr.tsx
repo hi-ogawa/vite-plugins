@@ -1,10 +1,9 @@
 import { DefaultMap, memoize, tinyassert } from "@hiogawa/utils";
-import { unwrapRenderId } from "./shared";
-import type { WebpackRequire } from "./types";
+import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 
 const memoImport = memoize(ssrImport);
 
-// during dev, import cache needs to be isolated for each RSC + SSR run
+// during dev, import cache needs to be isolated for each SSR run
 // so that import/ssrLoadModule will load fresh module
 // while keeping Promise stable during the single render for requireAsyncModule trick:
 //   https://github.com/facebook/react/pull/26985
@@ -60,4 +59,41 @@ export function initDomWebpackSsr() {
       throw new Error("todo: __webpack_chunk_load__");
     },
   });
+}
+
+export function createModuleMap({ renderId }: { renderId: string }): ModuleMap {
+  return new Proxy(
+    {},
+    {
+      get(_target, id, _receiver) {
+        return new Proxy(
+          {},
+          {
+            get(_target, name, _receiver) {
+              tinyassert(typeof id === "string");
+              tinyassert(typeof name === "string");
+              return {
+                id: wrapRenderId(id, renderId),
+                name,
+                chunks: [],
+              } satisfies ImportManifestEntry;
+            },
+          }
+        );
+      },
+    }
+  );
+}
+
+const RENDER_ID_SEP = "?__renderId=";
+
+function wrapRenderId(id: string, tag: string) {
+  if (import.meta.env.DEV) {
+    return `${id}${RENDER_ID_SEP}${tag}`;
+  }
+  return id;
+}
+
+function unwrapRenderId(id: string) {
+  return id.split(RENDER_ID_SEP) as [string, string];
 }
