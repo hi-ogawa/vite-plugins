@@ -8,6 +8,18 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./rsc": {
+      "types": "./dist/entry/rsc.d.ts",
+      "default": "./dist/entry/rsc.js"
+    },
+    "./ssr": {
+      "types": "./dist/entry/ssr.d.ts",
+      "default": "./dist/entry/ssr.js"
+    },
+    "./client": {
+      "types": "./dist/entry/client.d.ts",
+      "default": "./dist/entry/client.js"
+    },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
       "default": "./dist/plugin/index.js"
