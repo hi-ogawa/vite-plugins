@@ -1,6 +1,7 @@
 # react-server starter example
 
 <!-- TODO: [Try it on Stackblitz]() -->
+<!-- TODO: init with degit, giget, tiged -->
 
 https://react-server-starter.hiro18181.workers.dev/
 
