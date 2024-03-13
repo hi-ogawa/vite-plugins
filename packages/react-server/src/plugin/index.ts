@@ -115,6 +115,30 @@ export function vitePluginReactServer(pluginOpt: { entry: string }): Plugin[] {
           return;
         },
       },
+
+      // expose glob import for routs
+      {
+        name: "virtual-rsc-glob-routes",
+        resolveId(source, _importer, _options) {
+          if (source === "virtual:rsc-glob-routes") {
+            return "\0" + source;
+          }
+          return;
+        },
+        async load(id, _options) {
+          if (id === "\0virtual:rsc-glob-routes") {
+            return /* js */ `
+              export default import.meta.glob(
+                "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
+                {
+                  eager: true,
+                }
+              )
+            `;
+          }
+          return;
+        },
+      },
     ],
     build: {
       ssr: true,
@@ -202,6 +226,8 @@ export function vitePluginReactServer(pluginOpt: { entry: string }): Plugin[] {
 
   return [rscParentPlugin, vitePluginClientUseServer({ manager })];
 }
+
+// TODO: refactor ast utils
 
 /*
 transform "use client" directive
