@@ -15,7 +15,7 @@ import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 //
 const memoImportByRenderId = new DefaultMap<string, WebpackRequire>(() =>
   // `import` is transformed to `ssrLoadModule` during dev
-  memoize((id) => import(/* @vite-ignore */ id))
+  memoize((id) => import(/* @vite-ignore */ id)),
 );
 
 // cleanup importCache after render to avoid leaking memory during dev
@@ -77,10 +77,10 @@ export function createModuleMap({ renderId }: { renderId: string }): ModuleMap {
                 chunks: [],
               } satisfies ImportManifestEntry;
             },
-          }
+          },
         );
       },
-    }
+    },
   );
 }
 

@@ -35,7 +35,7 @@ declare module "@hattip/compose" {
 export function sessionHandler(): RequestHandler {
   return async (ctx) => {
     ctx.session = await readCookieSession(
-      ctx.request.headers.get("cookie") ?? undefined
+      ctx.request.headers.get("cookie") ?? undefined,
     );
 
     let setCookie: string | undefined;
@@ -86,7 +86,7 @@ async function readCookieSession(cookie?: string): Promise<SessionData> {
 
 // also used for testing
 export async function writeCookieSession(
-  session: SessionData
+  session: SessionData,
 ): Promise<string> {
   const token = await jwsSign({
     header: { alg: "HS256", ...setExpirationTime(MAX_AGE) },

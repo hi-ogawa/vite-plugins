@@ -18,7 +18,7 @@ test("basic", async ({ page }) => {
   const res = await page.goto("/loader-data");
   expect(res?.status()).toBe(200);
   expect(await res?.text()).toContain(
-    "&quot;message&quot;: &quot;hello loader&quot"
+    "&quot;message&quot;: &quot;hello loader&quot",
   );
 });
 
@@ -28,7 +28,7 @@ test("POST api", async ({ page }) => {
   await page.getByRole("button", { name: "POST API" }).click();
   await page
     .getByText(
-      '{"method":"POST","message":"hello formData","data":{"input":"hello"}}'
+      '{"method":"POST","message":"hello formData","data":{"input":"hello"}}',
     )
     .click();
 });

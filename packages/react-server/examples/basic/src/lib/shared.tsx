@@ -26,7 +26,7 @@ const ACTION_ID = "x-actioin-id";
 export function wrapActionRequest(
   url: string,
   id: string,
-  body: BodyInit
+  body: BodyInit,
 ): Request {
   return new Request(wrapRscRequestUrl(url), {
     method: "POST",
@@ -81,14 +81,14 @@ export function createServerReference(id: string): React.FC {
         },
         configurable: true,
       },
-    }
+    },
   ) as any;
 }
 
 // TODO: refactor with createServerReference
 export function createServerReferenceForRsc(
   id: string,
-  action: Function
+  action: Function,
 ): React.FC {
   return Object.defineProperties(action, {
     $$typeof: {

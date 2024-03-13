@@ -27,7 +27,7 @@ test("modulepreload", async ({ page }) => {
   function findPreloadLink(href: string) {
     return page.evaluate(
       (href) => Boolean(document.querySelector(`link[href="${href}"]`)),
-      href
+      href,
     );
   }
 });

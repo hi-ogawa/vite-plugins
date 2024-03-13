@@ -8,7 +8,7 @@ export function vitePluginSimpleHmr(pluginOpts: {
 }): Plugin {
   const filter = createFilter(
     pluginOpts.include,
-    pluginOpts.exclude ?? ["**/node_modules/**"]
+    pluginOpts.exclude ?? ["**/node_modules/**"],
   );
 
   return {

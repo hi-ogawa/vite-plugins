@@ -257,7 +257,7 @@ function vitePluginServerUseClient({
         (node) =>
           node.type === "ExpressionStatement" &&
           "directive" in node &&
-          node.directive === "use client"
+          node.directive === "use client",
       );
       if (!hasUseClient) {
         return;
@@ -314,7 +314,7 @@ function vitePluginServerUseClient({
         tinyassert(options.dir);
         await fs.promises.writeFile(
           path.join(options.dir, "client-references.js"),
-          result
+          result,
         );
       },
     },
@@ -354,7 +354,7 @@ function vitePluginClientUseServer({
         (node) =>
           node.type === "ExpressionStatement" &&
           "directive" in node &&
-          node.directive === "use server"
+          node.directive === "use server",
       );
       if (!hasDirective) {
         return;
@@ -386,7 +386,7 @@ function vitePluginClientUseServer({
       if (configEnv.command === "build" && !configEnv.isSsrBuild) {
         tinyassert(
           manager.rscUseServerIds.has(id),
-          `missing server references in RSC build: ${id}`
+          `missing server references in RSC build: ${id}`,
         );
       }
       let result = `import { createServerReference } from "/src/lib/shared";\n`;
@@ -412,7 +412,7 @@ function vitePluginServerUseServer(): Plugin {
         (node) =>
           node.type === "ExpressionStatement" &&
           "directive" in node &&
-          node.directive === "use server"
+          node.directive === "use server",
       );
       if (!hasDirective) {
         return;
@@ -429,7 +429,7 @@ function vitePluginServerUseServer(): Plugin {
                 // rewrite from "const" to "let"
                 mcode.remove(
                   node.declaration.start,
-                  node.declaration.start + 5
+                  node.declaration.start + 5,
                 );
                 mcode.appendLeft(node.declaration.start, "let");
               }
@@ -448,11 +448,11 @@ function vitePluginServerUseServer(): Plugin {
         exportNames,
       });
       mcode.prepend(
-        `import { createServerReferenceForRsc } from "/src/lib/shared";\n`
+        `import { createServerReferenceForRsc } from "/src/lib/shared";\n`,
       );
       for (const name of exportNames) {
         mcode.append(
-          `${name} = createServerReferenceForRsc("${id}::${name}", ${name});\n`
+          `${name} = createServerReferenceForRsc("${id}::${name}", ${name});\n`,
         );
       }
       return {

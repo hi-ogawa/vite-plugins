@@ -25,7 +25,7 @@ test.describe("no-js", () => {
     await page.goto("/style");
     await expect(page.getByText("Some Styled Box")).toHaveCSS(
       "height",
-      "123px"
+      "123px",
     );
   });
 });

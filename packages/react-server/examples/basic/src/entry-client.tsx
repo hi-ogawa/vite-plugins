@@ -33,8 +33,8 @@ async function main() {
       wrapActionRequest(
         __history.location.href,
         id,
-        await reactServerDomClient.encodeReply(args)
-      )
+        await reactServerDomClient.encodeReply(args),
+      ),
     );
   };
 
@@ -55,7 +55,7 @@ async function main() {
       return __history.subscribe(() => {
         console.log("[history:change]", __history.location.href);
         updateRscByFetch(
-          new Request(wrapRscRequestUrl(__history.location.href))
+          new Request(wrapRscRequestUrl(__history.location.href)),
         );
       });
     }, []);
@@ -70,7 +70,7 @@ async function main() {
     rootEl,
     <React.StrictMode>
       <Root />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }
 

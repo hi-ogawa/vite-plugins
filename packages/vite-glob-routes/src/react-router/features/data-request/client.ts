@@ -6,7 +6,7 @@ import { LOADER_HEADERS, LOADER_ROUTE_ID_PARAM } from "./shared";
 
 export function injectDataRequestLoaders(
   routes: DataRouteObject[], // mutated
-  selectedRouteIds: string[]
+  selectedRouteIds: string[],
 ) {
   const ids = new Set(selectedRouteIds);
   walkArrayTree(routes, (route) => {
@@ -56,7 +56,7 @@ async function unwrapLoaderResponse(res: Response): Promise<Response> {
   if (redirectUrl) {
     const headers = new Headers(res.headers);
     const redirectStatus = headers.get(
-      LOADER_HEADERS["x-loader-redirect-status"]
+      LOADER_HEADERS["x-loader-redirect-status"],
     );
     tinyassert(redirectStatus);
     headers.delete(LOADER_HEADERS["x-loader-redirect-url"]);

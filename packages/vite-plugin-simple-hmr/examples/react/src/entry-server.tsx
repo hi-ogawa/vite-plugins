@@ -6,7 +6,7 @@ import { App } from "./App";
 
 export default async function handler(
   req: http.IncomingMessage & { viteDevServer: ViteDevServer },
-  res: http.ServerResponse
+  res: http.ServerResponse,
 ) {
   let html = await fs.promises.readFile("./index.html", "utf-8");
   html = await req.viteDevServer.transformIndexHtml("/", html);

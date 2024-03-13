@@ -14,7 +14,7 @@ export function Component() {
           <button
             className={cls(
               "antd-btn antd-btn-primary p-1",
-              debugMutation.isPending && "antd-btn-loading"
+              debugMutation.isPending && "antd-btn-loading",
             )}
             onClick={() => debugMutation.mutate()}
           >

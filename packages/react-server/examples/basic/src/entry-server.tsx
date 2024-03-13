@@ -75,7 +75,7 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
         moduleMap: createModuleMap({ renderId }),
         moduleLoading: null,
       },
-    }
+    },
   );
 
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
@@ -98,7 +98,7 @@ async function injectToHtmlTempalte() {
     const mod = await __devServer.ssrLoadModule("/src/style.css");
     html = html.replace(
       "</head>",
-      `<style>${(mod as any).default}</style></head>`
+      `<style>${(mod as any).default}</style></head>`,
     );
   }
 

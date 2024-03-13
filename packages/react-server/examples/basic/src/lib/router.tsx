@@ -45,7 +45,7 @@ export type MatchRouteResult = {
 
 export function matchRoute(
   pathname: string,
-  tree: RouteTreeNode
+  tree: RouteTreeNode,
 ): MatchRouteResult {
   let node = tree;
   const result: MatchRouteResult = {
@@ -74,7 +74,7 @@ export function matchRoute(
 // TODO: separate react code in a different file
 export function renderMatchRoute(
   match: MatchRouteResult,
-  fallback: React.ReactNode
+  fallback: React.ReactNode,
 ): React.ReactNode {
   const nodes = [...match.nodes].reverse();
   const props: RouteProps = { match };

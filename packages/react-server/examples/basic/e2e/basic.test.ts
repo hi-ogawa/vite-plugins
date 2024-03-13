@@ -41,7 +41,7 @@ test("@dev rsc hmr", async ({ page }) => {
   const checkClientState = await setupCheckClientState(page);
 
   await editFile("./src/components/header.tsx", (s) =>
-    s.replace("RSC Experiment", "RSC (EDIT) Experiment")
+    s.replace("RSC Experiment", "RSC (EDIT) Experiment"),
   );
   await page.getByRole("heading", { name: "RSC (EDIT) Experiment" }).click();
   await page.getByText("hydrated: true").click();
@@ -60,7 +60,7 @@ test("@dev common hmr", async ({ page }) => {
   const checkClientState = await setupCheckClientState(page);
 
   await editFile("./src/components/common.tsx", (s) =>
-    s.replace("Common component", "Common (EDIT) component")
+    s.replace("Common component", "Common (EDIT) component"),
   );
   await page.getByText("Common (EDIT) component (from server)").click();
   await page.getByText("Common (EDIT) component (from client)").click();
@@ -80,7 +80,7 @@ test("@dev client hmr", async ({ page }) => {
   // modify client comopnent
   await page.getByText("test-hmr-div").click();
   await editFile("./src/components/counter.tsx", (s) =>
-    s.replace("test-hmr-div", "test-hmr-edit-div")
+    s.replace("test-hmr-div", "test-hmr-edit-div"),
   );
   await page.getByText("test-hmr-edit-div").click();
 
@@ -95,7 +95,7 @@ test("css", async ({ page }) => {
   await page.goto("/test");
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
-    "700"
+    "700",
   );
 });
 
@@ -105,14 +105,14 @@ test("@dev css hmr", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
-    "700"
+    "700",
   );
   await editFile("./src/components/header.tsx", (s) =>
-    s.replace("font-bold", "font-light")
+    s.replace("font-bold", "font-light"),
   );
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
-    "300"
+    "300",
   );
 });
 
