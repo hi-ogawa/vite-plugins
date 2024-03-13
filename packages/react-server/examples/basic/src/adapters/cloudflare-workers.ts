@@ -1,4 +1,4 @@
-import { handler } from "../entry-server";
+import { handler } from "../entry-ssr";
 
 export default {
   fetch: handler,

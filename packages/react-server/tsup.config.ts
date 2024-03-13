@@ -1,9 +1,5 @@
 import { defineConfig } from "tsup";
 
-// TODO: organize export entries
-// public/rsc,ssr,client,shared
-// private/rsc,ssr,client,shared
-
 export default defineConfig([
   {
     entry: [
