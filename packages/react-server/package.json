@@ -24,13 +24,17 @@
       "types": "./dist/server-internal.d.ts",
       "default": "./dist/server-internal.js"
     },
-    "./entry-client": {
+    "./entry-browser": {
       "types": "./dist/entry/client.d.ts",
       "default": "./dist/entry/client.js"
     },
-    "./entry-ssr": {
+    "./entry-server": {
       "types": "./dist/entry/ssr.d.ts",
       "default": "./dist/entry/ssr.js"
+    },
+    "./entry-react-server": {
+      "types": "./dist/entry/rsc.d.ts",
+      "default": "./dist/entry/rsc.js"
     },
     "./entry-rsc": {
       "types": "./dist/entry/rsc.d.ts",

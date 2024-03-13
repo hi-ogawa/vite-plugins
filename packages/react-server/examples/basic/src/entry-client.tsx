@@ -1,4 +1,4 @@
 import "./style.css";
-import { start } from "@hiogawa/react-server/entry-client";
+import { start } from "@hiogawa/react-server/entry-browser";
 
 start();
