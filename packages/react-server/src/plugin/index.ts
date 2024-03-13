@@ -33,7 +33,7 @@ class RscManager {
   }
 }
 
-const RSC_ENTRY = "@hiogawa/react-server/rsc";
+const RSC_ENTRY = "@hiogawa/react-server/entry-rsc";
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
@@ -67,10 +67,10 @@ export function vitePluginReactServer(options?: {
           "react/jsx-runtime",
           "react/jsx-dev-runtime",
           "react-server-dom-webpack/server.edge",
-          "@hiogawa/react-server/rsc > react",
-          "@hiogawa/react-server/rsc > react/jsx-runtime",
-          "@hiogawa/react-server/rsc > react/jsx-dev-runtime",
-          "@hiogawa/react-server/rsc > react-server-dom-webpack/server.edge",
+          "@hiogawa/react-server/entry-rsc > react",
+          "@hiogawa/react-server/entry-rsc > react/jsx-runtime",
+          "@hiogawa/react-server/entry-rsc > react/jsx-dev-runtime",
+          "@hiogawa/react-server/entry-rsc > react-server-dom-webpack/server.edge",
         ],
       },
     },

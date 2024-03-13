@@ -1,1 +1,1 @@
-export { handler } from "@hiogawa/react-server/ssr";
+export { handler } from "@hiogawa/react-server/entry-ssr";

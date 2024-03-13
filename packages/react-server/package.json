@@ -8,21 +8,21 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./rsc": {
-      "types": "./dist/entry/rsc.d.ts",
-      "default": "./dist/entry/rsc.js"
-    },
-    "./ssr": {
-      "types": "./dist/entry/ssr.d.ts",
-      "default": "./dist/entry/ssr.js"
-    },
     "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./entry-client": {
       "types": "./dist/entry/client.d.ts",
       "default": "./dist/entry/client.js"
     },
-    "./client2": {
-      "types": "./dist/entry/client2.d.ts",
-      "default": "./dist/entry/client2.js"
+    "./entry-ssr": {
+      "types": "./dist/entry/ssr.d.ts",
+      "default": "./dist/entry/ssr.js"
+    },
+    "./entry-rsc": {
+      "types": "./dist/entry/rsc.d.ts",
+      "default": "./dist/entry/rsc.js"
     },
     "./shared": {
       "types": "./dist/entry/shared.d.ts",

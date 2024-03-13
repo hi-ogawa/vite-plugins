@@ -1,4 +1,4 @@
-import { Link } from "@hiogawa/react-server/client2";
+import { Link } from "@hiogawa/react-server/client";
 import { sortBy } from "@hiogawa/utils";
 import { fetchPokemons } from "./utils";
 

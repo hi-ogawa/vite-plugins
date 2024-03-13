@@ -8,7 +8,7 @@ import type { CallServerCallback } from "../lib/types";
 
 // TODO: root error boundary?
 
-export async function initialize() {
+export async function start() {
   initDomWebpackCsr();
   initHistory();
 
