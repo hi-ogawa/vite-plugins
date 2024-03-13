@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@tanstack/history": "^1.15.13",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-server-dom-webpack": "0.0.1",
+    "react": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
     "rsc-html-stream": "^0.0.3"
   },
   "devDependencies": {
