@@ -1,5 +1,7 @@
 # react-server starter example
 
+https://react-server-starter.hiro18181.workers.dev/
+
 ```sh
 # development
 npm i

@@ -4,6 +4,7 @@ export default async function Layout(props: React.PropsWithChildren) {
   return (
     <div>
       <h3>React Server Starter</h3>
+      <a href="https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server" target="_blank">GitHub</a>
       <nav>
         <ul>
           <li>
