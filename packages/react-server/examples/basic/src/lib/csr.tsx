@@ -6,12 +6,7 @@ import type { WebpackRequire } from "./types";
 //   https://github.com/facebook/react/pull/26926#discussion_r1236251023
 // vite uses import with timestamp paramemter during dev,
 // so manual invalidation doesn't look necessary for client?
-const memoImport = memoize(clientImport);
-
-const csrWebpackRequire: WebpackRequire = (id) => {
-  // console.log("[__webpack_require__]", { id });
-  return memoImport(id);
-};
+const csrWebpackRequire: WebpackRequire = memoize(clientImport);
 
 async function clientImport(id: string) {
   if (import.meta.env.DEV) {
