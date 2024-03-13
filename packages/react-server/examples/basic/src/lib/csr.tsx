@@ -1,5 +1,4 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
-import { unwrapRenderId } from "./shared";
 import type { WebpackRequire } from "./types";
 
 // __webpack_require__ needs to return stable promise during single render.
@@ -10,7 +9,6 @@ import type { WebpackRequire } from "./types";
 const memoImport = memoize(clientImport);
 
 const csrWebpackRequire: WebpackRequire = (id) => {
-  id = unwrapRenderId(id)[0];
   return memoImport(id);
 };
 
