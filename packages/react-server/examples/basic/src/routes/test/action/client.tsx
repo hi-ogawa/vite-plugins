@@ -1,16 +1,6 @@
 "use client";
 
-import { changeCounter, hello } from "./action";
-
-export function ClientFormImportAction() {
-  return (
-    <form action={hello}>
-      <button className="antd-btn antd-btn-default px-2">
-        action (client import)
-      </button>
-    </form>
-  );
-}
+import { changeCounter } from "./action";
 
 export function Counter(props: { value: number }) {
   return (
@@ -31,21 +21,36 @@ export function Counter(props: { value: number }) {
         >
           +1
         </button>
+        <div>(client form importing "use server")</div>
       </div>
     </form>
   );
 }
 
-export function ClientFormPropAction({
+export function Counter2({
   action,
 }: {
   action: JSX.IntrinsicElements["form"]["action"];
 }) {
   return (
-    <form action={action}>
-      <button className="antd-btn antd-btn-default px-2">
-        aciton (server prop to client)
-      </button>
+    <form action={action} className="flex flex-col items-start gap-2">
+      <div className="flex gap-2">
+        <button
+          className="antd-btn antd-btn-default px-2"
+          name="delta"
+          value={-1}
+        >
+          -1
+        </button>
+        <button
+          className="antd-btn antd-btn-default px-2"
+          name="delta"
+          value={+1}
+        >
+          +1
+        </button>
+        <div>(client form with action via server prop)</div>
+      </div>
     </form>
   );
 }
