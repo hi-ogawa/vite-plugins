@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/react-server-example-basic",
+  "name": "@hiogawa/react-server-example-starter",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -22,6 +22,7 @@
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@types/react": "18.2.59",
     "@types/react-dom": "18.2.19",
+    "@vitejs/plugin-react": "^4.2.0",
     "vite": "^5.1.0"
   }
 }
