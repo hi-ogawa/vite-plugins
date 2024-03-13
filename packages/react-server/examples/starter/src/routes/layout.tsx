@@ -16,10 +16,10 @@ export default async function Layout(props: React.PropsWithChildren) {
             <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/counter">Counter</Link>
+            <Link href="/use-state">Counter (useState)</Link>
           </li>
           <li>
-            <Link href="/server-action">Server Action</Link>
+            <Link href="/server-action">Counter (server action)</Link>
           </li>
         </ul>
       </nav>
