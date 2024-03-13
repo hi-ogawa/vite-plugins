@@ -11,13 +11,18 @@ and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/ma
 //
 import { defineConfig } from "vite";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
+import path from "node:path";
 
 export default defineConfig({
   plugins: [
     vitePluginSsrMiddleware({
       entry: "./server.ts",
+      preview: path.resolve("./dist/server/index.js"),
     }),
   ],
+  build: {
+    outDir: "dist/server",
+  },
 });
 
 //

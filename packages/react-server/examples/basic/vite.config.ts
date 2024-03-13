@@ -1,3 +1,4 @@
+import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
@@ -10,14 +11,7 @@ export default defineConfig({
     vitePluginReactServer(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
+      preview: path.resolve("./dist/server/index.js"),
     }),
-    {
-      name: "preview-ssr-middleware",
-      async configurePreviewServer(server) {
-        // "slice" to avoid esbuild crash when transpiling vite.config.ts
-        const mod = await import("./dist/server/index.js".slice());
-        return () => server.middlewares.use(mod.default);
-      },
-    },
   ],
 });

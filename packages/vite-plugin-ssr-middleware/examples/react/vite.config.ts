@@ -1,3 +1,4 @@
+import path from "node:path";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -8,7 +9,7 @@ export default defineConfig((env) => ({
     react(),
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
-      preview: new URL("./dist/server/index.js", import.meta.url).toString(),
+      preview: path.resolve("./dist/server/index.js"),
       mode: "ViteRuntime-no-hmr",
     }),
   ],
