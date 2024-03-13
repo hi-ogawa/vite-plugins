@@ -13,7 +13,7 @@
   "devDependencies": {
     "@hiogawa/vite-plugin-simple-hmr": "workspace:*",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@types/react": "18.2.12",
-    "@types/react-dom": "18.2.5"
+    "@types/react": "18.2.65",
+    "@types/react-dom": "18.2.21"
   }
 }

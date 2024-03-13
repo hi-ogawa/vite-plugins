@@ -8,17 +8,17 @@
     "test-e2e": "playwright test"
   },
   "dependencies": {
-    "@remix-run/react": "2.5.1",
-    "@remix-run/server-runtime": "2.5.1",
-    "isbot": "^3.6.8",
+    "@remix-run/react": "2.8.1",
+    "@remix-run/server-runtime": "2.8.1",
+    "isbot": "^5.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20231121.0",
+    "@cloudflare/workers-types": "^4.20240312.0",
     "@hiogawa/vite-node-miniflare": "workspace:*",
-    "@remix-run/dev": "2.5.1",
-    "@types/react": "18.2.12",
-    "@types/react-dom": "18.2.5"
+    "@remix-run/dev": "2.8.1",
+    "@types/react": "18.2.65",
+    "@types/react-dom": "18.2.21"
   }
 }
