@@ -25,8 +25,8 @@ export default defineConfig((env) => ({
     }),
     vitePluginRscServer({
       entry: "/src/entry-rsc.tsx",
+      actionEntries: ["/src/routes/test/action/action.tsx"],
     }),
-    vitePluginUseServer(),
     {
       name: "preview-ssr-middleware",
       async configurePreviewServer(server) {
@@ -53,19 +53,26 @@ class RscManager {
   rscIds = new Set<string>();
   // "use client" files in rsc server
   rscUseClientIds = new Set<string>();
+  // "use server" files in rsc server
+  rscUseServerIds = new Set<string>();
 
   shouldReloadRsc(id: string) {
-    console.log("[RscManager.shouldReloadRsc]", [
-      this.parentIds.has(id),
-      this.rscIds.has(id),
-      this.rscUseClientIds.has(id),
-      id,
-    ]);
-    return this.rscIds.has(id) && !this.rscUseClientIds.has(id);
+    const ok = this.rscIds.has(id) && !this.rscUseClientIds.has(id);
+    console.log("[RscManager.shouldReloadRsc]", { ok, id });
+    return ok;
   }
 }
 
-function vitePluginRscServer(options: { entry: string }): Plugin {
+function vitePluginRscServer(pluginOpt: {
+  entry: string;
+  // For now we require "use server" entries manually.
+  // Alternatively, we can crawl file system to find "use server" files since
+  // some "use server" files are only referenced by client/ssr build
+  // while we still need RSC -> Client -> SSR build pipeline
+  // to collect client references first in RSC.
+  // cf. https://github.com/lazarv/react-server/blob/2ff6105e594666065be206729858ecfed6f5e8d8/packages/react-server/lib/plugins/react-server.mjs#L29-L56
+  actionEntries?: string[];
+}): Plugin[] {
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
@@ -98,9 +105,9 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
     },
     plugins: [
       // TODO: expose server reference for RSC itself
-      // vitePluginUseServer(),
+      // vitePluginRscUseServer(),
 
-      // expose "use server" files for RSC build via virtual module
+      // expose server references for RSC build via virtual module
       {
         name: "virtual-rsc-use-server",
         apply: "build",
@@ -112,13 +119,14 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
         },
         async load(id, _options) {
           if (id === "\0virtual:rsc-use-server") {
-            // TODO: crawl file system?
-            const files = ["/src/routes/test/action/action.tsx"];
-            let result = `export default {\n`;
+            const files = pluginOpt.actionEntries ?? [];
             for (const file of files) {
               const resolved = await this.resolve(file);
-              tinyassert(resolved);
-              const id = resolved.id;
+              tinyassert(resolved, `failed to resolve action entry: ${file}`);
+              manager.rscUseServerIds.add(resolved.id);
+            }
+            let result = `export default {\n`;
+            for (const id of manager.rscUseServerIds) {
               result += `"${id}": () => import("${id}"),\n`;
             }
             result += "};\n";
@@ -138,13 +146,13 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: options.entry,
+          index: pluginOpt.entry,
         },
       },
     },
   };
 
-  return {
+  const mainPlugin: Plugin = {
     name: vitePluginRscServer.name,
     config(_config, env) {
       parentEnv = env;
@@ -216,6 +224,8 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       return;
     },
   };
+
+  return [mainPlugin, vitePluginUseServer({ manager })];
 }
 
 /*
@@ -320,11 +330,15 @@ export function hello() {}
 import { createServerReference } from "/src/runtime/shared"
 export const hello = createServerReference("<id>::hello");
 */
-function vitePluginUseServer(): Plugin {
+function vitePluginUseServer({ manager }: { manager: RscManager }): Plugin {
   const filter = createFilter(/\.[tj]sx?$/);
+  let configEnv: ConfigEnv;
 
   return {
     name: vitePluginRscUseClient.name,
+    config(_config, env) {
+      configEnv = env;
+    },
     async transform(code, id, _options) {
       if (!filter(id)) {
         return;
@@ -357,6 +371,15 @@ function vitePluginUseServer(): Plugin {
         }
       }
       console.log("[rsc-use-server:transform]", { id, exportNames });
+      // TODO
+      // only rsc build and client build shares is built in the same process
+      // so we cannot validate in ssr build
+      if (configEnv.command === "build" && !configEnv.isSsrBuild) {
+        tinyassert(
+          manager.rscUseServerIds.has(id),
+          `missing server references in RSC build: ${id}`
+        );
+      }
       let result = `import { createServerReference } from "/src/lib/shared";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createServerReference("${id}::${name}");\n`;
