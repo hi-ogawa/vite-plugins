@@ -1,3 +1,4 @@
+import { typedBoolean } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
@@ -96,12 +97,20 @@ async function injectToHtmlTempalte() {
   let html = await importHtmlTemplate();
 
   if (import.meta.env.DEV) {
-    // quick fix for dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
-    const mod = await __devServer.ssrLoadModule("/src/style.css");
-    html = html.replace(
-      "</head>",
-      `<style>${(mod as any).default}</style></head>`
+    // fix dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
+    // TODO: for now only direct dependency of entry-client only...
+    const modNode = await __devServer.moduleGraph.getModuleByUrl(
+      "/src/entry-client"
     );
+    if (modNode) {
+      const links = [...modNode.importedModules]
+        .map((modNode) => modNode.id)
+        .filter(typedBoolean)
+        .filter((id) => id.match(CSS_LANGS_RE))
+        .map((id) => `<link rel="stylesheet" href="${id}?direct" />\n`)
+        .join("");
+      html = html.replace("</head>", `${links}</head>`);
+    }
   }
 
   // transformer to inject SSR stream
@@ -134,3 +143,7 @@ async function importHtmlTemplate() {
   html = html.replace(/<\/body>\s*<\/html>\s*/, "</body></html>");
   return html;
 }
+
+// cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
+const CSS_LANGS_RE =
+  /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
