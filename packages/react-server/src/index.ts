@@ -1,2 +1,2 @@
-// TODO: remove?
-export type { PageRouteProps, LayoutRouteProps } from "./lib/router";
+// TODO: what to export?
+export {};

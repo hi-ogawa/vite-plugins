@@ -1,5 +1,5 @@
-import type { PageRouteProps } from "@hiogawa/react-server";
 import { Link } from "@hiogawa/react-server/client";
+import type { PageRouteProps } from "@hiogawa/react-server/server";
 import { tinyassert } from "@hiogawa/utils";
 import { fetchPokemons } from "../utils";
 
