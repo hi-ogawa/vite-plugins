@@ -43,7 +43,7 @@ type ResolvedRouteObject = Awaited<
 // manipulate route properties while keeping lazy-ness
 export function mutateRouteObject(
   r1: DataRouteObject,
-  mutateFn: (resolved: ResolvedRouteObject) => void,
+  mutateFn: (resolved: ResolvedRouteObject | DataRouteObject) => void,
 ) {
   const oldLazy = r1.lazy;
   if (oldLazy) {
