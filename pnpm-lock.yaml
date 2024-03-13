@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@hiogawa/react-server': workspace:*
-  '@hiogawa/vite-plugin-ssr-middleware': workspace:*
-
 importers:
 
   .:
