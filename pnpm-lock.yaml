@@ -246,12 +246,6 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
 
-  packages/react-server:
-    devDependencies:
-      vite:
-        specifier: ^5.1.0
-        version: 5.1.0(@types/node@18.16.18)
-
   packages/react-server/examples/basic:
     dependencies:
       '@tanstack/history':
