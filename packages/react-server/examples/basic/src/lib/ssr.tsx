@@ -32,7 +32,7 @@ export function invalidateImportCacheOnFinish<T>(renderId: string) {
 async function createWebpackRequire(): Promise<WebpackRequire> {
   if (import.meta.env.DEV) {
     return (id) => {
-      const [file, renderId] = unwrapRenderId(id);
+      const [file, renderId] = id.split(RENDER_ID_SEP) as [string, string];
       return memoImportByRenderId.get(renderId)(file);
     };
   } else {
@@ -68,8 +68,11 @@ export function createModuleMap({ renderId }: { renderId: string }): ModuleMap {
             get(_target, name, _receiver) {
               tinyassert(typeof id === "string");
               tinyassert(typeof name === "string");
+              if (import.meta.env.DEV) {
+                id = [id, renderId].join(RENDER_ID_SEP);
+              }
               return {
-                id: wrapRenderId(id, renderId),
+                id,
                 name,
                 chunks: [],
               } satisfies ImportManifestEntry;
@@ -81,15 +84,4 @@ export function createModuleMap({ renderId }: { renderId: string }): ModuleMap {
   );
 }
 
-const RENDER_ID_SEP = "?__renderId=";
-
-function wrapRenderId(id: string, tag: string) {
-  if (import.meta.env.DEV) {
-    return `${id}${RENDER_ID_SEP}${tag}`;
-  }
-  return id;
-}
-
-function unwrapRenderId(id: string) {
-  return id.split(RENDER_ID_SEP) as [string, string];
-}
+const RENDER_ID_SEP = "*";
