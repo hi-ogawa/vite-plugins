@@ -168,6 +168,13 @@ export function vitePluginReactServer(options?: {
       return {
         optimizeDeps: {
           exclude: ["@hiogawa/react-server"],
+          include: [
+            "react",
+            "react/jsx-runtime",
+            "react/jsx-dev-runtime",
+            "react-dom/client",
+            "react-server-dom-webpack/client.browser",
+          ],
         },
         ssr: {
           noExternal: ["@hiogawa/react-server"],
@@ -360,8 +367,6 @@ function vitePluginServerUseClient({
         }
       }
       // TODO: obfuscate "id" for production?
-      // TODO: should resolve "id" again on main server since
-      //       deps optimization "?v=..." hash mismatches
       console.log(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,

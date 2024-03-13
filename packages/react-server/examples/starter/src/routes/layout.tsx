@@ -1,4 +1,4 @@
-import { Link } from "@hiogawa/react-server/client";
+import { Link } from "../use-client";
 
 export default async function Layout(props: React.PropsWithChildren) {
   return (
