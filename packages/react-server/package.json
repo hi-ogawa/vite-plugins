@@ -25,20 +25,16 @@
       "default": "./dist/server-internal.js"
     },
     "./entry-browser": {
-      "types": "./dist/entry/client.d.ts",
-      "default": "./dist/entry/client.js"
+      "types": "./dist/entry/browser.d.ts",
+      "default": "./dist/entry/browser.js"
     },
     "./entry-server": {
-      "types": "./dist/entry/ssr.d.ts",
-      "default": "./dist/entry/ssr.js"
+      "types": "./dist/entry/server.d.ts",
+      "default": "./dist/entry/server.js"
     },
     "./entry-react-server": {
-      "types": "./dist/entry/rsc.d.ts",
-      "default": "./dist/entry/rsc.js"
-    },
-    "./entry-rsc": {
-      "types": "./dist/entry/rsc.d.ts",
-      "default": "./dist/entry/rsc.js"
+      "types": "./dist/entry/react-server.d.ts",
+      "default": "./dist/entry/react-server.js"
     },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
