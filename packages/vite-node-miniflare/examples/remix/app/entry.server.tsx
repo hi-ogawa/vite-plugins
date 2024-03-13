@@ -2,7 +2,7 @@
 
 import { RemixServer } from "@remix-run/react";
 import type { EntryContext } from "@remix-run/server-runtime";
-import isbot from "isbot";
+import * as isbot from "isbot";
 
 // force "browser" export on nodejs with manual typing override (see env.d.ts)
 import { renderToReadableStream } from "react-dom/server.browser";
