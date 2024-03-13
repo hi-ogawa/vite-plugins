@@ -78,7 +78,11 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
     }
   );
 
-  const ssrStream = await reactDomServer.renderToReadableStream(rscNode);
+  const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+    // TODO
+    bootstrapModules: [],
+    bootstrapScripts: [],
+  });
 
   return ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
