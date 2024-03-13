@@ -291,9 +291,6 @@ importers:
       '@hiogawa/react-server':
         specifier: workspace:*
         version: link:../..
-      '@tanstack/history':
-        specifier: ^1.15.13
-        version: 1.15.13
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226
@@ -303,9 +300,6 @@ importers:
       react-server-dom-webpack:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(webpack@5.90.3)
-      rsc-html-stream:
-        specifier: ^0.0.3
-        version: 0.0.3
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.43
@@ -319,12 +313,6 @@ importers:
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../../../vite-plugin-ssr-middleware
-      '@tsconfig/strictest':
-        specifier: ^2.0.1
-        version: 2.0.1
-      '@types/estree':
-        specifier: ^1.0.5
-        version: 1.0.5
       '@types/react':
         specifier: 18.2.59
         version: 18.2.59
@@ -334,12 +322,6 @@ importers:
       '@unocss/postcss':
         specifier: ^0.58.5
         version: 0.58.5(postcss@8.4.35)
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.2
-      magic-string:
-        specifier: ^0.30.6
-        version: 0.30.7
       unocss:
         specifier: ^0.57.7
         version: 0.57.7(postcss@8.4.35)(vite@5.1.0)
