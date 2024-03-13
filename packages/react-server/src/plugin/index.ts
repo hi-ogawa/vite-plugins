@@ -8,6 +8,7 @@ import {
   type ConfigEnv,
   type InlineConfig,
   type Plugin,
+  type PluginOption,
   type ViteDevServer,
   build,
   createServer,
@@ -32,7 +33,11 @@ class RscManager {
   }
 }
 
-export function vitePluginReactServer(pluginOpt: { entry: string }): Plugin[] {
+const RSC_ENTRY = "@hiogawa/react-server/rsc";
+
+export function vitePluginReactServer(options?: {
+  plugins?: PluginOption[];
+}): Plugin[] {
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
@@ -139,13 +144,15 @@ export function vitePluginReactServer(pluginOpt: { entry: string }): Plugin[] {
           return;
         },
       },
+
+      ...(options?.plugins ?? []),
     ],
     build: {
       ssr: true,
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: pluginOpt.entry,
+          index: RSC_ENTRY,
         },
       },
     },

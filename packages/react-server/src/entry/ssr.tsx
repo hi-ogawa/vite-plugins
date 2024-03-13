@@ -48,7 +48,7 @@ export async function handler(request: Request): Promise<Response> {
 
 async function importEntryRsc(): Promise<typeof import("./rsc")> {
   if (import.meta.env.DEV) {
-    return __rscDevServer.ssrLoadModule("/src/entry-rsc.tsx") as any;
+    return __rscDevServer.ssrLoadModule("@hiogawa/react-server/rsc") as any;
   } else {
     return import("/dist/rsc/index.js" as string);
   }

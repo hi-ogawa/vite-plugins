@@ -7,11 +7,9 @@ export default defineConfig((env) => ({
   clearScreen: false,
   plugins: [
     react(),
+    vitePluginReactServer(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
-    }),
-    vitePluginReactServer({
-      entry: "/src/entry-rsc.tsx",
     }),
     {
       name: "preview-ssr-middleware",
@@ -22,6 +20,7 @@ export default defineConfig((env) => ({
       },
     },
   ],
+  // TODO: move to plugin
   build: {
     outDir: env.isSsrBuild ? "dist/server" : "dist/client",
   },
