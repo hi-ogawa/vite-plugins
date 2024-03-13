@@ -162,6 +162,11 @@ export function vitePluginReactServer(options?: {
     name: vitePluginReactServer.name,
     config(_config, env) {
       parentEnv = env;
+      return {
+        build: {
+          outDir: env.isSsrBuild ? "dist/server" : "dist/client",
+        },
+      };
     },
     async configureServer(server) {
       parentServer = server;
