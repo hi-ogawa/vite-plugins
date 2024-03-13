@@ -33,6 +33,18 @@ export function createBundlerConfig(): BundlerConfig {
         let [id, name] = $$id.split("::");
         tinyassert(id);
         tinyassert(name);
+        if (import.meta.env.DEV) {
+          // TODO
+          // apply same noramlizaion as Vite to avoid dual package with "/xyz" and "/@fs/xyz"
+          // https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
+          const root = process.cwd();
+          console.log("[createBundlerConfig]", { id, root });
+          if (id.startsWith(root)) {
+            id = id.slice(root.length);
+          } else {
+            id = "/@fs" + id;
+          }
+        }
         return { id, name, chunks: [] } satisfies ImportManifestEntry;
       },
     }

@@ -20,6 +20,14 @@
       "types": "./dist/entry/client.d.ts",
       "default": "./dist/entry/client.js"
     },
+    "./client2": {
+      "types": "./dist/entry/client2.d.ts",
+      "default": "./dist/entry/client2.js"
+    },
+    "./shared": {
+      "types": "./dist/entry/shared.d.ts",
+      "default": "./dist/entry/shared.js"
+    },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
       "default": "./dist/plugin/index.js"
@@ -32,6 +40,7 @@
     "dev": "tsup --watch",
     "build": "tsup",
     "prepack": "tsup --clean",
+    "test": "vitest",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {

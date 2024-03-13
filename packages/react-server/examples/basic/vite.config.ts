@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
 import { tinyassert } from "@hiogawa/utils";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
@@ -24,9 +25,12 @@ export default defineConfig((env) => ({
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
     }),
-    vitePluginRscServer({
+    vitePluginReactServer({
       entry: "/src/entry-rsc.tsx",
     }),
+    // vitePluginRscServer({
+    //   entry: "/src/entry-rsc.tsx",
+    // }),
     {
       name: "preview-ssr-middleware",
       async configurePreviewServer(server) {

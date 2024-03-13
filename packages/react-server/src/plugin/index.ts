@@ -55,11 +55,17 @@ export function vitePluginReactServer(pluginOpt: { entry: string }): Plugin[] {
       // no external to ensure loading all deps with react-server condition
       noExternal: true,
       // pre-bundle cjs deps
+      // TODO: need to crawl user's react 3rd party libs? (like svelte does?)
       optimizeDeps: {
         include: [
           "react",
+          "react/jsx-runtime",
           "react/jsx-dev-runtime",
           "react-server-dom-webpack/server.edge",
+          "@hiogawa/react-server/rsc > react",
+          "@hiogawa/react-server/rsc > react/jsx-runtime",
+          "@hiogawa/react-server/rsc > react/jsx-dev-runtime",
+          "@hiogawa/react-server/rsc > react-server-dom-webpack/server.edge",
         ],
       },
     },
@@ -238,19 +244,69 @@ function vitePluginServerUseClient({
       // cf. https://github.com/hi-ogawa/vite-plugins/blob/aed20d88ae4b1582701795e2079a96d7caeccf89/packages/vite-plugin-simple-hmr/src/transform.ts#L73
       const exportNames: string[] = [];
       for (const node of ast.body) {
+        // named exports
         if (node.type === "ExportNamedDeclaration") {
           if (node.declaration) {
-            if (node.declaration.type === "FunctionDeclaration") {
+            if (
+              node.declaration.type === "FunctionDeclaration" ||
+              node.declaration.type === "ClassDeclaration"
+            ) {
+              /**
+               * export function foo() {}
+               */
               exportNames.push(node.declaration.id.name);
-            }
-            if (node.declaration.type === "VariableDeclaration") {
+            } else if (node.declaration.type === "VariableDeclaration") {
+              /**
+               * export const foo = 1, bar = 2
+               */
               for (const decl of node.declaration.declarations) {
                 if (decl.id.type === "Identifier") {
                   exportNames.push(decl.id.name);
+                } else {
+                  console.error(
+                    "[unsupported]",
+                    vitePluginServerUseClient.name,
+                    decl
+                  );
                 }
               }
             }
+          } else {
+            /**
+             * export { foo, bar } from './foo'
+             * export { foo, bar }
+             */
+            for (const spec of node.specifiers) {
+              exportNames.push(spec.exported.name);
+            }
           }
+        }
+
+        // default export
+        if (node.type === "ExportDefaultDeclaration") {
+          if (
+            (node.declaration.type === "FunctionDeclaration" ||
+              node.declaration.type === "ClassExpression") &&
+            node.declaration.id
+          ) {
+            /**
+             * export default function foo() {}
+             * export default class A {}
+             */
+            exportNames.push(node.declaration.id.name);
+          } else {
+            /**
+             * export default () => {}
+             */
+            exportNames.push("default");
+          }
+        }
+
+        /**
+         * export * from './foo'
+         */
+        if (node.type === "ExportAllDeclaration") {
+          console.error("[unsupported]", vitePluginServerUseClient.name, node);
         }
       }
       // TODO: obfuscate "id" for production?
@@ -258,7 +314,11 @@ function vitePluginServerUseClient({
         id,
         exportNames,
       });
-      let result = `import { createClientReference } from "/src/lib/rsc";\n`;
+      // TODO: workaround Vite self import issue?
+      // https://github.com/vitejs/vite/pull/16068
+      const self = new URL("../entry/shared.js", import.meta.url).pathname;
+      // let result = `import { createClientReference } from "@hiogawa/react-server/shared";\n`;
+      let result = `import { createClientReference } from "${self}";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createClientReference("${id}::${name}");\n`;
       }
@@ -358,7 +418,9 @@ function vitePluginClientUseServer({
           `missing server references in RSC build: ${id}`
         );
       }
-      let result = `import { createServerReference } from "/src/lib/shared";\n`;
+      // TODO
+      const self = new URL("../entry/shared.js", import.meta.url).pathname;
+      let result = `import { createServerReference } from "${self}";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createServerReference("${id}::${name}");\n`;
       }
@@ -416,9 +478,9 @@ function vitePluginServerUseServer(): Plugin {
         id,
         exportNames,
       });
-      mcode.prepend(
-        `import { createServerReferenceForRsc } from "/src/lib/shared";\n`
-      );
+      // TODO
+      const self = new URL("../entry/shared.js", import.meta.url).pathname;
+      mcode.prepend(`import { createServerReferenceForRsc } from "${self}";\n`);
       for (const name of exportNames) {
         mcode.append(
           `${name} = createServerReferenceForRsc("${id}::${name}", ${name});\n`

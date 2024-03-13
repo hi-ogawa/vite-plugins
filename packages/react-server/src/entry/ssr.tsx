@@ -13,7 +13,7 @@ declare let __devServer: ViteDevServer;
 declare let __rscDevServer: ViteDevServer;
 
 export async function handler(request: Request): Promise<Response> {
-  const entryRsc = await importEntryRsc();
+  const entryRsc = (await importEntryRsc()) as any;
 
   // action
   const actionRequest = unwrapActionRequest(request);

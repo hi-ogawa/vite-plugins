@@ -1,4 +1,3 @@
-"use client";
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
@@ -6,9 +5,6 @@ import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
 import { wrapActionRequest, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
-
-// TODO: organize exports
-export * from "../lib/components/link";
 
 // TODO: root error boundary?
 

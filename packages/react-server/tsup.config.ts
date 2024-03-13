@@ -1,5 +1,9 @@
 import { defineConfig } from "tsup";
 
+// TODO: organize export entries
+// public/rsc,ssr,client,shared
+// private/rsc,ssr,client,shared
+
 export default defineConfig([
   {
     entry: [
@@ -7,6 +11,8 @@ export default defineConfig([
       "src/entry/rsc.tsx",
       "src/entry/ssr.tsx",
       "src/entry/client.tsx",
+      "src/entry/client2.tsx",
+      "src/entry/shared.tsx",
       "src/plugin/index.ts",
     ],
     format: ["esm"],

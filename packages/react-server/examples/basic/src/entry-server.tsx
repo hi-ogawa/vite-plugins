@@ -1,3 +1,4 @@
+import * as reactServerSsr from "@hiogawa/react-server/ssr";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { ViteDevServer } from "vite";
@@ -13,6 +14,10 @@ declare let __devServer: ViteDevServer;
 declare let __rscDevServer: ViteDevServer;
 
 export async function handler(request: Request): Promise<Response> {
+  if (1) {
+    return reactServerSsr.handler(request);
+  }
+
   const entryRsc = await importEntryRsc();
 
   // action

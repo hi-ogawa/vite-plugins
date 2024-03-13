@@ -1,4 +1,6 @@
-import { Link } from "./link";
+// import { Link } from "./link";
+
+import { Link } from "@hiogawa/react-server/client2";
 
 export function NavMenu(props: { links: string[] }) {
   return (

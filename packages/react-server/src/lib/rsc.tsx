@@ -1,6 +1,9 @@
 import { tinyassert } from "@hiogawa/utils";
 import type { BundlerConfig, ImportManifestEntry } from "./types";
 
+// TODO: apply same noramlizaion as Vite to avoid dual package with "/xyz" and "/@fs/xyz"
+// https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
+
 // https://github.com/lazarv/react-server/blob/2ff6105e594666065be206729858ecfed6f5e8d8/packages/react-server/client/components.mjs#L15-L25
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L48
 export function createClientReference(id: string): React.FC {
@@ -33,6 +36,19 @@ export function createBundlerConfig(): BundlerConfig {
         let [id, name] = $$id.split("::");
         tinyassert(id);
         tinyassert(name);
+        if (import.meta.env.DEV) {
+          // TODO
+          // apply same noramlizaion as Vite to avoid dual package with "/xyz" and "/@fs/xyz"
+          // for now this covers just simple cases.
+          // https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
+          const root = process.cwd();
+          if (id.startsWith(root)) {
+            id = id.slice(root.length);
+          } else {
+            id = "/@fs" + id;
+          }
+          console.log("[createBundlerConfig]", { id, root });
+        }
         return { id, name, chunks: [] } satisfies ImportManifestEntry;
       },
     }
