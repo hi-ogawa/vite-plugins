@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
@@ -14,6 +15,8 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
+
+const require = createRequire(import.meta.url);
 
 // convenient singleton to track file ids to decide RSC hot reload
 class RscManager {
@@ -352,11 +355,14 @@ function vitePluginServerUseClient({
         id,
         exportNames,
       });
-      // TODO: workaround Vite self import issue?
-      // https://github.com/vitejs/vite/pull/16068
-      const self = new URL("../entry/shared.js", import.meta.url).pathname;
-      // let result = `import { createClientReference } from "@hiogawa/react-server/shared";\n`;
-      let result = `import { createClientReference } from "${self}";\n`;
+      // TODO:
+      // "@hiogawa/react-server/client" needs to self-reference
+      // "@hiogawa/react-server/server-internal" due to "use client" transform
+      // but presumably it's failing due to https://github.com/vitejs/vite/pull/16068
+      // For now, we workaround it by manually calling require.resolve
+      let result = `import { createClientReference } from "${require.resolve(
+        "@hiogawa/react-server/server-internal"
+      )}";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createClientReference("${id}::${name}");\n`;
       }
@@ -456,9 +462,9 @@ function vitePluginClientUseServer({
           `missing server references in RSC build: ${id}`
         );
       }
-      // TODO
-      const self = new URL("../entry/shared.js", import.meta.url).pathname;
-      let result = `import { createServerReference } from "${self}";\n`;
+      let result = `import { createServerReference } from "${require.resolve(
+        "@hiogawa/react-server/client-internal"
+      )}";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createServerReference("${id}::${name}");\n`;
       }
@@ -516,12 +522,14 @@ function vitePluginServerUseServer(): Plugin {
         id,
         exportNames,
       });
-      // TODO
-      const self = new URL("../entry/shared.js", import.meta.url).pathname;
-      mcode.prepend(`import { createServerReferenceForRsc } from "${self}";\n`);
+      mcode.prepend(
+        `import { createServerReference } from "${require.resolve(
+          "@hiogawa/react-server/server-internal"
+        )}";\n`
+      );
       for (const name of exportNames) {
         mcode.append(
-          `${name} = createServerReferenceForRsc("${id}::${name}", ${name});\n`
+          `${name} = createServerReference("${id}::${name}", ${name});\n`
         );
       }
       return {

@@ -12,6 +12,18 @@
       "types": "./dist/client.d.ts",
       "default": "./dist/client.js"
     },
+    "./client-internal": {
+      "types": "./dist/client-internal.d.ts",
+      "default": "./dist/client-internal.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    },
+    "./server-internal": {
+      "types": "./dist/server-internal.d.ts",
+      "default": "./dist/server-internal.js"
+    },
     "./entry-client": {
       "types": "./dist/entry/client.d.ts",
       "default": "./dist/entry/client.js"
@@ -23,10 +35,6 @@
     "./entry-rsc": {
       "types": "./dist/entry/rsc.d.ts",
       "default": "./dist/entry/rsc.js"
-    },
-    "./shared": {
-      "types": "./dist/entry/shared.d.ts",
-      "default": "./dist/entry/shared.js"
     },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",

@@ -8,11 +8,13 @@ export default defineConfig([
   {
     entry: [
       "src/index.ts",
+      "src/server.ts",
+      "src/server-internal.ts",
       "src/client.tsx",
+      "src/client-internal.ts",
       "src/entry/rsc.tsx",
       "src/entry/ssr.tsx",
       "src/entry/client.tsx",
-      "src/entry/shared.tsx",
       "src/plugin/index.ts",
     ],
     format: ["esm"],
