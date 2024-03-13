@@ -360,6 +360,8 @@ function vitePluginServerUseClient({
         }
       }
       // TODO: obfuscate "id" for production?
+      // TODO: should resolve "id" again on main server since
+      //       deps optimization "?v=..." hash mismatches
       console.log(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
