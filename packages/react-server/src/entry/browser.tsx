@@ -1,6 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { hydrateRoot } from "react-dom/client";
+import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
 import { wrapActionRequest, wrapRscRequestUrl } from "../lib/shared";
@@ -65,7 +65,7 @@ export async function start() {
   const rootEl = document.getElementById("root");
   tinyassert(rootEl);
 
-  hydrateRoot(
+  reactDomClient.hydrateRoot(
     rootEl,
     <React.StrictMode>
       <Root />
