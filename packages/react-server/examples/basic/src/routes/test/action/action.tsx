@@ -1,9 +1,5 @@
 "use server";
 
-export async function hello(formData: FormData) {
-  console.log("[action] hello", { formData });
-}
-
 let counter = 0;
 
 export function getCounter() {

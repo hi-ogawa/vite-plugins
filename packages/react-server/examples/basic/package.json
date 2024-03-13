@@ -33,6 +33,8 @@
     "@types/react": "18.2.59",
     "@types/react-dom": "18.2.19",
     "@unocss/postcss": "^0.58.5",
+    "fast-glob": "^3.3.2",
+    "magic-string": "^0.30.6",
     "unocss": "^0.57.7",
     "vite": "^5.1.0",
     "wrangler": "^3.32.0"

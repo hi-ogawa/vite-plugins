@@ -125,9 +125,17 @@ test("server action", async ({ page }) => {
   const checkClientState = await setupCheckClientState(page);
 
   await page.getByText("Count: 0").click();
-  await page.getByRole("button", { name: "+1" }).click();
+  await page.getByRole("button", { name: "+1" }).first().click();
   await page.getByText("Count: 1").click();
-  await page.getByRole("button", { name: "-1" }).click();
+  await page.getByRole("button", { name: "+1" }).nth(1).click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "+1" }).nth(2).click();
+  await page.getByText("Count: 3").click();
+  await page.getByRole("button", { name: "-1" }).first().click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "-1" }).nth(1).click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "-1" }).nth(2).click();
   await page.getByText("Count: 0").click();
 
   await checkClientState();

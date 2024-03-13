@@ -4,13 +4,14 @@ import { tinyassert } from "@hiogawa/utils";
 import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import type { Program } from "estree";
+import fg from "fast-glob";
+import MagicString from "magic-string";
 import {
   type ConfigEnv,
   type InlineConfig,
   type Plugin,
   type ViteDevServer,
   build,
-  createFilter,
   createServer,
   defineConfig,
   parseAstAsync,
@@ -26,7 +27,6 @@ export default defineConfig((env) => ({
     vitePluginRscServer({
       entry: "/src/entry-rsc.tsx",
     }),
-    vitePluginUseServer(),
     {
       name: "preview-ssr-middleware",
       async configurePreviewServer(server) {
@@ -53,19 +53,17 @@ class RscManager {
   rscIds = new Set<string>();
   // "use client" files in rsc server
   rscUseClientIds = new Set<string>();
+  // "use server" files in rsc server
+  rscUseServerIds = new Set<string>();
 
   shouldReloadRsc(id: string) {
-    console.log("[RscManager.shouldReloadRsc]", [
-      this.parentIds.has(id),
-      this.rscIds.has(id),
-      this.rscUseClientIds.has(id),
-      id,
-    ]);
-    return this.rscIds.has(id) && !this.rscUseClientIds.has(id);
+    const ok = this.rscIds.has(id) && !this.rscUseClientIds.has(id);
+    console.log("[RscManager.shouldReloadRsc]", { ok, id });
+    return ok;
   }
 }
 
-function vitePluginRscServer(options: { entry: string }): Plugin {
+function vitePluginRscServer(pluginOpt: { entry: string }): Plugin[] {
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
@@ -97,13 +95,33 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       },
     },
     plugins: [
-      // TODO: expose server reference for RSC itself
-      // vitePluginUseServer(),
+      // expose server reference for RSC itself
+      vitePluginServerUseServer(),
 
-      // expose "use server" files for RSC build via virtual module
+      // transform "use client" into client referecnes
+      vitePluginServerUseClient({ manager }),
+
+      // expose server references for RSC build via virtual module
       {
         name: "virtual-rsc-use-server",
         apply: "build",
+        async buildStart(_options) {
+          // we need to crawl file system to collect server references ("use server")
+          // since we currently needs RSC -> Client -> SSR build pipeline
+          // to collect client references first in RSC.
+          // TODO: what if "use server" is provided from 3rd party library?
+          const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
+            absolute: true,
+            ignore: ["**/node_modules/**"],
+          });
+          for (const file of files) {
+            const data = await fs.promises.readFile(file, "utf-8");
+            if (data.match(/^("use server")|('use server')/)) {
+              manager.rscUseServerIds.add(file);
+            }
+          }
+          console.log("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
+        },
         resolveId(source, _importer, _options) {
           if (source === "virtual:rsc-use-server") {
             return "\0" + source;
@@ -112,13 +130,8 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
         },
         async load(id, _options) {
           if (id === "\0virtual:rsc-use-server") {
-            // TODO: crawl file system?
-            const files = ["/src/routes/test/action/action.tsx"];
             let result = `export default {\n`;
-            for (const file of files) {
-              const resolved = await this.resolve(file);
-              tinyassert(resolved);
-              const id = resolved.id;
+            for (const id of manager.rscUseServerIds) {
               result += `"${id}": () => import("${id}"),\n`;
             }
             result += "};\n";
@@ -127,24 +140,19 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
           return;
         },
       },
-
-      // transform "use client" into client referecnes
-      vitePluginRscUseClient({
-        manager,
-      }),
     ],
     build: {
       ssr: true,
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: options.entry,
+          index: pluginOpt.entry,
         },
       },
     },
   };
 
-  return {
+  const rscParentPlugin: Plugin = {
     name: vitePluginRscServer.name,
     config(_config, env) {
       parentEnv = env;
@@ -216,6 +224,8 @@ function vitePluginRscServer(options: { entry: string }): Plugin {
       return;
     },
   };
+
+  return [rscParentPlugin, vitePluginClientUseServer({ manager })];
 }
 
 /*
@@ -229,16 +239,17 @@ export function Counter() {}
 import { createClientReference } from "/src/runtime/rsc"
 export const Counter = createClientReference("<id>::Counter");
 */
-function vitePluginRscUseClient({ manager }: { manager: RscManager }): Plugin {
-  const filter = createFilter(/\.[tj]sx$/);
-  const useClientFiles = manager.rscUseClientIds;
-
+function vitePluginServerUseClient({
+  manager,
+}: {
+  manager: RscManager;
+}): Plugin {
   return {
-    name: vitePluginRscUseClient.name,
+    name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
       manager.rscIds.add(id);
-      if (!filter(id)) {
-        useClientFiles.delete(id);
+      manager.rscUseClientIds.delete(id);
+      if (!code.includes("use client")) {
         return;
       }
       const ast: Program = await parseAstAsync(code);
@@ -249,10 +260,9 @@ function vitePluginRscUseClient({ manager }: { manager: RscManager }): Plugin {
           node.directive === "use client"
       );
       if (!hasUseClient) {
-        useClientFiles.delete(id);
         return;
       }
-      useClientFiles.add(id);
+      manager.rscUseClientIds.add(id);
       // for now only handle simple exports
       //   export function foo() {}
       //   export const foo = () => {}
@@ -275,7 +285,10 @@ function vitePluginRscUseClient({ manager }: { manager: RscManager }): Plugin {
         }
       }
       // TODO: obfuscate "id" for production?
-      console.log("[rsc-use-client:transform]", { id, exportNames });
+      console.log(`[${vitePluginServerUseClient.name}:transform]`, {
+        id,
+        exportNames,
+      });
       let result = `import { createClientReference } from "/src/lib/rsc";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createClientReference("${id}::${name}");\n`;
@@ -294,7 +307,7 @@ function vitePluginRscUseClient({ manager }: { manager: RscManager }): Plugin {
     writeBundle: {
       async handler(options, _bundle) {
         let result = `export default {\n`;
-        for (const file of useClientFiles) {
+        for (const file of manager.rscUseClientIds) {
           result += `"${file}": () => import("${file}"),\n`;
         }
         result += "};\n";
@@ -320,13 +333,20 @@ export function hello() {}
 import { createServerReference } from "/src/runtime/shared"
 export const hello = createServerReference("<id>::hello");
 */
-function vitePluginUseServer(): Plugin {
-  const filter = createFilter(/\.[tj]sx?$/);
+function vitePluginClientUseServer({
+  manager,
+}: {
+  manager: RscManager;
+}): Plugin {
+  let configEnv: ConfigEnv;
 
   return {
-    name: vitePluginRscUseClient.name,
+    name: vitePluginClientUseServer.name,
+    config(_config, env) {
+      configEnv = env;
+    },
     async transform(code, id, _options) {
-      if (!filter(id)) {
+      if (!code.includes("use server")) {
         return;
       }
       const ast: Program = await parseAstAsync(code);
@@ -356,7 +376,19 @@ function vitePluginUseServer(): Plugin {
           }
         }
       }
-      console.log("[rsc-use-server:transform]", { id, exportNames });
+      console.log(`[${vitePluginClientUseServer.name}:transform]`, {
+        id,
+        exportNames,
+      });
+      // TODO
+      // only rsc build and client build shares is built in the same process
+      // so we cannot validate in ssr build
+      if (configEnv.command === "build" && !configEnv.isSsrBuild) {
+        tinyassert(
+          manager.rscUseServerIds.has(id),
+          `missing server references in RSC build: ${id}`
+        );
+      }
       let result = `import { createServerReference } from "/src/lib/shared";\n`;
       for (const name of exportNames) {
         result += `export const ${name} = createServerReference("${id}::${name}");\n`;
@@ -364,4 +396,77 @@ function vitePluginUseServer(): Plugin {
       return result;
     },
   };
+}
+
+function vitePluginServerUseServer(): Plugin {
+  return {
+    name: vitePluginServerUseClient.name,
+    async transform(code, id, _options) {
+      if (!code.includes("use server")) {
+        return;
+      }
+      // cf. https://github.com/hi-ogawa/vite-plugins/blob/5f8e6936fa12e1f7524891e3c1e2a21065d50250/packages/vite-plugin-simple-hmr/src/transform.ts#L73
+      const ast: Program = await parseAstAsync(code);
+      const mcode = new MagicString(code);
+      const hasDirective = ast.body.some(
+        (node) =>
+          node.type === "ExpressionStatement" &&
+          "directive" in node &&
+          node.directive === "use server"
+      );
+      if (!hasDirective) {
+        return;
+      }
+      const exportNames: string[] = [];
+      for (const node of ast.body) {
+        if (node.type === "ExportNamedDeclaration") {
+          if (node.declaration) {
+            if (node.declaration.type === "FunctionDeclaration") {
+              exportNames.push(node.declaration.id.name);
+            }
+            if (node.declaration.type === "VariableDeclaration") {
+              if (node.declaration.kind === "const") {
+                // rewrite from "const" to "let"
+                mcode.remove(
+                  node.declaration.start,
+                  node.declaration.start + 5
+                );
+                mcode.appendLeft(node.declaration.start, "let");
+              }
+              for (const decl of node.declaration.declarations) {
+                if (decl.id.type === "Identifier") {
+                  exportNames.push(decl.id.name);
+                }
+                tinyassert(false);
+              }
+            }
+          }
+        }
+      }
+      console.log(`[${vitePluginServerUseServer.name}:transform]`, {
+        id,
+        exportNames,
+      });
+      mcode.prepend(
+        `import { createServerReferenceForRsc } from "/src/lib/shared";\n`
+      );
+      for (const name of exportNames) {
+        mcode.append(
+          `${name} = createServerReferenceForRsc("${id}::${name}", ${name});\n`
+        );
+      }
+      return {
+        code: mcode.toString(),
+        map: mcode.generateMap(),
+      };
+    },
+  };
+}
+
+// extend types for rollup ast with node position
+declare module "estree" {
+  interface BaseNode {
+    start: number;
+    end: number;
+  }
 }
