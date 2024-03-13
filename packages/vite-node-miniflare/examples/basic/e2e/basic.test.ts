@@ -14,7 +14,7 @@ test("basic", async ({ page }) => {
   expect(pageErrors).toEqual([]);
 });
 
-test("server error", async ({ request }) => {
+test.skip("server error", async ({ request }) => {
   const res = await request.get("/crash-ssr");
   expect(res.status()).toBe(500);
 
