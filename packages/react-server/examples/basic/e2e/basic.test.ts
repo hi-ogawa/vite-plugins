@@ -116,7 +116,7 @@ test("@dev css hmr", async ({ page }) => {
   );
 });
 
-test("server action", async ({ page }) => {
+test.only("server action", async ({ page }) => {
   await page.goto("/test/action");
 
   // TODO: should work without hydration (progressive enhancement)
