@@ -9,12 +9,13 @@ import type { WebpackRequire } from "./types";
 const memoImport = memoize(clientImport);
 
 const csrWebpackRequire: WebpackRequire = (id) => {
+  // console.log("[__webpack_require__]", { id });
   return memoImport(id);
 };
 
 async function clientImport(id: string) {
   if (import.meta.env.DEV) {
-    // transformed to "?import" which always returns latest module
+    // transformed to "?import"
     return import(/* @vite-ignore */ id);
   } else {
     const clientReferences = await import(

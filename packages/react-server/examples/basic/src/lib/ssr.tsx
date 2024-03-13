@@ -4,8 +4,7 @@ import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 const memoImport = memoize(ssrImport);
 
 // during dev, import cache needs to be isolated for each SSR run
-// so that import/ssrLoadModule will load fresh module
-// while keeping Promise stable during the single render for requireAsyncModule trick:
+// so that import/ssrLoadModule will load fresh module while keeping Promise stable
 //   https://github.com/facebook/react/pull/26985
 //   https://github.com/facebook/react/pull/26926#discussion_r1236251023
 //
@@ -29,6 +28,7 @@ export function invalidateImportCacheOnFinish<T>(renderId: string) {
 // __webpack_require__ is called at least twice for preloadModule and requireModule
 // https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js
 const ssrWebpackRequire: WebpackRequire = (id) => {
+  // console.log("[__webpack_require__]", { id });
   if (import.meta.env.DEV) {
     const [file, renderId] = unwrapRenderId(id);
     return memoImportByRenderId.get(renderId)(file);
