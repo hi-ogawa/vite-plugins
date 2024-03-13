@@ -1,0 +1,35 @@
+{
+  "name": "@hiogawa/react-server",
+  "version": "0.0.0-pre.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepack": "tsup --clean",
+    "release": "pnpm publish --no-git-checks --access public"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^5.1.0",
+    "react": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
+    "@types/react": "18.2.59",
+    "@types/react-dom": "18.2.19"
+  },
+  "peerDependencies": {
+    "vite": "^5.1.0",
+    "react": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226"
+  }
+}
