@@ -65,7 +65,6 @@ export function createServerReference(id: string): React.FC {
       $$bound: { value: null, configurable: true },
       $$FORM_ACTION: {
         value: (name: string) => {
-          console.log("[createServerReference]", { id, name });
           const data = new FormData();
           injectActionId(data, id);
           return {
@@ -86,7 +85,6 @@ export function createServerReference(id: string): React.FC {
   ) as any;
 }
 
-// TODO: refactor with createServerReference
 export function createServerReferenceForRsc(
   id: string,
   action: Function
@@ -100,18 +98,6 @@ export function createServerReferenceForRsc(
       configurable: true,
     },
     $$bound: { value: null, configurable: true },
-    // TODO: progressive enhancement?
-    // https://github.com/facebook/react/pull/26774
-    $$FORM_ACTION: {
-      value: (name: string) => {
-        return {
-          name,
-          method: "POST",
-          encType: "multipart/form-data",
-          data: new FormData(),
-        };
-      },
-    },
     bind: {
       value: () => {
         throw new Error("todo: createServerReference.bind");
