@@ -1,15 +1,33 @@
-# react-server
+# @hiogawa/react-server
 
 [Try it on Stackblitz](https://stackblitz.com/edit/github-4eut84?file=README.md)
 
 See https://github.com/hi-ogawa/vite-plugins/issues/174 for known issues.
 
-## examples
+## Quick start
+
+See also [`./examples/starter`](./examples/starter).
+
+```sh
+# download template
+npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/starter my-project
+cd my-project
+
+# development
+npm i
+npm run dev
+
+# build and preview
+npm run build
+npm run preview
+```
+
+## Examples
 
 - [`./examples/starter`](./examples/starter)
 - [`./examples/basic`](./examples/basic)
 
-## credits
+## Credits
 
 - https://github.com/dai-shi/waku
 - https://github.com/lazarv/react-server
