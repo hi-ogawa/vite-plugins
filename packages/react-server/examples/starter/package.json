@@ -12,14 +12,14 @@
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
   },
   "dependencies": {
-    "@hiogawa/react-server": "latest",
+    "@hiogawa/react-server": "0.0.0",
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226"
   },
   "devDependencies": {
     "@hattip/adapter-node": "^0.0.43",
-    "@hiogawa/vite-plugin-ssr-middleware": "latest",
+    "@hiogawa/vite-plugin-ssr-middleware": "0.0.3",
     "@types/react": "18.2.59",
     "@types/react-dom": "18.2.19",
     "@vitejs/plugin-react": "^4.2.0",
