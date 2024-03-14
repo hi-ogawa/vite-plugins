@@ -1,5 +1,5 @@
+import { Link } from "@hiogawa/react-server/client";
 import { sortBy } from "@hiogawa/utils";
-import { Link } from "../../../components/link";
 import { fetchPokemons } from "./utils";
 
 export default async function Page() {

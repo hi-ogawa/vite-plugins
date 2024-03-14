@@ -1,8 +1,10 @@
+// @ts-ignore
+import rscGlobRoutes from "virtual:rsc-glob-routes";
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import type { ViteDevServer } from "vite";
-import { generateRouteTree, matchRoute, renderMatchRoute } from "./lib/router";
-import { createBundlerConfig } from "./lib/rsc";
+import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
+import { createBundlerConfig } from "../lib/rsc";
 
 export function render({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -17,12 +19,7 @@ export function render({ request }: { request: Request }) {
 const router = createRouter();
 
 function createRouter() {
-  const glob = import.meta.glob(
-    "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
-    {
-      eager: true,
-    }
-  );
+  const glob = rscGlobRoutes as Record<string, unknown>;
   const tree = generateRouteTree(
     objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length))
   );

@@ -32,6 +32,7 @@ export function invalidateImportCacheOnFinish<T>(renderId: string) {
 async function createWebpackRequire(): Promise<WebpackRequire> {
   if (import.meta.env.DEV) {
     return (id) => {
+      console.log("[createWebpackRequire]", { id });
       const [file, renderId] = id.split(RENDER_ID_SEP) as [string, string];
       return memoImportByRenderId.get(renderId)(file);
     };

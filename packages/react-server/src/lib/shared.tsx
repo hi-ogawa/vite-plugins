@@ -1,6 +1,8 @@
 import { tinyassert } from "@hiogawa/utils";
 import type { CallServerCallback } from "./types";
 
+// TODO: organize
+
 const RSC_PARAM = "__rsc";
 
 export function wrapRscRequestUrl(url: string): string {

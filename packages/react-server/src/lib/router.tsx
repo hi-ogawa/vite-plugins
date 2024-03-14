@@ -98,7 +98,7 @@ export function renderMatchRoute(
   return acc;
 }
 
-export interface RouteProps {
+interface RouteProps {
   match: MatchRouteResult;
 }
 

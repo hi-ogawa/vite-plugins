@@ -1,6 +1,6 @@
 "use client";
 
-import { __history } from "../lib/csr";
+import { __history } from "../csr";
 
 export function Link(props: JSX.IntrinsicElements["a"] & { href: string }) {
   return (
