@@ -1,6 +1,9 @@
 import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
-import { vitePluginSsrMiddleware, vitePluginLogger } from "@hiogawa/vite-plugin-ssr-middleware";
+import {
+  vitePluginLogger,
+  vitePluginSsrMiddleware,
+} from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
