@@ -1,14 +1,12 @@
 # react-server starter example
 
-[Try it on Stackblitz](https://stackblitz.com/edit/github-4hrb3q?file=src%2Fuse-client.tsx)
-
 https://react-server-starter.hiro18181.workers.dev/
 
 ```sh
-# download template e.g. by https://github.com/Rich-Harris/degit
-#   degit hi-ogawa/vite-plugins/packages/react-server/examples/starter my-project
+# download template by
+#   npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/starter my-project
 #   cd my-project
-#   replace workspace:* with latest
+#   replace "workspace:*" with "latest" in package.json
 
 # development
 npm i
