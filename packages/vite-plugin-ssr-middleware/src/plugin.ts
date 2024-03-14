@@ -88,3 +88,41 @@ export function vitePluginSsrMiddleware({
     },
   };
 }
+
+// minimal logger inspired by
+// https://github.com/koajs/logger
+// https://github.com/honojs/hono/blob/25beca878f2662fedd84ed3fbf80c6a515609cea/src/middleware/logger/index.ts
+
+export function vitePluginLogger(): Plugin {
+  return {
+    name: vitePluginLogger.name,
+    configureServer(server) {
+      return () => server.middlewares.use(loggerMiddleware());
+    },
+    configurePreviewServer(server) {
+      return () => server.middlewares.use(loggerMiddleware());
+    },
+  };
+}
+
+function loggerMiddleware(): Connect.NextHandleFunction {
+  return (req, res, next) => {
+    const url = new URL(req.originalUrl!, "https://test.local");
+    console.log("  -->", req.method, url.pathname);
+    const startTime = Date.now();
+    res.once("close", () => {
+      console.log(
+        "  <--",
+        req.method,
+        url.pathname,
+        res.statusCode,
+        formatDuration(Date.now() - startTime)
+      );
+    });
+    next();
+  };
+}
+
+function formatDuration(ms: number) {
+  return ms < 1000 ? `${Math.floor(ms)}ms` : `${(ms / 1000).toFixed(1)}s`;
+}
