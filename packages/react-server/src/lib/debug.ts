@@ -1,8 +1,8 @@
 // minimal https://github.com/debug-js/debug/
 
-// node
+// cli
 //   DEBUG=react-server:* pnpm dev
-// browser
+// browser devtool
 //   __DEBUG = "react-server:*"
 
 const base = "react-server";
