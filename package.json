@@ -32,8 +32,8 @@
     "vite": "^5.1.0",
     "vitest": "^1.0.4"
   },
-  "packageManager": "pnpm@8.12.1+sha256.28ca61ece5a496148b73fabc9afb820f9c3fec4f55f04ce45a2cea0a5219f2e1",
+  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2",
   "volta": {
-    "node": "18.16.0"
+    "node": "20.11.1"
   }
 }
