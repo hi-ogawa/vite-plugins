@@ -15,6 +15,9 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
+import { createDebug } from "../lib/debug";
+
+const debug = createDebug("plugin")
 
 const require = createRequire(import.meta.url);
 
@@ -33,7 +36,7 @@ class RscManager {
 
   shouldReloadRsc(id: string) {
     const ok = this.rscIds.has(id) && !this.rscUseClientIds.has(id);
-    console.log("[RscManager.shouldReloadRsc]", { ok, id });
+    debug("[RscManager.shouldReloadRsc]", { ok, id });
     return ok;
   }
 }
@@ -105,7 +108,7 @@ export function vitePluginReactServer(options?: {
               manager.rscUseServerIds.add(file);
             }
           }
-          console.log("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
+          debug("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
         },
         resolveId(source, _importer, _options) {
           if (source === "virtual:rsc-use-server") {
@@ -374,7 +377,7 @@ function vitePluginServerUseClient({
       if (manager.parentServer) {
         id = noramlizeClientReferenceId(id);
       }
-      console.log(`[${vitePluginServerUseClient.name}:transform]`, {
+      debug(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
       });
@@ -492,7 +495,7 @@ function vitePluginClientUseServer({
           }
         }
       }
-      console.log(`[${vitePluginClientUseServer.name}:transform]`, {
+      debug(`[${vitePluginClientUseServer.name}:transform]`, {
         id,
         exportNames,
       });
@@ -561,7 +564,7 @@ function vitePluginServerUseServer(): Plugin {
           }
         }
       }
-      console.log(`[${vitePluginServerUseServer.name}:transform]`, {
+      debug(`[${vitePluginServerUseServer.name}:transform]`, {
         id,
         exportNames,
       });
