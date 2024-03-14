@@ -1,4 +1,4 @@
 "use client";
 
-// TODO: currently "use client" files in node_modules needs to be manually re-exported
+// TODO: currently "use client" files in node_modules need to be re-exported locally
 export { Link } from "@hiogawa/react-server/client";
