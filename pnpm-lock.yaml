@@ -335,7 +335,7 @@ importers:
   packages/react-server/examples/starter:
     dependencies:
       '@hiogawa/react-server':
-        specifier: workspace:*
+        specifier: latest
         version: link:../..
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
@@ -351,8 +351,8 @@ importers:
         specifier: ^0.0.43
         version: 0.0.43
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:*
-        version: link:../../../vite-plugin-ssr-middleware
+        specifier: latest
+        version: 0.0.3-pre.0(vite@5.1.0)
       '@types/react':
         specifier: 18.2.59
         version: 18.2.59
@@ -2432,6 +2432,14 @@ packages:
 
   /@hiogawa/utils@1.6.2:
     resolution: {integrity: sha512-t2xSsf6UZA6Y1NjrV80RUse5cElGTBxZOOs+RLSTI82O5u9yPhPXQ8xlxvExBqlR2SwjBvikCHqs4Oe6waWw1Q==}
+    dev: true
+
+  /@hiogawa/vite-plugin-ssr-middleware@0.0.3-pre.0(vite@5.1.0):
+    resolution: {integrity: sha512-RQj72aXOok1DBGHnmZvujyU/jfEQZpT36pEj1tQQ6PlMkPdHDiG7qm4a2UI1p7tMr6ry8n/Fg3SuvlKfg2Fogg==}
+    peerDependencies:
+      vite: '*'
+    dependencies:
+      vite: 5.1.0(@types/node@18.16.18)
     dev: true
 
   /@iconify-json/ri@1.1.9:
