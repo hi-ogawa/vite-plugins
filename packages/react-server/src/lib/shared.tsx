@@ -29,7 +29,7 @@ export function unwrapRscRequest(request: Request): Request | undefined {
 // cf. https://github.com/facebook/react/pull/26774
 const ACTION_ID_PREFIX = "$ACTION_ID_";
 
-function injectActionId(formData: FormData, id: string) {
+export function injectActionId(formData: FormData, id: string) {
   formData.set(ACTION_ID_PREFIX + id, "");
 }
 

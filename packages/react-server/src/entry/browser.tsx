@@ -4,7 +4,7 @@ import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
 import { createDebug } from "../lib/debug";
-import { wrapRscRequestUrl } from "../lib/shared";
+import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
 const debug = createDebug("browser");
@@ -35,6 +35,13 @@ export async function start() {
     if (0) {
       // TODO: proper encoding?
       await reactServerDomClient.encodeReply(args);
+    } else {
+      // TODO
+      // $ACTION_ID is injected during SSR
+      // but it can stripped away on client re-render (e.g. HMR?)
+      // so we do it here again to inject on client.
+      tinyassert(args[0] instanceof FormData);
+      injectActionId(args[0], id);
     }
     const request = new Request(wrapRscRequestUrl(__history.location.href), {
       method: "POST",

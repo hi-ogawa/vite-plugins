@@ -1,12 +1,15 @@
-import { changeCounter, getCounter } from "./action";
-import { Counter, Counter2 } from "./client";
+import { changeCounter, getCounter, getMessages } from "./action";
+import { Chat, Counter, Counter2 } from "./client";
 
 export default async function Page() {
   return (
-    <div className="flex flex-col gap-2">
-      <Counter value={getCounter()} />
-      <Counter2 action={changeCounter} />
-      <Counter3 />
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <Counter value={getCounter()} />
+        <Counter2 action={changeCounter} />
+        <Counter3 />
+      </div>
+      <Chat messages={getMessages()} />
     </div>
   );
 }

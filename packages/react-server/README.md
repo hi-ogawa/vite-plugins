@@ -37,6 +37,13 @@ npm run preview
 - [`./examples/starter`](./examples/starter)
 - [`./examples/basic`](./examples/basic)
 
+## Development
+
+```sh
+pnpm -C packages/react-server dev
+pnpm -C packages/react-server/examples/basic dev
+```
+
 ## Credits
 
 - https://github.com/dai-shi/waku
