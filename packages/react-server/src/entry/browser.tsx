@@ -3,8 +3,11 @@ import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
+import { createDebug } from "../lib/debug";
 import { wrapActionRequest, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
+
+const debug = createDebug("browser");
 
 // TODO: root error boundary?
 
@@ -52,7 +55,7 @@ export async function start() {
 
     React.useEffect(() => {
       return __history.subscribe(() => {
-        console.log("[history:change]", __history.location.href);
+        debug("history", __history.location.href);
         updateRscByFetch(
           new Request(wrapRscRequestUrl(__history.location.href))
         );
@@ -75,7 +78,7 @@ export async function start() {
   // custom event for RSC reload
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
-      console.log("[rsc] hot update", e);
+      console.log("[react-server] hot update", e);
       __history.notify();
     });
   }

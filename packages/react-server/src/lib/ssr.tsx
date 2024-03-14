@@ -1,6 +1,6 @@
 import { DefaultMap, memoize, tinyassert } from "@hiogawa/utils";
-import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 import { createDebug } from "./debug";
+import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 
 const debug = createDebug("ssr");
 

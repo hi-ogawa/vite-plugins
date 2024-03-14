@@ -17,7 +17,7 @@ import {
 } from "vite";
 import { createDebug } from "../lib/debug";
 
-const debug = createDebug("plugin")
+const debug = createDebug("plugin");
 
 const require = createRequire(import.meta.url);
 
