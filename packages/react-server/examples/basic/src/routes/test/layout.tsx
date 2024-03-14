@@ -6,7 +6,13 @@ export default async function Layout(props: React.PropsWithChildren) {
     <div className="flex flex-col gap-2">
       <h2 className="text-lg">Test</h2>
       <NavMenu
-        links={["/test", "/test/other", "/test/action", "/test/not-found"]}
+        links={[
+          "/test",
+          "/test/other",
+          "/test/action",
+          "/test/virtual",
+          "/test/not-found",
+        ]}
       />
       <input className="antd-input w-sm px-2" placeholder="test-input" />
       <Hydrated />

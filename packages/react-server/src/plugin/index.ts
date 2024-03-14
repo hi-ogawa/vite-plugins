@@ -20,6 +20,8 @@ const require = createRequire(import.meta.url);
 
 // convenient singleton to track file ids to decide RSC hot reload
 class RscManager {
+  parentServer: ViteDevServer | undefined;
+
   // all files in parent server
   parentIds = new Set<string>();
   // all files in rsc server
@@ -189,6 +191,7 @@ export function vitePluginReactServer(options?: {
     },
     async configureServer(server) {
       parentServer = server;
+      manager.parentServer = server;
     },
     async buildStart(_options) {
       if (parentEnv.command === "serve") {
@@ -366,7 +369,11 @@ function vitePluginServerUseClient({
           console.error("[unsupported]", vitePluginServerUseClient.name, node);
         }
       }
-      // TODO: obfuscate "id" for production?
+      // normalize client reference during dev
+      // to align with Vite's import analysis
+      if (manager.parentServer) {
+        id = noramlizeClientReferenceId(id);
+      }
       console.log(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
@@ -387,7 +394,8 @@ function vitePluginServerUseClient({
 
     /**
      * emit client-references as dynamic import map
-     * TODO: re-export only used exports?
+     * TODO: re-export only used exports via virtual modules?
+     * TODO: obfuscate "id" for production?
      *
      * export default {
      *   "some-file1": () => import("some-file1"),
@@ -396,8 +404,10 @@ function vitePluginServerUseClient({
     writeBundle: {
       async handler(options, _bundle) {
         let result = `export default {\n`;
-        for (const file of manager.rscUseClientIds) {
-          result += `"${file}": () => import("${file}"),\n`;
+        for (let id of manager.rscUseClientIds) {
+          // virtual module needs to be mapped back to the original form
+          const to = id.startsWith("\0") ? id.slice(1) : id;
+          result += `"${id}": () => import("${to}"),\n`;
         }
         result += "};\n";
         tinyassert(options.dir);
@@ -408,6 +418,23 @@ function vitePluginServerUseClient({
       },
     },
   };
+}
+
+// Apply same noramlizaion as Vite's dev import analysis
+// to avoid dual package with "/xyz" and "/@fs/xyz" for example.
+// For now this tries to cover simple cases
+// https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
+function noramlizeClientReferenceId(id: string) {
+  const root = process.cwd(); // TODO: pass vite root config
+  if (id.startsWith(root)) {
+    id = id.slice(root.length);
+  } else if (path.isAbsolute(id)) {
+    id = "/@fs" + id;
+  } else {
+    // aka wrapId
+    id = id.startsWith(`/@id`) ? id : `/@id/${id.replace("\0", "__x00__")}`;
+  }
+  return id;
 }
 
 /*
