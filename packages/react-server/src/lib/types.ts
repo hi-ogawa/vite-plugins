@@ -31,4 +31,4 @@ export type WebpackRequire = (id: string) => Promise<unknown>;
 // TODO
 export type WebpackChunkLoad = (id: string) => Promise<unknown>;
 
-export type CallServerCallback = (id: any, args: unknown) => Promise<unknown>;
+export type CallServerCallback = (id: any, args: any) => Promise<unknown>;

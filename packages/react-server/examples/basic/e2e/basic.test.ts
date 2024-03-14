@@ -116,11 +116,8 @@ test("@dev css hmr", async ({ page }) => {
   );
 });
 
-test("server action", async ({ page }) => {
+test("server action with js", async ({ page }) => {
   await page.goto("/test/action");
-
-  // TODO: should work without hydration (progressive enhancement)
-  await page.getByText("hydrated: true").click();
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -139,6 +136,24 @@ test("server action", async ({ page }) => {
   await page.getByText("Count: 0").click();
 
   await checkClientState();
+});
+
+test("server action no js", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  await page.goto("/test/action");
+  await page.getByText("Count: 0").click();
+  await page.getByRole("button", { name: "+1" }).first().click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "+1" }).nth(1).click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "+1" }).nth(2).click();
+  await page.getByText("Count: 3").click();
+  await page.getByRole("button", { name: "-1" }).first().click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "-1" }).nth(1).click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "-1" }).nth(2).click();
+  await page.getByText("Count: 0").click();
 });
 
 test("virtual module", async ({ page }) => {

@@ -1,25 +1,19 @@
 import { typedBoolean } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import type { ViteDevServer } from "vite";
-import { unwrapActionRequest, unwrapRscRequest } from "../lib/shared";
+import { unwrapRscRequest } from "../lib/shared";
 import {
   createModuleMap,
   initDomWebpackSsr,
   invalidateImportCacheOnFinish,
 } from "../lib/ssr";
 
-// injected globals during dev
-declare let __devServer: ViteDevServer;
-declare let __rscDevServer: ViteDevServer;
-
 export async function handler(request: Request): Promise<Response> {
-  const entryRsc = (await importEntryRsc()) as any;
+  const entryRsc = await importEntryRsc();
 
   // action
-  const actionRequest = unwrapActionRequest(request);
-  if (actionRequest) {
-    await entryRsc.actionHandler(actionRequest);
+  if (request.method === "POST") {
+    await entryRsc.actionHandler({ request });
   }
 
   // check rsc-only request
@@ -98,10 +92,10 @@ async function injectToHtmlTempalte() {
 
   if (import.meta.env.DEV) {
     // fix dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
-    // TODO: for now only direct dependency of entry-client only...
-    const modNode = await __devServer.moduleGraph.getModuleByUrl(
-      "/src/entry-client"
-    );
+    // for now crawl only direct dependency of entry-client
+    const entry = "/src/entry-client";
+    await __devServer.transformRequest(entry);
+    const modNode = await __devServer.moduleGraph.getModuleByUrl(entry);
     if (modNode) {
       const links = [...modNode.importedModules]
         .map((modNode) => modNode.id)
