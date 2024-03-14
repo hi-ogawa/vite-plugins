@@ -36,7 +36,6 @@ export async function start() {
       // TODO: proper encoding?
       await reactServerDomClient.encodeReply(args);
     } else {
-      // TODO
       // $ACTION_ID is injected during SSR
       // but it can stripped away on client re-render (e.g. HMR?)
       // so we do it here again to inject on client.
