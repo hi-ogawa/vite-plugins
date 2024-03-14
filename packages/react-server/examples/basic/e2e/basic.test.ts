@@ -141,6 +141,11 @@ test("server action", async ({ page }) => {
   await checkClientState();
 });
 
+test("virtual module", async ({ page }) => {
+  await page.goto("/test/virtual");
+  await page.getByText("VirtualUseClient").click();
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");
