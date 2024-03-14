@@ -1,6 +1,6 @@
 # react-server
 
-[Try it on Stackblitz](https://stackblitz.com/edit/github-4eut84?file=vite.config.ts)
+[Try it on Stackblitz](https://stackblitz.com/edit/github-4eut84?file=README.md)
 
 See https://github.com/hi-ogawa/vite-plugins/issues/174 for known issues.
 
