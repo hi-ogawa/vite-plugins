@@ -17,3 +17,7 @@ export function createDebug(tag: string) {
     }
   };
 }
+
+// TODO: better api?
+//   debug.plugin("...")
+//   debug.ssr.serverReference("");

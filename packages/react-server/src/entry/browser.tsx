@@ -4,7 +4,7 @@ import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
 import { createDebug } from "../lib/debug";
-import { wrapActionRequest, wrapRscRequestUrl } from "../lib/shared";
+import { wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
 const debug = createDebug("browser");
@@ -31,13 +31,16 @@ export async function start() {
 
   // server action callback
   const callServer: CallServerCallback = async (id, args) => {
-    updateRscByFetch(
-      wrapActionRequest(
-        __history.location.href,
-        id,
-        await reactServerDomClient.encodeReply(args)
-      )
-    );
+    debug("callServer", { id, args });
+    if (0) {
+      // TODO: proper encoding?
+      await reactServerDomClient.encodeReply(args);
+    }
+    const request = new Request(wrapRscRequestUrl(__history.location.href), {
+      method: "POST",
+      body: args[0],
+    });
+    updateRscByFetch(request);
   };
 
   // expose as global to be used for createServerReference

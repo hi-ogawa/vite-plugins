@@ -1,7 +1,7 @@
 import { typedBoolean } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { unwrapActionRequest, unwrapRscRequest } from "../lib/shared";
+import { unwrapRscRequest } from "../lib/shared";
 import {
   createModuleMap,
   initDomWebpackSsr,
@@ -9,12 +9,11 @@ import {
 } from "../lib/ssr";
 
 export async function handler(request: Request): Promise<Response> {
-  const entryRsc = (await importEntryRsc()) as any;
+  const entryRsc = await importEntryRsc();
 
   // action
-  const actionRequest = unwrapActionRequest(request);
-  if (actionRequest) {
-    await entryRsc.actionHandler(actionRequest);
+  if (request.method === "POST") {
+    await entryRsc.actionHandler({ request });
   }
 
   // check rsc-only request

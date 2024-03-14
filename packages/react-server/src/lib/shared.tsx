@@ -23,28 +23,26 @@ export function unwrapRscRequest(request: Request): Request | undefined {
   return;
 }
 
-const ACTION_ID = "x-actioin-id";
+// TODO
+// it doesn't seem like a right way to do progressive enhancement for SSR
+// but works okay for simple cases? (e.g. no `bind`?)
+// cf. https://github.com/facebook/react/pull/26774
+const ACTION_ID_PREFIX = "$ACTION_ID_";
 
-export function wrapActionRequest(
-  url: string,
-  id: string,
-  body: BodyInit
-): Request {
-  return new Request(wrapRscRequestUrl(url), {
-    method: "POST",
-    body,
-    headers: {
-      [ACTION_ID]: id,
-    },
-  });
+function injectActionId(formData: FormData, id: string) {
+  formData.set(ACTION_ID_PREFIX + id, "");
 }
 
-export function unwrapActionRequest(request: Request) {
-  const id = request.headers.get(ACTION_ID);
-  if (id && request.method === "POST") {
-    return { request, id };
-  }
-  return;
+export function ejectActionId(formData: FormData) {
+  let id: string | undefined;
+  formData.forEach((_v, k) => {
+    if (k.startsWith(ACTION_ID_PREFIX)) {
+      id = k.slice(ACTION_ID_PREFIX.length);
+      formData.delete(k);
+    }
+  });
+  tinyassert(id);
+  return id;
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
@@ -65,15 +63,16 @@ export function createServerReference(id: string): React.FC {
         configurable: true,
       },
       $$bound: { value: null, configurable: true },
-      // TODO: progressive enhancement?
-      // https://github.com/facebook/react/pull/26774
       $$FORM_ACTION: {
         value: (name: string) => {
+          console.log("[createServerReference]", { id, name });
+          const data = new FormData();
+          injectActionId(data, id);
           return {
             name,
             method: "POST",
             encType: "multipart/form-data",
-            data: new FormData(),
+            data,
           };
         },
       },

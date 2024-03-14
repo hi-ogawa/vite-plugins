@@ -4,6 +4,11 @@ import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
+import { ejectActionId } from "../lib/shared";
+
+//
+// render RSC
+//
 
 export function render({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -14,6 +19,10 @@ export function render({ request }: { request: Request }) {
   );
   return { rscStream, status: result.match.notFound ? 404 : 200 };
 }
+
+//
+// glob import routes
+//
 
 const router = createRouter();
 
@@ -36,13 +45,14 @@ function createRouter() {
 // server action
 //
 
-export async function actionHandler({
-  request,
-  id,
-}: {
-  request: Request;
-  id: string;
-}) {
+export async function actionHandler({ request }: { request: Request }) {
+  const formData = await request.formData();
+  if (0) {
+    // TODO: proper decoding?
+    await reactServerDomServer.decodeReply(formData);
+  }
+  const id = ejectActionId(formData);
+
   let action: Function;
   const [file, name] = id.split("::") as [string, string];
   if (import.meta.env.DEV) {
@@ -54,8 +64,7 @@ export async function actionHandler({
     const mod = await virtual.default[file]();
     action = mod[name];
   }
-  // TODO: decode properly?
-  let formData = await request.formData();
-  const decoded = (await reactServerDomServer.decodeReply(formData)) as any;
-  await action(decoded[0]);
+
+  // TODO: action return value?
+  await action(formData);
 }
