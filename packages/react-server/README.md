@@ -22,6 +22,14 @@ npm run build
 npm run preview
 ```
 
+## Conventions
+
+- `index.html`
+- `src/entry-client.tsx`
+- `src/routes/**/(page|layout).tsx`
+- `"use client"`
+- `"use server"`
+
 ## Examples
 
 - [`./examples/starter`](./examples/starter)
