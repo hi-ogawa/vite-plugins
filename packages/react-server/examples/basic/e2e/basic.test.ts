@@ -166,10 +166,15 @@ test("use client > lib fixture", async ({ page }) => {
   await page.getByText("TestDepUseClient").click();
 });
 
-test("use client > lib 3rd party lib", async ({ page }) => {
+test("use client > lib 3rd party", async ({ page }) => {
   await page.goto("/test/deps");
-  await page.getByText("react-wrap-balancer named import").click();
-  await page.getByText("react-wrap-balancer default import").click();
+  await page.getByText("BalancerNamed").click();
+  await page.getByText("BalancerDefault").click();
+});
+
+test("server compnoent > lib 3rd party", async ({ page }) => {
+  await page.goto("/test/deps");
+  await page.getByText('"hello brightness"').click();
 });
 
 test("RouteProps.request", async ({ page }) => {

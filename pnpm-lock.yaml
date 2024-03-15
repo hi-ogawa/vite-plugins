@@ -294,6 +294,9 @@ importers:
       '@hiogawa/test-dep-use-client':
         specifier: file:./deps/use-client
         version: file:packages/react-server/examples/basic/deps/use-client
+      bright:
+        specifier: ^0.8.5
+        version: 0.8.5(react@18.3.0-canary-6c3b8dbfe-20240226)
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226
@@ -1240,6 +1243,10 @@ packages:
   /@cloudflare/workers-types@4.20231121.0:
     resolution: {integrity: sha512-+kWfpCkqiepwAKXyHoE0gnkPgkLhz0/9HOBIGhHRsUvUKvhUtm3mbqqoGRWgF1qcjzrDUBbrrOq4MYHfFtc2RA==}
     dev: true
+
+  /@code-hike/lighter@0.8.1:
+    resolution: {integrity: sha512-St4rPmB7C2EWmAK1sAbvD3lZeM7UDInVDMjQDzEDsu4Q3B3AqF25vXedQK51U0UO0MCOASgBBdTiNwvJAfIqMQ==}
+    dev: false
 
   /@cspotcode/source-map-support@0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -2406,7 +2413,7 @@ packages:
     peerDependencies:
       unocss: '*'
     dependencies:
-      unocss: 0.57.7(postcss@8.4.35)(vite@5.1.6)
+      unocss: 0.57.7(postcss@8.4.35)(vite@5.1.0)
     dev: true
 
   /@hiogawa/utils@1.6.3:
@@ -4125,6 +4132,16 @@ packages:
     dependencies:
       wcwidth: 1.0.1
     dev: true
+
+  /bright@0.8.5(react@18.3.0-canary-6c3b8dbfe-20240226):
+    resolution: {integrity: sha512-LOhh3jk8KLFMqhX67TSGP1kCb3qGXbiRLbyBToVOfrrrEa3omXHT44r0/L4/OOlKluaFcO7+11KLOM5xI50XvA==}
+    peerDependencies:
+      react: ^18
+    dependencies:
+      '@code-hike/lighter': 0.8.1
+      react: 18.3.0-canary-6c3b8dbfe-20240226
+      server-only: 0.0.1
+    dev: false
 
   /browserify-zlib@0.1.4:
     resolution: {integrity: sha512-19OEpq7vWgsH6WkvkBJQDFvJS1uPcbFOQ4v9CU839dO+ZZXUZO6XpE6hNCqvlIIj+4fZvRiJ6DsAQ382GwiyTQ==}
@@ -8024,6 +8041,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /server-only@0.0.1:
+    resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
+    dev: false
 
   /set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}

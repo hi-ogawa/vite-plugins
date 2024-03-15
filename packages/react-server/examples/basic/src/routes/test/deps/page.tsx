@@ -1,5 +1,6 @@
 import { TestVirtualUseClient } from "virtual:test-use-client";
 import { TestDepUseClient } from "@hiogawa/test-dep-use-client";
+import { Code } from "bright";
 import {
   Balancer as BalancerNamed,
   default as BalancerDefault,
@@ -7,7 +8,7 @@ import {
 
 export default function Page() {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col items-start gap-2">
       <h4 className="font-bold">Test Dependencies</h4>
       <div>
         <TestVirtualUseClient />
@@ -16,10 +17,27 @@ export default function Page() {
         <TestDepUseClient />
       </div>
       <div>
-        <BalancerNamed>react-wrap-balancer named import</BalancerNamed>
+        <a
+          className="text-lg font-bold antd-link"
+          href="https://github.com/code-hike/bright"
+          target="_blank"
+        >
+          code-hike/bright
+        </a>
+        <Code lang="py">print("hello brightness")</Code>
       </div>
       <div>
-        <BalancerDefault>react-wrap-balancer default import</BalancerDefault>
+        <a
+          className="text-lg font-bold antd-link"
+          href="https://github.com/shuding/react-wrap-balancer"
+          target="_blank"
+        >
+          shuding/react-wrap-balancer
+        </a>
+        <div className="flex flex-col gap-2 p-2">
+          <BalancerNamed>BalancerNamed</BalancerNamed>
+          <BalancerDefault>BalancerDefault</BalancerDefault>
+        </div>
       </div>
     </div>
   );
