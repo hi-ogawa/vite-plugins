@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.1.0-pre.0",
+  "version": "0.1.0-pre.2",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -58,7 +58,7 @@
     "rsc-html-stream": "^0.0.3"
   },
   "devDependencies": {
-    "@hiogawa/utils": "^1.6.2",
+    "@hiogawa/utils": "^1.6.3",
     "@types/estree": "^1.0.5",
     "@types/react": "18.2.59",
     "@types/react-dom": "18.2.19",
