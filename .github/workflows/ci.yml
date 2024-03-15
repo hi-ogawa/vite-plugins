@@ -34,6 +34,7 @@ jobs:
       - run: pnpm -C packages/react-server/examples/basic test-e2e
       - run: pnpm -C packages/react-server/examples/basic build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
+      - run: pnpm -C packages/react-server test-e2e
 
   test-vite-node-miniflare:
     runs-on: ubuntu-latest

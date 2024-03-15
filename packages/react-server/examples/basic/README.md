@@ -7,6 +7,6 @@
 npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/basic my-project
 cd my-project
 
-npm i --force
-npm run dev
+pnpm i
+pnpm dev dev
 ```

@@ -16,12 +16,12 @@ npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/starter my
 cd my-project
 
 # development
-npm i
-npm run dev
+pnpm i
+pnpm dev
 
 # build and preview
-npm run build
-npm run preview
+pnpm build
+pnpm preview
 ```
 
 ## Conventions

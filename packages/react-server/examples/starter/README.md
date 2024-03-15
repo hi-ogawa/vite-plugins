@@ -8,16 +8,16 @@ npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/starter my
 cd my-project
 
 # development
-npm i
-npm run dev
+pnpm i
+pnpm dev
 
 # build and preview
-npm run build
-npm run preview
+pnpm build
+pnpm preview
 
 # deploy cloudflare workers
 npm i -D wrangler
-npm run cf-build
-npm run cf-preview
-npm run cf-release
+pnpm cf-build
+pnpm cf-preview
+pnpm cf-release
 ```
