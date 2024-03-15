@@ -31,8 +31,8 @@
     "miniflare": "^3.20231030.3"
   },
   "devDependencies": {
-    "@hiogawa/tiny-rpc": "^0.2.3-pre.11",
-    "@hiogawa/utils": "1.6.1-pre.10",
+    "@hiogawa/tiny-rpc": "0.2.3-pre.18",
+    "@hiogawa/utils": "1.6.2",
     "vite": "^5.1.0"
   },
   "peerDependencies": {

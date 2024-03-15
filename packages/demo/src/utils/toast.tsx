@@ -1,4 +1,4 @@
-import { PreactToastManager } from "@hiogawa/tiny-toast/dist/preact";
+import { TinyReactToastManager } from "@hiogawa/tiny-toast";
 
-export const toast = new PreactToastManager();
-toast.defaultOptions.class = "!antd-floating";
+export const toast = new TinyReactToastManager();
+toast.defaultOptions.className = "!antd-floating";

@@ -1,6 +1,8 @@
-import { type RequestHandler } from "@hattip/compose";
-import { type TinyRpcRoutes, createTinyRpcHandler } from "@hiogawa/tiny-rpc";
-import { zodFn } from "@hiogawa/tiny-rpc/dist/zod";
+import {
+  exposeTinyRpc,
+  httpServerAdapter,
+  validateFn,
+} from "@hiogawa/tiny-rpc";
 import { tinyassert } from "@hiogawa/utils";
 import { z } from "zod";
 import { logError } from "../server/log";
@@ -8,7 +10,7 @@ import { getRequestContext } from "../server/request-context";
 import { RPC_ENDPOINT } from "./client";
 
 export const rpcRoutes = {
-  login: zodFn(z.object({ name: z.string() }))(async (input) => {
+  login: validateFn(z.object({ name: z.string() }))(async (input) => {
     const ctx = getRequestContext();
     tinyassert(!ctx.session.user, "already logged in");
     ctx.session.user = { name: input.name };
@@ -26,14 +28,16 @@ export const rpcRoutes = {
     const ctx = getRequestContext();
     return ctx.session.user ?? null;
   },
-} satisfies TinyRpcRoutes;
+};
 
-export function rpcHandler(): RequestHandler {
-  return createTinyRpcHandler({
-    endpoint: RPC_ENDPOINT,
+export function rpcHandler() {
+  return exposeTinyRpc({
     routes: rpcRoutes,
-    onError(e) {
-      logError(e);
-    },
+    adapter: httpServerAdapter({
+      endpoint: RPC_ENDPOINT,
+      onError(e) {
+        logError(e);
+      },
+    }),
   });
 }
