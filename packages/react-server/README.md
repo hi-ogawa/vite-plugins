@@ -1,6 +1,6 @@
 # @hiogawa/react-server
 
-[Try it on Stackblitz](https://stackblitz.com/edit/github-4eut84?file=src%2Froutes%2Fserver-action%2Fserver.tsx)
+[Try it on Stackblitz](https://stackblitz.com/edit/github-ufbaye?file=src%2Froutes%2Fserver-action%2Fclient.tsx)
 
 ![image](https://github.com/hi-ogawa/vite-plugins/assets/4232207/119a42ee-d68e-401d-830a-161cc53c8b24)
 
