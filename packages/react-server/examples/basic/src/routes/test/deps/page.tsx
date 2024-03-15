@@ -1,6 +1,6 @@
 import { TestVirtualUseClient } from "virtual:test-use-client";
+import { TestDepServerComponent } from "@hiogawa/test-dep-server-component";
 import { TestDepUseClient } from "@hiogawa/test-dep-use-client";
-import { Code } from "bright";
 import {
   Balancer as BalancerNamed,
   default as BalancerDefault,
@@ -17,16 +17,9 @@ export default function Page() {
         <TestDepUseClient />
       </div>
       <div>
-        <a
-          className="text-lg font-bold antd-link"
-          href="https://github.com/code-hike/bright"
-          target="_blank"
-        >
-          code-hike/bright
-        </a>
-        <Code lang="py">print("hello brightness")</Code>
+        <TestDepServerComponent />
       </div>
-      <div>
+      <div className="border p-2">
         <a
           className="text-lg font-bold antd-link"
           href="https://github.com/shuding/react-wrap-balancer"

@@ -291,6 +291,9 @@ importers:
       '@hiogawa/react-server':
         specifier: latest
         version: link:../..
+      '@hiogawa/test-dep-server-component':
+        specifier: file:./deps/server-component
+        version: file:packages/react-server/examples/basic/deps/server-component
       '@hiogawa/test-dep-use-client':
         specifier: file:./deps/use-client
         version: file:packages/react-server/examples/basic/deps/use-client
@@ -2413,7 +2416,7 @@ packages:
     peerDependencies:
       unocss: '*'
     dependencies:
-      unocss: 0.57.7(postcss@8.4.35)(vite@5.1.0)
+      unocss: 0.57.7(postcss@8.4.35)(vite@5.1.6)
     dev: true
 
   /@hiogawa/utils@1.6.3:
@@ -9540,6 +9543,11 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
+
+  file:packages/react-server/examples/basic/deps/server-component:
+    resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
+    name: '@hiogawa/test-dep-use-client'
+    dev: false
 
   file:packages/react-server/examples/basic/deps/use-client:
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
