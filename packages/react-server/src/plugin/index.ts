@@ -23,6 +23,13 @@ const require = createRequire(import.meta.url);
 class RscManager {
   parentServer: ViteDevServer | undefined;
 
+  // expose "use client" node modules to client via virtual modules
+  // to avoid dual package due to deps optimization hash during dev
+  nodeModules = {
+    all: new Set<string>(),
+    useClient: new Map<string, { id: string; exports: Set<string> }>(),
+  };
+
   // all files in parent server
   parentIds = new Set<string>();
   // all files in rsc server
@@ -261,7 +268,28 @@ export function vitePluginReactServer(options?: {
     },
   };
 
-  return [rscParentPlugin, vitePluginClientUseServer({ manager })];
+  return [
+    rscParentPlugin,
+    vitePluginClientUseServer({ manager }),
+    {
+      name: "client-virtual-use-client-node-modules",
+      resolveId(source, _importer, _options) {
+        if (source.startsWith("virtual:use-client-node-module/")) {
+          return "\0" + source;
+        }
+        return;
+      },
+      load(id, _options) {
+        if (id.startsWith("\0virtual:use-client-node-module/")) {
+          const source = id.slice("\0virtual:use-client-node-module/".length);
+          const meta = manager.nodeModules.useClient.get(source);
+          tinyassert(meta);
+          return `export { ${[...meta.exports].join(", ")} } from "${source}"`;
+        }
+        return;
+      },
+    },
+  ];
 }
 
 // TODO: refactor ast utils
@@ -281,9 +309,144 @@ function vitePluginServerUseClient({
   manager,
 }: {
   manager: RscManager;
-}): Plugin {
-  return {
-    name: vitePluginServerUseClient.name,
+}): PluginOption {
+  // intercept Vite's node resolve to virtualize "use client" in node_modules
+  // TODO: expose same virtuals on client
+  // TODO: refactor ast manipulation
+  const pluginUseClientNodeModules: Plugin = {
+    name: "server-virtual-use-client-node-modules",
+    enforce: "pre", // "pre" to steal Vite's node resolve
+    apply: "serve",
+    async resolveId(source, importer, _options) {
+      // quick check node module
+      if (
+        source[0] !== "." &&
+        source[0] !== "/" &&
+        !source.startsWith("virtual")
+      ) {
+        // cached result
+        if (manager.nodeModules.useClient.has(source)) {
+          return `\0virtual:use-client-node-module/${source}`;
+        }
+        if (manager.nodeModules.all.has(source)) {
+          return;
+        }
+        const resolved = await this.resolve(source, importer, {
+          skipSelf: true,
+        });
+        debug.plugin("[use-client-node-modules]", { source, resolved });
+        if (resolved && resolved.id.includes("/node_modules/")) {
+          const [id] = resolved.id.split("?v=");
+          tinyassert(id);
+          const code = await fs.promises.readFile(id!, "utf-8");
+          if (code.match(/^("use client"|'use client')/)) {
+            manager.nodeModules.useClient.set(source, {
+              id,
+              exports: new Set(),
+            });
+            return `\0virtual:use-client-node-module/${source}`;
+          }
+        }
+      }
+      return;
+    },
+    async load(id, _options) {
+      if (id.startsWith("\0virtual:use-client-node-module/")) {
+        const source = id.slice("\0virtual:use-client-node-module/".length);
+        const meta = manager.nodeModules.useClient.get(source);
+        tinyassert(meta);
+        // assume transpiled so we can parse right away
+        // TODO: refactor ast
+        const code = await fs.promises.readFile(meta.id, "utf-8");
+        const ast: Program = await parseAstAsync(code);
+        const exportNames = meta.exports;
+        for (const node of ast.body) {
+          // named exports
+          if (node.type === "ExportNamedDeclaration") {
+            if (node.declaration) {
+              if (
+                node.declaration.type === "FunctionDeclaration" ||
+                node.declaration.type === "ClassDeclaration"
+              ) {
+                /**
+                 * export function foo() {}
+                 */
+                exportNames.add(node.declaration.id.name);
+              } else if (node.declaration.type === "VariableDeclaration") {
+                /**
+                 * export const foo = 1, bar = 2
+                 */
+                for (const decl of node.declaration.declarations) {
+                  if (decl.id.type === "Identifier") {
+                    exportNames.add(decl.id.name);
+                  } else {
+                    console.error(
+                      "[unsupported]",
+                      vitePluginServerUseClient.name,
+                      decl
+                    );
+                  }
+                }
+              }
+            } else {
+              /**
+               * export { foo, bar } from './foo'
+               * export { foo, bar as car }
+               */
+              for (const spec of node.specifiers) {
+                exportNames.add(spec.exported.name);
+              }
+            }
+          }
+
+          // default export
+          if (node.type === "ExportDefaultDeclaration") {
+            if (
+              (node.declaration.type === "FunctionDeclaration" ||
+                node.declaration.type === "ClassExpression") &&
+              node.declaration.id
+            ) {
+              /**
+               * export default function foo() {}
+               * export default class A {}
+               */
+              exportNames.add(node.declaration.id.name);
+            } else {
+              /**
+               * export default () => {}
+               */
+              exportNames.add("default");
+            }
+          }
+
+          /**
+           * export * from './foo'
+           */
+          if (node.type === "ExportAllDeclaration") {
+            console.error(
+              "[unsupported]",
+              vitePluginServerUseClient.name,
+              node
+            );
+          }
+        }
+        // we need to transform to client reference directly
+        // otherwise `soruce` will be resolved infinite recursively
+        id = noramlizeClientReferenceId(id);
+        let result = `import { createClientReference } from "${require.resolve(
+          "@hiogawa/react-server/server-internal"
+        )}";\n`;
+        for (const name of exportNames) {
+          result += `export const ${name} = createClientReference("${id}::${name}");\n`;
+        }
+        return result;
+      }
+      return;
+    },
+  };
+
+  const pluginUseClientLocal: Plugin = {
+    name: "use-client-local",
     async transform(code, id, _options) {
       manager.rscIds.add(id);
       manager.rscUseClientIds.delete(id);
@@ -337,7 +500,7 @@ function vitePluginServerUseClient({
           } else {
             /**
              * export { foo, bar } from './foo'
-             * export { foo, bar }
+             * export { foo, bar as car }
              */
             for (const spec of node.specifiers) {
               exportNames.push(spec.exported.name);
@@ -421,6 +584,7 @@ function vitePluginServerUseClient({
       },
     },
   };
+  return [pluginUseClientNodeModules, pluginUseClientLocal];
 }
 
 // Apply same noramlizaion as Vite's dev import analysis
