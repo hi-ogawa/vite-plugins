@@ -20,7 +20,7 @@ jobs:
       - run: pnpm -C packages/demo build-preview
       - run: E2E_COMMAND='pnpm preview' pnpm -C packages/demo test-e2e
 
-  test-rsc:
+  test-react-server:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
