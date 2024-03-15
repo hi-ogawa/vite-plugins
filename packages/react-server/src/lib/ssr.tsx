@@ -33,7 +33,7 @@ export function invalidateImportCacheOnFinish<T>(renderId: string) {
 async function createWebpackRequire(): Promise<WebpackRequire> {
   if (import.meta.env.DEV) {
     return (id) => {
-      debug.ssr("[__webpack_require__]", { id });
+      debug("[__webpack_require__]", { id });
       const [file, renderId] = id.split(RENDER_ID_SEP) as [string, string];
       return memoImportByRenderId.get(renderId)(file);
     };
@@ -43,7 +43,7 @@ async function createWebpackRequire(): Promise<WebpackRequire> {
       "/dist/rsc/client-references.js" as string
     );
     return memoize((id) => {
-      debug.ssr("[__webpack_require__]", { id });
+      debug("[__webpack_require__]", { id });
       const dynImport = clientReferences.default[id];
       tinyassert(dynImport, `client reference not found '${id}'`);
       return dynImport();
