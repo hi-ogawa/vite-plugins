@@ -50,6 +50,9 @@ importers:
       vitest:
         specifier: ^1.0.4
         version: 1.0.4(@types/node@18.16.18)
+      wrangler:
+        specifier: ^3.32.0
+        version: 3.32.0
 
   examples/spa:
     devDependencies:
@@ -286,7 +289,7 @@ importers:
   packages/react-server/examples/basic:
     dependencies:
       '@hiogawa/react-server':
-        specifier: workspace:*
+        specifier: latest
         version: link:../..
       '@hiogawa/test-dep-use-client':
         specifier: file:./deps/use-client
@@ -314,7 +317,7 @@ importers:
         specifier: ^1.6.3
         version: 1.6.3
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:*
+        specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
         specifier: 18.2.59
@@ -331,9 +334,6 @@ importers:
       vite:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
-      wrangler:
-        specifier: ^3.32.0
-        version: 3.32.0
 
   packages/react-server/examples/starter:
     dependencies:
