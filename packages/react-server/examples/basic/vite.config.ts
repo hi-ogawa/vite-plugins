@@ -24,7 +24,7 @@ export default defineConfig({
   ssr: {
     // needs to inline react-wrap-balancer since its default export
     // is not recognized by NodeJS. See:
-    //   node -e 'import("react-wrap-balancer").then(console.log)
+    //   node -e 'import("react-wrap-balancer").then(console.log)'
     //   https://publint.dev/react-wrap-balancer@1.1.0
     noExternal: ["react-wrap-balancer"],
   },
