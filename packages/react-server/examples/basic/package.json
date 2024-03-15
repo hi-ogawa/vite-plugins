@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@hattip/adapter-node": "^0.0.43",
-    "@hiogawa/unocss-preset-antd": "2.2.1-pre.3",
+    "@hiogawa/unocss-preset-antd": "2.2.1-pre.7",
     "@hiogawa/utils": "^1.6.2",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@types/react": "18.2.59",
