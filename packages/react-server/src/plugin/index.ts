@@ -285,7 +285,7 @@ export function vitePluginReactServer(options?: {
           const meta = manager.nodeModules.useClient.get(source);
           debug.plugin("[parent.use-client-node-modules]", { source, meta });
           tinyassert(meta);
-          return `export * from "${source}"`;
+          return `export {${[...meta.exports].join(", ")}} from "${source}"`;
         }
         return;
       },

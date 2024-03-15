@@ -18,15 +18,9 @@ export default function Page() {
       <div>
         <BalancerNamed>react-wrap-balancer named import</BalancerNamed>
       </div>
-      {/*
-        TODO: ssr is failing to load default import.
-        this could be a general Vite SSR issue https://publint.dev/react-wrap-balancer@1.1.0
-      */}
-      {false && (
-        <div>
-          <BalancerDefault>react-wrap-balancer default import</BalancerDefault>
-        </div>
-      )}
+      <div>
+        <BalancerDefault>react-wrap-balancer default import</BalancerDefault>
+      </div>
     </div>
   );
 }
