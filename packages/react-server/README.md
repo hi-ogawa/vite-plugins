@@ -40,7 +40,10 @@ npm run preview
 ## Development
 
 ```sh
+# NO_DTS=1
 pnpm -C packages/react-server dev
+
+# DEBUG=react-server:*
 pnpm -C packages/react-server/examples/basic dev
 ```
 

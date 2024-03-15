@@ -14,7 +14,7 @@ export default defineConfig([
       "src/plugin/index.ts",
     ],
     format: ["esm"],
-    dts: true,
+    dts: !process.env.NO_DTS,
     external: [
       /^virtual:/,
       // TODO: virtual module?

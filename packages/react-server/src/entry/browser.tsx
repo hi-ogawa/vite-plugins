@@ -3,11 +3,9 @@ import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
-import { createDebug } from "../lib/debug";
+import { debug } from "../lib/debug";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
-
-const debug = createDebug("browser");
 
 // TODO: root error boundary?
 
