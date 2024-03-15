@@ -29,9 +29,10 @@ jobs:
           node-version: 20
       - run: corepack enable
       - run: pnpm i
-      - run: pnpm --filter @hiogawa/react-server-example-basic... build
+      - run: pnpm --filter @hiogawa/react-server... build
       - run: npx playwright install chromium
       - run: pnpm -C packages/react-server/examples/basic test-e2e
+      - run: pnpm -C packages/react-server/examples/basic build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
 
   test-vite-node-miniflare:
