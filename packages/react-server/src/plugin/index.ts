@@ -16,6 +16,7 @@ import {
   parseAstAsync,
 } from "vite";
 import { debug } from "../lib/debug";
+import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 
 const require = createRequire(import.meta.url);
 
@@ -26,8 +27,7 @@ class RscManager {
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
   nodeModules = {
-    all: new Set<string>(),
-    useClient: new Map<string, { id: string; exports: Set<string> }>(),
+    useClient: new Map<string, { id: string; exportNames: Set<string> }>(),
   };
 
   // all files in parent server
@@ -285,7 +285,9 @@ export function vitePluginReactServer(options?: {
           const meta = manager.nodeModules.useClient.get(source);
           debug.plugin("[parent.use-client-node-modules]", { source, meta });
           tinyassert(meta);
-          return `export {${[...meta.exports].join(", ")}} from "${source}"`;
+          return `export {${[...meta.exportNames].join(
+            ", "
+          )}} from "${source}"`;
         }
         return;
       },
@@ -334,10 +336,10 @@ function vitePluginServerUseClient({
           const [id] = resolved.id.split("?v=");
           tinyassert(id);
           const code = await fs.promises.readFile(id!, "utf-8");
-          if (code.match(/^("use client"|'use client')/)) {
+          if (code.match(USE_CLIENT_RE)) {
             manager.nodeModules.useClient.set(source, {
               id,
-              exports: new Set(),
+              exportNames: new Set(),
             });
             return `\0virtual:use-client-node-module/${source}`;
           }
@@ -351,83 +353,13 @@ function vitePluginServerUseClient({
         const source = id.slice("\0virtual:use-client-node-module/".length);
         const meta = manager.nodeModules.useClient.get(source);
         tinyassert(meta);
-        // assume transpiled so we can parse right away
-        // TODO: refactor ast
+        // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
-        const ast: Program = await parseAstAsync(code);
-        const exportNames = meta.exports;
-        for (const node of ast.body) {
-          // named exports
-          if (node.type === "ExportNamedDeclaration") {
-            if (node.declaration) {
-              if (
-                node.declaration.type === "FunctionDeclaration" ||
-                node.declaration.type === "ClassDeclaration"
-              ) {
-                /**
-                 * export function foo() {}
-                 */
-                exportNames.add(node.declaration.id.name);
-              } else if (node.declaration.type === "VariableDeclaration") {
-                /**
-                 * export const foo = 1, bar = 2
-                 */
-                for (const decl of node.declaration.declarations) {
-                  if (decl.id.type === "Identifier") {
-                    exportNames.add(decl.id.name);
-                  } else {
-                    console.error(
-                      "[unsupported]",
-                      vitePluginServerUseClient.name,
-                      decl
-                    );
-                  }
-                }
-              }
-            } else {
-              /**
-               * export { foo, bar } from './foo'
-               * export { foo, bar as car }
-               */
-              for (const spec of node.specifiers) {
-                exportNames.add(spec.exported.name);
-              }
-            }
-          }
-
-          // default export
-          if (node.type === "ExportDefaultDeclaration") {
-            if (
-              (node.declaration.type === "FunctionDeclaration" ||
-                node.declaration.type === "ClassExpression") &&
-              node.declaration.id
-            ) {
-              /**
-               * export default function foo() {}
-               * export default class A {}
-               */
-              exportNames.add(node.declaration.id.name);
-            } else {
-              /**
-               * export default () => {}
-               */
-              exportNames.add("default");
-            }
-          }
-
-          /**
-           * export * from './foo'
-           */
-          if (node.type === "ExportAllDeclaration") {
-            console.error(
-              "[unsupported]",
-              vitePluginServerUseClient.name,
-              node
-            );
-          }
-        }
+        const ast = await parseAstAsync(code);
+        const exportNames = getExportNames(ast);
+        meta.exportNames = exportNames;
         // we need to transform to client reference directly
-        // otherwise `soruce` will be resolved infinite recursively
+        // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
         let result = `import { createClientReference } from "${require.resolve(
           "@hiogawa/react-server/server-internal"
@@ -457,91 +389,12 @@ function vitePluginServerUseClient({
     async transform(code, id, _options) {
       manager.rscIds.add(id);
       manager.rscUseClientIds.delete(id);
-      if (!code.includes("use client")) {
+      if (!code.match(USE_CLIENT_RE)) {
         return;
       }
-      const ast: Program = await parseAstAsync(code);
-      const hasUseClient = ast.body.some(
-        (node) =>
-          node.type === "ExpressionStatement" &&
-          "directive" in node &&
-          node.directive === "use client"
-      );
-      if (!hasUseClient) {
-        return;
-      }
+      const ast = await parseAstAsync(code);
+      const exportNames = getExportNames(ast);
       manager.rscUseClientIds.add(id);
-      // for now only handle simple exports
-      //   export function foo() {}
-      //   export const foo = () => {}
-      // cf. https://github.com/hi-ogawa/vite-plugins/blob/aed20d88ae4b1582701795e2079a96d7caeccf89/packages/vite-plugin-simple-hmr/src/transform.ts#L73
-      const exportNames: string[] = [];
-      for (const node of ast.body) {
-        // named exports
-        if (node.type === "ExportNamedDeclaration") {
-          if (node.declaration) {
-            if (
-              node.declaration.type === "FunctionDeclaration" ||
-              node.declaration.type === "ClassDeclaration"
-            ) {
-              /**
-               * export function foo() {}
-               */
-              exportNames.push(node.declaration.id.name);
-            } else if (node.declaration.type === "VariableDeclaration") {
-              /**
-               * export const foo = 1, bar = 2
-               */
-              for (const decl of node.declaration.declarations) {
-                if (decl.id.type === "Identifier") {
-                  exportNames.push(decl.id.name);
-                } else {
-                  console.error(
-                    "[unsupported]",
-                    vitePluginServerUseClient.name,
-                    decl
-                  );
-                }
-              }
-            }
-          } else {
-            /**
-             * export { foo, bar } from './foo'
-             * export { foo, bar as car }
-             */
-            for (const spec of node.specifiers) {
-              exportNames.push(spec.exported.name);
-            }
-          }
-        }
-
-        // default export
-        if (node.type === "ExportDefaultDeclaration") {
-          if (
-            (node.declaration.type === "FunctionDeclaration" ||
-              node.declaration.type === "ClassExpression") &&
-            node.declaration.id
-          ) {
-            /**
-             * export default function foo() {}
-             * export default class A {}
-             */
-            exportNames.push(node.declaration.id.name);
-          } else {
-            /**
-             * export default () => {}
-             */
-            exportNames.push("default");
-          }
-        }
-
-        /**
-         * export * from './foo'
-         */
-        if (node.type === "ExportAllDeclaration") {
-          console.error("[unsupported]", vitePluginServerUseClient.name, node);
-        }
-      }
       // normalize client reference during dev
       // to align with Vite's import analysis
       if (manager.parentServer) {
@@ -642,42 +495,17 @@ function vitePluginClientUseServer({
       configEnv = env;
     },
     async transform(code, id, _options) {
-      if (!code.includes("use server")) {
+      if (!code.match(USE_SERVER_RE)) {
         return;
       }
-      const ast: Program = await parseAstAsync(code);
-      const hasDirective = ast.body.some(
-        (node) =>
-          node.type === "ExpressionStatement" &&
-          "directive" in node &&
-          node.directive === "use server"
-      );
-      if (!hasDirective) {
-        return;
-      }
-      const exportNames: string[] = [];
-      for (const node of ast.body) {
-        if (node.type === "ExportNamedDeclaration") {
-          if (node.declaration) {
-            if (node.declaration.type === "FunctionDeclaration") {
-              exportNames.push(node.declaration.id.name);
-            }
-            if (node.declaration.type === "VariableDeclaration") {
-              for (const decl of node.declaration.declarations) {
-                if (decl.id.type === "Identifier") {
-                  exportNames.push(decl.id.name);
-                }
-              }
-            }
-          }
-        }
-      }
+      const ast = await parseAstAsync(code);
+      const exportNames = getExportNames(ast);
       debug.plugin(`[${vitePluginClientUseServer.name}:transform]`, {
         id,
         exportNames,
       });
       // TODO
-      // only rsc build and client build shares is built in the same process
+      // only rsc build and client build are built in the same process
       // so we cannot validate in ssr build
       if (configEnv.command === "build" && !configEnv.isSsrBuild) {
         tinyassert(
@@ -689,7 +517,12 @@ function vitePluginClientUseServer({
         "@hiogawa/react-server/client-internal"
       )}";\n`;
       for (const name of exportNames) {
-        result += `export const ${name} = createServerReference("${id}::${name}");\n`;
+        if (name === "default") {
+          result += `const $$default = createServerReference("${id}::${name}");\n`;
+          result += `export default $$default;\n`;
+        } else {
+          result += `export const ${name} = createServerReference("${id}::${name}");\n`;
+        }
       }
       return result;
     },
@@ -700,47 +533,13 @@ function vitePluginServerUseServer(): Plugin {
   return {
     name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
-      if (!code.includes("use server")) {
+      if (!code.match(USE_SERVER_RE)) {
         return;
       }
       // cf. https://github.com/hi-ogawa/vite-plugins/blob/5f8e6936fa12e1f7524891e3c1e2a21065d50250/packages/vite-plugin-simple-hmr/src/transform.ts#L73
       const ast: Program = await parseAstAsync(code);
       const mcode = new MagicString(code);
-      const hasDirective = ast.body.some(
-        (node) =>
-          node.type === "ExpressionStatement" &&
-          "directive" in node &&
-          node.directive === "use server"
-      );
-      if (!hasDirective) {
-        return;
-      }
-      const exportNames: string[] = [];
-      for (const node of ast.body) {
-        if (node.type === "ExportNamedDeclaration") {
-          if (node.declaration) {
-            if (node.declaration.type === "FunctionDeclaration") {
-              exportNames.push(node.declaration.id.name);
-            }
-            if (node.declaration.type === "VariableDeclaration") {
-              if (node.declaration.kind === "const") {
-                // rewrite from "const" to "let"
-                mcode.remove(
-                  node.declaration.start,
-                  node.declaration.start + 5
-                );
-                mcode.appendLeft(node.declaration.start, "let");
-              }
-              for (const decl of node.declaration.declarations) {
-                if (decl.id.type === "Identifier") {
-                  exportNames.push(decl.id.name);
-                }
-                tinyassert(false);
-              }
-            }
-          }
-        }
-      }
+      const exportNames = getExportNames(ast, { toWritable: { code: mcode } });
       debug.plugin(`[${vitePluginServerUseServer.name}:transform]`, {
         id,
         exportNames,
