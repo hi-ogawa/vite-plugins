@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm -r '--filter=!*example*' build",
     "dev": "pnpm run --stream /^dev:/",
     "dev:demo": "pnpm -C packages/demo dev",
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json examples/*/tsconfig.json",
