@@ -1,5 +1,3 @@
-// @ts-ignore
-import rscGlobRoutes from "virtual:rsc-glob-routes";
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
@@ -11,8 +9,7 @@ import { ejectActionId } from "../lib/shared";
 //
 
 export function render({ request }: { request: Request }) {
-  const url = new URL(request.url);
-  const result = router.run(url.pathname);
+  const result = router.run(request);
   const rscStream = reactServerDomServer.renderToReadableStream(
     result.node,
     createBundlerConfig()
@@ -27,14 +24,24 @@ export function render({ request }: { request: Request }) {
 const router = createRouter();
 
 function createRouter() {
-  const glob = rscGlobRoutes as Record<string, unknown>;
+  // for now hard code /src/routes as convention
+  const glob = import.meta.glob(
+    "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
+    {
+      eager: true,
+    }
+  );
   const tree = generateRouteTree(
     objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length))
   );
 
-  function run(pathname: string) {
-    const match = matchRoute(pathname, tree);
-    const node = renderMatchRoute(match, <div>Not Found: {pathname}</div>);
+  function run(request: Request) {
+    const url = new URL(request.url);
+    const match = matchRoute(url.pathname, tree);
+    const node = renderMatchRoute(
+      { request, match },
+      <div>Not Found: {url.pathname}</div>
+    );
     return { node, match };
   }
 

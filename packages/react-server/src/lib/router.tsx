@@ -1,8 +1,6 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import type React from "react";
 
-// TODO: rename to router
-
 // cf. similar to vite-glob-routes
 // https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
 
@@ -73,14 +71,13 @@ export function matchRoute(
 
 // TODO: separate react code in a different file
 export function renderMatchRoute(
-  match: MatchRouteResult,
+  props: RouteProps,
   fallback: React.ReactNode
 ): React.ReactNode {
-  const nodes = [...match.nodes].reverse();
-  const props: RouteProps = { match };
+  const nodes = [...props.match.nodes].reverse();
 
   let acc: React.ReactNode = fallback;
-  if (!match.notFound) {
+  if (!props.match.notFound) {
     // TODO: assert?
     const Page = nodes[0]?.value?.page?.default;
     if (Page) {
@@ -99,6 +96,7 @@ export function renderMatchRoute(
 }
 
 interface RouteProps {
+  request: Request;
   match: MatchRouteResult;
 }
 
