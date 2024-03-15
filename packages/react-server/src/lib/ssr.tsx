@@ -1,8 +1,6 @@
 import { DefaultMap, memoize, tinyassert } from "@hiogawa/utils";
-import { createDebug } from "./debug";
+import { debug } from "./debug";
 import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
-
-const debug = createDebug("ssr");
 
 // __webpack_require__ is called at least twice for preloadModule and requireModule
 // https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js
@@ -35,7 +33,7 @@ export function invalidateImportCacheOnFinish<T>(renderId: string) {
 async function createWebpackRequire(): Promise<WebpackRequire> {
   if (import.meta.env.DEV) {
     return (id) => {
-      debug("[__webpack_require__]", { id });
+      debug.ssr("[__webpack_require__]", { id });
       const [file, renderId] = id.split(RENDER_ID_SEP) as [string, string];
       return memoImportByRenderId.get(renderId)(file);
     };
@@ -45,7 +43,7 @@ async function createWebpackRequire(): Promise<WebpackRequire> {
       "/dist/rsc/client-references.js" as string
     );
     return memoize((id) => {
-      debug("[__webpack_require__]", { id });
+      debug.ssr("[__webpack_require__]", { id });
       const dynImport = clientReferences.default[id];
       tinyassert(dynImport, `client reference not found '${id}'`);
       return dynImport();
