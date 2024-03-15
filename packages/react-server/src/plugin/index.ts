@@ -136,30 +136,6 @@ export function vitePluginReactServer(options?: {
         },
       },
 
-      // expose glob import for routs
-      {
-        name: "virtual-rsc-glob-routes",
-        resolveId(source, _importer, _options) {
-          if (source === "virtual:rsc-glob-routes") {
-            return "\0" + source;
-          }
-          return;
-        },
-        async load(id, _options) {
-          if (id === "\0virtual:rsc-glob-routes") {
-            return /* js */ `
-              export default import.meta.glob(
-                "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
-                {
-                  eager: true,
-                }
-              )
-            `;
-          }
-          return;
-        },
-      },
-
       ...(options?.plugins ?? []),
     ],
     build: {
@@ -294,8 +270,6 @@ export function vitePluginReactServer(options?: {
     },
   ];
 }
-
-// TODO: refactor ast utils
 
 /*
 transform "use client" directive
@@ -560,12 +534,4 @@ function vitePluginServerUseServer(): Plugin {
       };
     },
   };
-}
-
-// extend types for rollup ast with node position
-declare module "estree" {
-  interface BaseNode {
-    start: number;
-    end: number;
-  }
 }

@@ -172,6 +172,13 @@ test("use client > lib 3rd party lib", async ({ page }) => {
   await page.getByText("react-wrap-balancer default import").click();
 });
 
+test("RouteProps.request", async ({ page }) => {
+  await page.goto("/test/other");
+  await page.getByText("searchParams = {}").click();
+  await page.getByRole("link", { name: "hello" }).click();
+  await page.getByText('searchParams = {"hello":""}').click();
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");
