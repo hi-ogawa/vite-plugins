@@ -2,7 +2,10 @@ import process from "node:process";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import { importDevServerPlugin } from "@hiogawa/vite-import-dev-server";
 import { viteNullExportPlugin } from "@hiogawa/vite-null-export";
-import { vitePluginSsrMiddleware } from "@hiogawa/vite-plugin-ssr-middleware";
+import {
+  vitePluginLogger,
+  vitePluginSsrMiddleware,
+} from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
 import { defineConfig } from "vite";
@@ -10,10 +13,12 @@ import { vitePluginSsrCss } from "./vite-plugin-ssr-css";
 
 export default defineConfig((ctx) => ({
   plugins: [
-    react(),
+    // TODO
+    react() as any,
     unocss(),
     importDevServerPlugin(),
     globRoutesPlugin({ root: "/src/routes" }),
+    vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
     }),

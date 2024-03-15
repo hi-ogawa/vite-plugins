@@ -179,9 +179,6 @@ importers:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
         version: 2.2.1-pre.7(unocss@0.57.7)
-      '@hiogawa/utils-hattip':
-        specifier: 0.0.1-pre.1
-        version: 0.0.1-pre.1
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../vite-glob-routes
@@ -2418,10 +2415,6 @@ packages:
       unocss: 0.57.7(postcss@8.4.35)(vite@5.1.6)
     dev: true
 
-  /@hiogawa/utils-hattip@0.0.1-pre.1:
-    resolution: {integrity: sha512-kzZ6U7PZ0/m+0bYFdG+/o2F73jRgDxf3gO7Ggwr3XxDZMHH22DttQzaPre1v+kxwuSF7MQ/s8DXk5nr1SD+7hQ==}
-    dev: true
-
   /@hiogawa/utils@1.6.2:
     resolution: {integrity: sha512-t2xSsf6UZA6Y1NjrV80RUse5cElGTBxZOOs+RLSTI82O5u9yPhPXQ8xlxvExBqlR2SwjBvikCHqs4Oe6waWw1Q==}
 
@@ -3264,11 +3257,6 @@ packages:
 
   /@types/node@18.16.18:
     resolution: {integrity: sha512-/aNaQZD0+iSBAGnvvN2Cx92HqE5sZCPZtx2TsK+4nvV23fFe09jVDvpArXr2j9DnYlzuU9WuoykDDc6wqvpNcw==}
-
-  /@types/node@20.11.27:
-    resolution: {integrity: sha512-qyUZfMnCg1KEz57r7pzFtSGt49f6RPkPBis3Vo4PbS7roQEDn22hiHzl/Lo1q4i4hDEgBJmBF/NTNg2XR0HbFg==}
-    dependencies:
-      undici-types: 5.26.5
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -5991,7 +5979,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 20.11.27
+      '@types/node': 18.16.18
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -8697,9 +8685,6 @@ packages:
       jiti: 1.20.0
       mlly: 1.4.2
     dev: true
-
-  /undici-types@5.26.5:
-    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
   /undici@5.28.2:
     resolution: {integrity: sha512-wh1pHJHnUeQV5Xa8/kyQhO7WFa8M34l026L5P/+2TYiakvGy5Rdc8jWZVyG7ieht/0WgJLEd3kcU5gKx+6GC8w==}
