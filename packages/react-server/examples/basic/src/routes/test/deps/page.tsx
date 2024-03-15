@@ -1,4 +1,4 @@
-import { VirtualUseClient } from "virtual:use-client";
+import { TestVirtualUseClient } from "virtual:test-use-client";
 import { TestDepUseClient } from "@hiogawa/test-dep-use-client";
 import {
   Balancer as BalancerNamed,
@@ -10,7 +10,7 @@ export default function Page() {
     <div className="flex flex-col gap-2">
       <h4 className="font-bold">Test Dependencies</h4>
       <div>
-        <VirtualUseClient />
+        <TestVirtualUseClient />
       </div>
       <div>
         <TestDepUseClient />

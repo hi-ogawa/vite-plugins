@@ -34,18 +34,17 @@ function testVitePluginVirtual(): Plugin {
   return {
     name: "test:" + testVitePluginVirtual.name,
     resolveId(source, _importer, _options) {
-      // TODO: rename to virtual:test-use-client
-      if (source === "virtual:use-client") {
+      if (source === "virtual:test-use-client") {
         return "\0" + source;
       }
       return;
     },
     load(id, _options) {
-      if (id === "\0virtual:use-client") {
+      if (id === "\0virtual:test-use-client") {
         return /* js */ `
           "use client";
-          export function VirtualUseClient() {
-            return "VirtualUseClient";
+          export function TestVirtualUseClient() {
+            return "TestVirtualUseClient";
           }
         `.trimStart();
       }

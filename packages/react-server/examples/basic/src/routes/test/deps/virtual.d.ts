@@ -1,3 +1,3 @@
-declare module "virtual:use-client" {
-  export function VirtualUseClient(): string;
+declare module "virtual:test-use-client" {
+  export function TestVirtualUseClient(): string;
 }

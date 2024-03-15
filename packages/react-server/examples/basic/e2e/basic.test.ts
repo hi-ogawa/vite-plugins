@@ -158,12 +158,18 @@ test("server action no js", async ({ browser }) => {
 
 test("use client > virtual module", async ({ page }) => {
   await page.goto("/test/deps");
-  await page.getByText("VirtualUseClient").click();
+  await page.getByText("TestVirtualUseClient").click();
 });
 
-test("use client > 3rd party lib", async ({ page }) => {
+test("use client > lib fixture", async ({ page }) => {
   await page.goto("/test/deps");
   await page.getByText("TestDepUseClient").click();
+});
+
+test("use client > lib 3rd party lib", async ({ page }) => {
+  await page.goto("/test/deps");
+  await page.getByText("react-wrap-balancer named import").click();
+  await page.getByText("react-wrap-balancer default import").click();
 });
 
 async function setupCheckClientState(page: Page) {
