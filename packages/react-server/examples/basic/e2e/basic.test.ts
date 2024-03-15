@@ -156,9 +156,14 @@ test("server action no js", async ({ browser }) => {
   await page.getByText("Count: 0").click();
 });
 
-test("virtual module", async ({ page }) => {
-  await page.goto("/test/virtual");
+test("use client > virtual module", async ({ page }) => {
+  await page.goto("/test/deps");
   await page.getByText("VirtualUseClient").click();
+});
+
+test("use client > 3rd party lib", async ({ page }) => {
+  await page.goto("/test/deps");
+  await page.getByText("TestDepUseClient").click();
 });
 
 async function setupCheckClientState(page: Page) {

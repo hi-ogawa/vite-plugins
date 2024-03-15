@@ -10,7 +10,6 @@ export default async function Layout(props: React.PropsWithChildren) {
           "/test",
           "/test/other",
           "/test/action",
-          "/test/virtual",
           "/test/deps",
           "/test/not-found",
         ]}
