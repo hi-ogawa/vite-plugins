@@ -563,7 +563,6 @@ function vitePluginServerUseClient({
           result += `export const ${name} = createClientReference("${id}::${name}");\n`;
         }
       }
-      // TODO: why does react-wrap-balancer reaches here??
       debug.plugin(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
