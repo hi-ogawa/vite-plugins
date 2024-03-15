@@ -1,6 +1,6 @@
 # react-server starter example
 
-https://react-server-starter.hiro18181.workers.dev/
+- https://react-server-starter.hiro18181.workers.dev/
 
 ```sh
 # download template
