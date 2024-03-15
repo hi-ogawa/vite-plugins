@@ -14,6 +14,11 @@ cd "$test_dir"
 rm -rf dist node_modules
 
 pnpm i "@hiogawa/react-server@file:$lib_dir"
+
+if test "${CI:-}" = "true"; then
+  npx playwright install chromium
+fi
+
 pnpm test-e2e
 pnpm build
 pnpm test-e2e-preview
