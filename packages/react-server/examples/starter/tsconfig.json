@@ -2,6 +2,8 @@
   "include": ["src", "vite.config.ts"],
   "compilerOptions": {
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
