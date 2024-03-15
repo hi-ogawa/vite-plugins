@@ -49,7 +49,7 @@
     "build": "tsup",
     "prepack": "tsup --clean",
     "test": "vitest",
-    "test-e2e": "playwright test",
+    "test-e2e": "bash misc/test.sh",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "dependencies": {
