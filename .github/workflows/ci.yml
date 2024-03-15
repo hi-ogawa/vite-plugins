@@ -29,7 +29,7 @@ jobs:
           node-version: 20
       - run: corepack enable
       - run: pnpm i
-      - run: pnpm --filter @hiogawa/react-server... build
+      - run: pnpm build
       - run: npx playwright install chromium
       - run: pnpm -C packages/react-server/examples/basic test-e2e
       - run: pnpm -C packages/react-server/examples/basic build
