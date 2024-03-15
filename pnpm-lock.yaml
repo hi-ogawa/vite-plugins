@@ -335,8 +335,8 @@ importers:
   packages/react-server/examples/starter:
     dependencies:
       '@hiogawa/react-server':
-        specifier: 0.0.0
-        version: 0.0.0(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react-server-dom-webpack@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(vite@5.1.0)
+        specifier: latest
+        version: link:../..
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226
@@ -351,8 +351,8 @@ importers:
         specifier: ^0.0.43
         version: 0.0.43
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: 0.0.3
-        version: 0.0.3(vite@5.1.0)
+        specifier: latest
+        version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
         specifier: 18.2.59
         version: 18.2.59
@@ -2324,24 +2324,6 @@ packages:
         optional: true
     dev: true
 
-  /@hiogawa/react-server@0.0.0(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react-server-dom-webpack@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(vite@5.1.0):
-    resolution: {integrity: sha512-q0tapixzKWCO0OBGfdCDub+v2P8qBHih4pTcvYsAl4JoldFFFqU2crZgEDRgp0j24cyeWcQHwldkJypTEpxx8w==}
-    peerDependencies:
-      react: 18.3.0-canary-6c3b8dbfe-20240226
-      react-dom: 18.3.0-canary-6c3b8dbfe-20240226
-      react-server-dom-webpack: 18.3.0-canary-6c3b8dbfe-20240226
-      vite: ^5.1.0
-    dependencies:
-      '@tanstack/history': 1.15.13
-      fast-glob: 3.3.2
-      magic-string: 0.30.7
-      react: 18.3.0-canary-6c3b8dbfe-20240226
-      react-dom: 18.3.0-canary-6c3b8dbfe-20240226(react@18.3.0-canary-6c3b8dbfe-20240226)
-      react-server-dom-webpack: 18.3.0-canary-6c3b8dbfe-20240226(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(webpack@5.90.3)
-      rsc-html-stream: 0.0.3
-      vite: 5.1.0(@types/node@18.16.18)
-    dev: false
-
   /@hiogawa/theme-script@0.0.4-pre.3(vite@5.1.6):
     resolution: {integrity: sha512-2uxVhemdAMUFE/OaUcaTT2QeZsXnxtnF/CLNs+CcrlgwaUXXfsnXUTvUZCz8MTmxzzz4Vp5hfAyi4pp58XHJCQ==}
     peerDependencies:
@@ -2420,14 +2402,6 @@ packages:
 
   /@hiogawa/utils@1.6.2:
     resolution: {integrity: sha512-t2xSsf6UZA6Y1NjrV80RUse5cElGTBxZOOs+RLSTI82O5u9yPhPXQ8xlxvExBqlR2SwjBvikCHqs4Oe6waWw1Q==}
-
-  /@hiogawa/vite-plugin-ssr-middleware@0.0.3(vite@5.1.0):
-    resolution: {integrity: sha512-84bzaAuImty4s4vHjOk5MQMzmDs0W0GP43fOTFhsBfj/MSJCNJ68elmPNZWs57WkIEzcdB4haY/P8Nf4ZGH8Qw==}
-    peerDependencies:
-      vite: '*'
-    dependencies:
-      vite: 5.1.0(@types/node@18.16.18)
-    dev: true
 
   /@iconify-json/ri@1.1.9:
     resolution: {integrity: sha512-YOSBce/bzkORxBI1mYz4b9vidaJDeorwzuddFoIV9ajazncI55VLtQ+puIra0d3HQhYfswNSwRy8PrHTZmvaOg==}
