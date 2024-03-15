@@ -27,6 +27,7 @@ function testVitePluginVirtual(): Plugin {
   return {
     name: "test:" + testVitePluginVirtual.name,
     resolveId(source, _importer, _options) {
+      // TODO: rename to virtual:test-use-client
       if (source === "virtual:use-client") {
         return "\0" + source;
       }

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
-import { tinyassert } from "@hiogawa/utils";
+import { memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import fg from "fast-glob";
 import MagicString from "magic-string";
@@ -283,8 +283,9 @@ export function vitePluginReactServer(options?: {
         if (id.startsWith("\0virtual:use-client-node-module/")) {
           const source = id.slice("\0virtual:use-client-node-module/".length);
           const meta = manager.nodeModules.useClient.get(source);
+          debug.plugin("[parent.use-client-node-modules]", { source, meta });
           tinyassert(meta);
-          return `export { ${[...meta.exports].join(", ")} } from "${source}"`;
+          return `export * from "${source}"`;
         }
         return;
       },
@@ -311,30 +312,24 @@ function vitePluginServerUseClient({
   manager: RscManager;
 }): PluginOption {
   // intercept Vite's node resolve to virtualize "use client" in node_modules
-  // TODO: expose same virtuals on client
-  // TODO: refactor ast manipulation
   const pluginUseClientNodeModules: Plugin = {
     name: "server-virtual-use-client-node-modules",
     enforce: "pre", // "pre" to steal Vite's node resolve
     apply: "serve",
-    async resolveId(source, importer, _options) {
-      // quick check node module
+    resolveId: memoize(async function (this, source, importer) {
       if (
         source[0] !== "." &&
         source[0] !== "/" &&
-        !source.startsWith("virtual")
+        !source.startsWith("virtual") &&
+        !source.startsWith("\0virtual")
       ) {
-        // cached result
-        if (manager.nodeModules.useClient.has(source)) {
-          return `\0virtual:use-client-node-module/${source}`;
-        }
-        if (manager.nodeModules.all.has(source)) {
-          return;
-        }
         const resolved = await this.resolve(source, importer, {
           skipSelf: true,
         });
-        debug.plugin("[use-client-node-modules]", { source, resolved });
+        debug.plugin("[rsc.use-client-node-modules.resolveId]", {
+          source,
+          resolved,
+        });
         if (resolved && resolved.id.includes("/node_modules/")) {
           const [id] = resolved.id.split("?v=");
           tinyassert(id);
@@ -347,9 +342,10 @@ function vitePluginServerUseClient({
             return `\0virtual:use-client-node-module/${source}`;
           }
         }
+        return;
       }
       return;
-    },
+    } satisfies Plugin["resolveId"]),
     async load(id, _options) {
       if (id.startsWith("\0virtual:use-client-node-module/")) {
         const source = id.slice("\0virtual:use-client-node-module/".length);
@@ -437,8 +433,19 @@ function vitePluginServerUseClient({
           "@hiogawa/react-server/server-internal"
         )}";\n`;
         for (const name of exportNames) {
-          result += `export const ${name} = createClientReference("${id}::${name}");\n`;
+          if (name === "default") {
+            result += `const $$default = createClientReference("${id}::${name}");\n`;
+            result += `export default $$default;\n`;
+          } else {
+            result += `export const ${name} = createClientReference("${id}::${name}");\n`;
+          }
         }
+        debug.plugin("[rsc.use-client-node-modules.load]", {
+          source,
+          meta,
+          id,
+          result,
+        });
         return result;
       }
       return;
@@ -540,10 +547,6 @@ function vitePluginServerUseClient({
       if (manager.parentServer) {
         id = noramlizeClientReferenceId(id);
       }
-      debug.plugin(`[${vitePluginServerUseClient.name}:transform]`, {
-        id,
-        exportNames,
-      });
       // TODO:
       // "@hiogawa/react-server/client" needs to self-reference
       // "@hiogawa/react-server/server-internal" due to "use client" transform
@@ -553,8 +556,19 @@ function vitePluginServerUseClient({
         "@hiogawa/react-server/server-internal"
       )}";\n`;
       for (const name of exportNames) {
-        result += `export const ${name} = createClientReference("${id}::${name}");\n`;
+        if (name === "default") {
+          result += `const $$default = createClientReference("${id}::${name}");\n`;
+          result += `export default $$default;\n`;
+        } else {
+          result += `export const ${name} = createClientReference("${id}::${name}");\n`;
+        }
       }
+      // TODO: why does react-wrap-balancer reaches here??
+      debug.plugin(`[${vitePluginServerUseClient.name}:transform]`, {
+        id,
+        exportNames,
+        result,
+      });
       return result;
     },
 

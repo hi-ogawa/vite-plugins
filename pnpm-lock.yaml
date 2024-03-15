@@ -15,8 +15,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(prettier@2.8.8)(typescript@5.1.6)
       '@hiogawa/utils':
-        specifier: ^1.6.2
-        version: 1.6.2
+        specifier: ^1.6.3
+        version: 1.6.3
       '@playwright/test':
         specifier: ^1.36.2
         version: 1.36.2
@@ -54,8 +54,8 @@ importers:
   examples/spa:
     devDependencies:
       '@hiogawa/utils':
-        specifier: 1.6.2
-        version: 1.6.2
+        specifier: ^1.6.3
+        version: 1.6.3
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../../packages/vite-glob-routes
@@ -96,8 +96,8 @@ importers:
         specifier: ^0.0.34
         version: 0.0.34
       '@hiogawa/utils':
-        specifier: 1.6.2
-        version: 1.6.2
+        specifier: ^1.6.3
+        version: 1.6.3
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../../packages/vite-glob-routes
@@ -259,8 +259,8 @@ importers:
         version: 0.0.3
     devDependencies:
       '@hiogawa/utils':
-        specifier: ^1.6.2
-        version: 1.6.2
+        specifier: ^1.6.3
+        version: 1.6.3
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
@@ -300,6 +300,9 @@ importers:
       react-server-dom-webpack:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(webpack@5.90.3)
+      react-wrap-balancer:
+        specifier: ^1.1.0
+        version: 1.1.0(react@18.3.0-canary-6c3b8dbfe-20240226)
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.43
@@ -308,8 +311,8 @@ importers:
         specifier: 2.2.1-pre.7
         version: 2.2.1-pre.7(unocss@0.57.7)
       '@hiogawa/utils':
-        specifier: ^1.6.2
-        version: 1.6.2
+        specifier: ^1.6.3
+        version: 1.6.3
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../../../vite-plugin-ssr-middleware
@@ -403,8 +406,8 @@ importers:
         specifier: 0.2.3-pre.18
         version: 0.2.3-pre.18
       '@hiogawa/utils':
-        specifier: 1.6.2
-        version: 1.6.2
+        specifier: ^1.6.3
+        version: 1.6.3
       vite:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
@@ -460,8 +463,8 @@ importers:
         specifier: ^0.0.34
         version: 0.0.34
       '@hiogawa/utils':
-        specifier: 1.6.2
-        version: 1.6.2
+        specifier: ^1.6.3
+        version: 1.6.3
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../../../vite-glob-routes
@@ -2400,8 +2403,8 @@ packages:
       unocss: 0.57.7(postcss@8.4.35)(vite@5.1.6)
     dev: true
 
-  /@hiogawa/utils@1.6.2:
-    resolution: {integrity: sha512-t2xSsf6UZA6Y1NjrV80RUse5cElGTBxZOOs+RLSTI82O5u9yPhPXQ8xlxvExBqlR2SwjBvikCHqs4Oe6waWw1Q==}
+  /@hiogawa/utils@1.6.3:
+    resolution: {integrity: sha512-Bs6Ycf6RhnMQipzU50vg9eb/yimRqPlpvERjkIklXW996kmZ7bjLbhCmYrUMRQVfqICzMPTtyrYkX7wGdVPUMA==}
 
   /@iconify-json/ri@1.1.9:
     resolution: {integrity: sha512-YOSBce/bzkORxBI1mYz4b9vidaJDeorwzuddFoIV9ajazncI55VLtQ+puIra0d3HQhYfswNSwRy8PrHTZmvaOg==}
@@ -7618,6 +7621,14 @@ packages:
       react: 18.3.0-canary-6c3b8dbfe-20240226
       react-dom: 18.3.0-canary-6c3b8dbfe-20240226(react@18.3.0-canary-6c3b8dbfe-20240226)
       webpack: 5.90.3(esbuild@0.18.6)
+
+  /react-wrap-balancer@1.1.0(react@18.3.0-canary-6c3b8dbfe-20240226):
+    resolution: {integrity: sha512-EhF3jOZm5Fjx+Cx41e423qOv2c2aOvXAtym2OHqrGeMUnwERIyNsRBgnfT3plB170JmuYvts8K2KSPEIerKr5A==}
+    peerDependencies:
+      react: '>=16.8.0 || ^17.0.0 || ^18'
+    dependencies:
+      react: 18.3.0-canary-6c3b8dbfe-20240226
+    dev: false
 
   /react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
