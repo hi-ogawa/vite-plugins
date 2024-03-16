@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
+    "@hiogawa/test-dep-server-component": "file:./deps/server-component",
     "@hiogawa/test-dep-use-client": "file:./deps/use-client",
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
