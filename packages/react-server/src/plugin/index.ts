@@ -260,7 +260,7 @@ export function vitePluginReactServer(options?: {
           debug.plugin("[parent.use-client-node-modules]", { source, meta });
           tinyassert(meta);
           return `export {${[...meta.exportNames].join(
-            ", "
+            ", ",
           )}} from "${source}"`;
         }
         return;
@@ -334,7 +334,7 @@ function vitePluginServerUseClient({
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
         let result = `import { createClientReference } from "${require.resolve(
-          "@hiogawa/react-server/server-internal"
+          "@hiogawa/react-server/server-internal",
         )}";\n`;
         for (const name of exportNames) {
           if (name === "default") {
@@ -378,7 +378,7 @@ function vitePluginServerUseClient({
       // but presumably it's failing due to https://github.com/vitejs/vite/pull/16068
       // For now, we workaround it by manually calling require.resolve
       let result = `import { createClientReference } from "${require.resolve(
-        "@hiogawa/react-server/server-internal"
+        "@hiogawa/react-server/server-internal",
       )}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
@@ -417,7 +417,7 @@ function vitePluginServerUseClient({
         tinyassert(options.dir);
         await fs.promises.writeFile(
           path.join(options.dir, "client-references.js"),
-          result
+          result,
         );
       },
     },
@@ -482,11 +482,11 @@ function vitePluginClientUseServer({
       if (configEnv.command === "build" && !configEnv.isSsrBuild) {
         tinyassert(
           manager.rscUseServerIds.has(id),
-          `missing server references in RSC build: ${id}`
+          `missing server references in RSC build: ${id}`,
         );
       }
       let result = `import { createServerReference } from "${require.resolve(
-        "@hiogawa/react-server/client-internal"
+        "@hiogawa/react-server/client-internal",
       )}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
@@ -518,12 +518,12 @@ function vitePluginServerUseServer(): Plugin {
       });
       mcode.prepend(
         `import { createServerReference } from "${require.resolve(
-          "@hiogawa/react-server/server-internal"
-        )}";\n`
+          "@hiogawa/react-server/server-internal",
+        )}";\n`,
       );
       for (const name of exportNames) {
         mcode.append(
-          `${name} = createServerReference("${id}::${name}", ${name});\n`
+          `${name} = createServerReference("${id}::${name}", ${name});\n`,
         );
       }
       return {

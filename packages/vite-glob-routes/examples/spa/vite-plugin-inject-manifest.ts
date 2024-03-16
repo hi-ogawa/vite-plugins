@@ -26,7 +26,7 @@ window.__viteManifest = ${manifestJson.source};
         // cf. https://github.com/vitejs/vite/blob/d36d6fb91d50b338f689e6c554e3896b3d739390/packages/vite/src/node/plugins/html.ts#L1115
         const injected = indexHtml.source.replace(
           /([ \t]*)<\/head>/i,
-          (match) => `${script}${match}`
+          (match) => `${script}${match}`,
         );
         fs.writeFileSync(path.join(options.dir, "index.html"), injected);
       },

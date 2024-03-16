@@ -9,7 +9,7 @@ import { escapeRegExp } from "@hiogawa/utils";
 
 function createDebugFn(base: string, sub: string) {
   const pattern = new RegExp(
-    `\\b(${escapeRegExp(base + ":*")}|${escapeRegExp(base + ":" + sub)}\\b)`
+    `\\b(${escapeRegExp(base + ":*")}|${escapeRegExp(base + ":" + sub)}\\b)`,
   );
   return (...args: unknown[]) => {
     const flag =
@@ -22,7 +22,7 @@ function createDebugFn(base: string, sub: string) {
 
 function createDebug<K extends string>(
   base: string,
-  subs: Readonly<[K, ...K[]]>
+  subs: Readonly<[K, ...K[]]>,
 ): Debug<K> {
   const debug = createDebugFn(base, "default") as any;
   for (const sub of subs) {

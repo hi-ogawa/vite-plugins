@@ -45,7 +45,7 @@ export default {
 type FetchHandler = (
   request: Request,
   env: Env,
-  ctx: unknown
+  ctx: unknown,
 ) => Promise<Response>;
 
 const createFetchHandlerOnce = once(createFetchHandler);
@@ -101,7 +101,7 @@ async function createFetchHandler(options: {
         // do same as vite-node/client
         // https://github.com/vitest-dev/vitest/blob/c6e04125fb4a0af2db8bd58ea193b965d50d415f/packages/vite-node/src/client.ts#L415
         const codeDefinition = `'use strict';async (${Object.keys(context).join(
-          ","
+          ",",
         )})=>{{`;
         const code = `${codeDefinition}${transformed}\n}}`;
         const fn = options.unsafeEval.eval(code, id);
@@ -113,7 +113,7 @@ async function createFetchHandler(options: {
         console.error("[vite-node-miniflare] runExternalModule:", filepath);
         throw new Error(`[vite-node-miniflare] runExternalModule: ${filepath}`);
       },
-    }
+    },
   );
 
   const fetchHandler: FetchHandler = async (request, env, ctx) => {
@@ -137,7 +137,7 @@ type OnUpdateFn = (payload: HMRPayload) => Promise<void>;
 function customOnUpdateFn(
   originalFn: OnUpdateFn,
   runtime: ViteRuntime,
-  options: { debug: boolean; hmr: boolean }
+  options: { debug: boolean; hmr: boolean },
 ): OnUpdateFn {
   return async (payload) => {
     if (options.debug) {

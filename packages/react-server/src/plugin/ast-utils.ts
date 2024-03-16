@@ -19,7 +19,7 @@ export function getExportNames(
     toWritable?: {
       code: MagicString;
     };
-  } = {}
+  } = {},
 ) {
   const exportNames = new Set<string>();
   for (const node of ast.body) {
@@ -42,7 +42,7 @@ export function getExportNames(
           if (toWritable) {
             toWritable.code.remove(
               node.declaration.start,
-              node.declaration.start + 5
+              node.declaration.start + 5,
             );
             toWritable.code.appendLeft(node.declaration.start, "let");
           }
@@ -66,7 +66,7 @@ export function getExportNames(
           console.error(
             getExportNames.name,
             "(toWritable) unsupported code",
-            node
+            node,
           );
         }
       }
@@ -94,7 +94,7 @@ export function getExportNames(
         console.error(
           getExportNames.name,
           "(toWritable) unsupported code",
-          node
+          node,
         );
       }
     }

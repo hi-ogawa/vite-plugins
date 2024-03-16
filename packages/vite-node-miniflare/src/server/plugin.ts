@@ -107,7 +107,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
               {
                 type: "ESModule",
                 path: fileURLToPath(
-                  new URL("./worker-entry.js", import.meta.url)
+                  new URL("./worker-entry.js", import.meta.url),
                 ),
               },
             ],
@@ -142,7 +142,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
         httipCompose.compose(serverRpcHandler, miniflareHandler),
         {
           alwaysCallNext: false,
-        }
+        },
       );
       return () => server.middlewares.use(middleware);
     },

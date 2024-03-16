@@ -20,7 +20,7 @@ export async function handleDateRequest({
       handler.queryRoute(loaderRequest.request, {
         routeId: loaderRequest.routeId,
         requestContext,
-      })
+      }),
     );
     return wrapLoaderResponse(loaderResult, { onError });
   }
@@ -28,7 +28,7 @@ export async function handleDateRequest({
 }
 
 function unwrapLoaderRequest(
-  req: Request
+  req: Request,
 ): { request: Request; routeId: string } | undefined {
   const url = new URL(req.url);
   const routeId = url.searchParams.get(LOADER_ROUTE_ID_PARAM);
@@ -45,7 +45,7 @@ function unwrapLoaderRequest(
 // cf. https://github.com/remix-run/remix/blob/c858f53e5a67fb293baf79a8de00c418903bc250/packages/remix-server-runtime/server.ts#L127
 function wrapLoaderResponse(
   result: Result<unknown, unknown>,
-  options: { onError?: (e: unknown) => void }
+  options: { onError?: (e: unknown) => void },
 ): Response {
   let res: Response;
   try {
@@ -131,6 +131,6 @@ function wrapLoaderException(e: unknown) {
         [LOADER_HEADERS["x-loader-exception"]]: "1",
         "content-type": "application/json",
       },
-    }
+    },
   );
 }

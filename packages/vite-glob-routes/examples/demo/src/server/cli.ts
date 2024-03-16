@@ -20,7 +20,7 @@ cli.defineCommand(
   async ({ args }) => {
     const cookie = await writeCookieSession({ user: { name: args.name } });
     process.stdout.write(cookie);
-  }
+  },
 );
 
 // main

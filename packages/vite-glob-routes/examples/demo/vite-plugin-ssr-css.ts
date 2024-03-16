@@ -49,7 +49,7 @@ export function vitePluginSsrCss(pluginOpts: { entry: string[] }): Plugin {
 // https://github.com/vikejs/vike/blob/f9a91f3c47cab9c2871526ef714cc0f87a41fda0/vike/node/runtime/renderPage/getPageAssets/retrieveAssetsDev.ts
 async function collectSsrStyleUrls(
   server: ViteDevServer,
-  entries: string[]
+  entries: string[],
 ): Promise<string[]> {
   const visited = new Set<string>();
 
@@ -64,7 +64,7 @@ async function collectSsrStyleUrls(
       return;
     }
     await Promise.all(
-      [...mod.importedModules].map((childMod) => traverse(childMod.url))
+      [...mod.importedModules].map((childMod) => traverse(childMod.url)),
     );
   }
 

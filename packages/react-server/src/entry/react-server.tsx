@@ -12,7 +12,7 @@ export function render({ request }: { request: Request }) {
   const result = router.run(request);
   const rscStream = reactServerDomServer.renderToReadableStream(
     result.node,
-    createBundlerConfig()
+    createBundlerConfig(),
   );
   return { rscStream, status: result.match.notFound ? 404 : 200 };
 }
@@ -29,10 +29,10 @@ function createRouter() {
     "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
     {
       eager: true,
-    }
+    },
   );
   const tree = generateRouteTree(
-    objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length))
+    objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length)),
   );
 
   function run(request: Request) {
@@ -40,7 +40,7 @@ function createRouter() {
     const match = matchRoute(url.pathname, tree);
     const node = renderMatchRoute(
       { request, match },
-      <div>Not Found: {url.pathname}</div>
+      <div>Not Found: {url.pathname}</div>,
     );
     return { node, match };
   }

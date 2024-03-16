@@ -18,7 +18,7 @@ test.afterEach(async () => {
 
 export async function editFile(
   filepath: string,
-  edit: (data: string) => string
+  edit: (data: string) => string,
 ) {
   const data = await fs.promises.readFile(filepath, "utf-8");
   if (!originalFileMap.has(filepath)) {

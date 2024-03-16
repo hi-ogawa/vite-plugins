@@ -69,7 +69,7 @@ export function ssrHandler(): RequestHandler {
     const matchRouteDeps = resolveRouteDependenciesByIds(
       matchRouteIds,
       routesMeta,
-      manifest
+      manifest,
     );
 
     html = html.replace(
@@ -95,7 +95,7 @@ export function ssrHandler(): RequestHandler {
           window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
           window.__initialMatchRouteIds = ${JSON.stringify(matchRouteIds)};
         </script>`,
-      ].flat().join("\n")
+      ].flat().join("\n"),
     );
 
     return new Response(html, {
@@ -126,11 +126,11 @@ function render({
       <StaticRouterProvider
         router={createStaticRouter(
           routerResult.handler.dataRoutes,
-          routerResult.context
+          routerResult.context,
         )}
         context={routerResult.context}
       />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }
 

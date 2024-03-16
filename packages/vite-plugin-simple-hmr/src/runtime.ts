@@ -36,7 +36,7 @@ function patchRegistry(current: Registry, next: Registry): boolean {
     ...new Set([...Object.keys(current.exports), ...Object.keys(next.exports)]),
   ];
   const mismatches = keys.filter(
-    (key) => !(key in current.exports && key in next.exports)
+    (key) => !(key in current.exports && key in next.exports),
   );
   if (mismatches.length > 0) {
     console.log("[simple-hmr] mismatch: ", mismatches.join(", "));

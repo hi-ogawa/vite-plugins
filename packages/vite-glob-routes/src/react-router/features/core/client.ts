@@ -14,7 +14,7 @@ import { walkArrayTree } from "../../route-utils";
 //
 export async function resolveLazyRoutes(
   routes: DataRouteObject[], // mutated
-  selectedRouteIds: string[]
+  selectedRouteIds: string[],
 ) {
   const ids = new Set(selectedRouteIds);
   const toResolve: DataRouteObject[] = [];
@@ -29,7 +29,7 @@ export async function resolveLazyRoutes(
 }
 
 async function resolveLazyRouteObject(
-  route: DataRouteObject // mutated
+  route: DataRouteObject, // mutated
 ) {
   if (route.lazy) {
     Object.assign(route, await route.lazy(), { lazy: undefined });
@@ -43,7 +43,7 @@ type ResolvedRouteObject = Awaited<
 // manipulate route properties while keeping lazy-ness
 export function mutateRouteObject(
   r1: DataRouteObject,
-  mutateFn: (resolved: DataRouteObject | ResolvedRouteObject) => void
+  mutateFn: (resolved: DataRouteObject | ResolvedRouteObject) => void,
 ) {
   const oldLazy = r1.lazy;
   if (oldLazy) {

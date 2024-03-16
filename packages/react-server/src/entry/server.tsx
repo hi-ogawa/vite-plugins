@@ -44,7 +44,7 @@ export async function handler(request: Request): Promise<Response> {
 async function importEntryRsc(): Promise<typeof import("./react-server")> {
   if (import.meta.env.DEV) {
     return __rscDevServer.ssrLoadModule(
-      "@hiogawa/react-server/entry-react-server"
+      "@hiogawa/react-server/entry-react-server",
     ) as any;
   } else {
     return import("/dist/rsc/index.js" as string);
@@ -72,7 +72,7 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
         moduleMap: createModuleMap({ renderId }),
         moduleLoading: null,
       },
-    }
+    },
   );
 
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {

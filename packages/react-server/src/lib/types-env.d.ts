@@ -7,7 +7,7 @@ declare module "react-server-dom-webpack/server.edge" {
   export function renderToReadableStream(
     node: React.ReactNode,
     bundlerConfig: import("./types").BundlerConfig,
-    opitons?: {}
+    opitons?: {},
   ): ReadableStream;
 
   export function decodeReply(body: string | FormData): Promise<unknown>;
@@ -19,7 +19,7 @@ declare module "react-server-dom-webpack/client.edge" {
     stream: ReadableStream,
     options: {
       ssrManifest: import("./types").SsrManifest;
-    }
+    },
   ): Promise<React.ReactNode>;
 }
 
@@ -29,17 +29,17 @@ declare module "react-server-dom-webpack/client.browser" {
     stream: ReadableStream,
     options?: {
       callServer?: import("./types").CallServerCallback;
-    }
+    },
   ): Promise<React.ReactNode>;
 
   export function createFromFetch(
     promiseForResponse: Promise<Response>,
     options?: {
       callServer?: import("./types").CallServerCallback;
-    }
+    },
   ): Promise<React.ReactNode>;
 
   export function encodeReply(
-    v: unknown
+    v: unknown,
   ): Promise<string | URLSearchParams | FormData>;
 }

@@ -51,7 +51,7 @@ export function ssrHandler(): RequestHandler {
       html = (await import("/index.html?raw")).default;
       html = await (ctx.platform as any).env.__RPC.transformIndexHtml(
         "/",
-        html
+        html,
       );
     } else {
       html = (await import("/dist/client/index.html?raw")).default;
@@ -61,8 +61,8 @@ export function ssrHandler(): RequestHandler {
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       `<script>window.__serverLoaderRouteIds = ${JSON.stringify(
-        serverLoaderRouteIds
-      )}</script>`
+        serverLoaderRouteIds,
+      )}</script>`,
     );
 
     return new Response(html, {
@@ -83,10 +83,10 @@ function render({
       <StaticRouterProvider
         router={createStaticRouter(
           routerResult.handler.dataRoutes,
-          routerResult.context
+          routerResult.context,
         )}
         context={routerResult.context}
       />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }

@@ -29,7 +29,7 @@ export type RoutesMeta = {
 };
 
 export function createGlobPageRoutes(
-  internal: GlobPageRoutesInternal
+  internal: GlobPageRoutesInternal,
 ): GlobPageRoutesResult {
   // TODO: warn invalid usage
   // - ensure `Component` export
@@ -49,7 +49,7 @@ type GlobPageMappingEntry = {
 };
 
 function createGlobPageMapping(
-  internal: GlobPageRoutesInternal
+  internal: GlobPageRoutesInternal,
 ): GlobPageMapping {
   const patterns = [
     [internal.globPage, /^(.*)\.page\./, false],
@@ -72,7 +72,7 @@ function createGlobPageMapping(
 
 function createGlobPageRoutesInner(
   eager: boolean,
-  mapping: GlobPageMapping
+  mapping: GlobPageMapping,
 ): GlobPageRoutesResult {
   // construct general tree structure
   const pathEntries = Object.entries(mapping).map(([k, v]) => ({
@@ -87,7 +87,7 @@ function createGlobPageRoutesInner(
 
   function recurse(
     children: Record<string, TreeNode<GlobPageMappingEntry[]>>,
-    idPath: string[]
+    idPath: string[],
   ): DataRouteObject[] {
     return Object.entries(children).map(([path, node]) => {
       // similar to convertRoutesToDataRoutes https://github.com/remix-run/react-router/blob/5b1765f54ee1f769b23c4ded3ad02f04a34e636e/packages/router/utils.ts#L389
@@ -116,7 +116,7 @@ function createGlobPageRoutesInner(
               entries.map((e) => {
                 tinyassert(typeof e.mod === "function");
                 return (e.mod satisfies LazyPageModule)();
-              })
+              }),
             );
             return Object.assign({}, ...mods);
           };
@@ -181,7 +181,7 @@ function createTree<T>(entries: { value: T; keys: string[] }[]): TreeNode<T> {
 export function walkArrayTree<T extends { children?: T[] }>(
   roots: T[],
   // TODO: support "afterFn" too?
-  beforeFn: (v: T) => void
+  beforeFn: (v: T) => void,
 ) {
   for (const node of roots) {
     beforeFn(node);
@@ -205,7 +205,7 @@ export function splitPathSegment(pathname: string): string[] {
     },
     (nonMatch) => {
       result.push(nonMatch);
-    }
+    },
   );
   return result;
 }
