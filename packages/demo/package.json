@@ -11,6 +11,7 @@
     "preview": "node ./dist/server/index.js",
     "test": "vitest",
     "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_COMMAND='pnpm preview' playwright test",
     "cli": "tsx ./src/server/cli.ts",
     "release": "vercel deploy --prebuilt .",
     "release-production": "vercel deploy --prebuilt . --prod"

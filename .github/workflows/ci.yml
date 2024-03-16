@@ -18,7 +18,7 @@ jobs:
       - run: npx playwright install chromium
       - run: pnpm -C packages/demo test-e2e
       - run: pnpm -C packages/demo build-preview
-      - run: E2E_COMMAND='pnpm preview' pnpm -C packages/demo test-e2e
+      - run: pnpm -C packages/demo test-e2e-preview
 
   test-react-server:
     runs-on: ubuntu-latest
