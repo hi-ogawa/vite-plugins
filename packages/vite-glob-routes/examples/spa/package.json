@@ -13,8 +13,8 @@
   },
   "devDependencies": {
     "@hiogawa/utils": "^1.6.3",
-    "@hiogawa/vite-glob-routes": "workspace:0.6.1-pre.2",
-    "@hiogawa/vite-import-dev-server": "workspace:^",
+    "@hiogawa/vite-glob-routes": "latest",
+    "@hiogawa/vite-import-dev-server": "latest",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",

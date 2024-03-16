@@ -97,7 +97,7 @@ importers:
   packages/react-server/examples/basic:
     dependencies:
       '@hiogawa/react-server':
-        specifier: workspace:0.1.0-pre.2
+        specifier: latest
         version: link:../..
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
@@ -128,7 +128,7 @@ importers:
         specifier: ^1.6.3
         version: 1.6.3
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:^
+        specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@playwright/test':
         specifier: ^1.42.1
@@ -155,7 +155,7 @@ importers:
   packages/react-server/examples/starter:
     dependencies:
       '@hiogawa/react-server':
-        specifier: workspace:0.1.0-pre.2
+        specifier: latest
         version: link:../..
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
@@ -171,7 +171,7 @@ importers:
         specifier: ^0.0.44
         version: 0.0.44
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:^
+        specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
         specifier: 18.2.66
@@ -309,10 +309,10 @@ importers:
         specifier: ^1.6.3
         version: 1.6.3
       '@hiogawa/vite-glob-routes':
-        specifier: workspace:0.6.1-pre.2
+        specifier: latest
         version: link:../..
       '@hiogawa/vite-import-dev-server':
-        specifier: workspace:^
+        specifier: latest
         version: link:../../../vite-import-dev-server
       '@types/react':
         specifier: ^18.2.66
@@ -351,13 +351,13 @@ importers:
         specifier: ^1.6.3
         version: 1.6.3
       '@hiogawa/vite-glob-routes':
-        specifier: workspace:0.6.1-pre.2
+        specifier: latest
         version: link:../..
       '@hiogawa/vite-import-dev-server':
-        specifier: workspace:^
+        specifier: latest
         version: link:../../../vite-import-dev-server
       '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:^
+        specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@types/express':
         specifier: ^4.17.21
@@ -3130,7 +3130,7 @@ packages:
       '@babel/plugin-syntax-typescript': 7.23.3(@babel/core@7.24.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.0.5
       '@vanilla-extract/css': 1.14.1
-      esbuild: 0.17.6
+      esbuild: 0.19.12
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
