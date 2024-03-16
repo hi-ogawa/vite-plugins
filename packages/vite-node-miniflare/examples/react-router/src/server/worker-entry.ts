@@ -17,6 +17,10 @@ function createFetchHandler() {
       waitUntil: ctx.waitUntil.bind(ctx),
       passThrough() {},
       platform: { env },
+      env(variable) {
+        const v = env[variable];
+        return typeof v === "string" ? v : undefined;
+      },
     });
   };
 }
