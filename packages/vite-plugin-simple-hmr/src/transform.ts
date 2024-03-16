@@ -32,7 +32,7 @@ function generateFooter(names: string[]) {
       ${name} = $$next;
     }
   };
-`
+`,
   );
 
   // requires dummy "hot.accept" for vite to detect

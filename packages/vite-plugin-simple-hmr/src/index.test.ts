@@ -45,7 +45,7 @@ export default () => {};
         const ast = await parseAstAsync(code);
         const { exportIds, errors } = analyzeExports(
           new MagicString(code),
-          ast as any
+          ast as any,
         );
         expect({
           exportIds,

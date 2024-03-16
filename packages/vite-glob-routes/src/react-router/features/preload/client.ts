@@ -33,7 +33,7 @@ function getRouteDependencies(page: string): RouteDependencies {
   return resolveRouteDependenciesByIds(
     matches.map((m) => m.route.id),
     routesMeta,
-    manifest
+    manifest,
   );
 }
 

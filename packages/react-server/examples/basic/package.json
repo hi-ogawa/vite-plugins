@@ -17,24 +17,24 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
-    "@hiogawa/test-dep-server-component": "file:./deps/server-component",
-    "@hiogawa/test-dep-use-client": "file:./deps/use-client",
+    "@hiogawa/test-dep-server-component": "file:deps/server-component",
+    "@hiogawa/test-dep-use-client": "file:deps/use-client",
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-wrap-balancer": "^1.1.0"
   },
   "devDependencies": {
-    "@hattip/adapter-node": "^0.0.43",
+    "@hattip/adapter-node": "^0.0.44",
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.7",
     "@hiogawa/utils": "^1.6.3",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
-    "@playwright/test": "^1.36.2",
+    "@playwright/test": "^1.42.1",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
-    "@unocss/postcss": "^0.58.5",
-    "@vitejs/plugin-react": "^4.2.0",
-    "unocss": "^0.57.7",
-    "vite": "^5.1.0"
+    "@unocss/postcss": "^0.58.6",
+    "@vitejs/plugin-react": "^4.2.1",
+    "unocss": "^0.58.6",
+    "vite": "^5.1.6"
   }
 }

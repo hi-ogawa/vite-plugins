@@ -38,6 +38,6 @@ export function createBundlerConfig(): BundlerConfig {
         tinyassert(name);
         return { id, name, chunks: [] } satisfies ImportManifestEntry;
       },
-    }
+    },
   );
 }

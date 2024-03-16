@@ -14,7 +14,7 @@ export function globApiRoutes() {
   const { root, globApi } = internal;
   const apiModules = mapKeys(
     globApi,
-    (k) => k.slice(root.length).match(/^(.*)\.api\./)![1]!
+    (k) => k.slice(root.length).match(/^(.*)\.api\./)![1]!,
   );
   return createGlobApiRoutesInner(apiModules);
 }
@@ -24,7 +24,7 @@ type ApiModule = Partial<
 >;
 
 function createGlobApiRoutesInner(
-  apiModules: Record<string, ApiModule>
+  apiModules: Record<string, ApiModule>,
 ): RequestHandler {
   const entries = Object.entries(apiModules).map(([apiRoute, apiModule]) => ({
     matcher: createParamMatcher(apiRoute),

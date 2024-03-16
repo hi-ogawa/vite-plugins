@@ -34,7 +34,7 @@ import type { ViteDevServer } from "vite";
 export default function handler(
   req: IncomingMessage & { viteDevServer: ViteDevServer },
   res: ServerResponse,
-  next: () => void
+  next: () => void,
 ) {
   res.end("hello!");
 }

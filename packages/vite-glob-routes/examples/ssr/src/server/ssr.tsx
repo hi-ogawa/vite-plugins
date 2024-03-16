@@ -52,8 +52,8 @@ export function ssrHandler(): RequestHandler {
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
       `<script>window.__serverLoaderRouteIds = ${JSON.stringify(
-        serverLoaderRouteIds
-      )}</script>`
+        serverLoaderRouteIds,
+      )}</script>`,
     );
     return new Response(html, {
       status: routerResult.context.statusCode,
@@ -83,10 +83,10 @@ function render({
       <StaticRouterProvider
         router={createStaticRouter(
           routerResult.handler.dataRoutes,
-          routerResult.context
+          routerResult.context,
         )}
         context={routerResult.context}
       />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }

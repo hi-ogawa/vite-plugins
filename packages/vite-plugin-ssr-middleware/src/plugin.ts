@@ -55,7 +55,7 @@ export function vitePluginSsrMiddleware({
             if (payload.type === "update") {
               // unwrapId?
               runtime.moduleCache.invalidateDepTree(
-                payload.updates.map((update) => update.path)
+                payload.updates.map((update) => update.path),
               );
             } else if (payload.type === "full-reload") {
               runtime.moduleCache.clear();
@@ -116,7 +116,7 @@ function loggerMiddleware(): Connect.NextHandleFunction {
         req.method,
         url.pathname,
         res.statusCode,
-        formatDuration(Date.now() - startTime)
+        formatDuration(Date.now() - startTime),
       );
     });
     next();

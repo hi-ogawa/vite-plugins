@@ -2,7 +2,7 @@
 
 import { RemixServer } from "@remix-run/react";
 import type { EntryContext } from "@remix-run/server-runtime";
-import isbot from "isbot";
+import { isbot } from "isbot";
 
 // force "browser" export on nodejs with manual typing override (see env.d.ts)
 import { renderToReadableStream } from "react-dom/server.browser";
@@ -11,7 +11,7 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   const body = await renderToReadableStream(
     <RemixServer context={remixContext} url={request.url} />,
@@ -22,7 +22,7 @@ export default async function handleRequest(
         console.error(error);
         responseStatusCode = 500;
       },
-    }
+    },
   );
 
   if (isbot(request.headers.get("user-agent"))) {

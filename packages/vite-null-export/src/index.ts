@@ -42,7 +42,7 @@ export function viteNullExportPlugin(pluginOpts?: {
           logger.info(
             `[DEBUG:${packageName}:${
               options?.ssr ? "clientOnly" : "serverOnly"
-            }] ${id}`
+            }] ${id}`,
           );
         }
         await esModuleLexer.init;
@@ -51,7 +51,7 @@ export function viteNullExportPlugin(pluginOpts?: {
           .map((e) =>
             e.n === "default"
               ? `export default null;\n`
-              : `export var ${e.n} = null;\n`
+              : `export var ${e.n} = null;\n`,
           )
           .join("");
       }

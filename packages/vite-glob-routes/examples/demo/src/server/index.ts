@@ -13,7 +13,7 @@ export function createHattipApp() {
     sessionHandler(),
     rpcHandler(),
     globApiRoutes(),
-    ssrHandler()
+    ssrHandler(),
   );
 }
 

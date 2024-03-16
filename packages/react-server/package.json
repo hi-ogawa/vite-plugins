@@ -55,7 +55,7 @@
   "dependencies": {
     "@tanstack/history": "^1.15.13",
     "fast-glob": "^3.3.2",
-    "magic-string": "^0.30.7",
+    "magic-string": "^0.30.8",
     "rsc-html-stream": "^0.0.3"
   },
   "devDependencies": {
@@ -66,7 +66,7 @@
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
-    "vite": "^5.1.0"
+    "vite": "^5.1.6"
   },
   "peerDependencies": {
     "react": "18.3.0-canary-6c3b8dbfe-20240226",

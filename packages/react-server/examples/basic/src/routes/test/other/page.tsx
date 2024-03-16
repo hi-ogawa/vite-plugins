@@ -15,8 +15,8 @@ export default function Page(props: PageRouteProps) {
           searchParams ={" "}
           {JSON.stringify(
             Object.fromEntries(
-              new URL(props.request.url).searchParams.entries()
-            )
+              new URL(props.request.url).searchParams.entries(),
+            ),
           )}
         </pre>
         <div className="flex gap-2">

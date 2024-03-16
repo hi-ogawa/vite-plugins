@@ -81,13 +81,13 @@ export function createServerReference(id: string): React.FC {
         },
         configurable: true,
       },
-    }
+    },
   ) as any;
 }
 
 export function createServerReferenceForRsc(
   id: string,
-  action: Function
+  action: Function,
 ): React.FC {
   return Object.defineProperties(action, {
     $$typeof: {

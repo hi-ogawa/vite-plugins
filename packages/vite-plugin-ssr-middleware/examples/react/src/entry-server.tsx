@@ -6,7 +6,7 @@ import { App } from "./app";
 
 export default async function handler(
   req: http.IncomingMessage & { viteDevServer: ViteDevServer },
-  res: http.ServerResponse
+  res: http.ServerResponse,
 ) {
   let html: string;
   if (import.meta.env.DEV) {

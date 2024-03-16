@@ -1,5 +1,5 @@
 import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
-import { unstable_vitePlugin as remix } from "@remix-run/dev";
+import { vitePlugin as remix } from "@remix-run/dev";
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
 

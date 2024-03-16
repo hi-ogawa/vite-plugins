@@ -18,17 +18,19 @@ function mergeRouteDependencies(ls: RouteDependencies[]): RouteDependencies {
 export function resolveRouteDependenciesByIds(
   routeIds: string[],
   routesMeta: RoutesMeta,
-  manifest?: Manifest
+  manifest?: Manifest,
 ): RouteDependencies {
   return mergeRouteDependencies(
-    routeIds.map((id) => resolveRouteDependenciesById(id, routesMeta, manifest))
+    routeIds.map((id) =>
+      resolveRouteDependenciesById(id, routesMeta, manifest),
+    ),
   );
 }
 
 function resolveRouteDependenciesById(
   routeId: string,
   routesMeta: RoutesMeta,
-  manifest?: Manifest
+  manifest?: Manifest,
 ): RouteDependencies {
   const files =
     routesMeta[routeId]?.entries
@@ -43,7 +45,7 @@ function resolveRouteDependenciesById(
 // need to probe vite client manifest to map production asset url
 function resolveManifestEntries(
   files: string[],
-  manifest: Manifest
+  manifest: Manifest,
 ): RouteDependencies {
   const entryKeys = new Set<string>();
 

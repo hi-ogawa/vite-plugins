@@ -64,7 +64,7 @@ export async function start() {
       return __history.subscribe(() => {
         debug("history", __history.location.href);
         updateRscByFetch(
-          new Request(wrapRscRequestUrl(__history.location.href))
+          new Request(wrapRscRequestUrl(__history.location.href)),
         );
       });
     }, []);
@@ -79,7 +79,7 @@ export async function start() {
     rootEl,
     <React.StrictMode>
       <Root />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 
   // custom event for RSC reload
