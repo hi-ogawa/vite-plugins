@@ -45,8 +45,8 @@
     "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router": "6.13.0",
-    "react-router-dom": "^6.13.0",
+    "react-router": "6.22.3",
+    "react-router-dom": "^6.22.3",
     "unocss": "^0.57.7",
     "zod": "^3.21.4"
   }
