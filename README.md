@@ -1,10 +1,24 @@
 # vite-plugins
 
-miscellaneous plugins to experiment with Vite SSR ideas.
+Random collection of vite plugins
 
 ## plugins
 
-See `./packages/demo`, `./examples/ssr`, and `./examples/spa` for basic usage.
+### [`@hiogawa/react-server`](./packages/react-server)
+
+Vite plugin for React Server Component and Server Action
+
+### [`@hiogawa/vite-node-miniflare`](./packages/vite-node-miniflare)
+
+Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare)
+during development via
+~[`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node)~
+[`ViteRuntime`](https://github.com/vitejs/vite/discussions/15774).
+
+### [`@hiogawa/vite-plugin-ssr-middleware`](./packages/vite-plugin-ssr-middleware)
+
+Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
+and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/main/packages/expose-vite-dev-server)
 
 ### [`@hiogawa/vite-glob-routes`](./packages/vite-glob-routes)
 
@@ -12,29 +26,3 @@ See `./packages/demo`, `./examples/ssr`, and `./examples/spa` for basic usage.
 - generate [`react-router`](https://github.com/remix-run/react-router) nested routes based on `**/*.page.tsx`, `**/*.page.server.tsx`, `**/layout.tsx`, and `**/layout.server.tsx`
 - generate [`hattip`](https://github.com/hattipjs/hattip) middleware based on `**/*.api.ts`
 - support `loader` for per-page data fetching in both SPA and SSR mode (similar to `loader` in [`remix`](https://github.com/remix-run/remix/) and `load` in [`@sveltejs/kit`](https://github.com/sveltejs/kit))
-
-### [`@hiogawa/vite-node-miniflare`](./packages/vite-node-miniflare)
-
-Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare) during development via ~[`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node)~ [`ViteRuntime`](https://github.com/vitejs/vite/discussions/15774).
-
-### [`@hiogawa/vite-plugin-ssr-middleware`](./packages/vite-plugin-ssr-middleware)
-
-Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
-and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/main/packages/expose-vite-dev-server)
-
-### [`@hiogawa/react-server`](./packages/react-server)
-
-Work in progress Vite plugin for React Server Component and Server Action
-
-## development
-
-```sh
-# develop demo
-pnpm i
-pnpm build
-pnpm dev
-
-# release demo
-pnpm -C packages/demo build
-pnpm -C packages/demo release-production
-```
