@@ -5,5 +5,8 @@
   "exports": {
     "types": "./index.d.ts",
     "default": "./index.js"
+  },
+  "dependencies": {
+    "react": "*"
   }
 }

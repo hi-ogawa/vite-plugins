@@ -9526,9 +9526,13 @@ packages:
   file:packages/react-server/examples/basic/deps/server-component:
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
     name: '@hiogawa/test-dep-use-client'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   file:packages/react-server/examples/basic/deps/use-client:
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
     name: '@hiogawa/test-dep-use-client'
+    dependencies:
+      react: 18.2.0
     dev: false
