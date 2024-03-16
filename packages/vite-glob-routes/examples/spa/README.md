@@ -13,9 +13,9 @@ which is similar to a feature suggested in this discussion on Remix https://gith
 ## usage
 
 ```sh
-# initial setup
-bash misc/init.sh
-pnpm update
+# download template
+npx tiged hi-ogawa/vite-plugins/packages/vite-glob-routes/examples/spa my-app
+cd my-app
 
 # development
 pnpm i

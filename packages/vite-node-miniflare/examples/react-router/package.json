@@ -11,13 +11,13 @@
     "@hiogawa/utils": "^1.6.3",
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-node-miniflare": "workspace:*",
-    "@types/react": "^18.2.12",
-    "@types/react-dom": "^18.2.5",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.0",
     "miniflare": "^3.20231030.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.13.0",
+    "react-router-dom": "^6.22.3",
     "vite": "^5.1.0"
   }
 }

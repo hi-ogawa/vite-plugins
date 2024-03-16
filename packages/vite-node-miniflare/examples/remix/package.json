@@ -18,7 +18,7 @@
     "@cloudflare/workers-types": "^4.20231121.0",
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "@remix-run/dev": "2.5.1",
-    "@types/react": "18.2.12",
-    "@types/react-dom": "18.2.5"
+    "@types/react": "18.2.66",
+    "@types/react-dom": "18.2.22"
   }
 }

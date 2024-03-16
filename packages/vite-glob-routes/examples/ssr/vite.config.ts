@@ -7,7 +7,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig((ctx) => ({
   plugins: [
-    react(),
+    react() as any,
     globRoutesPlugin({ root: "/src/routes" }),
     importDevServerPlugin(),
     vitePluginSsrMiddleware({

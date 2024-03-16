@@ -12,8 +12,8 @@ See also [`./examples/starter`](./examples/starter).
 
 ```sh
 # download template
-npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/starter my-project
-cd my-project
+npx tiged hi-ogawa/vite-plugins/packages/react-server/examples/starter my-app
+cd my-app
 
 # development
 pnpm i
