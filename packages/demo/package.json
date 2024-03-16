@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test-e2e": "playwright test",
-    "test-e2e-preview": "E2E_COMMAND='pnpm preview' playwright test",
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "cli": "tsx ./src/server/cli.ts",
     "vc-build": "SERVER_ENTRY=./src/server/adapter-vercel-edge.ts pnpm build && bash misc/vercel/build.sh",
     "vc-release": "vercel deploy --prebuilt --prod ."

@@ -3,7 +3,7 @@ import { tinyassert } from "@hiogawa/utils";
 import { test } from "@playwright/test";
 import { isPageReady } from "./helper";
 
-const isPreview = Boolean(process.env["E2E_COMMAND"]?.includes("preview"));
+const isPreview = Boolean(process.env["E2E_PREVIEW"]);
 
 test("modulepreload", async ({ page }) => {
   test.skip(isPreview);
