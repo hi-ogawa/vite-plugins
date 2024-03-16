@@ -4,8 +4,8 @@
 - https://rsc-experiment.hiro18181.workers.dev
 
 ```sh
-npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/basic my-project
-cd my-project
+npx degit@latest hi-ogawa/vite-plugins/packages/react-server/examples/basic my-app
+cd my-app
 
 pnpm i
 pnpm dev dev
