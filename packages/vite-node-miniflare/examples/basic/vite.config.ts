@@ -12,9 +12,10 @@ export default defineConfig({
   },
   plugins: [
     // stacktrace is different even if my hmr plugin is removed
-    false && vitePluginSimpleHmr({
-      include: new URL("./src/**/*.tsx", import.meta.url).pathname,
-    }),
+    false &&
+      vitePluginSimpleHmr({
+        include: new URL("./src/**/*.tsx", import.meta.url).pathname,
+      }),
     vitePluginViteNodeMiniflare({
       debug: true,
       hmr: true,
