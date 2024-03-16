@@ -1,5 +1,5 @@
 {
-  "name": "vite-puglins-example-ssr",
+  "name": "@hiogawa/vite-globa-routes-example-ssr",
   "private": true,
   "type": "module",
   "scripts": {

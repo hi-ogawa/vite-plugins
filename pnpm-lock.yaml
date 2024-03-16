@@ -54,108 +54,6 @@ importers:
         specifier: ^3.32.0
         version: 3.32.0
 
-  packages/demo:
-    devDependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.34
-        version: 0.0.34
-      '@hattip/adapter-vercel-edge':
-        specifier: ^0.0.34
-        version: 0.0.34
-      '@hattip/compose':
-        specifier: ^0.0.34
-        version: 0.0.34
-      '@hiogawa/query-proxy':
-        specifier: 0.1.1-pre.3
-        version: 0.1.1-pre.3
-      '@hiogawa/theme-script':
-        specifier: ^0.0.4-pre.3
-        version: 0.0.4-pre.3(vite@5.1.6)
-      '@hiogawa/tiny-cli':
-        specifier: ^0.0.4-pre.0
-        version: 0.0.4-pre.0
-      '@hiogawa/tiny-form':
-        specifier: 0.0.1-pre.10
-        version: 0.0.1-pre.10(react@18.2.0)
-      '@hiogawa/tiny-jwt':
-        specifier: ^0.2.2
-        version: 0.2.2
-      '@hiogawa/tiny-progress':
-        specifier: 0.0.1-pre.4
-        version: 0.0.1-pre.4(react@18.2.0)
-      '@hiogawa/tiny-rpc':
-        specifier: 0.2.3-pre.18
-        version: 0.2.3-pre.18
-      '@hiogawa/tiny-toast':
-        specifier: 0.1.1-pre.10
-        version: 0.1.1-pre.10(react@18.2.0)
-      '@hiogawa/unocss-preset-antd':
-        specifier: 2.2.1-pre.7
-        version: 2.2.1-pre.7(unocss@0.57.7)
-      '@hiogawa/vite-glob-routes':
-        specifier: workspace:*
-        version: link:../vite-glob-routes
-      '@hiogawa/vite-import-dev-server':
-        specifier: workspace:*
-        version: link:../vite-import-dev-server
-      '@hiogawa/vite-null-export':
-        specifier: workspace:*
-        version: link:../vite-null-export
-      '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:*
-        version: link:../vite-plugin-ssr-middleware
-      '@iconify-json/ri':
-        specifier: ^1.1.9
-        version: 1.1.9
-      '@tanstack/react-query':
-        specifier: ^5.12.2
-        version: 5.12.2(react@18.2.0)
-      '@tanstack/react-query-devtools':
-        specifier: ^5.12.2
-        version: 5.12.2(@tanstack/react-query@5.12.2)(react@18.2.0)
-      '@types/cookie':
-        specifier: ^0.5.1
-        version: 0.5.1
-      '@types/express':
-        specifier: ^4.17.17
-        version: 4.17.17
-      '@types/node':
-        specifier: ^18.16.18
-        version: 18.16.18
-      '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
-      '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
-      '@vitejs/plugin-react':
-        specifier: ^4.2.0
-        version: 4.2.0(vite@5.1.6)
-      cookie:
-        specifier: ^0.5.0
-        version: 0.5.0
-      express:
-        specifier: ^4.18.2
-        version: 4.18.2
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-router:
-        specifier: 6.22.3
-        version: 6.22.3(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
-      unocss:
-        specifier: ^0.57.7
-        version: 0.57.7(postcss@8.4.35)(vite@5.1.6)
-      zod:
-        specifier: ^3.21.4
-        version: 3.21.4
-
   packages/react-server:
     dependencies:
       '@tanstack/history':
@@ -302,6 +200,108 @@ importers:
       vite:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@18.16.18)
+
+  packages/vite-glob-routes/examples/demo:
+    devDependencies:
+      '@hattip/adapter-node':
+        specifier: ^0.0.34
+        version: 0.0.34
+      '@hattip/adapter-vercel-edge':
+        specifier: ^0.0.34
+        version: 0.0.34
+      '@hattip/compose':
+        specifier: ^0.0.34
+        version: 0.0.34
+      '@hiogawa/query-proxy':
+        specifier: 0.1.1-pre.3
+        version: 0.1.1-pre.3
+      '@hiogawa/theme-script':
+        specifier: ^0.0.4-pre.3
+        version: 0.0.4-pre.3(vite@5.1.6)
+      '@hiogawa/tiny-cli':
+        specifier: ^0.0.4-pre.0
+        version: 0.0.4-pre.0
+      '@hiogawa/tiny-form':
+        specifier: 0.0.1-pre.10
+        version: 0.0.1-pre.10(react@18.2.0)
+      '@hiogawa/tiny-jwt':
+        specifier: ^0.2.2
+        version: 0.2.2
+      '@hiogawa/tiny-progress':
+        specifier: 0.0.1-pre.4
+        version: 0.0.1-pre.4(react@18.2.0)
+      '@hiogawa/tiny-rpc':
+        specifier: 0.2.3-pre.18
+        version: 0.2.3-pre.18
+      '@hiogawa/tiny-toast':
+        specifier: 0.1.1-pre.10
+        version: 0.1.1-pre.10(react@18.2.0)
+      '@hiogawa/unocss-preset-antd':
+        specifier: 2.2.1-pre.7
+        version: 2.2.1-pre.7(unocss@0.57.7)
+      '@hiogawa/vite-glob-routes':
+        specifier: workspace:*
+        version: link:../..
+      '@hiogawa/vite-import-dev-server':
+        specifier: workspace:*
+        version: link:../../../vite-import-dev-server
+      '@hiogawa/vite-null-export':
+        specifier: workspace:*
+        version: link:../../../vite-null-export
+      '@hiogawa/vite-plugin-ssr-middleware':
+        specifier: workspace:*
+        version: link:../../../vite-plugin-ssr-middleware
+      '@iconify-json/ri':
+        specifier: ^1.1.9
+        version: 1.1.9
+      '@tanstack/react-query':
+        specifier: ^5.12.2
+        version: 5.12.2(react@18.2.0)
+      '@tanstack/react-query-devtools':
+        specifier: ^5.12.2
+        version: 5.12.2(@tanstack/react-query@5.12.2)(react@18.2.0)
+      '@types/cookie':
+        specifier: ^0.5.1
+        version: 0.5.1
+      '@types/express':
+        specifier: ^4.17.17
+        version: 4.17.17
+      '@types/node':
+        specifier: ^18.16.18
+        version: 18.16.18
+      '@types/react':
+        specifier: ^18.2.66
+        version: 18.2.66
+      '@types/react-dom':
+        specifier: ^18.2.22
+        version: 18.2.22
+      '@vitejs/plugin-react':
+        specifier: ^4.2.0
+        version: 4.2.0(vite@5.1.6)
+      cookie:
+        specifier: ^0.5.0
+        version: 0.5.0
+      express:
+        specifier: ^4.18.2
+        version: 4.18.2
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-router:
+        specifier: 6.22.3
+        version: 6.22.3(react@18.2.0)
+      react-router-dom:
+        specifier: ^6.22.3
+        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+      unocss:
+        specifier: ^0.57.7
+        version: 0.57.7(postcss@8.4.35)(vite@5.1.6)
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
 
   packages/vite-glob-routes/examples/spa:
     devDependencies:
@@ -2409,7 +2409,7 @@ packages:
     peerDependencies:
       unocss: '*'
     dependencies:
-      unocss: 0.57.7(postcss@8.4.35)(vite@5.1.6)
+      unocss: 0.57.7(postcss@8.4.35)(vite@5.1.0)
     dev: true
 
   /@hiogawa/utils@1.6.3:
@@ -3601,7 +3601,7 @@ packages:
       chalk: 4.1.2
       css-what: 6.1.0
       cssesc: 3.0.0
-      csstype: 3.1.2
+      csstype: 3.1.3
       deep-object-diff: 1.1.9
       deepmerge: 4.3.1
       media-query-parser: 2.0.2
@@ -4474,10 +4474,6 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
-    dev: true
-
-  /csstype@3.1.2:
-    resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
     dev: true
 
   /csstype@3.1.3:
