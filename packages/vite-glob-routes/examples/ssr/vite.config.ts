@@ -12,6 +12,7 @@ export default defineConfig((ctx) => ({
     importDevServerPlugin(),
     vitePluginSsrMiddleware({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
+      preview: process.cwd() + "/dist/server/index.js",
     }),
   ],
   build: {

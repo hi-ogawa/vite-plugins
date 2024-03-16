@@ -16,8 +16,8 @@ pnpm build-preview
 pnpm preview
 
 # build for vercel edge (see misc/vercel-edge/README.md)
-pnpm build-vercel-edge
-pnpm release-production
+pnpm vc-build
+pnpm vc-release
 ```
 
 ## sample projects

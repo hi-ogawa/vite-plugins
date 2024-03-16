@@ -5,14 +5,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && vite build --ssr",
-    "build-vercel-edge": "SERVER_ENTRY=./src/server/adapter-vercel-edge.ts pnpm build && bash misc/vercel-edge/build.sh",
-    "build-vercel": "pnpm build && bash misc/vercel/build.sh",
-    "build-preview": "SERVER_ENTRY=./src/server/adapter-preview.ts pnpm build",
-    "preview": "node ./dist/server/index.js",
+    "preview": "vite preview",
     "test-e2e": "playwright test",
-    "test-e2e-preview": "E2E_COMMAND='pnpm preview' playwright test",
-    "release": "vercel deploy --prebuilt .",
-    "release-production": "vercel deploy --prebuilt . --prod"
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
+    "vc-build": "SERVER_ENTRY=./src/server/adapter-vercel-edge.ts pnpm build && bash misc/vercel-edge/build.sh",
+    "vc-build-serverless": "pnpm build && bash misc/vercel/build.sh",
+    "vc-release": "vercel deploy --prebuilt --prod ."
   },
   "devDependencies": {
     "@hattip/adapter-node": "^0.0.34",

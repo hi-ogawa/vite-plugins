@@ -64,8 +64,8 @@ jobs:
       - run: pnpm build
       - run: npx playwright install chromium
       - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e
-      - run: pnpm -C packages/vite-glob-routes/examples/ssr build-preview
+      - run: pnpm -C packages/vite-glob-routes/examples/ssr build
       - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e-preview
       - run: pnpm -C packages/vite-glob-routes/examples/spa test-e2e
-      - run: pnpm -C packages/vite-glob-routes/examples/spa build-preview
+      - run: pnpm -C packages/vite-glob-routes/examples/spa build
       - run: pnpm -C packages/vite-glob-routes/examples/spa test-e2e-preview

@@ -26,8 +26,8 @@ pnpm build
 pnpm preview
 
 # build for vercel static (see misc/vercel/README.md)
-pnpm build-vercel
-pnpm release-production
+pnpm vc-build
+pnpm vc-release
 ```
 
 ## sample projects
