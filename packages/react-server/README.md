@@ -12,7 +12,7 @@ See also [`./examples/starter`](./examples/starter).
 
 ```sh
 # download template
-npx tiged@latest hi-ogawa/vite-plugins/packages/react-server/examples/starter my-app
+npx tiged hi-ogawa/vite-plugins/packages/react-server/examples/starter my-app
 cd my-app
 
 # development
