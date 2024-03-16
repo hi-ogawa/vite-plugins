@@ -8,6 +8,8 @@
     "build-vercel": "pnpm build && bash misc/vercel/build.sh",
     "build-preview": "pnpm build",
     "preview": "vite preview",
+    "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_COMMAND='pnpm preview' playwright test",
     "release": "vercel deploy --prebuilt .",
     "release-production": "vercel deploy --prebuilt . --prod"
   },

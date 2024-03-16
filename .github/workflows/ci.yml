@@ -63,15 +63,9 @@ jobs:
       - run: pnpm i
       - run: pnpm build
       - run: npx playwright install chromium
-      - name: test examples/ssr
-        run: |
-          export src_dir=examples/ssr
-          export dst_dir=$(mktemp -d)
-          bash examples/init.sh
-          bash examples/test.sh
-      - name: test examples/spa
-        run: |
-          export src_dir=examples/spa
-          export dst_dir=$(mktemp -d)
-          bash examples/init.sh
-          bash examples/test.sh
+      - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e
+      - run: pnpm -C packages/vite-glob-routes/examples/ssr build
+      - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e-preview
+      - run: pnpm -C packages/vite-glob-routes/examples/spa test-e2e
+      - run: pnpm -C packages/vite-glob-routes/examples/spa build
+      - run: pnpm -C packages/vite-glob-routes/examples/spa test-e2e-preview
