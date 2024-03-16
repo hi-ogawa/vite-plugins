@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [
     vitePluginInjectManifest(),
     vitePluginSkipRefreshPlugin({ include: ["**/src/routes/**/*.tsx"] }),
-    react(),
+    react() as any,
     globRoutesPlugin({ root: "/src/routes" }),
   ],
   build: {
