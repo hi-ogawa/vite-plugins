@@ -3,9 +3,9 @@
 https://vite-plugins-example-ssr-hiro18181.vercel.app/
 
 ```sh
-# initial setup
-bash misc/init.sh
-pnpm update
+# download template
+npx tiged hi-ogawa/vite-plugins/packages/vite-glob-routes/examples/ssr my-app
+cd my-app
 
 # development
 pnpm i
