@@ -1,3 +1,4 @@
+import path from "node:path";
 import process from "node:process";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import { importDevServerPlugin } from "@hiogawa/vite-import-dev-server";
@@ -21,6 +22,7 @@ export default defineConfig((ctx) => ({
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SERVER_ENTRY"] ?? "./src/server/adapter-node.ts",
+      preview: path.resolve("./dist/server/index.js"),
     }),
     vitePluginSsrCss({
       entry: ["./src/client/index.tsx"],
@@ -32,7 +34,7 @@ export default defineConfig((ctx) => ({
   ],
   build: {
     outDir: ctx.isSsrBuild ? "dist/server" : "dist/client",
-    manifest: ".vite/manifest.json", // explicit manifest path for v4/v5 compat
+    manifest: true,
     sourcemap: true,
   },
   optimizeDeps: {
