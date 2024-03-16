@@ -2,7 +2,7 @@ name: ci
 "on":
   - push
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,10 +15,6 @@ jobs:
       - run: pnpm build
       - run: pnpm tsc
       - run: pnpm test
-      - run: npx playwright install chromium
-      - run: pnpm -C packages/demo test-e2e
-      - run: pnpm -C packages/demo build
-      - run: pnpm -C packages/demo test-e2e-preview
 
   test-react-server:
     runs-on: ubuntu-latest
@@ -52,7 +48,7 @@ jobs:
       - run: pnpm -C packages/vite-node-miniflare/examples/react-router test-e2e
       - run: pnpm -C packages/vite-node-miniflare/examples/remix test-e2e
 
-  test-examples:
+  test-vite-glob-routes:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -63,6 +59,9 @@ jobs:
       - run: pnpm i
       - run: pnpm build
       - run: npx playwright install chromium
+      - run: pnpm -C packages/vite-glob-routes/examples/demo test-e2e
+      - run: pnpm -C packages/vite-glob-routes/examples/demo build
+      - run: pnpm -C packages/vite-glob-routes/examples/demo test-e2e-preview
       - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e
       - run: pnpm -C packages/vite-glob-routes/examples/ssr build
       - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e-preview
