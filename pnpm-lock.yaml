@@ -293,10 +293,10 @@ importers:
         version: link:../..
       '@hiogawa/test-dep-server-component':
         specifier: file:./deps/server-component
-        version: file:packages/react-server/examples/basic/deps/server-component
+        version: file:packages/react-server/examples/basic/deps/server-component(react@18.3.0-canary-6c3b8dbfe-20240226)
       '@hiogawa/test-dep-use-client':
         specifier: file:./deps/use-client
-        version: file:packages/react-server/examples/basic/deps/use-client
+        version: file:packages/react-server/examples/basic/deps/use-client(react@18.3.0-canary-6c3b8dbfe-20240226)
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226
@@ -9523,16 +9523,22 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  file:packages/react-server/examples/basic/deps/server-component:
+  file:packages/react-server/examples/basic/deps/server-component(react@18.3.0-canary-6c3b8dbfe-20240226):
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
+    id: file:packages/react-server/examples/basic/deps/server-component
     name: '@hiogawa/test-dep-use-client'
+    peerDependencies:
+      react: '*'
     dependencies:
-      react: 18.2.0
+      react: 18.3.0-canary-6c3b8dbfe-20240226
     dev: false
 
-  file:packages/react-server/examples/basic/deps/use-client:
+  file:packages/react-server/examples/basic/deps/use-client(react@18.3.0-canary-6c3b8dbfe-20240226):
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
+    id: file:packages/react-server/examples/basic/deps/use-client
     name: '@hiogawa/test-dep-use-client'
+    peerDependencies:
+      react: '*'
     dependencies:
-      react: 18.2.0
+      react: 18.3.0-canary-6c3b8dbfe-20240226
     dev: false
