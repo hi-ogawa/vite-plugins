@@ -8,7 +8,12 @@ export default defineConfig({
   clearScreen: false,
   ssr: {
     optimizeDeps: {
-      include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
+      include: [
+        "react",
+        "react/jsx-dev-runtime",
+        "react-dom",
+        "react-dom/server",
+      ],
     },
   },
   plugins: [
