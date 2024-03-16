@@ -5,10 +5,9 @@
   "scripts": {
     "build": "pnpm -r '--filter=!*example*' build",
     "dev": "pnpm run --stream /^dev:/",
-    "dev:demo": "pnpm -C packages/demo dev",
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json",
     "dev:tsc": "pnpm tsc --watch --preserveWatchOutput",
-    "test": "pnpm -r --seq test run",
+    "test": "pnpm -r --sequential test run",
     "lint": "pnpm run --sequential /^lint:/",
     "lint-check": "pnpm run --sequential /^lint-check:/",
     "lint:isort": "pnpm lint-check:isort --fix",
