@@ -71,19 +71,17 @@ export function vitePluginReactServer(options?: {
         conditions: ["react-server"],
       },
       // no external to ensure loading all deps with react-server condition
+      // TODO: but probably users should be able to exclude
+      //       node builtin or non-react related dependencies.
       noExternal: true,
       // pre-bundle cjs deps
-      // TODO: need to crawl user's react 3rd party libs? (like svelte does?)
+      // TODO: should crawl user's cjs react 3rd party libs? (like svelte does?)
       optimizeDeps: {
         include: [
           "react",
           "react/jsx-runtime",
           "react/jsx-dev-runtime",
           "react-server-dom-webpack/server.edge",
-          "@hiogawa/react-server/entry-react-server > react",
-          "@hiogawa/react-server/entry-react-server > react/jsx-runtime",
-          "@hiogawa/react-server/entry-react-server > react/jsx-dev-runtime",
-          "@hiogawa/react-server/entry-react-server > react-server-dom-webpack/server.edge",
         ],
       },
     },
