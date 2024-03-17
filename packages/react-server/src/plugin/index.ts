@@ -22,7 +22,7 @@ const require = createRequire(import.meta.url);
 
 // convenient singleton to track file ids to decide RSC hot reload
 class RscManager {
-  parentServer: ViteDevServer | undefined;
+  buildType?: "rsc" | "client" | "ssr";
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -54,10 +54,10 @@ export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
 }): Plugin[] {
   const rscEntry = options?.entry ?? "@hiogawa/react-server/entry-react-server";
+  const manager = new RscManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
-  let manager = new RscManager();
 
   const rscConfig: InlineConfig = {
     // TODO: custom logger to distinct two server logs easily?
@@ -178,7 +178,6 @@ export function vitePluginReactServer(options?: {
     },
     async configureServer(server) {
       parentServer = server;
-      manager.parentServer = server;
     },
     async buildStart(_options) {
       if (parentEnv.command === "serve") {
@@ -190,8 +189,14 @@ export function vitePluginReactServer(options?: {
           __rscEntry: rscEntry,
         });
       }
-      if (parentEnv.command === "build" && !parentEnv.isSsrBuild) {
-        await build(rscConfig);
+      if (parentEnv.command === "build") {
+        if (parentEnv.isSsrBuild) {
+          manager.buildType = "ssr";
+        } else {
+          manager.buildType = "rsc";
+          await build(rscConfig);
+          manager.buildType = "client";
+        }
       }
     },
     async buildEnd(_options) {
@@ -373,7 +378,7 @@ function vitePluginServerUseClient({
       manager.rscUseClientIds.add(id);
       // normalize client reference during dev
       // to align with Vite's import analysis
-      if (manager.parentServer) {
+      if (!manager.buildType) {
         id = noramlizeClientReferenceId(id);
       }
       // TODO:
