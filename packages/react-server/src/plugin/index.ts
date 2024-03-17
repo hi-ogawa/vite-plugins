@@ -35,7 +35,7 @@ class ReactServerManager {
   // all files in rsc server
   rscIds = new Set<string>();
   // "use client" files in rsc server
-  rscUseClientIds = new Set<string>();
+  rscUseClientIds = new Map<string, string>();
   // "use server" files in rsc server
   rscUseServerIds = new Set<string>();
 
@@ -376,15 +376,16 @@ function vitePluginServerUseClient({
       }
       const ast = await parseAstAsync(code);
       const exportNames = getExportNames(ast);
-      manager.rscUseClientIds.add(id);
-      // normalize client reference during dev
-      // to align with Vite's import analysis
-      if (!manager.buildType) {
-        id = noramlizeClientReferenceId(id);
-      } else {
+      let key: string;
+      if (manager.buildType) {
         // obfuscate reference
-        id = hashString(id);
+        key = hashString(id);
+      } else {
+        // normalize client reference during dev
+        // to align with Vite's import analysis
+        key = noramlizeClientReferenceId(id);
       }
+      manager.rscUseClientIds.set(id, key);
       // TODO:
       // "@hiogawa/react-server/client" needs to self-reference
       // "@hiogawa/react-server/server-internal" due to "use client" transform
@@ -395,10 +396,10 @@ function vitePluginServerUseClient({
       )}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
-          result += `const $$default = createClientReference("${id}::${name}");\n`;
+          result += `const $$default = createClientReference("${key}::${name}");\n`;
           result += `export default $$default;\n`;
         } else {
-          result += `export const ${name} = createClientReference("${id}::${name}");\n`;
+          result += `export const ${name} = createClientReference("${key}::${name}");\n`;
         }
       }
       debug.plugin(`[${vitePluginServerUseClient.name}:transform]`, {
@@ -420,13 +421,10 @@ function vitePluginServerUseClient({
     writeBundle: {
       async handler(options, _bundle) {
         let result = `export default {\n`;
-        for (let id of manager.rscUseClientIds) {
+        for (const [id, key] of manager.rscUseClientIds) {
           // virtual module needs to be mapped back to the original form
           const to = id.startsWith("\0") ? id.slice(1) : id;
-          if (manager.buildType) {
-            id = hashString(id);
-          }
-          result += `"${id}": () => import("${to}"),\n`;
+          result += `"${key}": () => import("${to}"),\n`;
         }
         result += "};\n";
         tinyassert(options.dir);
