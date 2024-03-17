@@ -1,7 +1,8 @@
+import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
-import { hashString, memoize, tinyassert } from "@hiogawa/utils";
+import { memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import fg from "fast-glob";
 import MagicString from "magic-string";
@@ -551,4 +552,12 @@ function vitePluginServerUseServer({
       };
     },
   };
+}
+
+function hashString(v: string) {
+  return nodeCrypto
+    .createHash("sha256")
+    .update(v)
+    .digest()
+    .toString("base64url");
 }
