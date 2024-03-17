@@ -12,6 +12,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginReactServer({
+      entry: "/src/entry-react-server.tsx",
       plugins: [testVitePluginVirtual()],
     }),
     vitePluginLogger(),

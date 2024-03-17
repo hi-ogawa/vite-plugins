@@ -3,6 +3,7 @@ import type { CallServerCallback } from "./types";
 
 // TODO: organize
 
+// TODO: use accept header x-component?
 const RSC_PARAM = "__rsc";
 
 export function wrapRscRequestUrl(url: string): string {
