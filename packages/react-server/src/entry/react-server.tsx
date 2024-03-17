@@ -2,18 +2,46 @@ import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
-import { ejectActionId } from "../lib/shared";
+import { ejectActionId, unwrapRscRequest } from "../lib/shared";
+
+export async function handler({ request }: { request: Request }) {
+  // action
+  if (request.method === "POST") {
+    await actionHandler({ request });
+  }
+
+  // check rsc-only request
+  const rscRequest = unwrapRscRequest(request);
+
+  // rsc
+  const { rscStream, status } = render({
+    request: rscRequest ?? request,
+  });
+  if (rscRequest) {
+    return new Response(rscStream, {
+      headers: {
+        "content-type": "text/x-component",
+      },
+    });
+  }
+
+  return { rscStream, status };
+}
+
+// TODO: hide other exports
 
 //
 // render RSC
 //
 
-export function render({ request }: { request: Request }) {
+function render({ request }: { request: Request }) {
   const result = router.run(request);
   const rscStream = reactServerDomServer.renderToReadableStream(
     result.node,
     createBundlerConfig(),
   );
+  // TODO: rename to stream
+  // TODO: api to manipulate status code from server component
   return { rscStream, status: result.match.notFound ? 404 : 200 };
 }
 
@@ -52,7 +80,7 @@ function createRouter() {
 // server action
 //
 
-export async function actionHandler({ request }: { request: Request }) {
+async function actionHandler({ request }: { request: Request }) {
   const formData = await request.formData();
   if (0) {
     // TODO: proper decoding?

@@ -1,7 +1,6 @@
 import { typedBoolean } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { unwrapRscRequest } from "../lib/shared";
 import {
   createModuleMap,
   initDomWebpackSsr,
@@ -9,39 +8,27 @@ import {
 } from "../lib/ssr";
 
 export async function handler(request: Request): Promise<Response> {
-  const entryRsc = await importEntryRsc();
+  const reactServer = await importReactServer();
 
-  // action
-  if (request.method === "POST") {
-    await entryRsc.actionHandler({ request });
-  }
-
-  // check rsc-only request
-  const rscRequest = unwrapRscRequest(request);
-
-  // rsc
-  const { rscStream, status } = entryRsc.render({
-    request: rscRequest ?? request,
-  });
-  if (rscRequest) {
-    return new Response(rscStream, {
-      headers: {
-        "content-type": "text/x-component",
-      },
-    });
+  // server action and render rsc
+  const result = await reactServer.handler({ request });
+  if (result instanceof Response) {
+    return result;
   }
 
   // ssr rsc
-  let htmlStream = await renderHtml(rscStream);
+  let htmlStream = await renderHtml(result.rscStream);
   return new Response(htmlStream, {
-    status,
+    status: result.status,
     headers: {
       "content-type": "text/html",
     },
   });
 }
 
-async function importEntryRsc(): Promise<typeof import("./react-server")> {
+export async function importReactServer(): Promise<
+  typeof import("./react-server")
+> {
   if (import.meta.env.DEV) {
     return __rscDevServer.ssrLoadModule(
       "@hiogawa/react-server/entry-react-server",
@@ -52,7 +39,9 @@ async function importEntryRsc(): Promise<typeof import("./react-server")> {
 }
 
 // TODO: full <html> render by RSC?
-async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
+export async function renderHtml(
+  rscStream: ReadableStream,
+): Promise<ReadableStream> {
   await initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
