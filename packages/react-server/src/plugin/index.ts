@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
-import { memoize, tinyassert } from "@hiogawa/utils";
+import { hashString, memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import fg from "fast-glob";
 import MagicString from "magic-string";
@@ -279,13 +279,13 @@ export function vitePluginReactServer(options?: {
 }
 
 /*
-transform "use client" directive
+transform "use client" directive on react server code
 
 [input]
 "use client"
 export function Counter() {}
 
-[output (rsc)]
+[output]
 import { createClientReference } from "/src/runtime/rsc"
 export const Counter = createClientReference("<id>::Counter");
 */
@@ -380,6 +380,9 @@ function vitePluginServerUseClient({
       // to align with Vite's import analysis
       if (!manager.buildType) {
         id = noramlizeClientReferenceId(id);
+      } else {
+        // obfuscate reference id on production
+        id = hashString(id);
       }
       // TODO:
       // "@hiogawa/react-server/client" needs to self-reference
@@ -420,6 +423,9 @@ function vitePluginServerUseClient({
         for (let id of manager.rscUseClientIds) {
           // virtual module needs to be mapped back to the original form
           const to = id.startsWith("\0") ? id.slice(1) : id;
+          if (manager.buildType) {
+            id = hashString(id);
+          }
           result += `"${id}": () => import("${to}"),\n`;
         }
         result += "};\n";
