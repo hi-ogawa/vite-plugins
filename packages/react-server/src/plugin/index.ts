@@ -536,11 +536,11 @@ function vitePluginServerUseServer({
           "@hiogawa/react-server/server-internal",
         )}";\n`,
       );
+      // obfuscate reference
+      if (manager.buildType) {
+        id = hashString(id);
+      }
       for (const name of exportNames) {
-        // obfuscate reference
-        if (manager.buildType) {
-          id = hashString(id);
-        }
         mcode.append(
           `${name} = createServerReference("${id}::${name}", ${name});\n`,
         );
