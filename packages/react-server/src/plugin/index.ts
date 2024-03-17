@@ -21,7 +21,7 @@ import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 const require = createRequire(import.meta.url);
 
 // convenient singleton to track file ids to decide RSC hot reload
-class RscManager {
+class ReactServerManager {
   buildType?: "rsc" | "client" | "ssr";
 
   // expose "use client" node modules to client via virtual modules
@@ -54,7 +54,7 @@ export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
 }): Plugin[] {
   const rscEntry = options?.entry ?? "@hiogawa/react-server/entry-react-server";
-  const manager = new RscManager();
+  const manager = new ReactServerManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
@@ -292,7 +292,7 @@ export const Counter = createClientReference("<id>::Counter");
 function vitePluginServerUseClient({
   manager,
 }: {
-  manager: RscManager;
+  manager: ReactServerManager;
 }): PluginOption {
   // intercept Vite's node resolve to virtualize "use client" in node_modules
   const pluginUseClientNodeModules: Plugin = {
@@ -466,7 +466,7 @@ export const hello = createServerReference("<id>::hello");
 function vitePluginClientUseServer({
   manager,
 }: {
-  manager: RscManager;
+  manager: ReactServerManager;
 }): Plugin {
   let configEnv: ConfigEnv;
 
