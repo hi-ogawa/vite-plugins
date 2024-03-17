@@ -184,6 +184,11 @@ test("RouteProps.request", async ({ page }) => {
   await page.getByText('searchParams = {"hello":""}').click();
 });
 
+test("custom entry-react-server", async ({ request }) => {
+  const res = await request.get("/test/__rpc");
+  expect(await res.json()).toEqual({ hello: "world" });
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");
