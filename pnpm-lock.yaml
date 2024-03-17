@@ -101,7 +101,7 @@ importers:
     dependencies:
       '@hiogawa/react-server':
         specifier: latest
-        version: 0.1.0-pre.3(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react-server-dom-webpack@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(vite@5.1.0)
+        version: link:../..
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
         version: file:packages/react-server/examples/basic/deps/server-component(react@18.3.0-canary-6c3b8dbfe-20240226)
@@ -162,7 +162,7 @@ importers:
     dependencies:
       '@hiogawa/react-server':
         specifier: latest
-        version: 0.1.0-pre.3(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react-server-dom-webpack@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(vite@5.1.0)
+        version: link:../..
       react:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226
@@ -2058,24 +2058,6 @@ packages:
       '@trpc/server':
         optional: true
     dev: true
-
-  /@hiogawa/react-server@0.1.0-pre.3(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react-server-dom-webpack@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(vite@5.1.0):
-    resolution: {integrity: sha512-E8nziq8s6H7eK05XbKKseDivbl90a+l8ekwZku/nyY/sJJhjDMJZdgjLYaYL6K8ixtmlZJ1VzQGlPhcXOKiRXQ==}
-    peerDependencies:
-      react: 18.3.0-canary-6c3b8dbfe-20240226
-      react-dom: 18.3.0-canary-6c3b8dbfe-20240226
-      react-server-dom-webpack: 18.3.0-canary-6c3b8dbfe-20240226
-      vite: 5.1.0
-    dependencies:
-      '@tanstack/history': 1.15.13
-      fast-glob: 3.3.2
-      magic-string: 0.30.8
-      react: 18.3.0-canary-6c3b8dbfe-20240226
-      react-dom: 18.3.0-canary-6c3b8dbfe-20240226(react@18.3.0-canary-6c3b8dbfe-20240226)
-      react-server-dom-webpack: 18.3.0-canary-6c3b8dbfe-20240226(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(webpack@5.90.3)
-      rsc-html-stream: 0.0.3
-      vite: 5.1.0(@types/node@20.11.28)
-    dev: false
 
   /@hiogawa/theme-script@0.0.4-pre.3(vite@5.1.0):
     resolution: {integrity: sha512-2uxVhemdAMUFE/OaUcaTT2QeZsXnxtnF/CLNs+CcrlgwaUXXfsnXUTvUZCz8MTmxzzz4Vp5hfAyi4pp58XHJCQ==}

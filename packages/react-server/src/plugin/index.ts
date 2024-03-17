@@ -1,3 +1,4 @@
+import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -20,9 +21,9 @@ import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 
 const require = createRequire(import.meta.url);
 
-// convenient singleton to track file ids to decide RSC hot reload
-class RscManager {
-  parentServer: ViteDevServer | undefined;
+// convenient singleton to share states
+class ReactServerManager {
+  buildType?: "rsc" | "client" | "ssr";
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -54,10 +55,10 @@ export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
 }): Plugin[] {
   const rscEntry = options?.entry ?? "@hiogawa/react-server/entry-react-server";
+  const manager = new ReactServerManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
-  let manager = new RscManager();
 
   const rscConfig: InlineConfig = {
     // TODO: custom logger to distinct two server logs easily?
@@ -90,7 +91,7 @@ export function vitePluginReactServer(options?: {
     },
     plugins: [
       // expose server reference for RSC itself
-      vitePluginServerUseServer(),
+      vitePluginServerUseServer({ manager }),
 
       // transform "use client" into client referecnes
       vitePluginServerUseClient({ manager }),
@@ -128,7 +129,8 @@ export function vitePluginReactServer(options?: {
           if (id === "\0virtual:rsc-use-server") {
             let result = `export default {\n`;
             for (const id of manager.rscUseServerIds) {
-              result += `"${id}": () => import("${id}"),\n`;
+              let key = manager.buildType ? hashString(id) : id;
+              result += `"${key}": () => import("${id}"),\n`;
             }
             result += "};\n";
             return result;
@@ -178,7 +180,6 @@ export function vitePluginReactServer(options?: {
     },
     async configureServer(server) {
       parentServer = server;
-      manager.parentServer = server;
     },
     async buildStart(_options) {
       if (parentEnv.command === "serve") {
@@ -190,8 +191,14 @@ export function vitePluginReactServer(options?: {
           __rscEntry: rscEntry,
         });
       }
-      if (parentEnv.command === "build" && !parentEnv.isSsrBuild) {
-        await build(rscConfig);
+      if (parentEnv.command === "build") {
+        if (parentEnv.isSsrBuild) {
+          manager.buildType = "ssr";
+        } else {
+          manager.buildType = "rsc";
+          await build(rscConfig);
+          manager.buildType = "client";
+        }
       }
     },
     async buildEnd(_options) {
@@ -274,20 +281,20 @@ export function vitePluginReactServer(options?: {
 }
 
 /*
-transform "use client" directive
+transform "use client" directive on react server code
 
 [input]
 "use client"
 export function Counter() {}
 
-[output (rsc)]
+[output]
 import { createClientReference } from "/src/runtime/rsc"
 export const Counter = createClientReference("<id>::Counter");
 */
 function vitePluginServerUseClient({
   manager,
 }: {
-  manager: RscManager;
+  manager: ReactServerManager;
 }): PluginOption {
   // intercept Vite's node resolve to virtualize "use client" in node_modules
   const pluginUseClientNodeModules: Plugin = {
@@ -373,8 +380,11 @@ function vitePluginServerUseClient({
       manager.rscUseClientIds.add(id);
       // normalize client reference during dev
       // to align with Vite's import analysis
-      if (manager.parentServer) {
+      if (!manager.buildType) {
         id = noramlizeClientReferenceId(id);
+      } else {
+        // obfuscate reference
+        id = hashString(id);
       }
       // TODO:
       // "@hiogawa/react-server/client" needs to self-reference
@@ -403,7 +413,6 @@ function vitePluginServerUseClient({
     /**
      * emit client-references as dynamic import map
      * TODO: re-export only used exports via virtual modules?
-     * TODO: obfuscate "id" for production?
      *
      * export default {
      *   "some-file1": () => import("some-file1"),
@@ -415,6 +424,9 @@ function vitePluginServerUseClient({
         for (let id of manager.rscUseClientIds) {
           // virtual module needs to be mapped back to the original form
           const to = id.startsWith("\0") ? id.slice(1) : id;
+          if (manager.buildType) {
+            id = hashString(id);
+          }
           result += `"${id}": () => import("${to}"),\n`;
         }
         result += "};\n";
@@ -448,7 +460,6 @@ function noramlizeClientReferenceId(id: string) {
 
 /*
 transform "use server" directive
-TODO: include all "use server" files for rsc build
 
 [input]
 "use server"
@@ -461,15 +472,10 @@ export const hello = createServerReference("<id>::hello");
 function vitePluginClientUseServer({
   manager,
 }: {
-  manager: RscManager;
+  manager: ReactServerManager;
 }): Plugin {
-  let configEnv: ConfigEnv;
-
   return {
     name: vitePluginClientUseServer.name,
-    config(_config, env) {
-      configEnv = env;
-    },
     async transform(code, id, _options) {
       if (!code.match(USE_SERVER_RE)) {
         return;
@@ -480,14 +486,16 @@ function vitePluginClientUseServer({
         id,
         exportNames,
       });
-      // TODO
-      // only rsc build and client build are built in the same process
-      // so we cannot validate in ssr build
-      if (configEnv.command === "build" && !configEnv.isSsrBuild) {
+      // validate server reference used by client is properly generated in rsc build
+      if (manager.buildType === "client") {
         tinyassert(
           manager.rscUseServerIds.has(id),
           `missing server references in RSC build: ${id}`,
         );
+      }
+      // obfuscate reference
+      if (manager.buildType) {
+        id = hashString(id);
       }
       let result = `import { createServerReference } from "${require.resolve(
         "@hiogawa/react-server/client-internal",
@@ -505,7 +513,11 @@ function vitePluginClientUseServer({
   };
 }
 
-function vitePluginServerUseServer(): Plugin {
+function vitePluginServerUseServer({
+  manager,
+}: {
+  manager: ReactServerManager;
+}): Plugin {
   return {
     name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
@@ -525,6 +537,10 @@ function vitePluginServerUseServer(): Plugin {
           "@hiogawa/react-server/server-internal",
         )}";\n`,
       );
+      // obfuscate reference
+      if (manager.buildType) {
+        id = hashString(id);
+      }
       for (const name of exportNames) {
         mcode.append(
           `${name} = createServerReference("${id}::${name}", ${name});\n`,
@@ -536,4 +552,12 @@ function vitePluginServerUseServer(): Plugin {
       };
     },
   };
+}
+
+function hashString(v: string) {
+  return nodeCrypto
+    .createHash("sha256")
+    .update(v)
+    .digest()
+    .toString("base64url");
 }
