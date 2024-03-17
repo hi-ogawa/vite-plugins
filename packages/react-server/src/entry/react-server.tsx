@@ -4,24 +4,28 @@ import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
 import { ejectActionId, unwrapRscRequest } from "../lib/shared";
 
+export type ReactServerHandler = (
+  ctx: ReactServerHandlerContext,
+) => Promise<ReactServerHandlerResult>;
+
+// users can extend interface
+export interface ReactServerHandlerContext {
+  request: Request;
+}
+
 export type ReactServerHandlerResult =
+  | Response
   | {
-      type: "response";
-      value: Response;
-    }
-  | {
-      type: "stream";
-      value: {
-        stream: ReadableStream<Uint8Array>;
-        status: number;
-      };
+      stream: ReadableStream<Uint8Array>;
+      status: number;
     };
 
-export async function handler({
-  request,
-}: {
-  request: Request;
-}): Promise<ReactServerHandlerResult> {
+export const handler: ReactServerHandler = async ({ request }) => {
+  // TODO
+  // api to manipulate response status/headers from server action/component?
+  // allow mutate them via PageRouterProps?
+  // also redirect?
+
   // action
   if (request.method === "POST") {
     await actionHandler({ request });
@@ -35,23 +39,15 @@ export async function handler({
     request: rscOnlyRequest ?? request,
   });
   if (rscOnlyRequest) {
-    return {
-      type: "response",
-      value: new Response(stream, {
-        headers: {
-          "content-type": "text/x-component",
-        },
-      }),
-    };
+    return new Response(stream, {
+      headers: {
+        "content-type": "text/x-component",
+      },
+    });
   }
-  return {
-    type: "stream",
-    value: {
-      stream,
-      status,
-    },
-  };
-}
+
+  return { stream, status };
+};
 
 //
 // render RSC
@@ -63,8 +59,6 @@ function render({ request }: { request: Request }) {
     result.node,
     createBundlerConfig(),
   );
-  // TODO: api to manipulate response status/headers etc... from server component
-  //       we can just allow mutate it via PageRouterProps?
   return { stream, status: result.match.notFound ? 404 : 200 };
 }
 

@@ -46,11 +46,14 @@ class RscManager {
   }
 }
 
-const RSC_ENTRY = "@hiogawa/react-server/entry-react-server";
-
 export function vitePluginReactServer(options?: {
+  /**
+   * @default "@hiogawa/react-server/entry-react-server"
+   */
+  entry?: string;
   plugins?: PluginOption[];
 }): Plugin[] {
+  const rscEntry = options?.entry ?? "@hiogawa/react-server/entry-react-server";
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
   let rscDevServer: ViteDevServer | undefined;
@@ -141,7 +144,7 @@ export function vitePluginReactServer(options?: {
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: RSC_ENTRY,
+          index: rscEntry,
         },
       },
     },
@@ -184,6 +187,7 @@ export function vitePluginReactServer(options?: {
         Object.assign(globalThis, {
           __devServer: parentServer,
           __rscDevServer: rscDevServer,
+          __rscEntry: rscEntry,
         });
       }
       if (parentEnv.command === "build" && !parentEnv.isSsrBuild) {

@@ -12,14 +12,14 @@ export async function handler(request: Request): Promise<Response> {
 
   // server action and render rsc
   const result = await reactServer.handler({ request });
-  if (result.type === "response") {
-    return result.value;
+  if (result instanceof Response) {
+    return result;
   }
 
   // ssr rsc
-  const htmlStream = await renderHtml(result.value.stream);
+  const htmlStream = await renderHtml(result.stream);
   return new Response(htmlStream, {
-    status: result.value.status,
+    status: result.status,
     headers: {
       "content-type": "text/html",
     },
@@ -30,9 +30,7 @@ export async function importReactServer(): Promise<
   typeof import("./react-server")
 > {
   if (import.meta.env.DEV) {
-    return __rscDevServer.ssrLoadModule(
-      "@hiogawa/react-server/entry-react-server",
-    ) as any;
+    return __rscDevServer.ssrLoadModule(__rscEntry) as any;
   } else {
     return import("/dist/rsc/index.js" as string);
   }
