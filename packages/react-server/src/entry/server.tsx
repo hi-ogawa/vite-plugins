@@ -12,14 +12,14 @@ export async function handler(request: Request): Promise<Response> {
 
   // server action and render rsc
   const result = await reactServer.handler({ request });
-  if (result instanceof Response) {
-    return result;
+  if (result.type === "response") {
+    return result.value;
   }
 
   // ssr rsc
-  let htmlStream = await renderHtml(result.rscStream);
+  const htmlStream = await renderHtml(result.value.stream);
   return new Response(htmlStream, {
-    status: result.status,
+    status: result.value.status,
     headers: {
       "content-type": "text/html",
     },

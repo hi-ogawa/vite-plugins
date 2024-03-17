@@ -4,31 +4,54 @@ import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
 import { ejectActionId, unwrapRscRequest } from "../lib/shared";
 
-export async function handler({ request }: { request: Request }) {
+export type ReactServerHandlerResult =
+  | {
+      type: "response";
+      value: Response;
+    }
+  | {
+      type: "stream";
+      value: {
+        stream: ReadableStream<Uint8Array>;
+        status: number;
+      };
+    };
+
+export async function handler({
+  request,
+}: {
+  request: Request;
+}): Promise<ReactServerHandlerResult> {
   // action
   if (request.method === "POST") {
     await actionHandler({ request });
   }
 
   // check rsc-only request
-  const rscRequest = unwrapRscRequest(request);
+  const rscOnlyRequest = unwrapRscRequest(request);
 
   // rsc
-  const { rscStream, status } = render({
-    request: rscRequest ?? request,
+  const { stream, status } = render({
+    request: rscOnlyRequest ?? request,
   });
-  if (rscRequest) {
-    return new Response(rscStream, {
-      headers: {
-        "content-type": "text/x-component",
-      },
-    });
+  if (rscOnlyRequest) {
+    return {
+      type: "response",
+      value: new Response(stream, {
+        headers: {
+          "content-type": "text/x-component",
+        },
+      }),
+    };
   }
-
-  return { rscStream, status };
+  return {
+    type: "stream",
+    value: {
+      stream,
+      status,
+    },
+  };
 }
-
-// TODO: hide other exports
 
 //
 // render RSC
@@ -36,13 +59,13 @@ export async function handler({ request }: { request: Request }) {
 
 function render({ request }: { request: Request }) {
   const result = router.run(request);
-  const rscStream = reactServerDomServer.renderToReadableStream(
+  const stream = reactServerDomServer.renderToReadableStream(
     result.node,
     createBundlerConfig(),
   );
-  // TODO: rename to stream
-  // TODO: api to manipulate status code from server component
-  return { rscStream, status: result.match.notFound ? 404 : 200 };
+  // TODO: api to manipulate response status/headers etc... from server component
+  //       we can just allow mutate it via PageRouterProps?
+  return { stream, status: result.match.notFound ? 404 : 200 };
 }
 
 //
