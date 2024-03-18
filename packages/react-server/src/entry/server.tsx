@@ -36,7 +36,6 @@ export async function importReactServer(): Promise<
   }
 }
 
-// TODO: full <html> render by RSC?
 export async function renderHtml(
   rscStream: ReadableStream,
 ): Promise<ReadableStream> {
