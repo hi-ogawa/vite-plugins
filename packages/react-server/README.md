@@ -1,6 +1,6 @@
 # @hiogawa/react-server
 
-[Try it on Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/feat-react-server-full-html/)
+[Try it on Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
 
 ![image](https://github.com/hi-ogawa/vite-plugins/assets/4232207/119a42ee-d68e-401d-830a-161cc53c8b24)
 
@@ -34,8 +34,8 @@ pnpm preview
 
 ## Examples
 
-- [`./examples/starter`](./examples/starter)
-- [`./examples/basic`](./examples/basic)
+- [`./examples/starter`](./examples/starter) [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
+- [`./examples/basic`](./examples/basic) [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/basic)
 
 ## Development
 
