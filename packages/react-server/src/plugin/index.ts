@@ -293,7 +293,7 @@ export function vitePluginReactServer(options?: {
         return;
       },
       async load(id, _options) {
-        if (id.startsWith("\0virtual:browser-bootstrap/dev")) {
+        if (id === "\0virtual:browser-bootstrap/dev") {
           tinyassert(!manager.buildType);
           // TODO
           // we should extract <head> from ViteDevServer.transformIndexHtml.
@@ -310,7 +310,7 @@ export function vitePluginReactServer(options?: {
             await import("/src/entry-client.tsx");
           `;
         }
-        if (id.startsWith("\0virtual:browser-bootstrap/build")) {
+        if (id === "\0virtual:browser-bootstrap/build") {
           tinyassert(manager.buildType === "ssr");
           const manifest: Manifest = JSON.parse(
             await fs.promises.readFile(
@@ -325,8 +325,60 @@ export function vitePluginReactServer(options?: {
         return;
       },
     },
+    {
+      // TODO: refactor to virtual:ssr-head also with transformIndexHtml?
+      name: "virtual-ssr-css",
+      resolveId(source, _importer, _options) {
+        if (source.startsWith("virtual:ssr-css")) {
+          return "\0" + source;
+        }
+        return;
+      },
+      async load(id, _options) {
+        if (id === "\0virtual:ssr-css/dev.css?direct") {
+          tinyassert(!manager.buildType);
+          // quick fix for dev FOUC
+          // for now crawl only direct dependency of entry-client
+          const entry = "/src/entry-client";
+          await __devServer.transformRequest(entry);
+          const mod = await __devServer.moduleGraph.getModuleByUrl(entry);
+          let style = "";
+          if (mod) {
+            for (const imported of mod.importedModules) {
+              if (imported.id && imported.id.match(CSS_LANGS_RE)) {
+                const mod = await __devServer.ssrLoadModule(imported.id);
+                if ("default" in mod && typeof mod["default"] === "string") {
+                  style += mod["default"] + "\n";
+                }
+              }
+            }
+          }
+          return style;
+        }
+        if (id === "\0virtual:ssr-css/build") {
+          tinyassert(manager.buildType === "ssr");
+          const manifest: Manifest = JSON.parse(
+            await fs.promises.readFile(
+              "dist/client/.vite/manifest.json",
+              "utf-8",
+            ),
+          );
+          const entry = manifest["src/entry-client.tsx"];
+          tinyassert(entry);
+          const head = (entry.css ?? [])
+            .map((url) => `<link rel="stylesheet" href="${url}" />`)
+            .join("");
+          return `export default ${JSON.stringify(head)}`;
+        }
+        return;
+      },
+    },
   ];
 }
+
+// cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
+const CSS_LANGS_RE =
+  /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
 
 /*
 transform "use client" directive on react server code

@@ -1,4 +1,4 @@
-import { tinyassert, typedBoolean } from "@hiogawa/utils";
+import { splitFirst, typedBoolean } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import {
@@ -71,16 +71,24 @@ export async function renderHtml(
     bootstrapModules.push(mod.default);
   }
 
-  // TODO
-  // inject css assets both dev and build
-  // expose utility for users to include it manually to layout? (like vinxi?)
-
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
     bootstrapModules,
   });
 
+  let head = "";
+  if (import.meta.env.DEV) {
+    // TODO: invalidate virtual module in each render?
+    head = `<link rel="stylesheet" href="/@id/__x00__virtual:ssr-css/dev.css?direct" />`;
+  } else {
+    const mod = await import("virtual:ssr-css/build" as string);
+    head = mod.default;
+  }
+
   return ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(injectToHead(head))
+    .pipeThrough(new TextEncoderStream())
     .pipeThrough(injectRSCPayload(rscStream2));
 
   // return ssrStream
@@ -89,6 +97,23 @@ export async function renderHtml(
   //   .pipeThrough(injectRSCPayload(rscStream2));
 }
 
+function injectToHead(data: string) {
+  const marker = "</head>";
+  let done = false;
+  return new TransformStream<string, string>({
+    transform(chunk, controller) {
+      if (!done && chunk.includes(marker)) {
+        const [pre, post] = splitFirst(chunk, marker);
+        controller.enqueue(pre + data + marker + post);
+        done = true;
+        return;
+      }
+      controller.enqueue(chunk);
+    },
+  });
+}
+
+// @ts-ignore
 async function injectToHtmlTempalte() {
   let html = await importHtmlTemplate();
 
