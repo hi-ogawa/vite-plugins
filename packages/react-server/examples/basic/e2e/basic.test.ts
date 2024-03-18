@@ -207,10 +207,10 @@ test("head in rsc", async ({ page }) => {
   // TODO: it doesn't magically overwrite already rendered title in the layout...
   const res = await page.request.get("/test/head?title=hello");
   const resText = await res.text();
-  expect(resText).toMatch(/<head>.*<title>rsc-experiment<\/title>.*<\/head>/);
-  expect(resText).toMatch(/<head>.*<title>hello<\/title>.*<\/head>/);
+  expect(resText).toMatch(/<head>.*<title>rsc-experiment<\/title>.*<\/head>/s);
+  expect(resText).toMatch(/<head>.*<title>hello<\/title>.*<\/head>/s);
   expect(resText).toMatch(
-    /<head>.*<meta name="test" content="hello"\/>.*<\/head>/,
+    /<head>.*<meta name="test" content="hello"\/>.*<\/head>/s,
   );
 });
 
