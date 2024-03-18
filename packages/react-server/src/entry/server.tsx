@@ -64,11 +64,11 @@ export async function renderHtml(
 
   let bootstrapModules: string[] = [];
   if (import.meta.env.DEV) {
-    bootstrapModules.push(`/@id/__x00__virtual:browser-bootstrap-module`);
+    bootstrapModules.push(`/@id/__x00__virtual:browser-bootstrap/dev`);
   } else {
-    // TODO: find js assets from manifest?
-    // srr build time constant?
-    // throw new Error("todo");
+    // inject asset url to SSR build via virtual module
+    const mod = await import("virtual:browser-bootstrap/build" as string);
+    bootstrapModules.push(mod.default);
   }
 
   // TODO

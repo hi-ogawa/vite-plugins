@@ -9,6 +9,7 @@ import MagicString from "magic-string";
 import {
   type ConfigEnv,
   type InlineConfig,
+  type Manifest,
   type Plugin,
   type PluginOption,
   type ViteDevServer,
@@ -284,16 +285,16 @@ export function vitePluginReactServer(options?: {
       },
     },
     {
-      name: "virtual-browser-bootstrap-module",
-      apply: "serve",
+      name: "virtual-browser-bootstrap",
       resolveId(source, _importer, _options) {
-        if (source.startsWith("virtual:browser-bootstrap-module")) {
+        if (source.startsWith("virtual:browser-bootstrap")) {
           return "\0" + source;
         }
         return;
       },
-      load(id, _options) {
-        if (id.startsWith("\0virtual:browser-bootstrap-module")) {
+      async load(id, _options) {
+        if (id.startsWith("\0virtual:browser-bootstrap/dev")) {
+          tinyassert(!manager.buildType);
           // TODO
           // we should extract <head> from ViteDevServer.transformIndexHtml.
           // for now, we hard code known dev scripts.
@@ -306,8 +307,20 @@ export function vitePluginReactServer(options?: {
 
             // dynamic import to avoid hoist
             await import("/@vite/client");
-            await import("/src/entry-client");
+            await import("/src/entry-client.tsx");
           `;
+        }
+        if (id.startsWith("\0virtual:browser-bootstrap/build")) {
+          tinyassert(manager.buildType === "ssr");
+          const manifest: Manifest = JSON.parse(
+            await fs.promises.readFile(
+              "dist/client/.vite/manifest.json",
+              "utf-8",
+            ),
+          );
+          const entry = manifest["src/entry-client.tsx"];
+          tinyassert(entry);
+          return `export default "/${entry.file}";`;
         }
         return;
       },
