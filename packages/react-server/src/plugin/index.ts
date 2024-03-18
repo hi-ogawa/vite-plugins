@@ -644,7 +644,7 @@ function hashString(v: string) {
     .toString("base64url");
 }
 
-function createVirtualPlugin(name: string, load: Plugin["load"]): Plugin {
+function createVirtualPlugin(name: string, load: Plugin["load"]) {
   name = "virtual:" + name;
   return {
     name: `virtual-${name}`,
@@ -656,5 +656,5 @@ function createVirtualPlugin(name: string, load: Plugin["load"]): Plugin {
         return (load as any)(id, options);
       }
     },
-  };
+  } satisfies Plugin;
 }

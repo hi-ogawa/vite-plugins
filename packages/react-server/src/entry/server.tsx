@@ -69,7 +69,6 @@ export async function renderHtml(
     const mod: any = await __devServer.ssrLoadModule("virtual:ssr-assets");
     assets = mod.default;
   } else {
-    // inject asset urls to SSR build via virtual module
     const mod = await import("virtual:ssr-assets" as string);
     assets = mod.default;
   }
