@@ -65,7 +65,7 @@ export async function renderHtml(
 
   let bootstrapModules: string[] = [];
   if (import.meta.env.DEV) {
-    bootstrapModules.push("/src/entry-client?import");
+    bootstrapModules.push("/src/entry-client");
   } else {
     // inject asset url to SSR build via virtual module
     const mod = await import("virtual:client-bootstrap/build" as string);

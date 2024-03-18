@@ -295,23 +295,6 @@ export function vitePluginReactServer(options?: {
         return;
       },
       async load(id, _options) {
-        if (id === "\0virtual:client-bootstrap/dev") {
-          tinyassert(!manager.buildType);
-          // TODO
-          // we should extract <head> from ViteDevServer.transformIndexHtml.
-          // for now, we hard code known dev scripts.
-          return /* js */ `
-            import RefreshRuntime from "/@react-refresh";
-            RefreshRuntime.injectIntoGlobalHook(window);
-            window.$RefreshReg$ = () => {};
-            window.$RefreshSig$ = () => (type) => type;
-            window.__vite_plugin_react_preamble_installed__ = true;
-
-            // dynamic import to avoid hoist
-            await import("/@vite/client");
-            await import("/src/entry-client.tsx");
-          `;
-        }
         if (id === "\0virtual:client-bootstrap/build") {
           tinyassert(manager.buildType === "ssr");
           const manifest: Manifest = JSON.parse(
