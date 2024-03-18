@@ -40,7 +40,7 @@ export async function collectStyle(server: ViteDevServer, entries: string[]) {
     }),
   );
 
-  return styles;
+  return styles.filter(Boolean).join("\n");
 }
 
 // cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50

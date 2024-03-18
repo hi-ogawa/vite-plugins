@@ -1,11 +1,13 @@
-import { splitFirst } from "@hiogawa/utils";
+import { splitFirst, tinyassert } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
+import type { ViteDevServer } from "vite";
 import {
   createModuleMap,
   initDomWebpackSsr,
   invalidateImportCacheOnFinish,
 } from "../lib/ssr";
+import { invalidateModule } from "../plugin/utils";
 
 export async function handler(request: Request): Promise<Response> {
   const reactServer = await importReactServer();
@@ -63,7 +65,7 @@ export async function renderHtml(
 
   let bootstrapModules: string[] = [];
   if (import.meta.env.DEV) {
-    bootstrapModules.push(`/@id/__x00__virtual:client-bootstrap/dev`);
+    bootstrapModules.push("/src/entry-client?import");
   } else {
     // inject asset url to SSR build via virtual module
     const mod = await import("virtual:client-bootstrap/build" as string);
@@ -74,16 +76,11 @@ export async function renderHtml(
     bootstrapModules,
   });
 
-  let head = "";
+  let head: string;
   if (import.meta.env.DEV) {
-    // TODO: remove link on first HMR on client
-    const mod = __devServer.moduleGraph.getModuleById(
-      "\0virtual:ssr-css/dev.css?direct",
-    );
-    if (mod) {
-      __devServer.moduleGraph.invalidateModule(mod);
-    }
-    head = `<link rel="stylesheet" href="/@id/__x00__virtual:ssr-css/dev.css?direct" />`;
+    invalidateModule(__devServer, "\0virtual:ssr-head/dev");
+    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-head/dev");
+    head = mod.default;
   } else {
     const mod = await import("virtual:ssr-css/build" as string);
     head = mod.default;
@@ -98,13 +95,13 @@ export async function renderHtml(
 }
 
 function injectToHead(data: string) {
-  const marker = "</head>";
+  const marker = "<head>";
   let done = false;
   return new TransformStream<string, string>({
     transform(chunk, controller) {
       if (!done && chunk.includes(marker)) {
         const [pre, post] = splitFirst(chunk, marker);
-        controller.enqueue(pre + data + marker + post);
+        controller.enqueue(pre + marker + data + post);
         done = true;
         return;
       }
