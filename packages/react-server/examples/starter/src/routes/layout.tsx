@@ -1,16 +1,16 @@
 import { Link } from "@hiogawa/react-server/client";
 
-export default function Root(props: React.PropsWithChildren) {
+export default function Layout(props: React.PropsWithChildren) {
   return (
     <html>
       <body>
-        <Layout {...props} />
+        <LayoutInner {...props} />
       </body>
     </html>
   );
 }
 
-async function Layout(props: React.PropsWithChildren) {
+async function LayoutInner(props: React.PropsWithChildren) {
   return (
     <div>
       <h3>React Server Starter</h3>

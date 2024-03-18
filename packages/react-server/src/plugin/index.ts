@@ -338,7 +338,7 @@ export function vitePluginReactServer(options?: {
         if (id === "\0virtual:ssr-css/dev.css?direct") {
           tinyassert(!manager.buildType);
           // quick fix for dev FOUC
-          // for now crawl only direct dependency of entry-client
+          // TODO: crawl more (for now it crawls only direct dependency of entry-client)
           const entry = "/src/entry-client";
           await __devServer.transformRequest(entry);
           const mod = await __devServer.moduleGraph.getModuleByUrl(entry);

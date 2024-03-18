@@ -78,6 +78,7 @@ export async function renderHtml(
   let head = "";
   if (import.meta.env.DEV) {
     // TODO: invalidate virtual module in each render?
+    // TODO: remove this link on first HMR on client
     head = `<link rel="stylesheet" href="/@id/__x00__virtual:ssr-css/dev.css?direct" />`;
   } else {
     const mod = await import("virtual:ssr-css/build" as string);
