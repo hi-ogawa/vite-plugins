@@ -64,13 +64,13 @@ export async function renderHtml(
 
   let assets: SsrAssetsType;
   if (import.meta.env.DEV) {
-    invalidateModule(__devServer, "\0virtual:ssr-assets/dev");
-    invalidateModule(__devServer, "\0virtual:ssr-assets/dev.css?direct");
-    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-assets/dev");
+    invalidateModule(__devServer, "\0virtual:ssr-assets");
+    invalidateModule(__devServer, "\0virtual:dev-ssr-css.css?direct");
+    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-assets");
     assets = mod.default;
   } else {
     // inject asset urls to SSR build via virtual module
-    const mod = await import("virtual:ssr-assets/build" as string);
+    const mod = await import("virtual:ssr-assets" as string);
     assets = mod.default;
   }
 
