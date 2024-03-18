@@ -6,7 +6,7 @@ import {
   initDomWebpackSsr,
   invalidateImportCacheOnFinish,
 } from "../lib/ssr";
-import { type SsrAssetsType, invalidateModule } from "../plugin/utils";
+import { invalidateModule } from "../plugin/utils";
 
 export async function handler(request: Request): Promise<Response> {
   const reactServer = await importReactServer();
