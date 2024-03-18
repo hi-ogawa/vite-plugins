@@ -20,7 +20,6 @@ import {
 import { debug } from "../lib/debug";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle } from "./css";
-import { invalidateModule } from "./utils";
 
 const require = createRequire(import.meta.url);
 
@@ -287,30 +286,7 @@ export function vitePluginReactServer(options?: {
       },
     },
     {
-      name: "virtual-client-bootstrap",
-      resolveId(source, _importer, _options) {
-        if (source.startsWith("virtual:client-bootstrap")) {
-          return "\0" + source;
-        }
-        return;
-      },
-      async load(id, _options) {
-        if (id === "\0virtual:client-bootstrap/build") {
-          tinyassert(manager.buildType === "ssr");
-          const manifest: Manifest = JSON.parse(
-            await fs.promises.readFile(
-              "dist/client/.vite/manifest.json",
-              "utf-8",
-            ),
-          );
-          const entry = manifest["src/entry-client.tsx"];
-          tinyassert(entry);
-          return `export default "/${entry.file}";`;
-        }
-        return;
-      },
-    },
-    {
+      // TODO(refactor): rename to "virtual-ssr-assets" to cover "virtual-client-bootstrap"?
       name: "virtual-ssr-head",
       resolveId(source, _importer, _options) {
         if (source.startsWith("virtual:ssr-head")) {
@@ -332,7 +308,6 @@ export function vitePluginReactServer(options?: {
 
           // server dev css as ?direct so that ssr html won't get too huge.
           // also remove style on first hot update.
-          invalidateModule(__devServer, "\0virtual:ssr-css/dev.css?direct");
           head += `\
             <link data-ssr-css-dev rel="stylesheet" href="/@id/__x00__virtual:ssr-css/dev.css?direct" />
             <script type="module">
@@ -350,7 +325,22 @@ export function vitePluginReactServer(options?: {
         }
         if (id === "\0virtual:ssr-head/build") {
           tinyassert(manager.buildType === "ssr");
-          // todo;
+          const manifest: Manifest = JSON.parse(
+            await fs.promises.readFile(
+              "dist/client/.vite/manifest.json",
+              "utf-8",
+            ),
+          );
+          const entry = manifest["src/entry-client.tsx"];
+          tinyassert(entry);
+          const head = (entry.css ?? [])
+            .map((url) => `<link rel="stylesheet" href="/${url}" />`)
+            .join("");
+          const result = {
+            bootstrapModules: [`/${entry.file}`],
+            head,
+          };
+          return `export default ${JSON.stringify(result)}`;
         }
         return;
       },
@@ -369,21 +359,6 @@ export function vitePluginReactServer(options?: {
           // collect style in the server to fix dev FOUC
           const style = await collectStyle(__devServer, ["/src/entry-client"]);
           return style;
-        }
-        if (id === "\0virtual:ssr-css/build") {
-          tinyassert(manager.buildType === "ssr");
-          const manifest: Manifest = JSON.parse(
-            await fs.promises.readFile(
-              "dist/client/.vite/manifest.json",
-              "utf-8",
-            ),
-          );
-          const entry = manifest["src/entry-client.tsx"];
-          tinyassert(entry);
-          const head = (entry.css ?? [])
-            .map((url) => `<link rel="stylesheet" href="/${url}" />`)
-            .join("");
-          return `export default ${JSON.stringify(head)}`;
         }
         return;
       },

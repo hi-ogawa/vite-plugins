@@ -1,7 +1,6 @@
-import { splitFirst, tinyassert } from "@hiogawa/utils";
+import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import type { ViteDevServer } from "vite";
 import {
   createModuleMap,
   initDomWebpackSsr,
@@ -63,28 +62,24 @@ export async function renderHtml(
     },
   );
 
-  let bootstrapModules: string[] = [];
+  let bootstrapModules: string[];
+  let head: string;
   if (import.meta.env.DEV) {
-    bootstrapModules.push("/src/entry-client");
+    bootstrapModules = ["/src/entry-client"];
+    invalidateModule(__devServer, "\0virtual:ssr-head/dev");
+    invalidateModule(__devServer, "\0virtual:ssr-css/dev.css?direct");
+    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-head/dev");
+    head = mod.default;
   } else {
-    // inject asset url to SSR build via virtual module
-    const mod = await import("virtual:client-bootstrap/build" as string);
-    bootstrapModules.push(mod.default);
+    // inject asset urls to SSR build via virtual module
+    const mod = await import("virtual:ssr-head/build" as string);
+    bootstrapModules = mod.default.bootstrapModules;
+    head = mod.default.head;
   }
 
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
     bootstrapModules,
   });
-
-  let head: string;
-  if (import.meta.env.DEV) {
-    invalidateModule(__devServer, "\0virtual:ssr-head/dev");
-    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-head/dev");
-    head = mod.default;
-  } else {
-    const mod = await import("virtual:ssr-css/build" as string);
-    head = mod.default;
-  }
 
   return ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
