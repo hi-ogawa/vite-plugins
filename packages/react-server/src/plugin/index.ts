@@ -9,6 +9,7 @@ import MagicString from "magic-string";
 import {
   type ConfigEnv,
   type InlineConfig,
+  type Manifest,
   type Plugin,
   type PluginOption,
   type ViteDevServer,
@@ -18,6 +19,8 @@ import {
 } from "vite";
 import { debug } from "../lib/debug";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
+import { collectStyle } from "./css";
+import type { SsrAssetsType } from "./utils";
 
 const require = createRequire(import.meta.url);
 
@@ -174,7 +177,13 @@ export function vitePluginReactServer(options?: {
           },
         },
         build: {
+          manifest: true,
           outDir: env.isSsrBuild ? "dist/server" : "dist/client",
+          rollupOptions: env.isSsrBuild
+            ? undefined
+            : {
+                input: "/src/entry-client",
+              },
         },
       };
     },
@@ -277,6 +286,79 @@ export function vitePluginReactServer(options?: {
         return;
       },
     },
+    createVirtualPlugin("ssr-assets", async () => {
+      // dev
+      if (!manager.buildType) {
+        // extract <head> injected by plugins
+        const html = await __devServer.transformIndexHtml(
+          "/",
+          "<html><head></head></html>",
+        );
+        const match = html.match(/<head>(.*)<\/head>/s);
+        tinyassert(match && 1 in match);
+        let head = match[1];
+
+        // serve dev css as ?direct so that ssr html won't get too huge.
+        // also remove style on first hot update.
+        head += `\
+          <link
+            data-ssr-dev-css
+            rel="stylesheet"
+            href="/@id/__x00__virtual:dev-ssr-css.css?direct"
+          />
+          <script type="module">
+            import { createHotContext } from "/@vite/client";
+            const hot = createHotContext("hot-data-ssr-dev-css");
+            hot.on("vite:afterUpdate", () => {
+              document
+                .querySelectorAll("[data-ssr-dev-css]")
+                .forEach(node => node.remove());
+            });
+          </script>
+        `;
+        const result: SsrAssetsType = {
+          bootstrapModules: ["/@id/__x00__virtual:dev-client-entry.js"],
+          head,
+        };
+        return `export default ${JSON.stringify(result)}`;
+      }
+
+      // build
+      if (manager.buildType === "ssr") {
+        const manifest: Manifest = JSON.parse(
+          await fs.promises.readFile(
+            "dist/client/.vite/manifest.json",
+            "utf-8",
+          ),
+        );
+        const entry = manifest["src/entry-client.tsx"];
+        tinyassert(entry);
+        const head = (entry.css ?? [])
+          .map((url) => `<link rel="stylesheet" href="/${url}" />`)
+          .join("");
+        const result: SsrAssetsType = {
+          bootstrapModules: [`/${entry.file}`],
+          head,
+        };
+        return `export default ${JSON.stringify(result)}`;
+      }
+
+      tinyassert(false);
+    }),
+    createVirtualPlugin("dev-client-entry.js", () => {
+      tinyassert(!manager.buildType);
+      // wrapper entry to ensure client entry runs after vite/react inititialization
+      return /* js */ `
+        for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
+          await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
+        }
+        await import("/src/entry-client");
+      `;
+    }),
+    createVirtualPlugin("dev-ssr-css.css?direct", () => {
+      tinyassert(!manager.buildType);
+      return collectStyle(__devServer, ["/src/entry-client"]);
+    }),
   ];
 }
 
@@ -560,4 +642,19 @@ function hashString(v: string) {
     .update(v)
     .digest()
     .toString("base64url");
+}
+
+function createVirtualPlugin(name: string, load: Plugin["load"]) {
+  name = "virtual:" + name;
+  return {
+    name: `virtual-${name}`,
+    resolveId(source, _importer, _options) {
+      return source === name ? "\0" + name : undefined;
+    },
+    load(id, options) {
+      if (id === "\0" + name) {
+        return (load as any)(id, options);
+      }
+    },
+  } satisfies Plugin;
 }

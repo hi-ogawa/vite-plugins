@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.1.0-pre.4",
+  "version": "0.1.0-pre.6",
   "license": "MIT",
   "type": "module",
   "exports": {
