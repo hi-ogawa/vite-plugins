@@ -366,7 +366,7 @@ export function vitePluginReactServer(options?: {
           const entry = manifest["src/entry-client.tsx"];
           tinyassert(entry);
           const head = (entry.css ?? [])
-            .map((url) => `<link rel="stylesheet" href="${url}" />`)
+            .map((url) => `<link rel="stylesheet" href="/${url}" />`)
             .join("");
           return `export default ${JSON.stringify(head)}`;
         }
