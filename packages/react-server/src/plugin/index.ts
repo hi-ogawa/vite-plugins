@@ -19,6 +19,7 @@ import {
 } from "vite";
 import { debug } from "../lib/debug";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
+import { collectStyle } from "./css";
 
 const require = createRequire(import.meta.url);
 
@@ -337,23 +338,9 @@ export function vitePluginReactServer(options?: {
       async load(id, _options) {
         if (id === "\0virtual:ssr-css/dev.css?direct") {
           tinyassert(!manager.buildType);
-          // quick fix for dev FOUC
-          // TODO: crawl more (for now it crawls only direct dependency of entry-client)
-          const entry = "/src/entry-client";
-          await __devServer.transformRequest(entry);
-          const mod = await __devServer.moduleGraph.getModuleByUrl(entry);
-          let style = "";
-          if (mod) {
-            for (const imported of mod.importedModules) {
-              if (imported.id && imported.id.match(CSS_LANGS_RE)) {
-                const mod = await __devServer.ssrLoadModule(imported.id);
-                if ("default" in mod && typeof mod["default"] === "string") {
-                  style += mod["default"] + "\n";
-                }
-              }
-            }
-          }
-          return style;
+          // collect style to fix dev FOUC
+          const styles = await collectStyle(__devServer, ["/src/entry-client"]);
+          return styles.filter(Boolean).join("\n");
         }
         if (id === "\0virtual:ssr-css/build") {
           tinyassert(manager.buildType === "ssr");
@@ -375,10 +362,6 @@ export function vitePluginReactServer(options?: {
     },
   ];
 }
-
-// cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
-const CSS_LANGS_RE =
-  /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
 
 /*
 transform "use client" directive on react server code
