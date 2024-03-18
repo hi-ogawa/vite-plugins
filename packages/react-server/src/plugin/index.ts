@@ -20,7 +20,7 @@ import {
 import { debug } from "../lib/debug";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle } from "./css";
-import type { SsrAssetsType } from "./utils";
+import { ENTRY_CLIENT, ENTRY_REACT_SERVER, type SsrAssetsType } from "./utils";
 
 const require = createRequire(import.meta.url);
 
@@ -51,13 +51,8 @@ class ReactServerManager {
 }
 
 export function vitePluginReactServer(options?: {
-  /**
-   * @default "@hiogawa/react-server/entry-react-server"
-   */
-  entry?: string;
   plugins?: PluginOption[];
 }): Plugin[] {
-  const rscEntry = options?.entry ?? "@hiogawa/react-server/entry-react-server";
   const manager = new ReactServerManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
@@ -149,7 +144,7 @@ export function vitePluginReactServer(options?: {
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: rscEntry,
+          index: ENTRY_REACT_SERVER,
         },
       },
     },
@@ -182,7 +177,7 @@ export function vitePluginReactServer(options?: {
           rollupOptions: env.isSsrBuild
             ? undefined
             : {
-                input: "/src/entry-client",
+                input: ENTRY_CLIENT,
               },
         },
       };
@@ -197,7 +192,6 @@ export function vitePluginReactServer(options?: {
         Object.assign(globalThis, {
           __devServer: parentServer,
           __rscDevServer: rscDevServer,
-          __rscEntry: rscEntry,
         });
       }
       if (parentEnv.command === "build") {
@@ -352,12 +346,14 @@ export function vitePluginReactServer(options?: {
         for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
           await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
         }
-        await import("/src/entry-client");
+        await import("${ENTRY_CLIENT}");
       `;
     }),
     createVirtualPlugin("dev-ssr-css.css?direct", () => {
       tinyassert(!manager.buildType);
-      return collectStyle(__devServer, ["/src/entry-client"]);
+      // TODO: collect from RSC too
+      // collectStyle(__rscDevServer, [ENTRY_REACT_SERVER]);
+      return collectStyle(__devServer, [ENTRY_CLIENT]);
     }),
   ];
 }

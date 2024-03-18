@@ -28,6 +28,7 @@ pnpm preview
 
 - `index.html`
 - `src/entry-client.tsx`
+- `src/entry-react-server.tsx`
 - `src/routes/**/(page|layout).tsx`
 - `"use client"`
 - `"use server"`

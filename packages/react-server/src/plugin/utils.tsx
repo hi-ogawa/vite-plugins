@@ -11,3 +11,7 @@ export interface SsrAssetsType {
   bootstrapModules: string[];
   head: string;
 }
+
+// TODO: configurable?
+export const ENTRY_CLIENT = "/src/entry-react-server";
+export const ENTRY_REACT_SERVER = "/src/entry-react-server";
