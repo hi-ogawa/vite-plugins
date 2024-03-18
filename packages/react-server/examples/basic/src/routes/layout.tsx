@@ -11,18 +11,12 @@ export default function Layout(props: LayoutRouteProps) {
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        <LayoutInner {...props} />
+        <div className="p-4 flex flex-col gap-2">
+          <Header />
+          <NavMenu links={["/", "/test", "/demo/waku_02"]} />
+          {props.children}
+        </div>
       </body>
     </html>
-  );
-}
-
-async function LayoutInner(props: LayoutRouteProps) {
-  return (
-    <div className="p-4 flex flex-col gap-2">
-      <Header />
-      <NavMenu links={["/", "/test", "/demo/waku_02"]} />
-      {props.children}
-    </div>
   );
 }
