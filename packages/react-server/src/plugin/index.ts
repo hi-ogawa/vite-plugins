@@ -313,7 +313,7 @@ export function vitePluginReactServer(options?: {
             <link
               data-ssr-assets-dev-css
               rel="stylesheet"
-              href="/@id/__x00__virtual:ssr-assets/dev.css?direct"
+              href="/@id/__x00__virtual:ssr-assets-dev.css?direct"
             />
             <script type="module">
               import { createHotContext } from "/@vite/client";
@@ -326,9 +326,7 @@ export function vitePluginReactServer(options?: {
             </script>
           `;
           const result: SsrAssetsType = {
-            bootstrapModules: [
-              "/@id/__x00__virtual:ssr-assets/dev-client-entry.js",
-            ],
+            bootstrapModules: ["/@id/__x00__virtual:ssr-assets-dev-entry.js"],
             head,
           };
           return `export default ${JSON.stringify(result)}`;
@@ -352,7 +350,7 @@ export function vitePluginReactServer(options?: {
           };
           return `export default ${JSON.stringify(result)}`;
         }
-        if (id === "\0virtual:ssr-assets/dev-client-entry.js") {
+        if (id === "\0virtual:ssr-assets-dev-entry.js") {
           tinyassert(!manager.buildType);
           // ensure client entry runs after react/vite init scripts
           return /* js */ `
@@ -362,7 +360,7 @@ export function vitePluginReactServer(options?: {
             await import("/src/entry-client");
           `;
         }
-        if (id === "\0virtual:ssr-assets/dev.css?direct") {
+        if (id === "\0virtual:ssr-assets-dev.css?direct") {
           tinyassert(!manager.buildType);
           return await collectStyle(__devServer, ["/src/entry-client"]);
         }
