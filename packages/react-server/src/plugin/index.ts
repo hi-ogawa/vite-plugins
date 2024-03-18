@@ -285,15 +285,15 @@ export function vitePluginReactServer(options?: {
       },
     },
     {
-      name: "virtual-browser-bootstrap",
+      name: "virtual-client-bootstrap",
       resolveId(source, _importer, _options) {
-        if (source.startsWith("virtual:browser-bootstrap")) {
+        if (source.startsWith("virtual:client-bootstrap")) {
           return "\0" + source;
         }
         return;
       },
       async load(id, _options) {
-        if (id === "\0virtual:browser-bootstrap/dev") {
+        if (id === "\0virtual:client-bootstrap/dev") {
           tinyassert(!manager.buildType);
           // TODO
           // we should extract <head> from ViteDevServer.transformIndexHtml.
@@ -310,7 +310,7 @@ export function vitePluginReactServer(options?: {
             await import("/src/entry-client.tsx");
           `;
         }
-        if (id === "\0virtual:browser-bootstrap/build") {
+        if (id === "\0virtual:client-bootstrap/build") {
           tinyassert(manager.buildType === "ssr");
           const manifest: Manifest = JSON.parse(
             await fs.promises.readFile(
