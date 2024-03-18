@@ -1,5 +1,5 @@
 import { Link } from "@hiogawa/react-server/client";
-import type { PageRouteProps } from "../../../../../../dist/server";
+import type { PageRouteProps } from "@hiogawa/react-server/server";
 
 export default function Page(props: PageRouteProps) {
   const title = new URL(props.request.url).searchParams.get("title");
