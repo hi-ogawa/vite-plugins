@@ -6,3 +6,8 @@ export function invalidateModule(server: ViteDevServer, id: string) {
     server.moduleGraph.invalidateModule(mod);
   }
 }
+
+export interface SsrAssetsType {
+  bootstrapModules: string[];
+  head: string;
+}

@@ -6,7 +6,7 @@ import {
   initDomWebpackSsr,
   invalidateImportCacheOnFinish,
 } from "../lib/ssr";
-import { invalidateModule } from "../plugin/utils";
+import { type SsrAssetsType, invalidateModule } from "../plugin/utils";
 
 export async function handler(request: Request): Promise<Response> {
   const reactServer = await importReactServer();
@@ -62,29 +62,26 @@ export async function renderHtml(
     },
   );
 
-  let bootstrapModules: string[];
-  let head: string;
+  let assets: SsrAssetsType;
   if (import.meta.env.DEV) {
-    bootstrapModules = ["/src/entry-client"];
-    invalidateModule(__devServer, "\0virtual:ssr-head/dev");
-    invalidateModule(__devServer, "\0virtual:ssr-css/dev.css?direct");
-    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-head/dev");
-    head = mod.default;
+    invalidateModule(__devServer, "\0virtual:ssr-assets/dev");
+    invalidateModule(__devServer, "\0virtual:ssr-assets/dev.css?direct");
+    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-assets/dev");
+    assets = mod.default;
   } else {
     // inject asset urls to SSR build via virtual module
-    const mod = await import("virtual:ssr-head/build" as string);
-    bootstrapModules = mod.default.bootstrapModules;
-    head = mod.default.head;
+    const mod = await import("virtual:ssr-assets/build" as string);
+    assets = mod.default;
   }
 
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
-    bootstrapModules,
+    bootstrapModules: assets.bootstrapModules,
   });
 
   return ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
     .pipeThrough(new TextDecoderStream())
-    .pipeThrough(injectToHead(head))
+    .pipeThrough(injectToHead(assets.head))
     .pipeThrough(new TextEncoderStream())
     .pipeThrough(injectRSCPayload(rscStream2));
 }
