@@ -120,6 +120,7 @@ test("@dev css hmr", async ({ page }) => {
 
 test("server action with js", async ({ page }) => {
   await page.goto("/test/action");
+  await page.getByText("hydrated: true").click();
 
   const checkClientState = await setupCheckClientState(page);
 

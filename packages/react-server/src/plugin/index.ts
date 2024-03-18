@@ -326,8 +326,9 @@ export function vitePluginReactServer(options?: {
             </script>
           `;
           const result: SsrAssetsType = {
-            // TODO: ensure entry runs after react/vite init scripts
-            bootstrapModules: ["/src/entry-client"],
+            bootstrapModules: [
+              "/@id/__x00__virtual:ssr-assets/dev-client-entry.js",
+            ],
             head,
           };
           return `export default ${JSON.stringify(result)}`;
@@ -350,6 +351,16 @@ export function vitePluginReactServer(options?: {
             head,
           };
           return `export default ${JSON.stringify(result)}`;
+        }
+        if (id === "\0virtual:ssr-assets/dev-client-entry.js") {
+          tinyassert(!manager.buildType);
+          // ensure client entry runs after react/vite init scripts
+          return /* js */ `
+            for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
+              await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
+            }
+            await import("/src/entry-client");
+          `;
         }
         if (id === "\0virtual:ssr-assets/dev.css?direct") {
           tinyassert(!manager.buildType);
