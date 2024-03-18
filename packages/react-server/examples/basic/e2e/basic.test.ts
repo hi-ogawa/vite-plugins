@@ -19,6 +19,8 @@ test("navigation", async ({ page }) => {
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByText("Other Page").click();
   await page.waitForURL("/test/other");
+  await page.goBack();
+  await page.waitForURL("/test");
 
   await checkClientState();
 });
@@ -187,6 +189,29 @@ test("RouteProps.request", async ({ page }) => {
 test("custom entry-react-server", async ({ request }) => {
   const res = await request.get("/test/__rpc");
   expect(await res.json()).toEqual({ hello: "world" });
+});
+
+test("head in rsc", async ({ page }) => {
+  await page.goto("/test/head");
+  await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await page.getByRole("link", { name: "title = hello" }).click();
+  await expect(page).toHaveTitle("hello");
+  await page.getByRole("link", { name: "title = world" }).click();
+  await expect(page).toHaveTitle("world");
+
+  await checkClientState();
+
+  // TODO: it doesn't magically overwrite already rendered title in the layout...
+  const res = await page.request.get("/test/head?title=hello");
+  const resText = await res.text();
+  expect(resText).toMatch(/<head>.*<title>rsc-experiment<\/title>.*<\/head>/);
+  expect(resText).toMatch(/<head>.*<title>hello<\/title>.*<\/head>/);
+  expect(resText).toMatch(
+    /<head>.*<meta name="test" content="hello"\/>.*<\/head>/,
+  );
 });
 
 async function setupCheckClientState(page: Page) {
