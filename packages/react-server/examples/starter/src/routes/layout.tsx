@@ -13,10 +13,10 @@ export default function Layout(props: React.PropsWithChildren) {
 async function LayoutInner(props: React.PropsWithChildren) {
   return (
     <div>
-      <h3>React Server Starter</h3>
       <meta charSet="UTF-8" />
-      <title>rsc-experiment</title>
+      <title>React Server Starter</title>
       <link rel="icon" href="/favicon.ico" />
+      <h3>React Server Starter</h3>
       <a
         href="https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server"
         target="_blank"
