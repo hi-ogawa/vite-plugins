@@ -62,16 +62,12 @@ export async function renderHtml(
     },
   );
 
-  let assets: SsrAssetsType;
   if (import.meta.env.DEV) {
+    // ensure latest css
     invalidateModule(__devServer, "\0virtual:ssr-assets");
     invalidateModule(__devServer, "\0virtual:dev-ssr-css.css?direct");
-    const mod: any = await __devServer.ssrLoadModule("virtual:ssr-assets");
-    assets = mod.default;
-  } else {
-    const mod = await import("virtual:ssr-assets" as string);
-    assets = mod.default;
   }
+  const assets = (await import("virtual:ssr-assets" as string)).default;
 
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
     bootstrapModules: assets.bootstrapModules,
