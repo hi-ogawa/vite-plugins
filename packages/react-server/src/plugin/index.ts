@@ -311,7 +311,7 @@ export function vitePluginReactServer(options?: {
             const hot = createHotContext("hot-data-ssr-dev-css");
             hot.on("vite:afterUpdate", () => {
               document
-                .querySelectorAll("[data-ssr-css-dev]")
+                .querySelectorAll("[data-ssr-dev-css]")
                 .forEach(node => node.remove());
             });
           </script>
