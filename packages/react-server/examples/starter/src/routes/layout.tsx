@@ -1,9 +1,26 @@
 import { Link } from "@hiogawa/react-server/client";
 
-export default async function Layout(props: React.PropsWithChildren) {
+export default function Root(props: React.PropsWithChildren) {
+  return (
+    <html>
+      <body>
+        <Layout {...props} />
+      </body>
+    </html>
+  );
+}
+
+async function Layout(props: React.PropsWithChildren) {
   return (
     <div>
       <h3>React Server Starter</h3>
+      <meta charSet="UTF-8" />
+      <title>rsc-experiment</title>
+      {/* TODO: inject in ssr stream? */}
+      {import.meta.env.DEV && (
+        <link rel="stylesheet" href="/src/style.css?direct" />
+      )}
+      <link rel="icon" href="/favicon.ico" />
       <a
         href="https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server"
         target="_blank"

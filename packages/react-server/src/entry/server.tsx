@@ -1,4 +1,4 @@
-import { typedBoolean } from "@hiogawa/utils";
+import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import {
@@ -62,22 +62,39 @@ export async function renderHtml(
     },
   );
 
+  let bootstrapModules: string[] = [];
+  if (import.meta.env.DEV) {
+    bootstrapModules.push(`/@id/__x00__virtual:browser-bootstrap-module`);
+  } else {
+    // TODO: find js assets from manifest?
+    // srr build time constant?
+    // throw new Error("todo");
+  }
+
+  // TODO
+  // inject css assets both dev and build
+  // expose utility for users to include it manually to layout? (like vinxi?)
+
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
-    // TODO
-    bootstrapModules: [],
-    bootstrapScripts: [],
+    bootstrapModules,
   });
 
   return ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
-    .pipeThrough(await injectToHtmlTempalte())
     .pipeThrough(injectRSCPayload(rscStream2));
+
+  // return ssrStream
+  //   .pipeThrough(invalidateImportCacheOnFinish(renderId))
+  //   .pipeThrough(await injectToHtmlTempalte())
+  //   .pipeThrough(injectRSCPayload(rscStream2));
 }
 
 async function injectToHtmlTempalte() {
   let html = await importHtmlTemplate();
 
   if (import.meta.env.DEV) {
+    // TODO: let use manage
+
     // fix dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
     // for now crawl only direct dependency of entry-client
     const entry = "/src/entry-client";

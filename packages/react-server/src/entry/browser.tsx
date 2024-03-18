@@ -7,7 +7,7 @@ import { debug } from "../lib/debug";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
-// TODO: root error boundary?
+// TODO: root error boundary? suspense?
 
 export async function start() {
   initDomWebpackCsr();
@@ -72,11 +72,8 @@ export async function start() {
     return React.use(rsc);
   }
 
-  const rootEl = document.getElementById("root");
-  tinyassert(rootEl);
-
   reactDomClient.hydrateRoot(
-    rootEl,
+    document,
     <React.StrictMode>
       <Root />
     </React.StrictMode>,

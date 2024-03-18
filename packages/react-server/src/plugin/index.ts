@@ -174,7 +174,13 @@ export function vitePluginReactServer(options?: {
           },
         },
         build: {
+          manifest: true,
           outDir: env.isSsrBuild ? "dist/server" : "dist/client",
+          rollupOptions: env.isSsrBuild
+            ? undefined
+            : {
+                input: "/src/entry-client",
+              },
         },
       };
     },
@@ -273,6 +279,35 @@ export function vitePluginReactServer(options?: {
           return `export {${[...meta.exportNames].join(
             ", ",
           )}} from "${source}"`;
+        }
+        return;
+      },
+    },
+    {
+      name: "virtual-browser-bootstrap-module",
+      apply: "serve",
+      resolveId(source, _importer, _options) {
+        if (source.startsWith("virtual:browser-bootstrap-module")) {
+          return "\0" + source;
+        }
+        return;
+      },
+      load(id, _options) {
+        if (id.startsWith("\0virtual:browser-bootstrap-module")) {
+          // TODO
+          // we should extract <head> from ViteDevServer.transformIndexHtml.
+          // for now, we hard code known dev scripts.
+          return /* js */ `
+            import RefreshRuntime from "/@react-refresh";
+            RefreshRuntime.injectIntoGlobalHook(window);
+            window.$RefreshReg$ = () => {};
+            window.$RefreshSig$ = () => (type) => type;
+            window.__vite_plugin_react_preamble_installed__ = true;
+
+            // dynamic import to avoid hoist
+            await import("/@vite/client");
+            await import("/src/entry-client");
+          `;
         }
         return;
       },
