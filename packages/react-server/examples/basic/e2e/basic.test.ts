@@ -93,15 +93,21 @@ test("@dev client hmr", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
-test("css", async ({ page }) => {
+test("css", async ({ page, browser }) => {
   await page.goto("/test");
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
     "700",
   );
+
+  const page2 = await browser.newPage({ javaScriptEnabled: false });
+  await page2.goto("/test");
+  await expect(
+    page2.getByRole("heading", { name: "RSC Experiment" }),
+  ).toHaveCSS("font-weight", "700");
 });
 
-test("@dev css hmr", async ({ page }) => {
+test("@dev css hmr", async ({ page, browser }) => {
   await page.goto("/test");
   await page.getByText("hydrated: true").click();
 
@@ -116,6 +122,13 @@ test("@dev css hmr", async ({ page }) => {
     "font-weight",
     "300",
   );
+
+  // verify new style is applied without js
+  const page2 = await browser.newPage({ javaScriptEnabled: false });
+  await page2.goto("/test");
+  await expect(
+    page2.getByRole("heading", { name: "RSC Experiment" }),
+  ).toHaveCSS("font-weight", "300");
 });
 
 test("server action with js", async ({ page }) => {
