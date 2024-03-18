@@ -352,6 +352,7 @@ export function vitePluginReactServer(options?: {
     createVirtualPlugin("dev-ssr-css.css?direct", () => {
       tinyassert(!manager.buildType);
       // TODO: collect from RSC too
+      // TODO: need to send new css also on RSC hot reload
       // collectStyle(__rscDevServer, [ENTRY_REACT_SERVER]);
       return collectStyle(__devServer, [ENTRY_CLIENT]);
     }),
