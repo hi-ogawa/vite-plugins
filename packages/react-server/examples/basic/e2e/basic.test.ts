@@ -33,7 +33,7 @@ test("404", async ({ page }) => {
   await page.getByText("Not Found: /test/not-found").click();
 });
 
-test("@dev rsc hmr", async ({ page }) => {
+test("rsc hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
@@ -51,7 +51,7 @@ test("@dev rsc hmr", async ({ page }) => {
   await checkClientState();
 });
 
-test("@dev common hmr", async ({ page }) => {
+test("common hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
@@ -71,7 +71,7 @@ test("@dev common hmr", async ({ page }) => {
   await checkClientState();
 });
 
-test("@dev client hmr", async ({ page }) => {
+test("client hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
