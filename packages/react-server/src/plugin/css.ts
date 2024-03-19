@@ -1,9 +1,24 @@
 import type { ViteDevServer } from "vite";
 
-// cf.
+// cf
 // https://github.com/hi-ogawa/vite-plugins/blob/3c496fa1bb5ac66d2880986877a37ed262f1d2a6/packages/vite-glob-routes/examples/demo/vite-plugin-ssr-css.ts
+// https://github.com/remix-run/remix/blob/dev/packages/remix-dev/vite/styles.ts
 
 export async function collectStyle(server: ViteDevServer, entries: string[]) {
+  const urls = await collectStyleUrls(server, entries);
+  const styles = await Promise.all(
+    urls.map(async (url) => {
+      const res = await server.transformRequest(url + "?direct");
+      return res?.code;
+    }),
+  );
+  return styles.filter(Boolean).join("\n\n");
+}
+
+export async function collectStyleUrls(
+  server: ViteDevServer,
+  entries: string[],
+) {
   const visited = new Set<string>();
 
   async function traverse(url: string) {
@@ -27,20 +42,7 @@ export async function collectStyle(server: ViteDevServer, entries: string[]) {
   // traverse
   await Promise.all(entries.map((url) => traverse(url)));
 
-  const styles = await Promise.all(
-    [...visited].map(async (url) => {
-      if (!url.match(CSS_LANGS_RE)) {
-        return;
-      }
-      const mod = await server.ssrLoadModule(url);
-      if ("default" in mod && typeof mod["default"] === "string") {
-        return mod["default"];
-      }
-      return;
-    }),
-  );
-
-  return styles.filter(Boolean).join("\n");
+  return [...visited].filter((url) => url.match(CSS_LANGS_RE));
 }
 
 // cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50

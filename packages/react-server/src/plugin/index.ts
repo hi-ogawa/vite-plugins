@@ -20,7 +20,7 @@ import {
 } from "vite";
 import { debug } from "../lib/debug";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
-import { collectStyle } from "./css";
+import { collectStyle, collectStyleUrls } from "./css";
 import { ENTRY_CLIENT, ENTRY_REACT_SERVER, type SsrAssetsType } from "./utils";
 
 const require = createRequire(import.meta.url);
@@ -349,12 +349,36 @@ export function vitePluginReactServer(options?: {
     createVirtualPlugin("dev-client-entry.js", () => {
       tinyassert(!manager.buildType);
       // wrapper entry to ensure client entry runs after vite/react inititialization
+      // TODO: setup "virtual:react-server-css.js" for build
       return /* js */ `
+        import "virtual:react-server-css.js";
         for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
           await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
         }
         await import("${ENTRY_CLIENT}");
       `;
+    }),
+    // TODO
+    createVirtualPlugin("client-entry-wrapper.js", () => {
+      // dev
+      if (!manager.buildType) {
+        // wrapper entry to ensure client entry runs after vite/react inititialization
+        return /* js */ `
+          import "virtual:react-server-css.js";
+          for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
+            await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
+          }
+          await import("${ENTRY_CLIENT}");
+        `;
+      }
+      // build
+      if (manager.buildType === "client") {
+        return /* js */ `
+          import "virtual:react-server-css.js";
+          import "${ENTRY_CLIENT}"
+        `;
+      }
+      tinyassert(false);
     }),
     createVirtualPlugin("dev-ssr-css.css?direct", async () => {
       tinyassert(!manager.buildType);
@@ -367,6 +391,18 @@ export function vitePluginReactServer(options?: {
         collectStyle(__devServer, [ENTRY_CLIENT]),
       ]);
       return styles.join("\n\n");
+    }),
+    createVirtualPlugin("react-server-css.js", async () => {
+      // proxy css imports to client
+      const urls = await collectStyleUrls(__rscDevServer, [ENTRY_REACT_SERVER]);
+      let code = urls.map((url) => `import "${url}";\n`).join("");
+      // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
+      code += `
+        if (import.meta.hot) {
+          import.meta.hot.accept();
+        }
+      `;
+      return code;
     }),
   ];
 }

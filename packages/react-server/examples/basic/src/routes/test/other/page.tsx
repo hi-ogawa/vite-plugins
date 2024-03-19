@@ -1,4 +1,3 @@
-import "./test.css";
 import { Link } from "@hiogawa/react-server/client";
 import type { PageRouteProps } from "@hiogawa/react-server/server";
 import { LinkInClientComponent } from "./client";
@@ -34,10 +33,6 @@ export default function Page(props: PageRouteProps) {
         <a className="antd-link" href="/test/__rpc">
           /text/__rpc
         </a>
-      </div>
-      <h5 className="font-bold">css</h5>
-      <div className="flex flex-col">
-        <div id="plain-css">plain css</div>
       </div>
     </div>
   );
