@@ -160,7 +160,7 @@ test("react-server css @nojs", async ({ browser }) => {
   );
 });
 
-test.only("react-server css hmr @dev", async ({ page, browser }) => {
+test("react-server css hmr @dev", async ({ page, browser }) => {
   await page.goto("/test/css");
   await page.getByText("hydrated: true").click();
 
