@@ -5,12 +5,14 @@ import {
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
+import unocss from "unocss/vite";
 import { type Plugin, defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
   plugins: [
     react(),
+    unocss(),
     vitePluginReactServer({
       entry: "/src/entry-react-server.tsx",
       plugins: [testVitePluginVirtual()],
