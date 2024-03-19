@@ -186,7 +186,7 @@ export function vitePluginReactServer(options?: {
           rollupOptions: env.isSsrBuild
             ? undefined
             : {
-                input: "virtual:client-entry-wrapper.js",
+                input: "virtual:entry-client-wrapper.js",
               },
         },
       };
@@ -320,7 +320,7 @@ export function vitePluginReactServer(options?: {
           </script>
         `;
         const result: SsrAssetsType = {
-          bootstrapModules: ["/@id/__x00__virtual:client-entry-wrapper.js"],
+          bootstrapModules: ["/@id/__x00__virtual:entry-client-wrapper.js"],
           head,
         };
         return `export default ${JSON.stringify(result)}`;
@@ -334,7 +334,7 @@ export function vitePluginReactServer(options?: {
             "utf-8",
           ),
         );
-        const entry = manifest["virtual:client-entry-wrapper.js"];
+        const entry = manifest["virtual:entry-client-wrapper.js"];
         tinyassert(entry);
         const head = (entry.css ?? [])
           .map((url) => `<link rel="stylesheet" href="/${url}" />`)
@@ -348,7 +348,7 @@ export function vitePluginReactServer(options?: {
 
       tinyassert(false);
     }),
-    createVirtualPlugin("client-entry-wrapper.js", () => {
+    createVirtualPlugin("entry-client-wrapper.js", () => {
       // dev
       if (!manager.buildType) {
         // wrapper entry to ensure client entry runs after vite/react inititialization
