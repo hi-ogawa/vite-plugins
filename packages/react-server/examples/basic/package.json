@@ -11,6 +11,7 @@
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "vc-build": "pnpm build && bash misc/vercel-serverless/build.sh",
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel-serverless",
+    "vc-release-staging": "vercel deploy --prebuilt misc/vercel-serverless",
     "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
     "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
