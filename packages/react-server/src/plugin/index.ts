@@ -14,6 +14,7 @@ import {
   type PluginOption,
   type ViteDevServer,
   build,
+  createLogger,
   createServer,
   parseAstAsync,
 } from "vite";
@@ -59,11 +60,17 @@ export function vitePluginReactServer(options?: {
   let rscDevServer: ViteDevServer | undefined;
 
   const rscConfig: InlineConfig = {
-    // TODO: custom logger to distinct two server logs easily?
-    // customLogger: undefined,
+    customLogger: createLogger(undefined, {
+      prefix: "[react-server]",
+      allowClearScreen: false,
+    }),
     clearScreen: false,
     configFile: false,
     cacheDir: "./node_modules/.vite-rsc",
+    server: {
+      // TODO: for now this is to silence build only virtual:... resolution error
+      preTransformRequests: false,
+    },
     optimizeDeps: {
       noDiscovery: true,
       include: [],
@@ -349,12 +356,17 @@ export function vitePluginReactServer(options?: {
         await import("${ENTRY_CLIENT}");
       `;
     }),
-    createVirtualPlugin("dev-ssr-css.css?direct", () => {
+    createVirtualPlugin("dev-ssr-css.css?direct", async () => {
       tinyassert(!manager.buildType);
-      // TODO: collect from RSC too
       // TODO: need to send new css also on RSC hot reload
-      // collectStyle(__rscDevServer, [ENTRY_REACT_SERVER]);
-      return collectStyle(__devServer, [ENTRY_CLIENT]);
+      //       probably a separate virtual css plugin?
+      const styles = await Promise.all([
+        `/******* react-server ********/`,
+        collectStyle(__rscDevServer, [ENTRY_REACT_SERVER]),
+        `/******* client **************/`,
+        collectStyle(__devServer, [ENTRY_CLIENT]),
+      ]);
+      return styles.join("\n\n");
     }),
   ];
 }
