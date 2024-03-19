@@ -93,7 +93,7 @@ test("@dev client hmr", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
-test("css", async ({ page, browser }) => {
+test("unocss", async ({ page, browser }) => {
   await page.goto("/test");
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
@@ -107,9 +107,11 @@ test("css", async ({ page, browser }) => {
   ).toHaveCSS("font-weight", "700");
 });
 
-test("@dev css hmr", async ({ page, browser }) => {
+test("unocss hmr @dev", async ({ page, browser }) => {
   await page.goto("/test");
   await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
 
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
@@ -123,12 +125,86 @@ test("@dev css hmr", async ({ page, browser }) => {
     "300",
   );
 
+  await checkClientState();
+
   // verify new style is applied without js
   const page2 = await browser.newPage({ javaScriptEnabled: false });
   await page2.goto("/test");
   await expect(
     page2.getByRole("heading", { name: "RSC Experiment" }),
   ).toHaveCSS("font-weight", "300");
+});
+
+test("react-server css", async ({ page }) => {
+  await page.goto("/test/css");
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+});
+
+test("react-server css @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  await page.goto("/test/css");
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+});
+
+test.only("react-server css hmr @dev", async ({ page, browser }) => {
+  await page.goto("/test/css");
+  await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await editFile("./src/routes/test/css/css-normal.css", (s) =>
+    s.replace("rgb(250, 250, 200)", "rgb(250, 250, 123)"),
+  );
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 123)",
+  );
+
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+  await editFile("./src/routes/test/css/css-module.module.css", (s) =>
+    s.replace("rgb(200, 250, 250)", "rgb(123, 250, 250)"),
+  );
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(123, 250, 250)",
+  );
+
+  await checkClientState();
+
+  // verify new style is applied without js
+  {
+    const page = await browser.newPage({ javaScriptEnabled: false });
+    await page.goto("/test/css");
+    await expect(page.getByText("css normal")).toHaveCSS(
+      "background-color",
+      "rgb(250, 250, 123)",
+    );
+    await expect(page.getByText("css module")).toHaveCSS(
+      "background-color",
+      "rgb(123, 250, 250)",
+    );
+  }
 });
 
 test("server action with js", async ({ page }) => {

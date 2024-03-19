@@ -1,5 +1,6 @@
 .test {
-  background: #ccffff;
-  padding: 1rem;
-  width: 8rem;
+  background: rgb(200, 250, 250);
+  padding: 20px;
+  width: 200px;
+  border: 1px solid gray;
 }
