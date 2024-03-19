@@ -148,6 +148,8 @@ export function vitePluginReactServer(options?: {
     ],
     build: {
       ssr: true,
+      manifest: true,
+      ssrEmitAssets: true,
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
@@ -184,7 +186,7 @@ export function vitePluginReactServer(options?: {
           rollupOptions: env.isSsrBuild
             ? undefined
             : {
-                input: ENTRY_CLIENT,
+                input: "virtual:client-entry-wrapper.js",
               },
         },
       };
@@ -318,7 +320,7 @@ export function vitePluginReactServer(options?: {
           </script>
         `;
         const result: SsrAssetsType = {
-          bootstrapModules: ["/@id/__x00__virtual:dev-client-entry.js"],
+          bootstrapModules: ["/@id/__x00__virtual:client-entry-wrapper.js"],
           head,
         };
         return `export default ${JSON.stringify(result)}`;
@@ -332,7 +334,7 @@ export function vitePluginReactServer(options?: {
             "utf-8",
           ),
         );
-        const entry = manifest["src/entry-client.tsx"];
+        const entry = manifest["virtual:client-entry-wrapper.js"];
         tinyassert(entry);
         const head = (entry.css ?? [])
           .map((url) => `<link rel="stylesheet" href="/${url}" />`)
@@ -346,19 +348,6 @@ export function vitePluginReactServer(options?: {
 
       tinyassert(false);
     }),
-    createVirtualPlugin("dev-client-entry.js", () => {
-      tinyassert(!manager.buildType);
-      // wrapper entry to ensure client entry runs after vite/react inititialization
-      // TODO: setup "virtual:react-server-css.js" for build
-      return /* js */ `
-        import "virtual:react-server-css.js";
-        for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
-          await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
-        }
-        await import("${ENTRY_CLIENT}");
-      `;
-    }),
-    // TODO
     createVirtualPlugin("client-entry-wrapper.js", () => {
       // dev
       if (!manager.buildType) {
@@ -382,8 +371,6 @@ export function vitePluginReactServer(options?: {
     }),
     createVirtualPlugin("dev-ssr-css.css?direct", async () => {
       tinyassert(!manager.buildType);
-      // TODO: need to send new css also on RSC hot reload
-      //       probably a separate virtual css plugin?
       const styles = await Promise.all([
         `/******* react-server ********/`,
         collectStyle(__rscDevServer, [ENTRY_REACT_SERVER]),
@@ -393,16 +380,23 @@ export function vitePluginReactServer(options?: {
       return styles.join("\n\n");
     }),
     createVirtualPlugin("react-server-css.js", async () => {
-      // proxy css imports to client
-      const urls = await collectStyleUrls(__rscDevServer, [ENTRY_REACT_SERVER]);
-      let code = urls.map((url) => `import "${url}";\n`).join("");
-      // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
-      code += `
-        if (import.meta.hot) {
-          import.meta.hot.accept();
-        }
-      `;
-      return code;
+      // virtual module proxy css imports from react server to client
+      // TODO: invalidate + full reload when add/remove css file?
+      if (!manager.buildType) {
+        const urls = await collectStyleUrls(__rscDevServer, [
+          ENTRY_REACT_SERVER,
+        ]);
+        const code = urls.map((url) => `import "${url}";\n`).join("");
+        // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
+        return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
+      }
+      if (manager.buildType === "client") {
+        // TODO: probe manifest to collect css?
+        const files = await fg("./dist/rsc/assets/*.css", { absolute: true });
+        const code = files.map((url) => `import "${url}";\n`).join("");
+        return code;
+      }
+      tinyassert(false);
     }),
   ];
 }
