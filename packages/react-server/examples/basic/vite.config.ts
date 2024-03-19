@@ -14,7 +14,7 @@ export default defineConfig({
     react(),
     unocss(),
     vitePluginReactServer({
-      plugins: [unocss(), testVitePluginVirtual()],
+      plugins: [testVitePluginVirtual()],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({

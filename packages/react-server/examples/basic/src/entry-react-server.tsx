@@ -1,4 +1,3 @@
-import "virtual:uno.css";
 import {
   type ReactServerHandler,
   handler as baseHandler,
