@@ -1,6 +1,7 @@
 import { TestVirtualUseClient } from "virtual:test-use-client";
 import { TestDepServerComponent } from "@hiogawa/test-dep-server-component";
 import { TestDepUseClient } from "@hiogawa/test-dep-use-client";
+import { Tweet } from "react-tweet";
 import {
   Balancer as BalancerNamed,
   default as BalancerDefault,
@@ -18,6 +19,16 @@ export default function Page() {
       </div>
       <div>
         <TestDepServerComponent />
+      </div>
+      <div className="border p-2">
+        <a
+          className="text-lg font-bold antd-link"
+          href="https://github.com/vercel/react-tweet"
+          target="_blank"
+        >
+          vercel/react-tweet
+        </a>
+        <Tweet id="1768090382670463440" />
       </div>
       <div className="border p-2">
         <a
