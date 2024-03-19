@@ -1,0 +1,14 @@
+import "./css-normal.css";
+import cssModule from "./css-module.module.css";
+
+export default function Page() {
+  return (
+    <div className="flex flex-col gap-2">
+      <h5 className="font-bold">css</h5>
+      <div className="flex flex-col gap-2">
+        <div id="css-normal">css normal</div>
+        <div className={cssModule.test}>css module</div>
+      </div>
+    </div>
+  );
+}

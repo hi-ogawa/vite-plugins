@@ -6,7 +6,7 @@ import {
   initDomWebpackSsr,
   invalidateImportCacheOnFinish,
 } from "../lib/ssr";
-import { invalidateModule } from "../plugin/utils";
+import { ENTRY_REACT_SERVER, invalidateModule } from "../plugin/utils";
 
 export async function handler(request: Request): Promise<Response> {
   const reactServer = await importReactServer();
@@ -31,7 +31,7 @@ export async function importReactServer(): Promise<
   typeof import("./react-server")
 > {
   if (import.meta.env.DEV) {
-    return __rscDevServer.ssrLoadModule(__rscEntry) as any;
+    return __rscDevServer.ssrLoadModule(ENTRY_REACT_SERVER) as any;
   } else {
     return import("/dist/rsc/index.js" as string);
   }
@@ -65,6 +65,7 @@ export async function renderHtml(
   if (import.meta.env.DEV) {
     // ensure latest css
     invalidateModule(__devServer, "\0virtual:ssr-assets");
+    invalidateModule(__devServer, "\0virtual:react-server-css.js");
     invalidateModule(__devServer, "\0virtual:dev-ssr-css.css?direct");
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
