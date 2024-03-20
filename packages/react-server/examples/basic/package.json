@@ -11,6 +11,7 @@
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "vc-build": "pnpm build && bash misc/vercel-serverless/build.sh",
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel-serverless",
+    "vc-release-staging": "vercel deploy --prebuilt misc/vercel-serverless",
     "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
     "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
@@ -29,6 +30,7 @@
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.7",
     "@hiogawa/utils": "^1.6.3",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
+    "@iconify-json/ri": "^1.1.20",
     "@playwright/test": "^1.42.1",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",

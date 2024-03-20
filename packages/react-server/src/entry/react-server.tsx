@@ -1,20 +1,66 @@
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import { __global } from "../lib/global";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
-import { ejectActionId } from "../lib/shared";
+import { ejectActionId, unwrapRscRequest } from "../lib/shared";
+
+export type ReactServerHandler = (
+  ctx: ReactServerHandlerContext,
+) => Promise<ReactServerHandlerResult>;
+
+// users can extend interface
+export interface ReactServerHandlerContext {
+  request: Request;
+}
+
+export type ReactServerHandlerResult =
+  | Response
+  | {
+      stream: ReadableStream<Uint8Array>;
+      status: number;
+    };
+
+export const handler: ReactServerHandler = async ({ request }) => {
+  // TODO
+  // api to manipulate response status/headers from server action/component?
+  // allow mutate them via PageRouterProps?
+  // also redirect?
+
+  // action
+  if (request.method === "POST") {
+    await actionHandler({ request });
+  }
+
+  // check rsc-only request
+  const rscOnlyRequest = unwrapRscRequest(request);
+
+  // rsc
+  const { stream, status } = render({
+    request: rscOnlyRequest ?? request,
+  });
+  if (rscOnlyRequest) {
+    return new Response(stream, {
+      headers: {
+        "content-type": "text/x-component",
+      },
+    });
+  }
+
+  return { stream, status };
+};
 
 //
 // render RSC
 //
 
-export function render({ request }: { request: Request }) {
+function render({ request }: { request: Request }) {
   const result = router.run(request);
-  const rscStream = reactServerDomServer.renderToReadableStream(
+  const stream = reactServerDomServer.renderToReadableStream(
     result.node,
     createBundlerConfig(),
   );
-  return { rscStream, status: result.match.notFound ? 404 : 200 };
+  return { stream, status: result.match.notFound ? 404 : 200 };
 }
 
 //
@@ -52,7 +98,7 @@ function createRouter() {
 // server action
 //
 
-export async function actionHandler({ request }: { request: Request }) {
+async function actionHandler({ request }: { request: Request }) {
   const formData = await request.formData();
   if (0) {
     // TODO: proper decoding?
@@ -63,7 +109,7 @@ export async function actionHandler({ request }: { request: Request }) {
   let action: Function;
   const [file, name] = id.split("::") as [string, string];
   if (import.meta.env.DEV) {
-    const mod: any = await __rscDevServer.ssrLoadModule(file);
+    const mod: any = await __global.dev.reactServer.ssrLoadModule(file);
     action = mod[name];
   } else {
     // include all "use server" files via virtual module on build

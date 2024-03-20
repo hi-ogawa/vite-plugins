@@ -1,58 +1,46 @@
-import { typedBoolean } from "@hiogawa/utils";
+import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { unwrapRscRequest } from "../lib/shared";
+import { __global } from "../lib/global";
 import {
   createModuleMap,
   initDomWebpackSsr,
   invalidateImportCacheOnFinish,
 } from "../lib/ssr";
+import { ENTRY_REACT_SERVER, invalidateModule } from "../plugin/utils";
 
 export async function handler(request: Request): Promise<Response> {
-  const entryRsc = await importEntryRsc();
+  const reactServer = await importReactServer();
 
-  // action
-  if (request.method === "POST") {
-    await entryRsc.actionHandler({ request });
-  }
-
-  // check rsc-only request
-  const rscRequest = unwrapRscRequest(request);
-
-  // rsc
-  const { rscStream, status } = entryRsc.render({
-    request: rscRequest ?? request,
-  });
-  if (rscRequest) {
-    return new Response(rscStream, {
-      headers: {
-        "content-type": "text/x-component",
-      },
-    });
+  // server action and render rsc
+  const result = await reactServer.handler({ request });
+  if (result instanceof Response) {
+    return result;
   }
 
   // ssr rsc
-  let htmlStream = await renderHtml(rscStream);
+  const htmlStream = await renderHtml(result.stream);
   return new Response(htmlStream, {
-    status,
+    status: result.status,
     headers: {
       "content-type": "text/html",
     },
   });
 }
 
-async function importEntryRsc(): Promise<typeof import("./react-server")> {
+export async function importReactServer(): Promise<
+  typeof import("./react-server")
+> {
   if (import.meta.env.DEV) {
-    return __rscDevServer.ssrLoadModule(
-      "@hiogawa/react-server/entry-react-server",
-    ) as any;
+    return __global.dev.reactServer.ssrLoadModule(ENTRY_REACT_SERVER) as any;
   } else {
     return import("/dist/rsc/index.js" as string);
   }
 }
 
-// TODO: full <html> render by RSC?
-async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
+export async function renderHtml(
+  rscStream: ReadableStream,
+): Promise<ReadableStream> {
   await initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
@@ -75,69 +63,38 @@ async function renderHtml(rscStream: ReadableStream): Promise<ReadableStream> {
     },
   );
 
+  if (import.meta.env.DEV) {
+    // ensure latest css
+    invalidateModule(__global.dev.server, "\0virtual:ssr-assets");
+    invalidateModule(__global.dev.server, "\0virtual:react-server-css.js");
+    invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
+  }
+  const assets = (await import("virtual:ssr-assets" as string)).default;
+
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
-    // TODO
-    bootstrapModules: [],
-    bootstrapScripts: [],
+    bootstrapModules: assets.bootstrapModules,
   });
 
   return ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
-    .pipeThrough(await injectToHtmlTempalte())
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(injectToHead(assets.head))
+    .pipeThrough(new TextEncoderStream())
     .pipeThrough(injectRSCPayload(rscStream2));
 }
 
-async function injectToHtmlTempalte() {
-  let html = await importHtmlTemplate();
-
-  if (import.meta.env.DEV) {
-    // fix dev FOUC (cf. https://github.com/hi-ogawa/vite-plugins/pull/110)
-    // for now crawl only direct dependency of entry-client
-    const entry = "/src/entry-client";
-    await __devServer.transformRequest(entry);
-    const modNode = await __devServer.moduleGraph.getModuleByUrl(entry);
-    if (modNode) {
-      const links = [...modNode.importedModules]
-        .map((modNode) => modNode.id)
-        .filter(typedBoolean)
-        .filter((id) => id.match(CSS_LANGS_RE))
-        .map((id) => `<link rel="stylesheet" href="${id}?direct" />\n`)
-        .join("");
-      html = html.replace("</head>", `${links}</head>`);
-    }
-  }
-
-  // transformer to inject SSR stream
-  const [pre, post] = html.split("<!--@INJECT_SSR@-->");
-  const encoder = new TextEncoder();
-  return new TransformStream<Uint8Array, Uint8Array>({
-    start(controller) {
-      controller.enqueue(encoder.encode(pre));
-    },
+function injectToHead(data: string) {
+  const marker = "<head>";
+  let done = false;
+  return new TransformStream<string, string>({
     transform(chunk, controller) {
+      if (!done && chunk.includes(marker)) {
+        const [pre, post] = splitFirst(chunk, marker);
+        controller.enqueue(pre + marker + data + post);
+        done = true;
+        return;
+      }
       controller.enqueue(chunk);
-    },
-    flush(controller) {
-      controller.enqueue(encoder.encode(post));
     },
   });
 }
-
-async function importHtmlTemplate() {
-  let html: string;
-  if (import.meta.env.DEV) {
-    const mod = await import("/index.html?raw");
-    html = await __devServer.transformIndexHtml("/", mod.default);
-  } else {
-    const mod = await import("/dist/client/index.html?raw");
-    html = mod.default;
-  }
-  // ensure </body></html> trailer
-  // https://github.com/devongovett/rsc-html-stream/blob/5c2f058996e42be6120dfaf1df384361331f3ea9/server.js#L2
-  html = html.replace(/<\/body>\s*<\/html>\s*/, "</body></html>");
-  return html;
-}
-
-// cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
-const CSS_LANGS_RE =
-  /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;

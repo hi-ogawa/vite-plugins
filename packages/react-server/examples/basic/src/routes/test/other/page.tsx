@@ -28,6 +28,12 @@ export default function Page(props: PageRouteProps) {
           </Link>
         </div>
       </div>
+      <h5 className="font-bold">custom entry</h5>
+      <div>
+        <a className="antd-link" href="/test/__rpc">
+          /text/__rpc
+        </a>
+      </div>
     </div>
   );
 }

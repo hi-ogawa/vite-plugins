@@ -19,6 +19,8 @@ test("navigation", async ({ page }) => {
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByText("Other Page").click();
   await page.waitForURL("/test/other");
+  await page.goBack();
+  await page.waitForURL("/test");
 
   await checkClientState();
 });
@@ -31,7 +33,7 @@ test("404", async ({ page }) => {
   await page.getByText("Not Found: /test/not-found").click();
 });
 
-test("@dev rsc hmr", async ({ page }) => {
+test("rsc hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
@@ -49,7 +51,7 @@ test("@dev rsc hmr", async ({ page }) => {
   await checkClientState();
 });
 
-test("@dev common hmr", async ({ page }) => {
+test("common hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
@@ -69,7 +71,7 @@ test("@dev common hmr", async ({ page }) => {
   await checkClientState();
 });
 
-test("@dev client hmr", async ({ page }) => {
+test("client hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
@@ -91,17 +93,25 @@ test("@dev client hmr", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
-test("css", async ({ page }) => {
+test("unocss", async ({ page, browser }) => {
   await page.goto("/test");
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
     "700",
   );
+
+  const page2 = await browser.newPage({ javaScriptEnabled: false });
+  await page2.goto("/test");
+  await expect(
+    page2.getByRole("heading", { name: "RSC Experiment" }),
+  ).toHaveCSS("font-weight", "700");
 });
 
-test("@dev css hmr", async ({ page }) => {
+test("unocss hmr @dev", async ({ page, browser }) => {
   await page.goto("/test");
   await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
 
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
@@ -114,10 +124,92 @@ test("@dev css hmr", async ({ page }) => {
     "font-weight",
     "300",
   );
+
+  await checkClientState();
+
+  // verify new style is applied without js
+  const page2 = await browser.newPage({ javaScriptEnabled: false });
+  await page2.goto("/test");
+  await expect(
+    page2.getByRole("heading", { name: "RSC Experiment" }),
+  ).toHaveCSS("font-weight", "300");
+});
+
+test("react-server css", async ({ page }) => {
+  await page.goto("/test/css");
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+});
+
+test("react-server css @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  await page.goto("/test/css");
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+});
+
+test("react-server css hmr @dev", async ({ page, browser }) => {
+  await page.goto("/test/css");
+  await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await editFile("./src/routes/test/css/css-normal.css", (s) =>
+    s.replace("rgb(250, 250, 200)", "rgb(250, 250, 123)"),
+  );
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 123)",
+  );
+
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+  await editFile("./src/routes/test/css/css-module.module.css", (s) =>
+    s.replace("rgb(200, 250, 250)", "rgb(123, 250, 250)"),
+  );
+  await expect(page.getByText("css module")).toHaveCSS(
+    "background-color",
+    "rgb(123, 250, 250)",
+  );
+
+  await checkClientState();
+
+  // verify new style is applied without js
+  {
+    const page = await browser.newPage({ javaScriptEnabled: false });
+    await page.goto("/test/css");
+    await expect(page.getByText("css normal")).toHaveCSS(
+      "background-color",
+      "rgb(250, 250, 123)",
+    );
+    await expect(page.getByText("css module")).toHaveCSS(
+      "background-color",
+      "rgb(123, 250, 250)",
+    );
+  }
 });
 
 test("server action with js", async ({ page }) => {
   await page.goto("/test/action");
+  await page.getByText("hydrated: true").click();
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -182,6 +274,34 @@ test("RouteProps.request", async ({ page }) => {
   await page.getByText("searchParams = {}").click();
   await page.getByRole("link", { name: "hello" }).click();
   await page.getByText('searchParams = {"hello":""}').click();
+});
+
+test("custom entry-react-server", async ({ request }) => {
+  const res = await request.get("/test/__rpc");
+  expect(await res.json()).toEqual({ hello: "world" });
+});
+
+test("head in rsc", async ({ page }) => {
+  await page.goto("/test/head");
+  await page.getByText("hydrated: true").click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await page.getByRole("link", { name: "title = hello" }).click();
+  await expect(page).toHaveTitle("hello");
+  await page.getByRole("link", { name: "title = world" }).click();
+  await expect(page).toHaveTitle("world");
+
+  await checkClientState();
+
+  // TODO: it doesn't magically overwrite already rendered title in the layout...
+  const res = await page.request.get("/test/head?title=hello");
+  const resText = await res.text();
+  expect(resText).toMatch(/<head>.*<title>rsc-experiment<\/title>.*<\/head>/s);
+  expect(resText).toMatch(/<head>.*<title>hello<\/title>.*<\/head>/s);
+  expect(resText).toMatch(
+    /<head>.*<meta name="test" content="hello"\/>.*<\/head>/s,
+  );
 });
 
 async function setupCheckClientState(page: Page) {

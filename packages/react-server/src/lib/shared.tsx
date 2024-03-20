@@ -1,8 +1,9 @@
 import { tinyassert } from "@hiogawa/utils";
-import type { CallServerCallback } from "./types";
+import { __global } from "./global";
 
 // TODO: organize
 
+// TODO: use accept header x-component?
 const RSC_PARAM = "__rsc";
 
 export function wrapRscRequestUrl(url: string): string {
@@ -50,9 +51,7 @@ export function ejectActionId(formData: FormData) {
 export function createServerReference(id: string): React.FC {
   return Object.defineProperties(
     (...args: unknown[]) => {
-      const callServer: CallServerCallback = (globalThis as any).__callServer;
-      tinyassert(callServer);
-      return callServer(id, args);
+      return __global.callServer(id, args);
     },
     {
       $$typeof: {

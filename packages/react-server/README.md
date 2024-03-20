@@ -1,8 +1,8 @@
 # @hiogawa/react-server
 
-[Try it on Stackblitz](https://stackblitz.com/edit/github-ufbaye?file=src%2Froutes%2Fserver-action%2Fclient.tsx)
+[Try it on Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
 
-![image](https://github.com/hi-ogawa/vite-plugins/assets/4232207/119a42ee-d68e-401d-830a-161cc53c8b24)
+![image](https://github.com/hi-ogawa/vite-plugins/assets/4232207/9417d47c-6a7a-42c0-af25-b33e527420e4)
 
 See https://github.com/hi-ogawa/vite-plugins/issues/174 for known issues.
 
@@ -28,14 +28,15 @@ pnpm preview
 
 - `index.html`
 - `src/entry-client.tsx`
+- `src/entry-react-server.tsx`
 - `src/routes/**/(page|layout).tsx`
 - `"use client"`
 - `"use server"`
 
 ## Examples
 
-- [`./examples/starter`](./examples/starter)
-- [`./examples/basic`](./examples/basic)
+- [`./examples/starter`](./examples/starter) [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
+- [`./examples/basic`](./examples/basic) [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/basic)
 
 ## Development
 
