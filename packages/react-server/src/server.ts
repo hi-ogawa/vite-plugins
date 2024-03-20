@@ -1,2 +1,5 @@
-// TODO: server action utilities with "use server"?
-export type { PageRouteProps, LayoutRouteProps } from "./lib/router";
+export type {
+  PageRouteProps,
+  LayoutRouteProps,
+  ErrorRouteProps,
+} from "./lib/router";

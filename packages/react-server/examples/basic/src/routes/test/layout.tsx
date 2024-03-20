@@ -14,6 +14,7 @@ export default async function Layout(props: React.PropsWithChildren) {
           "/test/deps",
           "/test/head",
           "/test/css",
+          "/test/error",
           "/test/not-found",
         ]}
       />

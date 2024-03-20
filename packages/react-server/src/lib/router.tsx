@@ -1,9 +1,6 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import type React from "react";
 
-// cf. similar to vite-glob-routes
-// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
-
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
   page?: {
@@ -11,6 +8,9 @@ interface RouteEntry {
   };
   layout?: {
     default: React.FC<LayoutRouteProps>;
+  };
+  error?: {
+    default: React.FC<ErrorRouteProps>;
   };
 }
 
@@ -21,7 +21,7 @@ type RouteTreeNode = TreeNode<RouteEntry>;
 export function generateRouteTree(globEntries: Record<string, unknown>) {
   const entries: Record<string, RouteEntry> = {};
   for (const [k, v] of Object.entries(globEntries)) {
-    const m = k.match(/^(.*)\/(page|layout)\.\w*$/);
+    const m = k.match(/^(.*)\/(page|layout|error)\.\w*$/);
     tinyassert(m && 1 in m && 2 in m);
     tinyassert(objectHas(v, "default"), `no deafult export found in '${k}'`);
     ((entries[m[1]] ??= {}) as any)[m[2]] = v;
@@ -37,6 +37,7 @@ export function generateRouteTree(globEntries: Record<string, unknown>) {
 
 export type MatchRouteResult = {
   nodes: RouteTreeNode[];
+  // TODO: not found as error
   notFound: boolean;
   params: Record<string, string>;
 };
@@ -102,6 +103,8 @@ interface RouteProps {
 
 export interface PageRouteProps extends RouteProps {}
 
+export interface ErrorRouteProps extends RouteProps {}
+
 export interface LayoutRouteProps extends React.PropsWithChildren<RouteProps> {}
 
 function matchChild(input: string, node: RouteTreeNode) {
@@ -124,7 +127,8 @@ function matchChild(input: string, node: RouteTreeNode) {
 }
 
 //
-// general tree structure utils
+// general tree utils copied from vite-glob-routes
+// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
 //
 
 type TreeNode<T> = {

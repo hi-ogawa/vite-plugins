@@ -72,7 +72,7 @@ const router = createRouter();
 function createRouter() {
   // for now hard code /src/routes as convention
   const glob = import.meta.glob(
-    "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
+    "/src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
     {
       eager: true,
     },
@@ -86,6 +86,7 @@ function createRouter() {
     const match = matchRoute(url.pathname, tree);
     const node = renderMatchRoute(
       { request, match },
+      // TODO: default error page?
       <div>Not Found: {url.pathname}</div>,
     );
     return { node, match };
