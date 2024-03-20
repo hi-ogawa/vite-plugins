@@ -1,6 +1,7 @@
 import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
+import { __global } from "../lib/global";
 import {
   createModuleMap,
   initDomWebpackSsr,
@@ -31,7 +32,7 @@ export async function importReactServer(): Promise<
   typeof import("./react-server")
 > {
   if (import.meta.env.DEV) {
-    return __rscDevServer.ssrLoadModule(ENTRY_REACT_SERVER) as any;
+    return __global.dev.reactServer.ssrLoadModule(ENTRY_REACT_SERVER) as any;
   } else {
     return import("/dist/rsc/index.js" as string);
   }
@@ -64,9 +65,9 @@ export async function renderHtml(
 
   if (import.meta.env.DEV) {
     // ensure latest css
-    invalidateModule(__devServer, "\0virtual:ssr-assets");
-    invalidateModule(__devServer, "\0virtual:react-server-css.js");
-    invalidateModule(__devServer, "\0virtual:dev-ssr-css.css?direct");
+    invalidateModule(__global.dev.server, "\0virtual:ssr-assets");
+    invalidateModule(__global.dev.server, "\0virtual:react-server-css.js");
+    invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
 

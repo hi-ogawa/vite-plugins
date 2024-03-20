@@ -19,6 +19,7 @@ import {
   parseAstAsync,
 } from "vite";
 import { debug } from "../lib/debug";
+import { __global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import { ENTRY_CLIENT, ENTRY_REACT_SERVER, type SsrAssetsType } from "./utils";
@@ -196,12 +197,13 @@ export function vitePluginReactServer(options?: {
     },
     async buildStart(_options) {
       if (parentEnv.command === "serve") {
+        tinyassert(parentServer);
         rscDevServer = await createServer(rscConfig);
         rscDevServer.pluginContainer.buildStart({});
-        Object.assign(globalThis, {
-          __devServer: parentServer,
-          __rscDevServer: rscDevServer,
-        });
+        __global.dev = {
+          server: parentServer,
+          reactServer: rscDevServer,
+        };
       }
       if (parentEnv.command === "build") {
         if (parentEnv.isSsrBuild) {
@@ -293,7 +295,7 @@ export function vitePluginReactServer(options?: {
       // dev
       if (!manager.buildType) {
         // extract <head> injected by plugins
-        const html = await __devServer.transformIndexHtml(
+        const html = await __global.dev.server.transformIndexHtml(
           "/",
           "<html><head></head></html>",
         );
@@ -373,9 +375,9 @@ export function vitePluginReactServer(options?: {
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle(__rscDevServer, [ENTRY_REACT_SERVER]),
+        collectStyle(__global.dev.reactServer, [ENTRY_REACT_SERVER]),
         `/******* client **************/`,
-        collectStyle(__devServer, [ENTRY_CLIENT]),
+        collectStyle(__global.dev.server, [ENTRY_CLIENT]),
       ]);
       return styles.join("\n\n");
     }),
@@ -383,7 +385,7 @@ export function vitePluginReactServer(options?: {
       // virtual module proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        const urls = await collectStyleUrls(__rscDevServer, [
+        const urls = await collectStyleUrls(__global.dev.reactServer, [
           ENTRY_REACT_SERVER,
         ]);
         const code = urls.map((url) => `import "${url}";\n`).join("");
