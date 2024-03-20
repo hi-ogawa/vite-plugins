@@ -6,6 +6,7 @@ export default async function Page(props: PageRouteProps) {
   await sleep(200);
   const url = new URL(props.request.url);
   if (url.searchParams.has("crash")) {
+    // TODO: not caught on SSR. need suspense?
     throw new Error("crash!");
   }
   return (

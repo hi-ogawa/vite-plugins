@@ -22,6 +22,8 @@ export default defineConfig([
       "/dist/rsc/index.js",
       "/dist/client/index.html?raw",
       "/index.html?raw",
+      // self reference
+      /^@hiogawa\/react-server/,
     ],
   },
 ]);

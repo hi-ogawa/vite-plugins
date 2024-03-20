@@ -36,7 +36,7 @@ export const handler: ReactServerHandler = async ({ request }) => {
   const rscOnlyRequest = unwrapRscRequest(request);
 
   // rsc
-  const { stream, status } = render({
+  const { stream, status } = await render({
     request: rscOnlyRequest ?? request,
   });
   if (rscOnlyRequest) {
@@ -54,8 +54,8 @@ export const handler: ReactServerHandler = async ({ request }) => {
 // render RSC
 //
 
-function render({ request }: { request: Request }) {
-  const result = router.run(request);
+async function render({ request }: { request: Request }) {
+  const result = await router.run(request);
   const stream = reactServerDomServer.renderToReadableStream(
     result.node,
     createBundlerConfig(),
@@ -81,10 +81,10 @@ function createRouter() {
     objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length)),
   );
 
-  function run(request: Request) {
+  async function run(request: Request) {
     const url = new URL(request.url);
     const match = matchRoute(url.pathname, tree);
-    const node = renderMatchRoute(
+    const node = await renderMatchRoute(
       { request, match },
       // TODO: default error page?
       <div>Not Found: {url.pathname}</div>,

@@ -1,5 +1,5 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
-import type React from "react";
+import React from "react";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -71,10 +71,26 @@ export function matchRoute(
 }
 
 // TODO: separate react code in a different file
-export function renderMatchRoute(
+export async function renderMatchRoute(
   props: RouteProps,
   fallback: React.ReactNode,
-): React.ReactNode {
+): Promise<React.ReactNode> {
+  // let clientLib: typeof import("../client-internal");
+  // if (import.meta.env.DEV) {
+  //   // TODO: workaorund self-reference during dev
+  //   const lib = await import("node:module");
+  //   const require = lib.default.createRequire(import.meta.url);
+  //   // TODO: resolved client boundary breaks vite deps optimization
+  //   const resolved = require.resolve("@hiogawa/react-server/client-internal");
+  //   // console.log({ resolved });
+  //   clientLib = (await import(/* @vite-ignore */ resolved)) as any;
+  //   // console.log(clientLib, clientLib.ErrorBoundary);
+  // } else {
+  //   throw new Error("todo");
+  //   // clientLib = await import("@hiogawa/react-server/client-internal") as any;
+  // }
+  // clientLib.ErrorBoundary;
+
   const nodes = [...props.match.nodes].reverse();
 
   let acc: React.ReactNode = fallback;
@@ -88,6 +104,8 @@ export function renderMatchRoute(
 
   for (const node of nodes) {
     const Layout = node.value?.layout?.default;
+    if (node.value?.error) {
+    }
     if (Layout) {
       acc = <Layout {...props}>{acc}</Layout>;
     }
@@ -103,7 +121,10 @@ interface RouteProps {
 
 export interface PageRouteProps extends RouteProps {}
 
-export interface ErrorRouteProps extends RouteProps {}
+export interface ErrorRouteProps {
+  error: Error;
+  reset: () => void;
+}
 
 export interface LayoutRouteProps extends React.PropsWithChildren<RouteProps> {}
 
