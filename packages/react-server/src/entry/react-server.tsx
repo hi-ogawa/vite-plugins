@@ -1,5 +1,6 @@
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import { __global } from "../lib/global";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
 import { ejectActionId, unwrapRscRequest } from "../lib/shared";
@@ -108,7 +109,7 @@ async function actionHandler({ request }: { request: Request }) {
   let action: Function;
   const [file, name] = id.split("::") as [string, string];
   if (import.meta.env.DEV) {
-    const mod: any = await __rscDevServer.ssrLoadModule(file);
+    const mod: any = await __global.dev.reactServer.ssrLoadModule(file);
     action = mod[name];
   } else {
     // include all "use server" files via virtual module on build

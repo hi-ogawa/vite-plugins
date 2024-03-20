@@ -4,6 +4,7 @@ import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
 import { debug } from "../lib/debug";
+import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
@@ -48,8 +49,7 @@ export async function start() {
   };
 
   // expose as global to be used for createServerReference
-  // TODO: refactor
-  Object.assign(globalThis, { __callServer: callServer });
+  __global.callServer = callServer;
 
   // initial rsc stream from inline <script>
   const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
