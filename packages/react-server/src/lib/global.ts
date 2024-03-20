@@ -9,4 +9,4 @@ export let __global: {
     server: ViteDevServer;
     reactServer: ViteDevServer;
   };
-} = {} as any;
+} = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});
