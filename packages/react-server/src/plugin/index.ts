@@ -58,7 +58,6 @@ export function vitePluginReactServer(options?: {
   const manager = new ReactServerManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
-  let rscDevServer: ViteDevServer | undefined;
 
   const rscConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
@@ -198,11 +197,11 @@ export function vitePluginReactServer(options?: {
     async buildStart(_options) {
       if (parentEnv.command === "serve") {
         tinyassert(parentServer);
-        rscDevServer = await createServer(rscConfig);
-        rscDevServer.pluginContainer.buildStart({});
+        const reactServer = await createServer(rscConfig);
+        reactServer.pluginContainer.buildStart({});
         __global.dev = {
           server: parentServer,
-          reactServer: rscDevServer,
+          reactServer: reactServer,
         };
       }
       if (parentEnv.command === "build") {
@@ -217,7 +216,8 @@ export function vitePluginReactServer(options?: {
     },
     async buildEnd(_options) {
       if (parentEnv.command === "serve") {
-        await rscDevServer?.close();
+        await __global.dev.reactServer.close();
+        delete (__global as any).dev;
       }
     },
     transform(_code, id, _options) {
