@@ -2,9 +2,11 @@
 
 import React from "react";
 
-// TOOD: for now, experiment in demo
+// TOOD: for now, experiment inside demo
 
-// cf. https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
+// cf.
+// https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
+// https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
 export class ErrorBoundary extends React.Component<
   {
     children?: React.ReactNode;

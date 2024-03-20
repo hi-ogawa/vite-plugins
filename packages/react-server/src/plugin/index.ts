@@ -509,6 +509,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
+      // TODO: can we use internal "imports" subpath?
       // TODO:
       // "@hiogawa/react-server/client" needs to self-reference
       // "@hiogawa/react-server/server-internal" due to "use client" transform

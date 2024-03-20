@@ -53,6 +53,7 @@ export async function renderHtml(
   // (see src/lib/ssr.tsx for details)
   const renderId = Math.random().toString(36).slice(2);
 
+  // TODO: stream more lazily?
   const rscNode = await reactServerDomClient.createFromReadableStream(
     rscStream1,
     {
@@ -71,8 +72,12 @@ export async function renderHtml(
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
 
+  // TODO: two pass render on error?
   const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
     bootstrapModules: assets.bootstrapModules,
+    onError(error, errorInfo) {
+      console.log("[renderToReadableStream]", { error, errorInfo });
+    },
   });
 
   return ssrStream
