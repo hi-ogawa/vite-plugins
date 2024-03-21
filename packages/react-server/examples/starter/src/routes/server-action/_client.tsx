@@ -1,6 +1,6 @@
 "use client";
 
-import { changeCounter } from "./server";
+import { changeCounter } from "./_action";
 
 export function Counter({ value }: { value: number }) {
   return (
