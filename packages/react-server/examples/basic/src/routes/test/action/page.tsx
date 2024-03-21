@@ -1,5 +1,5 @@
-import { changeCounter, getCounter, getMessages } from "./action";
-import { Chat, Counter, Counter2 } from "./client";
+import { changeCounter, getCounter, getMessages } from "./_action";
+import { Chat, Counter, Counter2 } from "./_client";
 
 export default async function Page() {
   return (
