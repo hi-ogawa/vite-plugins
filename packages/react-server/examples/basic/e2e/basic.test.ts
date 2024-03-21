@@ -30,13 +30,12 @@ test("error", async ({ page }) => {
   expect(res?.status()).toBe(404);
 
   await page.getByText("hydrated: true").click();
-  await page.getByText("status: 404").click();
+  await page.getByText(`server error: {"status":404}`).click();
 
   const checkClientState = await setupCheckClientState(page);
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByText("status: 500").click();
-  await page.getByText("message: boom!").click();
+  await page.getByText(`server error: {"status":500}`).click();
 
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByRole("heading", { name: "Other Page" }).click();

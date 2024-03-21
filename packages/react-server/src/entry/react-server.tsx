@@ -1,5 +1,7 @@
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import { debug } from "../lib/debug";
+import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
@@ -58,6 +60,19 @@ async function render({ request }: { request: Request }) {
   const stream = reactServerDomServer.renderToReadableStream(
     result.node,
     createBundlerConfig(),
+    {
+      onError(error, errorInfo) {
+        debug.rsc("[reactServerDomServer.renderToReadableStream]", {
+          error,
+          errorInfo,
+        });
+        const serverError =
+          error instanceof ReactServerDigestError
+            ? error
+            : createError({ status: 500 });
+        return serverError.digest;
+      },
+    },
   );
   return { stream };
 }

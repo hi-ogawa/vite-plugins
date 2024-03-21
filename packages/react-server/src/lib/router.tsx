@@ -1,6 +1,6 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { createError } from "./error";
+import { type ReactServerErrorContext, createError } from "./error";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -117,7 +117,7 @@ export async function renderMatchRoute(
 }
 
 const ThrowNotFound: React.FC = () => {
-  throw createError(404);
+  throw createError({ status: 404 });
 };
 
 interface RouteProps {
@@ -129,7 +129,7 @@ export interface PageRouteProps extends RouteProps {}
 
 export interface ErrorRouteProps {
   error: Error;
-  status: number;
+  serverError?: ReactServerErrorContext;
   reset: () => void;
 }
 

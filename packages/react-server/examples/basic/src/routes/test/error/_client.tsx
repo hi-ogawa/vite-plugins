@@ -44,17 +44,18 @@ export class ErrorBoundary extends React.Component<Props, State> {
   };
 
   override render() {
-    if (this.state.error) {
+    const error = this.state.error;
+    if (error) {
       const Component = this.props.errorComponent;
       return (
         <Component
-          error={this.state.error}
-          status={getErrorStatus(this.state.error) ?? 500}
+          error={error}
+          serverError={getErrorStatus(error)}
           reset={this.reset}
         />
       );
     }
-    // TODO: need to be wrapped with dom?
+    // TODO: why need to be wrapped with dom?
     return <div>{this.props.children}</div>;
   }
 }

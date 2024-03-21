@@ -79,7 +79,7 @@ export async function renderHtml(rscStream: ReadableStream) {
     ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
-        // TODO: there's still error log from somewhere?
+        // TODO: should handle SSR error which is not RSC error?
         debug.ssr("renderToReadableStream", { error, errorInfo });
       },
     });
@@ -100,7 +100,7 @@ export async function renderHtml(rscStream: ReadableStream) {
     ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
       bootstrapModules: assets.bootstrapModules,
     });
-    status = (e instanceof Error && getErrorStatus(e)) || 500;
+    status = getErrorStatus(e)?.status ?? 500;
   }
 
   const htmlStream = ssrStream

@@ -1,1 +1,1 @@
-export { createError, getErrorStatus } from "./lib/error";
+export { createError, getErrorContext as getErrorStatus } from "./lib/error";
