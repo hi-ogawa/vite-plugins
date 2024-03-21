@@ -25,7 +25,7 @@ test("navigation", async ({ page }) => {
   await checkClientState();
 });
 
-test.only("error", async ({ page }) => {
+test("error", async ({ page }) => {
   const res = await page.goto("/test/not-found");
   expect(res?.status()).toBe(404);
 
