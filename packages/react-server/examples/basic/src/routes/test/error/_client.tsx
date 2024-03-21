@@ -28,6 +28,14 @@ export class ErrorBoundary extends React.Component<
   };
 
   override render() {
+    // SSR context to pick up error from 1st pass in 2nd pass?
+    // __global.ssrContext[props.ssrId]
+    // TODO: how to know where the error is from?
+    //       track SSR of all error boundaries and whether?
+    if (import.meta.env.SSR) {
+    }
+    // import.meta.env.SSR
+
     if (this.state.error) {
       const Component = this.props.errorComponent;
       return <Component error={this.state.error} reset={this.reset} />;
