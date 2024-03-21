@@ -51,7 +51,6 @@ export async function renderHtml(
 
   // use unique id for each render to simplify ssr module invalidation during dev
   // (see src/lib/ssr.tsx for details)
-  // TODO: ssrId?
   const renderId = Math.random().toString(36).slice(2);
 
   // TODO: Reac.use promise?
