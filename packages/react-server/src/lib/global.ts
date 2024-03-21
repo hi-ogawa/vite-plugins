@@ -9,7 +9,4 @@ export const __global: {
     reactServer: ViteDevServer;
   };
   callServer: CallServerCallback;
-  // TODO: isolate by renderId
-  // TODO: track which error boundary to enable on 2nd pass
-  ssrError?: Error;
 } = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});

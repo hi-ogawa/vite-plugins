@@ -72,8 +72,8 @@ export async function start() {
     return React.use(rsc);
   }
 
-  // TODO: no hydration on SSR error
-  if (1) {
+  // full client render on SSR error
+  if (document.documentElement.dataset["noHydate"]) {
     reactDomClient.createRoot(document).render(
       <React.StrictMode>
         <Root />
@@ -98,7 +98,7 @@ export async function start() {
 }
 
 declare module "react-dom/client" {
-  // TODO: full document CSR works?
+  // TODO: full document CSR works fine?
   interface DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_CREATE_ROOT_CONTAINERS {
     Document: Document;
   }

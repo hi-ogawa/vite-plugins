@@ -1,4 +1,4 @@
-import { splitFirst, tinyassert } from "@hiogawa/utils";
+import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import { __global } from "../lib/global";
@@ -54,7 +54,7 @@ export async function renderHtml(
   // TODO: ssrId?
   const renderId = Math.random().toString(36).slice(2);
 
-  // TODO: stream more lazily?
+  // TODO: Reac.use promise?
   const rscNode = await reactServerDomClient.createFromReadableStream(
     rscStream1,
     {
@@ -76,31 +76,27 @@ export async function renderHtml(
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
   try {
-    delete __global.ssrError;
     ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
-        console.log("[renderToReadableStream]", { error, errorInfo });
+        console.log("[renderToReadableStream(rsc)]", { error, errorInfo });
       },
     });
   } catch (e) {
-    // TODO: http status
-    tinyassert(e instanceof Error);
-    __global.ssrError = e;
-    // pick root layout as fallback?
-    const fallback = (
-      <html>
+    // render empty as error fallback and
+    // let browser render full CSR instead of hydration
+    // which will reply client error boudnary from RSC error
+    // TODO: proper two-pass SSR with error route tracking?
+    const errorRoot = (
+      <html data-no-hydate>
         <head>
-          <meta charSet="UTF-8" />
+          <meta charSet="utf-8" />
         </head>
         <body></body>
       </html>
     );
-    ssrStream = await reactDomServer.renderToReadableStream(fallback, {
+    ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
       bootstrapModules: assets.bootstrapModules,
-      onError(error, errorInfo) {
-        console.log("[renderToReadableStream]", { error, errorInfo });
-      },
     });
   }
 
