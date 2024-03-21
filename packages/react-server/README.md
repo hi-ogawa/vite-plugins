@@ -2,7 +2,7 @@
 
 [Try it on Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
 
-![image](https://github.com/hi-ogawa/vite-plugins/assets/4232207/9417d47c-6a7a-42c0-af25-b33e527420e4)
+![image](https://github.com/hi-ogawa/vite-plugins/assets/4232207/cc56ed2e-4138-4bf1-abba-bdb84e5e1e0a)
 
 See https://github.com/hi-ogawa/vite-plugins/issues/174 for known issues.
 
