@@ -39,7 +39,6 @@ export function generateRouteTree(globEntries: Record<string, unknown>) {
 
 export type MatchRouteResult = {
   nodes: RouteTreeNode[];
-  // TODO: not found as error
   notFound: boolean;
   params: Record<string, string>;
 };
@@ -83,7 +82,6 @@ export async function renderMatchRoute(
 
   let acc: React.ReactNode = <ThrowNotFound />;
   if (!props.match.notFound) {
-    // TODO: assert?
     const Page = nodes[0]?.value?.page?.default;
     if (Page) {
       acc = <Page {...props} />;
