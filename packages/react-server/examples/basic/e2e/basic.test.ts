@@ -108,6 +108,8 @@ test("client hmr @dev", async ({ page }) => {
 });
 
 test("unocss", async ({ page, browser }) => {
+  checkNoError(page);
+
   await page.goto("/test");
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
@@ -122,6 +124,8 @@ test("unocss", async ({ page, browser }) => {
 });
 
 test("unocss hmr @dev", async ({ page, browser }) => {
+  checkNoError(page);
+
   await page.goto("/test");
   await page.getByText("hydrated: true").click();
 
@@ -150,6 +154,8 @@ test("unocss hmr @dev", async ({ page, browser }) => {
 });
 
 test("react-server css", async ({ page }) => {
+  checkNoError(page);
+
   await page.goto("/test/css");
   await expect(page.getByText("css normal")).toHaveCSS(
     "background-color",
@@ -163,6 +169,7 @@ test("react-server css", async ({ page }) => {
 
 test("react-server css @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
+
   await page.goto("/test/css");
   await expect(page.getByText("css normal")).toHaveCSS(
     "background-color",
@@ -175,6 +182,8 @@ test("react-server css @nojs", async ({ browser }) => {
 });
 
 test("react-server css hmr @dev", async ({ page, browser }) => {
+  checkNoError(page);
+
   await page.goto("/test/css");
   await page.getByText("hydrated: true").click();
 
@@ -222,6 +231,8 @@ test("react-server css hmr @dev", async ({ page, browser }) => {
 });
 
 test("server action with js", async ({ page }) => {
+  checkNoError(page);
+
   await page.goto("/test/action");
   await page.getByText("hydrated: true").click();
 

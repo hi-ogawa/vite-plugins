@@ -1,12 +1,28 @@
 import fs from "node:fs";
 import test, { type Page, expect } from "@playwright/test";
 
+//
+// page error check
+//
+
+const pageErrorsMap = new WeakMap<Page, Error[]>();
+
+test.afterEach(({ page }) => {
+  const errors = pageErrorsMap.get(page);
+  if (errors) {
+    expect(errors).toEqual([]);
+  }
+});
+
 export function checkNoError(page: Page) {
   const pageErrors: Error[] = [];
+  pageErrorsMap.set(page, pageErrors);
   page.on("pageerror", (e) => pageErrors.push(e));
-  // TODO: how to throw immediately in test? should use test.fail()?
-  page.on("close", () => expect(pageErrors).toEqual([]));
 }
+
+//
+// file edit utils
+//
 
 const originalFileMap = new Map<string, string>();
 
