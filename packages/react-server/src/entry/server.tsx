@@ -87,7 +87,16 @@ export async function renderHtml(
     // TODO: http status
     tinyassert(e instanceof Error);
     __global.ssrError = e;
-    ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+    // pick root layout as fallback?
+    const fallback = (
+      <html>
+        <head>
+          <meta charSet="UTF-8" />
+        </head>
+        <body></body>
+      </html>
+    );
+    ssrStream = await reactDomServer.renderToReadableStream(fallback, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
         console.log("[renderToReadableStream]", { error, errorInfo });
