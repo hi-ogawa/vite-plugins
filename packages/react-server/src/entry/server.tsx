@@ -19,9 +19,9 @@ export async function handler(request: Request): Promise<Response> {
   }
 
   // ssr rsc
-  const htmlStream = await renderHtml(result.stream);
-  return new Response(htmlStream, {
-    status: result.status,
+  const ssrResult = await renderHtml(result.stream);
+  return new Response(ssrResult.htmlStream, {
+    status: ssrResult.status,
     headers: {
       "content-type": "text/html",
     },
@@ -38,9 +38,7 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(
-  rscStream: ReadableStream,
-): Promise<ReadableStream> {
+export async function renderHtml(rscStream: ReadableStream) {
   await initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
@@ -74,6 +72,7 @@ export async function renderHtml(
 
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
+  let status = 200;
   try {
     ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
       bootstrapModules: assets.bootstrapModules,
@@ -97,14 +96,17 @@ export async function renderHtml(
     ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
       bootstrapModules: assets.bootstrapModules,
     });
+    status = 500;
   }
 
-  return ssrStream
+  const htmlStream = ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(new TextEncoderStream())
     .pipeThrough(injectRSCPayload(rscStream2));
+
+  return { htmlStream, status };
 }
 
 function injectToHead(data: string) {
