@@ -1,6 +1,7 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "./error";
+import { __global } from "./global";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -75,21 +76,8 @@ export function matchRoute(
 export async function renderMatchRoute(
   props: RouteProps,
 ): Promise<React.ReactNode> {
-  // let clientLib: typeof import("../client-internal");
-  // if (import.meta.env.DEV) {
-  //   // TODO: workaorund self-reference during dev
-  //   const lib = await import("node:module");
-  //   const require = lib.default.createRequire(import.meta.url);
-  //   // TODO: resolved client boundary breaks vite deps optimization
-  //   const resolved = require.resolve("@hiogawa/react-server/client-internal");
-  //   // console.log({ resolved });
-  //   clientLib = (await import(/* @vite-ignore */ resolved)) as any;
-  //   // console.log(clientLib, clientLib.ErrorBoundary);
-  // } else {
-  //   throw new Error("todo");
-  //   // clientLib = await import("@hiogawa/react-server/client-internal") as any;
-  // }
-  // clientLib.ErrorBoundary;
+  // TODO: for now, workaround self-reference by passing via global (Try Vite 5.2)
+  const ErrorBoundary = __global.ErrorBoundary;
 
   const nodes = [...props.match.nodes].reverse();
 
@@ -105,7 +93,11 @@ export async function renderMatchRoute(
   for (const node of nodes) {
     const ErrorPage = node.value?.error?.default;
     if (ErrorPage) {
-      // acc = <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>{acc}</ErrorBoundary>
+      acc = (
+        <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
+          {acc}
+        </ErrorBoundary>
+      );
     }
     const Layout = node.value?.layout?.default;
     if (Layout) {
