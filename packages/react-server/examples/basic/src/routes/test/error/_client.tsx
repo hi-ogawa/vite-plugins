@@ -1,12 +1,14 @@
 "use client";
 
+import { getErrorStatus } from "@hiogawa/react-server";
+import { type ErrorRouteProps } from "@hiogawa/react-server/server";
 import React from "react";
 
 // TOOD: for now, experiment inside demo
 
 interface Props {
   children?: React.ReactNode;
-  errorComponent: React.FC<any>;
+  errorComponent: React.FC<ErrorRouteProps>;
   url: string;
 }
 
@@ -44,8 +46,15 @@ export class ErrorBoundary extends React.Component<Props, State> {
   override render() {
     if (this.state.error) {
       const Component = this.props.errorComponent;
-      return <Component error={this.state.error} reset={this.reset} />;
+      return (
+        <Component
+          error={this.state.error}
+          status={getErrorStatus(this.state.error) ?? 500}
+          reset={this.reset}
+        />
+      );
     }
-    return this.props.children;
+    // TODO: need to be wrapped with dom?
+    return <div>{this.props.children}</div>;
   }
 }

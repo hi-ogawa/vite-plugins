@@ -1,2 +1,1 @@
-// TODO: what to export?
-export {};
+export { createError, getErrorStatus } from "./lib/error";

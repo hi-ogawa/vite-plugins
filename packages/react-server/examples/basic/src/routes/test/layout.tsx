@@ -1,7 +1,10 @@
+import type { LayoutRouteProps } from "@hiogawa/react-server/server";
 import { NavMenu } from "../../components/nav-menu";
 import { Hydrated } from "./_client";
+import ErrorPage from "./error";
+import { ErrorBoundary } from "./error/_client";
 
-export default async function Layout(props: React.PropsWithChildren) {
+export default async function Layout(props: LayoutRouteProps) {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-lg">Test</h2>
@@ -22,7 +25,9 @@ export default async function Layout(props: React.PropsWithChildren) {
         <input className="antd-input px-2" placeholder="test-input" />
         <Hydrated />
       </div>
-      {props.children}
+      <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
+        {props.children}
+      </ErrorBoundary>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
+import { getErrorStatus } from "..";
+import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
 import {
   createModuleMap,
@@ -77,7 +79,8 @@ export async function renderHtml(rscStream: ReadableStream) {
     ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
-        console.log("[renderToReadableStream(rsc)]", { error, errorInfo });
+        // TODO: there's still error log from somewhere?
+        debug.ssr("renderToReadableStream", { error, errorInfo });
       },
     });
   } catch (e) {
@@ -85,6 +88,7 @@ export async function renderHtml(rscStream: ReadableStream) {
     // let browser render full CSR instead of hydration
     // which will reply client error boudnary from RSC error
     // TODO: proper two-pass SSR with error route tracking?
+    // TODO: meta tag system
     const errorRoot = (
       <html data-no-hydate>
         <head>
@@ -96,7 +100,7 @@ export async function renderHtml(rscStream: ReadableStream) {
     ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
       bootstrapModules: assets.bootstrapModules,
     });
-    status = 500;
+    status = (e instanceof Error && getErrorStatus(e)) || 500;
   }
 
   const htmlStream = ssrStream

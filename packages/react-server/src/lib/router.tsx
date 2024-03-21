@@ -1,5 +1,6 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
+import { createError } from "./error";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -73,7 +74,6 @@ export function matchRoute(
 // TODO: separate react code in a different file
 export async function renderMatchRoute(
   props: RouteProps,
-  fallback: React.ReactNode,
 ): Promise<React.ReactNode> {
   // let clientLib: typeof import("../client-internal");
   // if (import.meta.env.DEV) {
@@ -93,7 +93,7 @@ export async function renderMatchRoute(
 
   const nodes = [...props.match.nodes].reverse();
 
-  let acc: React.ReactNode = fallback;
+  let acc: React.ReactNode = <ThrowNotFound />;
   if (!props.match.notFound) {
     // TODO: assert?
     const Page = nodes[0]?.value?.page?.default;
@@ -114,6 +114,10 @@ export async function renderMatchRoute(
   return acc;
 }
 
+const ThrowNotFound: React.FC = () => {
+  throw createError(404);
+};
+
 interface RouteProps {
   request: Request;
   match: MatchRouteResult;
@@ -123,6 +127,7 @@ export interface PageRouteProps extends RouteProps {}
 
 export interface ErrorRouteProps {
   error: Error;
+  status: number;
   reset: () => void;
 }
 

@@ -84,11 +84,7 @@ function createRouter() {
   async function run(request: Request) {
     const url = new URL(request.url);
     const match = matchRoute(url.pathname, tree);
-    const node = await renderMatchRoute(
-      { request, match },
-      // TODO: default error page?
-      <div>Not Found: {url.pathname}</div>,
-    );
+    const node = await renderMatchRoute({ request, match });
     return { node, match };
   }
 
