@@ -1,8 +1,8 @@
+import { ErrorBoundary } from "@hiogawa/react-server/client";
 import type { LayoutRouteProps } from "@hiogawa/react-server/server";
 import { NavMenu } from "../../components/nav-menu";
 import { Hydrated } from "./_client";
 import ErrorPage from "./error";
-import { ErrorBoundary } from "./error/_client";
 
 export default async function Layout(props: LayoutRouteProps) {
   return (
@@ -25,6 +25,7 @@ export default async function Layout(props: LayoutRouteProps) {
         <input className="antd-input px-2" placeholder="test-input" />
         <Hydrated />
       </div>
+      {/* TODO: implement as convention */}
       <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
         {props.children}
       </ErrorBoundary>

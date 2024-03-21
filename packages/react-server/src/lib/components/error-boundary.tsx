@@ -1,24 +1,60 @@
 "use client";
 
 import React from "react";
+import { getErrorContext } from "../error";
+import type { ErrorRouteProps } from "../router";
 
-// cf. https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
-export class ErrorBoundary extends React.Component<
-  {
-    children?: React.ReactNode;
-    errorComponent: React.FC<{ error?: Error }>;
-  },
-  { error?: Error }
-> {
+// cf.
+// https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
+// https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
+
+interface Props {
+  children?: React.ReactNode;
+  errorComponent: React.FC<ErrorRouteProps>;
+  url: string;
+}
+
+interface State {
+  error: Error | null;
+  url: string;
+}
+
+export class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { error: null, url: props.url };
+  }
+
   static getDerivedStateFromError(error: Error) {
     return { error };
   }
 
+  // automatically reset on url change
+  static getDerivedStateFromProps(props: Props, state: State): State {
+    return {
+      ...state,
+      url: props.url,
+      error: props.url === state.url ? state.error : null,
+    };
+  }
+
+  reset = () => {
+    this.setState({ error: null });
+  };
+
   override render() {
-    if (this.state.error) {
+    const error = this.state.error;
+    if (error) {
       const Component = this.props.errorComponent;
-      return <Component error={this.state.error} />;
+      return (
+        <Component
+          error={error}
+          serverError={getErrorContext(error)}
+          reset={this.reset}
+        />
+      );
     }
-    return this.props.children;
+    // TODO: why need to be wrapped with dom?
+    return <div>{this.props.children}</div>;
   }
 }

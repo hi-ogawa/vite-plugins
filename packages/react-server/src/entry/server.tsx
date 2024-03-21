@@ -1,8 +1,8 @@
 import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { getErrorStatus } from "..";
 import { debug } from "../lib/debug";
+import { getErrorContext } from "../lib/error";
 import { __global } from "../lib/global";
 import {
   createModuleMap,
@@ -100,7 +100,7 @@ export async function renderHtml(rscStream: ReadableStream) {
     ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
       bootstrapModules: assets.bootstrapModules,
     });
-    status = getErrorStatus(e)?.status ?? 500;
+    status = getErrorContext(e)?.status ?? 500;
   }
 
   const htmlStream = ssrStream
