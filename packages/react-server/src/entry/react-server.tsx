@@ -18,7 +18,6 @@ export type ReactServerHandlerResult =
   | Response
   | {
       stream: ReadableStream<Uint8Array>;
-      status: number;
     };
 
 export const handler: ReactServerHandler = async ({ request }) => {
@@ -36,7 +35,7 @@ export const handler: ReactServerHandler = async ({ request }) => {
   const rscOnlyRequest = unwrapRscRequest(request);
 
   // rsc
-  const { stream, status } = await render({
+  const { stream } = await render({
     request: rscOnlyRequest ?? request,
   });
   if (rscOnlyRequest) {
@@ -47,7 +46,7 @@ export const handler: ReactServerHandler = async ({ request }) => {
     });
   }
 
-  return { stream, status };
+  return { stream };
 };
 
 //
@@ -60,7 +59,7 @@ async function render({ request }: { request: Request }) {
     result.node,
     createBundlerConfig(),
   );
-  return { stream, status: result.match.notFound ? 404 : 200 };
+  return { stream };
 }
 
 //

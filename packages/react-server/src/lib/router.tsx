@@ -103,9 +103,11 @@ export async function renderMatchRoute(
   }
 
   for (const node of nodes) {
-    const Layout = node.value?.layout?.default;
-    if (node.value?.error) {
+    const ErrorPage = node.value?.error?.default;
+    if (ErrorPage) {
+      // acc = <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>{acc}</ErrorBoundary>
     }
+    const Layout = node.value?.layout?.default;
     if (Layout) {
       acc = <Layout {...props}>{acc}</Layout>;
     }
