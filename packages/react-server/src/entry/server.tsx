@@ -89,18 +89,20 @@ export async function renderHtml(rscStream: ReadableStream) {
     // which will reply client error boudnary from RSC error
     // TODO: proper two-pass SSR with error route tracking?
     // TODO: meta tag system
+    status = getErrorContext(e)?.status ?? 500;
     const errorRoot = (
       <html data-no-hydate>
         <head>
           <meta charSet="utf-8" />
         </head>
-        <body></body>
+        <body>
+          <noscript>{status}</noscript>
+        </body>
       </html>
     );
     ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
       bootstrapModules: assets.bootstrapModules,
     });
-    status = getErrorContext(e)?.status ?? 500;
   }
 
   const htmlStream = ssrStream
