@@ -1,5 +1,5 @@
 import { NavMenu } from "../../components/nav-menu";
-import { Hydrated } from "./hydrated";
+import { Hydrated } from "./_client";
 
 export default async function Layout(props: React.PropsWithChildren) {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { addMessage, changeCounter, type getMessages } from "./action";
+import { addMessage, changeCounter, type getMessages } from "./_action";
 
 export function Counter(props: { value: number }) {
   return (
