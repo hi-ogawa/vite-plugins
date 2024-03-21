@@ -25,12 +25,23 @@ test("navigation", async ({ page }) => {
   await checkClientState();
 });
 
-test("404", async ({ page }) => {
-  checkNoError(page);
-
+test.only("error", async ({ page }) => {
   const res = await page.goto("/test/not-found");
   expect(res?.status()).toBe(404);
-  await page.getByText("Not Found: /test/not-found").click();
+
+  await page.getByText("hydrated: true").click();
+  await page.getByText("status: 404").click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await page.getByRole("link", { name: "/test/error" }).click();
+  await page.getByText("status: 500").click();
+  await page.getByText("message: boom!").click();
+
+  await page.getByRole("link", { name: "/test/other" }).click();
+  await page.getByRole("heading", { name: "Other Page" }).click();
+
+  await checkClientState();
 });
 
 test("rsc hmr @dev", async ({ page }) => {

@@ -4,6 +4,7 @@ import test, { type Page, expect } from "@playwright/test";
 export function checkNoError(page: Page) {
   const pageErrors: Error[] = [];
   page.on("pageerror", (e) => pageErrors.push(e));
+  // TODO: how to slow immediately in test?
   page.on("close", () => expect(pageErrors).toEqual([]));
 }
 
