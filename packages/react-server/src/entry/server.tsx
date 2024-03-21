@@ -1,4 +1,4 @@
-import { splitFirst } from "@hiogawa/utils";
+import { splitFirst, tinyassert } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import { __global } from "../lib/global";
@@ -73,13 +73,27 @@ export async function renderHtml(
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
 
-  // TODO: two pass render on error?
-  const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
-    bootstrapModules: assets.bootstrapModules,
-    onError(error, errorInfo) {
-      console.log("[renderToReadableStream]", { error, errorInfo });
-    },
-  });
+  // two pass SSR to re-render on error
+  let ssrStream: ReadableStream<Uint8Array>;
+  try {
+    delete __global.ssrError;
+    ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+      bootstrapModules: assets.bootstrapModules,
+      onError(error, errorInfo) {
+        console.log("[renderToReadableStream]", { error, errorInfo });
+      },
+    });
+  } catch (e) {
+    // TODO: http status
+    tinyassert(e instanceof Error);
+    __global.ssrError = e;
+    ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+      bootstrapModules: assets.bootstrapModules,
+      onError(error, errorInfo) {
+        console.log("[renderToReadableStream]", { error, errorInfo });
+      },
+    });
+  }
 
   return ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))

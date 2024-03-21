@@ -1,5 +1,6 @@
 "use client";
 
+import { __global } from "@hiogawa/react-server/internal";
 import React from "react";
 
 // TOOD: for now, experiment inside demo
@@ -32,13 +33,11 @@ export class ErrorBoundary extends React.Component<
     // __global.ssrContext[props.ssrId]
     // TODO: how to know where the error is from?
     //       track SSR of all error boundaries and whether?
-    if (import.meta.env.SSR) {
-    }
-    // import.meta.env.SSR
-
-    if (this.state.error) {
+    const error = import.meta.env.SSR ? __global.ssrError : this.state.error;
+    console.log("[ErrorBoundary.render]", { error });
+    if (error) {
       const Component = this.props.errorComponent;
-      return <Component error={this.state.error} reset={this.reset} />;
+      return <Component error={error} reset={this.reset} />;
     }
     return this.props.children;
   }
