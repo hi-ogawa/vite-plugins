@@ -1,4 +1,5 @@
 import { splitFirst } from "@hiogawa/utils";
+import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import { debug } from "../lib/debug";
@@ -55,16 +56,16 @@ export async function renderHtml(rscStream: ReadableStream) {
   // (see src/lib/ssr.tsx for details)
   const renderId = Math.random().toString(36).slice(2);
 
-  // TODO: Reac.use promise?
-  const rscNode = await reactServerDomClient.createFromReadableStream(
-    rscStream1,
-    {
-      ssrManifest: {
-        moduleMap: createModuleMap({ renderId }),
-        moduleLoading: null,
-      },
+  const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
+    ssrManifest: {
+      moduleMap: createModuleMap({ renderId }),
+      moduleLoading: null,
     },
-  );
+  });
+
+  function Root() {
+    return React.use(rsc);
+  }
 
   if (import.meta.env.DEV) {
     // ensure latest css
@@ -78,7 +79,7 @@ export async function renderHtml(rscStream: ReadableStream) {
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
   try {
-    ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+    ssrStream = await reactDomServer.renderToReadableStream(<Root />, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
         // TODO: should handle SSR error which is not RSC error?
