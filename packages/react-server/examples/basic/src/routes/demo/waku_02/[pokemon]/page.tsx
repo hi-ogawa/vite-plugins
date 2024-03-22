@@ -1,7 +1,7 @@
 import { Link } from "@hiogawa/react-server/client";
 import type { PageRouteProps } from "@hiogawa/react-server/server";
 import { tinyassert } from "@hiogawa/utils";
-import { fetchPokemons } from "../utils";
+import { fetchPokemons } from "../_utils";
 
 export default async function Page(props: PageRouteProps) {
   const pokemons = await fetchPokemons();

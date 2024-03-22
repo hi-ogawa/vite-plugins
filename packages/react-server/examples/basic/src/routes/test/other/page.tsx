@@ -1,6 +1,6 @@
 import { Link } from "@hiogawa/react-server/client";
 import type { PageRouteProps } from "@hiogawa/react-server/server";
-import { LinkInClientComponent } from "./client";
+import { LinkInClientComponent } from "./_client";
 
 export default function Page(props: PageRouteProps) {
   return (
