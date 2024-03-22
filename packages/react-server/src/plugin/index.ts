@@ -153,13 +153,13 @@ export function vitePluginReactServer(options?: {
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
         () => {
-          // TODO: workaround Vite self-reference import (Try Vite 5.2)
+          // TODO: workaround Vite self-reference import via global (Try Vite 5.2)
           return /* js */ `
-          import { __global } from "@hiogawa/react-server/internal";
-          import * as clientInternal from "@hiogawa/react-server/client-internal";
-          __global.clientInternal = clientInternal;
-          export * from "${ENTRY_REACT_SERVER}";
-        `;
+            import { __global } from "@hiogawa/react-server/internal";
+            import * as clientInternal from "@hiogawa/react-server/client-internal";
+            __global.clientInternal = clientInternal;
+            export * from "${ENTRY_REACT_SERVER}";
+          `;
         },
       ),
 
