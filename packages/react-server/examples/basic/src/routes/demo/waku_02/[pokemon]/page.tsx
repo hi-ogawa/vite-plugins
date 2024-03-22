@@ -1,6 +1,6 @@
 import { type PageRouteProps, createError } from "@hiogawa/react-server/server";
 import { tinyassert } from "@hiogawa/utils";
-import { fetchPokemons } from "../_utils";
+import { findOnePokemon } from "../_utils";
 
 // extend server error to include detail
 declare module "@hiogawa/react-server/server" {
@@ -10,11 +10,9 @@ declare module "@hiogawa/react-server/server" {
 }
 
 export default async function Page(props: PageRouteProps) {
-  const pokemons = await fetchPokemons();
   tinyassert("pokemon" in props.match.params);
-
   const slug = props.match.params["pokemon"];
-  const e = pokemons.find((e) => e.slug === slug);
+  const e = await findOnePokemon(slug);
   if (!e) {
     throw createError({ status: 404, pokemonError: `Not found : ${slug}` });
   }
