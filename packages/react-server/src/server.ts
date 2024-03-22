@@ -4,4 +4,4 @@ export type {
   LayoutRouteProps,
   ErrorRouteProps,
 } from "./lib/router";
-export { createError } from "./lib/error";
+export { createError, type ReactServerErrorContext } from "./lib/error";
