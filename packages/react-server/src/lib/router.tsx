@@ -82,6 +82,7 @@ export function renderMatchRoute(props: RouteProps) {
   if (!props.match.notFound) {
     const Page = nodes[0]?.value?.page?.default;
     if (Page) {
+      // TODO: slim props if client page
       acc = <Page {...props} />;
     }
   }
@@ -98,6 +99,7 @@ export function renderMatchRoute(props: RouteProps) {
     }
     const Layout = node.value?.layout?.default;
     if (Layout) {
+      // TODO: slim props if client layout
       acc = <Layout {...props}>{acc}</Layout>;
     }
   }
