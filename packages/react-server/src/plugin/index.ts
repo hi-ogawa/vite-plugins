@@ -1,6 +1,5 @@
 import nodeCrypto from "node:crypto";
 import fs from "node:fs";
-import { createRequire } from "node:module";
 import path from "node:path";
 import { memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
@@ -29,8 +28,6 @@ import {
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
 } from "./utils";
-
-const require = createRequire(import.meta.url);
 
 // convenient singleton to share states
 class ReactServerManager {
@@ -150,14 +147,26 @@ export function vitePluginReactServer(options?: {
         },
       },
 
+      // TODO: workaround Vite self-reference import via global (Try Vite 5.2).
+      //       https://github.com/vitejs/vite/pull/16068
+      createVirtualPlugin("self-reference-workaround1", () => {
+        return /* js */ `
+          import * as serverInternal from "@hiogawa/react-server/server-internal";
+          Object.assign(globalThis.__REACT_SERVER_GLOBAL ??= {}, { serverInternal });
+        `;
+      }),
+      createVirtualPlugin("self-reference-workaround2", () => {
+        return /* js */ `
+          import * as clientInternal from "@hiogawa/react-server/client-internal";
+          Object.assign(globalThis.__REACT_SERVER_GLOBAL ??= {}, { clientInternal });
+        `;
+      }),
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
         () => {
-          // TODO: workaround Vite self-reference import via global (Try Vite 5.2)
           return /* js */ `
-            import { __global } from "@hiogawa/react-server/internal";
-            import * as clientInternal from "@hiogawa/react-server/client-internal";
-            __global.clientInternal = clientInternal;
+            import "virtual:self-reference-workaround1";
+            import "virtual:self-reference-workaround2";
             export * from "${ENTRY_REACT_SERVER}";
           `;
         },
@@ -486,9 +495,7 @@ function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
-        let result = `import { createClientReference } from "${require.resolve(
-          "@hiogawa/react-server/server-internal",
-        )}";\n`;
+        let result = `const { createClientReference } = __REACT_SERVER_GLOBAL.serverInternal;\n`;
         for (const name of exportNames) {
           if (name === "default") {
             result += `const $$default = createClientReference("${id}::${name}");\n`;
@@ -528,15 +535,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
-      // TODO: can we use internal "imports" subpath?
-      // TODO:
-      // "@hiogawa/react-server/client" needs to self-reference
-      // "@hiogawa/react-server/server-internal" due to "use client" transform
-      // but presumably it's failing due to https://github.com/vitejs/vite/pull/16068
-      // For now, we workaround it by manually calling require.resolve
-      let result = `import { createClientReference } from "${require.resolve(
-        "@hiogawa/react-server/server-internal",
-      )}";\n`;
+      let result = `const { createClientReference } = __REACT_SERVER_GLOBAL.serverInternal;\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createClientReference("${id}::${name}");\n`;
@@ -640,9 +639,7 @@ function vitePluginClientUseServer({
       if (manager.buildType) {
         id = hashString(id);
       }
-      let result = `import { createServerReference } from "${require.resolve(
-        "@hiogawa/react-server/client-internal",
-      )}";\n`;
+      let result = `import { createServerReference } from "@hiogawa/react-server/client-internal";\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createServerReference("${id}::${name}");\n`;
@@ -676,9 +673,7 @@ function vitePluginServerUseServer({
         exportNames,
       });
       mcode.prepend(
-        `import { createServerReference } from "${require.resolve(
-          "@hiogawa/react-server/server-internal",
-        )}";\n`,
+        `import { createServerReference } from "@hiogawa/react-server/server-internal";\n`,
       );
       // obfuscate reference
       if (manager.buildType) {

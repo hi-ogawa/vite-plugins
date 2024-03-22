@@ -9,8 +9,7 @@ export const __global: {
     reactServer: ViteDevServer;
   };
   callServer: CallServerCallback;
-  // TODO
-  // for now, we workaround self-reference "@hiogawa/react-server/client-internal"
-  // by passing via global from user code (Try Vite 5.2)
+  // see "virtual:self-reference-workaround"
   clientInternal: typeof import("../client-internal");
+  serverInternal: typeof import("../server-internal");
 } = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});
