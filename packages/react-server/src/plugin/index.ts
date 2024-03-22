@@ -148,26 +148,18 @@ export function vitePluginReactServer(options?: {
       },
 
       // TODO: workaround Vite self-reference import via global (Try Vite 5.2).
-      createVirtualPlugin("self-reference-workaround1", () => {
+      createVirtualPlugin("self-reference-workaround", () => {
         return /* js */ `
-          import { __global } from "@hiogawa/react-server/internal";
           import * as serverInternal from "@hiogawa/react-server/server-internal";
-          __global.serverInternal = serverInternal;
-        `;
-      }),
-      createVirtualPlugin("self-reference-workaround2", () => {
-        return /* js */ `
-          import { __global } from "@hiogawa/react-server/internal";
-          import * as clientInternal from "@hiogawa/react-server/client-internal";
-          __global.clientInternal = clientInternal;
+          globalThis.__REACT_SERVER_GLOBAL ??= {};
+          globalThis.__REACT_SERVER_GLOBAL.serverInternal = serverInternal;
         `;
       }),
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
         () => {
           return /* js */ `
-            import "virtual:self-reference-workaround1";
-            import "virtual:self-reference-workaround2";
+            import "virtual:self-reference-workaround";
             export * from "${ENTRY_REACT_SERVER}";
           `;
         },
