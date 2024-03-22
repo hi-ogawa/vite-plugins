@@ -1,7 +1,8 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
-import React from "react";
-import { type ReactServerErrorContext, createError } from "./error";
-import { __global } from "./global";
+import type React from "react";
+
+// cf. similar to vite-glob-routes
+// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -10,10 +11,6 @@ interface RouteEntry {
   };
   layout?: {
     default: React.FC<LayoutRouteProps>;
-  };
-  error?: {
-    // TODO: warn if no "use client"
-    default: React.FC<ErrorRouteProps>;
   };
 }
 
@@ -24,7 +21,7 @@ type RouteTreeNode = TreeNode<RouteEntry>;
 export function generateRouteTree(globEntries: Record<string, unknown>) {
   const entries: Record<string, RouteEntry> = {};
   for (const [k, v] of Object.entries(globEntries)) {
-    const m = k.match(/^(.*)\/(page|layout|error)\.\w*$/);
+    const m = k.match(/^(.*)\/(page|layout)\.\w*$/);
     tinyassert(m && 1 in m && 2 in m);
     tinyassert(objectHas(v, "default"), `no deafult export found in '${k}'`);
     ((entries[m[1]] ??= {}) as any)[m[2]] = v;
@@ -73,13 +70,15 @@ export function matchRoute(
 }
 
 // TODO: separate react code in a different file
-export function renderMatchRoute(props: RouteProps) {
-  const { ErrorBoundary, DefaultRootErrorPage } = __global.clientInternal;
-
+export function renderMatchRoute(
+  props: RouteProps,
+  fallback: React.ReactNode,
+): React.ReactNode {
   const nodes = [...props.match.nodes].reverse();
 
-  let acc: React.ReactNode = <ThrowNotFound />;
+  let acc: React.ReactNode = fallback;
   if (!props.match.notFound) {
+    // TODO: assert?
     const Page = nodes[0]?.value?.page?.default;
     if (Page) {
       acc = <Page {...props} />;
@@ -87,36 +86,14 @@ export function renderMatchRoute(props: RouteProps) {
   }
 
   for (const node of nodes) {
-    const ErrorPage = node.value?.error?.default;
-    if (ErrorPage) {
-      // TODO: why need to wrap with <div>?
-      acc = (
-        <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
-          <div>{acc}</div>
-        </ErrorBoundary>
-      );
-    }
     const Layout = node.value?.layout?.default;
     if (Layout) {
       acc = <Layout {...props}>{acc}</Layout>;
     }
   }
 
-  acc = (
-    <ErrorBoundary
-      errorComponent={DefaultRootErrorPage}
-      url={props.request.url}
-    >
-      {acc}
-    </ErrorBoundary>
-  );
-
   return acc;
 }
-
-const ThrowNotFound: React.FC = () => {
-  throw createError({ status: 404 });
-};
 
 interface RouteProps {
   request: Request;
@@ -124,12 +101,6 @@ interface RouteProps {
 }
 
 export interface PageRouteProps extends RouteProps {}
-
-export interface ErrorRouteProps {
-  error: Error;
-  serverError?: ReactServerErrorContext;
-  reset: () => void;
-}
 
 export interface LayoutRouteProps extends React.PropsWithChildren<RouteProps> {}
 
@@ -153,8 +124,7 @@ function matchChild(input: string, node: RouteTreeNode) {
 }
 
 //
-// general tree utils copied from vite-glob-routes
-// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
+// general tree structure utils
 //
 
 type TreeNode<T> = {

@@ -11,7 +11,6 @@ export default async function Layout(props: React.PropsWithChildren) {
           Waku
         </a>
       </h2>
-      {/* TODO: input to search */}
       {props.children}
     </div>
   );

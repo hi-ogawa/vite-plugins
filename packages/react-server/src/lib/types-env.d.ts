@@ -7,9 +7,7 @@ declare module "react-server-dom-webpack/server.edge" {
   export function renderToReadableStream(
     node: React.ReactNode,
     bundlerConfig: import("./types").BundlerConfig,
-    opitons?: {
-      onError: import("react-dom/server").RenderToReadableStreamOptions["onError"];
-    },
+    opitons?: {},
   ): ReadableStream<Uint8Array>;
 
   export function decodeReply(body: string | FormData): Promise<unknown>;

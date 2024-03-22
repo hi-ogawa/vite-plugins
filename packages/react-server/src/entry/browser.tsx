@@ -72,21 +72,12 @@ export async function start() {
     return React.use(rsc);
   }
 
-  // full client render on SSR error
-  if (document.documentElement.dataset["noHydate"]) {
-    reactDomClient.createRoot(document).render(
-      <React.StrictMode>
-        <Root />
-      </React.StrictMode>,
-    );
-  } else {
-    reactDomClient.hydrateRoot(
-      document,
-      <React.StrictMode>
-        <Root />
-      </React.StrictMode>,
-    );
-  }
+  reactDomClient.hydrateRoot(
+    document,
+    <React.StrictMode>
+      <Root />
+    </React.StrictMode>,
+  );
 
   // custom event for RSC reload
   if (import.meta.hot) {
@@ -94,12 +85,5 @@ export async function start() {
       console.log("[react-server] hot update", e);
       __history.notify();
     });
-  }
-}
-
-declare module "react-dom/client" {
-  // TODO: full document CSR works fine?
-  interface DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_CREATE_ROOT_CONTAINERS {
-    Document: Document;
   }
 }

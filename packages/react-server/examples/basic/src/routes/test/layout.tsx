@@ -1,8 +1,7 @@
-import type { LayoutRouteProps } from "@hiogawa/react-server/server";
 import { NavMenu } from "../../components/nav-menu";
-import { Hydrated } from "./_client";
+import { Hydrated } from "./hydrated";
 
-export default async function Layout(props: LayoutRouteProps) {
+export default async function Layout(props: React.PropsWithChildren) {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-lg">Test</h2>
@@ -15,14 +14,11 @@ export default async function Layout(props: LayoutRouteProps) {
           "/test/deps",
           "/test/head",
           "/test/css",
-          "/test/error",
           "/test/not-found",
         ]}
       />
-      <div className="flex items-center gap-2 w-sm text-sm">
-        <input className="antd-input px-2" placeholder="test-input" />
-        <Hydrated />
-      </div>
+      <input className="antd-input w-sm px-2" placeholder="test-input" />
+      <Hydrated />
       {props.children}
     </div>
   );

@@ -1,5 +1,5 @@
-import { getCounter } from "./_action";
-import { Counter } from "./_client";
+import { Counter } from "./client";
+import { getCounter } from "./server";
 
 export default async function Page() {
   return (

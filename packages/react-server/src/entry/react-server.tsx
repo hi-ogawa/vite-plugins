@@ -1,7 +1,5 @@
 import { objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
-import { debug } from "../lib/debug";
-import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
@@ -20,6 +18,7 @@ export type ReactServerHandlerResult =
   | Response
   | {
       stream: ReadableStream<Uint8Array>;
+      status: number;
     };
 
 export const handler: ReactServerHandler = async ({ request }) => {
@@ -37,7 +36,7 @@ export const handler: ReactServerHandler = async ({ request }) => {
   const rscOnlyRequest = unwrapRscRequest(request);
 
   // rsc
-  const { stream } = await render({
+  const { stream, status } = render({
     request: rscOnlyRequest ?? request,
   });
   if (rscOnlyRequest) {
@@ -48,33 +47,20 @@ export const handler: ReactServerHandler = async ({ request }) => {
     });
   }
 
-  return { stream };
+  return { stream, status };
 };
 
 //
 // render RSC
 //
 
-async function render({ request }: { request: Request }) {
-  const result = await router.run(request);
+function render({ request }: { request: Request }) {
+  const result = router.run(request);
   const stream = reactServerDomServer.renderToReadableStream(
     result.node,
     createBundlerConfig(),
-    {
-      onError(error, errorInfo) {
-        debug.rsc("[reactServerDomServer.renderToReadableStream]", {
-          error,
-          errorInfo,
-        });
-        const serverError =
-          error instanceof ReactServerDigestError
-            ? error
-            : createError({ status: 500 });
-        return serverError.digest;
-      },
-    },
   );
-  return { stream };
+  return { stream, status: result.match.notFound ? 404 : 200 };
 }
 
 //
@@ -86,7 +72,7 @@ const router = createRouter();
 function createRouter() {
   // for now hard code /src/routes as convention
   const glob = import.meta.glob(
-    "/src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
+    "/src/routes/**/(page|layout).(js|jsx|ts|tsx)",
     {
       eager: true,
     },
@@ -95,10 +81,13 @@ function createRouter() {
     objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length)),
   );
 
-  async function run(request: Request) {
+  function run(request: Request) {
     const url = new URL(request.url);
     const match = matchRoute(url.pathname, tree);
-    const node = renderMatchRoute({ request, match });
+    const node = renderMatchRoute(
+      { request, match },
+      <div>Not Found: {url.pathname}</div>,
+    );
     return { node, match };
   }
 

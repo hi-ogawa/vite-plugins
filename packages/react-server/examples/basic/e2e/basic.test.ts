@@ -25,32 +25,12 @@ test("navigation", async ({ page }) => {
   await checkClientState();
 });
 
-test("error", async ({ page }) => {
+test("404", async ({ page }) => {
+  checkNoError(page);
+
   const res = await page.goto("/test/not-found");
   expect(res?.status()).toBe(404);
-
-  await page.getByText("hydrated: true").click();
-  await page.getByText(`server error: {"status":404}`).click();
-
-  const checkClientState = await setupCheckClientState(page);
-
-  await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server" }).click();
-  await page.getByText('server error: {"status":500}').click();
-  await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Browser" }).click();
-  await page.getByText("server error: (N/A)").click();
-
-  await page.getByRole("link", { name: "/test/other" }).click();
-  await page.getByRole("heading", { name: "Other Page" }).click();
-
-  await checkClientState();
-});
-
-test("DefaultRootErrorPage", async ({ page }) => {
-  const res = await page.goto("/not-found");
-  expect(res?.status()).toBe(404);
-  await page.getByText("404 Not Found").click();
+  await page.getByText("Not Found: /test/not-found").click();
 });
 
 test("rsc hmr @dev", async ({ page }) => {
@@ -114,8 +94,6 @@ test("client hmr @dev", async ({ page }) => {
 });
 
 test("unocss", async ({ page, browser }) => {
-  checkNoError(page);
-
   await page.goto("/test");
   await expect(page.getByRole("heading", { name: "RSC Experiment" })).toHaveCSS(
     "font-weight",
@@ -130,8 +108,6 @@ test("unocss", async ({ page, browser }) => {
 });
 
 test("unocss hmr @dev", async ({ page, browser }) => {
-  checkNoError(page);
-
   await page.goto("/test");
   await page.getByText("hydrated: true").click();
 
@@ -160,8 +136,6 @@ test("unocss hmr @dev", async ({ page, browser }) => {
 });
 
 test("react-server css", async ({ page }) => {
-  checkNoError(page);
-
   await page.goto("/test/css");
   await expect(page.getByText("css normal")).toHaveCSS(
     "background-color",
@@ -175,7 +149,6 @@ test("react-server css", async ({ page }) => {
 
 test("react-server css @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
-
   await page.goto("/test/css");
   await expect(page.getByText("css normal")).toHaveCSS(
     "background-color",
@@ -188,8 +161,6 @@ test("react-server css @nojs", async ({ browser }) => {
 });
 
 test("react-server css hmr @dev", async ({ page, browser }) => {
-  checkNoError(page);
-
   await page.goto("/test/css");
   await page.getByText("hydrated: true").click();
 
@@ -237,8 +208,6 @@ test("react-server css hmr @dev", async ({ page, browser }) => {
 });
 
 test("server action with js", async ({ page }) => {
-  checkNoError(page);
-
   await page.goto("/test/action");
   await page.getByText("hydrated: true").click();
 

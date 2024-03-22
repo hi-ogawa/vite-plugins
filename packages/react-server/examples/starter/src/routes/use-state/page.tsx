@@ -1,4 +1,4 @@
-import { Counter } from "./_client";
+import { Counter } from "./client";
 
 export default function Page() {
   return (
