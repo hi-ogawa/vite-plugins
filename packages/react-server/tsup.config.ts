@@ -4,7 +4,6 @@ export default defineConfig([
   {
     entry: [
       "src/index.ts",
-      "src/internal.ts",
       "src/server.ts",
       "src/server-internal.ts",
       "src/client.tsx",
@@ -23,8 +22,6 @@ export default defineConfig([
       "/dist/rsc/index.js",
       "/dist/client/index.html?raw",
       "/index.html?raw",
-      // self reference
-      /^@hiogawa\/react-server/,
     ],
   },
 ]);
