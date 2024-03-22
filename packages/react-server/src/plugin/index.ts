@@ -22,7 +22,12 @@ import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
-import { ENTRY_CLIENT, ENTRY_REACT_SERVER, type SsrAssetsType } from "./utils";
+import {
+  ENTRY_CLIENT,
+  ENTRY_REACT_SERVER,
+  ENTRY_REACT_SERVER_WRAPPER,
+  type SsrAssetsType,
+} from "./utils";
 
 const require = createRequire(import.meta.url);
 
@@ -144,6 +149,16 @@ export function vitePluginReactServer(options?: {
         },
       },
 
+      createVirtualPlugin("entry-react-server-wrapper", () => {
+        // TODO: workaround Vite self-reference import (Try Vite 5.2)
+        return /* js */ `
+          import { __global } from "@hiogawa/react-server/internal";
+          import * as clientInternal from "@hiogawa/react-server/client-internal";
+          __global.clientInternal = clientInternal;
+          export * from "${ENTRY_REACT_SERVER}";
+        `;
+      }),
+
       ...(options?.plugins ?? []),
     ],
     build: {
@@ -153,7 +168,7 @@ export function vitePluginReactServer(options?: {
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: ENTRY_REACT_SERVER,
+          index: ENTRY_REACT_SERVER_WRAPPER,
         },
       },
     },
