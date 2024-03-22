@@ -37,6 +37,7 @@ export function initDomWebpackCsr() {
 //
 
 import { type RouterHistory, createBrowserHistory } from "@tanstack/history";
+import { __global } from "..";
 
 // TODO: client context instead of global?
 // TODO: create a wrapper to do `callServer` before actual client url update?
@@ -44,4 +45,5 @@ export let __history: RouterHistory;
 
 export function initHistory() {
   __history = createBrowserHistory();
+  __global.history = __history;
 }

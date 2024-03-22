@@ -35,4 +35,9 @@ type Debug<K extends string> = ((...args: unknown[]) => void) & {
   [k in K]: (...args: unknown[]) => void;
 };
 
-export const debug = createDebug("react-server", ["plugin", "ssr", "browser"]);
+export const debug = createDebug("react-server", [
+  "plugin",
+  "ssr",
+  "rsc",
+  "browser",
+]);

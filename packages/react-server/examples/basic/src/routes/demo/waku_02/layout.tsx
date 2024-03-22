@@ -1,3 +1,5 @@
+import { SearchInput } from "./_client";
+
 export default async function Layout(props: React.PropsWithChildren) {
   return (
     <div className="flex flex-col items-center gap-2">
@@ -11,6 +13,7 @@ export default async function Layout(props: React.PropsWithChildren) {
           Waku
         </a>
       </h2>
+      <SearchInput />
       {props.children}
     </div>
   );

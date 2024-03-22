@@ -1,6 +1,8 @@
 import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
+import { debug } from "../lib/debug";
+import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
 import {
   createModuleMap,
@@ -19,9 +21,9 @@ export async function handler(request: Request): Promise<Response> {
   }
 
   // ssr rsc
-  const htmlStream = await renderHtml(result.stream);
-  return new Response(htmlStream, {
-    status: result.status,
+  const ssrResult = await renderHtml(result.stream);
+  return new Response(ssrResult.htmlStream, {
+    status: ssrResult.status,
     headers: {
       "content-type": "text/html",
     },
@@ -40,9 +42,7 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(
-  rscStream: ReadableStream,
-): Promise<ReadableStream> {
+export async function renderHtml(rscStream: ReadableStream) {
   await initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
@@ -55,6 +55,7 @@ export async function renderHtml(
   // (see src/lib/ssr.tsx for details)
   const renderId = Math.random().toString(36).slice(2);
 
+  // TODO: Reac.use promise?
   const rscNode = await reactServerDomClient.createFromReadableStream(
     rscStream1,
     {
@@ -73,16 +74,49 @@ export async function renderHtml(
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
 
-  const ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
-    bootstrapModules: assets.bootstrapModules,
-  });
+  // two pass SSR to re-render on error
+  let ssrStream: ReadableStream<Uint8Array>;
+  let status = 200;
+  try {
+    ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+      bootstrapModules: assets.bootstrapModules,
+      onError(error, errorInfo) {
+        // TODO: should handle SSR error which is not RSC error?
+        debug.ssr("renderToReadableStream", { error, errorInfo });
+      },
+    });
+  } catch (e) {
+    // render empty as error fallback and
+    // let browser render full CSR instead of hydration
+    // which will reply client error boudnary from RSC error
+    // TODO: proper two-pass SSR with error route tracking?
+    // TODO: meta tag system
+    status = getErrorContext(e)?.status ?? 500;
+    const errorRoot = (
+      <html data-no-hydate>
+        <head>
+          <meta charSet="utf-8" />
+        </head>
+        <body>
+          <noscript>
+            {status} {getStatusText(status)}
+          </noscript>
+        </body>
+      </html>
+    );
+    ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
+      bootstrapModules: assets.bootstrapModules,
+    });
+  }
 
-  return ssrStream
+  const htmlStream = ssrStream
     .pipeThrough(invalidateImportCacheOnFinish(renderId))
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(new TextEncoderStream())
     .pipeThrough(injectRSCPayload(rscStream2));
+
+  return { htmlStream, status };
 }
 
 function injectToHead(data: string) {
