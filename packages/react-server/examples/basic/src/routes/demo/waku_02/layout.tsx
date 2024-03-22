@@ -1,3 +1,5 @@
+import { createError } from "@hiogawa/react-server/server";
+import { tinyassert } from "@hiogawa/utils";
 import { SearchInput } from "./_client";
 
 export default async function Layout(props: React.PropsWithChildren) {
@@ -14,7 +16,22 @@ export default async function Layout(props: React.PropsWithChildren) {
         </a>
       </h2>
       <SearchInput />
+      {/* <form action={search}>
+        <input name="q" placeholder="Search..." />
+      </form> */}
       {props.children}
     </div>
   );
+}
+
+// TODO: better example would be "create" + "redirect"?
+export function search(form: FormData) {
+  const q = form.get("q");
+  tinyassert(typeof q === "string");
+  throw createError({
+    status: 307,
+    headers: {
+      location: "/demo/waku_02/" + q,
+    },
+  });
 }

@@ -4,6 +4,7 @@ import { debug } from "./debug";
 // TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
+  headers?: Record<string, string>;
 }
 
 export class ReactServerDigestError extends Error {
@@ -35,6 +36,15 @@ export function getErrorContext(
     }
   }
   return;
+}
+
+if (0) {
+  throw createError({
+    status: 302,
+    headers: {
+      location: "/",
+    },
+  });
 }
 
 const STATUS_TEXT_MAP = new Map([
