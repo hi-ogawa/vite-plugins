@@ -1,4 +1,4 @@
-import { type PageRouteProps, createError } from "@hiogawa/react-server/server";
+import { type PageProps, createError } from "@hiogawa/react-server/server";
 
 declare module "@hiogawa/react-server/server" {
   interface ReactServerErrorContext {
@@ -6,7 +6,7 @@ declare module "@hiogawa/react-server/server" {
   }
 }
 
-export default function Page(props: PageRouteProps) {
+export default function Page(props: PageProps) {
   const url = new URL(props.request.url);
   if (url.searchParams.has("custom")) {
     throw createError({ status: 403, customMessage: "hello" });

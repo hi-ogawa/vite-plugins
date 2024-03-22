@@ -1,8 +1,8 @@
 import { Link } from "@hiogawa/react-server/client";
-import type { PageRouteProps } from "@hiogawa/react-server/server";
+import type { PageProps } from "@hiogawa/react-server/server";
 import { LinkInClientComponent } from "./_client";
 
-export default function Page(props: PageRouteProps) {
+export default function Page(props: PageProps) {
   return (
     <div className="flex flex-col gap-2">
       <h4 className="font-bold">Other Page</h4>
