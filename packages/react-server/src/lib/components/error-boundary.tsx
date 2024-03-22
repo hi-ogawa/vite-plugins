@@ -2,7 +2,7 @@
 
 import React from "react";
 import { getErrorContext, getStatusText } from "../error";
-import type { ErrorRouteProps } from "../router";
+import type { ErrorPageProps } from "../router";
 
 // cf.
 // https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
@@ -10,7 +10,7 @@ import type { ErrorRouteProps } from "../router";
 
 interface Props {
   children?: React.ReactNode;
-  errorComponent: React.FC<ErrorRouteProps>;
+  errorComponent: React.FC<ErrorPageProps>;
   url: string;
 }
 
@@ -58,7 +58,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 }
 
-export function DefaultRootErrorPage(props: ErrorRouteProps) {
+export function DefaultRootErrorPage(props: ErrorPageProps) {
   const status = props.serverError?.status;
   return (
     <html>

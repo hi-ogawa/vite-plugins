@@ -1,8 +1,8 @@
-import type { LayoutRouteProps } from "@hiogawa/react-server/server";
+import type { LayoutProps } from "@hiogawa/react-server/server";
 import { Header } from "../components/header";
 import { NavMenu } from "../components/nav-menu";
 
-export default function Layout(props: LayoutRouteProps) {
+export default function Layout(props: LayoutProps) {
   return (
     <html>
       <head>

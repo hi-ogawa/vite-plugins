@@ -1,7 +1,7 @@
 import { Link } from "@hiogawa/react-server/client";
-import type { PageRouteProps } from "@hiogawa/react-server/server";
+import type { PageProps } from "@hiogawa/react-server/server";
 
-export default function Page(props: PageRouteProps) {
+export default function Page(props: PageProps) {
   const title = new URL(props.request.url).searchParams.get("title");
   return (
     <div className="flex flex-col gap-2">

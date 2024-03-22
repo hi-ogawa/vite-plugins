@@ -6,14 +6,14 @@ import { __global } from "./global";
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
   page?: {
-    default: React.FC<PageRouteProps>;
+    default: React.FC<PageProps>;
   };
   layout?: {
-    default: React.FC<LayoutRouteProps>;
+    default: React.FC<LayoutProps>;
   };
   error?: {
     // TODO: warn if no "use client"
-    default: React.FC<ErrorRouteProps>;
+    default: React.FC<ErrorPageProps>;
   };
 }
 
@@ -73,13 +73,19 @@ export function matchRoute(
 }
 
 // TODO: separate react code in a different file
-export function renderMatchRoute(props: RouteProps) {
+// TODO: just do it together with matchRoute above?
+export function renderMatchRoute(request: Request, match: MatchRouteResult) {
   const { ErrorBoundary, DefaultRootErrorPage } = __global.clientInternal;
 
-  const nodes = [...props.match.nodes].reverse();
+  const props: BaseProps = {
+    request,
+    params: match.params,
+  };
+
+  const nodes = [...match.nodes].reverse();
 
   let acc: React.ReactNode = <ThrowNotFound />;
-  if (!props.match.notFound) {
+  if (!match.notFound) {
     const Page = nodes[0]?.value?.page?.default;
     if (Page) {
       acc = <Page {...props} />;
@@ -118,20 +124,21 @@ const ThrowNotFound: React.FC = () => {
   throw createError({ status: 404 });
 };
 
-interface RouteProps {
-  request: Request;
-  match: MatchRouteResult;
+interface BaseProps {
+  // TODO: parsed url prop?
+  request: Request; // TODO: "use client" page/layout doesn't have full aceess
+  params: Record<string, string>;
 }
 
-export interface PageRouteProps extends RouteProps {}
+export interface PageProps extends BaseProps {}
 
-export interface ErrorRouteProps {
+export interface LayoutProps extends React.PropsWithChildren<BaseProps> {}
+
+export interface ErrorPageProps {
   error: Error;
   serverError?: ReactServerErrorContext;
   reset: () => void;
 }
-
-export interface LayoutRouteProps extends React.PropsWithChildren<RouteProps> {}
 
 function matchChild(input: string, node: RouteTreeNode) {
   if (!node.children) {
