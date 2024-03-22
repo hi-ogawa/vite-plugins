@@ -1,7 +1,7 @@
 import { debug } from "./debug";
 
-// TODO: allow including arbitrary data?
 // TODO: accomodate redirection error convention?
+// TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
 }
