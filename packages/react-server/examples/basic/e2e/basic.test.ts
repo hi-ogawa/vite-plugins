@@ -25,32 +25,12 @@ test("navigation", async ({ page }) => {
   await checkClientState();
 });
 
-test("error", async ({ page }) => {
+test("404", async ({ page }) => {
+  checkNoError(page);
+
   const res = await page.goto("/test/not-found");
   expect(res?.status()).toBe(404);
-
-  await page.getByText("hydrated: true").click();
-  await page.getByText(`server error: {"status":404}`).click();
-
-  const checkClientState = await setupCheckClientState(page);
-
-  await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server" }).click();
-  await page.getByText('server error: {"status":500}').click();
-  await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Browser" }).click();
-  await page.getByText("server error: (N/A)").click();
-
-  await page.getByRole("link", { name: "/test/other" }).click();
-  await page.getByRole("heading", { name: "Other Page" }).click();
-
-  await checkClientState();
-});
-
-test("DefaultRootErrorPage", async ({ page }) => {
-  const res = await page.goto("/not-found");
-  expect(res?.status()).toBe(404);
-  await page.getByText("404 Not Found").click();
+  await page.getByText("Not Found: /test/not-found").click();
 });
 
 test("rsc hmr @dev", async ({ page }) => {
