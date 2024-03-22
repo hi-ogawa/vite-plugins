@@ -1,2 +1,2 @@
-// TODO: server action utilities with "use server"?
+// TODO: export type from root?
 export type { PageRouteProps, LayoutRouteProps } from "./lib/router";

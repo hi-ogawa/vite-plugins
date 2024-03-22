@@ -1,6 +1,5 @@
 import nodeCrypto from "node:crypto";
 import fs from "node:fs";
-import { createRequire } from "node:module";
 import path from "node:path";
 import { memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
@@ -22,9 +21,13 @@ import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
-import { ENTRY_CLIENT, ENTRY_REACT_SERVER, type SsrAssetsType } from "./utils";
-
-const require = createRequire(import.meta.url);
+import {
+  ENTRY_CLIENT,
+  ENTRY_CLIENT_WRAPPER,
+  ENTRY_REACT_SERVER,
+  ENTRY_REACT_SERVER_WRAPPER,
+  type SsrAssetsType,
+} from "./utils";
 
 // convenient singleton to share states
 class ReactServerManager {
@@ -144,6 +147,25 @@ export function vitePluginReactServer(options?: {
         },
       },
 
+      // TODO: workaround Vite self-reference import via global (Try Vite 5.2).
+      //       https://github.com/vitejs/vite/pull/16068
+      createVirtualPlugin("self-reference-workaround", () => {
+        return /* js */ `
+          import * as serverInternal from "@hiogawa/react-server/server-internal";
+          globalThis.__REACT_SERVER_GLOBAL ??= {};
+          globalThis.__REACT_SERVER_GLOBAL.serverInternal = serverInternal;
+        `;
+      }),
+      createVirtualPlugin(
+        ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
+        () => {
+          return /* js */ `
+            import "virtual:self-reference-workaround";
+            export * from "${ENTRY_REACT_SERVER}";
+          `;
+        },
+      ),
+
       ...(options?.plugins ?? []),
     ],
     build: {
@@ -153,7 +175,7 @@ export function vitePluginReactServer(options?: {
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: ENTRY_REACT_SERVER,
+          index: ENTRY_REACT_SERVER_WRAPPER,
         },
       },
     },
@@ -186,7 +208,7 @@ export function vitePluginReactServer(options?: {
           rollupOptions: env.isSsrBuild
             ? undefined
             : {
-                input: "virtual:entry-client-wrapper.js",
+                input: ENTRY_CLIENT_WRAPPER,
               },
         },
       };
@@ -322,7 +344,7 @@ export function vitePluginReactServer(options?: {
           </script>
         `;
         const result: SsrAssetsType = {
-          bootstrapModules: ["/@id/__x00__virtual:entry-client-wrapper.js"],
+          bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
           head,
         };
         return `export default ${JSON.stringify(result)}`;
@@ -336,7 +358,7 @@ export function vitePluginReactServer(options?: {
             "utf-8",
           ),
         );
-        const entry = manifest["virtual:entry-client-wrapper.js"];
+        const entry = manifest[ENTRY_CLIENT_WRAPPER];
         tinyassert(entry);
         const head = (entry.css ?? [])
           .map((url) => `<link rel="stylesheet" href="/${url}" />`)
@@ -350,7 +372,7 @@ export function vitePluginReactServer(options?: {
 
       tinyassert(false);
     }),
-    createVirtualPlugin("entry-client-wrapper.js", () => {
+    createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
         // wrapper entry to ensure client entry runs after vite/react inititialization
@@ -467,9 +489,7 @@ function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
-        let result = `import { createClientReference } from "${require.resolve(
-          "@hiogawa/react-server/server-internal",
-        )}";\n`;
+        let result = `const { createClientReference } = __REACT_SERVER_GLOBAL.serverInternal;\n`;
         for (const name of exportNames) {
           if (name === "default") {
             result += `const $$default = createClientReference("${id}::${name}");\n`;
@@ -509,14 +529,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
-      // TODO:
-      // "@hiogawa/react-server/client" needs to self-reference
-      // "@hiogawa/react-server/server-internal" due to "use client" transform
-      // but presumably it's failing due to https://github.com/vitejs/vite/pull/16068
-      // For now, we workaround it by manually calling require.resolve
-      let result = `import { createClientReference } from "${require.resolve(
-        "@hiogawa/react-server/server-internal",
-      )}";\n`;
+      let result = `const { createClientReference } = __REACT_SERVER_GLOBAL.serverInternal;\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createClientReference("${id}::${name}");\n`;
@@ -620,9 +633,7 @@ function vitePluginClientUseServer({
       if (manager.buildType) {
         id = hashString(id);
       }
-      let result = `import { createServerReference } from "${require.resolve(
-        "@hiogawa/react-server/client-internal",
-      )}";\n`;
+      let result = `import { createServerReference } from "@hiogawa/react-server/client-internal";\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createServerReference("${id}::${name}");\n`;
@@ -656,9 +667,7 @@ function vitePluginServerUseServer({
         exportNames,
       });
       mcode.prepend(
-        `import { createServerReference } from "${require.resolve(
-          "@hiogawa/react-server/server-internal",
-        )}";\n`,
+        `import { createServerReference } from "@hiogawa/react-server/server-internal";\n`,
       );
       // obfuscate reference
       if (manager.buildType) {
