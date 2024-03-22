@@ -89,10 +89,10 @@ export function renderMatchRoute(props: RouteProps) {
   for (const node of nodes) {
     const ErrorPage = node.value?.error?.default;
     if (ErrorPage) {
-      // TODO: why need to wrap with <div>?
+      // TODO: can we remove extra <div>?
       acc = (
         <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
-          <div>{acc}</div>
+          <div className="error-boundary">{acc}</div>
         </ErrorBoundary>
       );
     }
