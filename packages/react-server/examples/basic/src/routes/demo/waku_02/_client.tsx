@@ -9,8 +9,8 @@ export function SearchInput() {
       onSubmit={(e) => {
         e.preventDefault();
         const q = e.currentTarget["q"].value;
-        if (q) {
-          __global.history.push(`/demo/waku_02/${q}`);
+        if (typeof q === "string") {
+          __global.history.push(`/demo/waku_02/${q.toLowerCase()}`);
         }
       }}
     >
