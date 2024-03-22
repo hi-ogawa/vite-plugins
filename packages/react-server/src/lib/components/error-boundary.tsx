@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { getErrorContext } from "../error";
+import { getErrorContext, getStatusText } from "../error";
 import type { ErrorRouteProps } from "../router";
 
 // cf.
@@ -54,7 +54,23 @@ export class ErrorBoundary extends React.Component<Props, State> {
         />
       );
     }
-    // TODO: why need to be wrapped with dom?
-    return <div>{this.props.children}</div>;
+    return this.props.children;
   }
+}
+
+export function DefaultRootErrorPage(props: ErrorRouteProps) {
+  const status = props.serverError?.status;
+  return (
+    <html>
+      <body>
+        {status ? (
+          <div>
+            {status} {getStatusText(status)}
+          </div>
+        ) : (
+          <div>Unexpected Error</div>
+        )}
+      </body>
+    </html>
+  );
 }

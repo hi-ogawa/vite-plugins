@@ -12,6 +12,7 @@ interface RouteEntry {
     default: React.FC<LayoutRouteProps>;
   };
   error?: {
+    // TODO: warn if no "use client"
     default: React.FC<ErrorRouteProps>;
   };
 }
@@ -72,11 +73,8 @@ export function matchRoute(
 }
 
 // TODO: separate react code in a different file
-export async function renderMatchRoute(
-  props: RouteProps,
-): Promise<React.ReactNode> {
-  // TODO: for now, workaround self-reference by passing via global (Try Vite 5.2)
-  const ErrorBoundary = __global.ErrorBoundary;
+export function renderMatchRoute(props: RouteProps) {
+  const { ErrorBoundary, DefaultRootErrorPage } = __global.clientInternal;
 
   const nodes = [...props.match.nodes].reverse();
 
@@ -91,9 +89,10 @@ export async function renderMatchRoute(
   for (const node of nodes) {
     const ErrorPage = node.value?.error?.default;
     if (ErrorPage) {
+      // TODO: why need to wrap with <div>?
       acc = (
         <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
-          {acc}
+          <div>{acc}</div>
         </ErrorBoundary>
       );
     }
@@ -102,6 +101,15 @@ export async function renderMatchRoute(
       acc = <Layout {...props}>{acc}</Layout>;
     }
   }
+
+  acc = (
+    <ErrorBoundary
+      errorComponent={DefaultRootErrorPage}
+      url={props.request.url}
+    >
+      {acc}
+    </ErrorBoundary>
+  );
 
   return acc;
 }

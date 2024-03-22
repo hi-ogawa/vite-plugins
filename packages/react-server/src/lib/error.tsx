@@ -36,3 +36,14 @@ export function getErrorContext(
   }
   return;
 }
+
+const STATUS_TEXT_MAP = new Map([
+  [400, "Bad Request"],
+  [403, "Forbidden"],
+  [404, "Not Found"],
+  [500, "Internal Server Error"],
+]);
+
+export function getStatusText(status: number) {
+  return STATUS_TEXT_MAP.get(status) ?? "Unknown Server Error";
+}

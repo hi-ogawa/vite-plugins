@@ -1,5 +1,4 @@
 import type { ViteDevServer } from "vite";
-import type { ErrorBoundary } from "../client-internal";
 import type { CallServerCallback } from "./types";
 
 // centeralize quick global escape hatch...
@@ -10,5 +9,8 @@ export const __global: {
     reactServer: ViteDevServer;
   };
   callServer: CallServerCallback;
-  ErrorBoundary: typeof ErrorBoundary;
+  // TODO
+  // for now, we workaround self-reference "@hiogawa/react-server/client-internal"
+  // by passing via global from user code (Try Vite 5.2)
+  clientInternal: typeof import("../client-internal");
 } = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});

@@ -1,4 +1,4 @@
-import { ErrorBoundary } from "@hiogawa/react-server/client";
+import * as clientInternal from "@hiogawa/react-server/client-internal";
 import {
   type ReactServerHandler,
   handler as baseHandler,
@@ -6,7 +6,7 @@ import {
 import { __global } from "@hiogawa/react-server/internal";
 
 export const handler: ReactServerHandler = async (ctx) => {
-  __global.ErrorBoundary = ErrorBoundary;
+  __global.clientInternal = clientInternal;
 
   const url = new URL(ctx.request.url);
   if (url.pathname === "/test/__rpc") {

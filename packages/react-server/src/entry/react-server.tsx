@@ -98,7 +98,7 @@ function createRouter() {
   async function run(request: Request) {
     const url = new URL(request.url);
     const match = matchRoute(url.pathname, tree);
-    const node = await renderMatchRoute({ request, match });
+    const node = renderMatchRoute({ request, match });
     return { node, match };
   }
 

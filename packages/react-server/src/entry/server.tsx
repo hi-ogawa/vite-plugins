@@ -2,7 +2,7 @@ import { splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import { debug } from "../lib/debug";
-import { getErrorContext } from "../lib/error";
+import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
 import {
   createModuleMap,
@@ -96,7 +96,9 @@ export async function renderHtml(rscStream: ReadableStream) {
           <meta charSet="utf-8" />
         </head>
         <body>
-          <noscript>{status}</noscript>
+          <noscript>
+            {status} {getStatusText(status)}
+          </noscript>
         </body>
       </html>
     );
