@@ -24,6 +24,7 @@ import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import {
   ENTRY_CLIENT,
+  ENTRY_CLIENT_WRAPPER,
   ENTRY_REACT_SERVER,
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
@@ -149,15 +150,18 @@ export function vitePluginReactServer(options?: {
         },
       },
 
-      createVirtualPlugin("entry-react-server-wrapper", () => {
-        // TODO: workaround Vite self-reference import (Try Vite 5.2)
-        return /* js */ `
+      createVirtualPlugin(
+        ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
+        () => {
+          // TODO: workaround Vite self-reference import (Try Vite 5.2)
+          return /* js */ `
           import { __global } from "@hiogawa/react-server/internal";
           import * as clientInternal from "@hiogawa/react-server/client-internal";
           __global.clientInternal = clientInternal;
           export * from "${ENTRY_REACT_SERVER}";
         `;
-      }),
+        },
+      ),
 
       ...(options?.plugins ?? []),
     ],
@@ -201,7 +205,7 @@ export function vitePluginReactServer(options?: {
           rollupOptions: env.isSsrBuild
             ? undefined
             : {
-                input: "virtual:entry-client-wrapper.js",
+                input: ENTRY_CLIENT_WRAPPER,
               },
         },
       };
@@ -337,7 +341,7 @@ export function vitePluginReactServer(options?: {
           </script>
         `;
         const result: SsrAssetsType = {
-          bootstrapModules: ["/@id/__x00__virtual:entry-client-wrapper.js"],
+          bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
           head,
         };
         return `export default ${JSON.stringify(result)}`;
@@ -351,7 +355,7 @@ export function vitePluginReactServer(options?: {
             "utf-8",
           ),
         );
-        const entry = manifest["virtual:entry-client-wrapper.js"];
+        const entry = manifest[ENTRY_CLIENT_WRAPPER];
         tinyassert(entry);
         const head = (entry.css ?? [])
           .map((url) => `<link rel="stylesheet" href="/${url}" />`)
@@ -365,7 +369,7 @@ export function vitePluginReactServer(options?: {
 
       tinyassert(false);
     }),
-    createVirtualPlugin("entry-client-wrapper.js", () => {
+    createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
         // wrapper entry to ensure client entry runs after vite/react inititialization
