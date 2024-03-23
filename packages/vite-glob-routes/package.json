@@ -50,8 +50,7 @@
   "devDependencies": {
     "@hattip/compose": "^0.0.44",
     "react-router": "^6.22.3",
-    "react-router-dom": "^6.22.3",
-    "vite": "^5.1.6"
+    "react-router-dom": "^6.22.3"
   },
   "peerDependencies": {
     "@hattip/compose": "*",

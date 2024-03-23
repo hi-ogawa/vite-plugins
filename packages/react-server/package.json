@@ -65,8 +65,7 @@
     "@types/react-dom": "18.2.22",
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
-    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
-    "vite": "^5.1.6"
+    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226"
   },
   "peerDependencies": {
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
