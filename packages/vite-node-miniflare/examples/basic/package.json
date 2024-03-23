@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@hiogawa/tiny-react": "0.0.2-pre.9",
-    "@hiogawa/vite-node-miniflare": "workspace:*",
-    "@hiogawa/vite-plugin-simple-hmr": "workspace:*",
+    "@hiogawa/vite-node-miniflare": "latest",
+    "@hiogawa/vite-plugin-simple-hmr": "latest",
     "miniflare": "^3.20240304.2",
-    "vite": "^5.1.6"
+    "vite": "latest"
   }
 }
