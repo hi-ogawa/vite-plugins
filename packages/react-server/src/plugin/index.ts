@@ -293,7 +293,7 @@ export function vitePluginReactServer(options?: {
 
   return [
     rscParentPlugin,
-    vitePluginSilenceUseClientBuildWarning(),
+    vitePluginStripDirective(),
     vitePluginClientUseServer({ manager }),
     {
       name: "client-virtual-use-client-node-modules",
@@ -712,40 +712,22 @@ function createVirtualPlugin(name: string, load: Plugin["load"]) {
   } satisfies Plugin;
 }
 
-// silence warning due to "use client"
-// https://github.com/vitejs/vite-plugin-react/blob/814ed8043d321f4b4679a9f4a781d1ed14f185e4/packages/plugin-react/src/index.ts#L303
-function vitePluginSilenceUseClientBuildWarning(): Plugin {
+// strip "use client" directive to avoid false warning
+function vitePluginStripDirective(): Plugin {
   return {
-    name: vitePluginSilenceUseClientBuildWarning.name,
+    name: vitePluginStripDirective.name,
     enforce: "post",
-    config(config, _env) {
-      return {
-        build: {
-          rollupOptions: {
-            onwarn(warning, defaultHandler) {
-              // https://github.com/vitejs/vite/issues/15012#issuecomment-1948550039
-              if (
-                warning.code === "SOURCEMAP_ERROR" &&
-                warning.message.includes("(1:0)")
-              ) {
-                return;
-              }
-              // https://github.com/TanStack/query/pull/5161#issuecomment-1506683450
-              if (
-                warning.code === "MODULE_LEVEL_DIRECTIVE" &&
-                warning.message.includes(`"use client"`)
-              ) {
-                return;
-              }
-              if (config.build?.rollupOptions?.onwarn) {
-                config.build.rollupOptions.onwarn(warning, defaultHandler);
-              } else {
-                defaultHandler(warning);
-              }
-            },
-          },
-        },
-      };
+    transform(code, _id, _options) {
+      const m = code.match(/^("use \w*"|'use \w*')/);
+      if (m && m[1]) {
+        const mcode = new MagicString(code);
+        mcode.remove(0, m[1].length);
+        return {
+          code: mcode.toString(),
+          map: mcode.generateMap(),
+        };
+      }
+      return;
     },
   };
 }
