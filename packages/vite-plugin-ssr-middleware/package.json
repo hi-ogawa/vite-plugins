@@ -27,7 +27,7 @@
     "release": "pnpm publish --no-git-checks --access public"
   },
   "devDependencies": {
-    "vite": "latest"
+    "vite": "^5.1.6"
   },
   "peerDependencies": {
     "vite": "*"
