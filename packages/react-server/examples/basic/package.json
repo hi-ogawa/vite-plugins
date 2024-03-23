@@ -37,6 +37,6 @@
     "@unocss/postcss": "^0.58.6",
     "@vitejs/plugin-react": "^4.2.1",
     "unocss": "^0.58.6",
-    "vite": "^5.1.6"
+    "vite": "latest"
   }
 }

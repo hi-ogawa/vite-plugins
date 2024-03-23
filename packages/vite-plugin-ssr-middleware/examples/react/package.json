@@ -8,12 +8,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
+    "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite": "^5.1.6"
+    "vite": "latest"
   }
 }
