@@ -60,6 +60,8 @@ export async function start() {
     const [rsc, setRsc] = React.useState(initialRsc);
     __setRsc = setRsc;
 
+    // const [isPending, startTransition] = React.useTransition();
+
     React.useEffect(() => {
       return __history.subscribe(() => {
         debug("history", __history.location.href);
