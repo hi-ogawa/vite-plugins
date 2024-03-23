@@ -83,7 +83,7 @@ export async function renderMatchRoute(
     ErrorBoundary,
     DefaultRootErrorPage,
   }: typeof import("../client-internal") = await import(
-    "@hiogawa/react-server/client-internal"
+    "@hiogawa/react-server/client-internal" as string
   );
 
   const props: BaseProps = {
