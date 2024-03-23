@@ -68,6 +68,9 @@ importers:
       rsc-html-stream:
         specifier: ^0.0.3
         version: 0.0.3
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
     devDependencies:
       '@hiogawa/utils':
         specifier: ^1.6.3
@@ -90,9 +93,6 @@ importers:
       react-server-dom-webpack:
         specifier: 18.3.0-canary-6c3b8dbfe-20240226
         version: 18.3.0-canary-6c3b8dbfe-20240226(react-dom@18.3.0-canary-6c3b8dbfe-20240226)(react@18.3.0-canary-6c3b8dbfe-20240226)(webpack@5.90.3)
-      vite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@20.11.28)
 
   packages/react-server/examples/basic:
     dependencies:
@@ -190,6 +190,10 @@ importers:
         version: 5.2.3(@types/node@20.11.28)
 
   packages/vite-glob-routes:
+    dependencies:
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
     devDependencies:
       '@hattip/compose':
         specifier: ^0.0.44
@@ -200,9 +204,6 @@ importers:
       react-router-dom:
         specifier: ^6.22.3
         version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
-      vite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@20.11.28)
 
   packages/vite-glob-routes/examples/demo:
     devDependencies:
@@ -397,7 +398,7 @@ importers:
         version: 5.2.3(@types/node@20.11.28)
 
   packages/vite-import-dev-server:
-    devDependencies:
+    dependencies:
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -413,6 +414,9 @@ importers:
       miniflare:
         specifier: ^3.20240304.2
         version: 3.20240304.2
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
     devDependencies:
       '@hiogawa/tiny-rpc':
         specifier: 0.2.3-pre.18
@@ -420,9 +424,6 @@ importers:
       '@hiogawa/utils':
         specifier: ^1.6.3
         version: 1.6.3
-      vite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@20.11.28)
 
   packages/vite-node-miniflare/examples/basic:
     dependencies:
@@ -547,7 +548,6 @@ importers:
       es-module-lexer:
         specifier: ^1.4.1
         version: 1.4.1
-    devDependencies:
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -557,13 +557,13 @@ importers:
       magic-string:
         specifier: ^0.30.8
         version: 0.30.8
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
     devDependencies:
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
-      vite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@20.11.28)
 
   packages/vite-plugin-simple-hmr/examples/react:
     dependencies:
@@ -588,7 +588,7 @@ importers:
         version: 18.2.22
 
   packages/vite-plugin-ssr-middleware:
-    devDependencies:
+    dependencies:
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
