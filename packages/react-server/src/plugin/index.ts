@@ -108,8 +108,6 @@ export function vitePluginReactServer(options?: {
       },
     },
     plugins: [
-      vitePluginSilenceUseClientBuildWarning(),
-
       // expose server reference for RSC itself
       vitePluginServerUseServer({ manager }),
 
