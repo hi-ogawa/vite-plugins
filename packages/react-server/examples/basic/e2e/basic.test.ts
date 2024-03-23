@@ -25,6 +25,21 @@ test("navigation", async ({ page }) => {
   await checkClientState();
 });
 
+test("Link modifier", async ({ page, context }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await page.getByText("hydrated: true").click();
+
+  const newPagePromise = context.waitForEvent("page");
+  await page.getByRole("link", { name: "/test/other" }).click({
+    modifiers: ["Control"],
+  });
+  const newPage = await newPagePromise;
+  await newPage.waitForURL("/test/other");
+  await page.waitForURL("/test");
+});
+
 test("error", async ({ page }) => {
   const res = await page.goto("/test/not-found");
   expect(res?.status()).toBe(404);
