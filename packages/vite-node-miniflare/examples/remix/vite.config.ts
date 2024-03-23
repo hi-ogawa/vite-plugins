@@ -30,7 +30,9 @@ export default defineConfig({
         // DevServerHook is implemented via custom rpc
         // https://github.com/remix-run/remix/blob/db4471d2e32a175abdcb907b877f9a510c735d8b/packages/remix-server-runtime/dev.ts#L37-L48
         __remixGetCriticalCss: (...args: any[]) => {
-          return globalThis["__remix_devServerHooks"].getCriticalCss(...args);
+          return (globalThis as any)["__remix_devServerHooks"].getCriticalCss(
+            ...args,
+          );
         },
       },
     }),

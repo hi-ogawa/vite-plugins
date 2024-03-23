@@ -11,7 +11,4 @@ export const __global: {
   };
   history: RouterHistory;
   callServer: CallServerCallback;
-  // see "virtual:self-reference-workaround"
-  clientInternal: typeof import("../client-internal");
-  serverInternal: typeof import("../server-internal");
 } = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});

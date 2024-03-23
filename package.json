@@ -27,7 +27,7 @@
     "tsup": "^8.0.2",
     "tsx": "^4.7.1",
     "typescript": "^5.4.2",
-    "vite": "^5.1.6",
+    "vite": "^5.2.3",
     "vitest": "^1.4.0",
     "wrangler": "^3.34.2"
   },
@@ -37,7 +37,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "5.1.0"
+      "vite": "$vite"
     }
   }
 }

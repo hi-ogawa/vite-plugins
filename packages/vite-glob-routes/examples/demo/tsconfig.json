@@ -1,6 +1,13 @@
 {
   "extends": "../../../../tsconfig.base.json",
-  "include": ["src", "e2e"],
+  "include": [
+    "src",
+    "e2e",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "uno.config.ts",
+    "playwright.config.ts"
+  ],
   "compilerOptions": {
     "types": ["vite/client"],
     "jsx": "react-jsx"

@@ -29,9 +29,6 @@
   "dependencies": {
     "es-module-lexer": "^1.4.1"
   },
-  "devDependencies": {
-    "vite": "^5.1.6"
-  },
   "peerDependencies": {
     "vite": "*"
   }

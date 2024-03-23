@@ -14,14 +14,13 @@ export default defineConfig([
       "src/plugin/index.ts",
     ],
     format: ["esm"],
-    dts: !process.env.NO_DTS,
+    dts: !process.env["NO_DTS"],
     external: [
       /^virtual:/,
+      /^@hiogawa\/react-server\//,
       // TODO: virtual module?
       "/dist/rsc/client-references.js",
       "/dist/rsc/index.js",
-      "/dist/client/index.html?raw",
-      "/index.html?raw",
     ],
   },
 ]);
