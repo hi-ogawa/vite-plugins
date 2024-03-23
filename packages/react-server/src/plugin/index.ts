@@ -1,6 +1,7 @@
 import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import fg from "fast-glob";
@@ -28,6 +29,15 @@ import {
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
 } from "./utils";
+
+// resolve import paths for `createClientReference` and `createServerReference`
+// since `import "@hiogawa/react-server"` is not necessary visible for exernal library.
+const CLIENT_INTERNAL_PATH = fileURLToPath(
+  new URL("../client-internal.js", import.meta.url),
+);
+const SERVER_INTERNAL_PATH = fileURLToPath(
+  new URL("../server-internal.js", import.meta.url),
+);
 
 // convenient singleton to share states
 class ReactServerManager {
@@ -495,7 +505,7 @@ function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
-        let result = `import { createClientReference } from "@hiogawa/react-server/server-internal";\n`;
+        let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
         for (const name of exportNames) {
           if (name === "default") {
             result += `const $$default = createClientReference("${id}::${name}");\n`;
@@ -535,7 +545,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
-      let result = `import { createClientReference } from "@hiogawa/react-server/server-internal";\n`;
+      let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createClientReference("${id}::${name}");\n`;
@@ -639,7 +649,7 @@ function vitePluginClientUseServer({
       if (manager.buildType) {
         id = hashString(id);
       }
-      let result = `import { createServerReference } from "@hiogawa/react-server/client-internal";\n`;
+      let result = `import { createServerReference } from "${CLIENT_INTERNAL_PATH}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createServerReference("${id}::${name}");\n`;
@@ -673,7 +683,7 @@ function vitePluginServerUseServer({
         exportNames,
       });
       mcode.prepend(
-        `import { createServerReference } from "@hiogawa/react-server/server-internal";\n`,
+        `import { createServerReference } from "${SERVER_INTERNAL_PATH}";\n`,
       );
       // obfuscate reference
       if (manager.buildType) {
