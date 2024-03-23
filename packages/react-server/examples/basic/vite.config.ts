@@ -30,6 +30,9 @@ export default defineConfig({
     //   https://publint.dev/react-wrap-balancer@1.1.0
     noExternal: ["react-wrap-balancer"],
   },
+  build: {
+    minify: false,
+  },
 });
 
 function testVitePluginVirtual(): Plugin {
