@@ -1,10 +1,8 @@
 import { Link } from "@hiogawa/react-server/client";
-import { sortBy } from "@hiogawa/utils";
-import { fetchPokemons } from "./utils";
+import { findManyPokemons } from "./_utils";
 
 export default async function Page() {
-  const pokemons = await fetchPokemons();
-  const picked = sortBy(pokemons, () => Math.random()).slice(0, 9);
+  const pokemons = await findManyPokemons();
 
   return (
     <div className="flex flex-col items-center gap-4 p-4">
@@ -12,7 +10,7 @@ export default async function Page() {
         Random
       </Link>
       <div className="grid grid-cols-3 gap-4">
-        {picked.map((e) => (
+        {pokemons.map((e) => (
           <Link
             key={e.id}
             href={`/demo/waku_02/${e.slug}`}

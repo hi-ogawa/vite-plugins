@@ -1,16 +1,19 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
-import type React from "react";
-
-// cf. similar to vite-glob-routes
-// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
+import React from "react";
+import { type ReactServerErrorContext, createError } from "./error";
+import { __global } from "./global";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
   page?: {
-    default: React.FC<PageRouteProps>;
+    default: React.FC<PageProps>;
   };
   layout?: {
-    default: React.FC<LayoutRouteProps>;
+    default: React.FC<LayoutProps>;
+  };
+  error?: {
+    // TODO: warn if no "use client"
+    default: React.FC<ErrorPageProps>;
   };
 }
 
@@ -21,7 +24,7 @@ type RouteTreeNode = TreeNode<RouteEntry>;
 export function generateRouteTree(globEntries: Record<string, unknown>) {
   const entries: Record<string, RouteEntry> = {};
   for (const [k, v] of Object.entries(globEntries)) {
-    const m = k.match(/^(.*)\/(page|layout)\.\w*$/);
+    const m = k.match(/^(.*)\/(page|layout|error)\.\w*$/);
     tinyassert(m && 1 in m && 2 in m);
     tinyassert(objectHas(v, "default"), `no deafult export found in '${k}'`);
     ((entries[m[1]] ??= {}) as any)[m[2]] = v;
@@ -70,15 +73,19 @@ export function matchRoute(
 }
 
 // TODO: separate react code in a different file
-export function renderMatchRoute(
-  props: RouteProps,
-  fallback: React.ReactNode,
-): React.ReactNode {
-  const nodes = [...props.match.nodes].reverse();
+// TODO: just do it together with matchRoute above?
+export function renderMatchRoute(request: Request, match: MatchRouteResult) {
+  const { ErrorBoundary, DefaultRootErrorPage } = __global.clientInternal;
 
-  let acc: React.ReactNode = fallback;
-  if (!props.match.notFound) {
-    // TODO: assert?
+  const props: BaseProps = {
+    request,
+    params: match.params,
+  };
+
+  const nodes = [...match.nodes].reverse();
+
+  let acc: React.ReactNode = <ThrowNotFound />;
+  if (!match.notFound) {
     const Page = nodes[0]?.value?.page?.default;
     if (Page) {
       acc = <Page {...props} />;
@@ -86,23 +93,52 @@ export function renderMatchRoute(
   }
 
   for (const node of nodes) {
+    const ErrorPage = node.value?.error?.default;
+    if (ErrorPage) {
+      // TODO: can we remove extra <div>?
+      acc = (
+        <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
+          <div className="error-boundary">{acc}</div>
+        </ErrorBoundary>
+      );
+    }
     const Layout = node.value?.layout?.default;
     if (Layout) {
       acc = <Layout {...props}>{acc}</Layout>;
     }
   }
 
+  acc = (
+    <ErrorBoundary
+      errorComponent={DefaultRootErrorPage}
+      url={props.request.url}
+    >
+      {acc}
+    </ErrorBoundary>
+  );
+
   return acc;
 }
 
-interface RouteProps {
-  request: Request;
-  match: MatchRouteResult;
+const ThrowNotFound: React.FC = () => {
+  throw createError({ status: 404 });
+};
+
+interface BaseProps {
+  // TODO: parsed url prop?
+  request: Request; // TODO: "use client" page/layout doesn't have full aceess
+  params: Record<string, string>;
 }
 
-export interface PageRouteProps extends RouteProps {}
+export interface PageProps extends BaseProps {}
 
-export interface LayoutRouteProps extends React.PropsWithChildren<RouteProps> {}
+export interface LayoutProps extends React.PropsWithChildren<BaseProps> {}
+
+export interface ErrorPageProps {
+  error: Error;
+  serverError?: ReactServerErrorContext;
+  reset: () => void;
+}
 
 function matchChild(input: string, node: RouteTreeNode) {
   if (!node.children) {
@@ -124,7 +160,8 @@ function matchChild(input: string, node: RouteTreeNode) {
 }
 
 //
-// general tree structure utils
+// general tree utils copied from vite-glob-routes
+// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
 //
 
 type TreeNode<T> = {

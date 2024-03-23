@@ -1,3 +1,3 @@
 "use client";
 
-export * from "./lib/components/link";
+export { Link } from "./lib/components/link";
