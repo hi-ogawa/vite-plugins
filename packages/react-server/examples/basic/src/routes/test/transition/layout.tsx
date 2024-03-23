@@ -6,8 +6,8 @@ import type { LayoutProps } from "@hiogawa/react-server/server";
 
 const TABS = [
   ["/test/transition", "About"],
-  ["/test/transition?sleep=2000", "Slow (2 sec)"],
-  ["/test/transition?sleep=200", "Fast (200 msec)"],
+  ["/test/transition?sleep=2000", "Posts (2 sec)"],
+  ["/test/transition?sleep=200", "Contact (200 msec)"],
 ] as const;
 
 export default async function Layout(props: LayoutProps) {
@@ -18,13 +18,13 @@ export default async function Layout(props: LayoutProps) {
       <h4 className="font-bold">useTransition demo</h4>
       <ul className="antd-tablist flex gap-5 px-2">
         {TABS.map(([href, name]) => (
-          <li
-            key={href}
+          <Link
             className="antd-tab py-1.5"
+            href={href}
             aria-selected={href === urlHref}
           >
-            <Link href={href}>{name}</Link>
-          </li>
+            <li key={href}>{name}</li>
+          </Link>
         ))}
       </ul>
       <div className="p-2">{props.children}</div>
