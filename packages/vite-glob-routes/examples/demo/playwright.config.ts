@@ -1,15 +1,15 @@
 import process from "node:process";
 import { defineConfig } from "@playwright/test";
 
-const port = Number(process.env.E2E_PORT || 6174);
-const isPreview = Boolean(process.env.E2E_PREVIEW);
+const port = Number(process.env["E2E_PORT"] || 6174);
+const isPreview = Boolean(process.env["E2E_PREVIEW"]);
 const command = isPreview
   ? `pnpm preview --port ${port} --strict-port`
   : `pnpm dev --port ${port} --strict-port`;
 
 export default defineConfig({
   testDir: "e2e",
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env["CI"] ? 1 : 0,
   use: {
     trace: "on-first-retry",
   },
