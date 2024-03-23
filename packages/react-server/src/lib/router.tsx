@@ -74,8 +74,17 @@ export function matchRoute(
 
 // TODO: separate react code in a different file
 // TODO: just do it together with matchRoute above?
-export function renderMatchRoute(request: Request, match: MatchRouteResult) {
-  const { ErrorBoundary, DefaultRootErrorPage } = __global.clientInternal;
+export async function renderMatchRoute(
+  request: Request,
+  match: MatchRouteResult,
+) {
+  // use its own "use client" components
+  const {
+    ErrorBoundary,
+    DefaultRootErrorPage,
+  }: typeof import("../client-internal") = await import(
+    "@hiogawa/react-server/client-internal" as string
+  );
 
   const props: BaseProps = {
     request,
