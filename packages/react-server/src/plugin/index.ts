@@ -495,7 +495,7 @@ function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
-        let result = `const { createClientReference } = __REACT_SERVER_GLOBAL.serverInternal;\n`;
+        let result = `import { createClientReference } from "@hiogawa/react-server/server-internal";\n`;
         for (const name of exportNames) {
           if (name === "default") {
             result += `const $$default = createClientReference("${id}::${name}");\n`;
@@ -535,7 +535,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
-      let result = `const { createClientReference } = __REACT_SERVER_GLOBAL.serverInternal;\n`;
+      let result = `import { createClientReference } from "@hiogawa/react-server/server-internal";\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createClientReference("${id}::${name}");\n`;
