@@ -99,10 +99,18 @@ export async function start() {
       <ServerComponentTransitionContext.Provider
         value={{ isPending, isActionPending }}
       >
-        <RouterProvider history={history}>{rscRoot}</RouterProvider>
+        {rscRoot}
       </ServerComponentTransitionContext.Provider>
     );
   }
+
+  const reactRootEl = (
+    <React.StrictMode>
+      <RouterProvider history={history}>
+        <Root />
+      </RouterProvider>
+    </React.StrictMode>
+  );
 
   //
   // render
@@ -110,18 +118,9 @@ export async function start() {
 
   // full client render on SSR error
   if (document.documentElement.dataset["noHydate"]) {
-    reactDomClient.createRoot(document).render(
-      <React.StrictMode>
-        <Root />
-      </React.StrictMode>,
-    );
+    reactDomClient.createRoot(document).render(reactRootEl);
   } else {
-    reactDomClient.hydrateRoot(
-      document,
-      <React.StrictMode>
-        <Root />
-      </React.StrictMode>,
-    );
+    reactDomClient.hydrateRoot(document, reactRootEl);
   }
 
   // custom event for RSC reload
