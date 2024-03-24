@@ -2,7 +2,10 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { ServerComponentTransitionContext } from "../lib/client/router";
+import {
+  RouterProvider,
+  ServerComponentTransitionContext,
+} from "../lib/client/router";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
 import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
@@ -68,7 +71,16 @@ export async function start() {
     __setRsc = setRsc;
     __startActionTransition = startActionTransition;
 
-    React.useLayoutEffect(() => {
+    React.useEffect(() => {
+      console.log("[isPending]", isPending);
+    }, [isPending]);
+
+    React.useEffect(() => {
+      console.log("[isActionPending]", isActionPending);
+    }, [isActionPending]);
+
+    React.useEffect(() => {
+      // TODO: back navigation doesn't trigger `isPending?
       return __history.subscribe(() => {
         debug("history", __history.location.href);
 
@@ -85,7 +97,7 @@ export async function start() {
       <ServerComponentTransitionContext.Provider
         value={{ isPending, isActionPending }}
       >
-        {rscRoot}
+        <RouterProvider history={__global.history}>{rscRoot}</RouterProvider>
       </ServerComponentTransitionContext.Provider>
     );
   }

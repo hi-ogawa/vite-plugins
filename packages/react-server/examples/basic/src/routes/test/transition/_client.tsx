@@ -3,6 +3,7 @@
 import {
   Link,
   ServerComponentTransitionContext,
+  useRouter,
 } from "@hiogawa/react-server/client";
 import React from "react";
 import { changeCounter } from "./_action";
@@ -15,9 +16,7 @@ const TABS = [
 
 export function Tablist() {
   const ctx = React.useContext(ServerComponentTransitionContext);
-  React.useEffect(() => {
-    console.log("[isPending]", ctx.isPending);
-  }, [ctx.isPending]);
+  const router = useRouter();
 
   return (
     <ul className="antd-tablist flex gap-5 px-2">
@@ -25,10 +24,13 @@ export function Tablist() {
         <Link
           key={href}
           href={href}
-          // TODO: pending only current loading tab
-          className={cls("antd-tab py-1.5", ctx.isPending && "opacity-50")}
-          // TODO: this needs to be client component so that aria-selected switches on client
-          // aria-selected={href === urlHref}
+          className={cls(
+            "antd-tab py-1.5",
+            href === router.history.location.href &&
+              ctx.isPending &&
+              "opacity-50",
+          )}
+          aria-selected={href === router.history.location.href}
         >
           <li key={href}>{name}</li>
         </Link>
@@ -39,9 +41,6 @@ export function Tablist() {
 
 export function Counter(props: { value: number }) {
   const ctx = React.useContext(ServerComponentTransitionContext);
-  React.useEffect(() => {
-    console.log("[isActionPending]", ctx.isActionPending);
-  }, [ctx.isActionPending]);
 
   return (
     <form action={changeCounter} className="flex flex-col items-start gap-2">

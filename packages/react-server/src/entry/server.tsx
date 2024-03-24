@@ -1,6 +1,9 @@
 import { splitFirst } from "@hiogawa/utils";
+import { createMemoryHistory } from "@tanstack/history";
+import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
+import { RouterProvider } from "../lib/client/router";
 import { debug } from "../lib/debug";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
@@ -21,7 +24,7 @@ export async function handler(request: Request): Promise<Response> {
   }
 
   // ssr rsc
-  const ssrResult = await renderHtml(result.stream);
+  const ssrResult = await renderHtml(request, result.stream);
   return new Response(ssrResult.htmlStream, {
     status: ssrResult.status,
     headers: {
@@ -42,7 +45,7 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(rscStream: ReadableStream) {
+export async function renderHtml(request: Request, rscStream: ReadableStream) {
   await initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
@@ -55,16 +58,22 @@ export async function renderHtml(rscStream: ReadableStream) {
   // (see src/lib/ssr.tsx for details)
   const renderId = Math.random().toString(36).slice(2);
 
-  // TODO: Reac.use promise?
-  const rscNode = await reactServerDomClient.createFromReadableStream(
-    rscStream1,
-    {
-      ssrManifest: {
-        moduleMap: createModuleMap({ renderId }),
-        moduleLoading: null,
-      },
+  const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
+    ssrManifest: {
+      moduleMap: createModuleMap({ renderId }),
+      moduleLoading: null,
     },
-  );
+  });
+
+  const url = new URL(request.url);
+  const history = createMemoryHistory({
+    initialEntries: [url.href.slice(url.origin.length)],
+  });
+
+  function Root() {
+    const rscRoot = React.use(rsc);
+    return <RouterProvider history={history}>{rscRoot}</RouterProvider>;
+  }
 
   if (import.meta.env.DEV) {
     // ensure latest css
@@ -78,7 +87,7 @@ export async function renderHtml(rscStream: ReadableStream) {
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
   try {
-    ssrStream = await reactDomServer.renderToReadableStream(rscNode, {
+    ssrStream = await reactDomServer.renderToReadableStream(<Root />, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
         // TODO: should handle SSR error which is not RSC error?
