@@ -1,15 +1,16 @@
 import { changeCounter, getCounter, getMessages } from "./_action";
-import { Chat, Counter, Counter2 } from "./_client";
+import { Chat, Counter, Counter2, FormStateTest } from "./_client";
 
 export default async function Page() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-2">
       <div className="flex flex-col gap-2">
         <Counter value={getCounter()} />
         <Counter2 action={changeCounter} />
         <Counter3 />
       </div>
       <Chat messages={getMessages()} />
+      <FormStateTest />
     </div>
   );
 }
