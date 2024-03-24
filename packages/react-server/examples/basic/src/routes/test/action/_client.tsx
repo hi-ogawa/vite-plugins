@@ -95,7 +95,7 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
 
 function ClearInputOnAction(props: { clear: () => void }) {
   const { pending } = ReactDom.useFormStatus();
-  const lastPending = usePrevious(pending)
+  const lastPending = usePrevious(pending);
 
   React.useEffect(() => {
     if (!pending && lastPending) {
