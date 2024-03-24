@@ -1,6 +1,6 @@
 "use server";
 
-import { tinyassert } from "@hiogawa/utils";
+import { sleep, tinyassert } from "@hiogawa/utils";
 
 let counter = 0;
 
@@ -24,4 +24,8 @@ export function addMessage(formData: FormData) {
   tinyassert(typeof message === "string");
   messages.push([messageId++, message]);
   messages = messages.slice(-5);
+}
+
+export async function slowAction(formData: FormData) {
+  await sleep(Number(formData.get("sleep")));
 }
