@@ -1,4 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
+import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
@@ -6,7 +7,7 @@ import {
   RouterProvider,
   ServerComponentTransitionContext,
 } from "../lib/client/router";
-import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
+import { initDomWebpackCsr } from "../lib/csr";
 import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
@@ -16,11 +17,12 @@ import type { CallServerCallback } from "../lib/types";
 
 export async function start() {
   initDomWebpackCsr();
-  initHistory();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.browser"
   );
+
+  const history = createBrowserHistory();
 
   //
   // server action callback
@@ -42,12 +44,12 @@ export async function start() {
       tinyassert(args[0] instanceof FormData);
       injectActionId(args[0], id);
     }
-    const request = new Request(wrapRscRequestUrl(__history.location.href), {
+    const request = new Request(wrapRscRequestUrl(history.location.href), {
       method: "POST",
       body: args[0],
     });
     const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
-      callServer: __global.callServer,
+      callServer,
     });
     __startActionTransition(() => __setRsc(newRsc));
   };
@@ -81,10 +83,10 @@ export async function start() {
 
     React.useEffect(() => {
       // TODO: back navigation doesn't trigger `isPending?
-      return __history.subscribe(() => {
-        debug("history", __history.location.href);
+      return history.subscribe(() => {
+        debug("history", history.location.href);
 
-        const request = new Request(wrapRscRequestUrl(__history.location.href));
+        const request = new Request(wrapRscRequestUrl(history.location.href));
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
@@ -97,7 +99,7 @@ export async function start() {
       <ServerComponentTransitionContext.Provider
         value={{ isPending, isActionPending }}
       >
-        <RouterProvider history={__global.history}>{rscRoot}</RouterProvider>
+        <RouterProvider history={history}>{rscRoot}</RouterProvider>
       </ServerComponentTransitionContext.Provider>
     );
   }
@@ -126,7 +128,7 @@ export async function start() {
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
       console.log("[react-server] hot update", e);
-      __history.notify();
+      history.notify();
     });
   }
 }

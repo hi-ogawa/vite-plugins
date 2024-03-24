@@ -1,16 +1,18 @@
 "use client";
 
-import { __global } from "@hiogawa/react-server";
+import { useRouter } from "@hiogawa/react-server/client";
 
 // TODO: server action + redirect
 export function SearchInput() {
+  const router = useRouter();
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         const q = e.currentTarget["q"].value;
         if (typeof q === "string") {
-          __global.history.push(`/demo/waku_02/${q.toLowerCase()}`);
+          router.history.push(`/demo/waku_02/${q.toLowerCase()}`);
         }
       }}
     >
