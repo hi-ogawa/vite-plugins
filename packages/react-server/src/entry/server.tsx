@@ -97,7 +97,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   } catch (e) {
     // render empty as error fallback and
     // let browser render full CSR instead of hydration
-    // which will reply client error boudnary from RSC error
+    // which will replay client error boudnary from RSC error
     // TODO: proper two-pass SSR with error route tracking?
     // TODO: meta tag system
     status = getErrorContext(e)?.status ?? 500;

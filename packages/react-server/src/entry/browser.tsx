@@ -74,17 +74,17 @@ export async function start() {
     __startActionTransition = startActionTransition;
 
     React.useEffect(() => {
-      console.log("[isPending]", isPending);
+      debug.browser("[isPending]", isPending);
     }, [isPending]);
 
     React.useEffect(() => {
-      console.log("[isActionPending]", isActionPending);
+      debug.browser("[isActionPending]", isActionPending);
     }, [isActionPending]);
 
     React.useEffect(() => {
       // TODO: back navigation doesn't trigger `isPending?
       return history.subscribe(() => {
-        debug("history", history.location.href);
+        debug.browser("[history]", history.location.href);
 
         const request = new Request(wrapRscRequestUrl(history.location.href));
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {

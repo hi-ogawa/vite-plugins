@@ -346,6 +346,12 @@ export function vitePluginReactServer(options?: {
             });
           </script>
         `;
+
+        // inject DEBUG variable
+        if (process.env["DEBUG"]) {
+          head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
+        }
+
         const result: SsrAssetsType = {
           bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
           head,
