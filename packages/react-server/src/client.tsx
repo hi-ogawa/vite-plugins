@@ -1,7 +1,4 @@
 "use client";
 
 export { Link } from "./lib/components/link";
-export {
-  ServerComponentTransitionContext,
-  useRouter,
-} from "./lib/client/router";
+export { ServerTransitionContext, useRouter } from "./lib/client/router";

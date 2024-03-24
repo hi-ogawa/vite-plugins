@@ -3,10 +3,7 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import {
-  RouterContext,
-  ServerComponentTransitionContext,
-} from "../lib/client/router";
+import { RouterContext, ServerTransitionContext } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
 import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
@@ -96,11 +93,9 @@ export async function start() {
 
     const rscRoot = React.use(rsc);
     return (
-      <ServerComponentTransitionContext.Provider
-        value={{ isPending, isActionPending }}
-      >
+      <ServerTransitionContext.Provider value={{ isPending, isActionPending }}>
         {rscRoot}
-      </ServerComponentTransitionContext.Provider>
+      </ServerTransitionContext.Provider>
     );
   }
 

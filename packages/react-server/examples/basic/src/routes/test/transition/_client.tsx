@@ -2,7 +2,7 @@
 
 import {
   Link,
-  ServerComponentTransitionContext,
+  ServerTransitionContext,
   useRouter,
 } from "@hiogawa/react-server/client";
 import React from "react";
@@ -15,7 +15,7 @@ const TABS = [
 ] as const;
 
 export function Tablist() {
-  const ctx = React.useContext(ServerComponentTransitionContext);
+  const ctx = React.useContext(ServerTransitionContext);
   const router = useRouter();
 
   return (
@@ -40,7 +40,7 @@ export function Tablist() {
 }
 
 export function Counter(props: { value: number }) {
-  const ctx = React.useContext(ServerComponentTransitionContext);
+  const ctx = React.useContext(ServerTransitionContext);
 
   return (
     <form action={changeCounter} className="flex flex-col items-start gap-2">

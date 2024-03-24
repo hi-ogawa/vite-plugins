@@ -1,19 +1,18 @@
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
 
-// TODO: how to combine these in single context?
-type ServerComponentTransitionContextType = {
+// TODO: combine two contexts as a single global store?
+type ServerTransitionContextType = {
   isPending: boolean;
   isActionPending: boolean;
 };
 
-export const ServerComponentTransitionContext =
-  React.createContext<ServerComponentTransitionContextType>({
+export const ServerTransitionContext =
+  React.createContext<ServerTransitionContextType>({
     isPending: false,
     isActionPending: false,
   });
 
-// TODO: this should be just singleton as global store
 type RouterContextType = {
   history: RouterHistory;
 };
@@ -21,16 +20,6 @@ type RouterContextType = {
 export const RouterContext = React.createContext<RouterContextType>({
   history: undefined!,
 });
-
-export function RouterProvider(
-  props: React.PropsWithChildren<{ history: RouterHistory }>,
-) {
-  return (
-    <RouterContext.Provider value={{ history: props.history }}>
-      {props.children}
-    </RouterContext.Provider>
-  );
-}
 
 export function useRouter() {
   const ctx = React.useContext(RouterContext);
