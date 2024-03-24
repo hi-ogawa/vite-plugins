@@ -24,3 +24,72 @@ export function Link(props: JSX.IntrinsicElements["a"] & { href: string }) {
     />
   );
 }
+
+// for now, just global is fine
+// RouterContext
+// useRouter
+
+// updateRsc
+
+// navigate
+
+// import { type RouterHistory, createBrowserHistory } from "@tanstack/history";
+// import { tinyassert } from "@hiogawa/utils";
+// import React from "react";
+
+// class ClientRouter {
+//   constructor(
+//     public history: RouterHistory,
+//     public startTransition: React.TransitionStartFunction,
+//   ) {}
+
+//   setup() {}
+
+//   // private
+//   push() {}
+// }
+
+// function BrowserRouterProvider() {}
+
+// function SsrRouterProvider() {}
+
+// // history
+
+// // const GlobalTransitionContext
+// // function
+
+// function useRouterTransition() {}
+
+// const ClientRouterContext = React.createContext<ClientRouter>(undefined!);
+
+// // const clientRouter = new ClientRouter();
+
+// // <ClientRouterContext.Provider value={clientRouter}></ClientRouterContext.Provider>
+
+// export function RouterProvider(
+//   props: React.PropsWithChildren<{ history: RouterHistory }>,
+// ) {
+//   //
+//   const [isPending, startTransition] = React.useTransition();
+//   //
+//   const [router] = React.useState(
+//     () => new ClientRouter(props.history, startTransition),
+//   );
+//   // TODO: how to pass isPending?
+//   isPending;
+//   return (
+//     <ClientRouterContext.Provider value={router}>
+//       {props.children}
+//     </ClientRouterContext.Provider>
+//   );
+// }
+
+// function useRouter() {
+//   const [isPending, startTransition] = React.useTransition();
+
+//   React.useState(() => {});
+
+//   const clientRouter = React.useContext(ClientRouterContext);
+//   tinyassert(clientRouter);
+//   return clientRouter;
+// }

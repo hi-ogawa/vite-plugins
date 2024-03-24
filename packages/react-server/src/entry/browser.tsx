@@ -2,11 +2,12 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
+import { ServerComponentTransitionContext } from "../lib/client/router";
 import { __history, initDomWebpackCsr, initHistory } from "../lib/csr";
 import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
-import type { CallServerCallback } from "../lib/types";
+// import type { CallServerCallback } from "../lib/types";
 
 // TODO: root error boundary? suspense?
 
@@ -19,57 +20,110 @@ export async function start() {
   );
 
   // swtich root rsc on navigaton and server action
-  let __setRsc: (v: Promise<React.ReactNode>) => void;
+  // let __setRsc: (v: Promise<React.ReactNode>) => void;
 
-  function updateRscByFetch(request: Request) {
-    const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
-      callServer,
-    });
-    React.startTransition(() => __setRsc(newRsc));
-  }
+  // function updateRscByFetch(request: Request) {
+  //   const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+  //     callServer,
+  //   });
+  //   React.startTransition(() => __setRsc(newRsc));
+  // }
 
   // server action callback
-  const callServer: CallServerCallback = async (id, args) => {
-    debug("callServer", { id, args });
-    if (0) {
-      // TODO: proper encoding?
-      await reactServerDomClient.encodeReply(args);
-    } else {
-      // $ACTION_ID is injected during SSR
-      // but it can stripped away on client re-render (e.g. HMR?)
-      // so we do it here again to inject on client.
-      tinyassert(args[0] instanceof FormData);
-      injectActionId(args[0], id);
-    }
-    const request = new Request(wrapRscRequestUrl(__history.location.href), {
-      method: "POST",
-      body: args[0],
-    });
-    updateRscByFetch(request);
-  };
+  // TODO: separate useTransition
+  // const callServer: CallServerCallback = async (id, args) => {
+  //   debug("callServer", { id, args });
+  //   if (0) {
+  //     // TODO: proper encoding?
+  //     await reactServerDomClient.encodeReply(args);
+  //   } else {
+  //     // $ACTION_ID is injected during SSR
+  //     // but it can stripped away on client re-render (e.g. HMR?)
+  //     // so we do it here again to inject on client.
+  //     tinyassert(args[0] instanceof FormData);
+  //     injectActionId(args[0], id);
+  //   }
+  //   const request = new Request(wrapRscRequestUrl(__history.location.href), {
+  //     method: "POST",
+  //     body: args[0],
+  //   });
+  //   const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+  //     callServer,
+  //   });
+  //   __setRsc(newRsc);
+  //   // updateRscByFetch(request);
+  // };
 
   // expose as global to be used for createServerReference
-  __global.callServer = callServer;
+  // __global.callServer = callServer;
 
   // initial rsc stream from inline <script>
   const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
-    callServer,
+    // callServer,
   });
 
   function Root() {
-    const [rsc, setRsc] = React.useState(initialRsc);
-    __setRsc = setRsc;
+    const [isPending, startTransition] = React.useTransition();
+    // TODO: tell which action is pending?
+    const [isActionPending, startActionTransition] = React.useTransition();
+    isPending;
+    startTransition;
+    startActionTransition;
+    ServerComponentTransitionContext;
 
-    React.useEffect(() => {
+    const [rsc, setRsc] = React.useState(initialRsc);
+    // __setRsc = setRsc;
+
+    React.useLayoutEffect(() => {
+      if (typeof __global.callServer !== "undefined") {
+        return;
+      }
+      __global.callServer = async (id, args) => {
+        debug("callServer", { id, args });
+        if (0) {
+          // TODO: proper encoding?
+          await reactServerDomClient.encodeReply(args);
+        } else {
+          // $ACTION_ID is injected during SSR
+          // but it can stripped away on client re-render (e.g. HMR?)
+          // so we do it here again to inject on client.
+          tinyassert(args[0] instanceof FormData);
+          injectActionId(args[0], id);
+        }
+        const request = new Request(
+          wrapRscRequestUrl(__history.location.href),
+          {
+            method: "POST",
+            body: args[0],
+          },
+        );
+        const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+          // callServer,
+        });
+        startActionTransition(() => setRsc(newRsc));
+      };
+    }, []);
+
+    React.useLayoutEffect(() => {
       return __history.subscribe(() => {
         debug("history", __history.location.href);
-        updateRscByFetch(
-          new Request(wrapRscRequestUrl(__history.location.href)),
-        );
+
+        const request = new Request(wrapRscRequestUrl(__history.location.href));
+        const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+          // callServer,
+        });
+        startTransition(() => setRsc(newRsc));
       });
     }, []);
 
-    return React.use(rsc);
+    const rscRoot = React.use(rsc);
+    return (
+      <ServerComponentTransitionContext.Provider
+        value={{ isPending, isActionPending }}
+      >
+        {rscRoot}
+      </ServerComponentTransitionContext.Provider>
+    );
   }
 
   // full client render on SSR error
