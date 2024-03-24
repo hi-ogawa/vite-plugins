@@ -7,7 +7,7 @@ export default async function Layout(props: LayoutProps) {
     <div className="flex flex-col gap-2">
       <h2 className="text-lg">Test</h2>
       <NavMenu
-        className="grid grid-cols-2 w-xs gap-1"
+        className="grid grid-cols-3 w-lg gap-1"
         links={[
           "/test",
           "/test/other",

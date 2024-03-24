@@ -65,11 +65,6 @@ export function Counter2({
 export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
   const [input, setInput] = React.useState("");
 
-  // clear input after submit (really this way?)
-  React.useEffect(() => {
-    setInput("");
-  }, [props.messages]);
-
   return (
     <div className="flex flex-col gap-2">
       <h4 className="font-bold">Messages</h4>
@@ -81,6 +76,7 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
         ))}
       </ul>
       <form className="flex flex-col items-start gap-2" action={addMessage}>
+        <ClearInputOnAction clear={() => setInput("")} />
         <div className="flex gap-2">
           <input
             name="message"
@@ -95,6 +91,29 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
       </form>
     </div>
   );
+}
+
+function ClearInputOnAction(props: { clear: () => void }) {
+  const { pending } = ReactDom.useFormStatus();
+  const lastPending = usePrevious(pending)
+
+  React.useEffect(() => {
+    if (!pending && lastPending) {
+      props.clear();
+    }
+  }, [pending, lastPending]);
+
+  return <></>;
+}
+
+function usePrevious<T>(v: T) {
+  const ref = React.useRef(v);
+
+  React.useEffect(() => {
+    ref.current = v;
+  }, [v]);
+
+  return ref.current;
 }
 
 // https://react.dev/reference/react-dom/hooks/useFormStatus
