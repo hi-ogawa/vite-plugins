@@ -13,6 +13,10 @@ export const ServerTransitionContext =
     isActionPending: false,
   });
 
+export function useServerTransitionState() {
+  return React.useContext(ServerTransitionContext);
+}
+
 type RouterContextType = {
   history: RouterHistory;
 };

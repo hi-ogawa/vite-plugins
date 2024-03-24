@@ -1,11 +1,11 @@
 "use client";
 
-import { ServerTransitionContext } from "@hiogawa/react-server/client";
-import React from "react";
+import { useServerTransitionState } from "@hiogawa/react-server/client";
 
 export function GlobalProgress() {
-  const ctx = React.useContext(ServerTransitionContext);
+  const ctx = useServerTransitionState();
 
+  // TODO: animate in/out
   return (
     <>
       {ctx.isPending && (
