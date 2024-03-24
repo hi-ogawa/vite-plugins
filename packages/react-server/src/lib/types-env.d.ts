@@ -32,8 +32,6 @@ declare module "react-server-dom-webpack/client.browser" {
   export function createFromReadableStream(
     stream: ReadableStream<Uint8Array>,
     options?: {
-      // TODO: what is this for? progressive enhancement during partial rendering?
-      //       can we avoid __global.callServer?
       callServer?: import("./types").CallServerCallback;
     },
   ): Promise<React.ReactNode>;
