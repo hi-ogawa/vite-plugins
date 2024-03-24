@@ -1,5 +1,6 @@
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
+import { combineStore, type ReadableStore } from "./store-utils";
 
 // TODO: how to combine these in single context?
 type ServerComponentTransitionContextType = {
@@ -18,6 +19,31 @@ type RouterContextType = {
   history: RouterHistory;
 };
 
+type Router = {
+  history: RouterHistory;
+  isPending: boolean;
+  isActionPending: boolean;
+}
+
+// class RouterStore implements ReadableStore<Router> {
+
+//   private listeners = new Set<() => void>();
+
+//   subscribe = (listener: () => void) => {
+//     return () => {
+//       this.listeners.add
+//     }
+//   }
+// }
+
+export function createRouter(history: RouterHistory) {
+  combineStore
+
+  history;
+  // new Store
+  // new Tiny
+}
+
 export const RouterContext = React.createContext<RouterContextType>({
   history: undefined!,
 });
@@ -25,6 +51,11 @@ export const RouterContext = React.createContext<RouterContextType>({
 export function RouterProvider(
   props: React.PropsWithChildren<{ history: RouterHistory }>,
 ) {
+  const [transitionState, setTransitionState] = React.useState({
+    isPending: false,
+    isActionPending: false,
+  });
+
   return (
     <RouterContext.Provider value={{ history: props.history }}>
       {props.children}

@@ -1,0 +1,91 @@
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
+
+// tanstack-style select state subscription
+// https://github.com/TanStack/router/blob/876b887589b14fb4bce0773eb520417682a741e2/packages/react-router/src/useRouterState.tsx
+// https://github.com/TanStack/store/blob/8d6faa0c8eb54b5b1070148311e43bb011a929f9/packages/react-store/src/index.ts
+// https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
+
+export interface Store<T> extends ReadableStore<T>, WritableStore<T> {}
+
+export interface ReadableStore<T> {
+  get: () => T;
+  subscribe: (listener: () => void) => () => void;
+}
+
+export interface WritableStore<T> {
+  set: (action: (v: T) => T) => void;
+}
+
+export function useStore<T, U = T>(
+  store: ReadableStore<T>,
+  select: (v: T) => U = (v: T) => v as any,
+): U {
+  const v = useSyncExternalStoreWithSelector(
+    store.subscribe,
+    store.get,
+    store.get,
+    select as any,
+    isEqualShallow,
+  );
+  return v as any;
+}
+
+export function combineStore<T1, T2>(s1: Store<T1>, s2: Store<T2>): Store<T1 & T2> {
+  return {
+    get: () => ({ ...s1.get(), ...s2.get() }),
+    set: (action) => {
+      // TODO: really twice?
+      s1.set((v1) => action({ ...v1, ...s2.get() }));
+      s2.set((v2) => action({ ...v2, ...s1.get() }));
+    },
+    subscribe: (listener) => {
+      const unsub1 = s1.subscribe(listener);
+      const unsub2 = s2.subscribe(listener);
+      return () => {
+        unsub2();
+        unsub1();
+      };
+    },
+  };
+}
+
+// minimal copy of
+// https://github.com/hi-ogawa/js-utils/blob/63d573a4b0eeeb119059c19680e14c12d64b8a1a/packages/tiny-store/src/core.ts
+export class TinyStore<T> {
+  private listeners = new Set<() => void>();
+
+  constructor(private value: T) {}
+
+  get = () => this.value;
+
+  set = (value: T) => {
+    this.value = value;
+    this.notify();
+  };
+
+  subscribe = (listener: () => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  private notify = () => {
+    this.listeners.forEach((l) => l());
+  };
+}
+
+// from preact https://github.com/preactjs/preact/blob/4b1a7e9276e04676b8d3f8a8257469e2f732e8d4/compat/src/util.js#L19-L23
+function isEqualShallow(x: object, y: object): boolean {
+  for (const k in x) {
+    if (!(k in y)) {
+      return false;
+    }
+  }
+  for (const k in y) {
+    if ((x as any)[k] !== (y as any)[k]) {
+      return false;
+    }
+  }
+  return true;
+}
