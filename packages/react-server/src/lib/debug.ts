@@ -1,5 +1,6 @@
 import { escapeRegExp } from "@hiogawa/utils";
 
+// TODO: move to @hiogawa/utils?
 // inspired by https://github.com/debug-js/debug/
 
 // cli

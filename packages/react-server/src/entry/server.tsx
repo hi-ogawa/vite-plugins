@@ -96,6 +96,11 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
 
+  // inject DEBUG variable
+  if (process.env["DEBUG"]) {
+    assets.head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
+  }
+
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
