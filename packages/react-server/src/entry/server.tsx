@@ -3,7 +3,7 @@ import { createMemoryHistory } from "@tanstack/history";
 import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { RouterProvider } from "../lib/client/router";
+import { RouterContext } from "../lib/client/router";
 import { debug } from "../lib/debug";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
@@ -54,6 +54,10 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
 
   const [rscStream1, rscStream2] = rscStream.tee();
 
+  //
+  // ssr root
+  //
+
   // use unique id for each render to simplify ssr module invalidation during dev
   // (see src/lib/ssr.tsx for details)
   const renderId = Math.random().toString(36).slice(2);
@@ -71,9 +75,18 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   });
 
   function Root() {
-    const rscRoot = React.use(rsc);
-    return <RouterProvider history={history}>{rscRoot}</RouterProvider>;
+    return React.use(rsc);
   }
+
+  const reactRootEl = (
+    <RouterContext.Provider value={{ history }}>
+      <Root />
+    </RouterContext.Provider>
+  );
+
+  //
+  // render
+  //
 
   if (import.meta.env.DEV) {
     // ensure latest css
@@ -87,7 +100,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
   try {
-    ssrStream = await reactDomServer.renderToReadableStream(<Root />, {
+    ssrStream = await reactDomServer.renderToReadableStream(reactRootEl, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
         // TODO: should handle SSR error which is not RSC error?

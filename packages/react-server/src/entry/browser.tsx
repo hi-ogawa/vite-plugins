@@ -4,7 +4,7 @@ import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import {
-  RouterProvider,
+  RouterContext,
   ServerComponentTransitionContext,
 } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
@@ -63,7 +63,7 @@ export async function start() {
   });
 
   //
-  // browser root component
+  // browser root
   //
 
   function Root() {
@@ -106,9 +106,9 @@ export async function start() {
 
   const reactRootEl = (
     <React.StrictMode>
-      <RouterProvider history={history}>
+      <RouterContext.Provider value={{ history }}>
         <Root />
-      </RouterProvider>
+      </RouterContext.Provider>
     </React.StrictMode>
   );
 
