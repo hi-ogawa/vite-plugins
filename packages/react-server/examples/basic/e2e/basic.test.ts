@@ -301,6 +301,14 @@ test("server action no js", async ({ browser }) => {
   await page.getByText("Count: 0").click();
 });
 
+test("ReactDom.useFormStatus", async ({ page }) => {
+  await page.goto("/test/action");
+  await page.getByText("hydrated: true").click();
+  await page.getByRole("button", { name: "1.0 sec" }).click();
+  await page.getByText("pending: true").click();
+  await page.getByText("pending: false").click();
+});
+
 test("use client > virtual module", async ({ page }) => {
   await page.goto("/test/deps");
   await page.getByText("TestVirtualUseClient").click();

@@ -100,11 +100,7 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
 // https://react.dev/reference/react-dom/hooks/useFormStatus
 export function FormStateTest() {
   return (
-    <form
-      method="POST"
-      action={slowAction}
-      className="flex flex-col items-start gap-2"
-    >
+    <form action={slowAction} className="flex flex-col items-start gap-2">
       <FormStateTestInner />
     </form>
   );
