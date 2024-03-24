@@ -99,13 +99,19 @@ export async function start() {
     );
   }
 
+  // TODO: investigate StrictMode issue
   const reactRootEl = (
-    <React.StrictMode>
-      <RouterContext.Provider value={{ history }}>
-        <Root />
-      </RouterContext.Provider>
-    </React.StrictMode>
+    <RouterContext.Provider value={{ history }}>
+      <Root />
+    </RouterContext.Provider>
   );
+  // const reactRootEl = (
+  //   <React.StrictMode>
+  //     <RouterContext.Provider value={{ history }}>
+  //       <Root />
+  //     </RouterContext.Provider>
+  //   </React.StrictMode>
+  // );
 
   //
   // render

@@ -1,19 +1,25 @@
 "use client";
 
 import { useServerTransitionState } from "@hiogawa/react-server/client";
+import { cls } from "./utils";
 
 export function GlobalProgress() {
   const ctx = useServerTransitionState();
 
-  // TODO: animate in/out
   return (
     <>
-      {ctx.isPending && (
-        <div className="antd-spin w-5 h-5 text-colorInfo"></div>
-      )}
-      {ctx.isActionPending && (
-        <div className="antd-spin w-5 h-5 text-colorWarning"></div>
-      )}
+      <div
+        className={cls(
+          "antd-spin w-5 h-5 text-colorInfo transition duration-500",
+          ctx.isPending ? "opacity-100" : "opacity-0",
+        )}
+      ></div>
+      <div
+        className={cls(
+          "antd-spin w-5 h-5 text-colorWarning transition duration-500",
+          ctx.isActionPending ? "opacity-100" : "opacity-0",
+        )}
+      ></div>
     </>
   );
 }

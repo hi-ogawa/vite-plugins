@@ -5,6 +5,7 @@ import {
   useRouter,
   useServerTransitionState,
 } from "@hiogawa/react-server/client";
+import { cls } from "../../../components/utils";
 import { changeCounter } from "./_action";
 
 const TABS = [
@@ -63,5 +64,3 @@ export function Counter(props: { value: number }) {
     </form>
   );
 }
-
-const cls = (...args: unknown[]) => args.filter(Boolean).join(" ");
