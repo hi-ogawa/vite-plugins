@@ -3,12 +3,7 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import {
-  Router,
-  RouterContext,
-  ServerTransitionContext,
-  useRouterState,
-} from "../lib/client/router";
+import { Router, RouterContext, useRouterState } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
 import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
@@ -106,12 +101,7 @@ export async function start() {
       [updateCount],
     );
 
-    const rscRoot = React.use(rsc);
-    return (
-      <ServerTransitionContext.Provider value={{ isPending, isActionPending }}>
-        {rscRoot}
-      </ServerTransitionContext.Provider>
-    );
+    return React.use(rsc);
   }
 
   // TODO: root error boundary? suspense?

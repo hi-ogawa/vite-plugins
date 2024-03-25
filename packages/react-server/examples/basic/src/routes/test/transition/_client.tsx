@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Link,
-  useRouterState,
-  useServerTransitionState,
-} from "@hiogawa/react-server/client";
+import { Link, useRouter, useRouterState } from "@hiogawa/react-server/client";
 import { cls } from "../../../components/utils";
 import { changeCounter } from "./_action";
 
@@ -15,7 +11,7 @@ const TABS = [
 ] as const;
 
 export function Tablist() {
-  const { isPending } = useServerTransitionState();
+  const isPending = useRouter((s) => s.isPending);
   const location = useRouterState({ select: (s) => s.history.location });
 
   return (
@@ -38,7 +34,7 @@ export function Tablist() {
 }
 
 export function Counter(props: { value: number }) {
-  const { isActionPending } = useServerTransitionState();
+  const isActionPending = useRouter((s) => s.isActionPending);
 
   return (
     <form action={changeCounter} className="flex flex-col items-start gap-2">
