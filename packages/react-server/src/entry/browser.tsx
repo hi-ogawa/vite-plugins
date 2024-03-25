@@ -93,6 +93,7 @@ export async function start() {
     const updateCount = useRouterState({ select: (s) => s.updateCount });
 
     React.useEffect(
+      // workaround StrictMode
       once(() => {
         if (updateCount === 0) {
           return;
