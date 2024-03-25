@@ -26,7 +26,7 @@ export function useStore<T, U = T>(
 
 // from tiny-store
 // https://github.com/hi-ogawa/js-utils/blob/63d573a4b0eeeb119059c19680e14c12d64b8a1a/packages/tiny-store/src/core.ts
-export class TinyStore<T> {
+export class TinyStore<T> implements ReadableStore<T> {
   private listeners = new Set<() => void>();
 
   constructor(private value: T) {}
