@@ -15,8 +15,8 @@ importers:
         specifier: 1.1.2-pre.2
         version: 1.1.2-pre.2(prettier@3.2.5)(typescript@5.4.2)
       '@hiogawa/utils':
-        specifier: ^1.6.4-pre.0
-        version: 1.6.4-pre.0
+        specifier: ^1.6.4-pre.1
+        version: 1.6.4-pre.1
       '@playwright/test':
         specifier: ^1.42.1
         version: 1.42.1
@@ -1969,8 +1969,8 @@ packages:
   /@hiogawa/utils@1.6.3:
     resolution: {integrity: sha512-Bs6Ycf6RhnMQipzU50vg9eb/yimRqPlpvERjkIklXW996kmZ7bjLbhCmYrUMRQVfqICzMPTtyrYkX7wGdVPUMA==}
 
-  /@hiogawa/utils@1.6.4-pre.0:
-    resolution: {integrity: sha512-osui2L+1F7OfgEmFiQifXVVZbGjkgZxccZmBu+f8s6EadmzFtucbSftA8clyncpO2bZQgvYuLojEA0/ulai/NA==}
+  /@hiogawa/utils@1.6.4-pre.1:
+    resolution: {integrity: sha512-L8g6kQuPKJXKoqF1XuFYXXHQ3Z4VXuEX8tlOz/gPO6uP2VQ95JUyONsr93RpVTLc/GGblXY30/YK4r56kJzzgQ==}
     dev: true
 
   /@iconify-json/ri@1.1.20:
