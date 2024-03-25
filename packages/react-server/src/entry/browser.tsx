@@ -1,16 +1,16 @@
-import { tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { RouterContext, ServerTransitionContext } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
-import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
 // TODO: root error boundary? suspense?
+const debug = createDebug("react-server:browser");
 
 export async function start() {
   initDomWebpackCsr();
@@ -71,17 +71,17 @@ export async function start() {
     __startActionTransition = startActionTransition;
 
     React.useEffect(() => {
-      debug.browser("[isPending]", isPending);
+      debug("[isPending]", isPending);
     }, [isPending]);
 
     React.useEffect(() => {
-      debug.browser("[isActionPending]", isActionPending);
+      debug("[isActionPending]", isActionPending);
     }, [isActionPending]);
 
     React.useEffect(() => {
       // TODO: back navigation doesn't trigger `isPending?
       return history.subscribe(() => {
-        debug.browser("[history]", history.location.href);
+        debug("[history]", history.location.href);
 
         const request = new Request(wrapRscRequestUrl(history.location.href));
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
