@@ -15,8 +15,8 @@ importers:
         specifier: 1.1.2-pre.2
         version: 1.1.2-pre.2(prettier@3.2.5)(typescript@5.4.2)
       '@hiogawa/utils':
-        specifier: ^1.6.3
-        version: 1.6.3
+        specifier: ^1.6.4-pre.1
+        version: 1.6.4-pre.1
       '@playwright/test':
         specifier: ^1.42.1
         version: 1.42.1
@@ -75,9 +75,6 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
     devDependencies:
-      '@hiogawa/utils':
-        specifier: ^1.6.3
-        version: 1.6.3
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
@@ -427,9 +424,6 @@ importers:
       '@hiogawa/tiny-rpc':
         specifier: 0.2.3-pre.18
         version: 0.2.3-pre.18
-      '@hiogawa/utils':
-        specifier: ^1.6.3
-        version: 1.6.3
 
   packages/vite-node-miniflare/examples/basic:
     dependencies:
@@ -1980,6 +1974,10 @@ packages:
 
   /@hiogawa/utils@1.6.3:
     resolution: {integrity: sha512-Bs6Ycf6RhnMQipzU50vg9eb/yimRqPlpvERjkIklXW996kmZ7bjLbhCmYrUMRQVfqICzMPTtyrYkX7wGdVPUMA==}
+
+  /@hiogawa/utils@1.6.4-pre.1:
+    resolution: {integrity: sha512-L8g6kQuPKJXKoqF1XuFYXXHQ3Z4VXuEX8tlOz/gPO6uP2VQ95JUyONsr93RpVTLc/GGblXY30/YK4r56kJzzgQ==}
+    dev: true
 
   /@iconify-json/ri@1.1.20:
     resolution: {integrity: sha512-yScIGjLFBCJKWKskQTWRjNI2Awoq+VRDkRxEsCQvSfdz41n+xkRtFG2K6J1OVI90ClRHfjFC8VJ2+WzxxyFjTQ==}

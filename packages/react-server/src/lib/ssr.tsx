@@ -1,6 +1,7 @@
-import { DefaultMap, memoize, tinyassert } from "@hiogawa/utils";
-import { debug } from "./debug";
+import { DefaultMap, createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
+
+const debug = createDebug("react-server:default");
 
 // __webpack_require__ is called at least twice for preloadModule and requireModule
 // https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js

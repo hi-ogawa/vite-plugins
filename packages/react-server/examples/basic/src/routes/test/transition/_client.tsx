@@ -2,10 +2,10 @@
 
 import {
   Link,
-  ServerComponentTransitionContext,
   useRouter,
+  useServerTransitionState,
 } from "@hiogawa/react-server/client";
-import React from "react";
+import { cls } from "../../../components/utils";
 import { changeCounter } from "./_action";
 
 const TABS = [
@@ -15,7 +15,7 @@ const TABS = [
 ] as const;
 
 export function Tablist() {
-  const ctx = React.useContext(ServerComponentTransitionContext);
+  const { isPending } = useServerTransitionState();
   const router = useRouter();
 
   return (
@@ -26,9 +26,7 @@ export function Tablist() {
           href={href}
           className={cls(
             "antd-tab py-1.5",
-            href === router.history.location.href &&
-              ctx.isPending &&
-              "opacity-50",
+            href === router.history.location.href && isPending && "opacity-50",
           )}
           aria-selected={href === router.history.location.href}
         >
@@ -40,7 +38,7 @@ export function Tablist() {
 }
 
 export function Counter(props: { value: number }) {
-  const ctx = React.useContext(ServerComponentTransitionContext);
+  const { isActionPending } = useServerTransitionState();
 
   return (
     <form action={changeCounter} className="flex flex-col items-start gap-2">
@@ -59,12 +57,10 @@ export function Counter(props: { value: number }) {
         >
           +1 (0.2 sec)
         </button>
-        <div className={cls(ctx.isActionPending && "opacity-50")}>
+        <div className={cls(isActionPending && "opacity-50")}>
           Count: {props.value}
         </div>
       </div>
     </form>
   );
 }
-
-const cls = (...args: unknown[]) => args.filter(Boolean).join(" ");

@@ -1,4 +1,6 @@
-import { debug } from "./debug";
+import { createDebug } from "@hiogawa/utils";
+
+const debug = createDebug("react-server:default");
 
 // TODO: accomodate redirection error convention?
 // TODO: custom (de)serialization?

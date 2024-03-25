@@ -2,7 +2,7 @@ import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import fg from "fast-glob";
 import MagicString from "magic-string";
@@ -18,7 +18,6 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
-import { debug } from "../lib/debug";
 import { __global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
@@ -29,6 +28,8 @@ import {
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
 } from "./utils";
+
+const debug = createDebug("react-server:plugin");
 
 // resolve import paths for `createClientReference` and `createServerReference`
 // since `import "@hiogawa/react-server"` is not necessary visible for exernal library.
@@ -60,7 +61,7 @@ class ReactServerManager {
 
   shouldReloadRsc(id: string) {
     const ok = this.rscIds.has(id) && !this.rscUseClientIds.has(id);
-    debug.plugin("[RscManager.shouldReloadRsc]", { ok, id });
+    debug("[RscManager.shouldReloadRsc]", { ok, id });
     return ok;
   }
 }
@@ -133,9 +134,7 @@ export function vitePluginReactServer(options?: {
               manager.rscUseServerIds.add(file);
             }
           }
-          debug.plugin("[virtual-rsc-use-server]", [
-            ...manager.rscUseServerIds,
-          ]);
+          debug("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
         },
         resolveId(source, _importer, _options) {
           if (source === "virtual:rsc-use-server") {
@@ -307,7 +306,7 @@ export function vitePluginReactServer(options?: {
         if (id.startsWith("\0virtual:use-client-node-module/")) {
           const source = id.slice("\0virtual:use-client-node-module/".length);
           const meta = manager.nodeModules.useClient.get(source);
-          debug.plugin("[parent.use-client-node-modules]", { source, meta });
+          debug("[parent.use-client-node-modules]", { source, meta });
           tinyassert(meta);
           return `export {${[...meta.exportNames].join(
             ", ",
@@ -346,12 +345,6 @@ export function vitePluginReactServer(options?: {
             });
           </script>
         `;
-
-        // inject DEBUG variable
-        if (process.env["DEBUG"]) {
-          head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
-        }
-
         const result: SsrAssetsType = {
           bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
           head,
@@ -465,7 +458,7 @@ function vitePluginServerUseClient({
         const resolved = await this.resolve(source, importer, {
           skipSelf: true,
         });
-        debug.plugin("[rsc.use-client-node-modules.resolveId]", {
+        debug("[rsc.use-client-node-modules.resolveId]", {
           source,
           resolved,
         });
@@ -507,7 +500,7 @@ function vitePluginServerUseClient({
             result += `export const ${name} = createClientReference("${id}::${name}");\n`;
           }
         }
-        debug.plugin("[rsc.use-client-node-modules.load]", {
+        debug("[rsc.use-client-node-modules.load]", {
           source,
           meta,
           id,
@@ -547,7 +540,7 @@ function vitePluginServerUseClient({
           result += `export const ${name} = createClientReference("${id}::${name}");\n`;
         }
       }
-      debug.plugin(`[${vitePluginServerUseClient.name}:transform]`, {
+      debug(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
         result,
@@ -627,7 +620,7 @@ function vitePluginClientUseServer({
       }
       const ast = await parseAstAsync(code);
       const exportNames = getExportNames(ast);
-      debug.plugin(`[${vitePluginClientUseServer.name}:transform]`, {
+      debug(`[${vitePluginClientUseServer.name}:transform]`, {
         id,
         exportNames,
       });
@@ -671,7 +664,7 @@ function vitePluginServerUseServer({
       const ast: Program = await parseAstAsync(code);
       const mcode = new MagicString(code);
       const exportNames = getExportNames(ast, { toWritable: { code: mcode } });
-      debug.plugin(`[${vitePluginServerUseServer.name}:transform]`, {
+      debug(`[${vitePluginServerUseServer.name}:transform]`, {
         id,
         exportNames,
       });

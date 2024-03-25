@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -60,7 +60,6 @@
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
-    "@hiogawa/utils": "^1.6.3",
     "@types/estree": "^1.0.5",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
