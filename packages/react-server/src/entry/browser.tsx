@@ -87,8 +87,8 @@ export async function start() {
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
-        // need to delay transition after useRouter's re-render is committed
-        // for back/forward navigation?
+        // delay transition after useRouter's re-render is committed for back/forward navigation
+        // TODO: why normal history.push works?
         setTimeout(() => startTransition(() => setRsc(newRsc)));
       });
     }, []);
@@ -101,19 +101,15 @@ export async function start() {
     );
   }
 
-  // TODO: investigate StrictMode issue
-  const reactRootEl = (
+  let reactRootEl = (
     <RouterContext.Provider value={{ history }}>
       <Root />
     </RouterContext.Provider>
   );
-  // const reactRootEl = (
-  //   <React.StrictMode>
-  //     <RouterContext.Provider value={{ history }}>
-  //       <Root />
-  //     </RouterContext.Provider>
-  //   </React.StrictMode>
-  // );
+  if (0) {
+    // TODO: investigate StrictMode issue
+    reactRootEl = <React.StrictMode>{reactRootEl}</React.StrictMode>;
+  }
 
   //
   // render
