@@ -2,14 +2,18 @@ import { Link } from "@hiogawa/react-server/client";
 
 export function NavMenu(props: { links: string[]; className?: string }) {
   return (
-    <ul className={props.className ?? "flex flex-col items-start gap-1"}>
+    <ul className={props.className}>
       {props.links.map((e) => (
-        <li key={e} className="antd-link flex items-stretch">
-          <Link href={e}>
-            <span className="text-lg pr-2">•</span>
+        <Link
+          key={e}
+          href={e}
+          className="antd-link self-start justify-self-start"
+        >
+          <li className="flex items-center">
+            <span className="text-lg pr-2 select-none">•</span>
             {e}
-          </Link>
-        </li>
+          </li>
+        </Link>
       ))}
     </ul>
   );
