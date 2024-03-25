@@ -83,22 +83,23 @@ export async function start() {
       router.store.set((s) => ({ ...s, isActionPending }));
     }, [isActionPending]);
 
-    const updateCount = useRouter((s) => s.updateCount);
+    const location = useRouter((s) => s.location);
+    const initialLocation = useRouter((s) => s.initialLocation);
 
     React.useEffect(
       // workaround StrictMode
       once(() => {
-        if (updateCount === 0) {
+        if (initialLocation === location) {
           return;
         }
-        debug("[history]", history.location.href);
-        const request = new Request(wrapRscRequestUrl(history.location.href));
+        debug("[history]", location.href);
+        const request = new Request(wrapRscRequestUrl(location.href));
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
         startTransition(() => setRsc(newRsc));
       }),
-      [updateCount],
+      [initialLocation, location],
     );
 
     return React.use(rsc);

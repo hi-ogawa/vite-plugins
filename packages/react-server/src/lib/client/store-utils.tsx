@@ -5,7 +5,7 @@ import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/w
 // https://github.com/TanStack/store/blob/8d6faa0c8eb54b5b1070148311e43bb011a929f9/packages/react-store/src/index.ts
 // https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
 
-export interface ReadableStore<T> {
+interface ReadableStore<T> {
   get: () => T;
   subscribe: (listener: () => void) => () => void;
 }
