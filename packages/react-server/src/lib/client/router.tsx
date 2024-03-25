@@ -18,10 +18,6 @@ export function useServerTransitionState() {
   return React.useContext(ServerTransitionContext);
 }
 
-type RouterContextType = {
-  history: RouterHistory;
-};
-
 type RouterState = {
   history: RouterHistory;
   updateCount: number;
@@ -46,40 +42,19 @@ export class Router {
       this.store.set((s) => ({
         ...s,
         updateCount: s.updateCount + 1,
+        // make it immutable so `useStore` can pick up re-render easily?
+        // history: { ...s.history }
       }));
     });
   }
 }
 
-export const RouterContext2 = React.createContext<Router>(undefined!);
+export const RouterContext = React.createContext<Router>(undefined!);
 
-export function useRouter2() {
-  return React.useContext(RouterContext2);
-}
-
+// TODO: tweak API? useRouter(s => s.history)
 export function useRouterState<U = RouterState>(options?: {
   select?: (v: RouterState) => U;
 }) {
-  const router = React.useContext(RouterContext2);
+  const router = React.useContext(RouterContext);
   return useStore(router.store, options?.select);
-}
-
-export const RouterContext = React.createContext<RouterContextType>({
-  history: undefined!,
-});
-
-export function useRouter() {
-  const ctx = React.useContext(RouterContext);
-
-  // TODO: tanstack-style refined state subscription
-  // https://github.com/TanStack/router/blob/876b887589b14fb4bce0773eb520417682a741e2/packages/react-router/src/useRouterState.tsx
-  // https://github.com/TanStack/store/blob/8d6faa0c8eb54b5b1070148311e43bb011a929f9/packages/react-store/src/index.ts
-  // https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
-  React.useSyncExternalStore(
-    ctx.history.subscribe,
-    () => ctx.history,
-    () => ctx.history,
-  );
-
-  return ctx;
 }

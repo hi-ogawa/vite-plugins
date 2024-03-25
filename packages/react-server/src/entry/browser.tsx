@@ -6,9 +6,7 @@ import { rscStream } from "rsc-html-stream/client";
 import {
   Router,
   RouterContext,
-  RouterContext2,
   ServerTransitionContext,
-  useRouter2,
   useRouterState,
 } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
@@ -76,7 +74,7 @@ export async function start() {
     __setRsc = setRsc;
     __startActionTransition = startActionTransition;
 
-    const router = useRouter2();
+    const router = React.use(RouterContext);
 
     React.useEffect(() => router.setup(), []);
 
@@ -118,10 +116,8 @@ export async function start() {
 
   // TODO: root error boundary? suspense?
   let reactRootEl = (
-    <RouterContext.Provider value={{ history }}>
-      <RouterContext2.Provider value={new Router(history)}>
-        <Root />
-      </RouterContext2.Provider>
+    <RouterContext.Provider value={new Router(history)}>
+      <Root />
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {

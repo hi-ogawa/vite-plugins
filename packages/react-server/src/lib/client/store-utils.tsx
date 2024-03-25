@@ -24,7 +24,7 @@ export function useStore<T, U = T>(
   return v as any;
 }
 
-// minimal copy of
+// from tiny-store
 // https://github.com/hi-ogawa/js-utils/blob/63d573a4b0eeeb119059c19680e14c12d64b8a1a/packages/tiny-store/src/core.ts
 export class TinyStore<T> {
   private listeners = new Set<() => void>();
@@ -50,11 +50,12 @@ export class TinyStore<T> {
   };
 }
 
-// from preact https://github.com/preactjs/preact/blob/4b1a7e9276e04676b8d3f8a8257469e2f732e8d4/compat/src/util.js#L19-L23
 function isEqualShallow(x: object, y: object): boolean {
   if (typeof x !== "object") {
     return Object.is(x, y);
   }
+  // from preact
+  // https://github.com/preactjs/preact/blob/4b1a7e9276e04676b8d3f8a8257469e2f732e8d4/compat/src/util.js#L19-L23
   for (const k in x) {
     if (!(k in y)) {
       return false;

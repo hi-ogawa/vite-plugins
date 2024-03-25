@@ -2,7 +2,7 @@
 
 import {
   Link,
-  useRouter,
+  useRouterState,
   useServerTransitionState,
 } from "@hiogawa/react-server/client";
 import { cls } from "../../../components/utils";
@@ -16,7 +16,7 @@ const TABS = [
 
 export function Tablist() {
   const { isPending } = useServerTransitionState();
-  const router = useRouter();
+  const location = useRouterState({ select: (s) => s.history.location });
 
   return (
     <ul className="antd-tablist flex gap-5 px-2">
@@ -26,9 +26,9 @@ export function Tablist() {
           href={href}
           className={cls(
             "antd-tab py-1.5",
-            href === router.history.location.href && isPending && "opacity-50",
+            href === location.href && isPending && "opacity-50",
           )}
-          aria-selected={href === router.history.location.href}
+          aria-selected={href === location.href}
         >
           <li key={href}>{name}</li>
         </Link>

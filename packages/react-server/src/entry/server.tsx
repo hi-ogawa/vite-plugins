@@ -3,7 +3,7 @@ import { createMemoryHistory } from "@tanstack/history";
 import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { RouterContext } from "../lib/client/router";
+import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
 import {
@@ -80,7 +80,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   }
 
   const reactRootEl = (
-    <RouterContext.Provider value={{ history }}>
+    <RouterContext.Provider value={new Router(history)}>
       <Root />
     </RouterContext.Provider>
   );
