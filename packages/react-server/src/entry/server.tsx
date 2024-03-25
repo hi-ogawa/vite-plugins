@@ -1,7 +1,6 @@
-import { splitFirst } from "@hiogawa/utils";
+import { createDebug, splitFirst } from "@hiogawa/utils";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { debug } from "../lib/debug";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
 import {
@@ -10,6 +9,8 @@ import {
   invalidateImportCacheOnFinish,
 } from "../lib/ssr";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+
+const debug = createDebug("react-server:ssr");
 
 export async function handler(request: Request): Promise<Response> {
   const reactServer = await importReactServer();
@@ -73,6 +74,9 @@ export async function renderHtml(rscStream: ReadableStream) {
     invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
+  if (process.env["DEBUG"]) {
+    assets.head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
+  }
 
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
@@ -82,7 +86,7 @@ export async function renderHtml(rscStream: ReadableStream) {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
         // TODO: should handle SSR error which is not RSC error?
-        debug.ssr("renderToReadableStream", { error, errorInfo });
+        debug("renderToReadableStream", { error, errorInfo });
       },
     });
   } catch (e) {

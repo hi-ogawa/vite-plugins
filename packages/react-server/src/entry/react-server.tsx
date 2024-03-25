@@ -1,11 +1,12 @@
-import { objectMapKeys } from "@hiogawa/utils";
+import { createDebug, objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
-import { debug } from "../lib/debug";
 import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
 import { ejectActionId, unwrapRscRequest } from "../lib/shared";
+
+const debug = createDebug("react-server:rsc");
 
 export type ReactServerHandler = (
   ctx: ReactServerHandlerContext,
@@ -62,7 +63,7 @@ async function render({ request }: { request: Request }) {
     createBundlerConfig(),
     {
       onError(error, errorInfo) {
-        debug.rsc("[reactServerDomServer.renderToReadableStream]", {
+        debug("[reactServerDomServer.renderToReadableStream]", {
           error,
           errorInfo,
         });
