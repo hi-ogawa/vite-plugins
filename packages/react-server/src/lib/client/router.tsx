@@ -5,7 +5,6 @@ import { TinyStore, useStore } from "./store-utils";
 type RouterState = {
   history: Omit<RouterHistory, "location">; // hide location from API since history is mutable
   location: HistoryLocation;
-  initialLocation: HistoryLocation; // keep initial location to avoid fetch rsc on first render
   isPending: boolean;
   isActionPending: boolean;
 };
@@ -17,7 +16,6 @@ export class Router {
     this.store = new TinyStore<RouterState>({
       history,
       location: history.location,
-      initialLocation: history.location,
       isPending: false,
       isActionPending: false,
     });

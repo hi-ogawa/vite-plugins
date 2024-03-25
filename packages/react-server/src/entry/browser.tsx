@@ -19,6 +19,7 @@ export async function start() {
   );
 
   const history = createBrowserHistory();
+  const initialLocation = history.location;
 
   //
   // server action callback
@@ -84,12 +85,11 @@ export async function start() {
     }, [isActionPending]);
 
     const location = useRouter((s) => s.location);
-    const initialLocation = useRouter((s) => s.initialLocation);
 
     React.useEffect(
       // workaround StrictMode
       once(() => {
-        if (initialLocation === location) {
+        if (location === initialLocation) {
           return;
         }
         debug("[history]", location.href);
@@ -99,7 +99,7 @@ export async function start() {
         });
         startTransition(() => setRsc(newRsc));
       }),
-      [initialLocation, location],
+      [location],
     );
 
     return React.use(rsc);
