@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouterState } from "@hiogawa/react-server/client";
+import { useRouter } from "@hiogawa/react-server/client";
 
 // TODO: server action + redirect
 export function SearchInput() {
-  const history = useRouterState({ select: (s) => s.history });
+  const history = useRouter((s) => s.history);
 
   return (
     <form

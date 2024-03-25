@@ -3,7 +3,7 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { Router, RouterContext, useRouterState } from "../lib/client/router";
+import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
 import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
@@ -83,7 +83,7 @@ export async function start() {
       router.store.set((s) => ({ ...s, isActionPending }));
     }, [isActionPending]);
 
-    const updateCount = useRouterState({ select: (s) => s.updateCount });
+    const updateCount = useRouter((s) => s.updateCount);
 
     React.useEffect(
       // workaround StrictMode

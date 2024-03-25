@@ -1,13 +1,14 @@
 "use client";
 
-import { useRouterState } from "../client/router";
+import { useRouter } from "../client/router";
 
 // TODO: study prior art
 // https://github.com/TanStack/router/blame/a1030ef24de104eb32f7a781cda247458e0ec90a/packages/react-router/src/link.tsx
 // https://github.com/remix-run/react-router/blob/9e7486b89e712b765d947297f228650cdc0c488e/packages/react-router-dom/index.tsx#L1394
 
 export function Link(props: JSX.IntrinsicElements["a"] & { href: string }) {
-  const history = useRouterState({ select: (s) => s.history });
+  const history = useRouter((s) => s.history);
+
   return (
     <a
       {...props}

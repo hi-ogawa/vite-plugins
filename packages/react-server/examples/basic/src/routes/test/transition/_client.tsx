@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, useRouter, useRouterState } from "@hiogawa/react-server/client";
+import { Link, useRouter } from "@hiogawa/react-server/client";
 import { cls } from "../../../components/utils";
 import { changeCounter } from "./_action";
 
@@ -12,7 +12,7 @@ const TABS = [
 
 export function Tablist() {
   const isPending = useRouter((s) => s.isPending);
-  const location = useRouterState({ select: (s) => s.history.location });
+  const location = useRouter((s) => s.location);
 
   return (
     <ul className="antd-tablist flex gap-5 px-2">

@@ -1,13 +1,10 @@
-import type { RouterHistory } from "@tanstack/history";
+import type { HistoryLocation, RouterHistory } from "@tanstack/history";
 import React from "react";
 import { TinyStore, useStore } from "./store-utils";
 
 type RouterState = {
-  // TODO
-  // move location at the top level
-  // since it's too error prone that
-  // useRouter(s => s.history).location doesn't re-render on location change
-  history: RouterHistory;
+  location: HistoryLocation;
+  history: Omit<RouterHistory, "location">; // hide location from API since history is mutable
   updateCount: number;
   isPending: boolean;
   isActionPending: boolean;
@@ -19,6 +16,7 @@ export class Router {
   constructor(public history: RouterHistory) {
     this.store = new TinyStore<RouterState>({
       history,
+      location: history.location,
       updateCount: 0,
       isPending: false,
       isActionPending: false,
@@ -29,6 +27,7 @@ export class Router {
     return this.history.subscribe(() => {
       this.store.set((s) => ({
         ...s,
+        location: this.history.location,
         updateCount: s.updateCount + 1,
       }));
     });
@@ -36,14 +35,6 @@ export class Router {
 }
 
 export const RouterContext = React.createContext<Router>(undefined!);
-
-// TODO: tweak API? useRouter(s => s.history)
-export function useRouterState<U = RouterState>(options?: {
-  select?: (v: RouterState) => U;
-}) {
-  const router = React.useContext(RouterContext);
-  return useStore(router.store, options?.select);
-}
 
 export function useRouter<U = RouterState>(select?: (v: RouterState) => U) {
   const router = React.useContext(RouterContext);
