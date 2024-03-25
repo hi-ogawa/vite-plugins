@@ -345,7 +345,6 @@ export function vitePluginReactServer(options?: {
             });
           </script>
         `;
-
         const result: SsrAssetsType = {
           bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
           head,

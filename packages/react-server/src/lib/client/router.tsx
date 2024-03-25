@@ -34,8 +34,8 @@ export function useRouter() {
   // https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
   React.useSyncExternalStore(
     ctx.history.subscribe,
-    () => ctx.history.location.href,
-    () => ctx.history.location.href,
+    () => ctx.history,
+    () => ctx.history,
   );
 
   return ctx;
