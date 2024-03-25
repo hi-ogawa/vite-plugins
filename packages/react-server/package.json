@@ -64,14 +64,14 @@
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
     "@types/use-sync-external-store": "^0.0.6",
-    "react": "18.3.0-canary-6c3b8dbfe-20240226",
-    "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
-    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226"
+    "react": "18.3.0-canary-14898b6a9-20240318",
+    "react-dom": "18.3.0-canary-14898b6a9-20240318",
+    "react-server-dom-webpack": "18.3.0-canary-14898b6a9-20240318"
   },
   "peerDependencies": {
-    "react": "18.3.0-canary-6c3b8dbfe-20240226",
-    "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
-    "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226",
+    "react": "18.3.0-canary-14898b6a9-20240318",
+    "react-dom": "18.3.0-canary-14898b6a9-20240318",
+    "react-server-dom-webpack": "18.3.0-canary-14898b6a9-20240318",
     "vite": "*"
   }
 }
