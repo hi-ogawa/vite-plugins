@@ -96,12 +96,9 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
   }
   const assets = (await import("virtual:ssr-assets" as string)).default;
-  if (process.env["DEBUG"]) {
-    assets.head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
-  }
 
   // inject DEBUG variable
-  if (process.env["DEBUG"]) {
+  if (globalThis?.process?.env?.["DEBUG"]) {
     assets.head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
 
