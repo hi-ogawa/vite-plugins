@@ -130,7 +130,7 @@ export async function start() {
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
       console.log("[react-server] hot update", e);
-      history.notify();
+      history.replace(history.location.href);
     });
   }
 }
