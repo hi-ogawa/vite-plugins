@@ -1,15 +1,21 @@
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, once, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { RouterContext, ServerTransitionContext } from "../lib/client/router";
+import {
+  Router,
+  RouterContext,
+  RouterContext2,
+  ServerTransitionContext,
+  useRouter2,
+  useRouterState,
+} from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
 import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
-// TODO: root error boundary? suspense?
 const debug = createDebug("react-server:browser");
 
 export async function start() {
@@ -70,27 +76,36 @@ export async function start() {
     __setRsc = setRsc;
     __startActionTransition = startActionTransition;
 
+    const router = useRouter2();
+
+    React.useEffect(() => router.setup(), []);
+
     React.useEffect(() => {
       debug("[isPending]", isPending);
+      router.store.set((s) => ({ ...s, isPending }));
     }, [isPending]);
 
     React.useEffect(() => {
       debug("[isActionPending]", isActionPending);
+      router.store.set((s) => ({ ...s, isActionPending }));
     }, [isActionPending]);
 
-    React.useEffect(() => {
-      return history.subscribe(() => {
-        debug("[history]", history.location.href);
+    const updateCount = useRouterState({ select: (s) => s.updateCount });
 
+    React.useEffect(
+      once(() => {
+        if (updateCount === 0) {
+          return;
+        }
+        debug("[history]", history.location.href);
         const request = new Request(wrapRscRequestUrl(history.location.href));
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
-        // delay transition after useRouter's re-render is committed for back/forward navigation
-        // TODO: why normal history.push works?
-        setTimeout(() => startTransition(() => setRsc(newRsc)));
-      });
-    }, []);
+        startTransition(() => setRsc(newRsc));
+      }),
+      [updateCount],
+    );
 
     const rscRoot = React.use(rsc);
     return (
@@ -100,9 +115,12 @@ export async function start() {
     );
   }
 
+  // TODO: root error boundary? suspense?
   let reactRootEl = (
     <RouterContext.Provider value={{ history }}>
-      <Root />
+      <RouterContext2.Provider value={new Router(history)}>
+        <Root />
+      </RouterContext2.Provider>
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {

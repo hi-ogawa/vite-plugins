@@ -1,6 +1,6 @@
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
-import { combineStore, type ReadableStore } from "./store-utils";
+import { TinyStore, useStore } from "./store-utils";
 
 // TODO: combine two contexts as a single global store?
 type ServerTransitionContextType = {
@@ -22,49 +22,51 @@ type RouterContextType = {
   history: RouterHistory;
 };
 
-type Router = {
+type RouterState = {
   history: RouterHistory;
+  updateCount: number;
   isPending: boolean;
   isActionPending: boolean;
+};
+
+export class Router {
+  public store: TinyStore<RouterState>;
+
+  constructor(public history: RouterHistory) {
+    this.store = new TinyStore<RouterState>({
+      history,
+      updateCount: 0,
+      isPending: false,
+      isActionPending: false,
+    });
+  }
+
+  setup() {
+    return this.history.subscribe(() => {
+      this.store.set((s) => ({
+        ...s,
+        updateCount: s.updateCount + 1,
+      }));
+    });
+  }
 }
 
-// class RouterStore implements ReadableStore<Router> {
+export const RouterContext2 = React.createContext<Router>(undefined!);
 
-//   private listeners = new Set<() => void>();
+export function useRouter2() {
+  return React.useContext(RouterContext2);
+}
 
-//   subscribe = (listener: () => void) => {
-//     return () => {
-//       this.listeners.add
-//     }
-//   }
-// }
-
-export function createRouter(history: RouterHistory) {
-  combineStore
-
-  history;
-  // new Store
-  // new Tiny
+export function useRouterState<U = RouterState>(options?: {
+  select?: (v: RouterState) => U;
+}) {
+  const router = React.useContext(RouterContext2);
+  return useStore(router.store, options?.select);
 }
 
 export const RouterContext = React.createContext<RouterContextType>({
   history: undefined!,
 });
-
-export function RouterProvider(
-  props: React.PropsWithChildren<{ history: RouterHistory }>,
-) {
-  const [transitionState, setTransitionState] = React.useState({
-    isPending: false,
-    isActionPending: false,
-  });
-
-  return (
-    <RouterContext.Provider value={{ history: props.history }}>
-      {props.children}
-    </RouterContext.Provider>
-  );
-}
 
 export function useRouter() {
   const ctx = React.useContext(RouterContext);

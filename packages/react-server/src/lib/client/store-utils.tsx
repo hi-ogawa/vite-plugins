@@ -5,15 +5,9 @@ import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/w
 // https://github.com/TanStack/store/blob/8d6faa0c8eb54b5b1070148311e43bb011a929f9/packages/react-store/src/index.ts
 // https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
 
-export interface Store<T> extends ReadableStore<T>, WritableStore<T> {}
-
 export interface ReadableStore<T> {
   get: () => T;
   subscribe: (listener: () => void) => () => void;
-}
-
-export interface WritableStore<T> {
-  set: (action: (v: T) => T) => void;
 }
 
 export function useStore<T, U = T>(
@@ -30,25 +24,6 @@ export function useStore<T, U = T>(
   return v as any;
 }
 
-export function combineStore<T1, T2>(s1: Store<T1>, s2: Store<T2>): Store<T1 & T2> {
-  return {
-    get: () => ({ ...s1.get(), ...s2.get() }),
-    set: (action) => {
-      // TODO: really twice?
-      s1.set((v1) => action({ ...v1, ...s2.get() }));
-      s2.set((v2) => action({ ...v2, ...s1.get() }));
-    },
-    subscribe: (listener) => {
-      const unsub1 = s1.subscribe(listener);
-      const unsub2 = s2.subscribe(listener);
-      return () => {
-        unsub2();
-        unsub1();
-      };
-    },
-  };
-}
-
 // minimal copy of
 // https://github.com/hi-ogawa/js-utils/blob/63d573a4b0eeeb119059c19680e14c12d64b8a1a/packages/tiny-store/src/core.ts
 export class TinyStore<T> {
@@ -58,8 +33,8 @@ export class TinyStore<T> {
 
   get = () => this.value;
 
-  set = (value: T) => {
-    this.value = value;
+  set = (action: (v: T) => T) => {
+    this.value = action(this.value);
     this.notify();
   };
 
@@ -77,6 +52,9 @@ export class TinyStore<T> {
 
 // from preact https://github.com/preactjs/preact/blob/4b1a7e9276e04676b8d3f8a8257469e2f732e8d4/compat/src/util.js#L19-L23
 function isEqualShallow(x: object, y: object): boolean {
+  if (typeof x !== "object") {
+    return Object.is(x, y);
+  }
   for (const k in x) {
     if (!(k in y)) {
       return false;
