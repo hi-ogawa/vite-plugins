@@ -87,7 +87,9 @@ export async function start() {
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
-        startTransition(() => setRsc(newRsc));
+        // need to delay transition after useRouter's re-render is committed
+        // for back/forward navigation?
+        setTimeout(() => startTransition(() => setRsc(newRsc)));
       });
     }, []);
 
