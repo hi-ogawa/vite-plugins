@@ -21,6 +21,8 @@ declare module "react-server-dom-webpack/client.edge" {
     stream: ReadableStream<Uint8Array>,
     options: {
       ssrManifest: import("./types").SsrManifest;
+      // TODO
+      // encodeFormAction
     },
   ): Promise<React.ReactNode>;
 }

@@ -13,7 +13,10 @@ export default function Layout(props: LayoutProps) {
       <body>
         <div className="p-4 flex flex-col gap-2">
           <Header />
-          <NavMenu links={["/", "/test", "/demo/waku_02"]} />
+          <NavMenu
+            className="flex flex-col items-start gap-1"
+            links={["/", "/test", "/demo/waku_02"]}
+          />
           {props.children}
         </div>
       </body>

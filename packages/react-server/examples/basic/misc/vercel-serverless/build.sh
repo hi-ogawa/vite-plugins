@@ -29,11 +29,17 @@ rm -rf .vercel/output/static/index.html
 mkdir -p .vercel/output/functions/index.func
 cp .vc-config.json .vercel/output/functions/index.func/.vc-config.json
 
+# NOTE: silence `ignored-bare-import` for
+# https://rollupjs.org/configuration-options/#output-hoisttransitiveimports
+# https://rollupjs.org/faqs/#why-do-additional-imports-turn-up-in-my-entry-chunks-when-code-splitting
+# https://github.com/evanw/esbuild/issues/2334
+
 npx esbuild ../../dist/server/index.js \
   --outfile=.vercel/output/functions/index.func/index.mjs \
   --metafile=dist/esbuild-metafile.json \
   --define:process.env.NODE_ENV='"production"' \
   --banner:js="import { createRequire } from 'module'; const require = createRequire(import.meta.url);" \
+  --log-override:ignored-bare-import=silent \
   --bundle \
   --minify \
   --format=esm \
