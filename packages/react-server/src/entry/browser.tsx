@@ -106,8 +106,7 @@ export async function start() {
       <Root />
     </RouterContext.Provider>
   );
-  if (0) {
-    // TODO: investigate StrictMode issue
+  if (!window.location.search.includes("__noStrict")) {
     reactRootEl = <React.StrictMode>{reactRootEl}</React.StrictMode>;
   }
 
