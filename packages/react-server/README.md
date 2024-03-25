@@ -6,6 +6,16 @@
 
 See https://github.com/hi-ogawa/vite-plugins/issues/174 for known issues.
 
+## Examples
+
+- [`./examples/starter`](./examples/starter)
+  - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
+  - https://rsc-experiment.hiro18181.workers.dev
+  - https://rsc-experiment-hiroshi.vercel.app
+- [`./examples/basic`](./examples/basic)
+  - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/basic)
+  - https://react-server-starter.hiro18181.workers.dev
+
 ## Quick start
 
 See also [`./examples/starter`](./examples/starter).
@@ -32,11 +42,6 @@ pnpm preview
 - `src/routes/**/(page|layout).tsx`
 - `"use client"`
 - `"use server"`
-
-## Examples
-
-- [`./examples/starter`](./examples/starter) [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
-- [`./examples/basic`](./examples/basic) [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/basic)
 
 ## Development
 
