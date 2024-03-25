@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "../client/router";
+import { useRouter } from "./router";
 
 // TODO: study prior art
 // https://github.com/TanStack/router/blame/a1030ef24de104eb32f7a781cda247458e0ec90a/packages/react-router/src/link.tsx

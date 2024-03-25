@@ -4,4 +4,4 @@ export { createServerReference } from "./lib/shared";
 export {
   ErrorBoundary,
   DefaultRootErrorPage,
-} from "./lib/components/error-boundary";
+} from "./lib/client/error-boundary";
