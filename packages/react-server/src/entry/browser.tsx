@@ -1,15 +1,14 @@
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, once, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { RouterContext, ServerTransitionContext } from "../lib/client/router";
+import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
 import { __global } from "../lib/global";
 import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
-// TODO: root error boundary? suspense?
 const debug = createDebug("react-server:browser");
 
 export async function start() {
@@ -20,6 +19,7 @@ export async function start() {
   );
 
   const history = createBrowserHistory();
+  const initialLocation = history.location;
 
   //
   // server action callback
@@ -70,38 +70,44 @@ export async function start() {
     __setRsc = setRsc;
     __startActionTransition = startActionTransition;
 
+    const router = React.use(RouterContext);
+
+    React.useEffect(() => router.setup(), []);
+
     React.useEffect(() => {
       debug("[isPending]", isPending);
+      router.store.set((s) => ({ ...s, isPending }));
     }, [isPending]);
 
     React.useEffect(() => {
       debug("[isActionPending]", isActionPending);
+      router.store.set((s) => ({ ...s, isActionPending }));
     }, [isActionPending]);
 
-    React.useEffect(() => {
-      return history.subscribe(() => {
-        debug("[history]", history.location.href);
+    const location = useRouter((s) => s.location);
 
-        const request = new Request(wrapRscRequestUrl(history.location.href));
+    React.useEffect(
+      // workaround StrictMode
+      once(() => {
+        if (location === initialLocation) {
+          return;
+        }
+        debug("[history]", location.href);
+        const request = new Request(wrapRscRequestUrl(location.href));
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
-        // delay transition after useRouter's re-render is committed for back/forward navigation
-        // TODO: why normal history.push works?
-        setTimeout(() => startTransition(() => setRsc(newRsc)));
-      });
-    }, []);
-
-    const rscRoot = React.use(rsc);
-    return (
-      <ServerTransitionContext.Provider value={{ isPending, isActionPending }}>
-        {rscRoot}
-      </ServerTransitionContext.Provider>
+        startTransition(() => setRsc(newRsc));
+      }),
+      [location],
     );
+
+    return React.use(rsc);
   }
 
+  // TODO: root error boundary? suspense?
   let reactRootEl = (
-    <RouterContext.Provider value={{ history }}>
+    <RouterContext.Provider value={new Router(history)}>
       <Root />
     </RouterContext.Provider>
   );
@@ -124,7 +130,7 @@ export async function start() {
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
       console.log("[react-server] hot update", e);
-      history.notify();
+      history.replace(history.location.href);
     });
   }
 }

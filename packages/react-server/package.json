@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.1.3",
+  "version": "0.1.4-pre.1",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -56,12 +56,14 @@
     "@tanstack/history": "^1.15.13",
     "fast-glob": "^3.3.2",
     "magic-string": "^0.30.8",
-    "rsc-html-stream": "^0.0.3"
+    "rsc-html-stream": "^0.0.3",
+    "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
     "@types/estree": "^1.0.5",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
+    "@types/use-sync-external-store": "^0.0.6",
     "react": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-dom": "18.3.0-canary-6c3b8dbfe-20240226",
     "react-server-dom-webpack": "18.3.0-canary-6c3b8dbfe-20240226"

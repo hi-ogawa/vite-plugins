@@ -1,42 +1,39 @@
-import type { RouterHistory } from "@tanstack/history";
+import type { HistoryLocation, RouterHistory } from "@tanstack/history";
 import React from "react";
+import { TinyStore, useStore } from "./store-utils";
 
-// TODO: combine two contexts as a single global store?
-type ServerTransitionContextType = {
+type RouterState = {
+  history: Omit<RouterHistory, "location">; // hide location from API since history is mutable
+  location: HistoryLocation;
   isPending: boolean;
   isActionPending: boolean;
 };
 
-export const ServerTransitionContext =
-  React.createContext<ServerTransitionContextType>({
-    isPending: false,
-    isActionPending: false,
-  });
+export class Router {
+  public store: TinyStore<RouterState>;
 
-export function useServerTransitionState() {
-  return React.useContext(ServerTransitionContext);
+  constructor(public history: RouterHistory) {
+    this.store = new TinyStore<RouterState>({
+      history,
+      location: history.location,
+      isPending: false,
+      isActionPending: false,
+    });
+  }
+
+  setup() {
+    return this.history.subscribe(() => {
+      this.store.set((s) => ({
+        ...s,
+        location: this.history.location,
+      }));
+    });
+  }
 }
 
-type RouterContextType = {
-  history: RouterHistory;
-};
+export const RouterContext = React.createContext<Router>(undefined!);
 
-export const RouterContext = React.createContext<RouterContextType>({
-  history: undefined!,
-});
-
-export function useRouter() {
-  const ctx = React.useContext(RouterContext);
-
-  // TODO: tanstack-style refined state subscription
-  // https://github.com/TanStack/router/blob/876b887589b14fb4bce0773eb520417682a741e2/packages/react-router/src/useRouterState.tsx
-  // https://github.com/TanStack/store/blob/8d6faa0c8eb54b5b1070148311e43bb011a929f9/packages/react-store/src/index.ts
-  // https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
-  React.useSyncExternalStore(
-    ctx.history.subscribe,
-    () => ctx.history,
-    () => ctx.history,
-  );
-
-  return ctx;
+export function useRouter<U = RouterState>(select?: (v: RouterState) => U) {
+  const router = React.useContext(RouterContext);
+  return useStore(router.store, select);
 }

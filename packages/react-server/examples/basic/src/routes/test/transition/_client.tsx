@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Link,
-  useRouter,
-  useServerTransitionState,
-} from "@hiogawa/react-server/client";
+import { Link, useRouter } from "@hiogawa/react-server/client";
 import { cls } from "../../../components/utils";
 import { changeCounter } from "./_action";
 
@@ -15,8 +11,8 @@ const TABS = [
 ] as const;
 
 export function Tablist() {
-  const { isPending } = useServerTransitionState();
-  const router = useRouter();
+  const isPending = useRouter((s) => s.isPending);
+  const location = useRouter((s) => s.location);
 
   return (
     <ul className="antd-tablist flex gap-5 px-2">
@@ -26,9 +22,9 @@ export function Tablist() {
           href={href}
           className={cls(
             "antd-tab py-1.5",
-            href === router.history.location.href && isPending && "opacity-50",
+            href === location.href && isPending && "opacity-50",
           )}
-          aria-selected={href === router.history.location.href}
+          aria-selected={href === location.href}
         >
           <li key={href}>{name}</li>
         </Link>
@@ -38,7 +34,7 @@ export function Tablist() {
 }
 
 export function Counter(props: { value: number }) {
-  const { isActionPending } = useServerTransitionState();
+  const isActionPending = useRouter((s) => s.isActionPending);
 
   return (
     <form action={changeCounter} className="flex flex-col items-start gap-2">
