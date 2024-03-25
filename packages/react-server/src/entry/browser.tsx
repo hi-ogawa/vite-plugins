@@ -79,7 +79,6 @@ export async function start() {
     }, [isActionPending]);
 
     React.useEffect(() => {
-      // TODO: back navigation doesn't trigger `isPending?
       return history.subscribe(() => {
         debug("[history]", history.location.href);
 
