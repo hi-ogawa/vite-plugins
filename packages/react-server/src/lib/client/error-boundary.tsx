@@ -29,6 +29,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return { error };
   }
 
+  // TODO: get url from client useRouter
   // automatically reset on url change
   static getDerivedStateFromProps(props: Props, state: State): State {
     return {

@@ -12,6 +12,10 @@ export class PageManager {
   });
 }
 
+export function solvePageMapping(pathname: string) {
+  pathname;
+}
+
 export const PageManagerContext = React.createContext<PageManager>(undefined!);
 
 export function usePageManager<U = PageManagerState>(

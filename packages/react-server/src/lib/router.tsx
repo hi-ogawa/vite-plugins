@@ -1,4 +1,4 @@
-import { objectHas, tinyassert } from "@hiogawa/utils";
+import { objectHas, range, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
@@ -70,6 +70,90 @@ export function matchRoute(
     break;
   }
   return result;
+}
+
+async function importClientInternal() {
+  // TODO: probably static import works?
+  return (await import(
+    "@hiogawa/react-server/client-internal" as string
+  )) as typeof import("../client-internal");
+}
+
+export function renderPage(node: RouteTreeNode, props: PageProps) {
+  const Page = node.value?.page?.default ?? ThrowNotFound;
+  return <Page {...props} />;
+}
+
+export async function renderLayout(
+  node: RouteTreeNode,
+  props: PageProps,
+  pathname: string,
+) {
+  const { ErrorBoundary, LayoutContent } = await importClientInternal();
+
+  let acc = <LayoutContent name={pathname} />;
+  const ErrorPage = node.value?.error?.default;
+  if (ErrorPage) {
+    // TODO: can we remove extra <div>?
+    acc = (
+      <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
+        <div className="error-boundary">{acc}</div>
+      </ErrorBoundary>
+    );
+  }
+  const Layout = node.value?.layout?.default ?? React.Fragment;
+  return <Layout {...props}>{acc}</Layout>;
+}
+
+/**
+ * @example
+ * "/hello/world" =>
+ *    [
+ *      ["/",            ""],
+ *      ["/hello",       "hello"],
+ *      ["/hello/world", "world"],
+ *    ]
+ */
+function getPathPrefixes(pathname: string) {
+  // strip trailing slash (including "/" => "")
+  pathname = pathname.replaceAll(/\/*$/g, "");
+  const keys = pathname.split("/");
+  const segments: [string, string][] = [];
+  let prefix = "";
+  for (const key of keys) {
+    prefix += "/" + key;
+    segments.push([prefix, key]);
+  }
+  return segments;
+}
+
+export async function renderRoutes(tree: RouteTreeNode, request: Request) {
+  const url = new URL(request.url);
+  const prefixes = getPathPrefixes(url.pathname);
+
+  let node = tree;
+  let params: BaseProps["params"] = {};
+  const pages: Record<string, React.ReactNode> = {};
+  const layouts: Record<string, React.ReactNode> = {};
+  for (const i of range(prefixes.length)) {
+    const [prefix, key] = prefixes[i]!;
+    const next = matchChild(key, node);
+    if (next?.child) {
+      node = next.child;
+      if (next.param) {
+        params = { ...params, [next.param]: key };
+      }
+    } else {
+      node = initNode();
+    }
+    const props: BaseProps = { request, params };
+    layouts[prefix] = await renderLayout(node, props, prefix);
+    if (i === prefixes.length - 1) {
+      pages[prefix] = renderPage(node, props);
+    }
+  }
+
+  return { pages, layouts };
 }
 
 // TODO: separate react code in a different file
