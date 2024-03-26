@@ -3,6 +3,7 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
+import { RootErrorBoundary } from "../lib/client/error-boundary";
 import {
   LayoutContent,
   PageManager,
@@ -17,7 +18,7 @@ import type { CallServerCallback } from "../lib/types";
 const debug = createDebug("react-server:browser");
 
 export async function start() {
-  if (window.location.search.includes("__noJs")) {
+  if (window.location.search.includes("__noCsr")) {
     return;
   }
 
@@ -111,11 +112,12 @@ export async function start() {
     return <LayoutContent name="__root" />;
   }
 
-  // TODO: root error boundary? suspense?
   let reactRootEl = (
     <RouterContext.Provider value={router}>
       <PageManagerContext.Provider value={pageManager}>
-        <Root />
+        <RootErrorBoundary>
+          <Root />
+        </RootErrorBoundary>
       </PageManagerContext.Provider>
     </RouterContext.Provider>
   );

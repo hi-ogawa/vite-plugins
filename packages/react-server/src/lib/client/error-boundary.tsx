@@ -1,8 +1,7 @@
-"use client";
-
 import React from "react";
 import { getErrorContext, getStatusText } from "../error";
 import type { ErrorPageProps } from "../router";
+import { useRouter } from "./router";
 
 // cf.
 // https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
@@ -11,56 +10,62 @@ import type { ErrorPageProps } from "../router";
 interface Props {
   children?: React.ReactNode;
   errorComponent: React.FC<ErrorPageProps>;
-  url: string;
 }
 
 interface State {
   error: Error | null;
-  url: string;
 }
 
 export class ErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { error: null, url: props.url };
+    this.state = { error: null };
   }
 
   static getDerivedStateFromError(error: Error) {
     return { error };
   }
 
-  // TODO: get url from client useRouter
-  // automatically reset on url change
-  static getDerivedStateFromProps(props: Props, state: State): State {
-    return {
-      ...state,
-      url: props.url,
-      error: props.url === state.url ? state.error : null,
-    };
-  }
-
   reset = () => {
-    this.setState({ error: null });
+    React.startTransition(() => {
+      this.setState({ error: null });
+    });
   };
 
   override render() {
     const error = this.state.error;
     if (error) {
-      const Component = this.props.errorComponent;
       return (
-        <Component
-          error={error}
-          serverError={getErrorContext(error)}
-          reset={this.reset}
-        />
+        <>
+          <this.props.errorComponent
+            error={error}
+            serverError={getErrorContext(error)}
+            reset={this.reset}
+          />
+          <ErrorAutoReset reset={this.reset} />
+        </>
       );
     }
     return this.props.children;
   }
 }
 
-// TODO: customizable?
-export function DefaultRootErrorPage(props: ErrorPageProps) {
+function ErrorAutoReset(props: Pick<ErrorPageProps, "reset">) {
+  const href = useRouter((s) => s.location.href);
+  const initialHref = React.useRef(href).current;
+  React.useEffect(() => {
+    if (href !== initialHref) {
+      props.reset();
+    }
+  }, [href]);
+  return null;
+}
+
+export function RootErrorBoundary(props: React.PropsWithChildren) {
+  return <ErrorBoundary errorComponent={DefaultRootErrorPage} {...props} />;
+}
+
+function DefaultRootErrorPage(props: ErrorPageProps) {
   const status = props.serverError?.status;
   return (
     <html>

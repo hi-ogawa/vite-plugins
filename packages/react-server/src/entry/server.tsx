@@ -75,6 +75,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
       moduleLoading: null,
     },
   });
+  rsc;
 
   const url = new URL(request.url);
 

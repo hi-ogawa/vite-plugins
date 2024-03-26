@@ -97,7 +97,7 @@ export async function renderLayout(
   if (ErrorPage) {
     // TODO: can we remove extra <div>?
     acc = (
-      <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
+      <ErrorBoundary errorComponent={ErrorPage}>
         <div className="error-boundary">{acc}</div>
       </ErrorBoundary>
     );
@@ -142,11 +142,8 @@ export async function renderMatchRoute(
   request: Request,
   match: MatchRouteResult,
 ) {
-  // use its own "use client" components
-  const {
-    ErrorBoundary,
-    DefaultRootErrorPage,
-  }: typeof import("../client-internal") = await import(
+  // use own "use client" components as external
+  const { ErrorBoundary }: typeof import("../client-internal") = await import(
     "@hiogawa/react-server/client-internal" as string
   );
 
@@ -170,7 +167,7 @@ export async function renderMatchRoute(
     if (ErrorPage) {
       // TODO: can we remove extra <div>?
       acc = (
-        <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
+        <ErrorBoundary errorComponent={ErrorPage}>
           <div className="error-boundary">{acc}</div>
         </ErrorBoundary>
       );
@@ -181,15 +178,6 @@ export async function renderMatchRoute(
       acc = <Layout {...props}>{acc}</Layout>;
     }
   }
-
-  acc = (
-    <ErrorBoundary
-      errorComponent={DefaultRootErrorPage}
-      url={props.request.url}
-    >
-      {acc}
-    </ErrorBoundary>
-  );
 
   return acc;
 }
