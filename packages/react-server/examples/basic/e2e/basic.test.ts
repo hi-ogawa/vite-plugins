@@ -420,5 +420,5 @@ async function setupCheckClientState(page: Page) {
 }
 
 async function checkHydration(page: Page) {
-  await expect(page.getByText("hydrated: true")).toBeVisible();
+  await expect(page.getByText("hydrated: 1")).toBeVisible();
 }

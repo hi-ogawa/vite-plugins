@@ -7,8 +7,7 @@ export function Hydrated() {
   React.useEffect(() => {
     setHydrated(true);
   }, []);
-
-  return <div>[hydrated: {String(hydrated)}]</div>;
+  return <div>[hydrated: {Number(hydrated)}]</div>;
 }
 
 // test client re-rendering
