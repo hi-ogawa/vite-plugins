@@ -18,5 +18,5 @@ export function EffectCount() {
   React.useEffect(() => {
     commitCountRef.current += 1;
   });
-  return <div>[EffectCount: {commitCountRef.current}]</div>;
+  return <div>[effect: {commitCountRef.current}]</div>;
 }
