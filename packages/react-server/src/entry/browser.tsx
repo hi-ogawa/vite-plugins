@@ -3,6 +3,7 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
+import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
 import { __global } from "../lib/global";
@@ -104,10 +105,11 @@ export async function start() {
     return React.use(rsc);
   }
 
-  // TODO: root error boundary? suspense?
   let reactRootEl = (
     <RouterContext.Provider value={router}>
-      <Root />
+      <RootErrorBoundary>
+        <Root />
+      </RootErrorBoundary>
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {
