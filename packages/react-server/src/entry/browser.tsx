@@ -129,10 +129,12 @@ export async function start() {
     // wrap root switch as transition
     const [rsc, setRsc] = React.useState(page);
     React.useEffect(() => {
-      startTransition(() => {
-        setRsc(page);
-      });
-    }, [page]);
+      if (rsc !== page) {
+        startTransition(() => {
+          setRsc(page);
+        });
+      }
+    }, [rsc, page]);
 
     // return React.use(page);
     return React.use(rsc);
