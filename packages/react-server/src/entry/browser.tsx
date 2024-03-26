@@ -25,7 +25,6 @@ export async function start() {
 
   const history = createBrowserHistory();
   const initialLocation = history.location;
-
   const router = new Router(history);
   const pageManager = new PageManager();
 
