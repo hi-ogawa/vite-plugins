@@ -78,7 +78,7 @@ export async function renderMatchRoute(
   request: Request,
   match: MatchRouteResult,
 ) {
-  // use its own "use client" components
+  // use own "use client" components as external
   const { ErrorBoundary }: typeof import("../client-internal") = await import(
     "@hiogawa/react-server/client-internal" as string
   );

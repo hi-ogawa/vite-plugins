@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { getErrorContext, getStatusText } from "../error";
 import type { ErrorPageProps } from "../router";
