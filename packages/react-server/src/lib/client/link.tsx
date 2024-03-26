@@ -1,5 +1,3 @@
-"use client";
-
 import { useRouter } from "./router";
 
 // TODO: study prior art
