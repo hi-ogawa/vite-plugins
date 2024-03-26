@@ -2,7 +2,7 @@ import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
-import { getPathPrefixes, normalizePathname } from "./router-utils";
+import { getPathPrefixes, normalizePathname } from "./utils";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -88,11 +88,11 @@ export function renderPage(node: RouteTreeNode, props: PageProps) {
 export async function renderLayout(
   node: RouteTreeNode,
   props: PageProps,
-  pathname: string,
+  name: string,
 ) {
   const { ErrorBoundary, LayoutContent } = await importClientInternal();
 
-  let acc = <LayoutContent name={pathname} />;
+  let acc = <LayoutContent name={name} />;
   const ErrorPage = node.value?.error?.default;
   if (ErrorPage) {
     // TODO: can we remove extra <div>?

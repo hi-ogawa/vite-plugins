@@ -17,6 +17,10 @@ import type { CallServerCallback } from "../lib/types";
 const debug = createDebug("react-server:browser");
 
 export async function start() {
+  if (window.location.search.includes("__noJs")) {
+    return;
+  }
+
   initDomWebpackCsr();
 
   const { default: reactServerDomClient } = await import(

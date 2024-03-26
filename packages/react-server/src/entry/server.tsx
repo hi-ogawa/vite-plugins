@@ -1,11 +1,13 @@
-import { createDebug, splitFirst } from "@hiogawa/utils";
+import { createDebug, objectMapValues, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import {
+  LAYOUT_ROOT_NAME,
   LayoutContent,
   PageManager,
   PageManagerContext,
+  solveLayoutContentMapping,
 } from "../lib/client/page-manager";
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
@@ -75,18 +77,47 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   });
 
   const url = new URL(request.url);
+
+  const { mapping } = solveLayoutContentMapping(url.pathname);
+
+  // TODO: still need to include root layout initially
+  mapping["__root"] = { type: "layout", name: "" };
+
+  const reactServer = await importReactServer();
+
+  // TODO: merge to a single stream to send it to client
+  const streamMapping = await reactServer.render2({ request, mapping });
+
+  const moduleMap = createModuleMap({ renderId });
+  const clientMapping = objectMapValues(streamMapping, (stream) => {
+    return reactServerDomClient.createFromReadableStream(stream, {
+      ssrManifest: {
+        moduleMap,
+        moduleLoading: null,
+      },
+    });
+  });
+  // TODO: missing root
+  // objectMapValues()
+  console.log({
+    mapping,
+    streamMapping,
+    clientMapping,
+  });
+
   const history = createMemoryHistory({
     initialEntries: [url.href.slice(url.origin.length)],
   });
   const router = new Router(history);
   const pageManager = new PageManager();
   // TODO: for now only whole root...
-  pageManager.store.set(() => ({ pages: { __root: rsc } }));
+  // pageManager.store.set(() => ({ pages: { __root: rsc } }));
+  pageManager.store.set(() => ({ pages: clientMapping }));
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <PageManagerContext.Provider value={pageManager}>
-        <LayoutContent name="__root" />
+        <LayoutContent name={LAYOUT_ROOT_NAME} />
       </PageManagerContext.Provider>
     </RouterContext.Provider>
   );

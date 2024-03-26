@@ -1,7 +1,9 @@
 import React from "react";
 import { __global } from "../global";
-import { getPathPrefixes } from "../router-utils";
+import { type ManualPromise, getPathPrefixes } from "../utils";
 import { TinyStore, useStore } from "./store-utils";
+
+// TODO: rename to layout manager?
 
 type PageManagerState = {
   pages: Record<string, Promise<React.ReactNode>>;
@@ -13,32 +15,45 @@ export class PageManager {
   });
 }
 
-type LayoutContentEntry = {
+export const LAYOUT_ROOT_NAME = "__root";
+
+// LayoutContentRequestEntry
+export type LayoutContentEntry = {
   type: "page" | "layout";
-  pathname: string;
+  name: string;
 };
 
-type LayoutContentMapping = Record<string, LayoutContentEntry>;
+// LayoutContentRequestMapping
+export type LayoutContentMapping = Record<string, LayoutContentEntry>;
+
+export type ServerLayoutContentMapping = Record<string, React.ReactNode>;
+
+export type StreamLayoutContentMapping = Record<
+  string,
+  ReadableStream<Uint8Array>
+>;
+
+export type ClientLayoutContentMapping = Record<
+  string,
+  ManualPromise<React.ReactNode>
+>;
 
 // TODO: test
-export function solveLayoutContentMapping(from: string, to: string) {
-  // TODO: keep common entries
-  const toParts = getPathPrefixes(to);
-  const fromParts = getPathPrefixes(from);
-  fromParts;
-
+// TODO: keep common prefix when navigating
+export function solveLayoutContentMapping(pathname: string) {
+  const parts = getPathPrefixes(pathname);
   const mapping: LayoutContentMapping = {};
-  for (let i = 0; i < toParts.length; i++) {
-    const [prefix] = toParts[i]!;
-    if (i < toParts.length - 1) {
+  for (let i = 0; i < parts.length; i++) {
+    const [prefix] = parts[i]!;
+    if (i < parts.length - 1) {
       mapping[prefix] = {
         type: "layout",
-        pathname: toParts[i + 1]![0],
+        name: parts[i + 1]![0],
       };
     } else {
       mapping[prefix] = {
         type: "page",
-        pathname: prefix,
+        name: prefix,
       };
     }
   }
@@ -69,3 +84,9 @@ export function LayoutContent(props: { name: string }) {
   }, [node]);
   return React.use(current);
 }
+
+// result
+// <Layout><LayoutContent name="" /><
+// export function LayoutRoot() {
+//   return <LayoutContent name="__root" />;
+// }

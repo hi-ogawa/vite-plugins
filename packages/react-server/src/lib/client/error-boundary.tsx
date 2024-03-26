@@ -59,6 +59,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 }
 
+// TODO: customizable?
 export function DefaultRootErrorPage(props: ErrorPageProps) {
   const status = props.serverError?.status;
   return (
