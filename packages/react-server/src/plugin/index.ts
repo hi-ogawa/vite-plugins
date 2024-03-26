@@ -163,6 +163,7 @@ export function vitePluginReactServer(options?: {
           // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
           return /* js */ `
             export * from "${ENTRY_REACT_SERVER}";
+            export { render2 } from "@hiogawa/react-server/entry-react-server";
           `;
         },
       ),

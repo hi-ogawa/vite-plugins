@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { generateRouteTree, matchRoute } from "./router";
+import { getPathPrefixes } from "./utils";
 
 describe(generateRouteTree, () => {
   it("basic", () => {
@@ -308,6 +309,47 @@ describe(generateRouteTree, () => {
         "notFound": true,
         "params": {},
       }
+    `);
+  });
+});
+
+describe(getPathPrefixes, () => {
+  it("basic", () => {
+    expect(getPathPrefixes("/")).toMatchInlineSnapshot(`
+      [
+        [
+          "",
+          "",
+        ],
+      ]
+    `);
+    expect(getPathPrefixes("/hello")).toMatchInlineSnapshot(`
+      [
+        [
+          "",
+          "",
+        ],
+        [
+          "/hello",
+          "hello",
+        ],
+      ]
+    `);
+    expect(getPathPrefixes("/hello/world")).toMatchInlineSnapshot(`
+      [
+        [
+          "",
+          "",
+        ],
+        [
+          "/hello",
+          "hello",
+        ],
+        [
+          "/hello/world",
+          "world",
+        ],
+      ]
     `);
   });
 });

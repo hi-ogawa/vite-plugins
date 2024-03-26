@@ -1,8 +1,23 @@
-import { createDebug, objectMapKeys } from "@hiogawa/utils";
+import {
+  createDebug,
+  objectMapKeys,
+  objectMapValues,
+  tinyassert,
+} from "@hiogawa/utils";
+import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import type {
+  LayoutContentMapping,
+  StreamLayoutContentMapping,
+} from "../lib/client/page-manager";
 import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
-import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
+import {
+  generateRouteTree,
+  matchRoute,
+  renderMatchRoute,
+  renderRoutes,
+} from "../lib/router";
 import { createBundlerConfig } from "../lib/rsc";
 import { ejectActionId, unwrapRscRequest } from "../lib/shared";
 
@@ -56,6 +71,42 @@ export const handler: ReactServerHandler = async ({ request }) => {
 // render RSC
 //
 
+// TODO: renderMapping?
+export async function render2({
+  request,
+  mapping,
+}: {
+  request: Request;
+  mapping: LayoutContentMapping;
+}): Promise<StreamLayoutContentMapping> {
+  const result = await renderRoutes(router.tree, request);
+  const bundlerConfig = createBundlerConfig();
+  return objectMapValues(mapping, (v) => {
+    const reactNode = result[`${v.type}s`][v.name];
+    tinyassert(reactNode);
+    return reactServerDomServer.renderToReadableStream(
+      reactNode,
+      bundlerConfig,
+      { onError: reactServerOnError },
+    );
+  });
+}
+
+const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
+  error,
+  errorInfo,
+) => {
+  debug("[reactServerDomServer.renderToReadableStream]", {
+    error,
+    errorInfo,
+  });
+  const serverError =
+    error instanceof ReactServerDigestError
+      ? error
+      : createError({ status: 500 });
+  return serverError.digest;
+};
+
 async function render({ request }: { request: Request }) {
   const result = await router.run(request);
   const stream = reactServerDomServer.renderToReadableStream(
@@ -103,7 +154,7 @@ function createRouter() {
     return { node, match };
   }
 
-  return { run };
+  return { run, tree };
 }
 
 //
