@@ -25,6 +25,26 @@ test("navigation", async ({ page }) => {
   await checkClientState();
 });
 
+test("render count", async ({ page }) => {
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  if (process.env.E2E_PREVIEW) {
+    await page.getByText('[effect: 1]').click();
+    await page.getByRole('link', { name: '/test/other' }).click();
+    await page.getByText('[effect: 2]').click();
+    await page.goBack();
+    await page.getByText('[effect: 3]').click();
+  } else {
+    // strict mode doubles initial effect
+    await page.getByText('[effect: 1]').click();
+    await page.getByRole('link', { name: '/test/other' }).click();
+    await page.getByText('[effect: 3]').click();
+    await page.goBack();
+    await page.getByText('[effect: 4]').click();
+  }
+})
+
 test("ServerTransitionContext.isPending", async ({ page }) => {
   checkNoError(page);
 
@@ -420,5 +440,5 @@ async function setupCheckClientState(page: Page) {
 }
 
 async function waitForHydration(page: Page) {
-  await expect(page.getByText("hydrated: 1")).toBeVisible();
+  await expect(page.getByText("[hydrated: 1]")).toBeVisible();
 }
