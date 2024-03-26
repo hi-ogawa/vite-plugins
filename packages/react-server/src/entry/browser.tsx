@@ -3,6 +3,11 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
+import {
+  PageManager,
+  PageManagerContext,
+  usePageManager,
+} from "../lib/client/page-manager";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
 import { __global } from "../lib/global";
@@ -21,13 +26,16 @@ export async function start() {
   const history = createBrowserHistory();
   const initialLocation = history.location;
 
+  const router = new Router(history);
+  const pageManager = new PageManager();
+
   //
   // server action callback
   //
 
   // TODO: only this way?
   let __startActionTransition: React.TransitionStartFunction;
-  let __setRsc: (v: Promise<React.ReactNode>) => void;
+  // let __setRsc: (v: Promise<React.ReactNode>) => void;
 
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
@@ -48,7 +56,13 @@ export async function start() {
     const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
       callServer,
     });
-    __startActionTransition(() => __setRsc(newRsc));
+    // __startActionTransition(() => __setRsc(newRsc));
+    __startActionTransition(() => {
+      pageManager.store.set((s) => ({
+        ...s,
+        pages: { ...s.pages, __root: newRsc },
+      }));
+    });
   };
 
   // expose as global to be used for createServerReference
@@ -58,6 +72,10 @@ export async function start() {
   const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
     callServer,
   });
+  pageManager.store.set((s) => ({
+    ...s,
+    pages: { ...s.pages, __root: initialRsc },
+  }));
 
   //
   // browser root
@@ -66,11 +84,9 @@ export async function start() {
   function Root() {
     const [isPending, startTransition] = React.useTransition();
     const [isActionPending, startActionTransition] = React.useTransition();
-    const [rsc, setRsc] = React.useState(initialRsc);
-    __setRsc = setRsc;
+    // const [rsc, setRsc] = React.useState(initialRsc);
+    // __setRsc = setRsc;
     __startActionTransition = startActionTransition;
-
-    const router = React.use(RouterContext);
 
     React.useEffect(() => router.setup(), []);
 
@@ -97,18 +113,37 @@ export async function start() {
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
-        startTransition(() => setRsc(newRsc));
+        // startTransition(() => setRsc(newRsc));
+        startTransition(() => {
+          pageManager.store.set((s) => ({
+            ...s,
+            pages: { ...s.pages, __root: newRsc },
+          }));
+        });
       }),
       [location],
     );
 
+    const page = usePageManager((s) => s.pages["__root"]!);
+
+    // wrap root switch as transition
+    const [rsc, setRsc] = React.useState(page);
+    React.useEffect(() => {
+      startTransition(() => {
+        setRsc(page);
+      });
+    }, [page]);
+
+    // return React.use(page);
     return React.use(rsc);
   }
 
   // TODO: root error boundary? suspense?
   let reactRootEl = (
-    <RouterContext.Provider value={new Router(history)}>
-      <Root />
+    <RouterContext.Provider value={router}>
+      <PageManagerContext.Provider value={pageManager}>
+        <Root />
+      </PageManagerContext.Provider>
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {

@@ -3,6 +3,11 @@ import { createMemoryHistory } from "@tanstack/history";
 import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
+import {
+  PageManager,
+  PageManagerContext,
+  usePageManager,
+} from "../lib/client/page-manager";
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
@@ -74,14 +79,21 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   const history = createMemoryHistory({
     initialEntries: [url.href.slice(url.origin.length)],
   });
+  const router = new Router(history);
+  const pageManager = new PageManager();
+  // TODO: for now only whole root...
+  pageManager.store.set((s) => ({ ...s, pages: { ...s.pages, __root: rsc } }));
 
   function Root() {
-    return React.use(rsc);
+    const root = usePageManager((s) => s.pages["__root"]!);
+    return React.use(root);
   }
 
   const reactRootEl = (
-    <RouterContext.Provider value={new Router(history)}>
-      <Root />
+    <RouterContext.Provider value={router}>
+      <PageManagerContext.Provider value={pageManager}>
+        <Root />
+      </PageManagerContext.Provider>
     </RouterContext.Provider>
   );
 
