@@ -5,14 +5,14 @@ test("basic", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
-  await checkHydration(page);
+  await waitForHydration(page);
 });
 
 test("navigation", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -29,7 +29,7 @@ test("ServerTransitionContext.isPending", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/transition");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   await expect(page.getByRole("link", { name: "About" })).toHaveAttribute(
     "aria-selected",
@@ -61,7 +61,7 @@ test("ServerTransitionContext.isActionPending", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/transition");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   await expect(page.getByText("Count: 0")).not.toHaveClass(/opacity-50/);
   await page.getByRole("button", { name: "-1 (2.0 sec)" }).click();
@@ -73,7 +73,7 @@ test("Link modifier", async ({ page, context }) => {
   checkNoError(page);
 
   await page.goto("/test");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const newPagePromise = context.waitForEvent("page");
   await page.getByRole("link", { name: "/test/other" }).click({
@@ -88,7 +88,7 @@ test("error", async ({ page }) => {
   const res = await page.goto("/test/not-found");
   expect(res?.status()).toBe(404);
 
-  await checkHydration(page);
+  await waitForHydration(page);
   await page.getByText(`server error: {"status":404}`).click();
 
   const checkClientState = await setupCheckClientState(page);
@@ -124,7 +124,7 @@ test("rsc hmr @dev", async ({ page }) => {
 
   await page.goto("/test");
   await page.getByRole("heading", { name: "RSC Experiment" }).click();
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -132,7 +132,7 @@ test("rsc hmr @dev", async ({ page }) => {
     s.replace("RSC Experiment", "RSC (EDIT) Experiment"),
   );
   await page.getByRole("heading", { name: "RSC (EDIT) Experiment" }).click();
-  await checkHydration(page);
+  await waitForHydration(page);
 
   await checkClientState();
 });
@@ -143,7 +143,7 @@ test("common hmr @dev", async ({ page }) => {
   await page.goto("/test");
   await page.getByText("Common component (from server)").click();
   await page.getByText("Common component (from client)").click();
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -152,7 +152,7 @@ test("common hmr @dev", async ({ page }) => {
   );
   await page.getByText("Common (EDIT) component (from server)").click();
   await page.getByText("Common (EDIT) component (from client)").click();
-  await checkHydration(page);
+  await waitForHydration(page);
 
   await checkClientState();
 });
@@ -161,7 +161,7 @@ test("client hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -199,7 +199,7 @@ test("unocss hmr @dev", async ({ page, browser }) => {
   checkNoError(page);
 
   await page.goto("/test");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -257,7 +257,7 @@ test("react-server css hmr @dev", async ({ page, browser }) => {
   checkNoError(page);
 
   await page.goto("/test/css");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -306,7 +306,7 @@ test("server action with js", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/action");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -347,7 +347,7 @@ test("server action no js", async ({ browser }) => {
 
 test("ReactDom.useFormStatus", async ({ page }) => {
   await page.goto("/test/action");
-  await checkHydration(page);
+  await waitForHydration(page);
   await page.getByRole("button", { name: "1.0 sec" }).click();
   await page.getByText("pending: true").click();
   await page.getByText("pending: false").click();
@@ -388,7 +388,7 @@ test("custom entry-react-server", async ({ request }) => {
 
 test("head in rsc", async ({ page }) => {
   await page.goto("/test/head");
-  await checkHydration(page);
+  await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -419,6 +419,6 @@ async function setupCheckClientState(page: Page) {
   };
 }
 
-async function checkHydration(page: Page) {
+async function waitForHydration(page: Page) {
   await expect(page.getByText("hydrated: 1")).toBeVisible();
 }
