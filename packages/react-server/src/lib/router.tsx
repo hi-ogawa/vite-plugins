@@ -113,6 +113,7 @@ export async function renderMatchRoute(
     }
     const Layout = node.value?.layout?.default;
     if (Layout) {
+      // TODO: wrap by selectable store context
       acc = <Layout {...props}>{acc}</Layout>;
     }
   }
