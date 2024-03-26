@@ -20,6 +20,7 @@ export async function start() {
 
   const history = createBrowserHistory();
   const initialLocation = history.location;
+  const router = new Router(history);
 
   //
   // server action callback
@@ -70,8 +71,6 @@ export async function start() {
     __setRsc = setRsc;
     __startActionTransition = startActionTransition;
 
-    const router = React.use(RouterContext);
-
     React.useEffect(() => router.setup(), []);
 
     React.useEffect(() => {
@@ -107,7 +106,7 @@ export async function start() {
 
   // TODO: root error boundary? suspense?
   let reactRootEl = (
-    <RouterContext.Provider value={new Router(history)}>
+    <RouterContext.Provider value={router}>
       <Root />
     </RouterContext.Provider>
   );
