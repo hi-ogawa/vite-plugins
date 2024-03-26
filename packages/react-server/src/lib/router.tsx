@@ -1,4 +1,4 @@
-import { objectHas, range, tinyassert } from "@hiogawa/utils";
+import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
@@ -115,8 +115,6 @@ export async function renderLayout(
  *    ]
  */
 function getPathPrefixes(pathname: string) {
-  // strip trailing slash (including "/" => "")
-  pathname = pathname.replaceAll(/\/*$/g, "");
   const keys = pathname.split("/");
   const segments: [string, string][] = [];
   let prefix = "";
@@ -129,14 +127,15 @@ function getPathPrefixes(pathname: string) {
 
 export async function renderRoutes(tree: RouteTreeNode, request: Request) {
   const url = new URL(request.url);
-  const prefixes = getPathPrefixes(url.pathname);
+  // strip trailing slash (including "/" => "")
+  const pathname = url.pathname.replaceAll(/\/*$/g, "");
+  const prefixes = getPathPrefixes(pathname);
 
   let node = tree;
   let params: BaseProps["params"] = {};
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
-  for (const i of range(prefixes.length)) {
-    const [prefix, key] = prefixes[i]!;
+  for (const [prefix, key] of prefixes) {
     const next = matchChild(key, node);
     if (next?.child) {
       node = next.child;
@@ -148,7 +147,7 @@ export async function renderRoutes(tree: RouteTreeNode, request: Request) {
     }
     const props: BaseProps = { request, params };
     layouts[prefix] = await renderLayout(node, props, prefix);
-    if (i === prefixes.length - 1) {
+    if (prefix === pathname) {
       pages[prefix] = renderPage(node, props);
     }
   }
