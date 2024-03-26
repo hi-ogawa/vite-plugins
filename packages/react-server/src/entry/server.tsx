@@ -1,12 +1,11 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
-import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import {
+  LayoutContent,
   PageManager,
   PageManagerContext,
-  usePageManager,
 } from "../lib/client/page-manager";
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
@@ -84,15 +83,10 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   // TODO: for now only whole root...
   pageManager.store.set(() => ({ pages: { __root: rsc } }));
 
-  function Root() {
-    const root = usePageManager((s) => s.pages["__root"]!);
-    return React.use(root);
-  }
-
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <PageManagerContext.Provider value={pageManager}>
-        <Root />
+        <LayoutContent name="__root" />
       </PageManagerContext.Provider>
     </RouterContext.Provider>
   );

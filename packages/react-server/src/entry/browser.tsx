@@ -4,9 +4,9 @@ import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import {
+  LayoutContent,
   PageManager,
   PageManagerContext,
-  usePageManager,
 } from "../lib/client/page-manager";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { initDomWebpackCsr } from "../lib/csr";
@@ -69,6 +69,8 @@ export async function start() {
 
   function Root() {
     const [isPending, startTransition] = React.useTransition();
+    __global.startTransition = startTransition;
+
     // TODO: for now, no action pending state
     const [isActionPending, _startActionTransition] = React.useTransition();
 
@@ -102,15 +104,7 @@ export async function start() {
       [location],
     );
 
-    // wrap root switch as transition
-    const page = usePageManager((s) => s.pages["__root"]!);
-    const [page2, setPage] = React.useState(page);
-    React.useEffect(() => {
-      if (page2 !== page) {
-        startTransition(() => setPage(page));
-      }
-    }, [page2, page]);
-    return React.use(page2);
+    return <LayoutContent name="__root" />;
   }
 
   // TODO: root error boundary? suspense?
