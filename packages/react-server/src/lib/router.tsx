@@ -2,6 +2,7 @@ import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
+import { getPathPrefixes, normalizePathname } from "./router-utils";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -105,30 +106,10 @@ export async function renderLayout(
   return <Layout {...props}>{acc}</Layout>;
 }
 
-/**
- * @example
- * "/hello/world" =>
- *    [
- *      ["/",            ""],
- *      ["/hello",       "hello"],
- *      ["/hello/world", "world"],
- *    ]
- */
-function getPathPrefixes(pathname: string) {
-  const keys = pathname.split("/");
-  const segments: [string, string][] = [];
-  let prefix = "";
-  for (const key of keys) {
-    prefix += "/" + key;
-    segments.push([prefix, key]);
-  }
-  return segments;
-}
-
+// TODO: test
 export async function renderRoutes(tree: RouteTreeNode, request: Request) {
   const url = new URL(request.url);
-  // strip trailing slash (including "/" => "")
-  const pathname = url.pathname.replaceAll(/\/*$/g, "");
+  const pathname = normalizePathname(url.pathname);
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;

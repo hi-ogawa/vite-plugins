@@ -1,5 +1,6 @@
 import React from "react";
 import { __global } from "../global";
+import { getPathPrefixes } from "../router-utils";
 import { TinyStore, useStore } from "./store-utils";
 
 type PageManagerState = {
@@ -12,8 +13,36 @@ export class PageManager {
   });
 }
 
-export function solvePageMapping(pathname: string) {
-  pathname;
+type LayoutContentEntry = {
+  type: "page" | "layout";
+  pathname: string;
+};
+
+type LayoutContentMapping = Record<string, LayoutContentEntry>;
+
+// TODO: test
+export function solveLayoutContentMapping(from: string, to: string) {
+  // TODO: keep common entries
+  const toParts = getPathPrefixes(to);
+  const fromParts = getPathPrefixes(from);
+  fromParts;
+
+  const mapping: LayoutContentMapping = {};
+  for (let i = 0; i < toParts.length; i++) {
+    const [prefix] = toParts[i]!;
+    if (i < toParts.length - 1) {
+      mapping[prefix] = {
+        type: "layout",
+        pathname: toParts[i + 1]![0],
+      };
+    } else {
+      mapping[prefix] = {
+        type: "page",
+        pathname: prefix,
+      };
+    }
+  }
+  return { mapping };
 }
 
 export const PageManagerContext = React.createContext<PageManager>(undefined!);
