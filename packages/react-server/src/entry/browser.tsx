@@ -32,10 +32,6 @@ export async function start() {
   // server action callback
   //
 
-  // TODO: only this way?
-  let __startActionTransition: React.TransitionStartFunction;
-  // let __setRsc: (v: Promise<React.ReactNode>) => void;
-
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
     if (0) {
@@ -55,13 +51,7 @@ export async function start() {
     const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
       callServer,
     });
-    // __startActionTransition(() => __setRsc(newRsc));
-    __startActionTransition(() => {
-      pageManager.store.set((s) => ({
-        ...s,
-        pages: { ...s.pages, __root: newRsc },
-      }));
-    });
+    pageManager.store.set(() => ({ pages: { __root: newRsc } }));
   };
 
   // expose as global to be used for createServerReference
@@ -71,10 +61,7 @@ export async function start() {
   const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
     callServer,
   });
-  pageManager.store.set((s) => ({
-    ...s,
-    pages: { ...s.pages, __root: initialRsc },
-  }));
+  pageManager.store.set(() => ({ pages: { __root: initialRsc } }));
 
   //
   // browser root
@@ -82,10 +69,8 @@ export async function start() {
 
   function Root() {
     const [isPending, startTransition] = React.useTransition();
-    const [isActionPending, startActionTransition] = React.useTransition();
-    // const [rsc, setRsc] = React.useState(initialRsc);
-    // __setRsc = setRsc;
-    __startActionTransition = startActionTransition;
+    // TODO: for now, no action pending state
+    const [isActionPending, _startActionTransition] = React.useTransition();
 
     React.useEffect(() => router.setup(), []);
 
@@ -112,31 +97,20 @@ export async function start() {
         const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
           callServer,
         });
-        // startTransition(() => setRsc(newRsc));
-        startTransition(() => {
-          pageManager.store.set((s) => ({
-            ...s,
-            pages: { ...s.pages, __root: newRsc },
-          }));
-        });
+        pageManager.store.set(() => ({ pages: { __root: newRsc } }));
       }),
       [location],
     );
 
-    const page = usePageManager((s) => s.pages["__root"]!);
-
     // wrap root switch as transition
-    const [rsc, setRsc] = React.useState(page);
+    const page = usePageManager((s) => s.pages["__root"]!);
+    const [page2, setPage] = React.useState(page);
     React.useEffect(() => {
-      if (rsc !== page) {
-        startTransition(() => {
-          setRsc(page);
-        });
+      if (page2 !== page) {
+        startTransition(() => setPage(page));
       }
-    }, [rsc, page]);
-
-    // return React.use(page);
-    return React.use(rsc);
+    }, [page2, page]);
+    return React.use(page2);
   }
 
   // TODO: root error boundary? suspense?

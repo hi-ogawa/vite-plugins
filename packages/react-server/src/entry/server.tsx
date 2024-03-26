@@ -82,7 +82,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   const router = new Router(history);
   const pageManager = new PageManager();
   // TODO: for now only whole root...
-  pageManager.store.set((s) => ({ ...s, pages: { ...s.pages, __root: rsc } }));
+  pageManager.store.set(() => ({ pages: { __root: rsc } }));
 
   function Root() {
     const root = usePageManager((s) => s.pages["__root"]!);
