@@ -74,13 +74,14 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   const history = createMemoryHistory({
     initialEntries: [url.href.slice(url.origin.length)],
   });
+  const router = new Router(history);
 
   function Root() {
     return React.use(rsc);
   }
 
   const reactRootEl = (
-    <RouterContext.Provider value={new Router(history)}>
+    <RouterContext.Provider value={router}>
       <Root />
     </RouterContext.Provider>
   );
