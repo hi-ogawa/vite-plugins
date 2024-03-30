@@ -43,7 +43,7 @@ export async function importReactServer(): Promise<
 }
 
 export async function renderHtml(request: Request, rscStream: ReadableStream) {
-  await initDomWebpackSsr();
+  initDomWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
@@ -55,8 +55,10 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   // ssr root
   //
 
-  // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
-  __global.dev.ssrImportCache.clear();
+  if (import.meta.env.DEV) {
+    // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
+    __global.dev.ssrImportCache.clear();
+  }
 
   const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
     ssrManifest: {

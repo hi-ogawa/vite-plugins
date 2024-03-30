@@ -20,6 +20,10 @@ async function ssrImport(id: string) {
 }
 
 export async function initDomWebpackSsr() {
+  if ("__webpack_require__" in globalThis) {
+    return;
+  }
+
   // __webpack_require__ is called at least twice for preloadModule and requireModule
   // https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js
   // We use `memoize` since `__webpack_require__` needs to
