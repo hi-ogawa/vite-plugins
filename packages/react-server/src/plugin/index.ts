@@ -253,11 +253,6 @@ export function vitePluginReactServer(options?: {
     async handleHotUpdate(ctx) {
       tinyassert(parentServer);
 
-      // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
-      if (ctx.modules.length > 0) {
-        __global.dev.ssrImportCache.clear();
-      }
-
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
         parentServer.hot.send({
