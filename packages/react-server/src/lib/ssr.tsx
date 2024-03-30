@@ -2,7 +2,7 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import { __global } from "./global";
 import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 
-const debug = createDebug("react-server:default");
+const debug = createDebug("react-server:ssr-import");
 
 async function ssrImport(id: string) {
   debug("[__webpack_require__]", { id });
