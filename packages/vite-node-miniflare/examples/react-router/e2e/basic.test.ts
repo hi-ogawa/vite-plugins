@@ -32,3 +32,9 @@ test("POST api", async ({ page }) => {
     )
     .click();
 });
+
+test("nodejs compat", async ({ request }) => {
+  const res = await request.get("/nodejs-compat");
+  expect(res.status()).toBe(200);
+  expect(await res.text()).toBe('{"format":"hello:world"}');
+});
