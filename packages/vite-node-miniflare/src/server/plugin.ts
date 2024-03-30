@@ -123,7 +123,9 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             },
           };
           pluginOptions.miniflareOptions?.(miniflareOptions);
-          miniflareOptions.bindings.__WORKER_NODE_COMPAT = miniflareOptions.compatibilityFlags?.includes("nodejs_compat") ?? false;
+          miniflareOptions.bindings!['__WORKER_NODE_COMPAT'] =
+            miniflareOptions.compatibilityFlags?.includes("nodejs_compat") ??
+            false;
           miniflare = new Miniflare(miniflareOptions);
           await miniflare.ready;
         }

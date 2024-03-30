@@ -21,18 +21,18 @@ interface Env {
 }
 
 const nodeCompatExternals = [
-  'node:assert',
-  'node:async_hooks',
-  'node:buffer',
-  'node:crypto',
-  'node:diagnostics_channel',
-  'node:events',
-  'node:path',
-  'node:process',
-  'node:stream',
-  'node:string_decoder',
-  'node:util',
-]
+  "node:assert",
+  "node:async_hooks",
+  "node:buffer",
+  "node:crypto",
+  "node:diagnostics_channel",
+  "node:events",
+  "node:path",
+  "node:process",
+  "node:stream",
+  "node:string_decoder",
+  "node:util",
+];
 
 export default {
   async fetch(request: Request, env: Env, ctx: unknown) {
@@ -127,8 +127,8 @@ async function createFetchHandler(options: {
       },
 
       runExternalModule(filepath) {
-        if(options.nodeCompat && nodeCompatExternals.includes(filepath))
-          return import(filepath)
+        if (options.nodeCompat && nodeCompatExternals.includes(filepath))
+          return import(filepath);
         console.error("[vite-node-miniflare] runExternalModule:", filepath);
         throw new Error(`[vite-node-miniflare] runExternalModule: ${filepath}`);
       },
