@@ -226,7 +226,6 @@ export function vitePluginReactServer(options?: {
         __global.dev = {
           server: parentServer,
           reactServer: reactServer,
-          ssrImportCache: new Map(),
         };
       }
       if (parentEnv.command === "build") {

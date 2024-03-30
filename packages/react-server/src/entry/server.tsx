@@ -6,7 +6,11 @@ import { injectRSCPayload } from "rsc-html-stream/server";
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
-import { createModuleMap, initDomWebpackSsr } from "../lib/ssr";
+import {
+  createModuleMap,
+  initDomWebpackSsr,
+  ssrImportPromiseCache,
+} from "../lib/ssr";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 
 const debug = createDebug("react-server:ssr");
@@ -56,8 +60,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   //
 
   if (import.meta.env.DEV) {
-    // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
-    __global.dev.ssrImportCache.clear();
+    ssrImportPromiseCache.clear();
   }
 
   const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {

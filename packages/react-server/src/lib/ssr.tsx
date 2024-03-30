@@ -4,6 +4,20 @@ import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 
 const debug = createDebug("react-server:ssr-import");
 
+// __webpack_require__ is called at least (maybe exactly?) twice for preloadModule and requireModule
+// https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js
+// We use `memoize` since `__webpack_require__` needs to return stable promise during each render.
+// During dev, memoize cache is invalidated before each render,
+// so the SSR will load fresh module in each time.
+// Note that memoize cache invalidation doesn't need to be so precise at all
+// since vite's ssrLoadModule has cache already
+// and memoize cache is used only to make `ssrLoadModule`'s promise stable.
+export const ssrImportPromiseCache = new Map<string, Promise<unknown>>();
+
+const ssrWebpackRequire: WebpackRequire = memoize(ssrImport, {
+  cache: ssrImportPromiseCache,
+});
+
 async function ssrImport(id: string) {
   debug("[__webpack_require__]", { id });
   if (import.meta.env.DEV) {
@@ -20,22 +34,6 @@ async function ssrImport(id: string) {
 }
 
 export function initDomWebpackSsr() {
-  if ("__webpack_require__" in globalThis) {
-    return;
-  }
-
-  // __webpack_require__ is called at least twice for preloadModule and requireModule
-  // https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js
-  // We use `memoize` since `__webpack_require__` needs to
-  // return stable promise during each render.
-  // Import cache is invaliadted manually in the plugin
-  // so that SSR will load fresh module on any change.
-  // Note that `ssrImportCache` cache invalidation doesn't need to be so precise
-  // since vite's ssrLoadModule has cache already
-  // and `ssrImportCache` is only to make `ssrLoadModule`'s promise stable.
-  const cache = import.meta.env.DEV ? __global.dev.ssrImportCache : undefined;
-  const ssrWebpackRequire: WebpackRequire = memoize(ssrImport, { cache });
-
   Object.assign(globalThis, {
     __webpack_require__: ssrWebpackRequire,
     __webpack_chunk_load__: () => {
