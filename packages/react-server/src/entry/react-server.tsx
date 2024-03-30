@@ -1,9 +1,9 @@
 import { createDebug, objectMapKeys } from "@hiogawa/utils";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import { createBundlerConfig } from "../features/use-client/react-server";
 import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
 import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
-import { createBundlerConfig } from "../lib/rsc";
 import { ejectActionId, unwrapRscRequest } from "../lib/shared";
 
 const debug = createDebug("react-server:rsc");

@@ -1,6 +1,9 @@
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { __global } from "./global";
-import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
+import type {
+  ImportManifestEntry,
+  ModuleMap,
+  WebpackRequire,
+} from "../../lib/types";
 
 const debug = createDebug("react-server:ssr-import");
 
@@ -33,7 +36,7 @@ async function ssrImport(id: string) {
   }
 }
 
-export function initDomWebpackSsr() {
+export function initializeWebpackSsr() {
   Object.assign(globalThis, {
     __webpack_require__: ssrWebpackRequire,
     __webpack_chunk_load__: () => {

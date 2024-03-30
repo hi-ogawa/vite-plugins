@@ -4,9 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r '--filter=!*example*' build",
-    "dev": "pnpm run --stream /^dev:/",
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json",
-    "dev:tsc": "pnpm tsc --watch --preserveWatchOutput",
+    "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
     "test": "pnpm -r --sequential test run",
     "lint": "pnpm run --sequential /^lint:/",
     "lint-check": "pnpm run --sequential /^lint-check:/",

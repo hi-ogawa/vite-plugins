@@ -3,14 +3,14 @@ import { createMemoryHistory } from "@tanstack/history";
 import React from "react";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
+import {
+  createModuleMap,
+  initializeWebpackSsr,
+  ssrImportPromiseCache,
+} from "../features/use-client/server";
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
-import {
-  createModuleMap,
-  initDomWebpackSsr,
-  ssrImportPromiseCache,
-} from "../lib/ssr";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 
 const debug = createDebug("react-server:ssr");
@@ -47,7 +47,7 @@ export async function importReactServer(): Promise<
 }
 
 export async function renderHtml(request: Request, rscStream: ReadableStream) {
-  initDomWebpackSsr();
+  initializeWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
