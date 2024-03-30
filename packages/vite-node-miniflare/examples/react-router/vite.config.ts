@@ -23,6 +23,8 @@ export default defineConfig({
       entry: "/src/server/worker-entry.ts",
       miniflareOptions(options) {
         options.log = new Log();
+        // @ts-ignore
+        options.compatibilityFlags = ["nodejs_compat"];
       },
     }),
     react(),
