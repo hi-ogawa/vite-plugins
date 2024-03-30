@@ -6,11 +6,7 @@ import { injectRSCPayload } from "rsc-html-stream/server";
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
-import {
-  createModuleMap,
-  initDomWebpackSsr,
-  invalidateImportCacheOnFinish,
-} from "../lib/ssr";
+import { createModuleMap, initDomWebpackSsr } from "../lib/ssr";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 
 const debug = createDebug("react-server:ssr");
@@ -59,13 +55,9 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   // ssr root
   //
 
-  // use unique id for each render to simplify ssr module invalidation during dev
-  // (see src/lib/ssr.tsx for details)
-  const renderId = Math.random().toString(36).slice(2);
-
   const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
     ssrManifest: {
-      moduleMap: createModuleMap({ renderId }),
+      moduleMap: createModuleMap(),
       moduleLoading: null,
     },
   });
@@ -139,7 +131,6 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   }
 
   const htmlStream = ssrStream
-    .pipeThrough(invalidateImportCacheOnFinish(renderId))
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(new TextEncoderStream())

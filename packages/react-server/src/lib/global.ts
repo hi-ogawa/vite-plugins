@@ -7,6 +7,7 @@ export const __global: {
   dev: {
     server: ViteDevServer;
     reactServer: ViteDevServer;
+    ssrImportCache: Map<string, Promise<unknown>>;
   };
   callServer: CallServerCallback;
 } = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});

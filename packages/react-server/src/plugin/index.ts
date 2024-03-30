@@ -226,6 +226,7 @@ export function vitePluginReactServer(options?: {
         __global.dev = {
           server: parentServer,
           reactServer: reactServer,
+          ssrImportCache: new Map(),
         };
       }
       if (parentEnv.command === "build") {
@@ -251,6 +252,9 @@ export function vitePluginReactServer(options?: {
     },
     async handleHotUpdate(ctx) {
       tinyassert(parentServer);
+
+      // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
+      __global.dev.ssrImportCache.clear();
 
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
