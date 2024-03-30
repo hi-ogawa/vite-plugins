@@ -55,6 +55,9 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   // ssr root
   //
 
+  // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
+  __global.dev.ssrImportCache.clear();
+
   const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
     ssrManifest: {
       moduleMap: createModuleMap(),
@@ -99,8 +102,6 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
   try {
-    // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
-    __global.dev.ssrImportCache.clear();
     ssrStream = await reactDomServer.renderToReadableStream(reactRootEl, {
       bootstrapModules: assets.bootstrapModules,
       onError(error, errorInfo) {
