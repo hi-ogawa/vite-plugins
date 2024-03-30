@@ -123,9 +123,24 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
             },
           };
           pluginOptions.miniflareOptions?.(miniflareOptions);
-          miniflareOptions.bindings!["__WORKER_NODE_COMPAT"] =
-            miniflareOptions.compatibilityFlags?.includes("nodejs_compat") ??
-            false;
+          miniflareOptions.bindings!["__WORKER_NODE_BUILTINS"] =
+            miniflareOptions.compatibilityFlags?.includes("nodejs_compat")
+              ? [
+                  "node:assert",
+                  "node:async_hooks",
+                  "node:buffer",
+                  "node:crypto",
+                  "node:diagnostics_channel",
+                  "node:events",
+                  "node:path",
+                  "node:process",
+                  "node:stream",
+                  "node:string_decoder",
+                  "node:util",
+                ]
+              : miniflareOptions.compatibilityFlags?.includes("nodejs_als")
+                ? ["node:async_hooks"]
+                : [];
           miniflare = new Miniflare(miniflareOptions);
           await miniflare.ready;
         }

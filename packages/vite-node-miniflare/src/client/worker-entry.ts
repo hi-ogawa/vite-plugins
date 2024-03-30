@@ -17,22 +17,8 @@ interface Env {
   __VITE_RUNTIME_ROOT: string;
   __VITE_RUNTIME_HMR: boolean;
   __WORKER_ENTRY: string;
-  __WORKER_NODE_COMPAT: boolean;
+  __WORKER_NODE_BUILTINS: string[];
 }
-
-const nodeCompatExternals = [
-  "node:assert",
-  "node:async_hooks",
-  "node:buffer",
-  "node:crypto",
-  "node:diagnostics_channel",
-  "node:events",
-  "node:path",
-  "node:process",
-  "node:stream",
-  "node:string_decoder",
-  "node:util",
-];
 
 export default {
   async fetch(request: Request, env: Env, ctx: unknown) {
@@ -44,7 +30,7 @@ export default {
         root: env.__VITE_RUNTIME_ROOT,
         debug: env.__VITE_NODE_DEBUG,
         hmr: env.__VITE_RUNTIME_HMR,
-        nodeCompat: env.__WORKER_NODE_COMPAT,
+        allowedExternals: env.__WORKER_NODE_BUILTINS,
       });
       return await fetchHandler(request, env, ctx);
     } catch (e) {
@@ -73,7 +59,7 @@ async function createFetchHandler(options: {
   root: string;
   debug: boolean;
   hmr: boolean;
-  nodeCompat: boolean;
+  allowedExternals: string[];
 }) {
   // ServerRpc proxy
   const serverRpc = proxyTinyRpc<ServerRpc>({
@@ -127,7 +113,7 @@ async function createFetchHandler(options: {
       },
 
       runExternalModule(filepath) {
-        if (options.nodeCompat && nodeCompatExternals.includes(filepath))
+        if (options.allowedExternals.includes(filepath))
           return import(filepath);
         console.error("[vite-node-miniflare] runExternalModule:", filepath);
         throw new Error(`[vite-node-miniflare] runExternalModule: ${filepath}`);
