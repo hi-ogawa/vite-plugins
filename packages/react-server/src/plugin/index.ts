@@ -254,7 +254,9 @@ export function vitePluginReactServer(options?: {
       tinyassert(parentServer);
 
       // see initDomWebpackSsr in packages/react-server/src/lib/ssr.tsx
-      __global.dev.ssrImportCache.clear();
+      if (ctx.modules.length > 0) {
+        __global.dev.ssrImportCache.clear();
+      }
 
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
