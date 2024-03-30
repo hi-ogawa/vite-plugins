@@ -19,7 +19,7 @@ async function ssrImport(id: string) {
   }
 }
 
-export async function initDomWebpackSsr() {
+export function initDomWebpackSsr() {
   if ("__webpack_require__" in globalThis) {
     return;
   }
