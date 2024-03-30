@@ -6,6 +6,8 @@ const command = isPreview
   ? `pnpm preview --port ${port} --strict-port`
   : `pnpm dev --port ${port} --strict-port`;
 
+process.env["DEBUG"] = "react-server:*";
+
 export default defineConfig({
   testDir: "e2e",
   use: {
