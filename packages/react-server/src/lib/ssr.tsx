@@ -1,67 +1,48 @@
-import { DefaultMap, createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { __global } from "./global";
 import type { ImportManifestEntry, ModuleMap, WebpackRequire } from "./types";
 
-const debug = createDebug("react-server:default");
+const debug = createDebug("react-server:ssr-import");
 
-// __webpack_require__ is called at least twice for preloadModule and requireModule
+// __webpack_require__ is called at least (maybe exactly?) twice for preloadModule and requireModule
 // https://github.com/facebook/react/blob/706d95f486fbdec35b771ea4aaf3e78feb907249/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js
+// We use `memoize` since `__webpack_require__` needs to return stable promise during each render.
+// During dev, memoize cache is invalidated before each render,
+// so the SSR will load fresh module in each time.
+// Note that memoize cache invalidation doesn't need to be so precise at all
+// since vite's ssrLoadModule has cache already
+// and memoize cache is used only to make `ssrLoadModule`'s promise stable.
+export const ssrImportPromiseCache = new Map<string, Promise<unknown>>();
 
-// during dev, import cache needs to be isolated for each SSR run
-// so that import/ssrLoadModule will load fresh module while keeping Promise stable
-//   https://github.com/facebook/react/pull/26985
-//   https://github.com/facebook/react/pull/26926#discussion_r1236251023
-//
-// Alternative:
-//   use AsyncLocalStorage to differentiate each run.
-//   however it's not supported well on Stackblitz, so we avoid relying on it for now.
-//
-const memoImportByRenderId = new DefaultMap<string, WebpackRequire>(() =>
-  // `import` is transformed to `ssrLoadModule` during dev
-  memoize((id) => import(/* @vite-ignore */ id)),
-);
+const ssrWebpackRequire: WebpackRequire = memoize(ssrImport, {
+  cache: ssrImportPromiseCache,
+});
 
-// cleanup importCache after render to avoid leaking memory during dev
-export function invalidateImportCacheOnFinish<T>(renderId: string) {
-  return new TransformStream<T, T>({
-    flush() {
-      if (import.meta.env.DEV) {
-        memoImportByRenderId.delete(renderId);
-      }
-    },
-  });
-}
-
-async function createWebpackRequire(): Promise<WebpackRequire> {
+async function ssrImport(id: string) {
+  debug("[__webpack_require__]", { id });
   if (import.meta.env.DEV) {
-    return (id) => {
-      debug("[__webpack_require__]", { id });
-      const [file, renderId] = id.split(RENDER_ID_SEP) as [string, string];
-      return memoImportByRenderId.get(renderId)(file);
-    };
+    // transformed to "ssrLoadModule" during dev
+    return import(/* @vite-ignore */ id);
   } else {
-    // `as string` to silence ts error
     const clientReferences = await import(
       "/dist/rsc/client-references.js" as string
     );
-    return memoize((id) => {
-      debug("[__webpack_require__]", { id });
-      const dynImport = clientReferences.default[id];
-      tinyassert(dynImport, `client reference not found '${id}'`);
-      return dynImport();
-    });
+    const dynImport = clientReferences.default[id];
+    tinyassert(dynImport, `client reference not found '${id}'`);
+    return dynImport();
   }
 }
 
-export async function initDomWebpackSsr() {
+export function initDomWebpackSsr() {
   Object.assign(globalThis, {
-    __webpack_require__: await createWebpackRequire(),
+    __webpack_require__: ssrWebpackRequire,
     __webpack_chunk_load__: () => {
       throw new Error("todo: __webpack_chunk_load__");
     },
   });
 }
 
-export function createModuleMap({ renderId }: { renderId: string }): ModuleMap {
+export function createModuleMap(): ModuleMap {
   return new Proxy(
     {},
     {
@@ -72,9 +53,6 @@ export function createModuleMap({ renderId }: { renderId: string }): ModuleMap {
             get(_target, name, _receiver) {
               tinyassert(typeof id === "string");
               tinyassert(typeof name === "string");
-              if (import.meta.env.DEV) {
-                id = [id, renderId].join(RENDER_ID_SEP);
-              }
               return {
                 id,
                 name,
@@ -87,5 +65,3 @@ export function createModuleMap({ renderId }: { renderId: string }): ModuleMap {
     },
   );
 }
-
-const RENDER_ID_SEP = "*";

@@ -30,6 +30,9 @@ export function Component() {
             </a>
           </li>
           <li>
+            <a href="/nodejs-compat">nodejs compat</a>
+          </li>
+          <li>
             <a href="/hello">GET API</a>
           </li>
           <li>

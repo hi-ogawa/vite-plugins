@@ -4,7 +4,9 @@ import { checkNoError, editFile } from "./helper";
 test("basic", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/test");
+  const res = await page.goto("/test");
+  expect(res?.status()).toBe(200);
+
   await waitForHydration(page);
 });
 
