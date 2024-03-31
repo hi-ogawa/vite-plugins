@@ -80,8 +80,6 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   const url = new URL(request.url);
 
   const { mapping } = solveLayoutContentMapping(url.pathname);
-
-  // TODO: still need to include root layout initially
   mapping["__root"] = { type: "layout", name: "" };
 
   const reactServer = await importReactServer();
@@ -89,21 +87,13 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   // TODO: merge to a single stream to send it to client
   const streamMapping = await reactServer.render2({ request, mapping });
 
-  const moduleMap = createModuleMap();
   const clientMapping = objectMapValues(streamMapping, (stream) => {
     return reactServerDomClient.createFromReadableStream(stream, {
       ssrManifest: {
-        moduleMap,
+        moduleMap: createModuleMap(),
         moduleLoading: null,
       },
     });
-  });
-  // TODO: missing root
-  // objectMapValues()
-  console.log({
-    mapping,
-    streamMapping,
-    clientMapping,
   });
 
   const history = createMemoryHistory({
@@ -111,8 +101,6 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   });
   const router = new Router(history);
   const pageManager = new PageManager();
-  // TODO: for now only whole root...
-  // pageManager.store.set(() => ({ pages: { __root: rsc } }));
   pageManager.store.set(() => ({ pages: clientMapping }));
 
   const reactRootEl = (
