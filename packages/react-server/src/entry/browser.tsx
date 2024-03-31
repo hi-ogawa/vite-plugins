@@ -8,7 +8,10 @@ import {
   PageManagerContext,
   createLayoutFromStream,
 } from "../features/router/layout-manager";
-import { getNewLayoutContentKeys } from "../features/router/utils";
+import {
+  createLayoutContentRequest,
+  getNewLayoutContentKeys,
+} from "../features/router/utils";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
@@ -55,10 +58,13 @@ export async function start() {
     // TODO: for now, we invalidate only leaf content
     const pathname = history.location.pathname;
     const newKeys = getNewLayoutContentKeys(pathname, pathname);
-    const request = new Request(wrapRscRequestUrl(history.location.href), {
-      method: "POST",
-      body: args[0],
-    });
+    const request = new Request(
+      wrapRscRequestUrl(history.location.href, newKeys),
+      {
+        method: "POST",
+        body: args[0],
+      },
+    );
     const clientLayoutMap = createLayoutFromStream(
       history.location.pathname,
       reactNodeFromStream,
@@ -136,21 +142,19 @@ export async function start() {
         lastLocation.current = location;
 
         const pathname = location.pathname;
-        const newKeys = getNewLayoutContentKeys(pathname, lastPathname);
+        let newKeys = getNewLayoutContentKeys(pathname, lastPathname);
+        if (RSC_HMR_STATE_KEY in location.state) {
+          newKeys = Object.keys(createLayoutContentRequest(pathname));
+        }
         debug("[navigation]", location, { pathname, lastPathname, newKeys });
 
         // TODO: request only necessary layout content
-        const request = new Request(wrapRscRequestUrl(location.href));
+        const request = new Request(wrapRscRequestUrl(location.href, newKeys));
         const clientLayoutMap = createLayoutFromStream(
           location.pathname,
           reactNodeFromStream,
           () => fetchLayoutStream(request),
         );
-
-        if (RSC_HMR in location.state) {
-          pageManager.store.set(() => ({ pages: clientLayoutMap }));
-          return;
-        }
 
         pageManager.store.set((s) => ({
           pages: {
@@ -193,12 +197,12 @@ export async function start() {
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
       console.log("[react-server] hot update", e);
-      history.replace(history.location.href, { [RSC_HMR]: true });
+      history.replace(history.location.href, { [RSC_HMR_STATE_KEY]: true });
     });
   }
 }
 
-const RSC_HMR = "__rscHmr";
+const RSC_HMR_STATE_KEY = "__rscHmr";
 
 declare module "react-dom/client" {
   // TODO: full document CSR works fine?
