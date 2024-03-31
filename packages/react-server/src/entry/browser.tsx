@@ -123,6 +123,7 @@ export async function start() {
           return;
         }
         debug("[history]", location.href);
+        // TODO: start transition for whole thing (manual promise trick?)
         // TODO: take diff new location and request only required layout content
         const request = new Request(wrapRscRequestUrl(location.href));
         (async () => {

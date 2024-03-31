@@ -50,6 +50,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 }
 
+// TODO: not working
 function ErrorAutoReset(props: Pick<ErrorPageProps, "reset">) {
   const href = useRouter((s) => s.location.href);
   const initialHref = React.useRef(href).current;
