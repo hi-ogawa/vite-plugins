@@ -6,7 +6,6 @@ import {
   LayoutRoot,
   PageManagerContext,
 } from "../features/router/layout-manager";
-import { createLayoutContentRequest } from "../features/router/utils";
 import {
   createModuleMap,
   initializeWebpackSsr,
@@ -26,20 +25,21 @@ import {
   teeStreamMap,
 } from "../utils/stream";
 import { injectStreamScript } from "../utils/stream-script";
+import type { ReactServerHandlerStreamResult } from "./react-server";
 
 const debug = createDebug("react-server:ssr");
 
 export async function handler(request: Request): Promise<Response> {
   const reactServer = await importReactServer();
 
-  // server action and render rsc
+  // server action and render rsc stream
   const result = await reactServer.handler({ request });
   if (result instanceof Response) {
     return result;
   }
 
-  // ssr rsc
-  const ssrResult = await renderHtml(request, result.stream);
+  // render rsc stream into html
+  const ssrResult = await renderHtml(request, result);
   return new Response(ssrResult.htmlStream, {
     status: ssrResult.status,
     headers: {
@@ -60,7 +60,10 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(request: Request, _rscStream: ReadableStream) {
+export async function renderHtml(
+  request: Request,
+  result: ReactServerHandlerStreamResult,
+) {
   initializeWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
@@ -77,13 +80,13 @@ export async function renderHtml(request: Request, _rscStream: ReadableStream) {
 
   const url = new URL(request.url);
 
-  const mapping = createLayoutContentRequest(url.pathname);
+  // const mapping = createLayoutContentRequest(url.pathname);
 
-  const reactServer = await importReactServer();
+  // const reactServer = await importReactServer();
 
-  const streamMapping = await reactServer.render2({ request, mapping });
+  // const streamMapping = await reactServer.render2({ request, mapping });
 
-  const [streamMapping1, streamMapping2] = teeStreamMap(streamMapping);
+  const [streamMapping1, streamMapping2] = teeStreamMap(result.streamMap);
 
   const clientMapping = objectMapValues(streamMapping1, (stream) => {
     return reactServerDomClient.createFromReadableStream(stream, {

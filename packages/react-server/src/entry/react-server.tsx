@@ -36,35 +36,42 @@ export interface ReactServerHandlerContext {
   request: Request;
 }
 
+export interface ReactServerHandlerStreamResult {
+  streamMap: StreamLayoutContentMapping;
+}
+
 export type ReactServerHandlerResult =
   | Response
-  | {
-      stream: ReadableStream<Uint8Array>;
-    };
+  | ReactServerHandlerStreamResult;
 
-export const handler: ReactServerHandler = async ({ request }) => {
+export const handler: ReactServerHandler = async (ctx) => {
   // TODO
   // api to manipulate response status/headers from server action/component?
   // allow mutate them via PageRouterProps?
   // also redirect?
 
   // action
-  if (request.method === "POST") {
-    await actionHandler({ request });
+  if (ctx.request.method === "POST") {
+    await actionHandler(ctx);
   }
 
   // check rsc-only request
-  const rscOnly = unwrapRscRequest(request);
+  const rscOnly = unwrapRscRequest(ctx.request);
+  const request = rscOnly?.request ?? ctx.request;
+  const url = new URL(request.url);
+  let requestMap = createLayoutContentRequest(url.pathname);
 
   if (rscOnly) {
-    const url = new URL(request.url);
-    let mapping = createLayoutContentRequest(url.pathname);
-    mapping = objectPickBy(mapping, (_v, k) => rscOnly.newKeys.includes(k));
-    const streamMapping = await render2({ request: rscOnly.request, mapping });
+    requestMap = objectPickBy(requestMap, (_v, k) =>
+      rscOnly.newKeys.includes(k),
+    );
+  }
+
+  const streamMap = await render2({ request, mapping: requestMap });
+
+  if (rscOnly) {
     const stream = encodeStreamMap(
-      objectMapValues(streamMapping, (v) =>
-        v.pipeThrough(new TextDecoderStream()),
-      ),
+      objectMapValues(streamMap, (v) => v.pipeThrough(new TextDecoderStream())),
     )
       .pipeThrough(ndjsonStringifyTransform())
       .pipeThrough(new TextEncoderStream());
@@ -75,19 +82,7 @@ export const handler: ReactServerHandler = async ({ request }) => {
     });
   }
 
-  // rsc
-  const { stream } = await render({
-    request: rscOnly ?? request,
-  });
-  if (rscOnly) {
-    return new Response(stream, {
-      headers: {
-        "content-type": "text/x-component; charset=utf-8",
-      },
-    });
-  }
-
-  return { stream };
+  return { streamMap };
 };
 
 //
@@ -135,6 +130,7 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
   return serverError.digest;
 };
 
+// @ts-ignore
 async function render({ request }: { request: Request }) {
   const result = await router.run(request);
   const stream = reactServerDomServer.renderToReadableStream(
