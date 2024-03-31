@@ -10,7 +10,7 @@ describe(createLayoutContentRequest, () => {
           "type": "page",
         },
         "__root": {
-          "name": "",
+          "name": "/",
           "type": "layout",
         },
       }
@@ -26,7 +26,7 @@ describe(createLayoutContentRequest, () => {
           "type": "page",
         },
         "__root": {
-          "name": "",
+          "name": "/",
           "type": "layout",
         },
       }
@@ -46,7 +46,7 @@ describe(createLayoutContentRequest, () => {
           "type": "page",
         },
         "__root": {
-          "name": "",
+          "name": "/",
           "type": "layout",
         },
       }
