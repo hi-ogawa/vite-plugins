@@ -1,4 +1,9 @@
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import {
+  type ManualPromise,
+  createDebug,
+  createManualPromise,
+  tinyassert,
+} from "@hiogawa/utils";
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
@@ -27,7 +32,10 @@ export type LayoutRequest = Record<
 
 export type StreamLayoutMap = Record<string, ReadableStream<Uint8Array>>;
 
-export type ClientLayoutMap = Record<string, Promise<React.ReactNode>>;
+export type ClientLayoutMap = Record<
+  string,
+  Promise<React.ReactNode> | ManualPromise<React.ReactNode>
+>;
 
 export const LayoutManagerContext = React.createContext<LayoutManager>(
   undefined!,
@@ -71,7 +79,7 @@ export function createLayoutMapFromStream(
 ): ClientLayoutMap {
   const keys = Object.keys(createLayoutContentRequest(pathname));
   const clientLayoutMap = Object.fromEntries(
-    keys.map((k) => [k, createManualPromise()]),
+    keys.map((k) => [k, createManualPromise<React.ReactNode>()]),
   );
   (async () => {
     const stream = await getLayoutStream();
@@ -84,22 +92,22 @@ export function createLayoutMapFromStream(
       );
     }
   })();
-  return clientLayoutMap as any;
+  return clientLayoutMap;
 }
 
 // TODO: js-utils
-export interface ManualPromise<T> extends PromiseLike<T> {
-  promise: Promise<T>;
-  resolve: (value: T | PromiseLike<T>) => void;
-  reject: (value: unknown) => void;
-}
+// export interface ManualPromise<T> extends PromiseLike<T> {
+//   promise: Promise<T>;
+//   resolve: (value: T | PromiseLike<T>) => void;
+//   reject: (value: unknown) => void;
+// }
 
-export function createManualPromise<T>(): ManualPromise<T> {
-  let resolve!: ManualPromise<T>["resolve"];
-  let reject!: ManualPromise<T>["reject"];
-  const promise = new Promise<T>((resolve_, reject_) => {
-    resolve = resolve_;
-    reject = reject_;
-  });
-  return { promise, resolve, reject, then: promise.then.bind(promise) };
-}
+// export function createManualPromise<T>(): ManualPromise<T> {
+//   let resolve!: ManualPromise<T>["resolve"];
+//   let reject!: ManualPromise<T>["reject"];
+//   const promise = new Promise<T>((resolve_, reject_) => {
+//     resolve = resolve_;
+//     reject = reject_;
+//   });
+//   return { promise, resolve, reject, then: promise.then.bind(promise) };
+// }
