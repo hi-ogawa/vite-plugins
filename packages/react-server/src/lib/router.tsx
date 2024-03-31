@@ -78,12 +78,12 @@ function importClientInternal(): Promise<typeof import("../client-internal")> {
   return import("@hiogawa/react-server/client-internal" as string);
 }
 
-export function renderPage(node: RouteTreeNode, props: PageProps) {
+function renderPage(node: RouteTreeNode, props: PageProps) {
   const Page = node.value?.page?.default ?? ThrowNotFound;
   return <Page {...props} />;
 }
 
-export async function renderLayout(
+async function renderLayout(
   node: RouteTreeNode,
   props: PageProps,
   name: string,
@@ -135,49 +135,6 @@ export async function renderRoutes(tree: RouteTreeNode, request: Request) {
   }
 
   return { pages, layouts };
-}
-
-// TODO: separate react code in a different file
-// TODO: just do it together with matchRoute above?
-export async function renderMatchRoute(
-  request: Request,
-  match: MatchRouteResult,
-) {
-  const { ErrorBoundary } = await importClientInternal();
-
-  const props: BaseProps = {
-    request,
-    params: match.params,
-  };
-
-  const nodes = [...match.nodes].reverse();
-
-  let acc: React.ReactNode = <ThrowNotFound />;
-  if (!match.notFound) {
-    const Page = nodes[0]?.value?.page?.default;
-    if (Page) {
-      acc = <Page {...props} />;
-    }
-  }
-
-  for (const node of nodes) {
-    const ErrorPage = node.value?.error?.default;
-    if (ErrorPage) {
-      // TODO: can we remove extra <div>?
-      acc = (
-        <ErrorBoundary errorComponent={ErrorPage}>
-          <div className="error-boundary">{acc}</div>
-        </ErrorBoundary>
-      );
-    }
-    const Layout = node.value?.layout?.default;
-    if (Layout) {
-      // TODO: wrap by selectable store context
-      acc = <Layout {...props}>{acc}</Layout>;
-    }
-  }
-
-  return acc;
 }
 
 const ThrowNotFound: React.FC = () => {
