@@ -4,8 +4,8 @@ declare module "react-dom/server.edge" {
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMServerEdge.js
 declare module "react-server-dom-webpack/server.edge" {
-  export function renderToReadableStream(
-    node: React.ReactNode,
+  export function renderToReadableStream<T>(
+    node: T,
     bundlerConfig: import("./types").BundlerConfig,
     opitons?: {
       onError: import("react-dom/server").RenderToReadableStreamOptions["onError"];
@@ -17,31 +17,31 @@ declare module "react-server-dom-webpack/server.edge" {
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMClientEdge.js
 declare module "react-server-dom-webpack/client.edge" {
-  export function createFromReadableStream(
+  export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
     options: {
       ssrManifest: import("./types").SsrManifest;
       // TODO
       // encodeFormAction
     },
-  ): Promise<React.ReactNode>;
+  ): Promise<T>;
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMClientBrowser.js
 declare module "react-server-dom-webpack/client.browser" {
-  export function createFromReadableStream(
+  export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
     options?: {
       callServer?: import("./types").CallServerCallback;
     },
-  ): Promise<React.ReactNode>;
+  ): Promise<T>;
 
-  export function createFromFetch(
+  export function createFromFetch<T>(
     promiseForResponse: Promise<Response>,
     options?: {
       callServer?: import("./types").CallServerCallback;
     },
-  ): Promise<React.ReactNode>;
+  ): Promise<T>;
 
   export function encodeReply(
     v: unknown,

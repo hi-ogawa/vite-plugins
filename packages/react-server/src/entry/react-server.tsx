@@ -9,6 +9,7 @@ import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import type {
   LayoutRequest,
+  ServerLayoutMap,
   StreamLayoutMap,
 } from "../features/router/layout-manager";
 import { createLayoutContentRequest } from "../features/router/utils";
@@ -33,6 +34,8 @@ export interface ReactServerHandlerContext {
 
 export interface ReactServerHandlerStreamResult {
   streamMap: StreamLayoutMap;
+  layoutStream: ReadableStream<Uint8Array>;
+  layoutMap: LayoutRequest;
 }
 
 export type ReactServerHandlerResult =
@@ -56,6 +59,7 @@ export const handler: ReactServerHandler = async (ctx) => {
   }
 
   const streamMap = await render({ request, layoutMap });
+  const stream = await renderLayoutMap({ request, layoutMap });
 
   if (rscOnly) {
     const stream = encodeStreamMap(
@@ -70,12 +74,34 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  return { streamMap };
+  return { streamMap, layoutStream: stream, layoutMap };
 };
 
 //
 // render RSC
 //
+
+async function renderLayoutMap({
+  request,
+  layoutMap,
+}: {
+  request: Request;
+  layoutMap: LayoutRequest;
+}) {
+  const result = await renderRouteMap(router.tree, request);
+  const nodeMap = objectMapValues(
+    layoutMap,
+    (v) => result[`${v.type}s`][v.name],
+  );
+  const bundlerConfig = createBundlerConfig();
+  return reactServerDomServer.renderToReadableStream<ServerLayoutMap>(
+    nodeMap,
+    bundlerConfig,
+    {
+      onError: reactServerOnError,
+    },
+  );
+}
 
 async function render({
   request,

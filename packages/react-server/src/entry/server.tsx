@@ -1,10 +1,12 @@
-import { createDebug, objectMapValues, splitFirst } from "@hiogawa/utils";
+import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import {
   LayoutManager,
   LayoutManagerContext,
   LayoutRoot,
+  type ServerLayoutMap,
+  flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
 import {
   createModuleMap,
@@ -19,11 +21,7 @@ import {
   type SsrAssetsType,
   invalidateModule,
 } from "../plugin/utils";
-import {
-  encodeStreamMap,
-  jsonStringifyTransform,
-  teeStreamMap,
-} from "../utils/stream";
+import { jsonStringifyTransform } from "../utils/stream";
 import { injectStreamScript } from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./react-server";
 
@@ -78,18 +76,26 @@ export async function renderHtml(
     ssrImportPromiseCache.clear();
   }
 
-  const [streamMap1, streamMap2] = teeStreamMap(result.streamMap);
+  const [layoutStream1, layoutStream2] = result.layoutStream.tee();
 
-  const layoutMap = objectMapValues(streamMap1, (stream) => {
-    return reactServerDomClient.createFromReadableStream(stream, {
-      ssrManifest: {
-        moduleMap: createModuleMap(),
-        moduleLoading: null,
+  const layoutPromise =
+    reactServerDomClient.createFromReadableStream<ServerLayoutMap>(
+      layoutStream1,
+      {
+        ssrManifest: {
+          moduleMap: createModuleMap(),
+          moduleLoading: null,
+        },
       },
-    });
-  });
+    );
+
+  const clientLayoutMap = flattenLayoutMapPromise(
+    Object.keys(result.layoutMap),
+    layoutPromise,
+  );
+
   const layoutManager = new LayoutManager();
-  layoutManager.update(layoutMap);
+  layoutManager.update(clientLayoutMap);
 
   const url = new URL(request.url);
   const history = createMemoryHistory({
@@ -165,11 +171,9 @@ export async function renderHtml(
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(
       injectStreamScript(
-        encodeStreamMap(
-          objectMapValues(streamMap2, (v) =>
-            v.pipeThrough(new TextDecoderStream()),
-          ),
-        ).pipeThrough(jsonStringifyTransform()),
+        layoutStream2
+          .pipeThrough(new TextDecoderStream())
+          .pipeThrough(jsonStringifyTransform()),
       ),
     )
     .pipeThrough(new TextEncoderStream());
