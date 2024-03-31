@@ -123,7 +123,7 @@ export async function start() {
         if (location === initialLocation) {
           return;
         }
-        debug("[history]", location.href);
+        debug("[history]", location);
         // TODO: take diff new location and request only required layout content
         const request = new Request(wrapRscRequestUrl(location.href));
         const clientLayoutMap = createLayoutFromStream(
