@@ -3,8 +3,8 @@ import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import {
   LayoutManager,
+  LayoutManagerContext,
   LayoutRoot,
-  PageManagerContext,
 } from "../features/router/layout-manager";
 import {
   createModuleMap,
@@ -78,17 +78,9 @@ export async function renderHtml(
     ssrImportPromiseCache.clear();
   }
 
-  const url = new URL(request.url);
+  const [streamMap1, streamMap2] = teeStreamMap(result.streamMap);
 
-  // const mapping = createLayoutContentRequest(url.pathname);
-
-  // const reactServer = await importReactServer();
-
-  // const streamMapping = await reactServer.render2({ request, mapping });
-
-  const [streamMapping1, streamMapping2] = teeStreamMap(result.streamMap);
-
-  const clientMapping = objectMapValues(streamMapping1, (stream) => {
+  const clientMapping = objectMapValues(streamMap1, (stream) => {
     return reactServerDomClient.createFromReadableStream(stream, {
       ssrManifest: {
         moduleMap: createModuleMap(),
@@ -97,18 +89,19 @@ export async function renderHtml(
     });
   });
 
+  const url = new URL(request.url);
   const history = createMemoryHistory({
     initialEntries: [url.href.slice(url.origin.length)],
   });
   const router = new Router(history);
-  const pageManager = new LayoutManager();
-  pageManager.store.set(() => ({ pages: clientMapping }));
+  const layoutManager = new LayoutManager();
+  layoutManager.store.set(() => ({ pages: clientMapping }));
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
-      <PageManagerContext.Provider value={pageManager}>
+      <LayoutManagerContext.Provider value={layoutManager}>
         <LayoutRoot />
-      </PageManagerContext.Provider>
+      </LayoutManagerContext.Provider>
     </RouterContext.Provider>
   );
 
@@ -173,7 +166,7 @@ export async function renderHtml(
     .pipeThrough(
       injectStreamScript(
         encodeStreamMap(
-          objectMapValues(streamMapping2, (v) =>
+          objectMapValues(streamMap2, (v) =>
             v.pipeThrough(new TextDecoderStream()),
           ),
         ).pipeThrough(jsonStringifyTransform()),

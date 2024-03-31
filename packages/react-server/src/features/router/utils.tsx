@@ -1,11 +1,11 @@
 import { getPathPrefixes } from "../../lib/utils";
-import type { LayoutContentRequest } from "./layout-manager";
+import type { LayoutRequest } from "./layout-manager";
 
 export const LAYOUT_ROOT_NAME = "__root";
 
 export function createLayoutContentRequest(pathname: string) {
   const parts = getPathPrefixes(pathname);
-  const map: LayoutContentRequest = {
+  const map: LayoutRequest = {
     [LAYOUT_ROOT_NAME]: { type: "layout", name: "" },
   };
   for (let i = 0; i < parts.length; i++) {

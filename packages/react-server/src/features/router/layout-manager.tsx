@@ -17,32 +17,26 @@ export class LayoutManager {
   });
 }
 
-// TODO: naming?
-export type LayoutContentRequestEntry = {
-  type: "page" | "layout";
-  name: string;
-};
-
-export type LayoutContentRequest = Record<string, LayoutContentRequestEntry>;
-
-export type StreamLayoutContentMapping = Record<
+export type LayoutRequest = Record<
   string,
-  ReadableStream<Uint8Array>
+  {
+    type: "page" | "layout";
+    name: string;
+  }
 >;
 
-export type ClientLayoutContentMapping = Record<
-  string,
-  Promise<React.ReactNode>
->;
+export type StreamLayoutMap = Record<string, ReadableStream<Uint8Array>>;
 
-export const PageManagerContext = React.createContext<LayoutManager>(
+export type ClientLayoutMap = Record<string, Promise<React.ReactNode>>;
+
+export const LayoutManagerContext = React.createContext<LayoutManager>(
   undefined!,
 );
 
-function usePageManager<U = LayoutManagerState>(
+function useLayoutManager<U = LayoutManagerState>(
   select?: (v: LayoutManagerState) => U,
 ) {
-  const ctx = React.useContext(PageManagerContext);
+  const ctx = React.useContext(LayoutManagerContext);
   return useStore(ctx.store, select);
 }
 
@@ -50,7 +44,7 @@ export function LayoutContent(props: { name: string }) {
   // TODO: each layout can have transition state?
   // const [isPending, startTransition] = React.useTransition();
 
-  const node = usePageManager((s) => s.pages[props.name]);
+  const node = useLayoutManager((s) => s.pages[props.name]);
 
   // wrap each content switch as transition
   const [current, setCurrent] = React.useState(node);
@@ -68,13 +62,13 @@ export function LayoutRoot() {
   return <LayoutContent name={LAYOUT_ROOT_NAME} />;
 }
 
-export function createLayoutFromStream(
+export function createLayoutMapFromStream(
   pathname: string,
   reactNodeFromStream: (
     stream: ReadableStream<Uint8Array>,
   ) => Promise<React.ReactNode>,
   getLayoutStream: () => Promise<ReadableStream<unknown>>,
-): ClientLayoutContentMapping {
+): ClientLayoutMap {
   const keys = Object.keys(createLayoutContentRequest(pathname));
   const clientLayoutMap = Object.fromEntries(
     keys.map((k) => [k, createManualPromise()]),
@@ -93,6 +87,7 @@ export function createLayoutFromStream(
   return clientLayoutMap as any;
 }
 
+// TODO: js-utils
 export interface ManualPromise<T> extends PromiseLike<T> {
   promise: Promise<T>;
   resolve: (value: T | PromiseLike<T>) => void;

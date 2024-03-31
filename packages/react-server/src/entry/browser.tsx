@@ -4,9 +4,9 @@ import React from "react";
 import reactDomClient from "react-dom/client";
 import {
   LayoutManager,
+  LayoutManagerContext,
   LayoutRoot,
-  PageManagerContext,
-  createLayoutFromStream,
+  createLayoutMapFromStream,
 } from "../features/router/layout-manager";
 import {
   createLayoutContentRequest,
@@ -37,7 +37,7 @@ export async function start() {
 
   const history = createBrowserHistory();
   const router = new Router(history);
-  const pageManager = new LayoutManager();
+  const layoutManager = new LayoutManager();
 
   //
   // server action callback
@@ -65,12 +65,12 @@ export async function start() {
         body: args[0],
       },
     );
-    const clientLayoutMap = createLayoutFromStream(
+    const clientLayoutMap = createLayoutMapFromStream(
       history.location.pathname,
       reactNodeFromStream,
       () => fetchLayoutStream(request),
     );
-    pageManager.store.set((s) => ({
+    layoutManager.store.set((s) => ({
       pages: {
         ...clientLayoutMap,
         ...objectPickBy(s.pages, (_v, k) => !newKeys.includes(k)),
@@ -99,12 +99,12 @@ export async function start() {
   }
 
   // initial layout stream from inline <script>
-  const clientLayoutMap = createLayoutFromStream(
+  const clientLayoutMap = createLayoutMapFromStream(
     history.location.pathname,
     reactNodeFromStream,
     async () => readStreamScript(),
   );
-  pageManager.store.set(() => ({ pages: clientLayoutMap }));
+  layoutManager.store.set(() => ({ pages: clientLayoutMap }));
 
   //
   // browser root
@@ -150,13 +150,13 @@ export async function start() {
 
         // TODO: request only necessary layout content
         const request = new Request(wrapRscRequestUrl(location.href, newKeys));
-        const clientLayoutMap = createLayoutFromStream(
+        const clientLayoutMap = createLayoutMapFromStream(
           location.pathname,
           reactNodeFromStream,
           () => fetchLayoutStream(request),
         );
 
-        pageManager.store.set((s) => ({
+        layoutManager.store.set((s) => ({
           pages: {
             ...clientLayoutMap,
             ...objectPickBy(s.pages, (_v, k) => !newKeys.includes(k)),
@@ -171,11 +171,11 @@ export async function start() {
 
   let reactRootEl = (
     <RouterContext.Provider value={router}>
-      <PageManagerContext.Provider value={pageManager}>
+      <LayoutManagerContext.Provider value={layoutManager}>
         <RootErrorBoundary>
           <Root />
         </RootErrorBoundary>
-      </PageManagerContext.Provider>
+      </LayoutManagerContext.Provider>
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {

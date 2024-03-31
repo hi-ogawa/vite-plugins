@@ -8,8 +8,8 @@ import {
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import type {
-  LayoutContentRequest,
-  StreamLayoutContentMapping,
+  LayoutRequest,
+  StreamLayoutMap,
 } from "../features/router/layout-manager";
 import { createLayoutContentRequest } from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
@@ -37,7 +37,7 @@ export interface ReactServerHandlerContext {
 }
 
 export interface ReactServerHandlerStreamResult {
-  streamMap: StreamLayoutContentMapping;
+  streamMap: StreamLayoutMap;
 }
 
 export type ReactServerHandlerResult =
@@ -45,11 +45,6 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
-  // TODO
-  // api to manipulate response status/headers from server action/component?
-  // allow mutate them via PageRouterProps?
-  // also redirect?
-
   // action
   if (ctx.request.method === "POST") {
     await actionHandler(ctx);
@@ -59,15 +54,13 @@ export const handler: ReactServerHandler = async (ctx) => {
   const rscOnly = unwrapRscRequest(ctx.request);
   const request = rscOnly?.request ?? ctx.request;
   const url = new URL(request.url);
-  let requestMap = createLayoutContentRequest(url.pathname);
+  let layoutMap = createLayoutContentRequest(url.pathname);
 
   if (rscOnly) {
-    requestMap = objectPickBy(requestMap, (_v, k) =>
-      rscOnly.newKeys.includes(k),
-    );
+    layoutMap = objectPickBy(layoutMap, (_v, k) => rscOnly.newKeys.includes(k));
   }
 
-  const streamMap = await render2({ request, mapping: requestMap });
+  const streamMap = await render({ request, layoutMap });
 
   if (rscOnly) {
     const stream = encodeStreamMap(
@@ -89,17 +82,16 @@ export const handler: ReactServerHandler = async (ctx) => {
 // render RSC
 //
 
-// TODO: renderLayoutMap
-export async function render2({
+async function render({
   request,
-  mapping,
+  layoutMap,
 }: {
   request: Request;
-  mapping: LayoutContentRequest;
-}): Promise<StreamLayoutContentMapping> {
+  layoutMap: LayoutRequest;
+}): Promise<StreamLayoutMap> {
   const result = await renderRoutes(router.tree, request);
   const bundlerConfig = createBundlerConfig();
-  return objectMapValues(mapping, (v) => {
+  return objectMapValues(layoutMap, (v) => {
     const reactNode =
       v.type === "page"
         ? result.pages[v.name]
@@ -129,29 +121,6 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
       : createError({ status: 500 });
   return serverError.digest;
 };
-
-// @ts-ignore
-async function render({ request }: { request: Request }) {
-  const result = await router.run(request);
-  const stream = reactServerDomServer.renderToReadableStream(
-    result.node,
-    createBundlerConfig(),
-    {
-      onError(error, errorInfo) {
-        debug("[reactServerDomServer.renderToReadableStream]", {
-          error,
-          errorInfo,
-        });
-        const serverError =
-          error instanceof ReactServerDigestError
-            ? error
-            : createError({ status: 500 });
-        return serverError.digest;
-      },
-    },
-  );
-  return { stream };
-}
 
 //
 // glob import routes
