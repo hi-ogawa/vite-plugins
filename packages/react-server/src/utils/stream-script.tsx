@@ -3,9 +3,6 @@
 // https://github.com/vercel/next.js/blob/1c5aa7fa09cc5503c621c534fc40065cbd2aefcb/packages/next/src/client/app-index.tsx#L110-L113
 // https://github.com/devongovett/rsc-html-stream/
 
-// TODO: handle cancel?
-// TODO: handle binary?
-
 export function injectStreamScript(stream: ReadableStream<string>) {
   const search = "</body>";
   return new TransformStream<string, string>({
@@ -18,19 +15,17 @@ export function injectStreamScript(stream: ReadableStream<string>) {
       const [pre, post] = chunk.split(search);
       controller.enqueue(pre);
 
+      // TODO: handle cancel?
       await stream.pipeTo(
         new WritableStream({
           start() {
             controller.enqueue(`<script>self.__stream_chunks||=[]</script>`);
           },
           write(chunk) {
+            // assume chunk is already encoded as javascript code e.g. by
+            //   stream.pipeThrough(jsonStringifyTransform())
             controller.enqueue(
-              `<script>__stream_chunks.push(${JSON.stringify(chunk)})</script>`,
-            );
-          },
-          close() {
-            controller.enqueue(
-              `<script>__stream_chunks.push("$$close")</script>`,
+              `<script>__stream_chunks.push(${chunk})</script>`,
             );
           },
         }),
@@ -42,26 +37,26 @@ export function injectStreamScript(stream: ReadableStream<string>) {
 }
 
 export function readStreamScript() {
-  const stream = new ReadableStream<string>({
+  return new ReadableStream<unknown>({
     start(controller) {
-      function handleChunk(chunk: string) {
-        if (chunk === "$$close") {
-          controller.close();
-          return;
-        }
+      const chunks: unknown[] = ((globalThis as any).__stream_chunks ||= []);
+
+      for (const chunk of chunks) {
         controller.enqueue(chunk);
       }
 
-      const chunks: string[] = ((globalThis as any).__stream_chunks ||= []);
-      for (const chunk of chunks) {
-        handleChunk(chunk);
-      }
-
       chunks.push = function (chunk) {
-        handleChunk(chunk);
+        controller.enqueue(chunk);
         return 0;
       };
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
+          controller.close();
+        });
+      } else {
+        controller.close();
+      }
     },
   });
-  return stream;
 }
