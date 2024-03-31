@@ -17,6 +17,7 @@ export class LayoutManager {
 
 const LAYOUT_ROOT_NAME = "__root";
 
+// TODO: naming?
 export type LayoutContentRequestEntry = {
   type: "page" | "layout";
   name: string;

@@ -83,7 +83,12 @@ export async function render2({
   const result = await renderRoutes(router.tree, request);
   const bundlerConfig = createBundlerConfig();
   return objectMapValues(mapping, (v) => {
-    const reactNode = result[`${v.type}s`][v.name];
+    const reactNode =
+      v.type === "page"
+        ? result.pages[v.name]
+        : v.type === "layout"
+          ? result.layouts[v.name]
+          : undefined;
     tinyassert(reactNode);
     return reactServerDomServer.renderToReadableStream(
       reactNode,
