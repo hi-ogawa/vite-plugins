@@ -1,9 +1,4 @@
-import {
-  type ManualPromise,
-  createDebug,
-  createManualPromise,
-  tinyassert,
-} from "@hiogawa/utils";
+import { createDebug, createManualPromise, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
@@ -32,10 +27,7 @@ export type LayoutRequest = Record<
 
 export type StreamLayoutMap = Record<string, ReadableStream<Uint8Array>>;
 
-export type ClientLayoutMap = Record<
-  string,
-  Promise<React.ReactNode> | ManualPromise<React.ReactNode>
->;
+export type ClientLayoutMap = Record<string, Promise<React.ReactNode>>;
 
 export const LayoutManagerContext = React.createContext<LayoutManager>(
   undefined!,
@@ -92,5 +84,5 @@ export function createLayoutMapFromStream(
       );
     }
   })();
-  return clientLayoutMap;
+  return clientLayoutMap as any;
 }
