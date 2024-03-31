@@ -3,6 +3,11 @@ import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import {
+  createModuleMap,
+  initializeWebpackSsr,
+  ssrImportPromiseCache,
+} from "../features/use-client/server";
+import {
   LAYOUT_ROOT_NAME,
   LayoutContent,
   PageManager,
@@ -12,11 +17,6 @@ import {
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
-import {
-  createModuleMap,
-  initDomWebpackSsr,
-  invalidateImportCacheOnFinish,
-} from "../lib/ssr";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 
 const debug = createDebug("react-server:ssr");
@@ -53,7 +53,7 @@ export async function importReactServer(): Promise<
 }
 
 export async function renderHtml(request: Request, rscStream: ReadableStream) {
-  await initDomWebpackSsr();
+  initializeWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
@@ -65,13 +65,13 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   // ssr root
   //
 
-  // use unique id for each render to simplify ssr module invalidation during dev
-  // (see src/lib/ssr.tsx for details)
-  const renderId = Math.random().toString(36).slice(2);
+  if (import.meta.env.DEV) {
+    ssrImportPromiseCache.clear();
+  }
 
   const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
     ssrManifest: {
-      moduleMap: createModuleMap({ renderId }),
+      moduleMap: createModuleMap(),
       moduleLoading: null,
     },
   });
@@ -89,7 +89,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   // TODO: merge to a single stream to send it to client
   const streamMapping = await reactServer.render2({ request, mapping });
 
-  const moduleMap = createModuleMap({ renderId });
+  const moduleMap = createModuleMap();
   const clientMapping = objectMapValues(streamMapping, (stream) => {
     return reactServerDomClient.createFromReadableStream(stream, {
       ssrManifest: {
@@ -176,7 +176,6 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   }
 
   const htmlStream = ssrStream
-    .pipeThrough(invalidateImportCacheOnFinish(renderId))
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(new TextEncoderStream())

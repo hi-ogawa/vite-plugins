@@ -3,6 +3,9 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
+import { injectActionId } from "../features/server-action/utils";
+import { wrapRscRequestUrl } from "../features/server-component/utils";
+import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
 import {
   LayoutContent,
@@ -10,9 +13,7 @@ import {
   PageManagerContext,
 } from "../lib/client/page-manager";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
-import { initDomWebpackCsr } from "../lib/csr";
 import { __global } from "../lib/global";
-import { injectActionId, wrapRscRequestUrl } from "../lib/shared";
 import type { CallServerCallback } from "../lib/types";
 
 const debug = createDebug("react-server:browser");
@@ -22,7 +23,7 @@ export async function start() {
     return;
   }
 
-  initDomWebpackCsr();
+  initializeWebpackBrowser();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.browser"

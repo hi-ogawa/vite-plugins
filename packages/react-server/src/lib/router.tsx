@@ -73,11 +73,9 @@ export function matchRoute(
   return result;
 }
 
-async function importClientInternal() {
-  // TODO: probably static import works?
-  return (await import(
-    "@hiogawa/react-server/client-internal" as string
-  )) as typeof import("../client-internal");
+// use own "use client" components as external
+function importClientInternal(): Promise<typeof import("../client-internal")> {
+  return import("@hiogawa/react-server/client-internal" as string);
 }
 
 export function renderPage(node: RouteTreeNode, props: PageProps) {
@@ -142,10 +140,7 @@ export async function renderMatchRoute(
   request: Request,
   match: MatchRouteResult,
 ) {
-  // use own "use client" components as external
-  const { ErrorBoundary }: typeof import("../client-internal") = await import(
-    "@hiogawa/react-server/client-internal" as string
-  );
+  const { ErrorBoundary } = await importClientInternal();
 
   const props: BaseProps = {
     request,
