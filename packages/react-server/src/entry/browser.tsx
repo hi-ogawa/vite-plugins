@@ -1,4 +1,4 @@
-import { createDebug, once, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
@@ -56,7 +56,6 @@ export async function start() {
       injectActionId(args[0], id);
     }
     // TODO: for now, we invalidate only leaf content
-    // TODO: test
     const pathname = history.location.pathname;
     const newKeys = getNewLayoutContentKeys(pathname, pathname);
     const request = new Request(
@@ -128,31 +127,27 @@ export async function start() {
     const location = useRouter((s) => s.location);
     const lastLocation = React.useRef(location);
 
-    React.useEffect(
-      // workaround StrictMode
-      once(() => {
-        if (location === lastLocation.current) {
-          return;
-        }
-        const lastPathname = lastLocation.current.pathname;
-        lastLocation.current = location;
+    React.useEffect(() => {
+      if (location === lastLocation.current) {
+        return;
+      }
+      const lastPathname = lastLocation.current.pathname;
+      lastLocation.current = location;
 
-        const pathname = location.pathname;
-        let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
-        if (RSC_HMR_STATE_KEY in location.state) {
-          newKeys = Object.keys(createLayoutContentRequest(pathname));
-        }
-        debug("[navigation]", location, { pathname, lastPathname, newKeys });
+      const pathname = location.pathname;
+      let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
+      if (RSC_HMR_STATE_KEY in location.state) {
+        newKeys = Object.keys(createLayoutContentRequest(pathname));
+      }
+      debug("[navigation]", location, { pathname, lastPathname, newKeys });
 
-        const request = new Request(wrapRscRequestUrl(location.href, newKeys));
-        layoutManager.update(
-          createLayoutMapFromStream(newKeys, reactNodeFromStream, () =>
-            fetchLayoutStream(request),
-          ),
-        );
-      }),
-      [location],
-    );
+      const request = new Request(wrapRscRequestUrl(location.href, newKeys));
+      layoutManager.update(
+        createLayoutMapFromStream(newKeys, reactNodeFromStream, () =>
+          fetchLayoutStream(request),
+        ),
+      );
+    }, [location]);
 
     return <LayoutRoot />;
   }
