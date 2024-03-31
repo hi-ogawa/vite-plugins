@@ -13,7 +13,7 @@ import { LAYOUT_ROOT_NAME } from "./utils";
 const debug = createDebug("react-server:layout");
 
 // TODO: feel like "map" wouldn't be enough in the future,
-//       so rename it something more general?
+//       so rename it something more general? like `ClientLayoutData`?
 // TODO: flag to indicate current layout is from server action? (for isActionPending transition?)
 type LayoutManagerState = {
   map: Record<string, Promise<React.ReactNode>>;

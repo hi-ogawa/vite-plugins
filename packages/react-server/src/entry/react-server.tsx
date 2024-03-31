@@ -3,14 +3,12 @@ import {
   objectMapKeys,
   objectMapValues,
   objectPickBy,
-  tinyassert,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import type {
   LayoutRequest,
   ServerLayoutMap,
-  StreamLayoutMap,
 } from "../features/router/layout-manager";
 import { createLayoutContentRequest } from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
@@ -19,7 +17,6 @@ import { createBundlerConfig } from "../features/use-client/react-server";
 import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
 import { generateRouteTree, renderRouteMap } from "../lib/router";
-import { encodeStreamMap, ndjsonStringifyTransform } from "../utils/stream";
 
 const debug = createDebug("react-server:rsc");
 
@@ -33,8 +30,7 @@ export interface ReactServerHandlerContext {
 }
 
 export interface ReactServerHandlerStreamResult {
-  streamMap: StreamLayoutMap;
-  layoutStream: ReadableStream<Uint8Array>;
+  stream: ReadableStream<Uint8Array>;
   layoutMap: LayoutRequest;
 }
 
@@ -58,15 +54,9 @@ export const handler: ReactServerHandler = async (ctx) => {
     layoutMap = objectPickBy(layoutMap, (_v, k) => rscOnly.newKeys.includes(k));
   }
 
-  const streamMap = await render({ request, layoutMap });
-  const stream = await renderLayoutMap({ request, layoutMap });
+  const stream = await render({ request, layoutMap });
 
   if (rscOnly) {
-    const stream = encodeStreamMap(
-      objectMapValues(streamMap, (v) => v.pipeThrough(new TextDecoderStream())),
-    )
-      .pipeThrough(ndjsonStringifyTransform())
-      .pipeThrough(new TextEncoderStream());
     return new Response(stream, {
       headers: {
         "content-type": "text/x-component; charset=utf-8",
@@ -74,14 +64,14 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  return { streamMap, layoutStream: stream, layoutMap };
+  return { stream, layoutMap };
 };
 
 //
 // render RSC
 //
 
-async function renderLayoutMap({
+async function render({
   request,
   layoutMap,
 }: {
@@ -101,31 +91,6 @@ async function renderLayoutMap({
       onError: reactServerOnError,
     },
   );
-}
-
-async function render({
-  request,
-  layoutMap,
-}: {
-  request: Request;
-  layoutMap: LayoutRequest;
-}): Promise<StreamLayoutMap> {
-  const result = await renderRouteMap(router.tree, request);
-  const bundlerConfig = createBundlerConfig();
-  return objectMapValues(layoutMap, (v) => {
-    const reactNode =
-      v.type === "page"
-        ? result.pages[v.name]
-        : v.type === "layout"
-          ? result.layouts[v.name]
-          : undefined;
-    tinyassert(reactNode);
-    return reactServerDomServer.renderToReadableStream(
-      reactNode,
-      bundlerConfig,
-      { onError: reactServerOnError },
-    );
-  });
 }
 
 const reactServerOnError: RenderToReadableStreamOptions["onError"] = (

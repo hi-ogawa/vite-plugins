@@ -76,11 +76,11 @@ export async function renderHtml(
     ssrImportPromiseCache.clear();
   }
 
-  const [layoutStream1, layoutStream2] = result.layoutStream.tee();
+  const [stream1, stream2] = result.stream.tee();
 
   const layoutPromise =
     reactServerDomClient.createFromReadableStream<ServerLayoutMap>(
-      layoutStream1,
+      stream1,
       {
         ssrManifest: {
           moduleMap: createModuleMap(),
@@ -171,7 +171,7 @@ export async function renderHtml(
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(
       injectStreamScript(
-        layoutStream2
+        stream2
           .pipeThrough(new TextDecoderStream())
           .pipeThrough(jsonStringifyTransform()),
       ),
