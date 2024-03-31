@@ -25,8 +25,6 @@ export type LayoutContentRequestEntry = {
 
 export type LayoutContentRequest = Record<string, LayoutContentRequestEntry>;
 
-export type ServerLayoutContentMapping = Record<string, React.ReactNode>;
-
 export type StreamLayoutContentMapping = Record<
   string,
   ReadableStream<Uint8Array>
