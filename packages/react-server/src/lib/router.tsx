@@ -73,7 +73,6 @@ async function renderLayout(
   return acc;
 }
 
-// TODO: test
 export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
   const url = new URL(request.url);
   const pathname = normalizePathname(url.pathname);
