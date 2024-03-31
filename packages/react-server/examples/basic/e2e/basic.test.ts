@@ -340,6 +340,10 @@ test("server action with js", async ({ page }) => {
   await page.getByText("Count: 0").click();
 
   await checkClientState();
+
+  // check layout doesn't re-render
+  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  await page.getByText(`[effect: ${count}]`).click();
 });
 
 test("server action no js", async ({ browser }) => {
