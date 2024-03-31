@@ -29,7 +29,7 @@ export async function handler(request: Request): Promise<Response> {
   return new Response(ssrResult.htmlStream, {
     status: ssrResult.status,
     headers: {
-      "content-type": "text/html",
+      "content-type": "text/html, charset=utf-8",
     },
   });
 }

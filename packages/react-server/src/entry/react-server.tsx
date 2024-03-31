@@ -45,7 +45,7 @@ export const handler: ReactServerHandler = async ({ request }) => {
   if (rscOnlyRequest) {
     return new Response(stream, {
       headers: {
-        "content-type": "text/x-component",
+        "content-type": "text/x-component; charset=utf-8",
       },
     });
   }

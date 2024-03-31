@@ -65,9 +65,6 @@ importers:
       magic-string:
         specifier: ^0.30.8
         version: 0.30.8
-      rsc-html-stream:
-        specifier: ^0.0.3
-        version: 0.0.3
       use-sync-external-store:
         specifier: ^1.2.0
         version: 1.2.0(react@18.3.0-canary-6c3b8dbfe-20240226)
@@ -6339,10 +6336,6 @@ packages:
       '@rollup/rollup-win32-ia32-msvc': 4.13.0
       '@rollup/rollup-win32-x64-msvc': 4.13.0
       fsevents: 2.3.3
-
-  /rsc-html-stream@0.0.3:
-    resolution: {integrity: sha512-GrHT+ADZM1Mj+sfXNjJjtFCwvB/xK5gx9KHQqcHJQIKfZ0Nh3wd8O59Nvd7VLb8lyvdOkqnqi5d5TAtDICf8yQ==}
-    dev: false
 
   /run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
