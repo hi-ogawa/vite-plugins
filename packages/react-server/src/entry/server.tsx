@@ -12,7 +12,6 @@ import {
   jsonStringifyTransform,
   teeStreamMap,
 } from "../features/router/stream";
-import { injectStreamScript } from "../features/server-component/stream-script";
 import {
   createModuleMap,
   initializeWebpackSsr,
@@ -26,6 +25,7 @@ import {
   type SsrAssetsType,
   invalidateModule,
 } from "../plugin/utils";
+import { injectStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:ssr");
 
