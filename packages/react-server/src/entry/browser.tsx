@@ -1,4 +1,4 @@
-import { createDebug, once, tinyassert } from "@hiogawa/utils";
+import { createDebug, objectMapValues, once, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
@@ -7,6 +7,7 @@ import {
   LayoutRoot,
   PageManagerContext,
 } from "../features/router/layout-manager";
+import { decodeStreamMap } from "../features/router/stream";
 import { injectActionId } from "../features/server-action/utils";
 import { readStreamScript } from "../features/server-component/stream-script";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
@@ -19,6 +20,23 @@ import type { CallServerCallback } from "../lib/types";
 const debug = createDebug("react-server:browser");
 
 export async function start() {
+  {
+    initializeWebpackBrowser();
+    const { default: reactServerDomClient } = await import(
+      "react-server-dom-webpack/client.browser"
+    );
+
+    const stream = readStreamScript();
+    const streamMap = await decodeStreamMap(stream);
+    const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
+      reactServerDomClient.createFromReadableStream(
+        stream.pipeThrough(new TextEncoderStream()),
+        { callServer: undefined },
+      ),
+    );
+    console.log(clientLayoutMap);
+  }
+
   if (window.location.search.includes("__noCsr")) {
     return;
   }

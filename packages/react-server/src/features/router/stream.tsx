@@ -1,22 +1,31 @@
 import { tinyassert } from "@hiogawa/utils";
 
-const SEP = "\n";
+export function teeStreamMap<T>(
+  streams: Record<string, ReadableStream<T>>,
+): [Record<string, ReadableStream<T>>, Record<string, ReadableStream<T>>] {
+  const result1: any = {};
+  const result2: any = {};
+  for (const [k, v] of Object.entries(streams)) {
+    [result1[k], result2[k]] = v.tee();
+  }
+  return [result1, result2];
+}
 
 export function encodeStreamMap(
   streams: Record<string, ReadableStream<string>>,
-): ReadableStream<string> {
-  return new ReadableStream({
+): ReadableStream<unknown> {
+  return new ReadableStream<unknown>({
     async start(controller) {
-      controller.enqueue(JSON.stringify(Object.keys(streams)) + SEP);
+      controller.enqueue(Object.keys(streams));
       await Promise.all(
         Object.entries(streams).map(async ([_key, stream], i) => {
           await stream.pipeTo(
             new WritableStream({
               write(chunk) {
-                controller.enqueue(JSON.stringify([i, chunk]) + SEP);
+                controller.enqueue([i, chunk]);
               },
               close() {
-                controller.enqueue(JSON.stringify([i, true]) + SEP);
+                controller.enqueue([i, true]);
               },
             }),
           );
@@ -27,13 +36,11 @@ export function encodeStreamMap(
   });
 }
 
-export async function decodeStreamMap(encoded: ReadableStream<string>) {
-  encoded = encoded.pipeThrough(splitTransform(SEP));
-
+export async function decodeStreamMap(encoded: ReadableStream<unknown>) {
   const reader = encoded.getReader();
   const first = await reader.read();
   tinyassert(!first.done);
-  const keys: string[] = JSON.parse(first.value);
+  const keys = first.value as string[];
 
   const controllers: ReadableStreamDefaultController<string>[] = [];
   const streams = Object.fromEntries(
@@ -53,7 +60,7 @@ export async function decodeStreamMap(encoded: ReadableStream<string>) {
       if (result.done) {
         return;
       }
-      const [i, chunk] = JSON.parse(result.value) as [number, string | boolean];
+      const [i, chunk] = result.value as [number, string | boolean];
       const controller = controllers[i];
       tinyassert(controller);
       if (typeof chunk === "string") {
@@ -67,7 +74,7 @@ export async function decodeStreamMap(encoded: ReadableStream<string>) {
   return { streams, done };
 }
 
-function splitTransform(sep: string) {
+export function splitTransform(sep: string) {
   let acc = "";
   return new TransformStream<string, string>({
     transform(chunk, controller) {
@@ -79,6 +86,22 @@ function splitTransform(sep: string) {
           controller.enqueue(line);
         }
       }
+    },
+  });
+}
+
+export function jsonStringifyTransform() {
+  return new TransformStream<unknown, string>({
+    transform(chunk, controller) {
+      controller.enqueue(JSON.stringify(chunk));
+    },
+  });
+}
+
+export function jsonParseTransform() {
+  return new TransformStream<string, unknown>({
+    transform(chunk, controller) {
+      controller.enqueue(JSON.parse(chunk));
     },
   });
 }

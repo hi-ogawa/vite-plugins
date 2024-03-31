@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { decodeStreamMap, encodeStreamMap } from "./stream";
 
-function fromChunks(chunks: string[]) {
-  return new ReadableStream<string>({
+function fromChunks<T>(chunks: T[]) {
+  return new ReadableStream<T>({
     async start(controller) {
       for (const chunk of chunks) {
         controller.enqueue(chunk);
@@ -12,8 +12,8 @@ function fromChunks(chunks: string[]) {
   });
 }
 
-async function toChunks(stream: ReadableStream<string>) {
-  const chunks: string[] = [];
+async function toChunks<T>(stream: ReadableStream<T>) {
+  const chunks: T[] = [];
   await stream.pipeTo(
     new WritableStream({
       write(chunk) {
@@ -31,16 +31,41 @@ describe(encodeStreamMap, () => {
       bar: fromChunks(["server", "component", "rocks"]),
     });
     const [stream1, stream2] = encoded.tee();
-    expect((await toChunks(stream1)).join("")).toMatchInlineSnapshot(`
-      "["foo","bar"]
-      [0,"hello"]
-      [1,"server"]
-      [0,"world"]
-      [1,"component"]
-      [0,true]
-      [1,"rocks"]
-      [1,true]
-      "
+    expect(await toChunks(stream1)).toMatchInlineSnapshot(`
+      [
+        [
+          "foo",
+          "bar",
+        ],
+        [
+          0,
+          "hello",
+        ],
+        [
+          1,
+          "server",
+        ],
+        [
+          0,
+          "world",
+        ],
+        [
+          1,
+          "component",
+        ],
+        [
+          0,
+          true,
+        ],
+        [
+          1,
+          "rocks",
+        ],
+        [
+          1,
+          true,
+        ],
+      ]
     `);
     const decoded = await decodeStreamMap(stream2);
     const result: any = {};

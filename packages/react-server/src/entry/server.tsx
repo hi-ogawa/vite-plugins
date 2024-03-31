@@ -7,6 +7,11 @@ import {
   PageManagerContext,
   solveLayoutContentMapping,
 } from "../features/router/layout-manager";
+import {
+  encodeStreamMap,
+  jsonStringifyTransform,
+  teeStreamMap,
+} from "../features/router/stream";
 import { injectStreamScript } from "../features/server-component/stream-script";
 import {
   createModuleMap,
@@ -16,7 +21,11 @@ import {
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
-import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+import {
+  ENTRY_REACT_SERVER_WRAPPER,
+  type SsrAssetsType,
+  invalidateModule,
+} from "../plugin/utils";
 
 const debug = createDebug("react-server:ssr");
 
@@ -87,7 +96,9 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   //       but later client navigation re-rendering would be tricky
   const streamMapping = await reactServer.render2({ request, mapping });
 
-  const clientMapping = objectMapValues(streamMapping, (stream) => {
+  const [streamMapping1, streamMapping2] = teeStreamMap(streamMapping);
+
+  const clientMapping = objectMapValues(streamMapping1, (stream) => {
     return reactServerDomClient.createFromReadableStream(stream, {
       ssrManifest: {
         moduleMap: createModuleMap(),
@@ -121,7 +132,8 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     invalidateModule(__global.dev.server, "\0virtual:react-server-css.js");
     invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
   }
-  const assets = (await import("virtual:ssr-assets" as string)).default;
+  const assets: SsrAssetsType = (await import("virtual:ssr-assets" as string))
+    .default;
 
   // inject DEBUG variable
   if (globalThis?.process?.env?.["DEBUG"]) {
@@ -133,7 +145,9 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   let status = 200;
   try {
     ssrStream = await reactDomServer.renderToReadableStream(reactRootEl, {
-      bootstrapModules: assets.bootstrapModules,
+      bootstrapModules: url.search.includes("__noJs")
+        ? []
+        : assets.bootstrapModules,
       onError(error, errorInfo) {
         // TODO: should handle SSR error which is not RSC error?
         debug("renderToReadableStream", { error, errorInfo });
@@ -163,11 +177,21 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     });
   }
 
+  rscStream2;
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
+    // .pipeThrough(
+    //   injectStreamScript(rscStream2.pipeThrough(new TextDecoderStream())),
+    // )
     .pipeThrough(
-      injectStreamScript(rscStream2.pipeThrough(new TextDecoderStream())),
+      injectStreamScript(
+        encodeStreamMap(
+          objectMapValues(streamMapping2, (v) =>
+            v.pipeThrough(new TextDecoderStream()),
+          ),
+        ).pipeThrough(jsonStringifyTransform()),
+      ),
     )
     .pipeThrough(new TextEncoderStream());
 

@@ -24,13 +24,15 @@ export function injectStreamScript(stream: ReadableStream<string>) {
             controller.enqueue(`<script>self.__stream_chunks||=[]</script>`);
           },
           write(chunk) {
+            // assume chunk is already encoded as raw js string e.g. by
+            //   stream.pipeThrough(jsonStringifyTransform())
             controller.enqueue(
-              `<script>__stream_chunks.push(${JSON.stringify(chunk)})</script>`,
+              `<script>__stream_chunks.push(${chunk})</script>`,
             );
           },
           close() {
             controller.enqueue(
-              `<script>__stream_chunks.push("$$close")</script>`,
+              `<script>__stream_chunks.push("__stream_close")</script>`,
             );
           },
         }),
@@ -42,10 +44,10 @@ export function injectStreamScript(stream: ReadableStream<string>) {
 }
 
 export function readStreamScript() {
-  const stream = new ReadableStream<string>({
+  const stream = new ReadableStream<unknown>({
     start(controller) {
       function handleChunk(chunk: string) {
-        if (chunk === "$$close") {
+        if (chunk === "__stream_close") {
           controller.close();
           return;
         }
