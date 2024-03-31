@@ -80,7 +80,7 @@ export async function renderHtml(
 
   const [streamMap1, streamMap2] = teeStreamMap(result.streamMap);
 
-  const clientMapping = objectMapValues(streamMap1, (stream) => {
+  const layoutMap = objectMapValues(streamMap1, (stream) => {
     return reactServerDomClient.createFromReadableStream(stream, {
       ssrManifest: {
         moduleMap: createModuleMap(),
@@ -88,14 +88,14 @@ export async function renderHtml(
       },
     });
   });
+  const layoutManager = new LayoutManager();
+  layoutManager.update(layoutMap);
 
   const url = new URL(request.url);
   const history = createMemoryHistory({
     initialEntries: [url.href.slice(url.origin.length)],
   });
   const router = new Router(history);
-  const layoutManager = new LayoutManager();
-  layoutManager.store.set(() => ({ pages: clientMapping }));
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>

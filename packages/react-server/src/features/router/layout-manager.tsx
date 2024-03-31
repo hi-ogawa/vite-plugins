@@ -3,18 +3,31 @@ import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
 import { decodeStreamMap } from "../../utils/stream";
-import { LAYOUT_ROOT_NAME, createLayoutContentRequest } from "./utils";
+import { LAYOUT_ROOT_NAME } from "./utils";
 
 const debug = createDebug("react-server:layout");
 
 type LayoutManagerState = {
-  pages: Record<string, Promise<React.ReactNode>>;
+  map: Record<string, Promise<React.ReactNode>>;
 };
 
 export class LayoutManager {
   public store = new TinyStore<LayoutManagerState>({
-    pages: {},
+    map: {},
   });
+
+  update(map: ClientLayoutMap) {
+    this.store.set((s) => {
+      debug("[update]", { current: s.map, next: map });
+      return {
+        ...s,
+        map: {
+          ...s.map,
+          ...map,
+        },
+      };
+    });
+  }
 }
 
 export type LayoutRequest = Record<
@@ -44,7 +57,7 @@ export function LayoutContent(props: { name: string }) {
   // TODO: each layout can have transition state?
   // const [isPending, startTransition] = React.useTransition();
 
-  const node = useLayoutManager((s) => s.pages[props.name]);
+  const node = useLayoutManager((s) => s.map[props.name]);
 
   // wrap each content switch as transition
   const [current, setCurrent] = React.useState(node);
@@ -63,13 +76,12 @@ export function LayoutRoot() {
 }
 
 export function createLayoutMapFromStream(
-  pathname: string,
+  keys: string[],
   reactNodeFromStream: (
     stream: ReadableStream<Uint8Array>,
   ) => Promise<React.ReactNode>,
   getLayoutStream: () => Promise<ReadableStream<unknown>>,
 ): ClientLayoutMap {
-  const keys = Object.keys(createLayoutContentRequest(pathname));
   const clientLayoutMap = Object.fromEntries(
     keys.map((k) => [k, createManualPromise<React.ReactNode>()]),
   );

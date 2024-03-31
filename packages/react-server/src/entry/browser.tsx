@@ -1,4 +1,4 @@
-import { createDebug, objectPickBy, once, tinyassert } from "@hiogawa/utils";
+import { createDebug, once, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
@@ -56,6 +56,7 @@ export async function start() {
       injectActionId(args[0], id);
     }
     // TODO: for now, we invalidate only leaf content
+    // TODO: test
     const pathname = history.location.pathname;
     const newKeys = getNewLayoutContentKeys(pathname, pathname);
     const request = new Request(
@@ -65,17 +66,11 @@ export async function start() {
         body: args[0],
       },
     );
-    const clientLayoutMap = createLayoutMapFromStream(
-      history.location.pathname,
-      reactNodeFromStream,
-      () => fetchLayoutStream(request),
+    layoutManager.update(
+      createLayoutMapFromStream(newKeys, reactNodeFromStream, () =>
+        fetchLayoutStream(request),
+      ),
     );
-    layoutManager.store.set((s) => ({
-      pages: {
-        ...clientLayoutMap,
-        ...objectPickBy(s.pages, (_v, k) => !newKeys.includes(k)),
-      },
-    }));
   };
 
   // expose as global to be used for createServerReference
@@ -98,13 +93,14 @@ export async function start() {
       .pipeThrough(ndjsonParseTransform());
   }
 
-  // initial layout stream from inline <script>
-  const clientLayoutMap = createLayoutMapFromStream(
-    history.location.pathname,
-    reactNodeFromStream,
-    async () => readStreamScript(),
+  // set initial layout stream from inline <script>
+  layoutManager.update(
+    createLayoutMapFromStream(
+      Object.keys(createLayoutContentRequest(history.location.pathname)),
+      reactNodeFromStream,
+      async () => readStreamScript(),
+    ),
   );
-  layoutManager.store.set(() => ({ pages: clientLayoutMap }));
 
   //
   // browser root
@@ -148,20 +144,12 @@ export async function start() {
         }
         debug("[navigation]", location, { pathname, lastPathname, newKeys });
 
-        // TODO: request only necessary layout content
         const request = new Request(wrapRscRequestUrl(location.href, newKeys));
-        const clientLayoutMap = createLayoutMapFromStream(
-          location.pathname,
-          reactNodeFromStream,
-          () => fetchLayoutStream(request),
+        layoutManager.update(
+          createLayoutMapFromStream(newKeys, reactNodeFromStream, () =>
+            fetchLayoutStream(request),
+          ),
         );
-
-        layoutManager.store.set((s) => ({
-          pages: {
-            ...clientLayoutMap,
-            ...objectPickBy(s.pages, (_v, k) => !newKeys.includes(k)),
-          },
-        }));
       }),
       [location],
     );
