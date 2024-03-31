@@ -4,8 +4,7 @@ import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
 import { getPathPrefixes } from "../../lib/utils";
 import { decodeStreamMap } from "../../utils/stream";
-
-// TODO: rename to layout manager?
+import { solveLayoutContentMapping } from "./utils";
 
 const debug = createDebug("react-server:layout");
 
@@ -38,29 +37,6 @@ export type ClientLayoutContentMapping = Record<
   string,
   Promise<React.ReactNode>
 >;
-
-// TODO: test
-// TODO: keep common prefix when navigating
-export function solveLayoutContentMapping(pathname: string) {
-  const parts = getPathPrefixes(pathname);
-  const mapping: LayoutContentRequest = {};
-  for (let i = 0; i < parts.length; i++) {
-    const [prefix] = parts[i]!;
-    if (i < parts.length - 1) {
-      mapping[prefix] = {
-        type: "layout",
-        name: parts[i + 1]![0],
-      };
-    } else {
-      mapping[prefix] = {
-        type: "page",
-        name: prefix,
-      };
-    }
-  }
-  mapping[LAYOUT_ROOT_NAME] = { type: "layout", name: "" };
-  return { mapping };
-}
 
 export const PageManagerContext = React.createContext<LayoutManager>(
   undefined!,

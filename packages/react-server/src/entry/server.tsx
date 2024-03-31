@@ -5,8 +5,8 @@ import {
   LayoutManager,
   LayoutRoot,
   PageManagerContext,
-  solveLayoutContentMapping,
 } from "../features/router/layout-manager";
+import { solveLayoutContentMapping } from "../features/router/utils";
 import {
   createModuleMap,
   initializeWebpackSsr,

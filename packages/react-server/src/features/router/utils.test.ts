@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { solveLayoutContentMapping } from "./layout-manager";
-import { getNewLayoutContentKeys } from "./utils";
+import { getNewLayoutContentKeys, solveLayoutContentMapping } from "./utils";
 
 describe(solveLayoutContentMapping, () => {
   it("basic", () => {
