@@ -1,9 +1,10 @@
 // TODO: use accept header x-component?
 const RSC_PARAM = "__rsc";
 
-export function wrapRscRequestUrl(url: string): string {
+// TODO
+export function wrapRscRequestUrl(url: string, newKeys: string[] = []): string {
   const newUrl = new URL(url, window.location.href);
-  newUrl.searchParams.set(RSC_PARAM, "1");
+  newUrl.searchParams.set(RSC_PARAM, newKeys.join(","));
   return newUrl.toString();
 }
 

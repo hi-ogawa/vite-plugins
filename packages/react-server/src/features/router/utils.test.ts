@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getNewLayoutContentKeys, solveLayoutContentMapping } from "./utils";
+import { createLayoutContentRequest, getNewLayoutContentKeys } from "./utils";
 
-describe(solveLayoutContentMapping, () => {
+describe(createLayoutContentRequest, () => {
   it("basic", () => {
-    expect(solveLayoutContentMapping("/")).toMatchInlineSnapshot(`
+    expect(createLayoutContentRequest("/")).toMatchInlineSnapshot(`
       {
         "mapping": {
           "": {
@@ -17,7 +17,7 @@ describe(solveLayoutContentMapping, () => {
         },
       }
     `);
-    expect(solveLayoutContentMapping("/a")).toMatchInlineSnapshot(`
+    expect(createLayoutContentRequest("/a")).toMatchInlineSnapshot(`
       {
         "mapping": {
           "": {
@@ -35,7 +35,7 @@ describe(solveLayoutContentMapping, () => {
         },
       }
     `);
-    expect(solveLayoutContentMapping("/a/b")).toMatchInlineSnapshot(`
+    expect(createLayoutContentRequest("/a/b")).toMatchInlineSnapshot(`
       {
         "mapping": {
           "": {

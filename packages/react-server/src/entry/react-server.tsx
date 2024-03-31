@@ -10,7 +10,7 @@ import type {
   LayoutContentRequest,
   StreamLayoutContentMapping,
 } from "../features/router/layout-manager";
-import { solveLayoutContentMapping } from "../features/router/utils";
+import { createLayoutContentRequest } from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
@@ -57,7 +57,7 @@ export const handler: ReactServerHandler = async ({ request }) => {
 
   if (rscOnlyRequest) {
     const url = new URL(request.url);
-    const { mapping } = solveLayoutContentMapping(url.pathname);
+    const mapping = createLayoutContentRequest(url.pathname);
     const streamMapping = await render2({ request: rscOnlyRequest, mapping });
     // TODO: how to avoid own encoding?
     //       can we use reactServerDomServer.renderToReadableStream

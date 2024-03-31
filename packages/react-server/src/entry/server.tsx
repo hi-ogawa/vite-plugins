@@ -6,7 +6,7 @@ import {
   LayoutRoot,
   PageManagerContext,
 } from "../features/router/layout-manager";
-import { solveLayoutContentMapping } from "../features/router/utils";
+import { createLayoutContentRequest } from "../features/router/utils";
 import {
   createModuleMap,
   initializeWebpackSsr,
@@ -77,7 +77,7 @@ export async function renderHtml(request: Request, _rscStream: ReadableStream) {
 
   const url = new URL(request.url);
 
-  const { mapping } = solveLayoutContentMapping(url.pathname);
+  const mapping = createLayoutContentRequest(url.pathname);
 
   const reactServer = await importReactServer();
 

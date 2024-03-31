@@ -3,31 +3,31 @@ import type { LayoutContentRequest } from "./layout-manager";
 
 export const LAYOUT_ROOT_NAME = "__root";
 
-export function solveLayoutContentMapping(pathname: string) {
+export function createLayoutContentRequest(pathname: string) {
   const parts = getPathPrefixes(pathname);
-  const mapping: LayoutContentRequest = {
+  const map: LayoutContentRequest = {
     [LAYOUT_ROOT_NAME]: { type: "layout", name: "" },
   };
   for (let i = 0; i < parts.length; i++) {
     const [prefix] = parts[i]!;
     if (i < parts.length - 1) {
-      mapping[prefix] = {
+      map[prefix] = {
         type: "layout",
         name: parts[i + 1]![0],
       };
     } else {
-      mapping[prefix] = {
+      map[prefix] = {
         type: "page",
         name: prefix,
       };
     }
   }
-  return { mapping };
+  return map;
 }
 
 export function getNewLayoutContentKeys(prev: string, next: string): string[] {
-  const prevMap = solveLayoutContentMapping(prev).mapping;
-  const nextMap = solveLayoutContentMapping(next).mapping;
+  const prevMap = createLayoutContentRequest(prev);
+  const nextMap = createLayoutContentRequest(next);
   return Object.keys(nextMap).filter(
     (k) =>
       nextMap[k]?.type === "page" ||

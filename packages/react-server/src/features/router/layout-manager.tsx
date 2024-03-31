@@ -3,7 +3,7 @@ import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
 import { decodeStreamMap } from "../../utils/stream";
-import { LAYOUT_ROOT_NAME, solveLayoutContentMapping } from "./utils";
+import { LAYOUT_ROOT_NAME, createLayoutContentRequest } from "./utils";
 
 const debug = createDebug("react-server:layout");
 
@@ -75,7 +75,7 @@ export function createLayoutFromStream(
   ) => Promise<React.ReactNode>,
   getLayoutStream: () => Promise<ReadableStream<unknown>>,
 ): ClientLayoutContentMapping {
-  const keys = Object.keys(solveLayoutContentMapping(pathname).mapping);
+  const keys = Object.keys(createLayoutContentRequest(pathname));
   const clientLayoutMap = Object.fromEntries(
     keys.map((k) => [k, createManualPromise()]),
   );
