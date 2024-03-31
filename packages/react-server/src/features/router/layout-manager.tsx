@@ -94,20 +94,3 @@ export function createLayoutMapFromStream(
   })();
   return clientLayoutMap;
 }
-
-// TODO: js-utils
-// export interface ManualPromise<T> extends PromiseLike<T> {
-//   promise: Promise<T>;
-//   resolve: (value: T | PromiseLike<T>) => void;
-//   reject: (value: unknown) => void;
-// }
-
-// export function createManualPromise<T>(): ManualPromise<T> {
-//   let resolve!: ManualPromise<T>["resolve"];
-//   let reject!: ManualPromise<T>["reject"];
-//   const promise = new Promise<T>((resolve_, reject_) => {
-//     resolve = resolve_;
-//     reject = reject_;
-//   });
-//   return { promise, resolve, reject, then: promise.then.bind(promise) };
-// }
