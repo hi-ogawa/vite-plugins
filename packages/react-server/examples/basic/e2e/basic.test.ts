@@ -398,6 +398,7 @@ test("server compnoent > fixture", async ({ page }) => {
 
 test("RouteProps.request", async ({ page }) => {
   await page.goto("/test/other");
+  await waitForHydration(page);
   await page.getByText("searchParams = {}").click();
   await page.getByRole("link", { name: "hello" }).click();
   await page.getByText('searchParams = {"hello":""}').click();
