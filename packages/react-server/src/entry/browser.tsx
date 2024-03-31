@@ -3,13 +3,13 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { injectActionId } from "../features/server-action/utils";
-import { readStreamScript } from "../features/server-component/stream-script";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
+import { readStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
 

@@ -2,7 +2,6 @@ import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import React from "react";
 import reactDomServer from "react-dom/server.edge";
-import { injectStreamScript } from "../features/server-component/stream-script";
 import {
   createModuleMap,
   initializeWebpackSsr,
@@ -12,6 +11,8 @@ import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+import { jsonStringifyTransform } from "../utils/stream";
+import { injectStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:ssr");
 
@@ -142,7 +143,11 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(
-      injectStreamScript(rscStream2.pipeThrough(new TextDecoderStream())),
+      injectStreamScript(
+        rscStream2
+          .pipeThrough(new TextDecoderStream())
+          .pipeThrough(jsonStringifyTransform()),
+      ),
     )
     .pipeThrough(new TextEncoderStream());
 
