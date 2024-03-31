@@ -100,8 +100,11 @@ export async function renderLayout(
       </ErrorBoundary>
     );
   }
-  const Layout = node.value?.layout?.default ?? React.Fragment;
-  return <Layout {...props}>{acc}</Layout>;
+  const Layout = node.value?.layout?.default;
+  if (Layout) {
+    return <Layout {...props}>{acc}</Layout>;
+  }
+  return acc;
 }
 
 // TODO: test

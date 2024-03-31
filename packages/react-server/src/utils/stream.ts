@@ -105,3 +105,14 @@ export function jsonStringifyTransform() {
 export function jsonParseTransform() {
   return mapTransformStream<string, unknown>(JSON.parse);
 }
+
+export function ndjsonStringifyTransform() {
+  return mapTransformStream<unknown, string>((v) => JSON.stringify(v) + "\n");
+}
+
+export function ndjsonParseTransform() {
+  const split = splitTransform("\n");
+  const parse = mapTransformStream<string, unknown>(JSON.parse);
+  split.readable.pipeTo(parse.writable);
+  return { writable: split.writable, readable: parse.readable };
+}

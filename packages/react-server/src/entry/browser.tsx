@@ -14,7 +14,7 @@ import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
-import { decodeStreamMap } from "../utils/stream";
+import { decodeStreamMap, ndjsonParseTransform } from "../utils/stream";
 import { readStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
@@ -55,10 +55,26 @@ export async function start() {
       method: "POST",
       body: args[0],
     });
-    const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
-      callServer,
-    });
-    pageManager.store.set(() => ({ pages: { __root: newRsc } }));
+    // const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+    //   callServer,
+    // });
+    // pageManager.store.set(() => ({ pages: { __root: newRsc } }));
+    (async () => {
+      const res = await fetch(request);
+      tinyassert(res.body);
+      const streamMap = await decodeStreamMap(
+        res.body
+          .pipeThrough(new TextDecoderStream())
+          .pipeThrough(ndjsonParseTransform()),
+      );
+      const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
+        reactServerDomClient.createFromReadableStream(
+          stream.pipeThrough(new TextEncoderStream()),
+          { callServer },
+        ),
+      );
+      pageManager.store.set(() => ({ pages: clientLayoutMap }));
+    })();
   };
 
   // expose as global to be used for createServerReference
@@ -107,11 +123,31 @@ export async function start() {
           return;
         }
         debug("[history]", location.href);
+        // TODO: take diff new location and request only required layout content
         const request = new Request(wrapRscRequestUrl(location.href));
-        const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
-          callServer,
-        });
-        pageManager.store.set(() => ({ pages: { __root: newRsc } }));
+        (async () => {
+          const res = await fetch(request);
+          tinyassert(res.body);
+          const streamMap = await decodeStreamMap(
+            res.body
+              .pipeThrough(new TextDecoderStream())
+              .pipeThrough(ndjsonParseTransform()),
+          );
+          const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
+            reactServerDomClient.createFromReadableStream(
+              stream.pipeThrough(new TextEncoderStream()),
+              { callServer },
+            ),
+          );
+          pageManager.store.set(() => ({ pages: clientLayoutMap }));
+        })();
+        // fetch(request).then(() => {
+        // }, () => {
+        // })
+        // const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+        //   callServer,
+        // });
+        // pageManager.store.set(() => ({ pages: { __root: newRsc } }));
       }),
       [location],
     );

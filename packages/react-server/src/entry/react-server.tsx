@@ -10,6 +10,7 @@ import type {
   LayoutContentRequest,
   StreamLayoutContentMapping,
 } from "../features/router/layout-manager";
+import { solveLayoutContentMapping } from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
@@ -21,6 +22,7 @@ import {
   renderMatchRoute,
   renderRoutes,
 } from "../lib/router";
+import { encodeStreamMap, ndjsonStringifyTransform } from "../utils/stream";
 
 const debug = createDebug("react-server:rsc");
 
@@ -52,6 +54,25 @@ export const handler: ReactServerHandler = async ({ request }) => {
 
   // check rsc-only request
   const rscOnlyRequest = unwrapRscRequest(request);
+
+  if (rscOnlyRequest) {
+    const url = new URL(request.url);
+    const { mapping } = solveLayoutContentMapping(url.pathname);
+    const streamMapping = await render2({ request: rscOnlyRequest, mapping });
+    // TODO: how to avoid own encoding?
+    //       can we use reactServerDomServer.renderToReadableStream
+    //       to render multiple RSCs at once?
+    const stream = encodeStreamMap(
+      objectMapValues(streamMapping, (v) =>
+        v.pipeThrough(new TextDecoderStream()),
+      ),
+    ).pipeThrough(ndjsonStringifyTransform());
+    return new Response(stream, {
+      headers: {
+        "content-type": "text/x-component; charset=utf-8",
+      },
+    });
+  }
 
   // rsc
   const { stream } = await render({
