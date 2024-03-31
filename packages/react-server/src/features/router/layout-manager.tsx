@@ -95,7 +95,7 @@ export function LayoutRoot() {
   return <LayoutContent name={LAYOUT_ROOT_NAME} />;
 }
 
-export function findKeepLayoutKeys(from: string, to: string) {
+export function findCommonLayoutKeys(from: string, to: string) {
   const fromParts = getPathPrefixes(from).map(([p]) => p);
   const toParts = getPathPrefixes(to).map(([p]) => p);
   const keep: string[] = [];

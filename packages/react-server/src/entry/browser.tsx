@@ -7,7 +7,7 @@ import {
   LayoutRoot,
   PageManagerContext,
   createLayoutFromStream,
-  findKeepLayoutKeys,
+  findCommonLayoutKeys,
 } from "../features/router/layout-manager";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
@@ -52,17 +52,32 @@ export async function start() {
       tinyassert(args[0] instanceof FormData);
       injectActionId(args[0], id);
     }
-    // TODO: for now, we invalidate whole layout on action
+    // TODO: for now, we invalidate only leaf content
     const request = new Request(wrapRscRequestUrl(history.location.href), {
       method: "POST",
       body: args[0],
     });
     const clientLayoutMap = createLayoutFromStream(
-      location.pathname,
+      history.location.pathname,
       reactNodeFromStream,
       () => fetchLayoutStream(request),
     );
-    pageManager.store.set(() => ({ pages: clientLayoutMap }));
+    // pageManager.store.set(() => ({ pages: clientLayoutMap }));
+    // TODO: for now, we invalidate only leaf content
+    const keepKeys = findCommonLayoutKeys(
+      history.location.pathname,
+      history.location.pathname,
+    );
+    pageManager.store.set((s) => {
+      const last = { ...s.pages };
+      for (const key in last) {
+        if (!keepKeys.includes(key)) {
+          delete last[key];
+        }
+      }
+      debug("[layout]", { keepKeys, last, next: clientLayoutMap });
+      return { pages: { ...clientLayoutMap, ...last } };
+    });
   };
 
   // expose as global to be used for createServerReference
@@ -135,8 +150,7 @@ export async function start() {
           reactNodeFromStream,
           () => fetchLayoutStream(request),
         );
-        // TODO: request only necessary layout content
-        const keepKeys = findKeepLayoutKeys(location.pathname, lastPathname);
+        const keepKeys = findCommonLayoutKeys(location.pathname, lastPathname);
         pageManager.store.set((s) => {
           const last = { ...s.pages };
           for (const key in last) {
