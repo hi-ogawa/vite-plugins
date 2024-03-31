@@ -1,4 +1,4 @@
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert, zip } from "@hiogawa/utils";
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
@@ -14,7 +14,7 @@ type LayoutManagerState = {
 };
 
 export class LayoutManager {
-  public store = new TinyStore({
+  public store = new TinyStore<LayoutManagerState>({
     pages: {},
   });
 }
@@ -93,6 +93,21 @@ export function LayoutContent(props: { name: string }) {
 
 export function LayoutRoot() {
   return <LayoutContent name={LAYOUT_ROOT_NAME} />;
+}
+
+export function findKeepLayoutKeys(from: string, to: string) {
+  const fromParts = getPathPrefixes(from).map(([p]) => p);
+  const toParts = getPathPrefixes(to).map(([p]) => p);
+  const keep: string[] = [];
+  for (const [fromPrefix, toPrefix] of zip(fromParts, toParts)) {
+    if (fromPrefix === toPrefix) {
+      keep.push(fromPrefix);
+      continue;
+    }
+    break;
+  }
+  keep.pop();
+  return keep;
 }
 
 export function createLayoutFromStream(

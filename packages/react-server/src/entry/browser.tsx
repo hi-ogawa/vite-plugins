@@ -7,6 +7,7 @@ import {
   LayoutRoot,
   PageManagerContext,
   createLayoutFromStream,
+  findKeepLayoutKeys,
 } from "../features/router/layout-manager";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
@@ -32,7 +33,6 @@ export async function start() {
   );
 
   const history = createBrowserHistory();
-  const initialLocation = history.location;
   const router = new Router(history);
   const pageManager = new LayoutManager();
 
@@ -52,6 +52,7 @@ export async function start() {
       tinyassert(args[0] instanceof FormData);
       injectActionId(args[0], id);
     }
+    // TODO: for now, we invalidate whole layout on action
     const request = new Request(wrapRscRequestUrl(history.location.href), {
       method: "POST",
       body: args[0],
@@ -116,22 +117,36 @@ export async function start() {
     }, [isActionPending]);
 
     const location = useRouter((s) => s.location);
+    const lastLocation = React.useRef(location);
 
     React.useEffect(
       // workaround StrictMode
       once(() => {
-        if (location === initialLocation) {
+        if (location === lastLocation.current) {
           return;
         }
+        const lastPathname = lastLocation.current.pathname;
+        lastLocation.current = location;
         debug("[history]", location);
-        // TODO: take diff new location and request only required layout content
+        // TODO: request only necessary layout content
         const request = new Request(wrapRscRequestUrl(location.href));
         const clientLayoutMap = createLayoutFromStream(
           location.pathname,
           reactNodeFromStream,
           () => fetchLayoutStream(request),
         );
-        pageManager.store.set(() => ({ pages: clientLayoutMap }));
+        // TODO: request only necessary layout content
+        const keepKeys = findKeepLayoutKeys(location.pathname, lastPathname);
+        pageManager.store.set((s) => {
+          const last = { ...s.pages };
+          for (const key in last) {
+            if (!keepKeys.includes(key)) {
+              delete last[key];
+            }
+          }
+          debug("[layout]", { keepKeys, last, next: clientLayoutMap });
+          return { pages: { ...clientLayoutMap, ...last } };
+        });
       }),
       [location],
     );
