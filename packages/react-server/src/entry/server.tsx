@@ -2,7 +2,7 @@ import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import React from "react";
 import reactDomServer from "react-dom/server.edge";
-import { injectRSCPayload } from "rsc-html-stream/server";
+import { injectStreamScript } from "../features/server-component/stream-script";
 import {
   createModuleMap,
   initializeWebpackSsr,
@@ -141,8 +141,10 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
-    .pipeThrough(new TextEncoderStream())
-    .pipeThrough(injectRSCPayload(rscStream2));
+    .pipeThrough(
+      injectStreamScript(rscStream2.pipeThrough(new TextDecoderStream())),
+    )
+    .pipeThrough(new TextEncoderStream());
 
   return { htmlStream, status };
 }
