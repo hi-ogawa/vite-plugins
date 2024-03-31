@@ -146,6 +146,12 @@ export async function start() {
           reactNodeFromStream,
           () => fetchLayoutStream(request),
         );
+
+        if (RSC_HMR in location.state) {
+          pageManager.store.set(() => ({ pages: clientLayoutMap }));
+          return;
+        }
+
         pageManager.store.set((s) => ({
           pages: {
             ...clientLayoutMap,
@@ -187,10 +193,12 @@ export async function start() {
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
       console.log("[react-server] hot update", e);
-      history.replace(history.location.href);
+      history.replace(history.location.href, { [RSC_HMR]: true });
     });
   }
 }
+
+const RSC_HMR = "__rscHmr";
 
 declare module "react-dom/client" {
   // TODO: full document CSR works fine?
