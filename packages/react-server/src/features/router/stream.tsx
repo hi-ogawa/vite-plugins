@@ -54,7 +54,6 @@ export async function decodeStreamMap(encoded: ReadableStream<string>) {
         return;
       }
       const [i, chunk] = JSON.parse(result.value) as [number, string | boolean];
-      console.log({ i, chunk });
       const controller = controllers[i];
       tinyassert(controller);
       if (typeof chunk === "string") {

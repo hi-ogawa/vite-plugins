@@ -1,7 +1,7 @@
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
-import { type ManualPromise, getPathPrefixes } from "../../lib/utils";
+import { getPathPrefixes } from "../../lib/utils";
 
 // TODO: rename to layout manager?
 
@@ -32,7 +32,7 @@ export type StreamLayoutContentMapping = Record<
 
 export type ClientLayoutContentMapping = Record<
   string,
-  ManualPromise<React.ReactNode>
+  Promise<React.ReactNode>
 >;
 
 // TODO: test
