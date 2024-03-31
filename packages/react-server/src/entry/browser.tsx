@@ -1,4 +1,4 @@
-import { createDebug, once, tinyassert } from "@hiogawa/utils";
+import { createDebug, objectPickBy, once, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
@@ -7,8 +7,8 @@ import {
   LayoutRoot,
   PageManagerContext,
   createLayoutFromStream,
-  findCommonLayoutKeys,
 } from "../features/router/layout-manager";
+import { getNewLayoutContentKeys } from "../features/router/utils";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
@@ -53,6 +53,8 @@ export async function start() {
       injectActionId(args[0], id);
     }
     // TODO: for now, we invalidate only leaf content
+    const pathname = history.location.pathname;
+    const newKeys = getNewLayoutContentKeys(pathname, pathname);
     const request = new Request(wrapRscRequestUrl(history.location.href), {
       method: "POST",
       body: args[0],
@@ -62,22 +64,12 @@ export async function start() {
       reactNodeFromStream,
       () => fetchLayoutStream(request),
     );
-    // pageManager.store.set(() => ({ pages: clientLayoutMap }));
-    // TODO: for now, we invalidate only leaf content
-    const keepKeys = findCommonLayoutKeys(
-      history.location.pathname,
-      history.location.pathname,
-    );
-    pageManager.store.set((s) => {
-      const last = { ...s.pages };
-      for (const key in last) {
-        if (!keepKeys.includes(key)) {
-          delete last[key];
-        }
-      }
-      debug("[layout]", { keepKeys, last, next: clientLayoutMap });
-      return { pages: { ...clientLayoutMap, ...last } };
-    });
+    pageManager.store.set((s) => ({
+      pages: {
+        ...clientLayoutMap,
+        ...objectPickBy(s.pages, (_v, k) => !newKeys.includes(k)),
+      },
+    }));
   };
 
   // expose as global to be used for createServerReference
@@ -142,7 +134,11 @@ export async function start() {
         }
         const lastPathname = lastLocation.current.pathname;
         lastLocation.current = location;
-        debug("[history]", location);
+
+        const pathname = location.pathname;
+        const newKeys = getNewLayoutContentKeys(pathname, lastPathname);
+        debug("[navigation]", location, { pathname, lastPathname, newKeys });
+
         // TODO: request only necessary layout content
         const request = new Request(wrapRscRequestUrl(location.href));
         const clientLayoutMap = createLayoutFromStream(
@@ -150,17 +146,12 @@ export async function start() {
           reactNodeFromStream,
           () => fetchLayoutStream(request),
         );
-        const keepKeys = findCommonLayoutKeys(location.pathname, lastPathname);
-        pageManager.store.set((s) => {
-          const last = { ...s.pages };
-          for (const key in last) {
-            if (!keepKeys.includes(key)) {
-              delete last[key];
-            }
-          }
-          debug("[layout]", { keepKeys, last, next: clientLayoutMap });
-          return { pages: { ...clientLayoutMap, ...last } };
-        });
+        pageManager.store.set((s) => ({
+          pages: {
+            ...clientLayoutMap,
+            ...objectPickBy(s.pages, (_v, k) => !newKeys.includes(k)),
+          },
+        }));
       }),
       [location],
     );
