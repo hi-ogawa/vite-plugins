@@ -2,8 +2,8 @@ import { createDebug, once, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
-import { rscStream } from "rsc-html-stream/client";
 import { injectActionId } from "../features/server-action/utils";
+import { readStreamScript } from "../features/server-component/stream-script";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
@@ -62,6 +62,7 @@ export async function start() {
   __global.callServer = callServer;
 
   // initial rsc stream from inline <script>
+  const rscStream = readStreamScript().pipeThrough(new TextEncoderStream());
   const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
     callServer,
   });
