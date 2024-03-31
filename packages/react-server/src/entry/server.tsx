@@ -81,9 +81,6 @@ export async function renderHtml(request: Request, _rscStream: ReadableStream) {
 
   const reactServer = await importReactServer();
 
-  // TODO: merge to a single stream to send it to client
-  // TODO: for ssr, it's actually not necessary to split layout parts?
-  //       but later client navigation re-rendering would be tricky
   const streamMapping = await reactServer.render2({ request, mapping });
 
   const [streamMapping1, streamMapping2] = teeStreamMap(streamMapping);
