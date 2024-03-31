@@ -1,30 +1,28 @@
 import React from "react";
-import { __global } from "../global";
-import { type ManualPromise, getPathPrefixes } from "../utils";
-import { TinyStore, useStore } from "./store-utils";
+import { TinyStore, useStore } from "../../lib/client/store-utils";
+import { __global } from "../../lib/global";
+import { type ManualPromise, getPathPrefixes } from "../../lib/utils";
 
 // TODO: rename to layout manager?
 
-type PageManagerState = {
+type LayoutManagerState = {
   pages: Record<string, Promise<React.ReactNode>>;
 };
 
-export class PageManager {
+export class LayoutManager {
   public store = new TinyStore({
     pages: {},
   });
 }
 
-export const LAYOUT_ROOT_NAME = "__root";
+const LAYOUT_ROOT_NAME = "__root";
 
-// LayoutContentRequestEntry
-export type LayoutContentEntry = {
+export type LayoutContentRequestEntry = {
   type: "page" | "layout";
   name: string;
 };
 
-// LayoutContentRequestMapping
-export type LayoutContentMapping = Record<string, LayoutContentEntry>;
+export type LayoutContentRequest = Record<string, LayoutContentRequestEntry>;
 
 export type ServerLayoutContentMapping = Record<string, React.ReactNode>;
 
@@ -42,7 +40,7 @@ export type ClientLayoutContentMapping = Record<
 // TODO: keep common prefix when navigating
 export function solveLayoutContentMapping(pathname: string) {
   const parts = getPathPrefixes(pathname);
-  const mapping: LayoutContentMapping = {};
+  const mapping: LayoutContentRequest = {};
   for (let i = 0; i < parts.length; i++) {
     const [prefix] = parts[i]!;
     if (i < parts.length - 1) {
@@ -57,13 +55,16 @@ export function solveLayoutContentMapping(pathname: string) {
       };
     }
   }
+  mapping[LAYOUT_ROOT_NAME] = { type: "layout", name: "" };
   return { mapping };
 }
 
-export const PageManagerContext = React.createContext<PageManager>(undefined!);
+export const PageManagerContext = React.createContext<LayoutManager>(
+  undefined!,
+);
 
-export function usePageManager<U = PageManagerState>(
-  select?: (v: PageManagerState) => U,
+function usePageManager<U = LayoutManagerState>(
+  select?: (v: LayoutManagerState) => U,
 ) {
   const ctx = React.useContext(PageManagerContext);
   return useStore(ctx.store, select);
@@ -85,8 +86,6 @@ export function LayoutContent(props: { name: string }) {
   return React.use(current);
 }
 
-// result
-// <Layout><LayoutContent name="" /><
-// export function LayoutRoot() {
-//   return <LayoutContent name="__root" />;
-// }
+export function LayoutRoot() {
+  return <LayoutContent name={LAYOUT_ROOT_NAME} />;
+}

@@ -3,15 +3,15 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
+import {
+  LayoutManager,
+  LayoutRoot,
+  PageManagerContext,
+} from "../features/router/layout-manager";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
-import {
-  LayoutContent,
-  PageManager,
-  PageManagerContext,
-} from "../lib/client/page-manager";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
@@ -32,7 +32,7 @@ export async function start() {
   const history = createBrowserHistory();
   const initialLocation = history.location;
   const router = new Router(history);
-  const pageManager = new PageManager();
+  const pageManager = new LayoutManager();
 
   //
   // server action callback
@@ -110,7 +110,7 @@ export async function start() {
       [location],
     );
 
-    return <LayoutContent name="__root" />;
+    return <LayoutRoot />;
   }
 
   let reactRootEl = (

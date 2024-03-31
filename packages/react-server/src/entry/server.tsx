@@ -3,17 +3,16 @@ import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import {
+  LayoutManager,
+  LayoutRoot,
+  PageManagerContext,
+  solveLayoutContentMapping,
+} from "../features/router/layout-manager";
+import {
   createModuleMap,
   initializeWebpackSsr,
   ssrImportPromiseCache,
 } from "../features/use-client/server";
-import {
-  LAYOUT_ROOT_NAME,
-  LayoutContent,
-  PageManager,
-  PageManagerContext,
-  solveLayoutContentMapping,
-} from "../lib/client/page-manager";
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
@@ -80,7 +79,6 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   const url = new URL(request.url);
 
   const { mapping } = solveLayoutContentMapping(url.pathname);
-  mapping["__root"] = { type: "layout", name: "" };
 
   const reactServer = await importReactServer();
 
@@ -100,13 +98,13 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     initialEntries: [url.href.slice(url.origin.length)],
   });
   const router = new Router(history);
-  const pageManager = new PageManager();
+  const pageManager = new LayoutManager();
   pageManager.store.set(() => ({ pages: clientMapping }));
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <PageManagerContext.Provider value={pageManager}>
-        <LayoutContent name={LAYOUT_ROOT_NAME} />
+        <LayoutRoot />
       </PageManagerContext.Provider>
     </RouterContext.Provider>
   );

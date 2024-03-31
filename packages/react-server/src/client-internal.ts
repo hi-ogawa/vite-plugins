@@ -2,4 +2,4 @@
 
 export { createServerReference } from "./features/server-action/client";
 export { ErrorBoundary } from "./lib/client/error-boundary";
-export { LayoutContent } from "./lib/client/page-manager";
+export { LayoutContent } from "./features/router/layout-manager";

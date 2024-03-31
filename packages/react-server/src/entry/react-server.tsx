@@ -6,13 +6,13 @@ import {
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import type {
+  LayoutContentRequest,
+  StreamLayoutContentMapping,
+} from "../features/router/layout-manager";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
-import type {
-  LayoutContentMapping,
-  StreamLayoutContentMapping,
-} from "../lib/client/page-manager";
 import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
 import {
@@ -72,13 +72,13 @@ export const handler: ReactServerHandler = async ({ request }) => {
 // render RSC
 //
 
-// TODO: renderMapping?
+// TODO: renderLayoutMap
 export async function render2({
   request,
   mapping,
 }: {
   request: Request;
-  mapping: LayoutContentMapping;
+  mapping: LayoutContentRequest;
 }): Promise<StreamLayoutContentMapping> {
   const result = await renderRoutes(router.tree, request);
   const bundlerConfig = createBundlerConfig();
