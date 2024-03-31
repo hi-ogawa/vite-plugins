@@ -106,7 +106,6 @@ export function FormStateTest() {
   );
 }
 
-// TODO: not working. because of no immediate transition?
 function FormStateTestInner() {
   // useFormStatus works only inside <form />
   const formStatus = ReactDom.useFormStatus();
