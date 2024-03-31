@@ -142,7 +142,7 @@ export async function start() {
         lastLocation.current = location;
 
         const pathname = location.pathname;
-        let newKeys = getNewLayoutContentKeys(pathname, lastPathname);
+        let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
         if (RSC_HMR_STATE_KEY in location.state) {
           newKeys = Object.keys(createLayoutContentRequest(pathname));
         }

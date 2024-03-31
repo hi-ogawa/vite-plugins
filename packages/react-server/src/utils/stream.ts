@@ -1,5 +1,9 @@
 import { tinyassert } from "@hiogawa/utils";
 
+// TODO
+// can we use reactServerDomServer.renderToReadableStream
+// to render multiple RSCs at once without custom stream encoding?
+
 export function teeStreamMap<T>(
   streams: Record<string, ReadableStream<T>>,
 ): [Record<string, ReadableStream<T>>, Record<string, ReadableStream<T>>] {

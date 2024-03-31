@@ -2,6 +2,7 @@ import {
   createDebug,
   objectMapKeys,
   objectMapValues,
+  objectPickBy,
   tinyassert,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
@@ -53,15 +54,13 @@ export const handler: ReactServerHandler = async ({ request }) => {
   }
 
   // check rsc-only request
-  const rscOnlyRequest = unwrapRscRequest(request);
+  const rscOnly = unwrapRscRequest(request);
 
-  if (rscOnlyRequest) {
+  if (rscOnly) {
     const url = new URL(request.url);
-    const mapping = createLayoutContentRequest(url.pathname);
-    const streamMapping = await render2({ request: rscOnlyRequest, mapping });
-    // TODO: how to avoid own encoding?
-    //       can we use reactServerDomServer.renderToReadableStream
-    //       to render multiple RSCs at once?
+    let mapping = createLayoutContentRequest(url.pathname);
+    mapping = objectPickBy(mapping, (_v, k) => rscOnly.newKeys.includes(k));
+    const streamMapping = await render2({ request: rscOnly.request, mapping });
     const stream = encodeStreamMap(
       objectMapValues(streamMapping, (v) =>
         v.pipeThrough(new TextDecoderStream()),
@@ -78,9 +77,9 @@ export const handler: ReactServerHandler = async ({ request }) => {
 
   // rsc
   const { stream } = await render({
-    request: rscOnlyRequest ?? request,
+    request: rscOnly ?? request,
   });
-  if (rscOnlyRequest) {
+  if (rscOnly) {
     return new Response(stream, {
       headers: {
         "content-type": "text/x-component; charset=utf-8",
