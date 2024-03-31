@@ -90,18 +90,18 @@ export function splitTransform(sep: string) {
   });
 }
 
-export function jsonStringifyTransform() {
-  return new TransformStream<unknown, string>({
+function mapTransformStream<T, U>(f: (v: T) => U) {
+  return new TransformStream<T, U>({
     transform(chunk, controller) {
-      controller.enqueue(JSON.stringify(chunk));
+      controller.enqueue(f(chunk));
     },
   });
 }
 
+export function jsonStringifyTransform() {
+  return mapTransformStream<unknown, string>(JSON.stringify);
+}
+
 export function jsonParseTransform() {
-  return new TransformStream<string, unknown>({
-    transform(chunk, controller) {
-      controller.enqueue(JSON.parse(chunk));
-    },
-  });
+  return mapTransformStream<string, unknown>(JSON.parse);
 }

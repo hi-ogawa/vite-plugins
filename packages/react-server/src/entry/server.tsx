@@ -8,11 +8,6 @@ import {
   solveLayoutContentMapping,
 } from "../features/router/layout-manager";
 import {
-  encodeStreamMap,
-  jsonStringifyTransform,
-  teeStreamMap,
-} from "../features/router/stream";
-import {
   createModuleMap,
   initializeWebpackSsr,
   ssrImportPromiseCache,
@@ -25,6 +20,11 @@ import {
   type SsrAssetsType,
   invalidateModule,
 } from "../plugin/utils";
+import {
+  encodeStreamMap,
+  jsonStringifyTransform,
+  teeStreamMap,
+} from "../utils/stream";
 import { injectStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:ssr");

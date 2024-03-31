@@ -7,7 +7,6 @@ import {
   LayoutRoot,
   PageManagerContext,
 } from "../features/router/layout-manager";
-import { decodeStreamMap } from "../features/router/stream";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
@@ -15,6 +14,7 @@ import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
+import { decodeStreamMap } from "../utils/stream";
 import { readStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
