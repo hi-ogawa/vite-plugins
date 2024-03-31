@@ -66,7 +66,9 @@ export const handler: ReactServerHandler = async ({ request }) => {
       objectMapValues(streamMapping, (v) =>
         v.pipeThrough(new TextDecoderStream()),
       ),
-    ).pipeThrough(ndjsonStringifyTransform());
+    )
+      .pipeThrough(ndjsonStringifyTransform())
+      .pipeThrough(new TextEncoderStream());
     return new Response(stream, {
       headers: {
         "content-type": "text/x-component; charset=utf-8",
