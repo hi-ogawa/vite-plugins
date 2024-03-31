@@ -17,7 +17,7 @@ import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
-import { generateRouteTree, renderRoutes } from "../lib/router";
+import { generateRouteTree, renderRouteMap } from "../lib/router";
 import { encodeStreamMap, ndjsonStringifyTransform } from "../utils/stream";
 
 const debug = createDebug("react-server:rsc");
@@ -84,7 +84,7 @@ async function render({
   request: Request;
   layoutMap: LayoutRequest;
 }): Promise<StreamLayoutMap> {
-  const result = await renderRoutes(router.tree, request);
+  const result = await renderRouteMap(router.tree, request);
   const bundlerConfig = createBundlerConfig();
   return objectMapValues(layoutMap, (v) => {
     const reactNode =
