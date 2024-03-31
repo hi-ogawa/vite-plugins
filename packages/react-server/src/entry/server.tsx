@@ -60,14 +60,12 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(request: Request, rscStream: ReadableStream) {
+export async function renderHtml(request: Request, _rscStream: ReadableStream) {
   initializeWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
   );
-
-  const [rscStream1, rscStream2] = rscStream.tee();
 
   //
   // ssr root
@@ -76,14 +74,6 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   if (import.meta.env.DEV) {
     ssrImportPromiseCache.clear();
   }
-
-  const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
-    ssrManifest: {
-      moduleMap: createModuleMap(),
-      moduleLoading: null,
-    },
-  });
-  rsc;
 
   const url = new URL(request.url);
 
@@ -177,13 +167,9 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     });
   }
 
-  rscStream2;
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(assets.head))
-    // .pipeThrough(
-    //   injectStreamScript(rscStream2.pipeThrough(new TextDecoderStream())),
-    // )
     .pipeThrough(
       injectStreamScript(
         encodeStreamMap(

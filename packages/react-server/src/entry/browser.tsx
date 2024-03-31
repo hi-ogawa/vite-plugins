@@ -20,23 +20,6 @@ import type { CallServerCallback } from "../lib/types";
 const debug = createDebug("react-server:browser");
 
 export async function start() {
-  {
-    initializeWebpackBrowser();
-    const { default: reactServerDomClient } = await import(
-      "react-server-dom-webpack/client.browser"
-    );
-
-    const stream = readStreamScript();
-    const streamMap = await decodeStreamMap(stream);
-    const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
-      reactServerDomClient.createFromReadableStream(
-        stream.pipeThrough(new TextEncoderStream()),
-        { callServer: undefined },
-      ),
-    );
-    console.log(clientLayoutMap);
-  }
-
   if (window.location.search.includes("__noCsr")) {
     return;
   }
@@ -81,12 +64,16 @@ export async function start() {
   // expose as global to be used for createServerReference
   __global.callServer = callServer;
 
-  // initial rsc stream from inline <script>
-  const rscStream = readStreamScript().pipeThrough(new TextEncoderStream());
-  const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
-    callServer,
-  });
-  pageManager.store.set(() => ({ pages: { __root: initialRsc } }));
+  // initial rsc layout stream from inline <script>
+  const stream = readStreamScript();
+  const streamMap = await decodeStreamMap(stream);
+  const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
+    reactServerDomClient.createFromReadableStream(
+      stream.pipeThrough(new TextEncoderStream()),
+      { callServer },
+    ),
+  );
+  pageManager.store.set(() => ({ pages: clientLayoutMap }));
 
   //
   // browser root
