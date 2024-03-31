@@ -1,4 +1,4 @@
-import { createDebug, objectMapValues, once, tinyassert } from "@hiogawa/utils";
+import { createDebug, once, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
@@ -6,6 +6,7 @@ import {
   LayoutManager,
   LayoutRoot,
   PageManagerContext,
+  createLayoutFromStream,
 } from "../features/router/layout-manager";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
@@ -14,7 +15,7 @@ import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
-import { decodeStreamMap, ndjsonParseTransform } from "../utils/stream";
+import { ndjsonParseTransform } from "../utils/stream";
 import { readStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
@@ -55,39 +56,39 @@ export async function start() {
       method: "POST",
       body: args[0],
     });
-    // const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
-    //   callServer,
-    // });
-    // pageManager.store.set(() => ({ pages: { __root: newRsc } }));
-    (async () => {
-      const res = await fetch(request);
-      tinyassert(res.body);
-      const streamMap = await decodeStreamMap(
-        res.body
-          .pipeThrough(new TextDecoderStream())
-          .pipeThrough(ndjsonParseTransform()),
-      );
-      const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
-        reactServerDomClient.createFromReadableStream(
-          stream.pipeThrough(new TextEncoderStream()),
-          { callServer },
-        ),
-      );
-      pageManager.store.set(() => ({ pages: clientLayoutMap }));
-    })();
+    const clientLayoutMap = createLayoutFromStream(
+      location.pathname,
+      reactNodeFromStream,
+      () => fetchLayoutStream(request),
+    );
+    pageManager.store.set(() => ({ pages: clientLayoutMap }));
   };
 
   // expose as global to be used for createServerReference
   __global.callServer = callServer;
 
-  // initial rsc layout stream from inline <script>
-  const stream = readStreamScript();
-  const streamMap = await decodeStreamMap(stream);
-  const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
-    reactServerDomClient.createFromReadableStream(
-      stream.pipeThrough(new TextEncoderStream()),
-      { callServer },
-    ),
+  function reactNodeFromStream(
+    stream: ReadableStream<Uint8Array>,
+  ): Promise<React.ReactNode> {
+    return reactServerDomClient.createFromReadableStream(stream, {
+      callServer,
+    });
+  }
+
+  async function fetchLayoutStream(req: Request) {
+    const res = await fetch(req);
+    tinyassert(res.ok);
+    tinyassert(res.body);
+    return res.body
+      .pipeThrough(new TextDecoderStream())
+      .pipeThrough(ndjsonParseTransform());
+  }
+
+  // initial layout stream from inline <script>
+  const clientLayoutMap = createLayoutFromStream(
+    history.location.pathname,
+    reactNodeFromStream,
+    async () => readStreamScript(),
   );
   pageManager.store.set(() => ({ pages: clientLayoutMap }));
 
@@ -123,32 +124,14 @@ export async function start() {
           return;
         }
         debug("[history]", location.href);
-        // TODO: start transition for whole thing (manual promise trick?)
         // TODO: take diff new location and request only required layout content
         const request = new Request(wrapRscRequestUrl(location.href));
-        (async () => {
-          const res = await fetch(request);
-          tinyassert(res.body);
-          const streamMap = await decodeStreamMap(
-            res.body
-              .pipeThrough(new TextDecoderStream())
-              .pipeThrough(ndjsonParseTransform()),
-          );
-          const clientLayoutMap = objectMapValues(streamMap.streams, (stream) =>
-            reactServerDomClient.createFromReadableStream(
-              stream.pipeThrough(new TextEncoderStream()),
-              { callServer },
-            ),
-          );
-          pageManager.store.set(() => ({ pages: clientLayoutMap }));
-        })();
-        // fetch(request).then(() => {
-        // }, () => {
-        // })
-        // const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
-        //   callServer,
-        // });
-        // pageManager.store.set(() => ({ pages: { __root: newRsc } }));
+        const clientLayoutMap = createLayoutFromStream(
+          location.pathname,
+          reactNodeFromStream,
+          () => fetchLayoutStream(request),
+        );
+        pageManager.store.set(() => ({ pages: clientLayoutMap }));
       }),
       [location],
     );
