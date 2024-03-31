@@ -1,19 +1,18 @@
-import { getPathPrefixes } from "../../lib/utils";
 import type { LayoutRequest } from "./layout-manager";
 
 export const LAYOUT_ROOT_NAME = "__root";
 
 export function createLayoutContentRequest(pathname: string) {
-  const parts = getPathPrefixes(pathname);
+  const prefixes = getPathPrefixes(pathname);
   const map: LayoutRequest = {
-    [LAYOUT_ROOT_NAME]: { type: "layout", name: "" },
+    [LAYOUT_ROOT_NAME]: { type: "layout", name: "/" },
   };
-  for (let i = 0; i < parts.length; i++) {
-    const [prefix] = parts[i]!;
-    if (i < parts.length - 1) {
+  for (let i = 0; i < prefixes.length; i++) {
+    const prefix = prefixes[i]!;
+    if (i < prefixes.length - 1) {
       map[prefix] = {
         type: "layout",
-        name: parts[i + 1]![0],
+        name: prefixes[i + 1]!,
       };
     } else {
       map[prefix] = {
@@ -33,4 +32,21 @@ export function getNewLayoutContentKeys(prev: string, next: string): string[] {
       nextMap[k]?.type === "page" ||
       JSON.stringify(nextMap[k]) !== JSON.stringify(prevMap[k]),
   );
+}
+
+/**
+ * @example
+ * "/" => ["/"]
+ * "/a" => ["/", "/a"]
+ * "/a/b" => ["/", "/a", "/a/b"]
+ */
+export function getPathPrefixes(pathname: string) {
+  pathname = pathname.replaceAll(/\/*$/g, "");
+  const keys = pathname.split("/");
+  return keys.map((_key, i) => keys.slice(0, i + 1).join("/") || "/");
+}
+
+// strip trailing slash
+export function normalizePathname(pathname: string) {
+  return pathname.replaceAll(/\/*$/g, "") || "/";
 }

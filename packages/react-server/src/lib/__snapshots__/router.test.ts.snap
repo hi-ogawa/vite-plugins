@@ -3,7 +3,7 @@
 exports[`generateRouteTree > basic > (0) "/" 1`] = `
 {
   "layouts": {
-    "": </layout.tsx
+    "/": </layout.tsx
       params={{}}
       request={
         {
@@ -12,12 +12,12 @@ exports[`generateRouteTree > basic > (0) "/" 1`] = `
       }
     >
       <LayoutContent
-        name=""
+        name="/"
       />
     <//layout.tsx>,
   },
   "pages": {
-    "": </page.tsx
+    "/": </page.tsx
       params={{}}
       request={
         {
@@ -32,7 +32,7 @@ exports[`generateRouteTree > basic > (0) "/" 1`] = `
 exports[`generateRouteTree > basic > (1) "/other" 1`] = `
 {
   "layouts": {
-    "": </layout.tsx
+    "/": </layout.tsx
       params={{}}
       request={
         {
@@ -41,7 +41,7 @@ exports[`generateRouteTree > basic > (1) "/other" 1`] = `
       }
     >
       <LayoutContent
-        name=""
+        name="/"
       />
     <//layout.tsx>,
     "/other": <LayoutContent
@@ -64,7 +64,7 @@ exports[`generateRouteTree > basic > (1) "/other" 1`] = `
 exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
 {
   "layouts": {
-    "": </layout.tsx
+    "/": </layout.tsx
       params={{}}
       request={
         {
@@ -73,7 +73,7 @@ exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
       }
     >
       <LayoutContent
-        name=""
+        name="/"
       />
     <//layout.tsx>,
     "/not-found": <LayoutContent
@@ -96,7 +96,7 @@ exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
 exports[`generateRouteTree > basic > (3) "/test" 1`] = `
 {
   "layouts": {
-    "": </layout.tsx
+    "/": </layout.tsx
       params={{}}
       request={
         {
@@ -105,7 +105,7 @@ exports[`generateRouteTree > basic > (3) "/test" 1`] = `
       }
     >
       <LayoutContent
-        name=""
+        name="/"
       />
     <//layout.tsx>,
     "/test": </test/layout.tsx
@@ -137,7 +137,7 @@ exports[`generateRouteTree > basic > (3) "/test" 1`] = `
 exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
 {
   "layouts": {
-    "": </layout.tsx
+    "/": </layout.tsx
       params={{}}
       request={
         {
@@ -146,7 +146,7 @@ exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
       }
     >
       <LayoutContent
-        name=""
+        name="/"
       />
     <//layout.tsx>,
     "/test": </test/layout.tsx
@@ -181,7 +181,7 @@ exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
 exports[`generateRouteTree > basic > (5) "/test/not-found" 1`] = `
 {
   "layouts": {
-    "": </layout.tsx
+    "/": </layout.tsx
       params={{}}
       request={
         {
@@ -190,7 +190,7 @@ exports[`generateRouteTree > basic > (5) "/test/not-found" 1`] = `
       }
     >
       <LayoutContent
-        name=""
+        name="/"
       />
     <//layout.tsx>,
     "/test": </test/layout.tsx

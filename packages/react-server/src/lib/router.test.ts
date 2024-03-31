@@ -1,7 +1,7 @@
 import { range } from "@hiogawa/utils";
 import { describe, expect, it } from "vitest";
+import { getPathPrefixes } from "../features/router/utils";
 import { generateRouteTree, renderRouteMap } from "./router";
-import { getPathPrefixes } from "./utils";
 
 describe(generateRouteTree, () => {
   it("basic", async () => {
@@ -114,38 +114,20 @@ describe(getPathPrefixes, () => {
   it("basic", () => {
     expect(getPathPrefixes("/")).toMatchInlineSnapshot(`
       [
-        [
-          "",
-          "",
-        ],
+        "/",
       ]
     `);
     expect(getPathPrefixes("/hello")).toMatchInlineSnapshot(`
       [
-        [
-          "",
-          "",
-        ],
-        [
-          "/hello",
-          "hello",
-        ],
+        "/",
+        "/hello",
       ]
     `);
     expect(getPathPrefixes("/hello/world")).toMatchInlineSnapshot(`
       [
-        [
-          "",
-          "",
-        ],
-        [
-          "/hello",
-          "hello",
-        ],
-        [
-          "/hello/world",
-          "world",
-        ],
+        "/",
+        "/hello",
+        "/hello/world",
       ]
     `);
   });

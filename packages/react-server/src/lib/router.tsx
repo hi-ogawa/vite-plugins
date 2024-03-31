@@ -1,8 +1,10 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
+import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
-import { getPathPrefixes, normalizePathname } from "./utils";
+
+// TODO: move to features/router/react-server
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -82,7 +84,8 @@ export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
   let params: BaseProps["params"] = {};
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
-  for (const [prefix, key] of prefixes) {
+  for (const prefix of prefixes) {
+    const key = prefix.split("/").at(-1)!;
     const next = matchChild(key, node);
     if (next?.child) {
       node = next.child;

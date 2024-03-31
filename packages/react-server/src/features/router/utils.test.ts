@@ -5,8 +5,8 @@ describe(createLayoutContentRequest, () => {
   it("basic", () => {
     expect(createLayoutContentRequest("/")).toMatchInlineSnapshot(`
       {
-        "": {
-          "name": "",
+        "/": {
+          "name": "/",
           "type": "page",
         },
         "__root": {
@@ -17,7 +17,7 @@ describe(createLayoutContentRequest, () => {
     `);
     expect(createLayoutContentRequest("/a")).toMatchInlineSnapshot(`
       {
-        "": {
+        "/": {
           "name": "/a",
           "type": "layout",
         },
@@ -33,7 +33,7 @@ describe(createLayoutContentRequest, () => {
     `);
     expect(createLayoutContentRequest("/a/b")).toMatchInlineSnapshot(`
       {
-        "": {
+        "/": {
           "name": "/a",
           "type": "layout",
         },
@@ -58,23 +58,23 @@ describe(getNewLayoutContentKeys, () => {
   it("basic", () => {
     expect(getNewLayoutContentKeys("/", "/")).toMatchInlineSnapshot(`
       [
-        "",
+        "/",
       ]
     `);
     expect(getNewLayoutContentKeys("/", "/a")).toMatchInlineSnapshot(`
       [
-        "",
+        "/",
         "/a",
       ]
     `);
     expect(getNewLayoutContentKeys("/a", "/")).toMatchInlineSnapshot(`
       [
-        "",
+        "/",
       ]
     `);
     expect(getNewLayoutContentKeys("/a", "/b")).toMatchInlineSnapshot(`
       [
-        "",
+        "/",
         "/b",
       ]
     `);
@@ -97,7 +97,7 @@ describe(getNewLayoutContentKeys, () => {
     `);
     expect(getNewLayoutContentKeys("/", "/a/b")).toMatchInlineSnapshot(`
       [
-        "",
+        "/",
         "/a",
         "/a/b",
       ]
