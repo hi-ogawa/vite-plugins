@@ -1,10 +1,9 @@
-import { createDebug, tinyassert, zip } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
-import { getPathPrefixes } from "../../lib/utils";
 import { decodeStreamMap } from "../../utils/stream";
-import { solveLayoutContentMapping } from "./utils";
+import { LAYOUT_ROOT_NAME, solveLayoutContentMapping } from "./utils";
 
 const debug = createDebug("react-server:layout");
 
@@ -17,8 +16,6 @@ export class LayoutManager {
     pages: {},
   });
 }
-
-const LAYOUT_ROOT_NAME = "__root";
 
 // TODO: naming?
 export type LayoutContentRequestEntry = {
@@ -69,21 +66,6 @@ export function LayoutContent(props: { name: string }) {
 
 export function LayoutRoot() {
   return <LayoutContent name={LAYOUT_ROOT_NAME} />;
-}
-
-export function findCommonLayoutKeys(from: string, to: string) {
-  const fromParts = getPathPrefixes(from).map(([p]) => p);
-  const toParts = getPathPrefixes(to).map(([p]) => p);
-  const keep: string[] = [];
-  for (const [fromPrefix, toPrefix] of zip(fromParts, toParts)) {
-    if (fromPrefix === toPrefix) {
-      keep.push(fromPrefix);
-      continue;
-    }
-    break;
-  }
-  keep.pop();
-  return keep;
 }
 
 export function createLayoutFromStream(
