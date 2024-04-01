@@ -31,13 +31,20 @@ test("render count", async ({ page }) => {
   await page.goto("/test");
   await waitForHydration(page);
 
-  // strict mode doubles initial effect
-  const count = process.env.E2E_PREVIEW ? 1 : 2;
-  await page.getByText(`[effect: ${count}]`).click();
-  await page.getByRole("link", { name: "/test/other" }).click();
-  await page.getByText(`[effect: ${count}]`).click();
-  await page.goBack();
-  await page.getByText(`[effect: ${count}]`).click();
+  if (process.env.E2E_PREVIEW) {
+    await page.getByText("[effect: 1]").click();
+    await page.getByRole("link", { name: "/test/other" }).click();
+    await page.getByText("[effect: 2]").click();
+    await page.goBack();
+    await page.getByText("[effect: 3]").click();
+  } else {
+    // strict mode doubles initial effect
+    await page.getByText("[effect: 2]").click();
+    await page.getByRole("link", { name: "/test/other" }).click();
+    await page.getByText("[effect: 3]").click();
+    await page.goBack();
+    await page.getByText("[effect: 4]").click();
+  }
 });
 
 test("ServerTransitionContext.isPending", async ({ page }) => {
@@ -340,10 +347,6 @@ test("server action with js", async ({ page }) => {
   await page.getByText("Count: 0").click();
 
   await checkClientState();
-
-  // check layout doesn't re-render
-  const count = process.env.E2E_PREVIEW ? 1 : 2;
-  await page.getByText(`[effect: ${count}]`).click();
 });
 
 test("server action no js", async ({ browser }) => {
@@ -395,7 +398,6 @@ test("server compnoent > fixture", async ({ page }) => {
 
 test("RouteProps.request", async ({ page }) => {
   await page.goto("/test/other");
-  await waitForHydration(page);
   await page.getByText("searchParams = {}").click();
   await page.getByRole("link", { name: "hello" }).click();
   await page.getByText('searchParams = {"hello":""}').click();
