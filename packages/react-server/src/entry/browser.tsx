@@ -6,7 +6,7 @@ import {
   LayoutManager,
   LayoutManagerContext,
   LayoutRoot,
-  type ServerLayoutMap,
+  type ServerLayoutData,
   flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
 import {
@@ -41,7 +41,7 @@ export async function start() {
 
   function updateLayout(
     keys: string[],
-    layoutPromise: Promise<ServerLayoutMap>,
+    layoutPromise: Promise<ServerLayoutData>,
   ) {
     layoutManager.update(flattenLayoutMapPromise(keys, layoutPromise));
   }
@@ -74,7 +74,7 @@ export async function start() {
     );
     updateLayout(
       newKeys,
-      reactServerDomClient.createFromFetch<ServerLayoutMap>(fetch(request), {
+      reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
         callServer,
       }),
     );
@@ -90,7 +90,7 @@ export async function start() {
     );
     updateLayout(
       Object.keys(createLayoutContentRequest(history.location.pathname)),
-      reactServerDomClient.createFromReadableStream<ServerLayoutMap>(stream, {
+      reactServerDomClient.createFromReadableStream<ServerLayoutData>(stream, {
         callServer,
       }),
     );
@@ -139,7 +139,7 @@ export async function start() {
       const request = new Request(wrapRscRequestUrl(location.href, newKeys));
       updateLayout(
         newKeys,
-        reactServerDomClient.createFromFetch<ServerLayoutMap>(fetch(request), {
+        reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
           callServer,
         }),
       );

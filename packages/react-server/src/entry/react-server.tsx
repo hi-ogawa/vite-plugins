@@ -8,7 +8,7 @@ import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import type {
   LayoutRequest,
-  ServerLayoutMap,
+  ServerLayoutData,
 } from "../features/router/layout-manager";
 import { createLayoutContentRequest } from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
@@ -31,7 +31,7 @@ export interface ReactServerHandlerContext {
 
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
-  layoutMap: LayoutRequest;
+  layoutRequest: LayoutRequest;
 }
 
 export type ReactServerHandlerResult =
@@ -48,13 +48,15 @@ export const handler: ReactServerHandler = async (ctx) => {
   const rscOnly = unwrapRscRequest(ctx.request);
   const request = rscOnly?.request ?? ctx.request;
   const url = new URL(request.url);
-  let layoutMap = createLayoutContentRequest(url.pathname);
+  let layoutRequest = createLayoutContentRequest(url.pathname);
 
   if (rscOnly) {
-    layoutMap = objectPickBy(layoutMap, (_v, k) => rscOnly.newKeys.includes(k));
+    layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
+      rscOnly.newKeys.includes(k),
+    );
   }
 
-  const stream = await render({ request, layoutMap });
+  const stream = await render({ request, layoutRequest });
 
   if (rscOnly) {
     return new Response(stream, {
@@ -64,7 +66,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  return { stream, layoutMap };
+  return { stream, layoutRequest: layoutRequest };
 };
 
 //
@@ -73,18 +75,18 @@ export const handler: ReactServerHandler = async (ctx) => {
 
 async function render({
   request,
-  layoutMap,
+  layoutRequest,
 }: {
   request: Request;
-  layoutMap: LayoutRequest;
+  layoutRequest: LayoutRequest;
 }) {
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
-    layoutMap,
+    layoutRequest,
     (v) => result[`${v.type}s`][v.name],
   );
   const bundlerConfig = createBundlerConfig();
-  return reactServerDomServer.renderToReadableStream<ServerLayoutMap>(
+  return reactServerDomServer.renderToReadableStream<ServerLayoutData>(
     nodeMap,
     bundlerConfig,
     {

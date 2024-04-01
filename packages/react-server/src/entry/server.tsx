@@ -5,7 +5,7 @@ import {
   LayoutManager,
   LayoutManagerContext,
   LayoutRoot,
-  type ServerLayoutMap,
+  type ServerLayoutData,
   flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
 import {
@@ -79,7 +79,7 @@ export async function renderHtml(
   const [stream1, stream2] = result.stream.tee();
 
   const layoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerLayoutMap>(stream1, {
+    reactServerDomClient.createFromReadableStream<ServerLayoutData>(stream1, {
       ssrManifest: {
         moduleMap: createModuleMap(),
         moduleLoading: null,
@@ -87,7 +87,7 @@ export async function renderHtml(
     });
 
   const clientLayoutMap = flattenLayoutMapPromise(
-    Object.keys(result.layoutMap),
+    Object.keys(result.layoutRequest),
     layoutPromise,
   );
 

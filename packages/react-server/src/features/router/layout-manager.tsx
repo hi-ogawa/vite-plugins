@@ -15,22 +15,22 @@ const debug = createDebug("react-server:layout");
 //       so rename it something more general? like `ClientLayoutData`?
 // TODO: flag to indicate current layout is from server action? (for isActionPending transition?)
 type LayoutManagerState = {
-  map: Record<string, Promise<React.ReactNode>>;
+  data: Record<string, Promise<React.ReactNode>>;
 };
 
 export class LayoutManager {
   public store = new TinyStore<LayoutManagerState>({
-    map: {},
+    data: {},
   });
 
-  update(map: ClientLayoutMap) {
+  update(data: ClientLayoutData) {
     this.store.set((s) => {
-      debug("[update]", { current: s.map, next: map });
+      debug("[update]", { current: s.data, next: data });
       return {
         ...s,
-        map: {
-          ...s.map,
-          ...map,
+        data: {
+          ...s.data,
+          ...data,
         },
       };
     });
@@ -45,9 +45,9 @@ export type LayoutRequest = Record<
   }
 >;
 
-export type ServerLayoutMap = Record<string, React.ReactNode>;
+export type ServerLayoutData = Record<string, React.ReactNode>;
 
-export type ClientLayoutMap = Record<string, Promise<React.ReactNode>>;
+export type ClientLayoutData = Record<string, Promise<React.ReactNode>>;
 
 export const LayoutManagerContext = React.createContext<LayoutManager>(
   undefined!,
@@ -64,7 +64,7 @@ export function LayoutContent(props: { name: string }) {
   // TODO: each layout can have transition state?
   // const [isPending, startTransition] = React.useTransition();
 
-  const node = useLayoutManager((s) => s.map[props.name]);
+  const node = useLayoutManager((s) => s.data[props.name]);
 
   // wrap each content switch as transition
   const [current, setCurrent] = React.useState(node);
@@ -84,8 +84,8 @@ export function LayoutRoot() {
 
 export function flattenLayoutMapPromise(
   keys: string[],
-  promiseOfMap: Promise<ServerLayoutMap>,
-): ClientLayoutMap {
+  promiseOfMap: Promise<ServerLayoutData>,
+): ClientLayoutData {
   const mapOfPromise = Object.fromEntries(
     keys.map((k) => [k, createManualPromise<React.ReactNode>()]),
   );
