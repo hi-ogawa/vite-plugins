@@ -2,7 +2,7 @@
 // TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
-  redirect?: { location: string };
+  redirectLocation?: string;
 }
 
 export class ReactServerDigestError extends Error {
@@ -17,7 +17,7 @@ export function createError(ctx: ReactServerErrorContext) {
 }
 
 export function redirect(location: string, status: number = 307) {
-  return createError({ status, redirect: { location } });
+  return createError({ status, redirectLocation: location });
 }
 
 export function getErrorContext(

@@ -10,10 +10,10 @@ export default function ErrorPage(props: ErrorPageProps) {
   const history = useRouter((s) => s.history);
 
   React.useEffect(() => {
-    if (props.serverError?.redirect) {
-      history.push(props.serverError?.redirect.location);
+    if (props.serverError?.redirectLocation) {
+      history.push(props.serverError?.redirectLocation);
     }
-  }, [props.serverError?.redirect]);
+  }, [props.serverError?.redirectLocation]);
 
   return null;
 }
