@@ -12,6 +12,7 @@ import {
   Miniflare,
   type MiniflareOptions,
   type Request as MiniflareRequest,
+  type WorkerOptions,
 } from "miniflare";
 import {
   type HMRPayload,
@@ -38,7 +39,7 @@ export function vitePluginViteNodeMiniflare(pluginOptions: {
   entry: string;
   debug?: boolean;
   hmr?: boolean; // for now disable ssr hmr by default for react plugin
-  miniflareOptions?: (options: MiniflareOptions) => void;
+  miniflareOptions?: (options: MiniflareOptions & WorkerOptions) => void;
   customRpc?: Record<string, Function>;
 }): Plugin {
   // Initialize miniflare lazily on first request and
