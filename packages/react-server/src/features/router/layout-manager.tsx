@@ -1,12 +1,19 @@
-import { createDebug, createManualPromise, tinyassert } from "@hiogawa/utils";
+import {
+  createDebug,
+  createManualPromise,
+  objectMapValues,
+  tinyassert,
+} from "@hiogawa/utils";
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
-import { decodeStreamMap } from "../../utils/stream";
 import { LAYOUT_ROOT_NAME } from "./utils";
 
 const debug = createDebug("react-server:layout");
 
+// TODO: feel like "map" wouldn't be enough in the future,
+//       so rename it something more general? like `ClientLayoutData`?
+// TODO: flag to indicate current layout is from server action? (for isActionPending transition?)
 type LayoutManagerState = {
   map: Record<string, Promise<React.ReactNode>>;
 };
@@ -38,7 +45,7 @@ export type LayoutRequest = Record<
   }
 >;
 
-export type StreamLayoutMap = Record<string, ReadableStream<Uint8Array>>;
+export type ServerLayoutMap = Record<string, React.ReactNode>;
 
 export type ClientLayoutMap = Record<string, Promise<React.ReactNode>>;
 
@@ -75,26 +82,26 @@ export function LayoutRoot() {
   return <LayoutContent name={LAYOUT_ROOT_NAME} />;
 }
 
-export function createLayoutMapFromStream(
+export function flattenLayoutMapPromise(
   keys: string[],
-  reactNodeFromStream: (
-    stream: ReadableStream<Uint8Array>,
-  ) => Promise<React.ReactNode>,
-  getLayoutStream: () => Promise<ReadableStream<unknown>>,
+  promiseOfMap: Promise<ServerLayoutMap>,
 ): ClientLayoutMap {
-  const clientLayoutMap = Object.fromEntries(
+  const mapOfPromise = Object.fromEntries(
     keys.map((k) => [k, createManualPromise<React.ReactNode>()]),
   );
   (async () => {
-    const stream = await getLayoutStream();
-    const streamMap = await decodeStreamMap(stream);
-    for (const [key, stream] of Object.entries(streamMap.streams)) {
-      const promise = clientLayoutMap[key];
-      tinyassert(promise);
-      promise.resolve(
-        reactNodeFromStream(stream.pipeThrough(new TextEncoderStream())),
-      );
+    try {
+      const map = await promiseOfMap;
+      for (const [k, v] of Object.entries(map)) {
+        const promise = mapOfPromise[k];
+        tinyassert(promise);
+        promise.resolve(v);
+      }
+    } catch (e) {
+      for (const promise of Object.values(mapOfPromise)) {
+        promise.reject(e);
+      }
     }
   })();
-  return clientLayoutMap as any;
+  return objectMapValues(mapOfPromise, (v) => v.promise);
 }

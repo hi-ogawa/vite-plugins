@@ -6,7 +6,8 @@ import {
   LayoutManager,
   LayoutManagerContext,
   LayoutRoot,
-  createLayoutMapFromStream,
+  type ServerLayoutMap,
+  flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
 import {
   createLayoutContentRequest,
@@ -19,7 +20,6 @@ import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
-import { ndjsonParseTransform } from "../utils/stream";
 import { readStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
@@ -38,6 +38,13 @@ export async function start() {
   const history = createBrowserHistory();
   const router = new Router(history);
   const layoutManager = new LayoutManager();
+
+  function updateLayout(
+    keys: string[],
+    layoutPromise: Promise<ServerLayoutMap>,
+  ) {
+    layoutManager.update(flattenLayoutMapPromise(keys, layoutPromise));
+  }
 
   //
   // server action callback
@@ -65,41 +72,29 @@ export async function start() {
         body: args[0],
       },
     );
-    layoutManager.update(
-      createLayoutMapFromStream(newKeys, reactNodeFromStream, () =>
-        fetchLayoutStream(request),
-      ),
+    updateLayout(
+      newKeys,
+      reactServerDomClient.createFromFetch<ServerLayoutMap>(fetch(request), {
+        callServer,
+      }),
     );
   };
 
   // expose as global to be used for createServerReference
   __global.callServer = callServer;
 
-  function reactNodeFromStream(
-    stream: ReadableStream<Uint8Array>,
-  ): Promise<React.ReactNode> {
-    return reactServerDomClient.createFromReadableStream(stream, {
-      callServer,
-    });
-  }
-
-  async function fetchLayoutStream(req: Request) {
-    const res = await fetch(req);
-    tinyassert(res.ok);
-    tinyassert(res.body);
-    return res.body
-      .pipeThrough(new TextDecoderStream())
-      .pipeThrough(ndjsonParseTransform());
-  }
-
-  // set initial layout stream from inline <script>
-  layoutManager.update(
-    createLayoutMapFromStream(
+  // set initial layout data from inline <script>
+  {
+    const stream = readStreamScript<string>().pipeThrough(
+      new TextEncoderStream(),
+    );
+    updateLayout(
       Object.keys(createLayoutContentRequest(history.location.pathname)),
-      reactNodeFromStream,
-      async () => readStreamScript(),
-    ),
-  );
+      reactServerDomClient.createFromReadableStream<ServerLayoutMap>(stream, {
+        callServer,
+      }),
+    );
+  }
 
   //
   // browser root
@@ -142,10 +137,11 @@ export async function start() {
       debug("[navigation]", location, { pathname, lastPathname, newKeys });
 
       const request = new Request(wrapRscRequestUrl(location.href, newKeys));
-      layoutManager.update(
-        createLayoutMapFromStream(newKeys, reactNodeFromStream, () =>
-          fetchLayoutStream(request),
-        ),
+      updateLayout(
+        newKeys,
+        reactServerDomClient.createFromFetch<ServerLayoutMap>(fetch(request), {
+          callServer,
+        }),
       );
     }, [location]);
 
