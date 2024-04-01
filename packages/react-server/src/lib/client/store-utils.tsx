@@ -51,7 +51,7 @@ export class TinyStore<T> implements ReadableStore<T> {
 }
 
 function isEqualShallow(x: object, y: object): boolean {
-  if (typeof x !== "object") {
+  if (typeof x !== "object" || typeof y !== "object") {
     return Object.is(x, y);
   }
   // from preact

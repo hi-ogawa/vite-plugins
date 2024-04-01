@@ -36,10 +36,10 @@ export function injectStreamScript(stream: ReadableStream<string>) {
   });
 }
 
-export function readStreamScript() {
-  return new ReadableStream<unknown>({
+export function readStreamScript<T>() {
+  return new ReadableStream<T>({
     start(controller) {
-      const chunks: unknown[] = ((globalThis as any).__stream_chunks ||= []);
+      const chunks: T[] = ((globalThis as any).__stream_chunks ||= []);
 
       for (const chunk of chunks) {
         controller.enqueue(chunk);

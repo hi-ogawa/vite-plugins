@@ -9,7 +9,3 @@ function mapTransformStream<T, U>(f: (v: T) => U) {
 export function jsonStringifyTransform() {
   return mapTransformStream<unknown, string>(JSON.stringify);
 }
-
-export function jsonParseTransform() {
-  return mapTransformStream<string, unknown>(JSON.parse);
-}

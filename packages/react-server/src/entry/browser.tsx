@@ -1,7 +1,18 @@
-import { createDebug, once, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
+import {
+  LayoutManager,
+  LayoutManagerContext,
+  LayoutRoot,
+  flattenLayoutMapPromise,
+} from "../features/router/layout-manager";
+import {
+  type ServerLayoutData,
+  createLayoutContentRequest,
+  getNewLayoutContentKeys,
+} from "../features/router/utils";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapRscRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
@@ -25,16 +36,23 @@ export async function start() {
   );
 
   const history = createBrowserHistory();
-  const initialLocation = history.location;
   const router = new Router(history);
+  const layoutManager = new LayoutManager();
+
+  function updateLayout(
+    keys: string[],
+    layoutPromise: Promise<ServerLayoutData>,
+    transitionType?: "navigation" | "action",
+  ) {
+    layoutManager.update(
+      flattenLayoutMapPromise(keys, layoutPromise),
+      transitionType,
+    );
+  }
 
   //
   // server action callback
   //
-
-  // TODO: only this way?
-  let __startActionTransition: React.TransitionStartFunction;
-  let __setRsc: (v: Promise<React.ReactNode>) => void;
 
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
@@ -48,24 +66,40 @@ export async function start() {
       tinyassert(args[0] instanceof FormData);
       injectActionId(args[0], id);
     }
-    const request = new Request(wrapRscRequestUrl(history.location.href), {
-      method: "POST",
-      body: args[0],
-    });
-    const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
-      callServer,
-    });
-    __startActionTransition(() => __setRsc(newRsc));
+    // TODO: for now, we invalidate only leaf content
+    const pathname = history.location.pathname;
+    const newKeys = getNewLayoutContentKeys(pathname, pathname);
+    const request = new Request(
+      wrapRscRequestUrl(history.location.href, newKeys),
+      {
+        method: "POST",
+        body: args[0],
+      },
+    );
+    updateLayout(
+      newKeys,
+      reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
+        callServer,
+      }),
+      "action",
+    );
   };
 
   // expose as global to be used for createServerReference
   __global.callServer = callServer;
 
-  // initial rsc stream from inline <script>
-  const rscStream = readStreamScript().pipeThrough(new TextEncoderStream());
-  const initialRsc = reactServerDomClient.createFromReadableStream(rscStream, {
-    callServer,
-  });
+  // set initial layout data from inline <script>
+  {
+    const stream = readStreamScript<string>().pipeThrough(
+      new TextEncoderStream(),
+    );
+    updateLayout(
+      Object.keys(createLayoutContentRequest(history.location.pathname)),
+      reactServerDomClient.createFromReadableStream<ServerLayoutData>(stream, {
+        callServer,
+      }),
+    );
+  }
 
   //
   // browser root
@@ -74,9 +108,8 @@ export async function start() {
   function Root() {
     const [isPending, startTransition] = React.useTransition();
     const [isActionPending, startActionTransition] = React.useTransition();
-    const [rsc, setRsc] = React.useState(initialRsc);
-    __setRsc = setRsc;
-    __startActionTransition = startActionTransition;
+    __global.startTransition = startTransition;
+    __global.startActionTransition = startActionTransition;
 
     React.useEffect(() => router.setup(), []);
 
@@ -91,31 +124,42 @@ export async function start() {
     }, [isActionPending]);
 
     const location = useRouter((s) => s.location);
+    const lastLocation = React.useRef(location);
 
-    React.useEffect(
-      // workaround StrictMode
-      once(() => {
-        if (location === initialLocation) {
-          return;
-        }
-        debug("[history]", location.href);
-        const request = new Request(wrapRscRequestUrl(location.href));
-        const newRsc = reactServerDomClient.createFromFetch(fetch(request), {
+    React.useEffect(() => {
+      if (location === lastLocation.current) {
+        return;
+      }
+      const lastPathname = lastLocation.current.pathname;
+      lastLocation.current = location;
+
+      const pathname = location.pathname;
+      let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
+      if (RSC_HMR_STATE_KEY in location.state) {
+        newKeys = Object.keys(createLayoutContentRequest(pathname));
+      }
+      debug("[navigation]", location, { pathname, lastPathname, newKeys });
+
+      const request = new Request(wrapRscRequestUrl(location.href, newKeys));
+      updateLayout(
+        newKeys,
+        reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
           callServer,
-        });
-        startTransition(() => setRsc(newRsc));
-      }),
-      [location],
-    );
+        }),
+        "navigation",
+      );
+    }, [location]);
 
-    return React.use(rsc);
+    return <LayoutRoot />;
   }
 
   let reactRootEl = (
     <RouterContext.Provider value={router}>
-      <RootErrorBoundary>
-        <Root />
-      </RootErrorBoundary>
+      <LayoutManagerContext.Provider value={layoutManager}>
+        <RootErrorBoundary>
+          <Root />
+        </RootErrorBoundary>
+      </LayoutManagerContext.Provider>
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {
@@ -137,10 +181,12 @@ export async function start() {
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
       console.log("[react-server] hot update", e);
-      history.replace(history.location.href);
+      history.replace(history.location.href, { [RSC_HMR_STATE_KEY]: true });
     });
   }
 }
+
+const RSC_HMR_STATE_KEY = "__rscHmr";
 
 declare module "react-dom/client" {
   // TODO: full document CSR works fine?

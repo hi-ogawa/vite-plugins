@@ -1,11 +1,22 @@
-import { createDebug, objectMapKeys } from "@hiogawa/utils";
+import {
+  createDebug,
+  objectMapKeys,
+  objectMapValues,
+  objectPickBy,
+} from "@hiogawa/utils";
+import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import {
+  type LayoutRequest,
+  type ServerLayoutData,
+  createLayoutContentRequest,
+} from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import { ReactServerDigestError, createError } from "../lib/error";
 import { __global } from "../lib/global";
-import { generateRouteTree, matchRoute, renderMatchRoute } from "../lib/router";
+import { generateRouteTree, renderRouteMap } from "../lib/router";
 
 const debug = createDebug("react-server:rsc");
 
@@ -18,31 +29,36 @@ export interface ReactServerHandlerContext {
   request: Request;
 }
 
+export interface ReactServerHandlerStreamResult {
+  stream: ReadableStream<Uint8Array>;
+  layoutRequest: LayoutRequest;
+}
+
 export type ReactServerHandlerResult =
   | Response
-  | {
-      stream: ReadableStream<Uint8Array>;
-    };
+  | ReactServerHandlerStreamResult;
 
-export const handler: ReactServerHandler = async ({ request }) => {
-  // TODO
-  // api to manipulate response status/headers from server action/component?
-  // allow mutate them via PageRouterProps?
-  // also redirect?
-
+export const handler: ReactServerHandler = async (ctx) => {
   // action
-  if (request.method === "POST") {
-    await actionHandler({ request });
+  if (ctx.request.method === "POST") {
+    await actionHandler(ctx);
   }
 
   // check rsc-only request
-  const rscOnlyRequest = unwrapRscRequest(request);
+  const rscOnly = unwrapRscRequest(ctx.request);
+  const request = rscOnly?.request ?? ctx.request;
+  const url = new URL(request.url);
+  let layoutRequest = createLayoutContentRequest(url.pathname);
 
-  // rsc
-  const { stream } = await render({
-    request: rscOnlyRequest ?? request,
-  });
-  if (rscOnlyRequest) {
+  if (rscOnly) {
+    layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
+      rscOnly.newKeys.includes(k),
+    );
+  }
+
+  const stream = await render({ request, layoutRequest });
+
+  if (rscOnly) {
     return new Response(stream, {
       headers: {
         "content-type": "text/x-component; charset=utf-8",
@@ -50,34 +66,49 @@ export const handler: ReactServerHandler = async ({ request }) => {
     });
   }
 
-  return { stream };
+  return { stream, layoutRequest };
 };
 
 //
 // render RSC
 //
 
-async function render({ request }: { request: Request }) {
-  const result = await router.run(request);
-  const stream = reactServerDomServer.renderToReadableStream(
-    result.node,
-    createBundlerConfig(),
+async function render({
+  request,
+  layoutRequest,
+}: {
+  request: Request;
+  layoutRequest: LayoutRequest;
+}) {
+  const result = await renderRouteMap(router.tree, request);
+  const nodeMap = objectMapValues(
+    layoutRequest,
+    (v) => result[`${v.type}s`][v.name],
+  );
+  const bundlerConfig = createBundlerConfig();
+  return reactServerDomServer.renderToReadableStream<ServerLayoutData>(
+    nodeMap,
+    bundlerConfig,
     {
-      onError(error, errorInfo) {
-        debug("[reactServerDomServer.renderToReadableStream]", {
-          error,
-          errorInfo,
-        });
-        const serverError =
-          error instanceof ReactServerDigestError
-            ? error
-            : createError({ status: 500 });
-        return serverError.digest;
-      },
+      onError: reactServerOnError,
     },
   );
-  return { stream };
 }
+
+const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
+  error,
+  errorInfo,
+) => {
+  debug("[reactServerDomServer.renderToReadableStream]", {
+    error,
+    errorInfo,
+  });
+  const serverError =
+    error instanceof ReactServerDigestError
+      ? error
+      : createError({ status: 500 });
+  return serverError.digest;
+};
 
 //
 // glob import routes
@@ -97,14 +128,7 @@ function createRouter() {
     objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length)),
   );
 
-  async function run(request: Request) {
-    const url = new URL(request.url);
-    const match = matchRoute(url.pathname, tree);
-    const node = await renderMatchRoute(request, match);
-    return { node, match };
-  }
-
-  return { run };
+  return { tree };
 }
 
 //

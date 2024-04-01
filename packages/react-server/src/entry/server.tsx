@@ -1,7 +1,13 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
-import React from "react";
 import reactDomServer from "react-dom/server.edge";
+import {
+  LayoutManager,
+  LayoutManagerContext,
+  LayoutRoot,
+  flattenLayoutMapPromise,
+} from "../features/router/layout-manager";
+import type { ServerLayoutData } from "../features/router/utils";
 import {
   createModuleMap,
   initializeWebpackSsr,
@@ -10,23 +16,28 @@ import {
 import { Router, RouterContext } from "../lib/client/router";
 import { getErrorContext, getStatusText } from "../lib/error";
 import { __global } from "../lib/global";
-import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+import {
+  ENTRY_REACT_SERVER_WRAPPER,
+  type SsrAssetsType,
+  invalidateModule,
+} from "../plugin/utils";
 import { jsonStringifyTransform } from "../utils/stream";
 import { injectStreamScript } from "../utils/stream-script";
+import type { ReactServerHandlerStreamResult } from "./react-server";
 
 const debug = createDebug("react-server:ssr");
 
 export async function handler(request: Request): Promise<Response> {
   const reactServer = await importReactServer();
 
-  // server action and render rsc
+  // server action and render rsc stream
   const result = await reactServer.handler({ request });
   if (result instanceof Response) {
     return result;
   }
 
-  // ssr rsc
-  const ssrResult = await renderHtml(request, result.stream);
+  // render rsc stream into html
+  const ssrResult = await renderHtml(request, result);
   return new Response(ssrResult.htmlStream, {
     status: ssrResult.status,
     headers: {
@@ -47,14 +58,15 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(request: Request, rscStream: ReadableStream) {
+export async function renderHtml(
+  request: Request,
+  result: ReactServerHandlerStreamResult,
+) {
   initializeWebpackSsr();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
   );
-
-  const [rscStream1, rscStream2] = rscStream.tee();
 
   //
   // ssr root
@@ -64,12 +76,23 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     ssrImportPromiseCache.clear();
   }
 
-  const rsc = reactServerDomClient.createFromReadableStream(rscStream1, {
-    ssrManifest: {
-      moduleMap: createModuleMap(),
-      moduleLoading: null,
-    },
-  });
+  const [stream1, stream2] = result.stream.tee();
+
+  const layoutPromise =
+    reactServerDomClient.createFromReadableStream<ServerLayoutData>(stream1, {
+      ssrManifest: {
+        moduleMap: createModuleMap(),
+        moduleLoading: null,
+      },
+    });
+
+  const clientLayoutMap = flattenLayoutMapPromise(
+    Object.keys(result.layoutRequest),
+    layoutPromise,
+  );
+
+  const layoutManager = new LayoutManager();
+  layoutManager.update(clientLayoutMap);
 
   const url = new URL(request.url);
   const history = createMemoryHistory({
@@ -77,13 +100,11 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   });
   const router = new Router(history);
 
-  function Root() {
-    return React.use(rsc);
-  }
-
   const reactRootEl = (
     <RouterContext.Provider value={router}>
-      <Root />
+      <LayoutManagerContext.Provider value={layoutManager}>
+        <LayoutRoot />
+      </LayoutManagerContext.Provider>
     </RouterContext.Provider>
   );
 
@@ -97,7 +118,8 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     invalidateModule(__global.dev.server, "\0virtual:react-server-css.js");
     invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
   }
-  const assets = (await import("virtual:ssr-assets" as string)).default;
+  const assets: SsrAssetsType = (await import("virtual:ssr-assets" as string))
+    .default;
 
   // inject DEBUG variable
   if (globalThis?.process?.env?.["DEBUG"]) {
@@ -109,7 +131,9 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
   let status = 200;
   try {
     ssrStream = await reactDomServer.renderToReadableStream(reactRootEl, {
-      bootstrapModules: assets.bootstrapModules,
+      bootstrapModules: url.search.includes("__noJs")
+        ? []
+        : assets.bootstrapModules,
       onError(error, errorInfo) {
         // TODO: should handle SSR error which is not RSC error?
         debug("renderToReadableStream", { error, errorInfo });
@@ -144,7 +168,7 @@ export async function renderHtml(request: Request, rscStream: ReadableStream) {
     .pipeThrough(injectToHead(assets.head))
     .pipeThrough(
       injectStreamScript(
-        rscStream2
+        stream2
           .pipeThrough(new TextDecoderStream())
           .pipeThrough(jsonStringifyTransform()),
       ),
