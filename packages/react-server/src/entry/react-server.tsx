@@ -66,7 +66,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  return { stream, layoutRequest: layoutRequest };
+  return { stream, layoutRequest };
 };
 
 //
