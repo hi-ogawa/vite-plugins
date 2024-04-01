@@ -7,7 +7,6 @@ import {
   LayoutManagerContext,
   LayoutRoot,
   type ServerLayoutMap,
-  // createLayoutMapFromStream,
   flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
 import {
@@ -21,7 +20,6 @@ import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
-// import { ndjsonParseTransform } from "../utils/stream";
 import { readStreamScript } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
@@ -67,11 +65,6 @@ export async function start() {
         body: args[0],
       },
     );
-    // layoutManager.update(
-    //   createLayoutMapFromStream(newKeys, reactNodeFromStream, () =>
-    //     fetchLayoutStream(request),
-    //   ),
-    // );
     const layoutPromise = reactServerDomClient.createFromFetch<ServerLayoutMap>(
       fetch(request),
       { callServer },
@@ -83,37 +76,6 @@ export async function start() {
   // expose as global to be used for createServerReference
   __global.callServer = callServer;
 
-  // function reactNodeFromStream(
-  //   stream: ReadableStream<Uint8Array>,
-  // ): Promise<React.ReactNode> {
-  //   return reactServerDomClient.createFromReadableStream(stream, {
-  //     callServer,
-  //   });
-  // }
-
-  // async function fetchLayoutStream(req: Request) {
-  //   const res = await fetch(req);
-  //   tinyassert(res.ok);
-  //   tinyassert(res.body);
-  //   return res.body
-  //     .pipeThrough(new TextDecoderStream())
-  //     .pipeThrough(ndjsonParseTransform());
-  // }
-
-  // function fetchClientLayoutData(keys: string[], req: Request) {
-  //   const layoutPromise = reactServerDomClient.createFromFetch<ServerLayoutMap>(
-  //     fetch(req),
-  //     {
-  //       callServer,
-  //     },
-  //   );
-  //   return flattenLayoutMapPromise(keys, layoutPromise);
-  // }
-
-  // readStreamScript<string>().pipeThrough(new TextEncoderStream());
-  // const layoutPromise = reactServerDomClient.createFromFetch<ServerLayoutMap>(fetch(req), {
-  //   callServer,
-  // });
   // set initial layout data from inline <script>
   {
     const stream = readStreamScript<string>().pipeThrough(
@@ -129,15 +91,6 @@ export async function start() {
     const layoutData = flattenLayoutMapPromise(keys, layoutPromise);
     layoutManager.update(layoutData);
   }
-
-  // set initial layout stream from inline <script>
-  // layoutManager.update(
-  //   createLayoutMapFromStream(
-  //     Object.keys(createLayoutContentRequest(history.location.pathname)),
-  //     reactNodeFromStream,
-  //     async () => readStreamScript(),
-  //   ),
-  // );
 
   //
   // browser root

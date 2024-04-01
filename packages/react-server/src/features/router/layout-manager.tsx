@@ -7,7 +7,6 @@ import {
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
-import { decodeStreamMap } from "../../utils/stream";
 import { LAYOUT_ROOT_NAME } from "./utils";
 
 const debug = createDebug("react-server:layout");
@@ -46,9 +45,6 @@ export type LayoutRequest = Record<
   }
 >;
 
-// TODO: remove
-export type StreamLayoutMap = Record<string, ReadableStream<Uint8Array>>;
-
 export type ServerLayoutMap = Record<string, React.ReactNode>;
 
 export type ClientLayoutMap = Record<string, Promise<React.ReactNode>>;
@@ -84,30 +80,6 @@ export function LayoutContent(props: { name: string }) {
 
 export function LayoutRoot() {
   return <LayoutContent name={LAYOUT_ROOT_NAME} />;
-}
-
-export function createLayoutMapFromStream(
-  keys: string[],
-  reactNodeFromStream: (
-    stream: ReadableStream<Uint8Array>,
-  ) => Promise<React.ReactNode>,
-  getLayoutStream: () => Promise<ReadableStream<unknown>>,
-): ClientLayoutMap {
-  const clientLayoutMap = Object.fromEntries(
-    keys.map((k) => [k, createManualPromise<React.ReactNode>()]),
-  );
-  (async () => {
-    const stream = await getLayoutStream();
-    const streamMap = await decodeStreamMap(stream);
-    for (const [key, stream] of Object.entries(streamMap.streams)) {
-      const promise = clientLayoutMap[key];
-      tinyassert(promise);
-      promise.resolve(
-        reactNodeFromStream(stream.pipeThrough(new TextEncoderStream())),
-      );
-    }
-  })();
-  return clientLayoutMap as any;
 }
 
 export function flattenLayoutMapPromise(

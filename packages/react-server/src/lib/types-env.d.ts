@@ -4,6 +4,7 @@ declare module "react-dom/server.edge" {
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMServerEdge.js
 declare module "react-server-dom-webpack/server.edge" {
+  // TODO: branded stream type?
   export function renderToReadableStream<T>(
     node: T,
     bundlerConfig: import("./types").BundlerConfig,
