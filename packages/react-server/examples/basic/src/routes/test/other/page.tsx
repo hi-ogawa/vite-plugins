@@ -20,10 +20,16 @@ export default function Page(props: PageProps) {
           )}
         </pre>
         <div className="flex gap-2">
-          <Link className="antd-btn antd-btn-default px-2" href="?hello">
+          <Link
+            className="antd-btn antd-btn-default px-2"
+            href="/test/other?hello"
+          >
             hello
           </Link>
-          <Link className="antd-btn antd-btn-default px-2" href="?world">
+          <Link
+            className="antd-btn antd-btn-default px-2"
+            href="/test/other?world"
+          >
             world
           </Link>
         </div>
