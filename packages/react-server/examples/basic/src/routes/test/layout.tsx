@@ -18,6 +18,7 @@ export default async function Layout(props: LayoutProps) {
           "/test/error",
           "/test/not-found",
           "/test/transition",
+          "/test/transition-action",
         ]}
       />
       <div className="flex items-center gap-2 text-sm">
