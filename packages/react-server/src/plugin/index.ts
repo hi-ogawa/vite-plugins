@@ -176,6 +176,7 @@ export function vitePluginReactServer(options?: {
             "react/jsx-dev-runtime",
             "react-dom/client",
             "react-server-dom-webpack/client.browser",
+            "@hiogawa/react-server > @tanstack/history",
             "@hiogawa/react-server > use-sync-external-store/shim/with-selector.js",
           ],
         },
@@ -747,7 +748,9 @@ async function findDirectiveFiles() {
   };
   await Promise.all(
     files.map(async (file) => {
-      const stream = nodeStream.Readable.toWeb(fs.createReadStream(file));
+      const stream = nodeStream.Readable.toWeb(
+        fs.createReadStream(file, "utf-8"),
+      );
       const line = await getFirstLine(stream as any);
       if (line.match(USE_CLIENT_RE)) {
         result.client.push(file);
@@ -784,6 +787,7 @@ async function getFirstLine(stream: ReadableStream<string>) {
   const reader = lines.getReader();
   const result = await reader.read();
   const line = result.value ?? "";
+  reader.releaseLock();
   await lines.cancel();
   return line;
 }
