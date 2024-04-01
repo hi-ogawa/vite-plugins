@@ -56,9 +56,12 @@ async function renderLayout(
   props: PageProps,
   name: string,
 ) {
-  const { ErrorBoundary, LayoutContent } = await importClientInternal();
+  const { ErrorBoundary, RedirectBoundary, LayoutContent } =
+    await importClientInternal();
 
   let acc = <LayoutContent name={name} />;
+  acc = <RedirectBoundary>{acc}</RedirectBoundary>
+
   const ErrorPage = node.value?.error?.default;
   if (ErrorPage) {
     // TODO: can we remove extra <div>?

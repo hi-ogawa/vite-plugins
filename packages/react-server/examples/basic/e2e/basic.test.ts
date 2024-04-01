@@ -445,7 +445,7 @@ test("redirect ssr", async ({ page }) => {
 test("redirect client", async ({ page }) => {
   await page.goto("/test/redirect");
   await waitForHydration(page);
-  await page.getByRole('link', { name: 'From' }).click();
+  await page.getByRole("link", { name: "From" }).click();
   await page.waitForURL("/test/redirect?to");
 });
 

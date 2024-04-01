@@ -1,5 +1,10 @@
+import { tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { getErrorContext, getStatusText } from "../error";
+import {
+  type ReactServerRedirectErrorContext,
+  getErrorContext,
+  getStatusText,
+} from "../error";
 import type { ErrorPageProps } from "../router";
 import { useRouter } from "./router";
 
@@ -80,4 +85,42 @@ function DefaultRootErrorPage(props: ErrorPageProps) {
       </body>
     </html>
   );
+}
+
+export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
+  override state: { ctx?: ReactServerRedirectErrorContext } = {};
+
+  static getDerivedStateFromError(error: Error) {
+    if (!import.meta.env.SSR) {
+      const ctx = getErrorContext(error);
+      if (ctx?.redirectLocation) {
+        return { ctx };
+      }
+    }
+    throw error;
+  }
+
+  override render() {
+    if (this.state.ctx) {
+      return <RedirectErrorHandler ctx={this.state.ctx} />;
+    }
+    return this.props.children;
+  }
+}
+
+// trigger client navigation once and suspend forever
+const redirectSuspensionMap = new WeakMap<object, Promise<null>>();
+
+function RedirectErrorHandler(props: { ctx: ReactServerRedirectErrorContext }) {
+  tinyassert(!import.meta.env.SSR);
+
+  // trigger client navigation once and suspend until router fixes this up
+  const history = useRouter((s) => s.history);
+  let suspension = redirectSuspensionMap.get(props.ctx);
+  if (!suspension) {
+    suspension = new Promise(() => {});
+    redirectSuspensionMap.set(props.ctx, suspension);
+    setTimeout(() => history.replace(props.ctx.redirectLocation));
+  }
+  return React.use(suspension);
 }

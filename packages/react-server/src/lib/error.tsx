@@ -5,6 +5,10 @@ export interface ReactServerErrorContext {
   redirectLocation?: string;
 }
 
+export interface ReactServerRedirectErrorContext {
+  redirectLocation: string;
+}
+
 export class ReactServerDigestError extends Error {
   constructor(public digest: string) {
     super("ReactServerError");
