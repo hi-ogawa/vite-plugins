@@ -168,7 +168,9 @@ export function vitePluginReactServer(options?: {
 
       return {
         optimizeDeps: {
-          entries: directiveFiles.client,
+          // this can potentially include unnecessary server only deps for client,
+          // but there should be no issues except making deps optimization slightly slower.
+          entries: ["./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)"],
           exclude: ["@hiogawa/react-server"],
           include: [
             "react",
