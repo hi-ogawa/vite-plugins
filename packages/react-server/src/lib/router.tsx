@@ -1,7 +1,10 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
+import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
+
+// TODO: move to features/router/react-server
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -38,95 +41,68 @@ export function generateRouteTree(globEntries: Record<string, unknown>) {
   return tree;
 }
 
-export type MatchRouteResult = {
-  nodes: RouteTreeNode[];
-  notFound: boolean;
-  params: Record<string, string>;
-};
+// use own "use client" components as external
+function importClientInternal(): Promise<typeof import("../client-internal")> {
+  return import("@hiogawa/react-server/client-internal" as string);
+}
 
-export function matchRoute(
-  pathname: string,
-  tree: RouteTreeNode,
-): MatchRouteResult {
+function renderPage(node: RouteTreeNode, props: PageProps) {
+  const Page = node.value?.page?.default ?? ThrowNotFound;
+  return <Page {...props} />;
+}
+
+async function renderLayout(
+  node: RouteTreeNode,
+  props: PageProps,
+  name: string,
+) {
+  const { ErrorBoundary, LayoutContent } = await importClientInternal();
+
+  let acc = <LayoutContent name={name} />;
+  const ErrorPage = node.value?.error?.default;
+  if (ErrorPage) {
+    // TODO: can we remove extra <div>?
+    acc = (
+      <ErrorBoundary errorComponent={ErrorPage}>
+        <div className="error-boundary">{acc}</div>
+      </ErrorBoundary>
+    );
+  }
+  const Layout = node.value?.layout?.default;
+  if (Layout) {
+    return <Layout {...props}>{acc}</Layout>;
+  }
+  return acc;
+}
+
+export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
+  const url = new URL(request.url);
+  const pathname = normalizePathname(url.pathname);
+  const prefixes = getPathPrefixes(pathname);
+
   let node = tree;
-  const result: MatchRouteResult = {
-    nodes: [],
-    notFound: false,
-    params: {},
-  };
-  // strip trailing slash
-  const keys = pathname.replaceAll(/\/*$/g, "").split("/");
-  for (const key of keys) {
+  let params: BaseProps["params"] = {};
+  const pages: Record<string, React.ReactNode> = {};
+  const layouts: Record<string, React.ReactNode> = {};
+  for (const prefix of prefixes) {
+    const key = prefix.split("/").at(-1)!;
     const next = matchChild(key, node);
     if (next?.child) {
       node = next.child;
-      result.nodes.push(node);
       if (next.param) {
-        result.params[next.param] = key;
+        params = { ...params, [next.param]: key };
       }
-      continue;
+    } else {
+      node = initNode();
     }
-    result.notFound = true;
-    break;
-  }
-  return result;
-}
-
-// TODO: separate react code in a different file
-// TODO: just do it together with matchRoute above?
-export async function renderMatchRoute(
-  request: Request,
-  match: MatchRouteResult,
-) {
-  // use its own "use client" components
-  const {
-    ErrorBoundary,
-    DefaultRootErrorPage,
-  }: typeof import("../client-internal") = await import(
-    "@hiogawa/react-server/client-internal" as string
-  );
-
-  const props: BaseProps = {
-    request,
-    params: match.params,
-  };
-
-  const nodes = [...match.nodes].reverse();
-
-  let acc: React.ReactNode = <ThrowNotFound />;
-  if (!match.notFound) {
-    const Page = nodes[0]?.value?.page?.default;
-    if (Page) {
-      acc = <Page {...props} />;
+    const props: BaseProps = { request, params };
+    layouts[prefix] = await renderLayout(node, props, prefix);
+    if (prefix === pathname) {
+      pages[prefix] = renderPage(node, props);
     }
   }
 
-  for (const node of nodes) {
-    const ErrorPage = node.value?.error?.default;
-    if (ErrorPage) {
-      // TODO: can we remove extra <div>?
-      acc = (
-        <ErrorBoundary errorComponent={ErrorPage} url={props.request.url}>
-          <div className="error-boundary">{acc}</div>
-        </ErrorBoundary>
-      );
-    }
-    const Layout = node.value?.layout?.default;
-    if (Layout) {
-      acc = <Layout {...props}>{acc}</Layout>;
-    }
-  }
-
-  acc = (
-    <ErrorBoundary
-      errorComponent={DefaultRootErrorPage}
-      url={props.request.url}
-    >
-      {acc}
-    </ErrorBoundary>
-  );
-
-  return acc;
+  return { pages, layouts };
 }
 
 const ThrowNotFound: React.FC = () => {

@@ -1,7 +1,5 @@
 "use client";
 
-export { createServerReference } from "./lib/shared";
-export {
-  ErrorBoundary,
-  DefaultRootErrorPage,
-} from "./lib/components/error-boundary";
+export { createServerReference } from "./features/server-action/client";
+export { ErrorBoundary } from "./lib/client/error-boundary";
+export { LayoutContent } from "./features/router/layout-manager";

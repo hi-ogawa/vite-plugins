@@ -1,0 +1,227 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`generateRouteTree > basic > (0) "/" 1`] = `
+{
+  "layouts": {
+    "/": </layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/",
+        }
+      }
+    >
+      <LayoutContent
+        name="/"
+      />
+    <//layout.tsx>,
+  },
+  "pages": {
+    "/": </page.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/",
+        }
+      }
+    />,
+  },
+}
+`;
+
+exports[`generateRouteTree > basic > (1) "/other" 1`] = `
+{
+  "layouts": {
+    "/": </layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/other",
+        }
+      }
+    >
+      <LayoutContent
+        name="/"
+      />
+    <//layout.tsx>,
+    "/other": <LayoutContent
+      name="/other"
+    />,
+  },
+  "pages": {
+    "/other": </other/page.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/other",
+        }
+      }
+    />,
+  },
+}
+`;
+
+exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
+{
+  "layouts": {
+    "/": </layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/not-found",
+        }
+      }
+    >
+      <LayoutContent
+        name="/"
+      />
+    <//layout.tsx>,
+    "/not-found": <LayoutContent
+      name="/not-found"
+    />,
+  },
+  "pages": {
+    "/not-found": <ThrowNotFound
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/not-found",
+        }
+      }
+    />,
+  },
+}
+`;
+
+exports[`generateRouteTree > basic > (3) "/test" 1`] = `
+{
+  "layouts": {
+    "/": </layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test",
+        }
+      }
+    >
+      <LayoutContent
+        name="/"
+      />
+    <//layout.tsx>,
+    "/test": </test/layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test",
+        }
+      }
+    >
+      <LayoutContent
+        name="/test"
+      />
+    <//test/layout.tsx>,
+  },
+  "pages": {
+    "/test": </test/page.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test",
+        }
+      }
+    />,
+  },
+}
+`;
+
+exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
+{
+  "layouts": {
+    "/": </layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test/other",
+        }
+      }
+    >
+      <LayoutContent
+        name="/"
+      />
+    <//layout.tsx>,
+    "/test": </test/layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test/other",
+        }
+      }
+    >
+      <LayoutContent
+        name="/test"
+      />
+    <//test/layout.tsx>,
+    "/test/other": <LayoutContent
+      name="/test/other"
+    />,
+  },
+  "pages": {
+    "/test/other": </test/other/page.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test/other",
+        }
+      }
+    />,
+  },
+}
+`;
+
+exports[`generateRouteTree > basic > (5) "/test/not-found" 1`] = `
+{
+  "layouts": {
+    "/": </layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test/not-found",
+        }
+      }
+    >
+      <LayoutContent
+        name="/"
+      />
+    <//layout.tsx>,
+    "/test": </test/layout.tsx
+      params={{}}
+      request={
+        {
+          "url": "https://test.local/test/not-found",
+        }
+      }
+    >
+      <LayoutContent
+        name="/test"
+      />
+    <//test/layout.tsx>,
+    "/test/not-found": <LayoutContent
+      name="/test/not-found"
+    />,
+  },
+  "pages": {
+    "/test/not-found": </test/[dynamic]/page.tsx
+      params={
+        {
+          "dynamic": "not-found",
+        }
+      }
+      request={
+        {
+          "url": "https://test.local/test/not-found",
+        }
+      }
+    />,
+  },
+}
+`;

@@ -4,9 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r '--filter=!*example*' build",
-    "dev": "pnpm run --stream /^dev:/",
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json",
-    "dev:tsc": "pnpm tsc --watch --preserveWatchOutput",
+    "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
     "test": "pnpm -r --sequential test run",
     "lint": "pnpm run --sequential /^lint:/",
     "lint-check": "pnpm run --sequential /^lint-check:/",
@@ -17,7 +16,7 @@
   },
   "devDependencies": {
     "@hiogawa/isort-ts": "1.1.2-pre.2",
-    "@hiogawa/utils": "^1.6.4-pre.1",
+    "@hiogawa/utils": "^1.6.4-pre.2",
     "@playwright/test": "^1.42.1",
     "@tsconfig/strictest": "^2.0.3",
     "@types/node": "^20.11.28",

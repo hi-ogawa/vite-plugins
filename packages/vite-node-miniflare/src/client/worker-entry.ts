@@ -17,6 +17,7 @@ interface Env {
   __VITE_RUNTIME_ROOT: string;
   __VITE_RUNTIME_HMR: boolean;
   __WORKER_ENTRY: string;
+  __WORKER_NODE_BUILTINS: string[];
 }
 
 export default {
@@ -29,6 +30,7 @@ export default {
         root: env.__VITE_RUNTIME_ROOT,
         debug: env.__VITE_NODE_DEBUG,
         hmr: env.__VITE_RUNTIME_HMR,
+        allowedExternals: env.__WORKER_NODE_BUILTINS,
       });
       return await fetchHandler(request, env, ctx);
     } catch (e) {
@@ -57,6 +59,7 @@ async function createFetchHandler(options: {
   root: string;
   debug: boolean;
   hmr: boolean;
+  allowedExternals: string[];
 }) {
   // ServerRpc proxy
   const serverRpc = proxyTinyRpc<ServerRpc>({
@@ -110,6 +113,8 @@ async function createFetchHandler(options: {
       },
 
       runExternalModule(filepath) {
+        if (options.allowedExternals.includes(filepath))
+          return import(filepath);
         console.error("[vite-node-miniflare] runExternalModule:", filepath);
         throw new Error(`[vite-node-miniflare] runExternalModule: ${filepath}`);
       },

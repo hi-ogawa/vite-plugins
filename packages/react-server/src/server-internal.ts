@@ -1,2 +1,2 @@
-export { createClientReference } from "./lib/rsc";
-export { createServerReferenceForRsc as createServerReference } from "./lib/shared";
+export { createClientReference } from "./features/use-client/react-server";
+export { createServerReference } from "./features/server-action/react-server";

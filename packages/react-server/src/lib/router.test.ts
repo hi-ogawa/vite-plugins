@@ -1,8 +1,10 @@
+import { range } from "@hiogawa/utils";
 import { describe, expect, it } from "vitest";
-import { generateRouteTree, matchRoute } from "./router";
+import { getPathPrefixes } from "../features/router/utils";
+import { generateRouteTree, renderRouteMap } from "./router";
 
 describe(generateRouteTree, () => {
-  it("basic", () => {
+  it("basic", async () => {
     const files = [
       "/layout.tsx",
       "/page.tsx",
@@ -89,225 +91,44 @@ describe(generateRouteTree, () => {
     `);
 
     function testMatch(pathname: string) {
-      const result = matchRoute(pathname, tree);
-      return {
-        ...result,
-        nodes: result.nodes.map((node) => node.value),
-      };
+      const request = { url: "https://test.local" + pathname };
+      return renderRouteMap(tree, request as any as Request);
     }
 
-    expect(testMatch("/")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-        ],
-        "notFound": false,
-        "params": {},
-      }
+    const testCases = [
+      "/",
+      "/other",
+      "/not-found",
+      "/test",
+      "/test/other",
+      "/test/not-found",
+    ];
+    for (const i of range(testCases.length)) {
+      const testCase = testCases[i]!;
+      expect(await testMatch(testCase)).matchSnapshot(`(${i}) "${testCase}"`);
+    }
+  });
+});
+
+describe(getPathPrefixes, () => {
+  it("basic", () => {
+    expect(getPathPrefixes("/")).toMatchInlineSnapshot(`
+      [
+        "/",
+      ]
     `);
-    expect(testMatch("/other")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-          {
-            "page": {
-              "default": "/other/page.tsx",
-            },
-          },
-        ],
-        "notFound": false,
-        "params": {},
-      }
+    expect(getPathPrefixes("/hello")).toMatchInlineSnapshot(`
+      [
+        "/",
+        "/hello",
+      ]
     `);
-    expect(testMatch("/not-found")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-        ],
-        "notFound": true,
-        "params": {},
-      }
-    `);
-    expect(testMatch("/test")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-          {
-            "layout": {
-              "default": "/test/layout.tsx",
-            },
-            "page": {
-              "default": "/test/page.tsx",
-            },
-          },
-        ],
-        "notFound": false,
-        "params": {},
-      }
-    `);
-    expect(testMatch("/test/other")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-          {
-            "layout": {
-              "default": "/test/layout.tsx",
-            },
-            "page": {
-              "default": "/test/page.tsx",
-            },
-          },
-          {
-            "page": {
-              "default": "/test/other/page.tsx",
-            },
-          },
-        ],
-        "notFound": false,
-        "params": {},
-      }
-    `);
-    expect(testMatch("/test/other/not-found")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-          {
-            "layout": {
-              "default": "/test/layout.tsx",
-            },
-            "page": {
-              "default": "/test/page.tsx",
-            },
-          },
-          {
-            "page": {
-              "default": "/test/other/page.tsx",
-            },
-          },
-        ],
-        "notFound": true,
-        "params": {},
-      }
-    `);
-    expect(testMatch("/test/anything")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-          {
-            "layout": {
-              "default": "/test/layout.tsx",
-            },
-            "page": {
-              "default": "/test/page.tsx",
-            },
-          },
-          {
-            "page": {
-              "default": "/test/[dynamic]/page.tsx",
-            },
-          },
-        ],
-        "notFound": false,
-        "params": {
-          "dynamic": "anything",
-        },
-      }
-    `);
-    expect(testMatch("/test/anything/not-found")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-          {
-            "layout": {
-              "default": "/test/layout.tsx",
-            },
-            "page": {
-              "default": "/test/page.tsx",
-            },
-          },
-          {
-            "page": {
-              "default": "/test/[dynamic]/page.tsx",
-            },
-          },
-        ],
-        "notFound": true,
-        "params": {
-          "dynamic": "anything",
-        },
-      }
-    `);
-    expect(testMatch("/not-found1/not-found2")).toMatchInlineSnapshot(`
-      {
-        "nodes": [
-          {
-            "layout": {
-              "default": "/layout.tsx",
-            },
-            "page": {
-              "default": "/page.tsx",
-            },
-          },
-        ],
-        "notFound": true,
-        "params": {},
-      }
+    expect(getPathPrefixes("/hello/world")).toMatchInlineSnapshot(`
+      [
+        "/",
+        "/hello",
+        "/hello/world",
+      ]
     `);
   });
 });
