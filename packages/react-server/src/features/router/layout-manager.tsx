@@ -40,6 +40,14 @@ export class LayoutManager {
   }
 }
 
+type LayoutStateContextType = {
+  data: Promise<ServerLayoutData>;
+};
+
+export const LayoutStateContext = React.createContext<LayoutStateContextType>(
+  undefined!,
+);
+
 export const LayoutManagerContext = React.createContext<LayoutManager>(
   undefined!,
 );
@@ -54,6 +62,13 @@ function useLayoutManager<U = LayoutManagerState>(
 export function LayoutContent(props: { name: string }) {
   // TODO: each layout can have transition state?
   // const [isPending, startTransition] = React.useTransition();
+
+  if (1) {
+    const layoutState = React.useContext(LayoutStateContext);
+    const layout = React.use(layoutState.data);
+    return layout[props.name];
+    // return layoutState.data[props.name];
+  }
 
   const node = useLayoutManager((s) => s.data[props.name]);
   const transitionType = useLayoutManager((s) => s.transitionType);

@@ -5,6 +5,7 @@ import {
   LayoutManager,
   LayoutManagerContext,
   LayoutRoot,
+  LayoutStateContext,
   flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
 import type { ServerLayoutData } from "../features/router/utils";
@@ -86,13 +87,13 @@ export async function renderHtml(
       },
     });
 
-  const clientLayoutMap = flattenLayoutMapPromise(
-    Object.keys(result.layoutRequest),
-    layoutPromise,
-  );
+  // const clientLayoutMap = flattenLayoutMapPromise(
+  //   Object.keys(result.layoutRequest),
+  //   layoutPromise,
+  // );
 
   const layoutManager = new LayoutManager();
-  layoutManager.update(clientLayoutMap);
+  // layoutManager.update(clientLayoutMap);
 
   const url = new URL(request.url);
   const history = createMemoryHistory({
@@ -103,7 +104,9 @@ export async function renderHtml(
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <LayoutManagerContext.Provider value={layoutManager}>
-        <LayoutRoot />
+        <LayoutStateContext.Provider value={{ data: layoutPromise }}>
+          <LayoutRoot />
+        </LayoutStateContext.Provider>
       </LayoutManagerContext.Provider>
     </RouterContext.Provider>
   );
