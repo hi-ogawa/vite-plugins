@@ -1,6 +1,7 @@
 import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import nodeStream from "node:stream";
 import { fileURLToPath } from "node:url";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
@@ -124,6 +125,7 @@ export function vitePluginReactServer(options?: {
           // since we currently needs RSC -> Client -> SSR build pipeline
           // to collect client references first in RSC.
           // TODO: what if "use server" is provided from 3rd party library?
+          //       re-export locally to workaround?
           const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
             absolute: true,
             ignore: ["**/node_modules/**"],
@@ -184,10 +186,20 @@ export function vitePluginReactServer(options?: {
 
   const rscParentPlugin: Plugin = {
     name: vitePluginReactServer.name,
-    config(_config, env) {
+    async config(_config, env) {
       parentEnv = env;
+
+      // we need to crawl file system to collect server references ("use server")
+      // since we currently needs RSC -> Client -> SSR build pipeline
+      // to collect client references first in RSC.
+      // TODO: what if "use server" is provided from 3rd party library?
+      //       re-export locally to workaround?
+      const directiveFiles = await findDirectiveFiles();
+      manager.rscUseServerIds = new Set(directiveFiles.server);
+
       return {
         optimizeDeps: {
+          entries: directiveFiles.client,
           exclude: ["@hiogawa/react-server"],
           include: [
             "react",
@@ -748,4 +760,61 @@ function vitePluginSilenceUseClientBuildWarning(): Plugin {
       };
     },
   };
+}
+
+type DirectiveFiles = {
+  client: string[];
+  server: string[];
+};
+
+async function findDirectiveFiles() {
+  const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
+    absolute: true,
+    ignore: ["**/node_modules/**"],
+  });
+  const result: DirectiveFiles = {
+    client: [],
+    server: [],
+  };
+  await Promise.all(
+    files.map(async (file) => {
+      const stream = nodeStream.Readable.toWeb(fs.createReadStream(file));
+      const line = await getFirstLine(stream as any);
+      if (line.match(USE_CLIENT_RE)) {
+        result.client.push(file);
+      }
+      if (line.match(USE_SERVER_RE)) {
+        result.server.push(file);
+      }
+    }),
+  );
+  return result;
+}
+
+function splitTransform(sep: string) {
+  let acc = "";
+  return new TransformStream<string, string>({
+    transform(chunk, controller) {
+      acc += chunk;
+      if (acc.includes(sep)) {
+        const parts = chunk.split(sep);
+        acc = parts.pop()!;
+        for (const part of parts) {
+          controller.enqueue(part);
+        }
+      }
+    },
+    flush(controller) {
+      controller.enqueue(acc);
+    },
+  });
+}
+
+async function getFirstLine(stream: ReadableStream<string>) {
+  const lines = stream.pipeThrough(splitTransform("\n"));
+  const reader = lines.getReader();
+  const result = await reader.read();
+  const line = result.value ?? "";
+  await lines.cancel();
+  return line;
 }
