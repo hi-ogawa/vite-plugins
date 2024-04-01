@@ -2,6 +2,7 @@
 // TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
+  // TODO: hide from public typing?
   redirectLocation?: string;
 }
 

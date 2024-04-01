@@ -429,6 +429,23 @@ test("head in rsc", async ({ page }) => {
   );
 });
 
+test("redirect ssr", async ({ page }) => {
+  const res = await page.request.get("/test/redirect?from", {
+    maxRedirects: 0,
+  });
+  expect(res.status()).toBe(307);
+  expect(res.headers()).toMatchObject({ location: "/test/redirect?to" });
+  expect(await res.text()).toBe("");
+
+  checkNoError(page);
+  await page.goto("/test/redirect?from");
+  await page.waitForURL("/test/redirect?to");
+});
+
+test.skip("redirect client", async ({ page }) => {
+  page;
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");
