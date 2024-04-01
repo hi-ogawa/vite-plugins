@@ -15,11 +15,9 @@ import {
 
 const debug = createDebug("react-server:layout");
 
-// TODO: feel like "map" wouldn't be enough in the future,
-//       so rename it something more general? like `ClientLayoutData`?
-// TODO: flag to indicate current layout is from server action? (for isActionPending transition?)
 type LayoutManagerState = {
   data: ClientLayoutData;
+  transitionType?: "navigation" | "action";
 };
 
 export class LayoutManager {
@@ -27,7 +25,7 @@ export class LayoutManager {
     data: {},
   });
 
-  update(data: ClientLayoutData) {
+  update(data: ClientLayoutData, transitionType?: "navigation" | "action") {
     this.store.set((s) => {
       debug("[update]", { current: s.data, next: data });
       return {
@@ -36,6 +34,7 @@ export class LayoutManager {
           ...s.data,
           ...data,
         },
+        transitionType,
       };
     });
   }
@@ -57,13 +56,20 @@ export function LayoutContent(props: { name: string }) {
   // const [isPending, startTransition] = React.useTransition();
 
   const node = useLayoutManager((s) => s.data[props.name]);
+  const transitionType = useLayoutManager((s) => s.transitionType);
 
   // wrap each content switch as transition
   const [current, setCurrent] = React.useState(node);
   React.useEffect(() => {
     if (node !== current) {
       debug("[LayoutContent]", { name: props.name, node, current });
-      __global.startTransition(() => setCurrent(node));
+      if (transitionType === "navigation") {
+        __global.startTransition(() => setCurrent(node));
+      } else if (transitionType === "action") {
+        __global.startActionTransition(() => setCurrent(node));
+      } else {
+        setCurrent(node);
+      }
     }
   }, [node]);
 

@@ -42,8 +42,12 @@ export async function start() {
   function updateLayout(
     keys: string[],
     layoutPromise: Promise<ServerLayoutData>,
+    transitionType?: "navigation" | "action",
   ) {
-    layoutManager.update(flattenLayoutMapPromise(keys, layoutPromise));
+    layoutManager.update(
+      flattenLayoutMapPromise(keys, layoutPromise),
+      transitionType,
+    );
   }
 
   //
@@ -77,6 +81,7 @@ export async function start() {
       reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
         callServer,
       }),
+      "action",
     );
   };
 
@@ -102,10 +107,9 @@ export async function start() {
 
   function Root() {
     const [isPending, startTransition] = React.useTransition();
+    const [isActionPending, startActionTransition] = React.useTransition();
     __global.startTransition = startTransition;
-
-    // TODO: for now, no action pending state
-    const [isActionPending, _startActionTransition] = React.useTransition();
+    __global.startActionTransition = startActionTransition;
 
     React.useEffect(() => router.setup(), []);
 
@@ -142,6 +146,7 @@ export async function start() {
         reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
           callServer,
         }),
+        "navigation",
       );
     }, [location]);
 

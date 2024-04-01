@@ -10,4 +10,5 @@ export const __global: {
   };
   callServer: CallServerCallback;
   startTransition: React.TransitionStartFunction;
+  startActionTransition: React.TransitionStartFunction;
 } = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});

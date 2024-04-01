@@ -72,7 +72,7 @@ test("ServerTransitionContext.isPending", async ({ page }) => {
   await page.getByText("Took 2 sec to load.").click();
 });
 
-test.skip("ServerTransitionContext.isActionPending", async ({ page }) => {
+test("ServerTransitionContext.isActionPending", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/transition");
