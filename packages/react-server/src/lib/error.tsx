@@ -17,9 +17,7 @@ export function createError(ctx: ReactServerErrorContext) {
 }
 
 export function redirect(location: string, status: number = 307) {
-  const ctx: ReactServerErrorContext = { status, redirect: { location } };
-  const digest = `__REACT_SERVER_ERROR__:${JSON.stringify(ctx)}`;
-  return new ReactServerDigestError(digest);
+  return createError({ status, redirect: { location } });
 }
 
 export function getErrorContext(
