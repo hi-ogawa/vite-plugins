@@ -1,7 +1,6 @@
 import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import nodeStream from "node:stream";
 import { fileURLToPath } from "node:url";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
@@ -117,15 +116,45 @@ export function vitePluginReactServer(options?: {
       vitePluginServerUseClient({ manager }),
 
       // expose server references for RSC build via virtual module
-      createVirtualPlugin("rsc-use-server", () => {
-        let result = `export default {\n`;
-        for (const id of manager.rscUseServerIds) {
-          let key = manager.buildType ? hashString(id) : id;
-          result += `"${key}": () => import("${id}"),\n`;
-        }
-        result += "};\n";
-        return result;
-      }),
+      {
+        name: "virtual-rsc-use-server",
+        apply: "build",
+        async buildStart(_options) {
+          // we need to crawl file system to collect server references ("use server")
+          // since we currently needs RSC -> Client -> SSR build pipeline
+          // to collect client references first in RSC.
+          // TODO: what if "use server" is provided from 3rd party library?
+          const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
+            absolute: true,
+            ignore: ["**/node_modules/**"],
+          });
+          for (const file of files) {
+            const data = await fs.promises.readFile(file, "utf-8");
+            if (data.match(/^("use server")|('use server')/)) {
+              manager.rscUseServerIds.add(file);
+            }
+          }
+          debug("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
+        },
+        resolveId(source, _importer, _options) {
+          if (source === "virtual:rsc-use-server") {
+            return "\0" + source;
+          }
+          return;
+        },
+        async load(id, _options) {
+          if (id === "\0virtual:rsc-use-server") {
+            let result = `export default {\n`;
+            for (const id of manager.rscUseServerIds) {
+              let key = manager.buildType ? hashString(id) : id;
+              result += `"${key}": () => import("${id}"),\n`;
+            }
+            result += "};\n";
+            return result;
+          }
+          return;
+        },
+      },
 
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
@@ -155,22 +184,10 @@ export function vitePluginReactServer(options?: {
 
   const rscParentPlugin: Plugin = {
     name: vitePluginReactServer.name,
-    async config(_config, env) {
+    config(_config, env) {
       parentEnv = env;
-
-      // we need to crawl file system to collect server references ("use server")
-      // since we currently needs RSC -> Client -> SSR build pipeline
-      // to collect client references first in RSC.
-      // TODO: what if "use server" is provided from 3rd party library?
-      //       re-export locally to workaround?
-      const directiveFiles = await findDirectiveFiles();
-      manager.rscUseServerIds = new Set(directiveFiles.server);
-
       return {
         optimizeDeps: {
-          // this can potentially include unnecessary server only deps for client,
-          // but there should be no issues except making deps optimization slightly slower.
-          entries: ["./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)"],
           exclude: ["@hiogawa/react-server"],
           include: [
             "react",
@@ -178,7 +195,6 @@ export function vitePluginReactServer(options?: {
             "react/jsx-dev-runtime",
             "react-dom/client",
             "react-server-dom-webpack/client.browser",
-            "@hiogawa/react-server > @tanstack/history",
             "@hiogawa/react-server > use-sync-external-store/shim/with-selector.js",
           ],
         },
@@ -732,64 +748,4 @@ function vitePluginSilenceUseClientBuildWarning(): Plugin {
       };
     },
   };
-}
-
-type DirectiveFiles = {
-  client: string[];
-  server: string[];
-};
-
-async function findDirectiveFiles() {
-  const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
-    absolute: true,
-    ignore: ["**/node_modules/**"],
-  });
-  const result: DirectiveFiles = {
-    client: [],
-    server: [],
-  };
-  await Promise.all(
-    files.map(async (file) => {
-      const stream = nodeStream.Readable.toWeb(
-        fs.createReadStream(file, "utf-8"),
-      );
-      const line = await getFirstLine(stream as any);
-      if (line.match(USE_CLIENT_RE)) {
-        result.client.push(file);
-      }
-      if (line.match(USE_SERVER_RE)) {
-        result.server.push(file);
-      }
-    }),
-  );
-  return result;
-}
-
-function splitTransform(sep: string) {
-  let acc = "";
-  return new TransformStream<string, string>({
-    transform(chunk, controller) {
-      acc += chunk;
-      if (acc.includes(sep)) {
-        const parts = chunk.split(sep);
-        acc = parts.pop()!;
-        for (const part of parts) {
-          controller.enqueue(part);
-        }
-      }
-    },
-    flush(controller) {
-      controller.enqueue(acc);
-    },
-  });
-}
-
-async function getFirstLine(stream: ReadableStream<string>) {
-  const lines = stream.pipeThrough(splitTransform("\n"));
-  const reader = lines.getReader();
-  const result = await reader.read();
-  const line = result.value ?? "";
-  reader.releaseLock();
-  await lines.cancel();
-  return line;
 }
