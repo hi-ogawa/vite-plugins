@@ -46,6 +46,7 @@ export type LayoutRequest = Record<
   }
 >;
 
+// TODO: remove
 export type StreamLayoutMap = Record<string, ReadableStream<Uint8Array>>;
 
 export type ServerLayoutMap = Record<string, React.ReactNode>;

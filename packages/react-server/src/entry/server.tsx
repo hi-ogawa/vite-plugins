@@ -79,15 +79,12 @@ export async function renderHtml(
   const [stream1, stream2] = result.stream.tee();
 
   const layoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerLayoutMap>(
-      stream1,
-      {
-        ssrManifest: {
-          moduleMap: createModuleMap(),
-          moduleLoading: null,
-        },
+    reactServerDomClient.createFromReadableStream<ServerLayoutMap>(stream1, {
+      ssrManifest: {
+        moduleMap: createModuleMap(),
+        moduleLoading: null,
       },
-    );
+    });
 
   const clientLayoutMap = flattenLayoutMapPromise(
     Object.keys(result.layoutMap),
