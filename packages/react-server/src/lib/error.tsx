@@ -1,4 +1,3 @@
-// TODO: accomodate redirection error convention?
 // TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
