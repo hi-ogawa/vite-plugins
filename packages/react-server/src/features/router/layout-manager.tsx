@@ -5,7 +5,7 @@ import {
   tinyassert,
 } from "@hiogawa/utils";
 import React from "react";
-import { TinyStore, useStore } from "../../lib/client/store-utils";
+import { TinyStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
 import {
   type ClientLayoutData,
@@ -51,44 +51,10 @@ export const LayoutStateContext = React.createContext<LayoutStateContextType>(
 export const LayoutManagerContext = React.createContext<LayoutManager>(
   undefined!,
 );
-
-function useLayoutManager<U = LayoutManagerState>(
-  select?: (v: LayoutManagerState) => U,
-) {
-  const ctx = React.useContext(LayoutManagerContext);
-  return useStore(ctx.store, select);
-}
-
 export function LayoutContent(props: { name: string }) {
-  // TODO: each layout can have transition state?
-  // const [isPending, startTransition] = React.useTransition();
-
-  if (1) {
-    const layoutState = React.useContext(LayoutStateContext);
-    const layout = React.use(layoutState.data);
-    return layout[props.name];
-    // return layoutState.data[props.name];
-  }
-
-  const node = useLayoutManager((s) => s.data[props.name]);
-  const transitionType = useLayoutManager((s) => s.transitionType);
-
-  // wrap each content switch as transition
-  const [current, setCurrent] = React.useState(node);
-  React.useEffect(() => {
-    if (node !== current) {
-      debug("[LayoutContent]", { name: props.name, node, current });
-      if (transitionType === "navigation") {
-        __global.startTransition(() => setCurrent(node));
-      } else if (transitionType === "action") {
-        __global.startActionTransition(() => setCurrent(node));
-      } else {
-        setCurrent(node);
-      }
-    }
-  }, [node]);
-
-  return current && React.use(current);
+  const layoutState = React.useContext(LayoutStateContext);
+  const layout = React.use(layoutState.data);
+  return layout[props.name];
 }
 
 export function LayoutRoot() {
