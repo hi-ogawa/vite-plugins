@@ -39,6 +39,13 @@ export async function start() {
   const router = new Router(history);
   const layoutManager = new LayoutManager();
 
+  function updateLayout(
+    keys: string[],
+    layoutPromise: Promise<ServerLayoutMap>,
+  ) {
+    layoutManager.update(flattenLayoutMapPromise(keys, layoutPromise));
+  }
+
   //
   // server action callback
   //
@@ -65,12 +72,12 @@ export async function start() {
         body: args[0],
       },
     );
-    const layoutPromise = reactServerDomClient.createFromFetch<ServerLayoutMap>(
-      fetch(request),
-      { callServer },
+    updateLayout(
+      newKeys,
+      reactServerDomClient.createFromFetch<ServerLayoutMap>(fetch(request), {
+        callServer,
+      }),
     );
-    const layoutData = flattenLayoutMapPromise(newKeys, layoutPromise);
-    layoutManager.update(layoutData);
   };
 
   // expose as global to be used for createServerReference
@@ -81,15 +88,12 @@ export async function start() {
     const stream = readStreamScript<string>().pipeThrough(
       new TextEncoderStream(),
     );
-    const layoutPromise =
+    updateLayout(
+      Object.keys(createLayoutContentRequest(history.location.pathname)),
       reactServerDomClient.createFromReadableStream<ServerLayoutMap>(stream, {
         callServer,
-      });
-    const keys = Object.keys(
-      createLayoutContentRequest(history.location.pathname),
+      }),
     );
-    const layoutData = flattenLayoutMapPromise(keys, layoutPromise);
-    layoutManager.update(layoutData);
   }
 
   //
@@ -133,12 +137,12 @@ export async function start() {
       debug("[navigation]", location, { pathname, lastPathname, newKeys });
 
       const request = new Request(wrapRscRequestUrl(location.href, newKeys));
-      const layoutPromise =
+      updateLayout(
+        newKeys,
         reactServerDomClient.createFromFetch<ServerLayoutMap>(fetch(request), {
           callServer,
-        });
-      const layoutData = flattenLayoutMapPromise(newKeys, layoutPromise);
-      layoutManager.update(layoutData);
+        }),
+      );
     }, [location]);
 
     return <LayoutRoot />;
