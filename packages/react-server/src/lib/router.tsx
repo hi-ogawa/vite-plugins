@@ -60,7 +60,7 @@ async function renderLayout(
     await importClientInternal();
 
   let acc = <LayoutContent name={name} />;
-  acc = <RedirectBoundary>{acc}</RedirectBoundary>
+  acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
   const ErrorPage = node.value?.error?.default;
   if (ErrorPage) {
