@@ -75,7 +75,7 @@ test("ServerTransitionContext.isPending", async ({ page }) => {
 test("ServerTransitionContext.isActionPending", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/test/transition");
+  await page.goto("/test/transition-action");
   await waitForHydration(page);
 
   await expect(page.getByText("Count: 0")).not.toHaveClass(/opacity-50/);
