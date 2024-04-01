@@ -14,7 +14,11 @@ import {
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
-import { ReactServerDigestError, createError } from "../lib/error";
+import {
+  ReactServerDigestError,
+  createError,
+  getErrorContext,
+} from "../lib/error";
 import { __global } from "../lib/global";
 import { generateRouteTree, renderRouteMap } from "../lib/router";
 
@@ -39,13 +43,34 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
-  // action
-  if (ctx.request.method === "POST") {
-    await actionHandler(ctx);
-  }
-
   // check rsc-only request
   const rscOnly = unwrapRscRequest(ctx.request);
+
+  // action
+  if (ctx.request.method === "POST") {
+    try {
+      await actionHandler(ctx);
+    } catch (e) {
+      const errorCtx = getErrorContext(e);
+      if (errorCtx?.redirectLocation) {
+        if (rscOnly) {
+          // TODO
+          throw e;
+        } else {
+          return new Response(null, {
+            status: errorCtx.status,
+            headers: {
+              location: errorCtx.redirectLocation,
+            },
+          });
+        }
+      }
+
+      // TODO
+      throw e;
+    }
+  }
+
   const request = rscOnly?.request ?? ctx.request;
   const url = new URL(request.url);
   let layoutRequest = createLayoutContentRequest(url.pathname);
