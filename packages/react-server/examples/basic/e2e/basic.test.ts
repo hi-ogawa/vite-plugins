@@ -442,8 +442,11 @@ test("redirect ssr", async ({ page }) => {
   await page.waitForURL("/test/redirect?to");
 });
 
-test.skip("redirect client", async ({ page }) => {
-  page;
+test("redirect client", async ({ page }) => {
+  await page.goto("/test/redirect");
+  await waitForHydration(page);
+  await page.getByRole('link', { name: 'From' }).click();
+  await page.waitForURL("/test/redirect?to");
 });
 
 async function setupCheckClientState(page: Page) {

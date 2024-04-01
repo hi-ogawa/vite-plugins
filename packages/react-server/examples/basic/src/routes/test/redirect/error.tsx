@@ -4,16 +4,18 @@ import { useRouter } from "@hiogawa/react-server/client";
 import type { ErrorPageProps } from "@hiogawa/react-server/server";
 import React from "react";
 
+const suspensionCache = new WeakMap<Error, Promise<void>>();
+
 export default function ErrorPage(props: ErrorPageProps) {
-  // TODO: effect is too late.
-  //       can we trigger transition during getDerivedStateFromError?
   const history = useRouter((s) => s.history);
-
-  React.useEffect(() => {
-    if (props.serverError?.redirectLocation) {
-      history.push(props.serverError?.redirectLocation);
+  let suspend = suspensionCache.get(props.error);
+  if (!suspend) {
+    suspend = new Promise<void>(() => {});
+    suspensionCache.set(props.error, suspend);
+    const redirectLocation = props.serverError?.redirectLocation;
+    if (redirectLocation) {
+      setTimeout(() => history.replace(redirectLocation));
     }
-  }, [props.serverError?.redirectLocation]);
-
-  return null;
+  }
+  return React.use(suspend);
 }
