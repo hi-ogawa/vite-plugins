@@ -22,6 +22,7 @@
     "dist"
   ],
   "scripts": {
+    "dev": "tsup --watch",
     "build": "tsup",
     "prepack": "tsup --clean",
     "release": "pnpm publish --no-git-checks --access public"
