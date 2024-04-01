@@ -66,10 +66,13 @@ class ReactServerManager {
   }
 }
 
+const manager: ReactServerManager = ((
+  globalThis as any
+).__VITE_REACT_SERVER_MANAGER ??= new ReactServerManager());
+
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
 }): Plugin[] {
-  const manager = new ReactServerManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
 
@@ -232,20 +235,24 @@ export function vitePluginReactServer(options?: {
           reactServer: reactServer,
         };
       }
-      if (parentEnv.command === "build") {
-        if (parentEnv.isSsrBuild) {
-          manager.buildType = "ssr";
-        } else {
-          manager.buildType = "rsc";
-          await build(rscConfig);
-          manager.buildType = "client";
-        }
+      if (parentEnv.command === "build" && !manager.buildType) {
+        manager.buildType = "rsc";
+        await build(rscConfig);
+        manager.buildType = "client";
       }
     },
-    async buildEnd(_options) {
+    async closeBundle() {
       if (parentEnv.command === "serve") {
         await __global.dev.reactServer.close();
         delete (__global as any).dev;
+      }
+      if (parentEnv.command === "build" && manager.buildType === "client") {
+        manager.buildType = "ssr";
+        await build({
+          build: {
+            ssr: true,
+          },
+        });
       }
     },
     transform(_code, id, _options) {
