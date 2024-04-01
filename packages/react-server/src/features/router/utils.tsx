@@ -1,4 +1,14 @@
-import type { LayoutRequest } from "./layout-manager";
+export type LayoutRequest = Record<
+  string,
+  {
+    type: "page" | "layout";
+    name: string;
+  }
+>;
+
+export type ServerLayoutData = Record<string, React.ReactNode>;
+
+export type ClientLayoutData = Record<string, Promise<React.ReactNode>>;
 
 export const LAYOUT_ROOT_NAME = "__root";
 

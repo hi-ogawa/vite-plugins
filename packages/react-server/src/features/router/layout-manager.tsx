@@ -7,7 +7,11 @@ import {
 import React from "react";
 import { TinyStore, useStore } from "../../lib/client/store-utils";
 import { __global } from "../../lib/global";
-import { LAYOUT_ROOT_NAME } from "./utils";
+import {
+  type ClientLayoutData,
+  LAYOUT_ROOT_NAME,
+  type ServerLayoutData,
+} from "./utils";
 
 const debug = createDebug("react-server:layout");
 
@@ -15,7 +19,7 @@ const debug = createDebug("react-server:layout");
 //       so rename it something more general? like `ClientLayoutData`?
 // TODO: flag to indicate current layout is from server action? (for isActionPending transition?)
 type LayoutManagerState = {
-  data: Record<string, Promise<React.ReactNode>>;
+  data: ClientLayoutData;
 };
 
 export class LayoutManager {
@@ -36,18 +40,6 @@ export class LayoutManager {
     });
   }
 }
-
-export type LayoutRequest = Record<
-  string,
-  {
-    type: "page" | "layout";
-    name: string;
-  }
->;
-
-export type ServerLayoutData = Record<string, React.ReactNode>;
-
-export type ClientLayoutData = Record<string, Promise<React.ReactNode>>;
 
 export const LayoutManagerContext = React.createContext<LayoutManager>(
   undefined!,

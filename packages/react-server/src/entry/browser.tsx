@@ -6,10 +6,10 @@ import {
   LayoutManager,
   LayoutManagerContext,
   LayoutRoot,
-  type ServerLayoutData,
   flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
 import {
+  type ServerLayoutData,
   createLayoutContentRequest,
   getNewLayoutContentKeys,
 } from "../features/router/utils";

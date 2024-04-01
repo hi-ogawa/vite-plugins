@@ -5,9 +5,9 @@ import {
   LayoutManager,
   LayoutManagerContext,
   LayoutRoot,
-  type ServerLayoutData,
   flattenLayoutMapPromise,
 } from "../features/router/layout-manager";
+import type { ServerLayoutData } from "../features/router/utils";
 import {
   createModuleMap,
   initializeWebpackSsr,
