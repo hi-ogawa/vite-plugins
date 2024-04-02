@@ -64,12 +64,7 @@ async function renderLayout(
 
   const ErrorPage = node.value?.error?.default;
   if (ErrorPage) {
-    // TODO: can we remove extra <div>?
-    acc = (
-      <ErrorBoundary errorComponent={ErrorPage}>
-        <div className="error-boundary">{acc}</div>
-      </ErrorBoundary>
-    );
+    acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
   const Layout = node.value?.layout?.default;
   if (Layout) {
