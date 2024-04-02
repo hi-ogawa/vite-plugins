@@ -8,8 +8,6 @@ export type LayoutRequest = Record<
 
 export type ServerLayoutData = Record<string, React.ReactNode>;
 
-export type ClientLayoutData = Record<string, Promise<React.ReactNode>>;
-
 export const LAYOUT_ROOT_NAME = "__root";
 
 export function createLayoutContentRequest(pathname: string) {

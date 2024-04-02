@@ -1,12 +1,7 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
-import {
-  LayoutManager,
-  LayoutManagerContext,
-  LayoutRoot,
-  flattenLayoutMapPromise,
-} from "../features/router/layout-manager";
+import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerLayoutData } from "../features/router/utils";
 import {
   createModuleMap,
@@ -86,14 +81,6 @@ export async function renderHtml(
       },
     });
 
-  const clientLayoutMap = flattenLayoutMapPromise(
-    Object.keys(result.layoutRequest),
-    layoutPromise,
-  );
-
-  const layoutManager = new LayoutManager();
-  layoutManager.update(clientLayoutMap);
-
   const url = new URL(request.url);
   const history = createMemoryHistory({
     initialEntries: [url.href.slice(url.origin.length)],
@@ -102,9 +89,9 @@ export async function renderHtml(
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
-      <LayoutManagerContext.Provider value={layoutManager}>
+      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
         <LayoutRoot />
-      </LayoutManagerContext.Provider>
+      </LayoutStateContext.Provider>
     </RouterContext.Provider>
   );
 
