@@ -14,7 +14,21 @@ export default defineConfig({
     react(),
     unocss(),
     vitePluginReactServer({
-      plugins: [testVitePluginVirtual()],
+      plugins: [
+        testVitePluginVirtual(),
+        {
+          name: "cusotm-react-server-config",
+          config() {
+            return {
+              ssr: {
+                optimizeDeps: {
+                  include: ["cookie"],
+                },
+              },
+            };
+          },
+        },
+      ],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({

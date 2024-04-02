@@ -15,10 +15,16 @@ export function createError(ctx: ReactServerErrorContext) {
   return new ReactServerDigestError(digest);
 }
 
-export function redirect(location: string, status: number = 302) {
+export function redirect(
+  location: string,
+  options?: { status?: number; headers?: Record<string, string> },
+) {
   return createError({
-    status,
-    headers: { location },
+    status: options?.status ?? 302,
+    headers: {
+      ...options?.headers,
+      location,
+    },
   });
 }
 
