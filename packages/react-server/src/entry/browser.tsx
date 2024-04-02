@@ -33,11 +33,12 @@ export async function start() {
   const history = createBrowserHistory();
   const router = new Router(history);
 
+  let __setLayout: (v: Promise<ServerLayoutData>) => void;
+  let __startActionTransition: React.TransitionStartFunction;
+
   //
   // server action callback
   //
-  let __setLayout: (v: Promise<ServerLayoutData>) => void;
-
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
     if (0) {
@@ -60,7 +61,7 @@ export async function start() {
         body: args[0],
       },
     );
-    __global.startActionTransition(() => {
+    __startActionTransition(() => {
       __setLayout(
         reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
           callServer,
@@ -100,8 +101,7 @@ export async function start() {
 
     const [isPending, startTransition] = React.useTransition();
     const [isActionPending, startActionTransition] = React.useTransition();
-    __global.startTransition = startTransition;
-    __global.startActionTransition = startActionTransition;
+    __startActionTransition = startActionTransition;
 
     React.useEffect(() => router.setup(), []);
 
@@ -133,7 +133,7 @@ export async function start() {
       debug("[navigation]", location, { pathname, lastPathname, newKeys });
 
       const request = new Request(wrapRscRequestUrl(location.href, newKeys));
-      __global.startTransition(() => {
+      startTransition(() => {
         __setLayout(
           reactServerDomClient.createFromFetch<ServerLayoutData>(
             fetch(request),
@@ -146,11 +146,7 @@ export async function start() {
     }, [location]);
 
     return (
-      <LayoutStateContext.Provider
-        value={{
-          data: layoutPromise,
-        }}
-      >
+      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
         {props.children}
       </LayoutStateContext.Provider>
     );
