@@ -489,6 +489,46 @@ test("redirect server action @js", async ({ page }) => {
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
+test("action context @js", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/session");
+  await waitForHydration(page);
+  await testActionContext(page);
+});
+
+test("action context @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+  await page.goto("/test/session");
+  await testActionContext(page);
+});
+
+async function testActionContext(page: Page) {
+  await page.goto("/test/session");
+
+  // redirected from auth protected action
+  await page.getByText("Hi, anonymous user!").click();
+  await page.getByRole("button", { name: "+1" }).click();
+  await page.waitForURL("/test/session/signin");
+
+  // signin
+  await page.getByPlaceholder("Input name...").fill("asdf");
+  await page.getByRole("button", { name: "Signin" }).click();
+  await page.waitForURL("/test/session");
+
+  // try auth protected action
+  await page.getByText("Hello, asdf!").click();
+  await page.getByText("Counter: 0").click();
+  await page.getByRole("button", { name: "+1" }).click();
+  await page.getByText("Counter: 1").click();
+  await page.getByRole("button", { name: "-1" }).click();
+  await page.getByText("Counter: 0").click();
+
+  // signout
+  await page.getByRole("button", { name: "Signout" }).click();
+  await page.getByText("Hi, anonymous user!").click();
+}
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");

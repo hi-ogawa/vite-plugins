@@ -1,6 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { getErrorContext, getStatusText } from "../error";
+import { getErrorContext, getStatusText, isRedirectError } from "../error";
 import type { ErrorPageProps } from "../router";
 import { useRouter } from "./router";
 
@@ -89,8 +89,9 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
   static getDerivedStateFromError(error: Error) {
     if (!import.meta.env.SSR) {
       const ctx = getErrorContext(error);
-      if (ctx?.redirectLocation) {
-        return { redirectLocation: ctx.redirectLocation };
+      const redirect = ctx && isRedirectError(ctx);
+      if (redirect) {
+        return { redirectLocation: redirect.location };
       }
     }
     throw error;

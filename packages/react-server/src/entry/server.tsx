@@ -9,7 +9,12 @@ import {
   ssrImportPromiseCache,
 } from "../features/use-client/server";
 import { Router, RouterContext } from "../lib/client/router";
-import { getErrorContext, getStatusText } from "../lib/error";
+import {
+  DEFAULT_ERROR_CONTEXT,
+  getErrorContext,
+  getStatusText,
+  isRedirectError,
+} from "../lib/error";
 import { __global } from "../lib/global";
 import {
   ENTRY_REACT_SERVER_WRAPPER,
@@ -121,16 +126,11 @@ export async function renderHtml(
       },
     });
   } catch (e) {
-    const ctx = getErrorContext(e);
-    status = ctx?.status ?? 500;
-    if (ctx?.redirectLocation) {
-      return new Response(null, {
-        status,
-        headers: {
-          location: ctx.redirectLocation,
-        },
-      });
+    const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+    if (isRedirectError(ctx)) {
+      return new Response(null, { status: ctx.status, headers: ctx.headers });
     }
+    status = ctx.status;
     // render empty as error fallback and
     // let browser render full CSR instead of hydration
     // which will replay client error boudnary from RSC error
