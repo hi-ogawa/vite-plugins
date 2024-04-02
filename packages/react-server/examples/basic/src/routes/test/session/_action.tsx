@@ -36,5 +36,5 @@ export async function incrementCounter(formData: FormData) {
   if (!session?.name) {
     throw redirect("/test/session/signin");
   }
-  counter++;
+  counter += Number(formData.get("delta"));
 }
