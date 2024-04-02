@@ -1,11 +1,12 @@
-import { createDebug } from "@hiogawa/utils";
-
-const debug = createDebug("react-server:default");
-
-// TODO: accomodate redirection error convention?
 // TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
+  // TODO: hide from public typing?
+  redirectLocation?: string;
+}
+
+export interface ReactServerRedirectErrorContext {
+  redirectLocation: string;
 }
 
 export class ReactServerDigestError extends Error {
@@ -17,6 +18,10 @@ export class ReactServerDigestError extends Error {
 export function createError(ctx: ReactServerErrorContext) {
   const digest = `__REACT_SERVER_ERROR__:${JSON.stringify(ctx)}`;
   return new ReactServerDigestError(digest);
+}
+
+export function redirect(location: string, status: number = 307) {
+  return createError({ status, redirectLocation: location });
 }
 
 export function getErrorContext(
@@ -32,7 +37,7 @@ export function getErrorContext(
       try {
         return JSON.parse(m[1]);
       } catch (e) {
-        debug("[getErrorContext]", e);
+        console.error(e);
       }
     }
   }

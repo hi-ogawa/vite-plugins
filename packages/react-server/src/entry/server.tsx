@@ -31,14 +31,8 @@ export async function handler(request: Request): Promise<Response> {
     return result;
   }
 
-  // render rsc stream into html
-  const ssrResult = await renderHtml(request, result);
-  return new Response(ssrResult.htmlStream, {
-    status: ssrResult.status,
-    headers: {
-      "content-type": "text/html, charset=utf-8",
-    },
-  });
+  // render rsc stream into html (or redirect)
+  return renderHtml(request, result);
 }
 
 export async function importReactServer(): Promise<
@@ -127,12 +121,21 @@ export async function renderHtml(
       },
     });
   } catch (e) {
+    const ctx = getErrorContext(e);
+    status = ctx?.status ?? 500;
+    if (ctx?.redirectLocation) {
+      return new Response(null, {
+        status,
+        headers: {
+          location: ctx.redirectLocation,
+        },
+      });
+    }
     // render empty as error fallback and
     // let browser render full CSR instead of hydration
     // which will replay client error boudnary from RSC error
     // TODO: proper two-pass SSR with error route tracking?
     // TODO: meta tag system
-    status = getErrorContext(e)?.status ?? 500;
     const errorRoot = (
       <html data-no-hydate>
         <head>
@@ -162,7 +165,12 @@ export async function renderHtml(
     )
     .pipeThrough(new TextEncoderStream());
 
-  return { htmlStream, status };
+  return new Response(htmlStream, {
+    status,
+    headers: {
+      "content-type": "text/html, charset=utf-8",
+    },
+  });
 }
 
 function injectToHead(data: string) {
