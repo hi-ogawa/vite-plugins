@@ -4,6 +4,13 @@ name: ci
     branches:
       - main
   pull_request:
+
+# copied from vitest
+# https://github.com/vitest-dev/vitest/blob/e4e939ba2ab48c67ee14b82ec957fc9a8a52756c/.github/workflows/ci.yml#L12-L14
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
