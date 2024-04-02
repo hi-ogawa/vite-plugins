@@ -40,6 +40,17 @@ test("render count", async ({ page }) => {
   await page.getByText(`[effect: ${count}]`).click();
 });
 
+async function checkTransitionState(
+  page: Page,
+  isPending: boolean,
+  isActionPending: boolean,
+) {
+  await expect(page.getByTestId("transition")).toHaveAttribute(
+    "data-test-transition",
+    `{"isPending":${isPending},"isActionPending":${isActionPending}}`,
+  );
+}
+
 test("ServerTransitionContext.isPending", async ({ page }) => {
   checkNoError(page);
 
@@ -55,7 +66,11 @@ test("ServerTransitionContext.isPending", async ({ page }) => {
   ).toHaveAttribute("aria-selected", "false");
 
   await page.getByText("Took 0 sec to load.").click();
+
+  // start transition
+  await checkTransitionState(page, false, false);
   await page.getByRole("link", { name: "Posts (2.0 sec)" }).click();
+  await checkTransitionState(page, true, false);
   await expect(page.getByRole("link", { name: "About" })).toHaveAttribute(
     "aria-selected",
     "false",
@@ -63,25 +78,25 @@ test("ServerTransitionContext.isPending", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "Posts (2.0 sec)" }),
   ).toHaveAttribute("aria-selected", "true");
-  await expect(page.getByRole("link", { name: "Posts (2.0 sec)" })).toHaveClass(
-    /opacity-50/,
-  );
-  await expect(
-    page.getByRole("link", { name: "Posts (2.0 sec)" }),
-  ).not.toHaveClass(/opacity-50/);
+
+  // finished
+  await checkTransitionState(page, false, false);
   await page.getByText("Took 2 sec to load.").click();
 });
 
 test("ServerTransitionContext.isActionPending", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/test/transition-action");
+  await page.goto("/test/action");
   await waitForHydration(page);
 
-  await expect(page.getByText("Count: 0")).not.toHaveClass(/opacity-50/);
-  await page.getByRole("button", { name: "-1 (2.0 sec)" }).click();
-  await expect(page.getByText("Count: 0")).toHaveClass(/opacity-50/);
-  await expect(page.getByText("Count: -1")).not.toHaveClass(/opacity-50/);
+  // start transition
+  await checkTransitionState(page, false, false);
+  await page.getByRole("button", { name: "2.0 sec" }).click();
+  await checkTransitionState(page, false, true);
+
+  // finished
+  await checkTransitionState(page, false, false);
 });
 
 test("Link modifier", async ({ page, context }) => {
