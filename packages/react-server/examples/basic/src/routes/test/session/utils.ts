@@ -1,7 +1,7 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import * as cookieLib from "cookie";
 
-// mini cookie utils
+// mini cookie session utils
 
 type SessionData = {
   name?: string;
@@ -20,9 +20,7 @@ export function getSession(request: Request): SessionData | undefined {
         tinyassert(objectHas(data, "name"));
         tinyassert(typeof data.name === "string");
         return { name: data.name };
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) {}
     }
   }
 }

@@ -2,13 +2,9 @@
 
 import { getActionContext, redirect } from "@hiogawa/react-server/server";
 import { tinyassert } from "@hiogawa/utils";
-import { setSession } from "./utils";
+import { getSession, setSession } from "./utils";
 
 export async function signin(formData: FormData) {
-  // TODO: check if already signed in
-  const ctx = getActionContext(formData);
-  ctx.request.headers;
-
   // TODO: return error on invalid input
   const name = formData.get("name");
   tinyassert(typeof name === "string");
@@ -26,4 +22,19 @@ export async function signout() {
       "set-cookie": setSession({}),
     },
   });
+}
+
+let counter = 0;
+
+export function getCounter() {
+  return counter;
+}
+
+export async function incrementCounter(formData: FormData) {
+  const ctx = getActionContext(formData);
+  const session = getSession(ctx.request);
+  if (!session?.name) {
+    throw redirect("/test/session/signin");
+  }
+  counter++;
 }
