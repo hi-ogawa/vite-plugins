@@ -24,7 +24,7 @@ export default async function Page(props: PageProps) {
         </Link>
         <form action={testRedirect}>
           <button className="antd-btn antd-btn-default px-2">
-            From Action
+            From Server Action
           </button>
         </form>
       </div>
