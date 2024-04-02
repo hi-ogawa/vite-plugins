@@ -2,10 +2,7 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
-import {
-  LayoutRoot,
-  LayoutStateContext,
-} from "../features/router/layout-manager";
+import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import {
   type ServerLayoutData,
   createLayoutContentRequest,

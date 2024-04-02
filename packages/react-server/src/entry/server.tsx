@@ -1,10 +1,7 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
-import {
-  LayoutRoot,
-  LayoutStateContext,
-} from "../features/router/layout-manager";
+import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerLayoutData } from "../features/router/utils";
 import {
   createModuleMap,
