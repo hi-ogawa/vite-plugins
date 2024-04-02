@@ -18,7 +18,6 @@ export default async function Layout(props: LayoutProps) {
           "/test/error",
           "/test/not-found",
           "/test/transition",
-          "/test/transition-action",
           "/test/redirect",
         ]}
       />
