@@ -445,23 +445,23 @@ test("head in rsc", async ({ page }) => {
 });
 
 test("redirect ssr", async ({ page }) => {
-  const res = await page.request.get("/test/redirect?from", {
+  const res = await page.request.get("/test/redirect?server-component", {
     maxRedirects: 0,
   });
   expect(res.status()).toBe(307);
-  expect(res.headers()).toMatchObject({ location: "/test/redirect?to" });
+  expect(res.headers()).toMatchObject({ location: "/test/redirect?ok" });
   expect(await res.text()).toBe("");
 
   checkNoError(page);
-  await page.goto("/test/redirect?from");
-  await page.waitForURL("/test/redirect?to");
+  await page.goto("/test/redirect?server-component");
+  await page.waitForURL("/test/redirect?redirected");
 });
 
 test("redirect client", async ({ page }) => {
   await page.goto("/test/redirect");
   await waitForHydration(page);
-  await page.getByRole("link", { name: "From" }).click();
-  await page.waitForURL("/test/redirect?to");
+  await page.getByRole("link", { name: "From Server Component" }).click();
+  await page.waitForURL("/test/redirect?ok");
 });
 
 async function setupCheckClientState(page: Page) {

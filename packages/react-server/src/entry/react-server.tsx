@@ -54,6 +54,8 @@ export const handler: ReactServerHandler = async (ctx) => {
       const errorCtx = getErrorContext(e);
       if (errorCtx?.redirectLocation) {
         if (rscOnly) {
+          // create new request
+          // render rsc stream to propage error on client?
           // TODO
           throw e;
         } else {
