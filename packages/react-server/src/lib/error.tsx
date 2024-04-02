@@ -1,12 +1,7 @@
 // TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
-  // TODO: hide from public typing?
-  redirectLocation?: string;
-}
-
-export interface ReactServerRedirectErrorContext {
-  redirectLocation: string;
+  headers?: Record<string, string>;
 }
 
 export class ReactServerDigestError extends Error {
@@ -21,7 +16,18 @@ export function createError(ctx: ReactServerErrorContext) {
 }
 
 export function redirect(location: string, status: number = 302) {
-  return createError({ status, redirectLocation: location });
+  return createError({
+    status,
+    headers: { location },
+  });
+}
+
+export function isRedirectError(ctx: ReactServerErrorContext) {
+  const location = ctx.headers?.["location"];
+  if (300 <= ctx.status && ctx.status <= 399 && typeof location === "string") {
+    return { location };
+  }
+  return false;
 }
 
 export function getErrorContext(

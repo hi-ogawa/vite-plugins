@@ -55,7 +55,7 @@ export const handler: ReactServerHandler = async (ctx) => {
       const errorCtx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
       if (rscOnly) {
         // returns empty layout to keep current layout and
-        // let browser initiate clie-side navigation for redirection error
+        // let browser initiate cliet-side navigation for redirection error
         const data: ServerRouterData = {
           action: { error: errorCtx },
           layout: {},
@@ -70,11 +70,7 @@ export const handler: ReactServerHandler = async (ctx) => {
       // TODO: general action error handling?
       return new Response(null, {
         status: errorCtx.status,
-        headers: errorCtx.redirectLocation
-          ? {
-              location: errorCtx.redirectLocation,
-            }
-          : {},
+        headers: errorCtx.headers,
       });
     }
   }
