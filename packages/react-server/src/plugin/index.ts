@@ -59,6 +59,9 @@ class ReactServerManager {
   // "use server" files in rsc server
   rscUseServerIds = new Set<string>();
 
+  // map from server component to "use client" files
+  useClientMap = new Map<string, string[]>();
+
   shouldReloadRsc(id: string) {
     const ok = this.rscIds.has(id) && !this.rscUseClientIds.has(id);
     debug("[RscManager.shouldReloadRsc]", { ok, id });

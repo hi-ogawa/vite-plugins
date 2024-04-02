@@ -1,4 +1,4 @@
-import { objectHas, tinyassert } from "@hiogawa/utils";
+import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
@@ -8,28 +8,29 @@ import { __global } from "./global";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
-  page?: {
+  page?: () => Promise<{
     default: React.FC<PageProps>;
-  };
-  layout?: {
+  }>;
+  layout?: () => Promise<{
     default: React.FC<LayoutProps>;
-  };
-  error?: {
+  }>;
+  error?: () => Promise<{
     // TODO: warn if no "use client"
     default: React.FC<ErrorPageProps>;
-  };
+  }>;
 }
 
 type RouteTreeNode = TreeNode<RouteEntry>;
 
 // generate component tree from glob import such as
 //   import.meta.glob("/**/(page|layout).(js|jsx|ts|tsx)"
-export function generateRouteTree(globEntries: Record<string, unknown>) {
+export function generateRouteTree(
+  globEntries: Record<string, () => Promise<unknown>>,
+) {
   const entries: Record<string, RouteEntry> = {};
   for (const [k, v] of Object.entries(globEntries)) {
     const m = k.match(/^(.*)\/(page|layout|error)\.\w*$/);
     tinyassert(m && 1 in m && 2 in m);
-    tinyassert(objectHas(v, "default"), `no deafult export found in '${k}'`);
     ((entries[m[1]] ??= {}) as any)[m[2]] = v;
   }
 
@@ -46,8 +47,10 @@ function importClientInternal(): Promise<typeof import("../client-internal")> {
   return import("@hiogawa/react-server/client-internal" as string);
 }
 
-function renderPage(node: RouteTreeNode, props: PageProps) {
-  const Page = node.value?.page?.default ?? ThrowNotFound;
+async function renderPage(node: RouteTreeNode, props: PageProps) {
+  const Page = node.value?.page
+    ? (await node.value.page()).default
+    : ThrowNotFound;
   return <Page {...props} />;
 }
 
@@ -62,11 +65,11 @@ async function renderLayout(
   let acc = <LayoutContent name={name} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
-  const ErrorPage = node.value?.error?.default;
+  const ErrorPage = node.value?.error && (await node.value.error()).default;
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
-  const Layout = node.value?.layout?.default;
+  const Layout = node.value?.layout && (await node.value?.layout()).default;
   if (Layout) {
     return <Layout {...props}>{acc}</Layout>;
   }
@@ -96,7 +99,7 @@ export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
     const props: BaseProps = { request, params };
     layouts[prefix] = await renderLayout(node, props, prefix);
     if (prefix === pathname) {
-      pages[prefix] = renderPage(node, props);
+      pages[prefix] = await renderPage(node, props);
     }
   }
 

@@ -151,9 +151,6 @@ function createRouter() {
   // for now hard code /src/routes as convention
   const glob = import.meta.glob(
     "/src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
-    {
-      eager: true,
-    },
   );
   const tree = generateRouteTree(
     objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length)),
