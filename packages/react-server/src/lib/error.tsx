@@ -20,7 +20,7 @@ export function createError(ctx: ReactServerErrorContext) {
   return new ReactServerDigestError(digest);
 }
 
-export function redirect(location: string, status: number = 307) {
+export function redirect(location: string, status: number = 302) {
   return createError({ status, redirectLocation: location });
 }
 
@@ -43,6 +43,8 @@ export function getErrorContext(
   }
   return;
 }
+
+export const DEFAULT_ERROR_CONTEXT: ReactServerErrorContext = { status: 500 };
 
 const STATUS_TEXT_MAP = new Map([
   [400, "Bad Request"],

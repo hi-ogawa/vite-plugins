@@ -8,13 +8,18 @@ import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import {
   type LayoutRequest,
-  type ServerLayoutData,
+  type ServerRouterData,
   createLayoutContentRequest,
 } from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
-import { ReactServerDigestError, createError } from "../lib/error";
+import {
+  DEFAULT_ERROR_CONTEXT,
+  ReactServerDigestError,
+  createError,
+  getErrorContext,
+} from "../lib/error";
 import { __global } from "../lib/global";
 import { generateRouteTree, renderRouteMap } from "../lib/router";
 
@@ -39,13 +44,41 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
-  // action
-  if (ctx.request.method === "POST") {
-    await actionHandler(ctx);
-  }
-
   // check rsc-only request
   const rscOnly = unwrapRscRequest(ctx.request);
+
+  // action
+  if (ctx.request.method === "POST") {
+    try {
+      await actionHandler(ctx);
+    } catch (e) {
+      const errorCtx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+      if (rscOnly) {
+        // returns empty layout to keep current layout and
+        // let browser initiate clie-side navigation for redirection error
+        const data: ServerRouterData = {
+          action: { error: errorCtx },
+          layout: {},
+        };
+        const stream = reactServerDomServer.renderToReadableStream(data, {});
+        return new Response(stream, {
+          headers: {
+            "content-type": "text/x-component; charset=utf-8",
+          },
+        });
+      }
+      // TODO: general action error handling?
+      return new Response(null, {
+        status: errorCtx.status,
+        headers: errorCtx.redirectLocation
+          ? {
+              location: errorCtx.redirectLocation,
+            }
+          : {},
+      });
+    }
+  }
+
   const request = rscOnly?.request ?? ctx.request;
   const url = new URL(request.url);
   let layoutRequest = createLayoutContentRequest(url.pathname);
@@ -86,8 +119,8 @@ async function render({
     (v) => result[`${v.type}s`][v.name],
   );
   const bundlerConfig = createBundlerConfig();
-  return reactServerDomServer.renderToReadableStream<ServerLayoutData>(
-    nodeMap,
+  return reactServerDomServer.renderToReadableStream<ServerRouterData>(
+    { layout: nodeMap },
     bundlerConfig,
     {
       onError: reactServerOnError,

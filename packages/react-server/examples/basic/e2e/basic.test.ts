@@ -444,24 +444,49 @@ test("head in rsc", async ({ page }) => {
   );
 });
 
-test("redirect ssr", async ({ page }) => {
-  const res = await page.request.get("/test/redirect?from", {
+test("redirect server component @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+
+  const res = await page.request.get("/test/redirect?from-server-component", {
     maxRedirects: 0,
   });
-  expect(res.status()).toBe(307);
-  expect(res.headers()).toMatchObject({ location: "/test/redirect?to" });
+  expect(res.status()).toBe(302);
+  expect(res.headers()).toMatchObject({
+    location: "/test/redirect?ok=server-component",
+  });
   expect(await res.text()).toBe("");
 
-  checkNoError(page);
-  await page.goto("/test/redirect?from");
-  await page.waitForURL("/test/redirect?to");
+  await page.goto("/test/redirect");
+  await page.getByRole("link", { name: "From Server Component" }).click();
+  await page.waitForURL("/test/redirect?ok=server-component");
 });
 
-test("redirect client", async ({ page }) => {
+test("redirect server component @js", async ({ page }) => {
+  checkNoError(page);
+
   await page.goto("/test/redirect");
   await waitForHydration(page);
-  await page.getByRole("link", { name: "From" }).click();
-  await page.waitForURL("/test/redirect?to");
+  await page.getByRole("link", { name: "From Server Component" }).click();
+  await page.waitForURL("/test/redirect?ok=server-component");
+});
+
+test("redirect server action @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+
+  await page.goto("/test/redirect");
+  await page.getByRole("button", { name: "From Server Action" }).click();
+  await page.waitForURL("/test/redirect?ok=server-action");
+});
+
+test("redirect server action @js", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/redirect");
+  await waitForHydration(page);
+  await page.getByRole("button", { name: "From Server Action" }).click();
+  await page.waitForURL("/test/redirect?ok=server-action");
 });
 
 async function setupCheckClientState(page: Page) {

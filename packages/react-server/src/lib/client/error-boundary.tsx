@@ -1,10 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
-import {
-  type ReactServerRedirectErrorContext,
-  getErrorContext,
-  getStatusText,
-} from "../error";
+import { getErrorContext, getStatusText } from "../error";
 import type { ErrorPageProps } from "../router";
 import { useRouter } from "./router";
 
@@ -88,21 +84,26 @@ function DefaultRootErrorPage(props: ErrorPageProps) {
 }
 
 export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
-  override state: { ctx?: ReactServerRedirectErrorContext } = {};
+  override state: { redirectLocation?: string } = {};
 
   static getDerivedStateFromError(error: Error) {
     if (!import.meta.env.SSR) {
       const ctx = getErrorContext(error);
       if (ctx?.redirectLocation) {
-        return { ctx };
+        return { redirectLocation: ctx.redirectLocation };
       }
     }
     throw error;
   }
 
   override render() {
-    if (this.state.ctx) {
-      return <RedirectErrorHandler ctx={this.state.ctx} />;
+    if (this.state.redirectLocation) {
+      return (
+        <RedirectHandler
+          suspensionKey={this.state}
+          redirectLocation={this.state.redirectLocation}
+        />
+      );
     }
     return this.props.children;
   }
@@ -111,16 +112,19 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
 // trigger client navigation once and suspend forever
 const redirectSuspensionMap = new WeakMap<object, Promise<null>>();
 
-function RedirectErrorHandler(props: { ctx: ReactServerRedirectErrorContext }) {
+export function RedirectHandler(props: {
+  suspensionKey: object;
+  redirectLocation: string;
+}) {
   tinyassert(!import.meta.env.SSR);
 
   // trigger client navigation once and suspend until router fixes this up
   const history = useRouter((s) => s.history);
-  let suspension = redirectSuspensionMap.get(props.ctx);
+  let suspension = redirectSuspensionMap.get(props.suspensionKey);
   if (!suspension) {
     suspension = new Promise(() => {});
-    redirectSuspensionMap.set(props.ctx, suspension);
-    setTimeout(() => history.replace(props.ctx.redirectLocation));
+    redirectSuspensionMap.set(props.suspensionKey, suspension);
+    setTimeout(() => history.replace(props.redirectLocation));
   }
   return React.use(suspension);
 }

@@ -2,9 +2,13 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
-import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import {
-  type ServerLayoutData,
+  LayoutRoot,
+  LayoutStateContext,
+  ServerActionRedirectHandler,
+} from "../features/router/client";
+import {
+  type ServerRouterData,
   createLayoutContentRequest,
   getNewLayoutContentKeys,
 } from "../features/router/utils";
@@ -33,7 +37,7 @@ export async function start() {
   const history = createBrowserHistory();
   const router = new Router(history);
 
-  let __setLayout: (v: Promise<ServerLayoutData>) => void;
+  let __setLayout: (v: Promise<ServerRouterData>) => void;
   let __startActionTransition: React.TransitionStartFunction;
 
   //
@@ -63,7 +67,7 @@ export async function start() {
     );
     __startActionTransition(() => {
       __setLayout(
-        reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
+        reactServerDomClient.createFromFetch<ServerRouterData>(fetch(request), {
           callServer,
         }),
       );
@@ -75,7 +79,7 @@ export async function start() {
 
   // prepare initial layout data from inline <script>
   const initialLayoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerLayoutData>(
+    reactServerDomClient.createFromReadableStream<ServerRouterData>(
       readStreamScript<string>().pipeThrough(new TextEncoderStream()),
       { callServer },
     );
@@ -86,15 +90,21 @@ export async function start() {
 
   function LayoutHandler(props: React.PropsWithChildren) {
     const [layoutPromise, setLayoutPromise] =
-      React.useState<Promise<ServerLayoutData>>(initialLayoutPromise);
+      React.useState<Promise<ServerRouterData>>(initialLayoutPromise);
 
     // very shaky trick to merge with current layout
     __setLayout = (nextPromise) => {
       setLayoutPromise(
-        memoize(async (currentPromise) => {
+        memoize(async (currentPromise: Promise<ServerRouterData>) => {
           const current = await currentPromise;
           const next = await nextPromise;
-          return { ...current, ...next };
+          return {
+            action: next.action,
+            layout: {
+              ...current.layout,
+              ...next.layout,
+            },
+          };
         }),
       );
     };
@@ -135,7 +145,7 @@ export async function start() {
       const request = new Request(wrapRscRequestUrl(location.href, newKeys));
       startTransition(() => {
         __setLayout(
-          reactServerDomClient.createFromFetch<ServerLayoutData>(
+          reactServerDomClient.createFromFetch<ServerRouterData>(
             fetch(request),
             {
               callServer,
@@ -157,6 +167,7 @@ export async function start() {
       <RootErrorBoundary>
         <LayoutHandler>
           <LayoutRoot />
+          <ServerActionRedirectHandler />
         </LayoutHandler>
       </RootErrorBoundary>
     </RouterContext.Provider>

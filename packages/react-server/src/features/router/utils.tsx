@@ -1,3 +1,5 @@
+import type { ReactServerErrorContext } from "../../lib/error";
+
 export type LayoutRequest = Record<
   string,
   {
@@ -6,7 +8,13 @@ export type LayoutRequest = Record<
   }
 >;
 
-export type ServerLayoutData = Record<string, React.ReactNode>;
+export type ServerRouterData = {
+  // TODO: can action return other things too?
+  action?: {
+    error?: ReactServerErrorContext;
+  };
+  layout: Record<string, React.ReactNode>;
+};
 
 export const LAYOUT_ROOT_NAME = "__root";
 
