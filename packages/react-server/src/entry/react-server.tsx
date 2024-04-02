@@ -63,6 +63,7 @@ export const handler: ReactServerHandler = async (ctx) => {
         const stream = reactServerDomServer.renderToReadableStream(data, {});
         return new Response(stream, {
           headers: {
+            ...errorCtx.headers,
             "content-type": "text/x-component; charset=utf-8",
           },
         });
