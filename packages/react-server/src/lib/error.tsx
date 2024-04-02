@@ -44,6 +44,8 @@ export function getErrorContext(
   return;
 }
 
+export const DEFAULT_ERROR_CONTEXT: ReactServerErrorContext = { status: 500 };
+
 const STATUS_TEXT_MAP = new Map([
   [400, "Bad Request"],
   [403, "Forbidden"],

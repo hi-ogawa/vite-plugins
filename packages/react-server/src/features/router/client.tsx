@@ -28,10 +28,10 @@ export function ServerActionRedirectHandler() {
 
   const history = useRouter((s) => s.history);
   React.useEffect(() => {
-    if (data.redirect) {
-      history.push(data.redirect.location);
+    if (data.action?.error?.redirectLocation) {
+      history.push(data.action?.error?.redirectLocation);
     }
-  }, [data.redirect]);
+  }, [data.action]);
 
   return null;
 }

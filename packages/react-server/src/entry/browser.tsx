@@ -98,13 +98,8 @@ export async function start() {
         memoize(async (currentPromise: Promise<ServerRouterData>) => {
           const current = await currentPromise;
           const next = await nextPromise;
-          if (next.redirect) {
-            return {
-              redirect: next.redirect,
-              layout: current.layout,
-            };
-          }
           return {
+            action: next.action,
             layout: {
               ...current.layout,
               ...next.layout,

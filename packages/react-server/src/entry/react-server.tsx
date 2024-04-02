@@ -15,6 +15,7 @@ import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
+  DEFAULT_ERROR_CONTEXT,
   ReactServerDigestError,
   createError,
   getErrorContext,
@@ -51,36 +52,30 @@ export const handler: ReactServerHandler = async (ctx) => {
     try {
       await actionHandler(ctx);
     } catch (e) {
-      const errorCtx = getErrorContext(e);
-      if (errorCtx?.redirectLocation) {
-        if (rscOnly) {
-          const stream =
-            reactServerDomServer.renderToReadableStream<ServerRouterData>(
-              {
-                redirect: {
-                  location: errorCtx.redirectLocation,
-                },
-                layout: {},
-              },
-              {},
-            );
-          return new Response(stream, {
-            headers: {
-              "content-type": "text/x-component; charset=utf-8",
-            },
-          });
-        } else {
-          return new Response(null, {
-            status: errorCtx.status,
-            headers: {
-              location: errorCtx.redirectLocation,
-            },
-          });
-        }
+      const errorCtx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+      if (rscOnly) {
+        // returns empty layout to keep current layout and
+        // let browser initiate clie-side navigation for redirection error
+        const data: ServerRouterData = {
+          action: { error: errorCtx },
+          layout: {},
+        };
+        const stream = reactServerDomServer.renderToReadableStream(data, {});
+        return new Response(stream, {
+          headers: {
+            "content-type": "text/x-component; charset=utf-8",
+          },
+        });
       }
-
       // TODO: general action error handling?
-      throw e;
+      return new Response(null, {
+        status: errorCtx.status,
+        headers: errorCtx.redirectLocation
+          ? {
+              location: errorCtx.redirectLocation,
+            }
+          : {},
+      });
     }
   }
 
