@@ -168,7 +168,7 @@ export async function renderHtml(
   return new Response(htmlStream, {
     status,
     headers: {
-      "content-type": "text/html, charset=utf-8",
+      "content-type": "text/html",
     },
   });
 }
