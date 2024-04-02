@@ -489,7 +489,7 @@ test("redirect server action @js", async ({ page }) => {
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
-test.only("action context @js", async ({ page }) => {
+test("action context @js", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/session");
   await waitForHydration(page);
@@ -517,7 +517,7 @@ test.only("action context @js", async ({ page }) => {
   await page.getByText("Hi, anonymous user!").click();
 });
 
-test.only("action context @nojs", async ({ browser }) => {
+test("action context @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/session");
