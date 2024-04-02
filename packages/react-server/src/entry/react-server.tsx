@@ -11,6 +11,7 @@ import {
   type ServerRouterData,
   createLayoutContentRequest,
 } from "../features/router/utils";
+import { actionContextMap } from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
@@ -185,6 +186,12 @@ async function actionHandler({ request }: { request: Request }) {
     action = mod[name];
   }
 
+  const responseHeaders = new Headers();
+  actionContextMap.set(formData, { request, responseHeaders });
+
   // TODO: action return value?
   await action(formData);
+
+  // TODO: write headers on successfull action
+  return { responseHeaders };
 }
