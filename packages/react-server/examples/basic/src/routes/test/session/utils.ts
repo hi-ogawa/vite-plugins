@@ -1,18 +1,11 @@
-import { tinyassert } from "@hiogawa/utils";
+import { objectHas, tinyassert } from "@hiogawa/utils";
 import * as cookieLib from "cookie";
-import * as z from "valibot";
 
 // mini cookie utils
 
-const sessionSchema = z.object({
-  user: z.optional(
-    z.object({
-      name: z.string(),
-    }),
-  ),
-});
-
-type SessionData = z.Output<typeof sessionSchema>;
+type SessionData = {
+  name?: string;
+};
 
 const SESSION_KEY = "__session";
 
@@ -24,7 +17,9 @@ export function getSession(request: Request): SessionData | undefined {
     if (token) {
       try {
         const data = JSON.parse(decodeURIComponent(token));
-        return z.parse(sessionSchema, data);
+        tinyassert(objectHas(data, "name"));
+        tinyassert(typeof data.name === "string");
+        return { name: data.name };
       } catch (e) {
         console.error(e);
       }

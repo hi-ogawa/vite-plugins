@@ -4,10 +4,10 @@ import { getSession } from "./utils";
 
 export default function Page(props: PageProps) {
   const session = getSession(props.request);
-  if (session?.user) {
+  if (session?.name) {
     return (
       <form className="flex flex-col gap-2 p-2 max-w-sm" action={signout}>
-        Hello {session?.user?.name || "TODO"}!
+        Hello {session.name}!
         <button className="antd-btn antd-btn-default">Signout</button>
       </form>
     );

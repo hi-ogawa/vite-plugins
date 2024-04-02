@@ -15,7 +15,7 @@ export async function signin(formData: FormData) {
 
   throw redirect("/test/session", {
     headers: {
-      "set-cookie": setSession({ user: { name } }),
+      "set-cookie": setSession({ name }),
     },
   });
 }
