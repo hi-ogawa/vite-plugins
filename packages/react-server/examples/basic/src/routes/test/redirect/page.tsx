@@ -9,21 +9,26 @@ export default async function Page(props: PageProps) {
   if (url.search) {
     await sleep(500);
   }
-  if (url.search.includes("server-component")) {
-    throw redirect("/test/redirect?ok");
+  if (url.search.includes("from-server-component")) {
+    throw redirect("/test/redirect?ok=server-component");
   }
 
   return (
-    <div className="flex gap-2">
-      <Link
-        className="antd-btn antd-btn-default px-2"
-        href="/test/redirect?server-component"
-      >
-        From Server Component
-      </Link>
-      <form action={testRedirect}>
-        <button className="antd-btn antd-btn-default px-2">From Action</button>
-      </form>
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
+        <Link
+          className="antd-btn antd-btn-default px-2"
+          href="/test/redirect?from-server-component"
+        >
+          From Server Component
+        </Link>
+        <form action={testRedirect}>
+          <button className="antd-btn antd-btn-default px-2">
+            From Action
+          </button>
+        </form>
+      </div>
+      <div>{url.search.slice(1)}</div>
     </div>
   );
 }

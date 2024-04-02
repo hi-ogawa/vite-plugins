@@ -445,7 +445,7 @@ test("head in rsc", async ({ page }) => {
 });
 
 test("redirect ssr", async ({ page }) => {
-  const res = await page.request.get("/test/redirect?server-component", {
+  const res = await page.request.get("/test/redirect?from-server-component", {
     maxRedirects: 0,
   });
   expect(res.status()).toBe(307);
@@ -453,7 +453,7 @@ test("redirect ssr", async ({ page }) => {
   expect(await res.text()).toBe("");
 
   checkNoError(page);
-  await page.goto("/test/redirect?server-component");
+  await page.goto("/test/redirect?from-server-component");
   await page.waitForURL("/test/redirect?ok");
 });
 

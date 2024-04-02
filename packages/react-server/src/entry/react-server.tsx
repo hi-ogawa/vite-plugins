@@ -54,9 +54,9 @@ export const handler: ReactServerHandler = async (ctx) => {
       const errorCtx = getErrorContext(e);
       if (errorCtx?.redirectLocation) {
         if (rscOnly) {
-          // create new request
-          // render rsc stream to propage error on client?
           // TODO
+          // return empty layout data to keep current client layout +
+          // return additional metadata to trigger client side navigation separately?
           throw e;
         } else {
           return new Response(null, {
