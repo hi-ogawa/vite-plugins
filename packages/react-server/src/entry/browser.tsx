@@ -1,13 +1,8 @@
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
-import {
-  LayoutManager,
-  LayoutManagerContext,
-  LayoutRoot,
-  flattenLayoutMapPromise,
-} from "../features/router/layout-manager";
+import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import {
   type ServerLayoutData,
   createLayoutContentRequest,
@@ -37,23 +32,13 @@ export async function start() {
 
   const history = createBrowserHistory();
   const router = new Router(history);
-  const layoutManager = new LayoutManager();
 
-  function updateLayout(
-    keys: string[],
-    layoutPromise: Promise<ServerLayoutData>,
-    transitionType?: "navigation" | "action",
-  ) {
-    layoutManager.update(
-      flattenLayoutMapPromise(keys, layoutPromise),
-      transitionType,
-    );
-  }
+  let __setLayout: (v: Promise<ServerLayoutData>) => void;
+  let __startActionTransition: React.TransitionStartFunction;
 
   //
   // server action callback
   //
-
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
     if (0) {
@@ -76,40 +61,47 @@ export async function start() {
         body: args[0],
       },
     );
-    updateLayout(
-      newKeys,
-      reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
-        callServer,
-      }),
-      "action",
-    );
+    __startActionTransition(() => {
+      __setLayout(
+        reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
+          callServer,
+        }),
+      );
+    });
   };
 
   // expose as global to be used for createServerReference
   __global.callServer = callServer;
 
-  // set initial layout data from inline <script>
-  {
-    const stream = readStreamScript<string>().pipeThrough(
-      new TextEncoderStream(),
+  // prepare initial layout data from inline <script>
+  const initialLayoutPromise =
+    reactServerDomClient.createFromReadableStream<ServerLayoutData>(
+      readStreamScript<string>().pipeThrough(new TextEncoderStream()),
+      { callServer },
     );
-    updateLayout(
-      Object.keys(createLayoutContentRequest(history.location.pathname)),
-      reactServerDomClient.createFromReadableStream<ServerLayoutData>(stream, {
-        callServer,
-      }),
-    );
-  }
 
   //
   // browser root
   //
 
-  function Root() {
+  function LayoutHandler(props: React.PropsWithChildren) {
+    const [layoutPromise, setLayoutPromise] =
+      React.useState<Promise<ServerLayoutData>>(initialLayoutPromise);
+
+    // very shaky trick to merge with current layout
+    __setLayout = (nextPromise) => {
+      setLayoutPromise(
+        memoize(async (currentPromise) => {
+          const current = await currentPromise;
+          const next = await nextPromise;
+          return { ...current, ...next };
+        }),
+      );
+    };
+
     const [isPending, startTransition] = React.useTransition();
     const [isActionPending, startActionTransition] = React.useTransition();
-    __global.startTransition = startTransition;
-    __global.startActionTransition = startActionTransition;
+    __startActionTransition = startActionTransition;
 
     React.useEffect(() => router.setup(), []);
 
@@ -141,25 +133,32 @@ export async function start() {
       debug("[navigation]", location, { pathname, lastPathname, newKeys });
 
       const request = new Request(wrapRscRequestUrl(location.href, newKeys));
-      updateLayout(
-        newKeys,
-        reactServerDomClient.createFromFetch<ServerLayoutData>(fetch(request), {
-          callServer,
-        }),
-        "navigation",
-      );
+      startTransition(() => {
+        __setLayout(
+          reactServerDomClient.createFromFetch<ServerLayoutData>(
+            fetch(request),
+            {
+              callServer,
+            },
+          ),
+        );
+      });
     }, [location]);
 
-    return <LayoutRoot />;
+    return (
+      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
+        {props.children}
+      </LayoutStateContext.Provider>
+    );
   }
 
   let reactRootEl = (
     <RouterContext.Provider value={router}>
-      <LayoutManagerContext.Provider value={layoutManager}>
-        <RootErrorBoundary>
-          <Root />
-        </RootErrorBoundary>
-      </LayoutManagerContext.Provider>
+      <RootErrorBoundary>
+        <LayoutHandler>
+          <LayoutRoot />
+        </LayoutHandler>
+      </RootErrorBoundary>
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {
