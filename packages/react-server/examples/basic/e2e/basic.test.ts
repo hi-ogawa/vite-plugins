@@ -449,7 +449,9 @@ test("redirect ssr", async ({ page }) => {
     maxRedirects: 0,
   });
   expect(res.status()).toBe(307);
-  expect(res.headers()).toMatchObject({ location: "/test/redirect?ok=server-component" });
+  expect(res.headers()).toMatchObject({
+    location: "/test/redirect?ok=server-component",
+  });
   expect(await res.text()).toBe("");
 
   checkNoError(page);
