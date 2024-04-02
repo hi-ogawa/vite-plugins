@@ -1,4 +1,4 @@
-import { tinyassert } from "@hiogawa/utils";
+import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
@@ -42,15 +42,24 @@ export function generateRouteTree(
   return tree;
 }
 
+async function importDefault<T>(
+  lazyMod?: () => Promise<{ default: T }>,
+): Promise<T | undefined> {
+  if (lazyMod) {
+    const mod = await lazyMod();
+    tinyassert(objectHas(mod, "default"), `no deafult export found`);
+    return mod.default;
+  }
+  return;
+}
+
 // use own "use client" components as external
 function importClientInternal(): Promise<typeof import("../client-internal")> {
   return import("@hiogawa/react-server/client-internal" as string);
 }
 
 async function renderPage(node: RouteTreeNode, props: PageProps) {
-  const Page = node.value?.page
-    ? (await node.value.page()).default
-    : ThrowNotFound;
+  const Page = (await importDefault(node.value?.page)) ?? ThrowNotFound;
   return <Page {...props} />;
 }
 
@@ -65,11 +74,11 @@ async function renderLayout(
   let acc = <LayoutContent name={name} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
-  const ErrorPage = node.value?.error && (await node.value.error()).default;
+  const ErrorPage = await importDefault(node.value?.error);
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
-  const Layout = node.value?.layout && (await node.value?.layout()).default;
+  const Layout = await importDefault(node.value?.layout);
   if (Layout) {
     return <Layout {...props}>{acc}</Layout>;
   }
