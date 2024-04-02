@@ -548,11 +548,6 @@ function vitePluginServerUseClient({
           result += `export const ${name} = createClientReference("${id}::${name}");\n`;
         }
       }
-      if (manager.buildType) {
-        // embed this in source code to later collect
-        // "use client" dependencies for each server route
-        result += `console.log("__use_client_tracker__:${id}")\n`;
-      }
       debug(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
