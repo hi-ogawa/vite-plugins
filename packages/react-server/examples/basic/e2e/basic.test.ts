@@ -454,7 +454,7 @@ test("redirect ssr", async ({ page }) => {
 
   checkNoError(page);
   await page.goto("/test/redirect?server-component");
-  await page.waitForURL("/test/redirect?redirected");
+  await page.waitForURL("/test/redirect?ok");
 });
 
 test("redirect client", async ({ page }) => {
