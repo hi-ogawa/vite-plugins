@@ -2,7 +2,7 @@ import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
-import type { ServerLayoutData } from "../features/router/utils";
+import type { ServerRouterData } from "../features/router/utils";
 import {
   createModuleMap,
   initializeWebpackSsr,
@@ -68,7 +68,7 @@ export async function renderHtml(
   const [stream1, stream2] = result.stream.tee();
 
   const layoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerLayoutData>(stream1, {
+    reactServerDomClient.createFromReadableStream<ServerRouterData>(stream1, {
       ssrManifest: {
         moduleMap: createModuleMap(),
         moduleLoading: null,

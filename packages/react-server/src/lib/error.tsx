@@ -20,7 +20,7 @@ export function createError(ctx: ReactServerErrorContext) {
   return new ReactServerDigestError(digest);
 }
 
-export function redirect(location: string, status: number = 307) {
+export function redirect(location: string, status: number = 302) {
   return createError({ status, redirectLocation: location });
 }
 

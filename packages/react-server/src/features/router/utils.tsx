@@ -6,7 +6,13 @@ export type LayoutRequest = Record<
   }
 >;
 
-export type ServerLayoutData = Record<string, React.ReactNode>;
+export type ServerRouterData = {
+  // TODO: generalize to actionData?
+  redirect?: {
+    location: string;
+  };
+  layout: Record<string, React.ReactNode>;
+};
 
 export const LAYOUT_ROOT_NAME = "__root";
 

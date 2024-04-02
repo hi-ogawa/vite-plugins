@@ -448,7 +448,7 @@ test("redirect ssr", async ({ page }) => {
   const res = await page.request.get("/test/redirect?from-server-component", {
     maxRedirects: 0,
   });
-  expect(res.status()).toBe(307);
+  expect(res.status()).toBe(302);
   expect(res.headers()).toMatchObject({
     location: "/test/redirect?ok=server-component",
   });

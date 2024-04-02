@@ -8,7 +8,7 @@ import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import {
   type LayoutRequest,
-  type ServerLayoutData,
+  type ServerRouterData,
   createLayoutContentRequest,
 } from "../features/router/utils";
 import { ejectActionId } from "../features/server-action/utils";
@@ -54,10 +54,21 @@ export const handler: ReactServerHandler = async (ctx) => {
       const errorCtx = getErrorContext(e);
       if (errorCtx?.redirectLocation) {
         if (rscOnly) {
-          // TODO
-          // return empty layout data to keep current client layout +
-          // return additional metadata to trigger client side navigation separately?
-          throw e;
+          const stream =
+            reactServerDomServer.renderToReadableStream<ServerRouterData>(
+              {
+                redirect: {
+                  location: errorCtx.redirectLocation,
+                },
+                layout: {},
+              },
+              {},
+            );
+          return new Response(stream, {
+            headers: {
+              "content-type": "text/x-component; charset=utf-8",
+            },
+          });
         } else {
           return new Response(null, {
             status: errorCtx.status,
@@ -68,7 +79,7 @@ export const handler: ReactServerHandler = async (ctx) => {
         }
       }
 
-      // TODO
+      // TODO: general action error handling?
       throw e;
     }
   }
@@ -113,8 +124,8 @@ async function render({
     (v) => result[`${v.type}s`][v.name],
   );
   const bundlerConfig = createBundlerConfig();
-  return reactServerDomServer.renderToReadableStream<ServerLayoutData>(
-    nodeMap,
+  return reactServerDomServer.renderToReadableStream<ServerRouterData>(
+    { layout: nodeMap },
     bundlerConfig,
     {
       onError: reactServerOnError,
