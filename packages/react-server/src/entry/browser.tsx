@@ -84,7 +84,7 @@ export async function start() {
   // browser root
   //
 
-  function LayoutDataProvider(props: React.PropsWithChildren) {
+  function LayoutHandler(props: React.PropsWithChildren) {
     const [layoutPromise, setLayoutPromise] =
       React.useState<Promise<ServerLayoutData>>(initialLayoutPromise);
 
@@ -155,9 +155,9 @@ export async function start() {
   let reactRootEl = (
     <RouterContext.Provider value={router}>
       <RootErrorBoundary>
-        <LayoutDataProvider>
+        <LayoutHandler>
           <LayoutRoot />
-        </LayoutDataProvider>
+        </LayoutHandler>
       </RootErrorBoundary>
     </RouterContext.Provider>
   );
