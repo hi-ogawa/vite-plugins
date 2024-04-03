@@ -11,10 +11,11 @@ export function Link(
 ) {
   const history = useRouter((s) => s.history);
   const preloadProps = usePreloadHandlers(props);
+  const { prefetch, ...aProps } = props;
 
   return (
     <a
-      {...props}
+      {...aProps}
       {...(props.prefetch ? preloadProps : {})}
       onClick={(e) => {
         const target = e.currentTarget.target;
