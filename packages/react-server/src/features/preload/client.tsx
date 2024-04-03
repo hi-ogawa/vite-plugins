@@ -1,8 +1,8 @@
 import React from "react";
-import type { AppMetadata, AssetDeps } from "./plugin";
+import type { AssetDeps, PreloadManifest } from "./plugin";
 import { getRouteAssetsDeps } from "./utils";
 
-declare let __preloadManifest: AppMetadata;
+declare let __preloadManifest: PreloadManifest;
 
 function usePreloadDeps(pathname: string): AssetDeps {
   // for now, build only

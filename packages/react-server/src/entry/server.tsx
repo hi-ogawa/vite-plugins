@@ -1,7 +1,7 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
-import type { AppMetadata } from "../features/preload/plugin";
+import type { PreloadManifest } from "../features/preload/plugin";
 import { getRouteAssetsDeps } from "../features/preload/utils";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
@@ -198,8 +198,8 @@ async function setupPreloadHead(pathname: string) {
   if (import.meta.env.DEV) {
     return "";
   } else {
-    const manifest: AppMetadata = (
-      await import("/dist/client/app-metadata.json" as string)
+    const manifest: PreloadManifest = (
+      await import("/dist/client/preload-manifest.json" as string)
     ).default;
     const deps = getRouteAssetsDeps(pathname, manifest);
     return [
@@ -210,7 +210,7 @@ async function setupPreloadHead(pathname: string) {
         (href) => `<link rel="preload" as="style" href="/${href}" />`,
       ),
       "<!-- ssr preload end -->",
-      `<script>globalThis.__appMetadata = ${JSON.stringify(manifest)}</script>`,
+      `<script>globalThis.__preloadManifest = ${JSON.stringify(manifest)}</script>`,
       "\n",
     ].join("\n");
   }

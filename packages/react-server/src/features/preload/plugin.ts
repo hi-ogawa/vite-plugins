@@ -22,7 +22,7 @@ export type AssetDeps = {
 };
 
 // TODO: preload manifest
-export type AppMetadata = {
+export type PreloadManifest = {
   routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
 };
 
@@ -83,11 +83,11 @@ export function vitePluginUseClientPrefetch({
           ]),
         );
         const tree = generateRouteTree(globEntries);
-        const result: AppMetadata = {
+        const result: PreloadManifest = {
           routeTree: tree,
         };
         await fs.promises.writeFile(
-          "dist/client/app-metadata.json",
+          "dist/client/preload-manifest.json",
           JSON.stringify(result, null, 2),
         );
       }
