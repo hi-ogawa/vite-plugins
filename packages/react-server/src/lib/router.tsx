@@ -9,8 +9,7 @@ import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
 
-// TODO: move to features/router/react-server
-// TODO: refactor with packages/react-server/src/utils/tree.ts
+// TODO: move to features/router
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
