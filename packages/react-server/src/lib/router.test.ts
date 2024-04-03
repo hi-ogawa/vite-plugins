@@ -17,7 +17,9 @@ describe(generateRouteTree, () => {
       "/demo/layout.tsx",
       "/demo/page.tsx",
     ];
-    const input = Object.fromEntries(files.map((k) => [k, { default: k }]));
+    const input = Object.fromEntries(
+      files.map((k) => [k, async () => ({ default: k })]),
+    );
     const tree = generateRouteTree(input);
     expect(tree).toMatchInlineSnapshot(`
       {
@@ -26,19 +28,13 @@ describe(generateRouteTree, () => {
             "children": {
               "demo": {
                 "value": {
-                  "layout": {
-                    "default": "/demo/layout.tsx",
-                  },
-                  "page": {
-                    "default": "/demo/page.tsx",
-                  },
+                  "layout": [Function],
+                  "page": [Function],
                 },
               },
               "other": {
                 "value": {
-                  "page": {
-                    "default": "/other/page.tsx",
-                  },
+                  "page": [Function],
                 },
               },
               "test": {
@@ -47,43 +43,29 @@ describe(generateRouteTree, () => {
                     "children": {
                       "hello": {
                         "value": {
-                          "page": {
-                            "default": "/test/[dynamic]/hello/page.tsx",
-                          },
+                          "page": [Function],
                         },
                       },
                     },
                     "value": {
-                      "page": {
-                        "default": "/test/[dynamic]/page.tsx",
-                      },
+                      "page": [Function],
                     },
                   },
                   "other": {
                     "value": {
-                      "page": {
-                        "default": "/test/other/page.tsx",
-                      },
+                      "page": [Function],
                     },
                   },
                 },
                 "value": {
-                  "layout": {
-                    "default": "/test/layout.tsx",
-                  },
-                  "page": {
-                    "default": "/test/page.tsx",
-                  },
+                  "layout": [Function],
+                  "page": [Function],
                 },
               },
             },
             "value": {
-              "layout": {
-                "default": "/layout.tsx",
-              },
-              "page": {
-                "default": "/page.tsx",
-              },
+              "layout": [Function],
+              "page": [Function],
             },
           },
         },
