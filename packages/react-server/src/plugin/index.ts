@@ -403,9 +403,11 @@ export function vitePluginReactServer(options?: {
       }
       // build
       if (manager.buildType === "client") {
+        // add "client-internal" for preload
         return /* js */ `
           import "virtual:react-server-css.js";
-          import "${ENTRY_CLIENT}"
+          import("@hiogawa/react-server/client-internal");
+          import "${ENTRY_CLIENT}";
         `;
       }
       tinyassert(false);
