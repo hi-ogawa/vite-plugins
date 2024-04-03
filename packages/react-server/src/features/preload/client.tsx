@@ -3,44 +3,24 @@ import ReactDom from "react-dom";
 import type { AssetDeps, PreloadManifest } from "./plugin";
 import { getRouteAssetsDeps } from "./utils";
 
+// global inject by ssr <script>
 declare let __preloadManifest: PreloadManifest;
-
-function usePreloadDeps(props: {
-  href: string;
-  prefetch?: boolean;
-}): AssetDeps | undefined {
-  // for now, build only
-  if (import.meta.env.DEV) {
-    return;
-  }
-
-  // for now, client only since SSR injects preload links to head manually without react
-  const hydrated = useHydrated();
-  const enabled = props.prefetch && hydrated;
-
-  return React.useMemo(
-    () =>
-      enabled ? getRouteAssetsDeps(props.href, __preloadManifest) : undefined,
-    [enabled, props.href],
-  );
-}
 
 export function usePreloadHandlers(props: {
   href: string;
   prefetch?: boolean;
 }) {
-  const deps = usePreloadDeps(props);
+  // for now, client only since SSR injects preload links to head manually without react
+  const enabled = useHydrated() && props.prefetch;
+  const deps = React.useMemo(
+    () =>
+      enabled ? getRouteAssetsDeps(props.href, __preloadManifest) : undefined,
+    [enabled, props.href],
+  );
 
   function preload() {
-    if (!deps) {
-      return;
-    }
-    // TODO: do this in react-server handler?
-    for (const href of deps.js) {
-      ReactDom.preloadModule(href);
-    }
-    for (const href of deps.css) {
-      ReactDom.preload(href, { as: "style" });
+    if (deps) {
+      preloadAssetDeps(deps);
     }
   }
 
@@ -58,4 +38,14 @@ function useHydrated(): boolean {
     () => true,
     () => false,
   );
+}
+
+// TODO: do this in server component?
+function preloadAssetDeps(deps: AssetDeps) {
+  for (const href of deps.js) {
+    ReactDom.preloadModule(href);
+  }
+  for (const href of deps.css) {
+    ReactDom.preload(href, { as: "style" });
+  }
 }

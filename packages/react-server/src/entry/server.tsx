@@ -195,23 +195,25 @@ function injectToHead(data: string) {
 }
 
 async function setupPreloadHead(pathname: string) {
+  let manifest: PreloadManifest;
   if (import.meta.env.DEV) {
-    return "";
+    // TODO: for now build only
+    manifest = { routeTree: {} };
   } else {
-    const manifest: PreloadManifest = (
-      await import("/dist/client/preload-manifest.json" as string)
-    ).default;
-    const deps = getRouteAssetsDeps(pathname, manifest);
-    return [
-      "\n",
-      "<!-- ssr preload start -->",
-      ...deps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
-      ...deps.css.map(
-        (href) => `<link rel="preload" as="style" href="${href}" />`,
-      ),
-      "<!-- ssr preload end -->",
-      `<script>globalThis.__preloadManifest = ${JSON.stringify(manifest)}</script>`,
-      "\n",
-    ].join("\n");
+    manifest = (await import("/dist/client/preload-manifest.json" as string))
+      .default;
   }
+  const deps = getRouteAssetsDeps(pathname, manifest);
+  // TODO: use ReactDom.preload in react server?
+  return [
+    "\n",
+    "<!-- ssr preload start -->",
+    ...deps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
+    ...deps.css.map(
+      (href) => `<link rel="preload" as="style" href="${href}" />`,
+    ),
+    "<!-- ssr preload end -->",
+    `<script>globalThis.__preloadManifest = ${JSON.stringify(manifest)}</script>`,
+    "\n",
+  ].join("\n");
 }
