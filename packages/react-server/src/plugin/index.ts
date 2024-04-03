@@ -2,7 +2,7 @@ import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, memoize, tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { Program } from "estree";
 import fg from "fast-glob";
 import MagicString from "magic-string";
@@ -371,9 +371,15 @@ export function vitePluginReactServer(options?: {
         );
         const entry = manifest[ENTRY_CLIENT_WRAPPER];
         tinyassert(entry);
-        const head = (entry.css ?? [])
-          .map((url) => `<link rel="stylesheet" href="/${url}" />`)
-          .join("");
+        const css = entry.css ?? [];
+        const js =
+          entry.dynamicImports
+            ?.map((k) => manifest[k]?.file)
+            .filter(typedBoolean) ?? [];
+        const head = [
+          ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
+          ...js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
+        ].join("\n");
         const result: SsrAssetsType = {
           bootstrapModules: [`/${entry.file}`],
           head,
@@ -565,8 +571,8 @@ function vitePluginServerUseClient({
      *   "some-file1": () => import("some-file1"),
      * }
      */
-    writeBundle: {
-      async handler(options, _bundle) {
+    closeBundle: {
+      async handler() {
         let result = `export default {\n`;
         for (let id of manager.rscUseClientIds) {
           // virtual module needs to be mapped back to the original form
@@ -578,11 +584,7 @@ function vitePluginServerUseClient({
           manager.clientReferenceIdMap[id] = to;
         }
         result += "};\n";
-        tinyassert(options.dir);
-        await fs.promises.writeFile(
-          path.join(options.dir, "client-references.js"),
-          result,
-        );
+        await fs.promises.writeFile("dist/rsc/client-references.js", result);
       },
     },
   };

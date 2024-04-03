@@ -28,6 +28,9 @@ export async function start() {
     return;
   }
 
+  // TODO: for now, quick way to preload client-internal which is only referenced internally from react-server router
+  await import("@hiogawa/react-server/client-internal" as string);
+
   initializeWebpackBrowser();
 
   const { default: reactServerDomClient } = await import(
