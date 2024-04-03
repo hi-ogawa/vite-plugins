@@ -536,7 +536,7 @@ test("preload ssr @build", async ({ request }) => {
 
   const res = await request.get("/test/deps");
   const resText = await res.text();
-  expect(resText).toContain(`<link rel="modulepreload" href="/${file}" />`);
+  expect(resText).toContain(`<link rel="modulepreload" href="/${file}"/>`);
 });
 
 test("preload client @build", async ({ page }) => {
