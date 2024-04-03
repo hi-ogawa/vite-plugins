@@ -86,7 +86,7 @@ export function vitePluginUseClientPrefetch({
           routeTree: tree,
         };
         await fs.promises.writeFile(
-          "dist/client/app-metadata.json",
+          "dist/client/build-metadata.json",
           JSON.stringify(result, null, 2),
         );
       }
