@@ -1,16 +1,12 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
-import {
-  type TreeNode,
-  createTree,
-  initTreeNode,
-  matchRouteChild,
-} from "../utils/tree";
+import { type TreeNode, initTreeNode, matchRouteChild } from "../utils/tree";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
 
 // TODO: move to features/router/react-server
+// TODO: refactor with packages/react-server/src/utils/tree.ts
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -26,27 +22,7 @@ interface RouteEntry {
   }>;
 }
 
-type RouteTreeNode = TreeNode<RouteEntry>;
-
-// generate component tree from glob import such as
-//   import.meta.glob("/**/(page|layout).(js|jsx|ts|tsx)")
-export function generateRouteTree(
-  globEntries: Record<string, () => Promise<unknown>>,
-) {
-  const entries: Record<string, RouteEntry> = {};
-  for (const [k, v] of Object.entries(globEntries)) {
-    const m = k.match(/^(.*)\/(page|layout|error)\.\w*$/);
-    tinyassert(m && 1 in m && 2 in m);
-    ((entries[m[1]] ??= {}) as any)[m[2]] = v;
-  }
-
-  const flatTree = Object.entries(entries).map(([k, v]) => ({
-    keys: k.split("/"),
-    value: v,
-  }));
-  const tree = createTree(flatTree);
-  return tree;
-}
+export type RouteTreeNode = TreeNode<RouteEntry>;
 
 async function importDefault<T>(
   lazyMod?: () => Promise<{ default: T }>,

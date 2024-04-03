@@ -1,8 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 
-// TODO: refactor with packages/react-server/src/lib/router.tsx
-
 export interface BaseRouteEntry<T> {
   page?: T;
   layout?: T;

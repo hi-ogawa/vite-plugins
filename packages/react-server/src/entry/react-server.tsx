@@ -22,7 +22,8 @@ import {
   getErrorContext,
 } from "../lib/error";
 import { __global } from "../lib/global";
-import { generateRouteTree, renderRouteMap } from "../lib/router";
+import { type RouteTreeNode, renderRouteMap } from "../lib/router";
+import { generateRouteTree } from "../utils/tree";
 
 const debug = createDebug("react-server:rsc");
 
@@ -154,7 +155,7 @@ function createRouter() {
   );
   const tree = generateRouteTree(
     objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length)),
-  );
+  ) as RouteTreeNode;
 
   return { tree };
 }
