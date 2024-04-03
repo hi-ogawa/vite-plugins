@@ -21,7 +21,6 @@ export type AssetDeps = {
   css: string[];
 };
 
-// TODO: preload manifest
 export type PreloadManifest = {
   routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
 };
