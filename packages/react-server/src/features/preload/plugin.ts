@@ -25,14 +25,14 @@ export type PreloadManifest = {
   routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
 };
 
-export function vitePluginUseClientPrefetch({
+export function vitePluginUseClientPreloadManifest({
   manager,
 }: {
   manager: ReactServerManager;
 }): PluginOption {
   manager;
   const plugin: Plugin = {
-    name: vitePluginUseClientPrefetch.name,
+    name: vitePluginUseClientPreloadManifest.name,
     apply: "build",
     async closeBundle() {
       if (manager.buildType === "client") {

@@ -18,7 +18,7 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
-import { vitePluginUseClientPrefetch } from "../features/preload/plugin";
+import { vitePluginUseClientPreloadManifest } from "../features/preload/plugin";
 import { __global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
@@ -302,7 +302,7 @@ export function vitePluginReactServer(options?: {
     rscParentPlugin,
     vitePluginSilenceUseClientBuildWarning(),
     vitePluginClientUseServer({ manager }),
-    vitePluginUseClientPrefetch({ manager }),
+    vitePluginUseClientPreloadManifest({ manager }),
     {
       name: "client-virtual-use-client-node-modules",
       resolveId(source, _importer, _options) {
