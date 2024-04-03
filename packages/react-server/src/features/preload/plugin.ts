@@ -23,6 +23,7 @@ export function vitePluginUseClientPrefetch({
           "dist/rsc",
         );
         console.log(serverResult);
+        console.log(manager.clientReferenceIdMap);
 
         const clientManifest = JSON.parse(
           await fs.promises.readFile(
@@ -41,23 +42,25 @@ export function vitePluginUseClientPrefetch({
 const CLIENT_REFERENCE_RE = /createClientReference\("(\w*)::(\w*)"\)/g;
 
 async function processReactServerManifest(manifest: Manifest, distDir: string) {
-  const serverClientReferenceMap = new DefaultMap<string, string[]>(() => []);
+  const serverClientMap = new DefaultMap<string, string[]>(() => []);
 
+  // regex to look for `createClientReference` in the source code
   for (const [k, v] of Object.entries(manifest)) {
     const filepath = join(distDir, v.file);
     const code = await fs.promises.readFile(filepath, "utf-8");
     const matches = code.matchAll(CLIENT_REFERENCE_RE);
     const ids = uniq([...matches].map((m) => m[1]!));
-    serverClientReferenceMap.get(k).push(...ids);
+    serverClientMap.get(k).push(...ids);
   }
 
-  for (const [k, v] of serverClientReferenceMap) {
-    serverClientReferenceMap.set(k, uniq(v));
+  for (const [k, v] of serverClientMap) {
+    serverClientMap.set(k, uniq(v));
   }
 
+  // resolve deep dependency
   const result = objectMapValues(manifest, (_v, k) => {
     const deps = collectDeps(k, manifest);
-    return [...deps].flatMap((k) => serverClientReferenceMap.get(k));
+    return [...deps].flatMap((k) => serverClientMap.get(k));
   });
 
   return result;
