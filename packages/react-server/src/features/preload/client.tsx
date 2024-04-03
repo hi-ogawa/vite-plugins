@@ -25,13 +25,17 @@ function usePreloadDeps(props: {
   );
 }
 
-export function usePreloadHandlers(props: { href: string; prefetch?: boolean }) {
+export function usePreloadHandlers(props: {
+  href: string;
+  prefetch?: boolean;
+}) {
   const deps = usePreloadDeps(props);
 
   function preload() {
     if (!deps) {
       return;
     }
+    // TODO: do this in react-server handler?
     for (const href of deps.js) {
       ReactDom.preloadModule(href);
     }
