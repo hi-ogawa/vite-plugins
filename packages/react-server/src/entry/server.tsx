@@ -1,6 +1,8 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
+import type { BuildMetadata } from "../features/preload/plugin";
+import { getRouteAssetsDeps } from "../features/preload/utils";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
 import {
@@ -107,9 +109,12 @@ export async function renderHtml(
   const assets: SsrAssetsType = (await import("virtual:ssr-assets" as string))
     .default;
 
+  let head = assets.head;
+  head += await getPreloadLinks(url.pathname);
+
   // inject DEBUG variable
   if (globalThis?.process?.env?.["DEBUG"]) {
-    assets.head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
+    head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
 
   // two pass SSR to re-render on error
@@ -155,7 +160,7 @@ export async function renderHtml(
 
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
-    .pipeThrough(injectToHead(assets.head))
+    .pipeThrough(injectToHead(head))
     .pipeThrough(
       injectStreamScript(
         stream2
@@ -187,4 +192,25 @@ function injectToHead(data: string) {
       controller.enqueue(chunk);
     },
   });
+}
+
+async function getPreloadLinks(pathname: string) {
+  if (import.meta.env.DEV) {
+    return "";
+  } else {
+    const manifest: BuildMetadata = await import(
+      "/dist/client/build-metadata.json" as string
+    );
+    const deps = getRouteAssetsDeps(pathname, manifest);
+    return [
+      "\n",
+      "<!-- ssr preload start -->",
+      ...deps.js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
+      ...deps.css.map(
+        (href) => `<link rel="preload" as="style" href="/${href}" />`,
+      ),
+      "<!-- ssr preload end -->",
+      "\n",
+    ].join("\n");
+  }
 }

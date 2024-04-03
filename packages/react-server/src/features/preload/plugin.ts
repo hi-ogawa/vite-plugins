@@ -21,6 +21,7 @@ export type AssetDeps = {
   css: string[];
 };
 
+// TODO: rename? during dev?
 export type BuildMetadata = {
   routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
 };

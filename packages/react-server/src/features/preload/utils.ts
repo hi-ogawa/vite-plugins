@@ -1,4 +1,4 @@
-import { objectMapValues, typedBoolean } from "@hiogawa/utils";
+import { objectMapValues, typedBoolean, uniq } from "@hiogawa/utils";
 import { matchRouteTree } from "../../utils/tree";
 import type { AssetDeps, BuildMetadata } from "./plugin";
 
@@ -15,5 +15,5 @@ export function getRouteAssetsDeps(
 
 export function mergeAssetDeps(entries: AssetDeps[]): AssetDeps {
   const deps: AssetDeps = { js: [], css: [] };
-  return objectMapValues(deps, (_v, k) => entries.flatMap((e) => e[k]));
+  return objectMapValues(deps, (_v, k) => uniq(entries.flatMap((e) => e[k])));
 }
