@@ -1,6 +1,12 @@
 import fs from "node:fs";
-import { join } from "node:path";
-import { DefaultMap, objectMapValues, tinyassert, uniq } from "@hiogawa/utils";
+import { join, resolve } from "node:path";
+import {
+  DefaultMap,
+  objectMapValues,
+  tinyassert,
+  typedBoolean,
+  uniq,
+} from "@hiogawa/utils";
 import type { Manifest, Plugin, PluginOption } from "vite";
 import type { ReactServerManager } from "../../plugin";
 
@@ -22,16 +28,35 @@ export function vitePluginUseClientPrefetch({
           reactServerManifest,
           "dist/rsc",
         );
-        console.log(serverResult);
-        console.log(manager.clientReferenceIdMap);
 
-        const clientManifest = JSON.parse(
+        const clientManifest: Manifest = JSON.parse(
           await fs.promises.readFile(
             "dist/client/.vite/manifest.json",
             "utf-8",
           ),
         );
-        processClientManifest(clientManifest);
+        const clientResult = processClientManifest(clientManifest);
+
+        const result = objectMapValues(serverResult, (ids) => {
+          let js: string[] = [];
+          let css: string[] = [];
+          for (const id of ids) {
+            const key = manager.clientReferenceIdMap[id];
+            tinyassert(key);
+            const chunks = clientResult[key];
+            tinyassert(chunks);
+            js.push(...chunks.map((c) => c.file));
+            css.push(...chunks.flatMap((c) => c.css).filter(typedBoolean));
+          }
+          js = uniq(js);
+          css = uniq(css);
+          return { js, css };
+        });
+
+        await fs.promises.writeFile(
+          "dist/client/server-assets-map.json",
+          JSON.stringify(result, null, 2),
+        );
       }
     },
   };
@@ -62,12 +87,24 @@ async function processReactServerManifest(manifest: Manifest, distDir: string) {
     const deps = collectDeps(k, manifest);
     return [...deps].flatMap((k) => serverClientMap.get(k));
   });
-
   return result;
 }
 
 function processClientManifest(manifest: Manifest) {
-  manifest;
+  const chunkDepsMap = objectMapValues(manifest, (_v, k) => {
+    const deps = collectDeps(k, manifest);
+    return [...deps].map((k) => manifest[k]!);
+  });
+
+  const result: typeof chunkDepsMap = {};
+  for (let [k, v] of Object.entries(manifest)) {
+    if (v.src) {
+      let src = v.src.startsWith("virtual:") ? v.src : resolve(v.src);
+      result[src] = chunkDepsMap[k]!;
+    }
+  }
+
+  return result;
 }
 
 function collectDeps(k: string, manifest: Manifest) {
