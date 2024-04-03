@@ -205,9 +205,9 @@ async function setupPreloadHead(pathname: string) {
     return [
       "\n",
       "<!-- ssr preload start -->",
-      ...deps.js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
+      ...deps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
       ...deps.css.map(
-        (href) => `<link rel="preload" as="style" href="/${href}" />`,
+        (href) => `<link rel="preload" as="style" href="${href}" />`,
       ),
       "<!-- ssr preload end -->",
       `<script>globalThis.__preloadManifest = ${JSON.stringify(manifest)}</script>`,

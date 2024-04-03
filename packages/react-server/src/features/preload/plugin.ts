@@ -67,9 +67,9 @@ export function vitePluginUseClientPrefetch({
                 ...chunks.flatMap((c) => c.css).filter(typedBoolean),
               );
             }
-            entry.js = uniq(entry.js);
-            entry.css = uniq(entry.css);
-            return entry;
+            return objectMapValues(entry, (hrefs) =>
+              uniq(hrefs.map((href) => "/" + href)),
+            );
           },
         );
 
