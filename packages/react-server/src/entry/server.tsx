@@ -1,8 +1,8 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
+import { SsrPreloadLinks } from "../features/preload/client";
 import type { PreloadManifest } from "../features/preload/plugin";
-import { getRouteAssetsDeps } from "../features/preload/utils";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
 import {
@@ -88,10 +88,16 @@ export async function renderHtml(
   });
   const router = new Router(history);
 
+  const preloadManifest = await importPreloadManifest();
+
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <LayoutStateContext.Provider value={{ data: layoutPromise }}>
         <LayoutRoot />
+        <SsrPreloadLinks
+          pathname={url.pathname}
+          preloadManifest={preloadManifest}
+        />
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
   );
@@ -110,7 +116,7 @@ export async function renderHtml(
     .default;
 
   let head = assets.head;
-  head += await setupPreloadHead(url.pathname);
+  head += `<script>globalThis.__preloadManifest = ${JSON.stringify(preloadManifest)}</script>\n`;
 
   // inject DEBUG variable
   if (globalThis?.process?.env?.["DEBUG"]) {
@@ -194,26 +200,11 @@ function injectToHead(data: string) {
   });
 }
 
-async function setupPreloadHead(pathname: string) {
-  let manifest: PreloadManifest;
+async function importPreloadManifest(): Promise<PreloadManifest> {
   if (import.meta.env.DEV) {
-    // TODO: for now build only
-    manifest = { routeTree: {} };
+    return { routeTree: {} };
   } else {
-    manifest = (await import("/dist/client/preload-manifest.json" as string))
-      .default;
+    const mod = await import("/dist/client/preload-manifest.json" as string);
+    return mod.default;
   }
-  const deps = getRouteAssetsDeps(pathname, manifest);
-  // TODO: use ReactDom.preload in react server?
-  return [
-    "\n",
-    "<!-- ssr preload start -->",
-    ...deps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
-    ...deps.css.map(
-      (href) => `<link rel="preload" as="style" href="${href}" />`,
-    ),
-    "<!-- ssr preload end -->",
-    `<script>globalThis.__preloadManifest = ${JSON.stringify(manifest)}</script>`,
-    "\n",
-  ].join("\n");
 }

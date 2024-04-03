@@ -18,17 +18,24 @@ export function usePreloadHandlers(props: {
     [enabled, props.href],
   );
 
-  function preload() {
-    if (deps) {
-      preloadAssetDeps(deps);
-    }
+  if (!deps) {
+    return {};
   }
 
   return {
-    onMouseEnter: () => preload(),
-    onTouchStart: () => preload(),
-    onFocus: () => preload(),
+    onMouseEnter: () => preloadAssetDeps(deps),
+    onTouchStart: () => preloadAssetDeps(deps),
+    onFocus: () => preloadAssetDeps(deps),
   } satisfies JSX.IntrinsicElements["a"];
+}
+
+export function SsrPreloadLinks(props: {
+  pathname: string;
+  preloadManifest: PreloadManifest;
+}) {
+  const deps = getRouteAssetsDeps(props.pathname, props.preloadManifest);
+  preloadAssetDeps(deps);
+  return null;
 }
 
 // https://tkdodo.eu/blog/avoiding-hydration-mismatches-with-use-sync-external-store#usesyncexternalstore
@@ -40,7 +47,6 @@ function useHydrated(): boolean {
   );
 }
 
-// TODO: do this in server component?
 function preloadAssetDeps(deps: AssetDeps) {
   for (const href of deps.js) {
     ReactDom.preloadModule(href);
