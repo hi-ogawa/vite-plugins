@@ -1,6 +1,12 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
+import {
+  type TreeNode,
+  createTree,
+  initTreeNode,
+  matchRouteChild,
+} from "../utils/tree";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
 
@@ -96,14 +102,14 @@ export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
   const layouts: Record<string, React.ReactNode> = {};
   for (const prefix of prefixes) {
     const key = prefix.split("/").at(-1)!;
-    const next = matchChild(key, node);
+    const next = matchRouteChild(key, node);
     if (next?.child) {
       node = next.child;
       if (next.param) {
         params = { ...params, [next.param]: key };
       }
     } else {
-      node = initNode();
+      node = initTreeNode();
     }
     const props: BaseProps = { request, params };
     layouts[prefix] = await renderLayout(node, props, prefix);
@@ -133,51 +139,4 @@ export interface ErrorPageProps {
   error: Error;
   serverError?: ReactServerErrorContext;
   reset: () => void;
-}
-
-function matchChild(input: string, node: RouteTreeNode) {
-  if (!node.children) {
-    return;
-  }
-  // TODO: sort to dynmaic one come last
-  // TODO: catch-all route
-  for (const [segment, child] of Object.entries(node.children)) {
-    const m = segment.match(/^\[(.*)\]$/);
-    if (m) {
-      tinyassert(1 in m);
-      return { param: m[1], child };
-    }
-    if (segment === input) {
-      return { child };
-    }
-  }
-  return;
-}
-
-//
-// general tree utils copied from vite-glob-routes
-// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
-//
-
-type TreeNode<T> = {
-  value?: T;
-  children?: Record<string, TreeNode<T>>;
-};
-
-function initNode<T>(): TreeNode<T> {
-  return {};
-}
-
-function createTree<T>(entries: { value: T; keys: string[] }[]): TreeNode<T> {
-  const root = initNode<T>();
-
-  for (const e of entries) {
-    let node = root;
-    for (const key of e.keys) {
-      node = (node.children ??= {})[key] ??= initNode();
-    }
-    node.value = e.value;
-  }
-
-  return root;
 }

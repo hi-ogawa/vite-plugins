@@ -45,14 +45,14 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
         params = { ...params, [next.param]: key };
       }
     } else {
-      node = initNode();
+      node = initTreeNode();
     }
     nodes.push(node);
   }
   return { nodes };
 }
 
-function matchRouteChild<T>(input: string, node: TreeNode<T>) {
+export function matchRouteChild<T>(input: string, node: TreeNode<T>) {
   if (!node.children) {
     return;
   }
@@ -81,19 +81,19 @@ export type TreeNode<T> = {
   children?: Record<string, TreeNode<T>>;
 };
 
-export function initNode<T>(): TreeNode<T> {
+export function initTreeNode<T>(): TreeNode<T> {
   return {};
 }
 
 export function createTree<T>(
   entries: { value: T; keys: string[] }[],
 ): TreeNode<T> {
-  const root = initNode<T>();
+  const root = initTreeNode<T>();
 
   for (const e of entries) {
     let node = root;
     for (const key of e.keys) {
-      node = (node.children ??= {})[key] ??= initNode();
+      node = (node.children ??= {})[key] ??= initTreeNode();
     }
     node.value = e.value;
   }
