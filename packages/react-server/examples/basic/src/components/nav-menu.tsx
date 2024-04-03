@@ -8,6 +8,7 @@ export function NavMenu(props: { links: string[]; className?: string }) {
           key={e}
           href={e}
           className="antd-link self-start justify-self-start"
+          prefetch
         >
           <li className="flex items-center">
             <span className="text-lg pr-2 select-none">•</span>
