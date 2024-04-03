@@ -6,7 +6,7 @@ import { getRouteAssetsDeps } from "./utils";
 declare let __preloadManifest: PreloadManifest;
 
 export function getPreloadHandlers(href: string) {
-  if (typeof document === "undefined") {
+  if (typeof __preloadManifest === "undefined") {
     return {};
   }
   const url = new URL(href, window.location.origin);
