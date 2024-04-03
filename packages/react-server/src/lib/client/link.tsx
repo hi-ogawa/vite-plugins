@@ -1,4 +1,5 @@
-import { usePreloadHandlers } from "../../features/preload/client";
+import React from "react";
+import { getPreloadHandlers } from "../../features/preload/client";
 import { useRouter } from "./router";
 
 // TODO: study prior art
@@ -6,17 +7,19 @@ import { useRouter } from "./router";
 // https://github.com/remix-run/react-router/blob/9e7486b89e712b765d947297f228650cdc0c488e/packages/react-router-dom/index.tsx#L1394
 // https://github.com/remix-run/remix/blob/6ad886145bd35298accf04d43bd6ef69833567e2/packages/remix-react/components.tsx#L121
 
-export function Link(
-  props: JSX.IntrinsicElements["a"] & { href: string; prefetch?: boolean },
-) {
+export function Link({
+  prefetch,
+  ...props
+}: JSX.IntrinsicElements["a"] & { href: string; prefetch?: boolean }) {
   const history = useRouter((s) => s.history);
-  const preloadProps = usePreloadHandlers(props);
-  const { prefetch, ...aProps } = props;
-
+  const handlers = React.useMemo(
+    () => (prefetch ? getPreloadHandlers(props.href) : {}),
+    [prefetch, props.href],
+  );
   return (
     <a
-      {...aProps}
-      {...preloadProps}
+      {...props}
+      {...handlers}
       onClick={(e) => {
         const target = e.currentTarget.target;
         if (

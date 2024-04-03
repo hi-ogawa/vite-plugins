@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDom from "react-dom";
 import type { AssetDeps, PreloadManifest } from "./plugin";
 import { getRouteAssetsDeps } from "./utils";
@@ -6,22 +5,12 @@ import { getRouteAssetsDeps } from "./utils";
 // global inject by ssr <script>
 declare let __preloadManifest: PreloadManifest;
 
-export function usePreloadHandlers(props: {
-  href: string;
-  prefetch?: boolean;
-}) {
-  // for now, client only since SSR injects preload links to head manually without react
-  const enabled = useHydrated() && props.prefetch;
-  const deps = React.useMemo(
-    () =>
-      enabled ? getRouteAssetsDeps(props.href, __preloadManifest) : undefined,
-    [enabled, props.href],
-  );
-
-  if (!deps) {
+export function getPreloadHandlers(href: string) {
+  if (typeof document === "undefined") {
     return {};
   }
-
+  const url = new URL(href, window.location.origin);
+  const deps = getRouteAssetsDeps(url.pathname, __preloadManifest);
   return {
     onMouseEnter: () => preloadAssetDeps(deps),
     onTouchStart: () => preloadAssetDeps(deps),
@@ -29,22 +18,13 @@ export function usePreloadHandlers(props: {
   } satisfies JSX.IntrinsicElements["a"];
 }
 
-export function SsrPreloadLinks(props: {
+export function ServerPreloadLinks(props: {
   pathname: string;
   preloadManifest: PreloadManifest;
 }) {
   const deps = getRouteAssetsDeps(props.pathname, props.preloadManifest);
   preloadAssetDeps(deps);
   return null;
-}
-
-// https://tkdodo.eu/blog/avoiding-hydration-mismatches-with-use-sync-external-store#usesyncexternalstore
-function useHydrated(): boolean {
-  return React.useSyncExternalStore(
-    React.useState(() => () => () => {})[0],
-    () => true,
-    () => false,
-  );
 }
 
 function preloadAssetDeps(deps: AssetDeps) {

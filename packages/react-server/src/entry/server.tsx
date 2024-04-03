@@ -1,7 +1,7 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
-import { SsrPreloadLinks } from "../features/preload/client";
+import { ServerPreloadLinks } from "../features/preload/client";
 import type { PreloadManifest } from "../features/preload/plugin";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
@@ -94,7 +94,7 @@ export async function renderHtml(
     <RouterContext.Provider value={router}>
       <LayoutStateContext.Provider value={{ data: layoutPromise }}>
         <LayoutRoot />
-        <SsrPreloadLinks
+        <ServerPreloadLinks
           pathname={url.pathname}
           preloadManifest={preloadManifest}
         />
