@@ -1,5 +1,5 @@
 import { objectMapValues, typedBoolean, uniq } from "@hiogawa/utils";
-import { matchRouteTree } from "../../utils/tree";
+import { matchRouteTree } from "../router/tree";
 import type { AssetDeps, PreloadManifest } from "./plugin";
 
 export function getRouteAssetsDeps(

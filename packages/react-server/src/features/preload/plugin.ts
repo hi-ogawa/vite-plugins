@@ -14,7 +14,7 @@ import {
   type BaseRouteEntry,
   type TreeNode,
   generateRouteTree,
-} from "../../utils/tree";
+} from "../router/tree";
 
 export type AssetDeps = {
   js: string[];

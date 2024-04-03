@@ -1,5 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import { getPathPrefixes, normalizePathname } from "../features/router/utils";
+import { getPathPrefixes, normalizePathname } from "./utils";
 
 export interface BaseRouteEntry<T> {
   page?: T;

@@ -6,6 +6,7 @@ import {
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import { generateRouteTree } from "../features/router/tree";
 import {
   type LayoutRequest,
   type ServerRouterData,
@@ -23,7 +24,6 @@ import {
 } from "../lib/error";
 import { __global } from "../lib/global";
 import { type RouteTreeNode, renderRouteMap } from "../lib/router";
-import { generateRouteTree } from "../utils/tree";
 
 const debug = createDebug("react-server:rsc");
 

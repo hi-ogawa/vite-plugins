@@ -1,7 +1,11 @@
 import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
+import {
+  type TreeNode,
+  initTreeNode,
+  matchRouteChild,
+} from "../features/router/tree";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
-import { type TreeNode, initTreeNode, matchRouteChild } from "../utils/tree";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
 
