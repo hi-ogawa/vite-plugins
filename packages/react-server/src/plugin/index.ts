@@ -18,6 +18,7 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
+import { vitePluginUseClientPrefetch } from "../features/preload/plugin";
 import { __global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
@@ -41,7 +42,7 @@ const SERVER_INTERNAL_PATH = fileURLToPath(
 );
 
 // convenient singleton to share states
-class ReactServerManager {
+export class ReactServerManager {
   buildType?: "rsc" | "client" | "ssr";
 
   // expose "use client" node modules to client via virtual modules
@@ -71,7 +72,7 @@ class ReactServerManager {
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
-}): Plugin[] {
+}): PluginOption {
   const manager = new ReactServerManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
@@ -302,6 +303,7 @@ export function vitePluginReactServer(options?: {
     rscParentPlugin,
     vitePluginSilenceUseClientBuildWarning(),
     vitePluginClientUseServer({ manager }),
+    vitePluginUseClientPrefetch({ manager }),
     {
       name: "client-virtual-use-client-node-modules",
       resolveId(source, _importer, _options) {
@@ -697,11 +699,7 @@ function vitePluginServerUseServer({
 }
 
 function hashString(v: string) {
-  return nodeCrypto
-    .createHash("sha256")
-    .update(v)
-    .digest()
-    .toString("base64url");
+  return nodeCrypto.createHash("sha256").update(v).digest().toString("hex");
 }
 
 function createVirtualPlugin(name: string, load: Plugin["load"]) {
