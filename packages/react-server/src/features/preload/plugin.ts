@@ -7,8 +7,23 @@ import {
   typedBoolean,
   uniq,
 } from "@hiogawa/utils";
+import FastGlob from "fast-glob";
 import type { Manifest, Plugin, PluginOption } from "vite";
 import type { ReactServerManager } from "../../plugin";
+import {
+  type BaseRouteEntry,
+  type TreeNode,
+  generateRouteTree,
+} from "../../utils/tree";
+
+export type AssetDeps = {
+  js: string[];
+  css: string[];
+};
+
+export type BuildMetadata = {
+  routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
+};
 
 export function vitePluginUseClientPrefetch({
   manager,
@@ -24,7 +39,7 @@ export function vitePluginUseClientPrefetch({
         const reactServerManifest: Manifest = JSON.parse(
           await fs.promises.readFile("dist/rsc/.vite/manifest.json", "utf-8"),
         );
-        const serverResult = await processReactServerManifest(
+        const serverClientReferenceMap = await processReactServerManifest(
           reactServerManifest,
           "dist/rsc",
         );
@@ -35,26 +50,43 @@ export function vitePluginUseClientPrefetch({
             "utf-8",
           ),
         );
-        const clientResult = processClientManifest(clientManifest);
+        const clientChunksMap = processClientManifest(clientManifest);
 
-        const result = objectMapValues(serverResult, (ids) => {
-          let js: string[] = [];
-          let css: string[] = [];
-          for (const id of ids) {
-            const key = manager.clientReferenceIdMap[id];
-            tinyassert(key);
-            const chunks = clientResult[key];
-            tinyassert(chunks);
-            js.push(...chunks.map((c) => c.file));
-            css.push(...chunks.flatMap((c) => c.css).filter(typedBoolean));
-          }
-          js = uniq(js);
-          css = uniq(css);
-          return { js, css };
-        });
+        const serverAssetDepsMap = objectMapValues(
+          serverClientReferenceMap,
+          (ids) => {
+            const entry: AssetDeps = { js: [], css: [] };
+            for (const id of ids) {
+              const key = manager.clientReferenceIdMap[id];
+              tinyassert(key);
+              const chunks = clientChunksMap[key];
+              tinyassert(chunks);
+              entry.js.push(...chunks.map((c) => c.file));
+              entry.css.push(
+                ...chunks.flatMap((c) => c.css).filter(typedBoolean),
+              );
+            }
+            entry.js = uniq(entry.js);
+            entry.css = uniq(entry.css);
+            return entry;
+          },
+        );
 
+        const glob = await FastGlob(
+          "src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
+        );
+        const globEntries = Object.fromEntries(
+          glob.map((k) => [
+            k.slice("src/routes".length),
+            serverAssetDepsMap[k]!,
+          ]),
+        );
+        const tree = generateRouteTree(globEntries);
+        const result: BuildMetadata = {
+          routeTree: tree,
+        };
         await fs.promises.writeFile(
-          "dist/client/server-assets-map.json",
+          "dist/client/app-metadata.json",
           JSON.stringify(result, null, 2),
         );
       }

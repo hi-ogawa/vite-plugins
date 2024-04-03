@@ -23,7 +23,7 @@ interface RouteEntry {
 type RouteTreeNode = TreeNode<RouteEntry>;
 
 // generate component tree from glob import such as
-//   import.meta.glob("/**/(page|layout).(js|jsx|ts|tsx)"
+//   import.meta.glob("/**/(page|layout).(js|jsx|ts|tsx)")
 export function generateRouteTree(
   globEntries: Record<string, () => Promise<unknown>>,
 ) {
