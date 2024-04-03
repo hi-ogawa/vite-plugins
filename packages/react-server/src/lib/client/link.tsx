@@ -16,7 +16,7 @@ export function Link(
   return (
     <a
       {...aProps}
-      {...(props.prefetch ? preloadProps : {})}
+      {...preloadProps}
       onClick={(e) => {
         const target = e.currentTarget.target;
         if (
