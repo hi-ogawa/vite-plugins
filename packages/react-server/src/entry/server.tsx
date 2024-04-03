@@ -1,7 +1,7 @@
 import { createDebug, splitFirst } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
-import type { BuildMetadata } from "../features/preload/plugin";
+import type { AppMetadata } from "../features/preload/plugin";
 import { getRouteAssetsDeps } from "../features/preload/utils";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
@@ -110,7 +110,7 @@ export async function renderHtml(
     .default;
 
   let head = assets.head;
-  head += await getPreloadLinks(url.pathname);
+  head += await setupPreloadHead(url.pathname);
 
   // inject DEBUG variable
   if (globalThis?.process?.env?.["DEBUG"]) {
@@ -194,13 +194,13 @@ function injectToHead(data: string) {
   });
 }
 
-async function getPreloadLinks(pathname: string) {
+async function setupPreloadHead(pathname: string) {
   if (import.meta.env.DEV) {
     return "";
   } else {
-    const manifest: BuildMetadata = await import(
-      "/dist/client/build-metadata.json" as string
-    );
+    const manifest: AppMetadata = (
+      await import("/dist/client/app-metadata.json" as string)
+    ).default;
     const deps = getRouteAssetsDeps(pathname, manifest);
     return [
       "\n",
@@ -210,6 +210,7 @@ async function getPreloadLinks(pathname: string) {
         (href) => `<link rel="preload" as="style" href="/${href}" />`,
       ),
       "<!-- ssr preload end -->",
+      `<script>globalThis.__appMetadata = ${JSON.stringify(manifest)}</script>`,
       "\n",
     ].join("\n");
   }

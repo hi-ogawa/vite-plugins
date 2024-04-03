@@ -4,11 +4,16 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 
 export function Hydrated() {
-  const [hydrated, setHydrated] = React.useState(false);
-  React.useEffect(() => {
-    setHydrated(true);
-  }, []);
-  return <div>[hydrated: {Number(hydrated)}]</div>;
+  return <div>[hydrated: {Number(useHydrated())}]</div>;
+}
+
+// https://tkdodo.eu/blog/avoiding-hydration-mismatches-with-use-sync-external-store#usesyncexternalstore
+export function useHydrated(): boolean {
+  return React.useSyncExternalStore(
+    React.useState(() => () => () => {})[0],
+    () => true,
+    () => false,
+  );
 }
 
 // test client re-rendering

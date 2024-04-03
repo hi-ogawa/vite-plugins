@@ -1,10 +1,10 @@
 import { objectMapValues, typedBoolean, uniq } from "@hiogawa/utils";
 import { matchRouteTree } from "../../utils/tree";
-import type { AssetDeps, BuildMetadata } from "./plugin";
+import type { AppMetadata, AssetDeps } from "./plugin";
 
 export function getRouteAssetsDeps(
   pathname: string,
-  manifest: BuildMetadata,
+  manifest: AppMetadata,
 ): AssetDeps {
   const result = matchRouteTree(manifest.routeTree, pathname);
   const deps = result.nodes

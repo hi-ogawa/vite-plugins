@@ -21,8 +21,8 @@ export type AssetDeps = {
   css: string[];
 };
 
-// TODO: rename? during dev?
-export type BuildMetadata = {
+// TODO: preload manifest
+export type AppMetadata = {
   routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
 };
 
@@ -83,11 +83,11 @@ export function vitePluginUseClientPrefetch({
           ]),
         );
         const tree = generateRouteTree(globEntries);
-        const result: BuildMetadata = {
+        const result: AppMetadata = {
           routeTree: tree,
         };
         await fs.promises.writeFile(
-          "dist/client/build-metadata.json",
+          "dist/client/app-metadata.json",
           JSON.stringify(result, null, 2),
         );
       }
