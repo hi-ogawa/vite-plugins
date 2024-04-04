@@ -7,6 +7,7 @@ import {
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import {
+  type ActionResult,
   type LayoutRequest,
   type ServerRouterData,
   createLayoutContentRequest,
@@ -18,7 +19,6 @@ import { createBundlerConfig } from "../features/use-client/react-server";
 import {
   DEFAULT_ERROR_CONTEXT,
   ReactServerDigestError,
-  type ReactServerErrorContext,
   createError,
   getErrorContext,
 } from "../lib/error";
@@ -171,13 +171,6 @@ function createRouter() {
 // server action
 //
 
-// TODO(refactor): discrimate union, move to features
-export type ActionResult = {
-  id?: string;
-  error?: ReactServerErrorContext;
-  data?: unknown;
-};
-
 async function actionHandler({ request }: { request: Request }) {
   const formData = await request.formData();
   if (0) {
@@ -201,7 +194,6 @@ async function actionHandler({ request }: { request: Request }) {
   const responseHeaders = new Headers();
   actionContextMap.set(formData, { request, responseHeaders });
 
-  // TODO: action return value?
   const result: ActionResult = { id };
   try {
     result.data = await action(formData);

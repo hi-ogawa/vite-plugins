@@ -1,4 +1,4 @@
-import type { ActionResult } from "../../entry/react-server";
+import type { ReactServerErrorContext } from "../../server";
 
 export type LayoutRequest = Record<
   string,
@@ -7,6 +7,13 @@ export type LayoutRequest = Record<
     name: string;
   }
 >;
+
+// TODO: discriminated union
+export type ActionResult = {
+  id?: string;
+  error?: ReactServerErrorContext;
+  data?: unknown;
+};
 
 export type ServerRouterData = {
   action?: ActionResult;
