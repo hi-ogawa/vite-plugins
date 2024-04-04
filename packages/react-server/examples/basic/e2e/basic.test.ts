@@ -489,6 +489,31 @@ test("redirect server action @js", async ({ page }) => {
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
+test("action return value @js", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await testActionReturnValue(page, { js: true });
+});
+
+test("action return value @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+  await page.goto("/test/action");
+  await testActionReturnValue(page, { js: false });
+});
+
+async function testActionReturnValue(page: Page, { js }: { js: boolean }) {
+  await page.getByPlaceholder("Answer?").fill("3");
+  await page.getByPlaceholder("Answer?").press("Enter");
+  await page.getByText("Wrong!").click();
+  await expect(page.getByPlaceholder("Answer?")).toHaveValue(js ? "3" : "");
+
+  await page.getByPlaceholder("Answer?").fill("2");
+  await page.getByPlaceholder("Answer?").press("Enter");
+  await page.getByText("Correct!").click();
+}
+
 test("action context @js", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/session");
