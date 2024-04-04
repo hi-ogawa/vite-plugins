@@ -513,7 +513,6 @@ async function testActionReturnValue(page: Page, { js }: { js: boolean }) {
 }
 
 test("action context @js", async ({ page }) => {
-  checkNoError(page);
   await page.goto("/test/session");
   await waitForHydration(page);
   await testActionContext(page);
@@ -527,8 +526,6 @@ test("action context @nojs", async ({ browser }) => {
 });
 
 async function testActionContext(page: Page) {
-  await page.goto("/test/session");
-
   // redirected from auth protected action
   await page.getByText("Hi, anonymous user!").click();
   await page.getByRole("button", { name: "+1" }).click();

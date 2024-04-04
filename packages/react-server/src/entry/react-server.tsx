@@ -95,6 +95,7 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (rscOnly) {
     return new Response(stream, {
       headers: {
+        ...actionResult?.error?.headers,
         "content-type": "text/x-component; charset=utf-8",
       },
     });
