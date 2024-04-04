@@ -135,6 +135,7 @@ export async function start() {
       const lastPathname = lastLocation.current.pathname;
       lastLocation.current = location;
 
+      // TODO: (refactor) server can find `newKeys` based on from/to location
       const pathname = location.pathname;
       let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
       if (RSC_HMR_STATE_KEY in location.state) {
