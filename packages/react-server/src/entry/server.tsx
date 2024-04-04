@@ -168,6 +168,7 @@ export async function renderHtml(
   return new Response(htmlStream, {
     status,
     headers: {
+      ...result.actionResult?.responseHeaders,
       "content-type": "text/html",
     },
   });

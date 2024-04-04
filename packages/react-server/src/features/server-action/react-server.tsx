@@ -26,7 +26,7 @@ export const actionContextMap = new WeakMap<FormData, ActionContext>();
 
 export interface ActionContext {
   request: Request;
-  responseHeaders: Headers;
+  responseHeaders: Record<string, string>; // TODO: Headers?
 }
 
 export function getActionContext(formData: FormData) {

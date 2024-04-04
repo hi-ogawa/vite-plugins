@@ -12,7 +12,10 @@ import {
   type ServerRouterData,
   createLayoutContentRequest,
 } from "../features/router/utils";
-import { actionContextMap } from "../features/server-action/react-server";
+import {
+  type ActionContext,
+  actionContextMap,
+} from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
@@ -39,6 +42,7 @@ export interface ReactServerHandlerContext {
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
   layoutRequest: LayoutRequest;
+  actionResult?: ActionResult;
 }
 
 export type ReactServerHandlerResult =
@@ -52,32 +56,7 @@ export const handler: ReactServerHandler = async (ctx) => {
   // action
   let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
-    const { result } = await actionHandler(ctx);
-    actionResult = result;
-    // TODO: can go through normal layout stream generation instead of returning early
-    // if (result.error) {
-    //   const errorCtx = result.error;
-    //   if (rscOnly) {
-    //     // returns empty layout to keep current layout and
-    //     // let browser initiate client-side navigation for redirection error
-    //     const data: ServerRouterData = {
-    //       action: { error: errorCtx },
-    //       layout: {},
-    //     };
-    //     const stream = reactServerDomServer.renderToReadableStream(data, {});
-    //     return new Response(stream, {
-    //       headers: {
-    //         ...errorCtx.headers,
-    //         "content-type": "text/x-component; charset=utf-8",
-    //       },
-    //     });
-    //   }
-    //   // TODO: general action error handling?
-    //   return new Response(null, {
-    //     status: errorCtx.status,
-    //     headers: errorCtx.headers,
-    //   });
-    // }
+    actionResult = await actionHandler(ctx);
   }
 
   const request = rscOnly?.request ?? ctx.request;
@@ -95,13 +74,13 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (rscOnly) {
     return new Response(stream, {
       headers: {
-        ...actionResult?.error?.headers,
+        ...actionResult?.responseHeaders,
         "content-type": "text/x-component; charset=utf-8",
       },
     });
   }
 
-  return { stream, layoutRequest };
+  return { stream, layoutRequest, actionResult };
 };
 
 //
@@ -192,8 +171,8 @@ async function actionHandler({ request }: { request: Request }) {
     action = mod[name];
   }
 
-  const responseHeaders = new Headers();
-  actionContextMap.set(formData, { request, responseHeaders });
+  const context: ActionContext = { request, responseHeaders: {} };
+  actionContextMap.set(formData, context);
 
   const result: ActionResult = { id };
   try {
@@ -201,9 +180,11 @@ async function actionHandler({ request }: { request: Request }) {
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
+    result.responseHeaders = {
+      ...context.responseHeaders,
+      ...result.error?.headers,
+    };
     actionContextMap.delete(formData);
   }
-
-  // TODO: write headers on successfull action
-  return { responseHeaders, result };
+  return result;
 }

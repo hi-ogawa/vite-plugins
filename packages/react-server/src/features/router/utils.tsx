@@ -13,6 +13,7 @@ export type ActionResult = {
   id?: string;
   error?: ReactServerErrorContext;
   data?: unknown;
+  responseHeaders?: Record<string, string>;
 };
 
 export type ServerRouterData = {
