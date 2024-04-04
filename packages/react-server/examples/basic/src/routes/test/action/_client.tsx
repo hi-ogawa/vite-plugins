@@ -1,8 +1,10 @@
 "use client";
 
+import { useActionData } from "@hiogawa/react-server/client";
 import React from "react";
 import ReactDom from "react-dom";
 import {
+  actionCheckAnswer,
   addMessage,
   changeCounter,
   type getMessages,
@@ -94,6 +96,24 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
         </div>
       </form>
     </div>
+  );
+}
+
+export function ActionDataTest() {
+  const data = useActionData(actionCheckAnswer);
+  return (
+    <form action={actionCheckAnswer} className="flex flex-col gap-2">
+      <h4 className="font-bold">Action Data</h4>
+      <div className="flex gap-2">
+        <div>1 + 1 = </div>
+        <input
+          className="antd-input px-2 max-w-30"
+          name="answer"
+          placeholder="Answer?"
+        />
+        <div>{data?.message}</div>
+      </div>
+    </form>
   );
 }
 

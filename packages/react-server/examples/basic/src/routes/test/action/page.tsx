@@ -1,5 +1,11 @@
 import { changeCounter, getCounter, getMessages } from "./_action";
-import { Chat, Counter, Counter2, FormStateTest } from "./_client";
+import {
+  ActionDataTest,
+  Chat,
+  Counter,
+  Counter2,
+  FormStateTest,
+} from "./_client";
 
 export default async function Page() {
   return (
@@ -10,6 +16,7 @@ export default async function Page() {
         <Counter3 />
       </div>
       <Chat messages={getMessages()} />
+      <ActionDataTest />
       <FormStateTest />
     </div>
   );

@@ -2,11 +2,7 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
-import {
-  LayoutRoot,
-  LayoutStateContext,
-  ServerActionRedirectHandler,
-} from "../features/router/client";
+import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import {
   type ServerRouterData,
   createLayoutContentRequest,
@@ -135,6 +131,7 @@ export async function start() {
       const lastPathname = lastLocation.current.pathname;
       lastLocation.current = location;
 
+      // TODO: (refactor) server can find `newKeys` based on from/to location
       const pathname = location.pathname;
       let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
       if (RSC_HMR_STATE_KEY in location.state) {
@@ -167,7 +164,6 @@ export async function start() {
       <RootErrorBoundary>
         <LayoutHandler>
           <LayoutRoot />
-          <ServerActionRedirectHandler />
         </LayoutHandler>
       </RootErrorBoundary>
     </RouterContext.Provider>

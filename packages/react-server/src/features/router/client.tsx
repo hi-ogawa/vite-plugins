@@ -2,6 +2,7 @@ import React from "react";
 import { RedirectHandler } from "../../lib/client/error-boundary";
 import { isRedirectError } from "../../lib/error";
 import { __global } from "../../lib/global";
+import { ActionRedirectHandler } from "../server-action/client";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -19,9 +20,16 @@ export function LayoutContent(props: { name: string }) {
 }
 
 export function LayoutRoot() {
-  return <LayoutContent name={LAYOUT_ROOT_NAME} />;
+  return (
+    <>
+      <LayoutContent name={LAYOUT_ROOT_NAME} />
+      <ActionRedirectHandler />
+    </>
+  );
 }
 
+// TODO: remove
+// TODO: handle non redirect action error
 export function ServerActionRedirectHandler() {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);

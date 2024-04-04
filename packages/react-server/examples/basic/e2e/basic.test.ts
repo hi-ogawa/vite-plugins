@@ -481,16 +481,38 @@ test("redirect server action @nojs", async ({ browser }) => {
 });
 
 test("redirect server action @js", async ({ page }) => {
-  checkNoError(page);
-
   await page.goto("/test/redirect");
   await waitForHydration(page);
   await page.getByRole("button", { name: "From Server Action" }).click();
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
-test("action context @js", async ({ page }) => {
+test("action return value @js", async ({ page }) => {
   checkNoError(page);
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await testActionReturnValue(page, { js: true });
+});
+
+test("action return value @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+  await page.goto("/test/action");
+  await testActionReturnValue(page, { js: false });
+});
+
+async function testActionReturnValue(page: Page, { js }: { js: boolean }) {
+  await page.getByPlaceholder("Answer?").fill("3");
+  await page.getByPlaceholder("Answer?").press("Enter");
+  await page.getByText("Wrong!").click();
+  await expect(page.getByPlaceholder("Answer?")).toHaveValue(js ? "3" : "");
+
+  await page.getByPlaceholder("Answer?").fill("2");
+  await page.getByPlaceholder("Answer?").press("Enter");
+  await page.getByText("Correct!").click();
+}
+
+test("action context @js", async ({ page }) => {
   await page.goto("/test/session");
   await waitForHydration(page);
   await testActionContext(page);
@@ -504,8 +526,6 @@ test("action context @nojs", async ({ browser }) => {
 });
 
 async function testActionContext(page: Page) {
-  await page.goto("/test/session");
-
   // redirected from auth protected action
   await page.getByText("Hi, anonymous user!").click();
   await page.getByRole("button", { name: "+1" }).click();

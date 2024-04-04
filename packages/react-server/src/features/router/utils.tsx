@@ -1,4 +1,4 @@
-import type { ReactServerErrorContext } from "../../lib/error";
+import type { ReactServerErrorContext } from "../../server";
 
 export type LayoutRequest = Record<
   string,
@@ -8,11 +8,16 @@ export type LayoutRequest = Record<
   }
 >;
 
+// TODO: discriminated union
+export type ActionResult = {
+  id?: string;
+  error?: ReactServerErrorContext;
+  data?: unknown;
+  responseHeaders?: Record<string, string>;
+};
+
 export type ServerRouterData = {
-  // TODO: can action return other things too?
-  action?: {
-    error?: ReactServerErrorContext;
-  };
+  action?: ActionResult;
   layout: Record<string, React.ReactNode>;
 };
 
