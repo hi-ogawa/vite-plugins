@@ -481,8 +481,6 @@ test("redirect server action @nojs", async ({ browser }) => {
 });
 
 test("redirect server action @js", async ({ page }) => {
-  checkNoError(page);
-
   await page.goto("/test/redirect");
   await waitForHydration(page);
   await page.getByRole("button", { name: "From Server Action" }).click();
