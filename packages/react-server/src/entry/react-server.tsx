@@ -55,29 +55,29 @@ export const handler: ReactServerHandler = async (ctx) => {
     const { result } = await actionHandler(ctx);
     actionResult = result;
     // TODO: can go through normal layout stream generation instead of returning early
-    if (result.error) {
-      const errorCtx = result.error;
-      if (rscOnly) {
-        // returns empty layout to keep current layout and
-        // let browser initiate client-side navigation for redirection error
-        const data: ServerRouterData = {
-          action: { error: errorCtx },
-          layout: {},
-        };
-        const stream = reactServerDomServer.renderToReadableStream(data, {});
-        return new Response(stream, {
-          headers: {
-            ...errorCtx.headers,
-            "content-type": "text/x-component; charset=utf-8",
-          },
-        });
-      }
-      // TODO: general action error handling?
-      return new Response(null, {
-        status: errorCtx.status,
-        headers: errorCtx.headers,
-      });
-    }
+    // if (result.error) {
+    //   const errorCtx = result.error;
+    //   if (rscOnly) {
+    //     // returns empty layout to keep current layout and
+    //     // let browser initiate client-side navigation for redirection error
+    //     const data: ServerRouterData = {
+    //       action: { error: errorCtx },
+    //       layout: {},
+    //     };
+    //     const stream = reactServerDomServer.renderToReadableStream(data, {});
+    //     return new Response(stream, {
+    //       headers: {
+    //         ...errorCtx.headers,
+    //         "content-type": "text/x-component; charset=utf-8",
+    //       },
+    //     });
+    //   }
+    //   // TODO: general action error handling?
+    //   return new Response(null, {
+    //     status: errorCtx.status,
+    //     headers: errorCtx.headers,
+    //   });
+    // }
   }
 
   const request = rscOnly?.request ?? ctx.request;

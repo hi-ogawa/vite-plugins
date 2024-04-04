@@ -2,11 +2,7 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
-import {
-  LayoutRoot,
-  LayoutStateContext,
-  ServerActionRedirectHandler,
-} from "../features/router/client";
+import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import {
   type ServerRouterData,
   createLayoutContentRequest,
@@ -168,7 +164,6 @@ export async function start() {
       <RootErrorBoundary>
         <LayoutHandler>
           <LayoutRoot />
-          <ServerActionRedirectHandler />
         </LayoutHandler>
       </RootErrorBoundary>
     </RouterContext.Provider>
