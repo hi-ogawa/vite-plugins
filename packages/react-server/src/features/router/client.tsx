@@ -22,6 +22,7 @@ export function LayoutRoot() {
   return <LayoutContent name={LAYOUT_ROOT_NAME} />;
 }
 
+// TODO: handle non redirect action error
 export function ServerActionRedirectHandler() {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);

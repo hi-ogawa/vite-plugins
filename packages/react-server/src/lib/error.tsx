@@ -28,6 +28,10 @@ export function redirect(
   });
 }
 
+export function setActionResult(): never {
+  throw createError({ status: 200 });
+}
+
 export function isRedirectError(ctx: ReactServerErrorContext) {
   const location = ctx.headers?.["location"];
   if (300 <= ctx.status && ctx.status <= 399 && typeof location === "string") {
