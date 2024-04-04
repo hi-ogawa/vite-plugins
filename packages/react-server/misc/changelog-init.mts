@@ -43,6 +43,12 @@ async function main() {
 
   // group by version
   const groups = groupBy(entries, (e) => e.version);
+  const versions = [...groups.keys()];
+  versions.slice(0, -1).forEach((version, i) => {
+    const next = groups.get(version)!;
+    const prev = groups.get(versions[i + 1])!;
+    next.push(...prev.splice(0, prev.length - 1));
+  });
 
   let result = "# Changelog\n\n";
 
