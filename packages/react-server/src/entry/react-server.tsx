@@ -18,6 +18,7 @@ import { createBundlerConfig } from "../features/use-client/react-server";
 import {
   DEFAULT_ERROR_CONTEXT,
   ReactServerDigestError,
+  type ReactServerErrorContext,
   createError,
   getErrorContext,
 } from "../lib/error";
@@ -49,11 +50,13 @@ export const handler: ReactServerHandler = async (ctx) => {
   const rscOnly = unwrapRscRequest(ctx.request);
 
   // action
+  let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
-    try {
-      await actionHandler(ctx);
-    } catch (e) {
-      const errorCtx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+    const { result } = await actionHandler(ctx);
+    actionResult = result;
+    // TODO: can go through normal layout stream generation instead of returning early
+    if (result.error) {
+      const errorCtx = result.error;
       if (rscOnly) {
         // returns empty layout to keep current layout and
         // let browser initiate client-side navigation for redirection error
@@ -87,7 +90,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     );
   }
 
-  const stream = await render({ request, layoutRequest });
+  const stream = await render({ request, layoutRequest, actionResult });
 
   if (rscOnly) {
     return new Response(stream, {
@@ -107,9 +110,11 @@ export const handler: ReactServerHandler = async (ctx) => {
 async function render({
   request,
   layoutRequest,
+  actionResult,
 }: {
   request: Request;
   layoutRequest: LayoutRequest;
+  actionResult?: ActionResult;
 }) {
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
@@ -118,7 +123,7 @@ async function render({
   );
   const bundlerConfig = createBundlerConfig();
   return reactServerDomServer.renderToReadableStream<ServerRouterData>(
-    { layout: nodeMap },
+    { layout: nodeMap, action: actionResult },
     bundlerConfig,
     {
       onError: reactServerOnError,
@@ -166,6 +171,13 @@ function createRouter() {
 // server action
 //
 
+// TODO(refactor): discrimate union, move to features
+export type ActionResult = {
+  id?: string;
+  error?: ReactServerErrorContext;
+  data?: unknown;
+};
+
 async function actionHandler({ request }: { request: Request }) {
   const formData = await request.formData();
   if (0) {
@@ -190,8 +202,15 @@ async function actionHandler({ request }: { request: Request }) {
   actionContextMap.set(formData, { request, responseHeaders });
 
   // TODO: action return value?
-  await action(formData);
+  const result: ActionResult = { id };
+  try {
+    result.data = await action(formData);
+  } catch (e) {
+    result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+  } finally {
+    actionContextMap.delete(formData);
+  }
 
   // TODO: write headers on successfull action
-  return { responseHeaders };
+  return { responseHeaders, result };
 }

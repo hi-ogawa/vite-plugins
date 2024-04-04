@@ -1,4 +1,4 @@
-import type { ReactServerErrorContext } from "../../lib/error";
+import type { ActionResult } from "../../entry/react-server";
 
 export type LayoutRequest = Record<
   string,
@@ -10,11 +10,7 @@ export type LayoutRequest = Record<
 
 export type ServerRouterData = {
   // TODO: include action stream for SSR (i.e. progressive enhancement)
-  action?: {
-    error?: ReactServerErrorContext;
-    id?: string;
-    data?: unknown;
-  };
+  action?: ActionResult;
   layout: Record<string, React.ReactNode>;
 };
 
