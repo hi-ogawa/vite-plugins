@@ -9,9 +9,11 @@ export type LayoutRequest = Record<
 >;
 
 export type ServerRouterData = {
-  // TODO: can action return other things too?
+  // TODO: include action stream for SSR (i.e. progressive enhancement)
   action?: {
     error?: ReactServerErrorContext;
+    id?: string;
+    data?: unknown;
   };
   layout: Record<string, React.ReactNode>;
 };
