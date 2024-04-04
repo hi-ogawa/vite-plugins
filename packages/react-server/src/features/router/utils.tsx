@@ -9,7 +9,6 @@ export type LayoutRequest = Record<
 >;
 
 export type ServerRouterData = {
-  // TODO: include action stream for SSR (i.e. progressive enhancement)
   action?: ActionResult;
   layout: Record<string, React.ReactNode>;
 };
