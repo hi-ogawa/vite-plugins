@@ -32,7 +32,7 @@ export function getCounter() {
 
 export async function incrementCounter(formData: FormData) {
   const ctx = getActionContext(formData);
-  const session = getSession(ctx.request);
+  const session = getSession(ctx.request.headers);
   if (!session?.name) {
     throw redirect("/test/session/signin");
   }

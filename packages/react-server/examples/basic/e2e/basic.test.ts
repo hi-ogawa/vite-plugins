@@ -577,6 +577,13 @@ test("dynamic routes", async ({ page }) => {
   await page.getByText('params: {"id":"abc","nested":"def"}').click();
 });
 
+test("full client route", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/client/full");
+  await page.getByRole("heading", { name: '"use client" layout' }).click();
+  await page.getByRole("heading", { name: '"use client" page' }).click();
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");

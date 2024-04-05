@@ -91,8 +91,10 @@ describe(generateRouteTree, () => {
     `);
 
     function testMatch(pathname: string) {
-      const request = { url: "https://test.local" + pathname };
-      return renderRouteMap(tree, request as any as Request);
+      return renderRouteMap(tree, {
+        url: "https://test.local" + pathname,
+        headers: new Headers(),
+      });
     }
 
     const testCases = [

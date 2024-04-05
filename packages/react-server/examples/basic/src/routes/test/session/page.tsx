@@ -4,7 +4,7 @@ import { getCounter, incrementCounter, signout } from "./_action";
 import { getSession } from "./utils";
 
 export default function Page(props: PageProps) {
-  const session = getSession(props.request);
+  const session = getSession(new Headers(props.request.headers));
   return (
     <div className="flex flex-col gap-4 p-3 max-w-sm">
       <form className="flex items-center gap-2" action={incrementCounter}>
