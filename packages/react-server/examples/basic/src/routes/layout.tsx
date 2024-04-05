@@ -15,7 +15,7 @@ export default function Layout(props: LayoutProps) {
           <Header />
           <NavMenu
             className="flex flex-col items-start gap-1"
-            links={["/", "/test", "/demo/waku_02"]}
+            links={["/", "/test", "/demo/waku_02", "/demo/remix-tutorial"]}
           />
           {props.children}
         </div>
