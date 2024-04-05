@@ -4,4 +4,4 @@ export {
   redirect,
   type ReactServerErrorContext,
 } from "./lib/error";
-export { getActionContext } from "./features/server-action/react-server";
+export type { ActionContext } from "./features/server-action/react-server";

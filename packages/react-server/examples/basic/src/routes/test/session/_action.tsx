@@ -1,6 +1,6 @@
 "use server";
 
-import { getActionContext, redirect } from "@hiogawa/react-server/server";
+import { type ActionContext, redirect } from "@hiogawa/react-server/server";
 import { tinyassert } from "@hiogawa/utils";
 import { getSession, setSession } from "./utils";
 
@@ -30,9 +30,11 @@ export function getCounter() {
   return counter;
 }
 
-export async function incrementCounter(formData: FormData) {
-  const ctx = getActionContext(formData);
-  const session = getSession(ctx.request.headers);
+export async function incrementCounter(
+  this: ActionContext,
+  formData: FormData,
+) {
+  const session = getSession(this.request.headers);
   if (!session?.name) {
     throw redirect("/test/session/signin");
   }
