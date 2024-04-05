@@ -89,7 +89,7 @@ async function renderLayout(
 }
 
 export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
-  const url = new URL(request.url);
+  const url = serializeUrl(new URL(request.url));
   const pathname = normalizePathname(url.pathname);
   const prefixes = getPathPrefixes(pathname);
 
@@ -108,7 +108,14 @@ export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
     } else {
       node = initNode();
     }
-    const props: BaseProps = { request, params };
+    const props: BaseProps = {
+      url,
+      request: {
+        url: request.url,
+        headers: serializeHeaders(request.headers),
+      },
+      params,
+    };
     layouts[prefix] = await renderLayout(node, props, prefix);
     if (prefix === pathname) {
       pages[prefix] = renderPage(node, props);
@@ -122,9 +129,33 @@ const ThrowNotFound: React.FC = () => {
   throw createError({ status: 404 });
 };
 
+type SerializedURL = {
+  [k in keyof URL]: URL[k] extends string ? URL[k] : never;
+};
+
+function serializeUrl(url: URL): SerializedURL {
+  const kv: any = {};
+  for (const k in url) {
+    const v = (url as any)[k];
+    if (typeof v === "string") {
+      kv[k] = v;
+    }
+  }
+  return kv;
+}
+
+function serializeHeaders(headers: Headers): Record<string, string> {
+  const kv: Record<string, string> = {};
+  headers.forEach((v, k) => (kv[k] = v));
+  return kv;
+}
+
 interface BaseProps {
-  // TODO: parsed url prop?
-  request: Request; // TODO: "use client" page/layout doesn't have full aceess
+  url: SerializedURL;
+  request: {
+    url: string;
+    headers: Record<string, string>;
+  };
   params: Record<string, string>;
 }
 

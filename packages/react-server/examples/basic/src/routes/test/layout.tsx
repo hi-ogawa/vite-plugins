@@ -21,6 +21,7 @@ export default async function Layout(props: LayoutProps) {
           "/test/transition",
           "/test/redirect",
           "/test/session",
+          "/test/client",
         ]}
       />
       <div className="flex items-center gap-2 text-sm">
