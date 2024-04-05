@@ -549,6 +549,41 @@ async function testActionContext(page: Page) {
   await page.getByText("Hi, anonymous user!").click();
 }
 
+test("dynamic routes", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/dynamic");
+  await waitForHydration(page);
+
+  await page.getByText("file: /test/dynamic/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic").click();
+  await page.getByText("params: {}").click();
+
+  await page.getByRole("link", { name: "• /test/dynamic/static" }).click();
+  await page.getByText("file: /test/dynamic/static/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic/static").click();
+  await page.getByText("params: {}").click();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/abc", exact: true })
+    .click();
+  await page.getByText("file: /test/dynamic/[id]/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic/abc").click();
+  await page.getByText('params: {"id":"abc"}').click();
+
+  await page.getByRole("link", { name: "• /test/dynamic/abc/def" }).click();
+  await page.getByText("file: /test/dynamic/[id]/[nested]/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic/abc/def").click();
+  await page.getByText('params: {"id":"abc","nested":"def"}').click();
+});
+
+test("full client route", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/client/full");
+  await page.getByRole("heading", { name: '"use client" layout' }).click();
+  await page.getByRole("heading", { name: '"use client" page' }).click();
+});
+
 async function setupCheckClientState(page: Page) {
   // setup client state
   await page.getByPlaceholder("test-input").fill("hello");

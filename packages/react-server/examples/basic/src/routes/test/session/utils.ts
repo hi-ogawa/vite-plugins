@@ -9,8 +9,8 @@ type SessionData = {
 
 const SESSION_KEY = "__session";
 
-export function getSession(request: Request): SessionData | undefined {
-  const raw = request.headers.get("cookie");
+export function getSession(headers: Headers): SessionData | undefined {
+  const raw = headers.get("cookie");
   if (raw) {
     const parsed = cookieLib.parse(raw);
     const token = parsed[SESSION_KEY];

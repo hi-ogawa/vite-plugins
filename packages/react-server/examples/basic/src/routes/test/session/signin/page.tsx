@@ -3,7 +3,7 @@ import { signin } from "../_action";
 import { getSession } from "../utils";
 
 export default function Page(props: PageProps) {
-  const session = getSession(props.request);
+  const session = getSession(new Headers(props.request.headers));
   if (session?.name) {
     throw redirect("/test/session");
   }

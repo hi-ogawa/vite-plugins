@@ -1,4 +1,4 @@
-import { objectHas, tinyassert } from "@hiogawa/utils";
+import { objectHas, sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
@@ -38,7 +38,22 @@ export function generateRouteTree(globEntries: Record<string, unknown>) {
     value: v,
   }));
   const tree = createTree(flatTree);
+
+  // sort to match static route first before dynamic route
+  sortDynamicRoutes(tree);
+
   return tree;
+}
+
+function sortDynamicRoutes<T>(tree: TreeNode<T>) {
+  if (tree.children) {
+    tree.children = Object.fromEntries(
+      sortBy(Object.entries(tree.children), ([k]) => k.includes("[")),
+    );
+    for (const v of Object.values(tree.children)) {
+      sortDynamicRoutes(v);
+    }
+  }
 }
 
 // use own "use client" components as external
@@ -73,8 +88,11 @@ async function renderLayout(
   return acc;
 }
 
-export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
-  const url = new URL(request.url);
+export async function renderRouteMap(
+  tree: RouteTreeNode,
+  request: Pick<Request, "url" | "headers">,
+) {
+  const url = serializeUrl(new URL(request.url));
   const pathname = normalizePathname(url.pathname);
   const prefixes = getPathPrefixes(pathname);
 
@@ -93,7 +111,14 @@ export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
     } else {
       node = initNode();
     }
-    const props: BaseProps = { request, params };
+    const props: BaseProps = {
+      url,
+      request: {
+        url: request.url,
+        headers: serializeHeaders(request.headers),
+      },
+      params,
+    };
     layouts[prefix] = await renderLayout(node, props, prefix);
     if (prefix === pathname) {
       pages[prefix] = renderPage(node, props);
@@ -107,9 +132,33 @@ const ThrowNotFound: React.FC = () => {
   throw createError({ status: 404 });
 };
 
+type SerializedURL = {
+  [k in keyof URL]: URL[k] extends string ? URL[k] : never;
+};
+
+function serializeUrl(url: URL): SerializedURL {
+  const kv: any = {};
+  for (const k in url) {
+    const v = (url as any)[k];
+    if (typeof v === "string") {
+      kv[k] = v;
+    }
+  }
+  return kv;
+}
+
+function serializeHeaders(headers: Headers): Record<string, string> {
+  const kv: Record<string, string> = {};
+  headers.forEach((v, k) => (kv[k] = v));
+  return kv;
+}
+
 interface BaseProps {
-  // TODO: parsed url prop?
-  request: Request; // TODO: "use client" page/layout doesn't have full aceess
+  url: SerializedURL;
+  request: {
+    url: string;
+    headers: Record<string, string>;
+  };
   params: Record<string, string>;
 }
 
@@ -127,7 +176,6 @@ function matchChild(input: string, node: RouteTreeNode) {
   if (!node.children) {
     return;
   }
-  // TODO: sort to dynmaic one come last
   // TODO: catch-all route
   for (const [segment, child] of Object.entries(node.children)) {
     const m = segment.match(/^\[(.*)\]$/);

@@ -34,7 +34,7 @@ export async function incrementCounter(
   this: ActionContext,
   formData: FormData,
 ) {
-  const session = getSession(this.request);
+  const session = getSession(this.request.headers);
   if (!session?.name) {
     throw redirect("/test/session/signin");
   }
