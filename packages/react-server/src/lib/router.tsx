@@ -3,6 +3,7 @@ import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
+import type { HistoryLocation } from "@tanstack/history";
 
 // TODO: move to features/router/react-server
 
@@ -109,6 +110,7 @@ const ThrowNotFound: React.FC = () => {
 
 interface BaseProps {
   // TODO: parsed url prop?
+  location: HistoryLocation;
   request: Request; // TODO: "use client" page/layout doesn't have full aceess
   params: Record<string, string>;
 }
