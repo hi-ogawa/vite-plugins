@@ -110,7 +110,7 @@ function formatMessage(s: string, opts: { keepScope: boolean }) {
   );
   // remove scope
   //   feat(react-server): ...  ⇒  feat: ...
-  if (opts.keepScope) {
+  if (!opts.keepScope) {
     s = s.replace(/^(\w+)(\([^)]*\))/, "$1");
   }
   return s;

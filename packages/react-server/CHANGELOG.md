@@ -2,7 +2,7 @@
 
 ## v0.1.13
 
-- feat(react-server): action return value (implement `useActionData`) ([#255](https://github.com/hi-ogawa/vite-plugins/pull/255))
+- feat: action return value (implement `useActionData`) ([#255](https://github.com/hi-ogawa/vite-plugins/pull/255))
 
 ## v0.1.12
 
