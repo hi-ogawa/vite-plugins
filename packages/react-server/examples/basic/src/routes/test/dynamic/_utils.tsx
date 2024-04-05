@@ -7,10 +7,11 @@ export function TestDynamic({
   importMetaUrl: string;
   props: PageProps;
 }) {
-  const result = {
-    file: importMetaUrl.split("/src/routes/").at(-1),
-    url: props.request.url,
-    params: props.params,
-  };
-  return <pre className="text-sm p-2">{JSON.stringify(result, null, 2)}</pre>;
+  return (
+    <div className="flex flex-col gap-1">
+      <div>file: {importMetaUrl.split("/src/routes").at(-1)}</div>
+      <div>pathname: {new URL(props.request.url).pathname}</div>
+      <div>params: {JSON.stringify(props.params)}</div>
+    </div>
+  );
 }
