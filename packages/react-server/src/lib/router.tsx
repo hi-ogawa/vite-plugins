@@ -142,7 +142,6 @@ function matchChild(input: string, node: RouteTreeNode) {
   if (!node.children) {
     return;
   }
-  // TODO: sort to dynmaic one come last
   // TODO: catch-all route
   for (const [segment, child] of Object.entries(node.children)) {
     const m = segment.match(/^\[(.*)\]$/);
