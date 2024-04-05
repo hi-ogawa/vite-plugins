@@ -12,10 +12,7 @@ import {
   type ServerRouterData,
   createLayoutContentRequest,
 } from "../features/router/utils";
-import {
-  type ActionContext,
-  actionContextMap,
-} from "../features/server-action/react-server";
+import { type ActionContext } from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapRscRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
@@ -172,11 +169,9 @@ async function actionHandler({ request }: { request: Request }) {
   }
 
   const context: ActionContext = { request, responseHeaders: {} };
-  actionContextMap.set(formData, context);
-
   const result: ActionResult = { id };
   try {
-    result.data = await action(formData);
+    result.data = await action.apply(context, [formData]);
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
@@ -184,7 +179,6 @@ async function actionHandler({ request }: { request: Request }) {
       ...context.responseHeaders,
       ...result.error?.headers,
     };
-    actionContextMap.delete(formData);
   }
   return result;
 }
