@@ -88,7 +88,10 @@ async function renderLayout(
   return acc;
 }
 
-export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
+export async function renderRouteMap(
+  tree: RouteTreeNode,
+  request: Pick<Request, "url" | "headers">,
+) {
   const url = serializeUrl(new URL(request.url));
   const pathname = normalizePathname(url.pathname);
   const prefixes = getPathPrefixes(pathname);
