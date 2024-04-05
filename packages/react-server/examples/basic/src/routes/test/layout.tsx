@@ -11,6 +11,7 @@ export default async function Layout(props: LayoutProps) {
         links={[
           "/test",
           "/test/other",
+          "/test/dynamic",
           "/test/action",
           "/test/deps",
           "/test/head",

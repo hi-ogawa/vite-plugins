@@ -3,7 +3,6 @@ import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
 import { __global } from "./global";
-import type { HistoryLocation } from "@tanstack/history";
 
 // TODO: move to features/router/react-server
 
@@ -94,7 +93,7 @@ export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
     } else {
       node = initNode();
     }
-    const props: BaseProps = { request, params };
+    const props: BaseProps = { url, request, params };
     layouts[prefix] = await renderLayout(node, props, prefix);
     if (prefix === pathname) {
       pages[prefix] = renderPage(node, props);
@@ -109,8 +108,8 @@ const ThrowNotFound: React.FC = () => {
 };
 
 interface BaseProps {
-  // TODO: parsed url prop?
-  location: HistoryLocation;
+  // TODO: serializable
+  url: InstanceType<typeof URL>;
   request: Request; // TODO: "use client" page/layout doesn't have full aceess
   params: Record<string, string>;
 }
