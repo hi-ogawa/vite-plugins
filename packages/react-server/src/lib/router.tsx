@@ -93,7 +93,7 @@ export async function renderRouteMap(tree: RouteTreeNode, request: Request) {
     } else {
       node = initNode();
     }
-    const props: BaseProps = { url, request, params };
+    const props: BaseProps = { request, params };
     layouts[prefix] = await renderLayout(node, props, prefix);
     if (prefix === pathname) {
       pages[prefix] = renderPage(node, props);
@@ -108,8 +108,7 @@ const ThrowNotFound: React.FC = () => {
 };
 
 interface BaseProps {
-  // TODO: serializable
-  url: InstanceType<typeof URL>;
+  // TODO: parsed url prop?
   request: Request; // TODO: "use client" page/layout doesn't have full aceess
   params: Record<string, string>;
 }
