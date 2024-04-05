@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.14
+
+- refactor: use `this: ActionContext` ([#261](https://github.com/hi-ogawa/vite-plugins/pull/261))
+- feat: serializable route props ([#262](https://github.com/hi-ogawa/vite-plugins/pull/262))
+- fix: fix static route with dynamic sibling ([#260](https://github.com/hi-ogawa/vite-plugins/pull/260))
+
 ## v0.1.13
 
 - feat: action return value (implement `useActionData`) ([#255](https://github.com/hi-ogawa/vite-plugins/pull/255))
