@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.13
+
+- feat: action return value (implement `useActionData`) ([#255](https://github.com/hi-ogawa/vite-plugins/pull/255))
+
 ## v0.1.12
 
 - fix: fix html content-type ([#256](https://github.com/hi-ogawa/vite-plugins/pull/256))
