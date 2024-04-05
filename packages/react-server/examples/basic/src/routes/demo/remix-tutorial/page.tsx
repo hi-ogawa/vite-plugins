@@ -1,29 +1,31 @@
 export default async function Page() {
   return (
     <>
-      <div id="sidebar">
-        <h1>Remix Contacts</h1>
-        <div>
-          <form id="search-form" role="search">
+      <div id="sidebar" className="flex flex-col gap-4">
+        <h1 className="font-bold">Remix Contacts</h1>
+        <div className="flex gap-2">
+          <form role="search">
             <input
+              className="antd-input px-2"
               aria-label="Search contacts"
-              id="q"
               name="q"
-              placeholder="Search"
+              placeholder="Search..."
               type="search"
             />
             <div aria-hidden hidden={true} id="search-spinner" />
           </form>
           <form method="post">
-            <button type="submit">New</button>
+            <button className="antd-btn antd-btn-default px-2" type="submit">
+              New
+            </button>
           </form>
         </div>
         <nav>
-          <ul>
-            <li>
+          <ul className="flex flex-col gap-2">
+            <li className="antd-btn antd-btn-default p-1">
               <a href={`/demo/remix-tutorial/contacts/1`}>Your Name</a>
             </li>
-            <li>
+            <li className="antd-btn antd-btn-default p-1">
               <a href={`/demo/remix-tutorial/contacts/2`}>Your Friend</a>
             </li>
           </ul>

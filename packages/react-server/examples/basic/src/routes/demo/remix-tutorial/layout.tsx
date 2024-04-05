@@ -1,9 +1,7 @@
-import cssHref from "./app.css?url";
-
 export default async function Layout(props: React.PropsWithChildren) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <link rel="styleshee" href={cssHref} />
+    <div className="flex flex-col items-center gap-2 w-full">
+      {/* <link rel="styleshee" href={cssHref} /> */}
       <h2 className="text-lg">
         Demo ported from{" "}
         <a
@@ -14,7 +12,7 @@ export default async function Layout(props: React.PropsWithChildren) {
           Remix
         </a>
       </h2>
-      {props.children}
+      <div className="border p-4">{props.children}</div>
     </div>
   );
 }
