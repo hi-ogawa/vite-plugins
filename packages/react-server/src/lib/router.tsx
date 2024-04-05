@@ -1,4 +1,4 @@
-import { objectHas, tinyassert } from "@hiogawa/utils";
+import { objectHas, sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
@@ -38,7 +38,22 @@ export function generateRouteTree(globEntries: Record<string, unknown>) {
     value: v,
   }));
   const tree = createTree(flatTree);
+
+  // sort to match static route first before dynamic route
+  sortDynamicRoutes(tree);
+
   return tree;
+}
+
+function sortDynamicRoutes<T>(tree: TreeNode<T>) {
+  if (tree.children) {
+    tree.children = Object.fromEntries(
+      sortBy(Object.entries(tree.children), ([k]) => k.includes("[")),
+    );
+    for (const v of Object.values(tree.children)) {
+      sortDynamicRoutes(v);
+    }
+  }
 }
 
 // use own "use client" components as external
