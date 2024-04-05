@@ -1,5 +1,3 @@
-import { tinyassert } from "@hiogawa/utils";
-
 export function createServerReference(id: string, action: Function): React.FC {
   return Object.defineProperties(action, {
     $$typeof: {
@@ -19,18 +17,8 @@ export function createServerReference(id: string, action: Function): React.FC {
   }) as any;
 }
 
-// Builtin action context system based on FormData identity.
-// Users can easilty setup own AsyncLocalStorage based request context using custom handler,
-// but we don't make it as a builtin feature until async hooks are properly supported on Stackblitz.
-export const actionContextMap = new WeakMap<FormData, ActionContext>();
-
+// action function can access context via (this: ActionContext)
 export interface ActionContext {
   request: Request;
   responseHeaders: Record<string, string>; // TODO: Headers?
-}
-
-export function getActionContext(formData: FormData) {
-  const ctx = actionContextMap.get(formData);
-  tinyassert(ctx);
-  return ctx;
 }
