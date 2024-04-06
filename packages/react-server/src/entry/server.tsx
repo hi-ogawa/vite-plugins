@@ -67,7 +67,8 @@ export async function renderHtml(
   //
 
   if (import.meta.env.DEV) {
-    ssrImportPromiseCache.clear();
+    ssrImportPromiseCache;
+    // ssrImportPromiseCache.clear();
   }
 
   const [stream1, stream2] = result.stream.tee();
