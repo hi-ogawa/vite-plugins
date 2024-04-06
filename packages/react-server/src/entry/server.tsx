@@ -101,7 +101,6 @@ export async function renderHtml(
 
   if (import.meta.env.DEV) {
     // ensure latest css
-    invalidateModule(__global.dev.server, "\0virtual:ssr-assets");
     invalidateModule(__global.dev.server, "\0virtual:react-server-css.js");
     invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
   }
