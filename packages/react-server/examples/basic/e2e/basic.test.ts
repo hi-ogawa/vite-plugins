@@ -1,5 +1,5 @@
 import { type Page, expect, test } from "@playwright/test";
-import { checkNoError, editFile } from "./helper";
+import { checkNoError, editFile, inspectDevModules } from "./helper";
 
 test("basic", async ({ page }) => {
   checkNoError(page);
@@ -209,78 +209,88 @@ test("client hmr @dev", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
-test.only("module invalidation @dev", async ({ page }) => {
+test("module invalidation @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
   await waitForHydration(page);
 
-  const modSsrEntry = await inspectDev(page, {
-    type: "module",
-    environment: "ssr",
-    url: "/src/entry-server",
+  const moduleUrls = [
+    "/src/entry-server",
+    "/src/entry-react-server",
+    "/src/routes/test/page",
+    "/src/components/counter",
+    "@hiogawa/react-server/entry-server",
+    "@hiogawa/react-server/entry-react-server",
+  ] as const;
+
+  const result = await inspectDevModules(page, moduleUrls);
+  expect(result).toMatchObject({
+    "/src/entry-server": {
+      ssr: expect.any(Object),
+      "react-server": false,
+    },
+    "/src/entry-react-server": {
+      ssr: false,
+      "react-server": expect.any(Object),
+    },
+    "/src/routes/test/page": {
+      ssr: false,
+      "react-server": expect.any(Object),
+    },
+    "/src/components/counter": {
+      ssr: expect.any(Object),
+      "react-server": expect.any(Object),
+    },
+    "@hiogawa/react-server/entry-server": {
+      ssr: expect.any(Object),
+      "react-server": false,
+    },
+    "@hiogawa/react-server/entry-react-server": {
+      ssr: false,
+      "react-server": expect.any(Object),
+    },
   });
 
-  const modReactServerEntry = await inspectDev(page, {
-    type: "module",
-    environment: "react-server",
-    url: "/src/entry-react-server",
-  });
+  // each render doesn't invalidate anything
+  await page.reload();
+  await waitForHydration(page);
 
-  const modReactServerEntryLib = await inspectDev(page, {
-    type: "module",
-    environment: "react-server",
-    url: "@hiogawa/react-server/entry-react-server",
-  });
+  const result2 = await inspectDevModules(page, moduleUrls);
+  expect([
+    result["/src/entry-server"].ssr.lastInvalidationTimestamp,
+    result["/src/entry-react-server"]["react-server"].lastInvalidationTimestamp,
+  ]).toEqual([
+    result2["/src/entry-server"].ssr.lastInvalidationTimestamp,
+    result2["/src/entry-react-server"]["react-server"]
+      .lastInvalidationTimestamp,
+  ]);
 
-  const modPage = await inspectDev(page, {
-    type: "module",
-    environment: "react-server",
-    url: "/src/routes/test/page",
-  });
+  // updating client component invalidates react-server entry
+  // due to import.meta.glob dependency
+  //   react server entry -> page -> client reference
+  await editFile("./src/components/counter.tsx", (s) =>
+    s.replace("test-hmr-div", "test-hmr-edit-div"),
+  );
+  await page.getByText("test-hmr-edit-div").click();
 
-  // const modClient = await inspectDev(page, {
-  //   type: "module",
-  //   environment: "react-server",
-  //   url: "/src/routes/test/page",
-  // });
+  const result3 = await inspectDevModules(page, moduleUrls);
+  expect([result["/src/entry-server"].ssr.lastInvalidationTimestamp]).toEqual([
+    result3["/src/entry-server"].ssr.lastInvalidationTimestamp,
+  ]);
 
-  // const modClient = await inspectDev(page, {
-  //   type: "module",
-  //   environment: "react-server",
-  //   url: "/src/routes/test/page",
-  // });
-
-  console.log({
-    modSsrEntry,
-    modReactServerEntry,
-    modReactServerEntryLib,
-    modPage,
-    // modClient,
-  });
-
-  // TODO
-  // this will invalidate server module due to the import.meta.glob dependency
-  // /src/routes/test/page.tsx
-  // @hiogawa/react-server/entry-react-server
-  // /src/entry-react-server.tsx
-
-  // but not
-  // /src/entry-server.tsx
-  // @hiogawa/react-server/entry-server
-  // await page.request.post("/__react_server_dev", {
-  //   data: {
-  //     type: "module",
-  //     environment: "ssr",
-  //     url: "/src/routes/test/page.tsx",
-  //   },
-  // });
+  const changed = [
+    ["/src/entry-react-server", "react-server"],
+    ["/src/routes/test/page", "react-server"],
+    ["/src/components/counter", "react-server"],
+    ["/src/components/counter", "ssr"],
+  ];
+  for (const [k1, k2] of changed) {
+    const v2 = (result2 as any)[k1][k2].lastInvalidationTimestamp;
+    const v3 = (result3 as any)[k1][k2].lastInvalidationTimestamp;
+    expect(v3).toBeGreaterThan(v2);
+  }
 });
-
-async function inspectDev(page: Page, data: any) {
-  const res = await page.request.post("/__react_server_dev", { data });
-  return await res.json();
-}
 
 test("unocss", async ({ page, browser }) => {
   checkNoError(page);

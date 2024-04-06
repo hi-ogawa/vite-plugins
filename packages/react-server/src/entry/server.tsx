@@ -34,7 +34,7 @@ export async function handler(request: Request): Promise<Response> {
     import.meta.env.DEV &&
     new URL(request.url).pathname === "/__react_server_dev"
   ) {
-    return devTestHandler(request);
+    return devInspectHandler(request);
   }
 
   const reactServer = await importReactServer();
@@ -198,7 +198,7 @@ function injectToHead(data: string) {
   });
 }
 
-async function devTestHandler(request: Request) {
+async function devInspectHandler(request: Request) {
   tinyassert(request.method === "POST");
   const data = await request.json();
   if (data.type === "module") {
@@ -209,16 +209,16 @@ async function devTestHandler(request: Request) {
     if (data.environment === "react-server") {
       mod = await getModuleNode(__global.dev.reactServer, data.url, true);
     }
-    const result = {
-      id: mod?.id,
-      lastInvalidationTimestamp: mod?.lastInvalidationTimestamp,
-      importers: [...(mod?.importers ?? [])].map((m) => m.id),
-      ssrImportedModules: [...(mod?.ssrImportedModules ?? [])].map((m) => m.id),
-      clientImportedModules: [...(mod?.clientImportedModules ?? [])].map(
+    const result = mod && {
+      id: mod.id,
+      lastInvalidationTimestamp: mod.lastInvalidationTimestamp,
+      importers: [...(mod.importers ?? [])].map((m) => m.id),
+      ssrImportedModules: [...(mod.ssrImportedModules ?? [])].map((m) => m.id),
+      clientImportedModules: [...(mod.clientImportedModules ?? [])].map(
         (m) => m.id,
       ),
     };
-    return new Response(JSON.stringify(result, null, 2), {
+    return new Response(JSON.stringify(result || false, null, 2), {
       headers: { "content-type": "application/json" },
     });
   }
