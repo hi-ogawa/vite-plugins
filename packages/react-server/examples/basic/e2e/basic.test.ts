@@ -214,7 +214,6 @@ test("rsc + client + rsc hmr @dev", async ({ page }) => {
 
   await page.goto("/test");
   await waitForHydration(page);
-  await page.pause();
 
   await page.getByText("Count: 0").click();
   await page.getByRole("button", { name: "+" }).click();
