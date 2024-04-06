@@ -1,6 +1,7 @@
-import { createDebug, splitFirst } from "@hiogawa/utils";
+import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
+import type { ModuleNode, ViteDevServer } from "vite";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
 import {
@@ -28,6 +29,14 @@ import type { ReactServerHandlerStreamResult } from "./react-server";
 const debug = createDebug("react-server:ssr");
 
 export async function handler(request: Request): Promise<Response> {
+  // dev only api endpoint to test internal
+  if (
+    import.meta.env.DEV &&
+    new URL(request.url).pathname === "/__react_server_dev"
+  ) {
+    return devTestHandler(request);
+  }
+
   const reactServer = await importReactServer();
 
   // server action and render rsc stream
@@ -187,4 +196,36 @@ function injectToHead(data: string) {
       controller.enqueue(chunk);
     },
   });
+}
+
+async function devTestHandler(request: Request) {
+  tinyassert(request.method === "POST");
+  const data = await request.json();
+  if (data.type === "module") {
+    let mod: ModuleNode | undefined;
+    if (data.environment === "ssr") {
+      mod = await getModuleNode(__global.dev.server, data.url, true);
+    }
+    if (data.environment === "react-server") {
+      mod = await getModuleNode(__global.dev.reactServer, data.url, true);
+    }
+    const result = {
+      id: mod?.id,
+      lastInvalidationTimestamp: mod?.lastInvalidationTimestamp,
+      importers: [...(mod?.importers ?? [])].map((m) => m.id),
+      ssrImportedModules: [...(mod?.ssrImportedModules ?? [])].map((m) => m.id),
+      clientImportedModules: [...(mod?.clientImportedModules ?? [])].map(
+        (m) => m.id,
+      ),
+    };
+    return new Response(JSON.stringify(result, null, 2), {
+      headers: { "content-type": "application/json" },
+    });
+  }
+  tinyassert(false);
+}
+
+async function getModuleNode(server: ViteDevServer, url: string, ssr: boolean) {
+  const resolved = await server.moduleGraph.resolveUrl(url, ssr);
+  return server.moduleGraph.getModuleById(resolved[1]);
 }

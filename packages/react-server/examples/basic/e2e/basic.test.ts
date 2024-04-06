@@ -209,6 +209,79 @@ test("client hmr @dev", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
+test.only("module invalidation @dev", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  const modSsrEntry = await inspectDev(page, {
+    type: "module",
+    environment: "ssr",
+    url: "/src/entry-server",
+  });
+
+  const modReactServerEntry = await inspectDev(page, {
+    type: "module",
+    environment: "react-server",
+    url: "/src/entry-react-server",
+  });
+
+  const modReactServerEntryLib = await inspectDev(page, {
+    type: "module",
+    environment: "react-server",
+    url: "@hiogawa/react-server/entry-react-server",
+  });
+
+  const modPage = await inspectDev(page, {
+    type: "module",
+    environment: "react-server",
+    url: "/src/routes/test/page",
+  });
+
+  // const modClient = await inspectDev(page, {
+  //   type: "module",
+  //   environment: "react-server",
+  //   url: "/src/routes/test/page",
+  // });
+
+  // const modClient = await inspectDev(page, {
+  //   type: "module",
+  //   environment: "react-server",
+  //   url: "/src/routes/test/page",
+  // });
+
+  console.log({
+    modSsrEntry,
+    modReactServerEntry,
+    modReactServerEntryLib,
+    modPage,
+    // modClient,
+  });
+
+  // TODO
+  // this will invalidate server module due to the import.meta.glob dependency
+  // /src/routes/test/page.tsx
+  // @hiogawa/react-server/entry-react-server
+  // /src/entry-react-server.tsx
+
+  // but not
+  // /src/entry-server.tsx
+  // @hiogawa/react-server/entry-server
+  // await page.request.post("/__react_server_dev", {
+  //   data: {
+  //     type: "module",
+  //     environment: "ssr",
+  //     url: "/src/routes/test/page.tsx",
+  //   },
+  // });
+});
+
+async function inspectDev(page: Page, data: any) {
+  const res = await page.request.post("/__react_server_dev", { data });
+  return await res.json();
+}
+
 test("unocss", async ({ page, browser }) => {
   checkNoError(page);
 
