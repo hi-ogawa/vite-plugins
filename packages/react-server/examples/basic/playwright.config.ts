@@ -18,7 +18,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         viewport: null,
         deviceScaleFactor: undefined,
-      }
+      },
     },
   ],
   webServer: {
