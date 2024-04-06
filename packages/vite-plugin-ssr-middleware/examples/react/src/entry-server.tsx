@@ -4,9 +4,6 @@ import { renderToString } from "react-dom/server";
 import type { ViteDevServer } from "vite";
 import { App } from "./app";
 
-// ok
-console.log("[import]", import.meta.url);
-
 export default async function handler(
   req: http.IncomingMessage & { viteDevServer: ViteDevServer },
   res: http.ServerResponse,
