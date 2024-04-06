@@ -209,6 +209,21 @@ test("client hmr @dev", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
+test.skip("rsc + client + rsc hmr @dev", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+  await page.pause();
+
+  // modify client comopnent
+  // await page.getByText("test-hmr-div").click();
+  // await editFile("./src/components/counter.tsx", (s) =>
+  //   s.replace("test-hmr-div", "test-hmr-edit-div"),
+  // );
+  // await page.getByText("test-hmr-edit-div").click();
+});
+
 test("module invalidation @dev", async ({ page }) => {
   checkNoError(page);
 
