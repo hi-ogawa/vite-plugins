@@ -209,6 +209,38 @@ test("client hmr @dev", async ({ page }) => {
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
 });
 
+test("rsc + client + rsc hmr @dev", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  await page.getByText("Count: 0").click();
+  await page.getByRole("button", { name: "+" }).click();
+  await page.getByText("Count: 1").click();
+
+  // edit server
+  await editFile("./src/routes/test/page.tsx", (s) =>
+    s.replace("Server Time", "Server (EDIT 1) Time"),
+  );
+  await page.getByText("Server (EDIT 1) Time").click();
+  await page.getByText("Count: 1").click();
+
+  // edit client
+  await editFile("./src/components/counter.tsx", (s) =>
+    s.replace("test-hmr-div", "test-hmr-edit-div"),
+  );
+  await page.getByText("test-hmr-edit-div").click();
+  await page.getByText("Count: 1").click();
+
+  // edit server again re-mounts client
+  await editFile("./src/routes/test/page.tsx", (s) =>
+    s.replace("Server (EDIT 1) Time", "Server (EDIT 2) Time"),
+  );
+  await page.getByText("Server (EDIT 2) Time").click();
+  await page.getByText("Count: 0").click();
+});
+
 test("module invalidation @dev", async ({ page }) => {
   checkNoError(page);
 
