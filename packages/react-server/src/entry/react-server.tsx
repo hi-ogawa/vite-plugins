@@ -113,6 +113,9 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
     error,
     errorInfo,
   });
+  if (!(error instanceof ReactServerDigestError)) {
+    console.error("[react-server:renderToReadableStream]", error);
+  }
   const serverError =
     error instanceof ReactServerDigestError
       ? error
