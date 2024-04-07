@@ -8,10 +8,10 @@ import type { ActionResult } from "../server-action/react-server";
 // TODO: use accept header x-component?
 const RSC_PARAM = "__rsc";
 
-// TODO: allow invalidating each layout layer
 type StreamRequestParam = {
   lastPathname?: string;
-  revalidate?: boolean; // currently used for server component HMR
+  // TODO: refine revalitating each layout layer
+  revalidate?: boolean;
 };
 
 export function wrapStreamRequestUrl(

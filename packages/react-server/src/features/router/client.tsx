@@ -48,7 +48,6 @@ export function ServerActionRedirectHandler() {
   return null;
 }
 
-// TODO: refine revalidation
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
 
 export function routerRevalidate() {
