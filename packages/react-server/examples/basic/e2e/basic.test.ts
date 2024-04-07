@@ -664,23 +664,34 @@ async function testActionContext(page: Page) {
   await page.getByText("Hi, anonymous user!").click();
 }
 
-test("action revalidate", async ({ page }) => {
+test("revalidate on action", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/test/action");
+  await page.goto("/test/revalidate");
   await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
-  if (process.env.E2E_PREVIEW) {
-    await page.getByText("[effect: 1]").click();
-    await page.getByRole("button", { name: "Revalidate!" }).click();
-    await page.getByText("[effect: 2]").click();
-  } else {
-    await page.getByText("[effect: 2]").click();
-    await page.getByRole("button", { name: "Revalidate!" }).click();
-    await page.getByText("[effect: 3]").click();
-  }
+  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByRole("button", { name: "Action" }).click();
+  await page.getByText(`[effect: ${count + 1}]`).click();
+
+  await checkClientState();
+});
+
+test("revalidate on navigation", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/revalidate");
+  await waitForHydration(page);
+
+  const checkClientState = await setupCheckClientState(page);
+
+  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByRole("link", { name: "Navigation" }).click();
+  await page.getByText(`[effect: ${count + 1}]`).click();
 
   await checkClientState();
 });

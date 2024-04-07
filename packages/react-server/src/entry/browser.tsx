@@ -2,7 +2,12 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
-import { LayoutRoot, LayoutStateContext } from "../features/router/client";
+import {
+  LayoutRoot,
+  LayoutStateContext,
+  ROUTER_REVALIDATE_KEY,
+  routerRevalidate,
+} from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
 import { injectActionId } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
@@ -133,7 +138,7 @@ export async function start() {
       const request = new Request(
         wrapStreamRequestUrl(location.href, {
           lastPathname,
-          invalidateAll: RSC_HMR_STATE_KEY in location.state,
+          revalidate: ROUTER_REVALIDATE_KEY in location.state,
         }),
       );
       startTransition(() => {
@@ -182,13 +187,11 @@ export async function start() {
   // custom event for RSC reload
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
-      console.log("[react-server] hot update", e);
-      history.replace(history.location.href, { [RSC_HMR_STATE_KEY]: true });
+      console.log("[react-server] hot update", e.file);
+      history.replace(history.location.href, routerRevalidate());
     });
   }
 }
-
-const RSC_HMR_STATE_KEY = "__rscHmr";
 
 declare module "react-dom/client" {
   // TODO: full document CSR works fine?

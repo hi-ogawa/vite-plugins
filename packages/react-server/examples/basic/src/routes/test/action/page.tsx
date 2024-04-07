@@ -1,9 +1,4 @@
-import {
-  actionTestRevalidate,
-  changeCounter,
-  getCounter,
-  getMessages,
-} from "./_action";
+import { changeCounter, getCounter, getMessages } from "./_action";
 import {
   ActionDataTest,
   Chat,
@@ -22,10 +17,6 @@ export default async function Page() {
       </div>
       <Chat messages={getMessages()} />
       <ActionDataTest />
-      <form action={actionTestRevalidate} className="flex flex-col gap-2">
-        <h4 className="font-bold">Action Revalidate</h4>
-        <button className="antd-btn antd-btn-default w-sm">Revalidate!</button>
-      </form>
       <FormStateTest />
     </div>
   );

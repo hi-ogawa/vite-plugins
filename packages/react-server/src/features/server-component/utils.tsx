@@ -8,10 +8,10 @@ import type { ActionResult } from "../server-action/react-server";
 // TODO: use accept header x-component?
 const RSC_PARAM = "__rsc";
 
-// TODO: allow invalidating each layout layer
 type StreamRequestParam = {
   lastPathname?: string;
-  invalidateAll?: boolean; // currently used for server component HMR
+  // TODO: refine revalitating each layout layer
+  revalidate?: boolean;
 };
 
 export function wrapStreamRequestUrl(
@@ -33,8 +33,8 @@ export function unwrapStreamRequest(
 
   let layoutRequest = createLayoutContentRequest(url.pathname);
   if (rscParam && !actionResult?.context.revalidate) {
-    const param = JSON.parse(rscParam);
-    if (param.lastPathname && !param.invalidateAll) {
+    const param = JSON.parse(rscParam) as StreamRequestParam;
+    if (param.lastPathname && !param.revalidate) {
       const newKeys = getNewLayoutContentKeys(param.lastPathname, url.pathname);
       layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
         newKeys.includes(k),
