@@ -44,6 +44,6 @@ export function unwrapStreamRequest(request: Request) {
       headers: request.headers,
     }),
     layoutRequest,
-    isStream: !rscParam,
+    isStream: Boolean(rscParam),
   };
 }
