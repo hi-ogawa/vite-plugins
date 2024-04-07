@@ -57,6 +57,12 @@ importers:
         specifier: ^3.34.2
         version: 3.34.2
 
+  packages/error-overlay:
+    dependencies:
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
+
   packages/react-server:
     dependencies:
       '@tanstack/history':
