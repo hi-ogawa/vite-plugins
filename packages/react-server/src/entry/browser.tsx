@@ -3,13 +3,9 @@ import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
-import {
-  type ServerRouterData,
-  createLayoutContentRequest,
-  getNewLayoutContentKeys,
-} from "../features/router/utils";
+import type { ServerRouterData } from "../features/router/utils";
 import { injectActionId } from "../features/server-action/utils";
-import { wrapRscRequestUrl } from "../features/server-component/utils";
+import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
@@ -51,11 +47,10 @@ export async function start() {
       tinyassert(args[0] instanceof FormData);
       injectActionId(args[0], id);
     }
-    // TODO: for now, we invalidate only leaf content
-    const pathname = history.location.pathname;
-    const newKeys = getNewLayoutContentKeys(pathname, pathname);
     const request = new Request(
-      wrapRscRequestUrl(history.location.href, newKeys),
+      wrapStreamRequestUrl(history.location.href, {
+        lastPathname: history.location.pathname,
+      }),
       {
         method: "POST",
         body: args[0],
@@ -131,15 +126,16 @@ export async function start() {
       const lastPathname = lastLocation.current.pathname;
       lastLocation.current = location;
 
-      // TODO: (refactor) server can find `newKeys` based on from/to location
-      const pathname = location.pathname;
-      let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
-      if (RSC_HMR_STATE_KEY in location.state) {
-        newKeys = Object.keys(createLayoutContentRequest(pathname));
-      }
-      debug("[navigation]", location, { pathname, lastPathname, newKeys });
-
-      const request = new Request(wrapRscRequestUrl(location.href, newKeys));
+      debug("[navigation]", location, {
+        pathname: location.pathname,
+        lastPathname,
+      });
+      const request = new Request(
+        wrapStreamRequestUrl(location.href, {
+          lastPathname,
+          invalidateAll: RSC_HMR_STATE_KEY in location.state,
+        }),
+      );
       startTransition(() => {
         __setLayout(
           reactServerDomClient.createFromFetch<ServerRouterData>(
