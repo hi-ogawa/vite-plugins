@@ -4,7 +4,7 @@ const RSC_PARAM = "__rsc";
 // TODO: allow invalidating each layout layer
 type StreamRequestParam = {
   lastPathname?: string;
-  invalidateAll?: boolean;
+  invalidateAll?: boolean; // currently used for server component HMR
 };
 
 export function wrapRscRequestUrl(

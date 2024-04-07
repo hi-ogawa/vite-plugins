@@ -61,7 +61,7 @@ export const handler: ReactServerHandler = async (ctx) => {
   const request = rscOnly?.request ?? ctx.request;
   const url = new URL(request.url);
   let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (rscOnly && rscOnly.param.lastPathname) {
+  if (rscOnly && rscOnly.param.lastPathname && !rscOnly.param.invalidateAll) {
     let newKeys = getNewLayoutContentKeys(
       rscOnly.param.lastPathname,
       url.pathname,
