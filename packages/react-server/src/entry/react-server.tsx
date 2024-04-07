@@ -54,7 +54,10 @@ export const handler: ReactServerHandler = async (ctx) => {
   }
 
   // check stream only request
-  const { request, layoutRequest, isStream } = unwrapStreamRequest(ctx.request);
+  const { request, layoutRequest, isStream } = unwrapStreamRequest(
+    ctx.request,
+    actionResult,
+  );
   const stream = await render({ request, layoutRequest, actionResult });
 
   if (isStream) {
