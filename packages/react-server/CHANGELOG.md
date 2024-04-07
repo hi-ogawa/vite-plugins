@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.15
+
+- feat: add `LinkForm` ([#270](https://github.com/hi-ogawa/vite-plugins/pull/270))
+- feat: add `routerRevalidate` ([#269](https://github.com/hi-ogawa/vite-plugins/pull/269))
+- feat: add `ActionContext.revalidate` ([#268](https://github.com/hi-ogawa/vite-plugins/pull/268))
+- refactor: layout invalidation on server ([#266](https://github.com/hi-ogawa/vite-plugins/pull/266))
+- fix: fix server entry module invalidation ([#264](https://github.com/hi-ogawa/vite-plugins/pull/264))
+
 ## v0.1.14
 
 - refactor: use `this: ActionContext` ([#261](https://github.com/hi-ogawa/vite-plugins/pull/261))
