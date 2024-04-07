@@ -701,7 +701,7 @@ test("revalidate on navigation", async ({ page }) => {
   await checkClientState();
 });
 
-test.only("dynamic routes", async ({ page }) => {
+test("dynamic routes", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/dynamic");
