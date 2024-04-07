@@ -19,7 +19,6 @@ export function createServerReference(id: string, action: Function): React.FC {
   }) as any;
 }
 
-// TODO: discriminated union
 export type ActionResult = {
   id: string;
   error?: ReactServerErrorContext;
@@ -30,6 +29,8 @@ export type ActionResult = {
 
 export class ActionContext {
   responseHeaders: Record<string, string> = {};
+
+  // TODO: refine revalidation by layout key
   revalidate = false;
 
   constructor(public request: Request) {}
