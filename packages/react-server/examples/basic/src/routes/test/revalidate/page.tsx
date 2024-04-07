@@ -1,6 +1,6 @@
 import type { LayoutProps } from "@hiogawa/react-server/server";
-import { Link } from "../../../../../../dist/client";
 import { actionTestRevalidate } from "./_action";
+import { LinkWithRevalidate } from "./_client";
 
 export default function Layout(_props: LayoutProps) {
   return (
@@ -12,12 +12,13 @@ export default function Layout(_props: LayoutProps) {
         </button>
       </form>
       <div className="flex flex-col gap-2">
-        <Link
+        <LinkWithRevalidate
           className="antd-btn antd-btn-default px-2 self-start"
           href="/test/revalidate"
+          revalidate
         >
           Navigation
-        </Link>
+        </LinkWithRevalidate>
       </div>
     </div>
   );
