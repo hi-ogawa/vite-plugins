@@ -11,6 +11,7 @@ import {
   type LayoutRequest,
   type ServerRouterData,
   createLayoutContentRequest,
+  getNewLayoutContentKeys,
 } from "../features/router/utils";
 import { type ActionContext } from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
@@ -47,23 +48,25 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
-  // check rsc-only request
-  const rscOnly = unwrapRscRequest(ctx.request);
-
   // action
   let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
     actionResult = await actionHandler(ctx);
   }
 
+  // TODO: refactor
+  // check rsc-only request
+  const rscOnly = unwrapRscRequest(ctx.request);
+
   const request = rscOnly?.request ?? ctx.request;
   const url = new URL(request.url);
   let layoutRequest = createLayoutContentRequest(url.pathname);
-
-  if (rscOnly) {
-    layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
-      rscOnly.newKeys.includes(k),
+  if (rscOnly && rscOnly.param.lastPathname) {
+    let newKeys = getNewLayoutContentKeys(
+      rscOnly.param.lastPathname,
+      url.pathname,
     );
+    layoutRequest = objectPickBy(layoutRequest, (_v, k) => newKeys.includes(k));
   }
 
   const stream = await render({ request, layoutRequest, actionResult });
