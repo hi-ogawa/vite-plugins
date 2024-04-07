@@ -10,7 +10,7 @@ import { name as packageName } from "../package.json";
 // generateErrorPayload
 // generateFrame
 
-export function viteRuntimeErrorOverlayPlugin(options?: {
+export function vitePluginErrorOverlay(options?: {
   filter?: (error: Error) => boolean;
 }): Plugin {
   return {
@@ -31,7 +31,9 @@ export function viteRuntimeErrorOverlayPlugin(options?: {
     },
 
     configureServer(server) {
-      server.ws.on(MESSAGE_TYPE, (data: unknown, client: WebSocketClient) => {
+      server.hot.on(MESSAGE_TYPE, (...args: any[]) => {
+        const [data, client] = args as [unknown, WebSocketClient];
+
         // deserialize error
         const error = Object.assign(new Error(), data);
 
@@ -59,8 +61,8 @@ const CLIENT_SCRIPT = /* js */ `
 
 import { createHotContext } from "/@vite/client";
 
-// dummy file path to instantiate import.meta.hot
-const hot = createHotContext("/__dummy__${packageName}");
+// fake file path to instantiate import.meta.hot
+const hot = createHotContext("__${packageName}__");
 
 function sendError(error) {
   if (!(error instanceof Error)) {
@@ -70,7 +72,7 @@ function sendError(error) {
     message: error.message,
     stack: error.stack,
   };
-  hot.send("${MESSAGE_TYPE}", serialized);
+  import.meta.hot.send("${MESSAGE_TYPE}", serialized);
 }
 
 window.addEventListener("error", (evt) => {

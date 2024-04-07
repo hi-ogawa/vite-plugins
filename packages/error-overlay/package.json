@@ -20,6 +20,8 @@
   ],
   "scripts": {
     "build": "tsup",
+    "dev": "tsup --watch",
+    "prepack": "tsup --clean",
     "release": "pnpm publish --no-git-checks --access public"
   },
   "peerDependencies": {
