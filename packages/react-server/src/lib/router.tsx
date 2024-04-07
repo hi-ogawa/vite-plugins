@@ -106,8 +106,7 @@ export async function renderRouteMap(
     if (next?.child) {
       node = next.child;
       if (next.param) {
-        // TODO: probably do this further up? (e.g. normalizePathname?)
-        params = { ...params, [next.param]: decodeURIComponent(key) };
+        params = { ...params, [next.param]: decodeURI(key) };
       }
     } else {
       node = initNode();
