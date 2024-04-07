@@ -24,3 +24,30 @@ export function Link(props: JSX.IntrinsicElements["a"] & { href: string }) {
     />
   );
 }
+
+export function LinkForm(
+  props: JSX.IntrinsicElements["form"] & { action: string },
+) {
+  const history = useRouter((s) => s.history);
+
+  return (
+    <form
+      {...props}
+      onSubmit={(e) => {
+        e.preventDefault();
+        // cf. react-router's getFormSubmissionInfo and normalizeNavigateOptions
+        // https://github.com/remix-run/react-router/blob/00ffa36b0aa5f046239acbc7675c83c43bfb4e2a/packages/react-router-dom/dom.ts#L237
+        // https://github.com/remix-run/react-router/blob/00ffa36b0aa5f046239acbc7675c83c43bfb4e2a/packages/router/router.ts#L3591-L3639
+        const data = new FormData(e.currentTarget);
+        const params = new URLSearchParams();
+        data.forEach((v, k) => {
+          if (typeof v === "string") {
+            params.set(k, v);
+          }
+        });
+        const href = props.action + `?${params}`;
+        history.push(href);
+      }}
+    />
+  );
+}
