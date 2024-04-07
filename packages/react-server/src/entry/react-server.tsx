@@ -1,12 +1,19 @@
-import { createDebug, objectMapKeys, objectMapValues } from "@hiogawa/utils";
+import {
+  createDebug,
+  objectMapKeys,
+  objectMapValues,
+  objectPick,
+} from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import {
-  type ActionResult,
   type LayoutRequest,
   type ServerRouterData,
 } from "../features/router/utils";
-import { type ActionContext } from "../features/server-action/react-server";
+import {
+  ActionContext,
+  type ActionResult,
+} from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
@@ -82,7 +89,12 @@ async function render({
   );
   const bundlerConfig = createBundlerConfig();
   return reactServerDomServer.renderToReadableStream<ServerRouterData>(
-    { layout: nodeMap, action: actionResult },
+    {
+      layout: nodeMap,
+      action: actionResult
+        ? objectPick(actionResult, ["id", "data", "error"])
+        : undefined,
+    },
     bundlerConfig,
     {
       onError: reactServerOnError,
@@ -150,8 +162,8 @@ async function actionHandler({ request }: { request: Request }) {
     action = mod[name];
   }
 
-  const context: ActionContext = { request, responseHeaders: {} };
-  const result: ActionResult = { id };
+  const context = new ActionContext(request);
+  const result: ActionResult = { id, context };
   try {
     result.data = await action.apply(context, [formData]);
   } catch (e) {
