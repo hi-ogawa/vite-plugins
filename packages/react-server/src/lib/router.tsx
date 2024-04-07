@@ -106,7 +106,7 @@ export async function renderRouteMap(
     if (next?.child) {
       node = next.child;
       if (next.param) {
-        params = { ...params, [next.param]: key };
+        params = { ...params, [next.param]: decodeURI(key) };
       }
     } else {
       node = initNode();

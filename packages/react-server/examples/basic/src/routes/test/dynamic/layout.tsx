@@ -11,6 +11,8 @@ export default function Layout(props: LayoutProps) {
           "/test/dynamic",
           "/test/dynamic/static",
           "/test/dynamic/abc",
+          "/test/dynamic/🎸 + 🎷 = 🎶",
+          "/test/dynamic/" + encodeURI("🎸 + 🎷 = 🎶"),
           "/test/dynamic/abc/def",
         ]}
       />
