@@ -187,7 +187,7 @@ export async function start() {
   // custom event for RSC reload
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
-      console.log("[react-server] hot update", e);
+      console.log("[react-server] hot update", e.file);
       history.replace(history.location.href, routerRevalidate());
     });
   }
