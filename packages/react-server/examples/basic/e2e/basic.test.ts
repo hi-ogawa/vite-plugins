@@ -695,11 +695,11 @@ test("revalidate on navigation", async ({ page }) => {
 
   if (process.env.E2E_PREVIEW) {
     await page.getByText("[effect: 1]").click();
-    await page.getByRole("button", { name: "Navigation" }).click();
+    await page.getByRole("link", { name: "Navigation" }).click();
     await page.getByText("[effect: 2]").click();
   } else {
     await page.getByText("[effect: 2]").click();
-    await page.getByRole("button", { name: "Navigation" }).click();
+    await page.getByRole("link", { name: "Navigation" }).click();
     await page.getByText("[effect: 3]").click();
   }
 
