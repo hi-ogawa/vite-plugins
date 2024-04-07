@@ -13,7 +13,7 @@ type StreamRequestParam = {
   invalidateAll?: boolean; // currently used for server component HMR
 };
 
-export function wrapRscRequestUrl(
+export function wrapStreamRequestUrl(
   url: string,
   param: StreamRequestParam,
 ): string {

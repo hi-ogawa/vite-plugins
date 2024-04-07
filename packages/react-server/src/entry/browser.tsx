@@ -5,7 +5,7 @@ import reactDomClient from "react-dom/client";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
 import { injectActionId } from "../features/server-action/utils";
-import { wrapRscRequestUrl } from "../features/server-component/utils";
+import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
 import { Router, RouterContext, useRouter } from "../lib/client/router";
@@ -48,7 +48,7 @@ export async function start() {
       injectActionId(args[0], id);
     }
     const request = new Request(
-      wrapRscRequestUrl(history.location.href, {
+      wrapStreamRequestUrl(history.location.href, {
         lastPathname: history.location.pathname,
       }),
       {
@@ -131,7 +131,7 @@ export async function start() {
         lastPathname,
       });
       const request = new Request(
-        wrapRscRequestUrl(location.href, {
+        wrapStreamRequestUrl(location.href, {
           lastPathname,
           invalidateAll: RSC_HMR_STATE_KEY in location.state,
         }),
