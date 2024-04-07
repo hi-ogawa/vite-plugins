@@ -693,6 +693,11 @@ test("revalidate on navigation", async ({ page }) => {
   await page.getByRole("link", { name: "Navigation" }).click();
   await page.getByText(`[effect: ${count + 1}]`).click();
 
+  await page.getByPlaceholder("Search...").fill("world");
+  await page.getByPlaceholder("Search...").press("Enter");
+  await page.getByText(`[effect: ${count + 2}]`).click();
+  await page.waitForURL("/test/revalidate?q=world");
+
   await checkClientState();
 });
 
