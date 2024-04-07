@@ -1,3 +1,5 @@
+import type { ReactServerErrorContext } from "../../server";
+
 export function createServerReference(id: string, action: Function): React.FC {
   return Object.defineProperties(action, {
     $$typeof: {
@@ -17,8 +19,18 @@ export function createServerReference(id: string, action: Function): React.FC {
   }) as any;
 }
 
-// action function can access context via (this: ActionContext)
-export interface ActionContext {
-  request: Request;
-  responseHeaders: Record<string, string>; // TODO: Headers?
+// TODO: discriminated union
+export type ActionResult = {
+  id: string;
+  error?: ReactServerErrorContext;
+  data?: unknown;
+  responseHeaders?: Record<string, string>;
+  context: ActionContext;
+};
+
+export class ActionContext {
+  responseHeaders: Record<string, string> = {};
+  revalidate = false;
+
+  constructor(public request: Request) {}
 }

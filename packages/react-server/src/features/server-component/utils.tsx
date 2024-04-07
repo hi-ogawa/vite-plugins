@@ -3,6 +3,7 @@ import {
   createLayoutContentRequest,
   getNewLayoutContentKeys,
 } from "../router/utils";
+import type { ActionResult } from "../server-action/react-server";
 
 // TODO: use accept header x-component?
 const RSC_PARAM = "__rsc";
@@ -22,13 +23,16 @@ export function wrapStreamRequestUrl(
   return newUrl.toString();
 }
 
-export function unwrapStreamRequest(request: Request) {
+export function unwrapStreamRequest(
+  request: Request,
+  actionResult?: ActionResult,
+) {
   const url = new URL(request.url);
   const rscParam = url.searchParams.get(RSC_PARAM);
   url.searchParams.delete(RSC_PARAM);
 
   let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (rscParam) {
+  if (rscParam && !actionResult?.context.revalidate) {
     const param = JSON.parse(rscParam);
     if (param.lastPathname && !param.invalidateAll) {
       const newKeys = getNewLayoutContentKeys(param.lastPathname, url.pathname);
