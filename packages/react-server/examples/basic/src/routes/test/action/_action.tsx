@@ -1,6 +1,5 @@
 "use server";
 
-import type { ActionContext } from "@hiogawa/react-server/server";
 import { sleep, tinyassert } from "@hiogawa/utils";
 
 let counter = 0;
@@ -35,8 +34,4 @@ export async function actionCheckAnswer(formData: FormData) {
   const answer = Number(formData.get("answer"));
   const message = answer === 2 ? "Correct!" : "Wrong!";
   return { message };
-}
-
-export async function actionTestRevalidate(this: ActionContext) {
-  this.revalidate = true;
 }

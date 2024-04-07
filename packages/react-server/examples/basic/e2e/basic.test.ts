@@ -667,18 +667,18 @@ async function testActionContext(page: Page) {
 test("action revalidate", async ({ page }) => {
   checkNoError(page);
 
-  await page.goto("/test/action");
+  await page.goto("/test/revalidate");
   await waitForHydration(page);
 
   const checkClientState = await setupCheckClientState(page);
 
   if (process.env.E2E_PREVIEW) {
     await page.getByText("[effect: 1]").click();
-    await page.getByRole("button", { name: "Revalidate!" }).click();
+    await page.getByRole("button", { name: "Action" }).click();
     await page.getByText("[effect: 2]").click();
   } else {
     await page.getByText("[effect: 2]").click();
-    await page.getByRole("button", { name: "Revalidate!" }).click();
+    await page.getByRole("button", { name: "Action" }).click();
     await page.getByText("[effect: 3]").click();
   }
 
