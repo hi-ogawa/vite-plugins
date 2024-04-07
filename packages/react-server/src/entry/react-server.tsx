@@ -1,21 +1,14 @@
-import {
-  createDebug,
-  objectMapKeys,
-  objectMapValues,
-  objectPickBy,
-} from "@hiogawa/utils";
+import { createDebug, objectMapKeys, objectMapValues } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import {
   type ActionResult,
   type LayoutRequest,
   type ServerRouterData,
-  createLayoutContentRequest,
-  getNewLayoutContentKeys,
 } from "../features/router/utils";
 import { type ActionContext } from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
-import { unwrapRscRequest } from "../features/server-component/utils";
+import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
   DEFAULT_ERROR_CONTEXT,
@@ -39,7 +32,6 @@ export interface ReactServerHandlerContext {
 
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
-  layoutRequest: LayoutRequest;
   actionResult?: ActionResult;
 }
 
@@ -54,24 +46,11 @@ export const handler: ReactServerHandler = async (ctx) => {
     actionResult = await actionHandler(ctx);
   }
 
-  // TODO: refactor
-  // check rsc-only request
-  const rscOnly = unwrapRscRequest(ctx.request);
-
-  const request = rscOnly?.request ?? ctx.request;
-  const url = new URL(request.url);
-  let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (rscOnly && rscOnly.param.lastPathname && !rscOnly.param.invalidateAll) {
-    let newKeys = getNewLayoutContentKeys(
-      rscOnly.param.lastPathname,
-      url.pathname,
-    );
-    layoutRequest = objectPickBy(layoutRequest, (_v, k) => newKeys.includes(k));
-  }
-
+  // check stream only request
+  const { request, layoutRequest, isStream } = unwrapStreamRequest(ctx.request);
   const stream = await render({ request, layoutRequest, actionResult });
 
-  if (rscOnly) {
+  if (isStream) {
     return new Response(stream, {
       headers: {
         ...actionResult?.responseHeaders,
@@ -80,7 +59,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  return { stream, layoutRequest, actionResult };
+  return { stream, actionResult };
 };
 
 //
