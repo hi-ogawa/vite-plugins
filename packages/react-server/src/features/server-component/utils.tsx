@@ -30,7 +30,6 @@ export function unwrapStreamRequest(
   const url = new URL(request.url);
   const rscParam = url.searchParams.get(RSC_PARAM);
   url.searchParams.delete(RSC_PARAM);
-  actionResult?.context.revalidate;
 
   let layoutRequest = createLayoutContentRequest(url.pathname);
   if (rscParam && !actionResult?.context.revalidate) {
