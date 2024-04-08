@@ -742,10 +742,22 @@ test("dynamic routes", async ({ page }) => {
   await page.getByRole("link", { name: "/test/dynamic/✅" }).click();
   await page.getByText('params: {"id":"✅"}').click();
   await page.waitForURL("/test/dynamic/✅");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/✅" }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }),
+  ).toHaveAttribute("aria-current", "page");
 
   await page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }).click();
   await page.getByText('params: {"id":"✅"}').click();
   await page.waitForURL("/test/dynamic/✅");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/✅" }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }),
+  ).toHaveAttribute("aria-current", "page");
 });
 
 test("full client route", async ({ page }) => {
