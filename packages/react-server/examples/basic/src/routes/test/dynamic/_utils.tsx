@@ -8,13 +8,13 @@ export function TestDynamic({
   file: string;
   props: PageProps;
 }) {
-  const url = new URL(props.request.url);
-  const serverPathname = props.request.url.slice(url.origin.length);
-
   return (
     <div className="flex flex-col gap-1">
       <div>file: {file}</div>
-      <div>pathname: {serverPathname}</div>
+      <div>
+        pathname:{" "}
+        {props.request.url.slice(new URL(props.request.url).origin.length)}
+      </div>
       <div>
         pathname (client): <ClientLocation />
       </div>
