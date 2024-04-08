@@ -16,6 +16,9 @@ export default function Layout(props: LayoutProps) {
           "/test/dynamic/" + encodeURI("✅"),
           "/test/dynamic/abc/def",
         ]}
+        activeProps={{
+          "aria-current": "page",
+        }}
       />
       <div>{props.children}</div>
     </div>
