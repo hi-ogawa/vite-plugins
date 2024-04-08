@@ -31,7 +31,19 @@ export async function start() {
     "react-server-dom-webpack/client.browser"
   );
 
-  const history = createBrowserHistory();
+  const history = createBrowserHistory({
+    createHref(path) {
+      // cf. https://github.com/remix-run/react-router/pull/9477
+      // consistently return encoded url as history state
+      // (i.e. history.push("/✅") should set { pathname: "/%E2%9C%85" } as state)
+
+      // actually `createHref` is not used for location, so I have to use patches/@tanstack__history@1.15.13.patch
+      // https://github.com/tanstack/router/blob/f5423494611c5ac404cc32cf88d6066b7bada0ed/packages/history/src/index.ts#L260-L267
+      const url = new URL(path, window.location.origin);
+      const newPath = url.href.slice(url.origin.length);
+      return newPath;
+    },
+  });
   const router = new Router(history);
 
   let __setLayout: (v: Promise<ServerRouterData>) => void;

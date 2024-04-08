@@ -38,6 +38,9 @@
   "pnpm": {
     "overrides": {
       "vite": "$vite"
+    },
+    "patchedDependencies": {
+      "@tanstack/history@1.15.13": "patches/@tanstack__history@1.15.13.patch"
     }
   }
 }
