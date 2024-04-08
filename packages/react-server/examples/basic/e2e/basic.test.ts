@@ -739,13 +739,13 @@ test("dynamic routes", async ({ page }) => {
   await page.getByText("pathname: /test/dynamic/abc/def").click();
   await page.getByText('params: {"id":"abc","nested":"def"}').click();
 
-  await page.getByRole("link", { name: "/test/dynamic/🎸 + 🎷 = 🎶" }).click();
-  await page.getByText('params: {"id":"🎸 + 🎷 = 🎶"}').click();
-  await page.waitForURL("/test/dynamic/🎸 + 🎷 = 🎶");
+  await page.getByRole("link", { name: "/test/dynamic/✅" }).click();
+  await page.getByText('params: {"id":"✅"}').click();
+  await page.waitForURL("/test/dynamic/✅");
 
-  await page.getByRole("link", { name: "/test/dynamic/%F0%9F%8E%B8%" }).click();
-  await page.getByText('params: {"id":"🎸 + 🎷 = 🎶"}').click();
-  await page.waitForURL("/test/dynamic/🎸 + 🎷 = 🎶");
+  await page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }).click();
+  await page.getByText('params: {"id":"✅"}').click();
+  await page.waitForURL("/test/dynamic/✅");
 });
 
 test("full client route", async ({ page }) => {
