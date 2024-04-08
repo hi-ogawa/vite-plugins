@@ -115,7 +115,7 @@ test("Link modifier", async ({ page, context }) => {
 });
 
 test("error", async ({ page }) => {
-  const res = await page.goto("/test/not-found");
+  const res = await page.goto("/test/error-not-found");
   expect(res?.status()).toBe(404);
 
   await waitForHydration(page);

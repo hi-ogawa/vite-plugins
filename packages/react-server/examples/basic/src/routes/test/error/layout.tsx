@@ -8,6 +8,7 @@ export default function Layout(props: LayoutProps) {
       <NavMenu
         className="flex flex-col items-start gap-1"
         links={[
+          "/test/error/not-found",
           "/test/error/server?500",
           "/test/error/server?custom",
           "/test/error/browser",

@@ -17,7 +17,6 @@ export default async function Layout(props: LayoutProps) {
           "/test/head",
           "/test/css",
           "/test/error",
-          "/test/not-found",
           "/test/transition",
           "/test/redirect",
           "/test/session",
