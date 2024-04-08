@@ -132,6 +132,15 @@ export async function renderHtml(
         debug("renderToReadableStream", { error, errorInfo });
         if (!getErrorContext(error)) {
           console.error("[react-dom:renderToReadableStream]", error);
+          if (import.meta.env.DEV && error instanceof Error) {
+            __global.dev.server.hot.send({
+              type: "error",
+              err: {
+                message: error.message,
+                stack: error.stack ?? "",
+              },
+            });
+          }
         }
       },
     });
