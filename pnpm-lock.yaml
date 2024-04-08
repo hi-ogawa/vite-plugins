@@ -7,11 +7,6 @@ settings:
 overrides:
   vite: ^5.2.3
 
-patchedDependencies:
-  '@tanstack/history@1.15.13':
-    hash: yaoie46c6lzkjojg2ebl6mifzi
-    path: patches/@tanstack__history@1.15.13.patch
-
 importers:
 
   .:
@@ -66,7 +61,7 @@ importers:
     dependencies:
       '@tanstack/history':
         specifier: ^1.15.13
-        version: 1.15.13(patch_hash=yaoie46c6lzkjojg2ebl6mifzi)
+        version: 1.15.13
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
@@ -2487,11 +2482,10 @@ packages:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
 
-  /@tanstack/history@1.15.13(patch_hash=yaoie46c6lzkjojg2ebl6mifzi):
+  /@tanstack/history@1.15.13:
     resolution: {integrity: sha512-ToaeMtK5S4YaxCywAlYexc7KPFN0esjyTZ4vXzJhXEWAkro9iHgh7m/4ozPJb7oTo65WkHWX0W9GjcZbInSD8w==}
     engines: {node: '>=12'}
     dev: false
-    patched: true
 
   /@tanstack/query-core@5.28.4:
     resolution: {integrity: sha512-uQZqOFqLWUvXNIQZ63XdKzg22NtHzgCBUfDmjDHi3BoF+nUYeBNvMi/xFPtFrMhqRzG2Ir4mYaGsWZzmiEjXpA==}
