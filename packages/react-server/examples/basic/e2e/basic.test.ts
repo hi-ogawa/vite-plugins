@@ -137,13 +137,16 @@ test("error", async ({ page }) => {
   await page.getByRole("link", { name: "/test/error/browser" }).click();
   await page.getByText("server error: (N/A)").click();
 
-  await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "/test/error/use-client" }).click();
-  await page.getByText('server error: {"status":500}').click();
+  // wrong usage errors would brew away the whole app on build?
+  if (!process.env.E2E_PREVIEW) {
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-client" }).click();
+    await page.getByText('server error: {"status":500}').click();
 
-  await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "/test/error/use-server" }).click();
-  await page.getByText('server error: {"status":500}').click();
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-server" }).click();
+    await page.getByText('server error: {"status":500}').click();
+  }
 
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByRole("heading", { name: "Other Page" }).click();
