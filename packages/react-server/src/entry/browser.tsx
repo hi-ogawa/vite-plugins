@@ -1,5 +1,4 @@
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import {
@@ -13,7 +12,12 @@ import { injectActionId } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
-import { Router, RouterContext, useRouter } from "../lib/client/router";
+import {
+  Router,
+  RouterContext,
+  createEncodedBrowserHistory,
+  useRouter,
+} from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
 import { readStreamScript } from "../utils/stream-script";
@@ -31,19 +35,7 @@ export async function start() {
     "react-server-dom-webpack/client.browser"
   );
 
-  const history = createBrowserHistory({
-    createHref(path) {
-      // cf. https://github.com/remix-run/react-router/pull/9477
-      // consistently return encoded url as history state
-      // (i.e. history.push("/✅") should set { pathname: "/%E2%9C%85" } as state)
-
-      // actually `createHref` is not used for location, so I have to use patches/@tanstack__history@1.15.13.patch
-      // https://github.com/tanstack/router/blob/f5423494611c5ac404cc32cf88d6066b7bada0ed/packages/history/src/index.ts#L260-L267
-      const url = new URL(path, window.location.origin);
-      const newPath = url.href.slice(url.origin.length);
-      return newPath;
-    },
-  });
+  const history = createEncodedBrowserHistory();
   const router = new Router(history);
 
   let __setLayout: (v: Promise<ServerRouterData>) => void;
