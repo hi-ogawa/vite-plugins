@@ -115,7 +115,7 @@ test("Link modifier", async ({ page, context }) => {
 });
 
 test("error", async ({ page }) => {
-  const res = await page.goto("/test/not-found");
+  const res = await page.goto("/test/error-not-found");
   expect(res?.status()).toBe(404);
 
   await waitForHydration(page);
@@ -124,18 +124,29 @@ test("error", async ({ page }) => {
   const checkClientState = await setupCheckClientState(page);
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server 500" }).click();
+  await page.getByRole("link", { name: "/test/error/server?500" }).click();
   await page.getByText('server error: {"status":500}').click();
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server Custom" }).click();
+  await page.getByRole("link", { name: "/test/error/server?custom" }).click();
   await page
     .getByText('server error: {"status":403,"customMessage":"hello"}')
     .click();
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Browser" }).click();
+  await page.getByRole("link", { name: "/test/error/browser" }).click();
   await page.getByText("server error: (N/A)").click();
+
+  // wrong usage errors would brew away the whole app on build?
+  if (!process.env.E2E_PREVIEW) {
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-client" }).click();
+    await page.getByText('server error: {"status":500}').click();
+
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-server" }).click();
+    await page.getByText('server error: {"status":500}').click();
+  }
 
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByRole("heading", { name: "Other Page" }).click();
