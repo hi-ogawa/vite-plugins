@@ -7,17 +7,33 @@ import { useRouter } from "./router";
 
 interface LinkProps {
   revalidate?: boolean;
+  activeProps?: JSX.IntrinsicElements["a"];
+}
+
+function encodeHref(href: string) {
+  const url = new URL(href, "https://test.local");
+  return url.href.slice(url.origin.length);
+}
+
+function matchHref(href: string, pathname: string) {
+  pathname = pathname.replaceAll(/\/*$/g, "/");
+  href = href.replaceAll(/\/*$/g, "/");
+  return pathname.startsWith(href);
 }
 
 export function Link({
   revalidate,
+  activeProps,
   ...props
 }: JSX.IntrinsicElements["a"] & { href: string } & LinkProps) {
   const history = useRouter((s) => s.history);
+  const pathname = useRouter((s) => s.location.pathname);
+  const href = encodeHref(props.href);
 
   return (
     <a
       {...props}
+      {...(matchHref(href, pathname) ? activeProps : {})}
       onClick={(e) => {
         const target = e.currentTarget.target;
         if (
@@ -26,7 +42,7 @@ export function Link({
           (!target || target === "_self")
         ) {
           e.preventDefault();
-          history.push(props.href!, revalidate ? routerRevalidate() : {});
+          history.push(href, revalidate ? routerRevalidate() : {});
         }
       }}
     />
@@ -35,6 +51,7 @@ export function Link({
 
 export function LinkForm({
   revalidate,
+  activeProps,
   ...props
 }: JSX.IntrinsicElements["form"] & { action: string } & LinkProps) {
   const history = useRouter((s) => s.history);
