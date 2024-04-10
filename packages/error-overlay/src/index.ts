@@ -72,7 +72,7 @@ function sendError(error) {
     message: error.message,
     stack: error.stack,
   };
-  import.meta.hot.send("${MESSAGE_TYPE}", serialized);
+  hot.send("${MESSAGE_TYPE}", serialized);
 }
 
 window.addEventListener("error", (evt) => {
