@@ -8,6 +8,9 @@ See https://github.com/hi-ogawa/vite-plugins/issues/174 for known issues.
 
 ## Examples
 
+- [react-server-demo-remix-tutorial](https://github.com/hi-ogawa/react-server-demo-remix-tutorial/)
+  - [Stackblitz](https://stackblitz.com/https://github.com/hi-ogawa/react-server-demo-remix-tutorial)
+  - https://react-server-demo-remix-tutorial.hiro18181.workers.dev
 - [`./examples/starter`](./examples/starter)
   - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
   - https://rsc-experiment.hiro18181.workers.dev
@@ -36,10 +39,9 @@ pnpm preview
 
 ## Conventions
 
-- `index.html`
 - `src/entry-client.tsx`
 - `src/entry-react-server.tsx`
-- `src/routes/**/(page|layout).tsx`
+- `src/routes/**/(page|layout|error).tsx`
 - `"use client"`
 - `"use server"`
 

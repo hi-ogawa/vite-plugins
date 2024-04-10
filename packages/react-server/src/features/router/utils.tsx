@@ -1,4 +1,4 @@
-import type { ReactServerErrorContext } from "../../lib/error";
+import type { ActionResult } from "../server-action/react-server";
 
 export type LayoutRequest = Record<
   string,
@@ -9,10 +9,7 @@ export type LayoutRequest = Record<
 >;
 
 export type ServerRouterData = {
-  // TODO: can action return other things too?
-  action?: {
-    error?: ReactServerErrorContext;
-  };
+  action?: Pick<ActionResult, "id" | "error" | "data">;
   layout: Record<string, React.ReactNode>;
 };
 

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
 import type { Manifest } from "vite";
-import { checkNoError, editFile } from "./helper";
+import { checkNoError, editFile, inspectDevModules } from "./helper";
 
 test("basic", async ({ page }) => {
   checkNoError(page);
@@ -117,7 +117,7 @@ test("Link modifier", async ({ page, context }) => {
 });
 
 test("error", async ({ page }) => {
-  const res = await page.goto("/test/not-found");
+  const res = await page.goto("/test/error-not-found");
   expect(res?.status()).toBe(404);
 
   await waitForHydration(page);
@@ -126,18 +126,29 @@ test("error", async ({ page }) => {
   const checkClientState = await setupCheckClientState(page);
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server 500" }).click();
+  await page.getByRole("link", { name: "/test/error/server?500" }).click();
   await page.getByText('server error: {"status":500}').click();
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server Custom" }).click();
+  await page.getByRole("link", { name: "/test/error/server?custom" }).click();
   await page
     .getByText('server error: {"status":403,"customMessage":"hello"}')
     .click();
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Browser" }).click();
+  await page.getByRole("link", { name: "/test/error/browser" }).click();
   await page.getByText("server error: (N/A)").click();
+
+  // wrong usage errors would brew away the whole app on build?
+  if (!process.env.E2E_PREVIEW) {
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-client" }).click();
+    await page.getByText('server error: {"status":500}').click();
+
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-server" }).click();
+    await page.getByText('server error: {"status":500}').click();
+  }
 
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByRole("heading", { name: "Other Page" }).click();
@@ -209,6 +220,121 @@ test("client hmr @dev", async ({ page }) => {
   // SSR should also use a fresh module
   const res = await page.request.get("/test");
   expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
+});
+
+test("rsc + client + rsc hmr @dev", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  await page.getByText("Count: 0").click();
+  await page.getByRole("button", { name: "+" }).click();
+  await page.getByText("Count: 1").click();
+
+  // edit server
+  await editFile("./src/routes/test/page.tsx", (s) =>
+    s.replace("Server Time", "Server (EDIT 1) Time"),
+  );
+  await page.getByText("Server (EDIT 1) Time").click();
+  await page.getByText("Count: 1").click();
+
+  // edit client
+  await editFile("./src/components/counter.tsx", (s) =>
+    s.replace("test-hmr-div", "test-hmr-edit-div"),
+  );
+  await page.getByText("test-hmr-edit-div").click();
+  await page.getByText("Count: 1").click();
+
+  // edit server again re-mounts client
+  await editFile("./src/routes/test/page.tsx", (s) =>
+    s.replace("Server (EDIT 1) Time", "Server (EDIT 2) Time"),
+  );
+  await page.getByText("Server (EDIT 2) Time").click();
+  await page.getByText("Count: 0").click();
+});
+
+test("module invalidation @dev", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  const moduleUrls = [
+    "/src/entry-server",
+    "/src/entry-react-server",
+    "/src/routes/test/page",
+    "/src/components/counter",
+    "@hiogawa/react-server/entry-server",
+    "@hiogawa/react-server/entry-react-server",
+  ] as const;
+
+  const result = await inspectDevModules(page, moduleUrls);
+  expect(result).toMatchObject({
+    "/src/entry-server": {
+      ssr: expect.any(Object),
+      "react-server": false,
+    },
+    "/src/entry-react-server": {
+      ssr: false,
+      "react-server": expect.any(Object),
+    },
+    "/src/routes/test/page": {
+      ssr: false,
+      "react-server": expect.any(Object),
+    },
+    "/src/components/counter": {
+      ssr: expect.any(Object),
+      "react-server": expect.any(Object),
+    },
+    "@hiogawa/react-server/entry-server": {
+      ssr: expect.any(Object),
+      "react-server": false,
+    },
+    "@hiogawa/react-server/entry-react-server": {
+      ssr: false,
+      "react-server": expect.any(Object),
+    },
+  });
+
+  // each render doesn't invalidate anything
+  await page.reload();
+  await waitForHydration(page);
+
+  const result2 = await inspectDevModules(page, moduleUrls);
+  expect([
+    result["/src/entry-server"].ssr.lastInvalidationTimestamp,
+    result["/src/entry-react-server"]["react-server"].lastInvalidationTimestamp,
+  ]).toEqual([
+    result2["/src/entry-server"].ssr.lastInvalidationTimestamp,
+    result2["/src/entry-react-server"]["react-server"]
+      .lastInvalidationTimestamp,
+  ]);
+
+  // updating client component invalidates react-server entry
+  // due to import.meta.glob dependency
+  //   react server entry -> page -> client reference
+  await editFile("./src/components/counter.tsx", (s) =>
+    s.replace("test-hmr-div", "test-hmr-edit-div"),
+  );
+  await page.getByText("test-hmr-edit-div").click();
+
+  const result3 = await inspectDevModules(page, moduleUrls);
+  expect([result["/src/entry-server"].ssr.lastInvalidationTimestamp]).toEqual([
+    result3["/src/entry-server"].ssr.lastInvalidationTimestamp,
+  ]);
+
+  const changed = [
+    ["/src/entry-react-server", "react-server"],
+    ["/src/routes/test/page", "react-server"],
+    ["/src/components/counter", "react-server"],
+    ["/src/components/counter", "ssr"],
+  ];
+  for (const [k1, k2] of changed) {
+    const v2 = (result2 as any)[k1][k2].lastInvalidationTimestamp;
+    const v3 = (result3 as any)[k1][k2].lastInvalidationTimestamp;
+    expect(v3).toBeGreaterThan(v2);
+  }
 });
 
 test("unocss", async ({ page, browser }) => {
@@ -483,16 +609,38 @@ test("redirect server action @nojs", async ({ browser }) => {
 });
 
 test("redirect server action @js", async ({ page }) => {
-  checkNoError(page);
-
   await page.goto("/test/redirect");
   await waitForHydration(page);
   await page.getByRole("button", { name: "From Server Action" }).click();
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
-test("action context @js", async ({ page }) => {
+test("action return value @js", async ({ page }) => {
   checkNoError(page);
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await testActionReturnValue(page, { js: true });
+});
+
+test("action return value @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+  await page.goto("/test/action");
+  await testActionReturnValue(page, { js: false });
+});
+
+async function testActionReturnValue(page: Page, { js }: { js: boolean }) {
+  await page.getByPlaceholder("Answer?").fill("3");
+  await page.getByPlaceholder("Answer?").press("Enter");
+  await page.getByText("Wrong!").click();
+  await expect(page.getByPlaceholder("Answer?")).toHaveValue(js ? "3" : "");
+
+  await page.getByPlaceholder("Answer?").fill("2");
+  await page.getByPlaceholder("Answer?").press("Enter");
+  await page.getByText("Correct!").click();
+}
+
+test("action context @js", async ({ page }) => {
   await page.goto("/test/session");
   await waitForHydration(page);
   await testActionContext(page);
@@ -506,8 +654,6 @@ test("action context @nojs", async ({ browser }) => {
 });
 
 async function testActionContext(page: Page) {
-  await page.goto("/test/session");
-
   // redirected from auth protected action
   await page.getByText("Hi, anonymous user!").click();
   await page.getByRole("button", { name: "+1" }).click();
@@ -558,6 +704,98 @@ function getClientManifest(): Manifest {
     fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
   );
 }
+
+test("revalidate on action", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/revalidate");
+  await waitForHydration(page);
+
+  const checkClientState = await setupCheckClientState(page);
+
+  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByRole("button", { name: "Action" }).click();
+  await page.getByText(`[effect: ${count + 1}]`).click();
+
+  await checkClientState();
+});
+
+test("revalidate on navigation", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/revalidate");
+  await waitForHydration(page);
+
+  const checkClientState = await setupCheckClientState(page);
+
+  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByRole("link", { name: "Navigation" }).click();
+  await page.getByText(`[effect: ${count + 1}]`).click();
+
+  await page.getByPlaceholder("Search...").fill("world");
+  await page.getByPlaceholder("Search...").press("Enter");
+  await page.getByText(`[effect: ${count + 2}]`).click();
+  await page.waitForURL("/test/revalidate?q=world");
+
+  await checkClientState();
+});
+
+test("dynamic routes", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/dynamic");
+  await waitForHydration(page);
+
+  await page.getByText("file: /test/dynamic/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic").click();
+  await page.getByText("params: {}").click();
+
+  await page.getByRole("link", { name: "• /test/dynamic/static" }).click();
+  await page.getByText("file: /test/dynamic/static/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic/static").click();
+  await page.getByText("params: {}").click();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/abc", exact: true })
+    .click();
+  await page.getByText("file: /test/dynamic/[id]/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic/abc").click();
+  await page.getByText('params: {"id":"abc"}').click();
+
+  await page.getByRole("link", { name: "• /test/dynamic/abc/def" }).click();
+  await page.getByText("file: /test/dynamic/[id]/[nested]/page.tsx").click();
+  await page.getByText("pathname: /test/dynamic/abc/def").click();
+  await page.getByText('params: {"id":"abc","nested":"def"}').click();
+
+  await page.getByRole("link", { name: "/test/dynamic/✅" }).click();
+  await page.getByText('params: {"id":"✅"}').click();
+  await page.waitForURL("/test/dynamic/✅");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/✅" }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }),
+  ).toHaveAttribute("aria-current", "page");
+
+  await page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }).click();
+  await page.getByText('params: {"id":"✅"}').click();
+  await page.waitForURL("/test/dynamic/✅");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/✅" }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }),
+  ).toHaveAttribute("aria-current", "page");
+});
+
+test("full client route", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/client/full");
+  await page.getByRole("heading", { name: '"use client" layout' }).click();
+  await page.getByRole("heading", { name: '"use client" page' }).click();
+});
 
 async function setupCheckClientState(page: Page) {
   // setup client state

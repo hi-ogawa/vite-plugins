@@ -14,6 +14,9 @@ importers:
       '@hiogawa/isort-ts':
         specifier: 1.1.2-pre.2
         version: 1.1.2-pre.2(prettier@3.2.5)(typescript@5.4.2)
+      '@hiogawa/tiny-cli':
+        specifier: 0.0.4-pre.1
+        version: 0.0.4-pre.1
       '@hiogawa/utils':
         specifier: ^1.6.4-pre.2
         version: 1.6.4-pre.2

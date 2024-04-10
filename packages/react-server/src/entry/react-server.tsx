@@ -2,7 +2,7 @@ import {
   createDebug,
   objectMapKeys,
   objectMapValues,
-  objectPickBy,
+  objectPick,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
@@ -10,11 +10,13 @@ import { generateRouteTree } from "../features/router/tree";
 import {
   type LayoutRequest,
   type ServerRouterData,
-  createLayoutContentRequest,
 } from "../features/router/utils";
-import { actionContextMap } from "../features/server-action/react-server";
+import {
+  ActionContext,
+  type ActionResult,
+} from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
-import { unwrapRscRequest } from "../features/server-component/utils";
+import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
   DEFAULT_ERROR_CONTEXT,
@@ -38,7 +40,7 @@ export interface ReactServerHandlerContext {
 
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
-  layoutRequest: LayoutRequest;
+  actionResult?: ActionResult;
 }
 
 export type ReactServerHandlerResult =
@@ -46,59 +48,29 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
-  // check rsc-only request
-  const rscOnly = unwrapRscRequest(ctx.request);
-
   // action
+  let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
-    try {
-      await actionHandler(ctx);
-    } catch (e) {
-      const errorCtx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
-      if (rscOnly) {
-        // returns empty layout to keep current layout and
-        // let browser initiate client-side navigation for redirection error
-        const data: ServerRouterData = {
-          action: { error: errorCtx },
-          layout: {},
-        };
-        const stream = reactServerDomServer.renderToReadableStream(data, {});
-        return new Response(stream, {
-          headers: {
-            ...errorCtx.headers,
-            "content-type": "text/x-component; charset=utf-8",
-          },
-        });
-      }
-      // TODO: general action error handling?
-      return new Response(null, {
-        status: errorCtx.status,
-        headers: errorCtx.headers,
-      });
-    }
+    actionResult = await actionHandler(ctx);
   }
 
-  const request = rscOnly?.request ?? ctx.request;
-  const url = new URL(request.url);
-  let layoutRequest = createLayoutContentRequest(url.pathname);
+  // check stream only request
+  const { request, layoutRequest, isStream } = unwrapStreamRequest(
+    ctx.request,
+    actionResult,
+  );
+  const stream = await render({ request, layoutRequest, actionResult });
 
-  if (rscOnly) {
-    layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
-      rscOnly.newKeys.includes(k),
-    );
-  }
-
-  const stream = await render({ request, layoutRequest });
-
-  if (rscOnly) {
+  if (isStream) {
     return new Response(stream, {
       headers: {
+        ...actionResult?.responseHeaders,
         "content-type": "text/x-component; charset=utf-8",
       },
     });
   }
 
-  return { stream, layoutRequest };
+  return { stream, actionResult };
 };
 
 //
@@ -108,9 +80,11 @@ export const handler: ReactServerHandler = async (ctx) => {
 async function render({
   request,
   layoutRequest,
+  actionResult,
 }: {
   request: Request;
   layoutRequest: LayoutRequest;
+  actionResult?: ActionResult;
 }) {
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
@@ -119,7 +93,12 @@ async function render({
   );
   const bundlerConfig = createBundlerConfig();
   return reactServerDomServer.renderToReadableStream<ServerRouterData>(
-    { layout: nodeMap },
+    {
+      layout: nodeMap,
+      action: actionResult
+        ? objectPick(actionResult, ["id", "data", "error"])
+        : undefined,
+    },
     bundlerConfig,
     {
       onError: reactServerOnError,
@@ -135,6 +114,9 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
     error,
     errorInfo,
   });
+  if (!(error instanceof ReactServerDigestError)) {
+    console.error("[react-server:renderToReadableStream]", error);
+  }
   const serverError =
     error instanceof ReactServerDigestError
       ? error
@@ -184,12 +166,17 @@ async function actionHandler({ request }: { request: Request }) {
     action = mod[name];
   }
 
-  const responseHeaders = new Headers();
-  actionContextMap.set(formData, { request, responseHeaders });
-
-  // TODO: action return value?
-  await action(formData);
-
-  // TODO: write headers on successfull action
-  return { responseHeaders };
+  const context = new ActionContext(request);
+  const result: ActionResult = { id, context };
+  try {
+    result.data = await action.apply(context, [formData]);
+  } catch (e) {
+    result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+  } finally {
+    result.responseHeaders = {
+      ...context.responseHeaders,
+      ...result.error?.headers,
+    };
+  }
+  return result;
 }

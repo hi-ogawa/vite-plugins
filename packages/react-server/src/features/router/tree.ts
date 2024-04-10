@@ -1,4 +1,4 @@
-import { tinyassert } from "@hiogawa/utils";
+import { sortBy, tinyassert } from "@hiogawa/utils";
 import { getPathPrefixes, normalizePathname } from "./utils";
 
 export interface BaseRouteEntry<T> {
@@ -24,7 +24,22 @@ export function generateRouteTree<T>(
     value: v,
   }));
   const tree = createTree(flatTree);
+
+  // sort to match static route first before dynamic route
+  sortDynamicRoutes(tree);
+
   return tree;
+}
+
+function sortDynamicRoutes<T>(tree: TreeNode<T>) {
+  if (tree.children) {
+    tree.children = Object.fromEntries(
+      sortBy(Object.entries(tree.children), ([k]) => k.includes("[")),
+    );
+    for (const v of Object.values(tree.children)) {
+      sortDynamicRoutes(v);
+    }
+  }
 }
 
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {

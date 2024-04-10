@@ -1,4 +1,4 @@
-import { tinyassert } from "@hiogawa/utils";
+import type { ReactServerErrorContext } from "../../server";
 
 export function createServerReference(id: string, action: Function): React.FC {
   return Object.defineProperties(action, {
@@ -19,18 +19,19 @@ export function createServerReference(id: string, action: Function): React.FC {
   }) as any;
 }
 
-// Builtin action context system based on FormData identity.
-// Users can easilty setup own AsyncLocalStorage based request context using custom handler,
-// but we don't make it as a builtin feature until async hooks are properly supported on Stackblitz.
-export const actionContextMap = new WeakMap<FormData, ActionContext>();
+export type ActionResult = {
+  id: string;
+  error?: ReactServerErrorContext;
+  data?: unknown;
+  responseHeaders?: Record<string, string>;
+  context: ActionContext;
+};
 
-export interface ActionContext {
-  request: Request;
-  responseHeaders: Headers;
-}
+export class ActionContext {
+  responseHeaders: Record<string, string> = {};
 
-export function getActionContext(formData: FormData) {
-  const ctx = actionContextMap.get(formData);
-  tinyassert(ctx);
-  return ctx;
+  // TODO: refine revalidation by layout key
+  revalidate = false;
+
+  constructor(public request: Request) {}
 }

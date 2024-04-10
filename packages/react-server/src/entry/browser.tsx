@@ -1,22 +1,23 @@
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import {
   LayoutRoot,
   LayoutStateContext,
-  ServerActionRedirectHandler,
+  ROUTER_REVALIDATE_KEY,
+  routerRevalidate,
 } from "../features/router/client";
-import {
-  type ServerRouterData,
-  createLayoutContentRequest,
-  getNewLayoutContentKeys,
-} from "../features/router/utils";
+import type { ServerRouterData } from "../features/router/utils";
 import { injectActionId } from "../features/server-action/utils";
-import { wrapRscRequestUrl } from "../features/server-component/utils";
+import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
-import { Router, RouterContext, useRouter } from "../lib/client/router";
+import {
+  Router,
+  RouterContext,
+  createEncodedBrowserHistory,
+  useRouter,
+} from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
 import { readStreamScript } from "../utils/stream-script";
@@ -34,7 +35,7 @@ export async function start() {
     "react-server-dom-webpack/client.browser"
   );
 
-  const history = createBrowserHistory();
+  const history = createEncodedBrowserHistory();
   const router = new Router(history);
 
   let __setLayout: (v: Promise<ServerRouterData>) => void;
@@ -55,11 +56,10 @@ export async function start() {
       tinyassert(args[0] instanceof FormData);
       injectActionId(args[0], id);
     }
-    // TODO: for now, we invalidate only leaf content
-    const pathname = history.location.pathname;
-    const newKeys = getNewLayoutContentKeys(pathname, pathname);
     const request = new Request(
-      wrapRscRequestUrl(history.location.href, newKeys),
+      wrapStreamRequestUrl(history.location.href, {
+        lastPathname: history.location.pathname,
+      }),
       {
         method: "POST",
         body: args[0],
@@ -135,14 +135,16 @@ export async function start() {
       const lastPathname = lastLocation.current.pathname;
       lastLocation.current = location;
 
-      const pathname = location.pathname;
-      let newKeys = getNewLayoutContentKeys(lastPathname, pathname);
-      if (RSC_HMR_STATE_KEY in location.state) {
-        newKeys = Object.keys(createLayoutContentRequest(pathname));
-      }
-      debug("[navigation]", location, { pathname, lastPathname, newKeys });
-
-      const request = new Request(wrapRscRequestUrl(location.href, newKeys));
+      debug("[navigation]", location, {
+        pathname: location.pathname,
+        lastPathname,
+      });
+      const request = new Request(
+        wrapStreamRequestUrl(location.href, {
+          lastPathname,
+          revalidate: ROUTER_REVALIDATE_KEY in location.state,
+        }),
+      );
       startTransition(() => {
         __setLayout(
           reactServerDomClient.createFromFetch<ServerRouterData>(
@@ -167,7 +169,6 @@ export async function start() {
       <RootErrorBoundary>
         <LayoutHandler>
           <LayoutRoot />
-          <ServerActionRedirectHandler />
         </LayoutHandler>
       </RootErrorBoundary>
     </RouterContext.Provider>
@@ -190,13 +191,11 @@ export async function start() {
   // custom event for RSC reload
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
-      console.log("[react-server] hot update", e);
-      history.replace(history.location.href, { [RSC_HMR_STATE_KEY]: true });
+      console.log("[react-server] hot update", e.file);
+      history.replace(history.location.href, routerRevalidate());
     });
   }
 }
-
-const RSC_HMR_STATE_KEY = "__rscHmr";
 
 declare module "react-dom/client" {
   // TODO: full document CSR works fine?
