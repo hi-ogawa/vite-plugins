@@ -129,8 +129,10 @@ export async function renderHtml(
         ? []
         : assets.bootstrapModules,
       onError(error, errorInfo) {
-        // TODO: should handle SSR error which is not RSC error?
         debug("renderToReadableStream", { error, errorInfo });
+        if (!getErrorContext(error)) {
+          console.error("[react-dom:renderToReadableStream]", error);
+        }
       },
     });
   } catch (e) {

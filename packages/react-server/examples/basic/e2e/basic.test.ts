@@ -115,7 +115,7 @@ test("Link modifier", async ({ page, context }) => {
 });
 
 test("error", async ({ page }) => {
-  const res = await page.goto("/test/not-found");
+  const res = await page.goto("/test/error-not-found");
   expect(res?.status()).toBe(404);
 
   await waitForHydration(page);
@@ -124,18 +124,29 @@ test("error", async ({ page }) => {
   const checkClientState = await setupCheckClientState(page);
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server 500" }).click();
+  await page.getByRole("link", { name: "/test/error/server?500" }).click();
   await page.getByText('server error: {"status":500}').click();
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Server Custom" }).click();
+  await page.getByRole("link", { name: "/test/error/server?custom" }).click();
   await page
     .getByText('server error: {"status":403,"customMessage":"hello"}')
     .click();
 
   await page.getByRole("link", { name: "/test/error" }).click();
-  await page.getByRole("link", { name: "Browser" }).click();
+  await page.getByRole("link", { name: "/test/error/browser" }).click();
   await page.getByText("server error: (N/A)").click();
+
+  // wrong usage errors would brew away the whole app on build?
+  if (!process.env.E2E_PREVIEW) {
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-client" }).click();
+    await page.getByText('server error: {"status":500}').click();
+
+    await page.getByRole("link", { name: "/test/error" }).click();
+    await page.getByRole("link", { name: "/test/error/use-server" }).click();
+    await page.getByText('server error: {"status":500}').click();
+  }
 
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByRole("heading", { name: "Other Page" }).click();
@@ -239,6 +250,15 @@ test("rsc + client + rsc hmr @dev", async ({ page }) => {
   );
   await page.getByText("Server (EDIT 2) Time").click();
   await page.getByText("Count: 0").click();
+
+  // edit client again should work
+  await page.getByRole("button", { name: "+" }).click();
+  await page.getByText("Count: 1").click();
+  await editFile("./src/components/counter.tsx", (s) =>
+    s.replace("test-hmr-edit-div", "test-hmr-edit-edit-div"),
+  );
+  await page.getByText("test-hmr-edit-edit-div").click();
+  await page.getByText("Count: 1").click();
 });
 
 test("module invalidation @dev", async ({ page }) => {
@@ -727,6 +747,26 @@ test("dynamic routes", async ({ page }) => {
   await page.getByText("file: /test/dynamic/[id]/[nested]/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/abc/def").click();
   await page.getByText('params: {"id":"abc","nested":"def"}').click();
+
+  await page.getByRole("link", { name: "/test/dynamic/✅" }).click();
+  await page.getByText('params: {"id":"✅"}').click();
+  await page.waitForURL("/test/dynamic/✅");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/✅" }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }),
+  ).toHaveAttribute("aria-current", "page");
+
+  await page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }).click();
+  await page.getByText('params: {"id":"✅"}').click();
+  await page.waitForURL("/test/dynamic/✅");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/✅" }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }),
+  ).toHaveAttribute("aria-current", "page");
 });
 
 test("full client route", async ({ page }) => {

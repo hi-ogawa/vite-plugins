@@ -1,4 +1,8 @@
-import type { HistoryLocation, RouterHistory } from "@tanstack/history";
+import {
+  type HistoryLocation,
+  type RouterHistory,
+  createBrowserHistory,
+} from "@tanstack/history";
 import React from "react";
 import { TinyStore, useStore } from "./store-utils";
 
@@ -36,4 +40,27 @@ export const RouterContext = React.createContext<Router>(undefined!);
 export function useRouter<U = RouterState>(select?: (v: RouterState) => U) {
   const router = React.useContext(RouterContext);
   return useStore(router.store, select);
+}
+
+export function createEncodedBrowserHistory() {
+  // patch push/replace so that location object consistently includes encoded url
+  // (i.e. history.push("/✅") should set { pathname: "/%E2%9C%85" } as state)
+  // cf.
+  // https://github.com/remix-run/react-router/pull/9477
+  // https://github.com/TanStack/router/issues/1441
+
+  const history = createBrowserHistory();
+
+  function encode(href: string) {
+    const url = new URL(href, window.location.origin);
+    return url.href.slice(url.origin.length);
+  }
+
+  function wrapEncode(f: typeof history.push): typeof history.push {
+    return (path, state) => f(encode(path), state);
+  }
+
+  history.push = wrapEncode(history.push);
+  history.replace = wrapEncode(history.replace);
+  return history;
 }

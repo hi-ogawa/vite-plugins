@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.1.17
+
+- fix: consistent history pathname encoding ([#276](https://github.com/hi-ogawa/vite-plugins/pull/276))
+- feat: support `Link.activeProps` ([#276](https://github.com/hi-ogawa/vite-plugins/pull/276))
+
+## v0.1.16
+
+- feat: log unexpected errors ([#273](https://github.com/hi-ogawa/vite-plugins/pull/273))
+- fix: decode dynamic route params ([#271](https://github.com/hi-ogawa/vite-plugins/pull/271))
+
 ## v0.1.15
 
 - feat: add `LinkForm` ([#270](https://github.com/hi-ogawa/vite-plugins/pull/270))

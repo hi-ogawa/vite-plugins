@@ -1,5 +1,4 @@
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { createBrowserHistory } from "@tanstack/history";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import {
@@ -13,7 +12,12 @@ import { injectActionId } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
-import { Router, RouterContext, useRouter } from "../lib/client/router";
+import {
+  Router,
+  RouterContext,
+  createEncodedBrowserHistory,
+  useRouter,
+} from "../lib/client/router";
 import { __global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
 import { readStreamScript } from "../utils/stream-script";
@@ -31,7 +35,7 @@ export async function start() {
     "react-server-dom-webpack/client.browser"
   );
 
-  const history = createBrowserHistory();
+  const history = createEncodedBrowserHistory();
   const router = new Router(history);
 
   let __setLayout: (v: Promise<ServerRouterData>) => void;

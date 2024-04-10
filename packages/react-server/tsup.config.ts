@@ -15,12 +15,6 @@ export default defineConfig([
     ],
     format: ["esm"],
     dts: !process.env["NO_DTS"],
-    external: [
-      /^virtual:/,
-      /^@hiogawa\/react-server\//,
-      // TODO: virtual module?
-      "/dist/rsc/client-references.js",
-      "/dist/rsc/index.js",
-    ],
+    external: [/^virtual:/, /^@hiogawa\/react-server\//, /^\/dist\//],
   },
 ]);
