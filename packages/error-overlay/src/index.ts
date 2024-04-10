@@ -1,5 +1,6 @@
-import { type Plugin, type WebSocketClient } from "vite";
+import { type HMRPayload, type Plugin, type WebSocketClient } from "vite";
 import { name as packageName } from "../package.json";
+import { parseStacktrace } from "./stack";
 
 // based on the idea in
 // https://github.com/vitejs/vite/pull/6274#issuecomment-1087749460
@@ -16,9 +17,7 @@ export function vitePluginErrorOverlay(options?: {
   return {
     name: packageName,
 
-    apply(config, env) {
-      return env.command === "serve" && !config.ssr;
-    },
+    apply: "serve",
 
     transformIndexHtml() {
       return [
@@ -31,6 +30,20 @@ export function vitePluginErrorOverlay(options?: {
     },
 
     configureServer(server) {
+      const sendDebounce = debounce(
+        (client: WebSocketClient, payload: HMRPayload) => {
+          client.send(payload);
+        },
+        200,
+      );
+
+      server.hot.send({
+        type: "error",
+        err: {
+          message: "",
+          stack: ""
+        },
+      })
       server.hot.on(MESSAGE_TYPE, (...args: any[]) => {
         const [data, client] = args as [unknown, WebSocketClient];
 
@@ -41,13 +54,15 @@ export function vitePluginErrorOverlay(options?: {
           return;
         }
 
-        // https://vitejs.dev/guide/api-plugin.html#client-server-communication
-        // https://github.com/vitejs/vite/blob/5b58eca05939c0667cf9698e83f4f4849f3296f4/packages/vite/src/node/server/middlewares/error.ts#L54-L57
-        client.send({
+        let stack = `${error.name}: ${error.message}\n`;
+        if (error.stack) {
+          stack += formatStack(error.stack);
+        }
+        sendDebounce(client, {
           type: "error",
           err: {
             message: error.message,
-            stack: error.stack ?? "",
+            stack,
           },
         });
       });
@@ -59,7 +74,7 @@ const MESSAGE_TYPE = `${packageName}:error`;
 
 const CLIENT_SCRIPT = /* js */ `
 
-import { createHotContext } from "/@vite/client";
+import { createHotContext, ErrorOverlay } from "/@vite/client";
 
 // fake file path to instantiate import.meta.hot
 const hot = createHotContext("__${packageName}__");
@@ -69,6 +84,7 @@ function sendError(error) {
     error = new Error("(unknown runtime error)");
   }
   const serialized = {
+    name: error.name,
     message: error.message,
     stack: error.stack,
   };
@@ -84,3 +100,26 @@ window.addEventListener("unhandledrejection", (evt) => {
 });
 
 `;
+
+function formatStack(s: string) {
+  const stacks = parseStacktrace(s);
+  return stacks
+    .map((s) => `    at ${s.method} (${s.file}:${s.line}:${s.column})\n`)
+    .join("");
+}
+
+function debounce<F extends (...args: any[]) => any>(f: F, ms: number) {
+  let unsub: ReturnType<typeof setTimeout> | undefined;
+
+  function wrapper(this: unknown, ...args: any[]) {
+    if (typeof unsub !== "undefined") {
+      clearTimeout(unsub);
+      unsub = undefined;
+    }
+    unsub = setTimeout(() => {
+      f.apply(this, args);
+    }, ms);
+  }
+
+  return wrapper as F;
+}
