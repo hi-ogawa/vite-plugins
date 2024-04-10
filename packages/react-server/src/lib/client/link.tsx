@@ -11,7 +11,7 @@ import { useRouter } from "./router";
 interface LinkProps {
   revalidate?: boolean;
   activeProps?: JSX.IntrinsicElements["a"];
-  prefetch?: boolean;
+  preload?: boolean;
 }
 
 function encodeHref(href: string) {
@@ -28,15 +28,15 @@ function matchHref(href: string, pathname: string) {
 export function Link({
   revalidate,
   activeProps,
-  prefetch,
+  preload,
   ...props
 }: JSX.IntrinsicElements["a"] & { href: string } & LinkProps) {
   const history = useRouter((s) => s.history);
   const pathname = useRouter((s) => s.location.pathname);
   const href = encodeHref(props.href);
   const handlers = React.useMemo(
-    () => (prefetch ? getPreloadHandlers(props.href) : {}),
-    [prefetch, props.href],
+    () => (preload ? getPreloadHandlers(props.href) : {}),
+    [preload, props.href],
   );
 
   return (

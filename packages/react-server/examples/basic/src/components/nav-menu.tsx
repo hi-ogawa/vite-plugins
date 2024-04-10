@@ -13,7 +13,7 @@ export function NavMenu(props: {
           href={e}
           className="antd-link self-start justify-self-start"
           activeProps={props.activeProps}
-          prefetch
+          preload
         >
           <li className="flex items-center">
             <span className="text-lg pr-2 select-none">•</span>
