@@ -250,6 +250,15 @@ test("rsc + client + rsc hmr @dev", async ({ page }) => {
   );
   await page.getByText("Server (EDIT 2) Time").click();
   await page.getByText("Count: 0").click();
+
+  // edit client again should work
+  await page.getByRole("button", { name: "+" }).click();
+  await page.getByText("Count: 1").click();
+  await editFile("./src/components/counter.tsx", (s) =>
+    s.replace("test-hmr-edit-div", "test-hmr-edit-edit-div"),
+  );
+  await page.getByText("test-hmr-edit-edit-div").click();
+  await page.getByText("Count: 1").click();
 });
 
 test("module invalidation @dev", async ({ page }) => {
