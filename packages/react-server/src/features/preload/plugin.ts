@@ -60,7 +60,10 @@ export function vitePluginUseClientPreloadManifest({
               const key = manager.clientReferenceIdMap[id];
               tinyassert(key);
               const chunks = clientChunksMap[key];
-              tinyassert(chunks);
+              // no dynamic import chunk when there is a static improt for the same module
+              if (!chunks) {
+                continue;
+              }
               entry.js.push(...chunks.map((c) => c.file));
               entry.css.push(
                 ...chunks.flatMap((c) => c.css).filter(typedBoolean),
