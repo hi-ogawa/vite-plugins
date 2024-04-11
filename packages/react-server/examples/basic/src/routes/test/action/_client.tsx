@@ -5,6 +5,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {
   actionCheckAnswer,
+  actionCheckAnswer2,
   addMessage,
   changeCounter,
   type getMessages,
@@ -118,12 +119,18 @@ export function ActionDataTest() {
 }
 
 export function UseActionStateTest() {
-  // React.useAction
-  // React.useform
-  const data = useActionData(actionCheckAnswer);
+  const [data, formAction, isPending] = ReactDom.useFormState(
+    actionCheckAnswer2,
+    null,
+  );
+
+  React.useEffect(() => {
+    console.log({ isPending, data });
+  }, [isPending, data]);
+
   return (
-    <form action={actionCheckAnswer} className="flex flex-col gap-2">
-      <h4 className="font-bold">Action Data</h4>
+    <form action={formAction} className="flex flex-col gap-2">
+      <h4 className="font-bold">Action Data (official)</h4>
       <div className="flex gap-2">
         <div>1 + 1 = </div>
         <input
