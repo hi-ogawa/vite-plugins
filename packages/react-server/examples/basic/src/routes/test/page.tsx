@@ -7,7 +7,7 @@ export default async function Page() {
       <CommonComponent message="from server" />
       <div className="text-sm">
         <pre>Server Time: {new Date().toISOString()}</pre>
-        <Fetch url="https://unpkg.com/react@18.3.0-canary-14898b6a9-20240318/package.json" />
+        <Fetch url="https://unpkg.com/react@19.0.0-canary-4c12339ce-20240408/package.json" />
       </div>
       <Counter />
     </div>
