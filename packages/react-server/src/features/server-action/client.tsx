@@ -5,7 +5,6 @@ import { __global } from "../../lib/global";
 import { createError } from "../../server";
 import { LayoutStateContext } from "../router/client";
 import { injectActionId } from "./utils";
-injectActionId;
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-client/src/ReactFlightReplyClient.js#L671-L678
@@ -28,13 +27,11 @@ export function createServerReference(id: string): React.FC {
       // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/packages/react-client/src/ReactFlightReplyClient.js#L552
       $$FORM_ACTION: {
         value: (_identifierPrefix: string) => {
-          const data = new FormData();
-          // injectActionId(data, id);
           return {
-            name: `$ACTION_ID_${id}`,
+            name: injectActionId(id),
             method: "POST",
             encType: "multipart/form-data",
-            data,
+            data: new FormData(),
           };
         },
       },

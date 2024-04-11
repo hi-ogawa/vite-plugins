@@ -1,4 +1,4 @@
-import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, memoize } from "@hiogawa/utils";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import {
@@ -8,7 +8,6 @@ import {
   routerRevalidate,
 } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
-import { injectActionId } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
@@ -46,25 +45,13 @@ export async function start() {
   //
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
-    let body: BodyInit;
-    if (1) {
-      // TODO: proper encoding?
-      body = await reactServerDomClient.encodeReply(args);
-    } else {
-      // $ACTION_ID is injected during SSR
-      // but it can stripped away on client re-render (e.g. HMR?)
-      // so we do it here again to inject on client.
-      tinyassert(args[0] instanceof FormData);
-      injectActionId(args[0], id);
-      body = args[0];
-    }
     const request = new Request(
       wrapStreamRequestUrl(history.location.href, {
         lastPathname: history.location.pathname,
       }),
       {
         method: "POST",
-        body,
+        body: await reactServerDomClient.encodeReply(args),
         headers: {
           "x-server-action-id": id,
         },

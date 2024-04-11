@@ -1,15 +1,16 @@
 import { tinyassert } from "@hiogawa/utils";
 
-// TODO
-// it doesn't seem like a right way to do progressive enhancement for SSR
-// but works okay for simple cases? (e.g. no `bind`?)
-// cf. https://github.com/facebook/react/pull/26774
+// TODO: use decodeAction
+// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/packages/react-server/src/ReactFlightActionServer.js#L78
+
 const ACTION_ID_PREFIX = "$ACTION_ID_";
 
-export function injectActionId(formData: FormData, id: string) {
-  formData.set(ACTION_ID_PREFIX + id, "");
+export function injectActionId(id: string) {
+  return ACTION_ID_PREFIX + id;
 }
 
+// TODO: use decodeAction
+// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/packages/react-server/src/ReactFlightActionServer.js#L78
 export function ejectActionId(formData: FormData) {
   let id: string | undefined;
   formData.forEach((_v, k) => {
