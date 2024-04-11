@@ -32,9 +32,12 @@ import {
 const debug = createDebug("react-server:plugin");
 
 // resolve import paths for `createClientReference` and `createServerReference`
-// since `import "@hiogawa/react-server"` is not necessary visible for exernal library.
-const CLIENT_INTERNAL_PATH = fileURLToPath(
-  new URL("../client-internal.js", import.meta.url),
+// since `import "@hiogawa/react-server"` is not always visible for exernal library.
+const RUNTIME_BROWSER_PATH = fileURLToPath(
+  new URL("../runtime-browser.js", import.meta.url),
+);
+const RUNTIME_SERVER_PATH = fileURLToPath(
+  new URL("../runtime-server.js", import.meta.url),
 );
 const SERVER_INTERNAL_PATH = fileURLToPath(
   new URL("../server-internal.js", import.meta.url),
@@ -623,7 +626,7 @@ function vitePluginClientUseServer({
 }): Plugin {
   return {
     name: vitePluginClientUseServer.name,
-    async transform(code, id, _options) {
+    async transform(code, id, options) {
       if (!code.match(USE_SERVER_RE)) {
         return;
       }
@@ -644,7 +647,7 @@ function vitePluginClientUseServer({
       if (manager.buildType) {
         id = hashString(id);
       }
-      let result = `import { createServerReference } from "${CLIENT_INTERNAL_PATH}";\n`;
+      let result = `import { createServerReference } from "${options?.ssr ? RUNTIME_SERVER_PATH : RUNTIME_BROWSER_PATH}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = createServerReference("${id}::${name}");\n`;
