@@ -47,7 +47,7 @@ export async function start() {
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
     if (0) {
-      // TODO: proper encoding?
+      // [TODO]: proper encoding?
       await reactServerDomClient.encodeReply(args);
     } else {
       // $ACTION_ID is injected during SSR

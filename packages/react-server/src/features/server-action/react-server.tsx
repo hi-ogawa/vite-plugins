@@ -1,5 +1,7 @@
 import type { ReactServerErrorContext } from "../../server";
 
+// https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
+
 export function createServerReference(id: string, action: Function): React.FC {
   return Object.defineProperties(action, {
     $$typeof: {
@@ -10,6 +12,7 @@ export function createServerReference(id: string, action: Function): React.FC {
       configurable: true,
     },
     $$bound: { value: null, configurable: true },
+    // [TODO]
     bind: {
       value: () => {
         throw new Error("todo: createServerReference.bind");

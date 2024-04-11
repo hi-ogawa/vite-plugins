@@ -35,3 +35,9 @@ export async function actionCheckAnswer(formData: FormData) {
   const message = answer === 2 ? "Correct!" : "Wrong!";
   return { message };
 }
+
+export async function actionCheckAnswer2(formData: FormData) {
+  const answer = Number(formData.get("answer"));
+  const message = answer === 2 ? "Correct!" : "Wrong!";
+  return { message };
+}

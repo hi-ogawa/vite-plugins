@@ -151,7 +151,7 @@ function createRouter() {
 async function actionHandler({ request }: { request: Request }) {
   const formData = await request.formData();
   if (0) {
-    // TODO: proper decoding?
+    // [TODO]: proper decoding?
     await reactServerDomServer.decodeReply(formData);
   }
   const id = ejectActionId(formData);

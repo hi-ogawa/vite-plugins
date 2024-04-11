@@ -117,6 +117,26 @@ export function ActionDataTest() {
   );
 }
 
+export function UseActionStateTest() {
+  // React.useAction
+  // React.useform
+  const data = useActionData(actionCheckAnswer);
+  return (
+    <form action={actionCheckAnswer} className="flex flex-col gap-2">
+      <h4 className="font-bold">Action Data</h4>
+      <div className="flex gap-2">
+        <div>1 + 1 = </div>
+        <input
+          className="antd-input px-2 max-w-30"
+          name="answer"
+          placeholder="Answer?"
+        />
+        <div>{data?.message}</div>
+      </div>
+    </form>
+  );
+}
+
 // https://react.dev/reference/react-dom/hooks/useFormStatus
 export function FormStateTest() {
   return (
