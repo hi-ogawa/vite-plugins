@@ -496,6 +496,38 @@ test("server action with js", async ({ page }) => {
   await page.getByText(`[effect: ${count}]`).click();
 });
 
+test("server action after client render", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  // on client render, the form doesn't have hidden $ACTION_ID_...
+  await page.goto("/test/action");
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await page.getByText("Count: 0").click();
+  await page.getByRole("button", { name: "+1" }).first().click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "+1" }).nth(1).click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "+1" }).nth(2).click();
+  await page.getByText("Count: 3").click();
+  await page.getByRole("button", { name: "-1" }).first().click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "-1" }).nth(1).click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "-1" }).nth(2).click();
+  await page.getByText("Count: 0").click();
+
+  await checkClientState();
+
+  // check layout doesn't re-render
+  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  await page.getByText(`[effect: ${count}]`).click();
+});
+
 test("server action no js", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   await page.goto("/test/action");
