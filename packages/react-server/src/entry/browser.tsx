@@ -8,6 +8,7 @@ import {
   routerRevalidate,
 } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
+import { wrapStreamActionRequest } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
@@ -52,9 +53,7 @@ export async function start() {
       {
         method: "POST",
         body: await reactServerDomClient.encodeReply(args),
-        headers: {
-          "x-server-action-id": id,
-        },
+        headers: wrapStreamActionRequest(id),
       },
     );
     __startActionTransition(() => {

@@ -23,10 +23,6 @@ export function wrapStreamRequestUrl(
   return newUrl.toString();
 }
 
-export function isStreamRequest(request: Request) {
-  return new URL(request.url).searchParams.has(RSC_PARAM);
-}
-
 export function unwrapStreamRequest(
   request: Request,
   actionResult?: ActionResult,

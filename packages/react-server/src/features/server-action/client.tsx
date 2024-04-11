@@ -8,7 +8,6 @@ import { injectActionId } from "./utils";
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-client/src/ReactFlightReplyClient.js#L671-L678
-// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/packages/react-client/src/ReactFlightReplyClient.js#L552
 
 export function createServerReference(id: string): React.FC {
   return Object.defineProperties(

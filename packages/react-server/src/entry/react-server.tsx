@@ -3,7 +3,6 @@ import {
   objectMapKeys,
   objectMapValues,
   objectPick,
-  tinyassert,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
@@ -15,11 +14,11 @@ import {
   ActionContext,
   type ActionResult,
 } from "../features/server-action/react-server";
-import { ejectActionId } from "../features/server-action/utils";
 import {
-  isStreamRequest,
-  unwrapStreamRequest,
-} from "../features/server-component/utils";
+  ejectActionId,
+  unwrapStreamActionRequest,
+} from "../features/server-action/utils";
+import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
   DEFAULT_ERROR_CONTEXT,
@@ -156,10 +155,9 @@ function createRouter() {
 async function actionHandler({ request }: { request: Request }) {
   let id: string;
   let args: unknown[];
-  if (isStreamRequest(request)) {
-    const headerId = request.headers.get("x-server-action-id");
-    tinyassert(headerId);
-    id = headerId;
+  const streamAction = unwrapStreamActionRequest(request);
+  if (streamAction) {
+    id = streamAction.id;
     const formData = await request.formData();
     args = await reactServerDomServer.decodeReply(formData);
   } else {
