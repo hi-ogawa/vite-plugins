@@ -100,7 +100,7 @@ export function initializeWebpackReactServer() {
   __global.serverReferenceWebpackChunkLoad = serverReferenceWebpackChunkLoad;
 }
 
-export async function importServerReference(id: string): Promise<unknown> {
+async function importServerReference(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
     return await __global.dev.reactServer.ssrLoadModule(id);
   } else {
@@ -109,4 +109,10 @@ export async function importServerReference(id: string): Promise<unknown> {
     tinyassert(dynImport, `server reference not found '${id}'`);
     return dynImport();
   }
+}
+
+export async function importServerAction(id: string): Promise<Function> {
+  const [file, name] = id.split("::") as [string, string];
+  const mod: any = await importServerReference(file);
+  return mod[name];
 }

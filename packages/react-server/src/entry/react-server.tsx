@@ -14,7 +14,7 @@ import {
   ActionContext,
   type ActionResult,
   createActionBundlerConfig,
-  importServerReference,
+  importServerAction,
   initializeWebpackReactServer,
 } from "../features/server-action/react-server";
 import { unwrapStreamActionRequest } from "../features/server-action/utils";
@@ -187,10 +187,4 @@ async function actionHandler({ request }: { request: Request }) {
     };
   }
   return result;
-}
-
-async function importServerAction(id: string): Promise<Function> {
-  const [file, name] = id.split("::") as [string, string];
-  const mod: any = await importServerReference(file);
-  return mod[name];
 }
