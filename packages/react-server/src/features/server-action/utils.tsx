@@ -6,7 +6,7 @@ export function injectActionId(id: string) {
   return ACTION_ID_PREFIX + id;
 }
 
-// TODO: use decodeAction
+// TODO: decodeAction
 // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/packages/react-server/src/ReactFlightActionServer.js#L78
 export function ejectActionId(formData: FormData) {
   let id: string | undefined;

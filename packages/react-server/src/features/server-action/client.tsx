@@ -22,10 +22,12 @@ export function createServerReference(id: string): React.FC {
         value: id,
         configurable: true,
       },
-      $$bound: { value: null, configurable: true },
+      $$bound: { value: ["hello"], configurable: true },
+      // TODO: defaultEncodeFormAction
       // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/packages/react-client/src/ReactFlightReplyClient.js#L552
       $$FORM_ACTION: {
         value: (_identifierPrefix: string) => {
+          tinyassert(import.meta.env.SSR);
           return {
             name: injectActionId(id),
             method: "POST",
