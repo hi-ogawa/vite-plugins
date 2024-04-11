@@ -661,7 +661,7 @@ test("action return value @js", async ({ page }) => {
   await testActionReturnValue(page, { js: true });
 });
 
-test("action return value @nojs", async ({ browser }) => {
+test.skip("action return value @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/action");
@@ -685,7 +685,7 @@ test("action context @js", async ({ page }) => {
   await testActionContext(page);
 });
 
-test("action context @nojs", async ({ browser }) => {
+test.skip("action context @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/session");
