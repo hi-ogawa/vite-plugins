@@ -15,12 +15,9 @@ import {
   type ActionResult,
   createActionBundlerConfig,
   importServerReference,
-  importServerReferencePromiseCache,
+  initializeWebpackReactServer,
 } from "../features/server-action/react-server";
-import {
-  getFormActionId,
-  unwrapStreamActionRequest,
-} from "../features/server-action/utils";
+import { unwrapStreamActionRequest } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
@@ -53,6 +50,8 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
+  initializeWebpackReactServer();
+
   // action
   let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
@@ -156,10 +155,6 @@ function createRouter() {
 
 // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
-  if (import.meta.env.DEV) {
-    importServerReferencePromiseCache.clear();
-  }
-
   const context = new ActionContext(request);
   const streamAction = unwrapStreamActionRequest(request);
   let boundAction: Function;
@@ -171,17 +166,9 @@ async function actionHandler({ request }: { request: Request }) {
     id = streamAction.id;
     boundAction = () => action.apply(context, args);
   } else {
-    // TODO: still extracting id myself...
-    const formData = await request.formData();
-    id = getFormActionId(formData);
-    const file = id.split("::")[0]!;
-    const reference = await importServerReference(file);
-    __global.serverReferenceMap ??= new Map();
-    __global.serverReferenceMap.set(file, reference);
-    // TODO: __webpack_require__ globals in react-server.
     // TODO: cannot bind context
     // TODO: decodeFormState
-    // __global.importServerReference = importServerReference;
+    const formData = await request.formData();
     boundAction = await reactServerDomServer.decodeAction(
       formData,
       createActionBundlerConfig(),

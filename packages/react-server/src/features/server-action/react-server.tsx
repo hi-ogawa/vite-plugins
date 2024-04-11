@@ -1,4 +1,4 @@
-import { memoize, tinyassert } from "@hiogawa/utils";
+import { tinyassert } from "@hiogawa/utils";
 import { __global } from "../../lib/global";
 import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
@@ -48,6 +48,7 @@ export class ActionContext {
 }
 
 const REFERENCE_SEP = "::";
+const ACTION_ID_MARKER = "@";
 
 export function createActionBundlerConfig(): BundlerConfig {
   return new Proxy(
@@ -58,26 +59,48 @@ export function createActionBundlerConfig(): BundlerConfig {
         let [id, name] = $$id.split(REFERENCE_SEP);
         tinyassert(id);
         tinyassert(name);
+        id += ACTION_ID_MARKER;
         return {
           id,
           name,
-          chunks: [],
+          chunks: [id],
         } satisfies ImportManifestEntry;
       },
     },
   );
 }
 
-export const importServerReferencePromiseCache = new Map<
-  string,
-  Promise<unknown>
->();
+const serverReferenceMap = new Map<string, unknown>();
 
-export const importServerReference = memoize(importServerReferenceImpl, {
-  cache: importServerReferencePromiseCache,
-});
+export function serverReferenceWebpackRequire(id: string): unknown | undefined {
+  if (id.endsWith(ACTION_ID_MARKER)) {
+    id = id.slice(0, -ACTION_ID_MARKER.length);
+    const mod = serverReferenceMap.get(id);
+    tinyassert(mod);
+    return mod;
+  }
+  return;
+}
 
-async function importServerReferenceImpl(id: string): Promise<unknown> {
+export function serverReferenceWebpackChunkLoad(
+  id: string,
+): Promise<unknown> | undefined {
+  if (id.endsWith(ACTION_ID_MARKER)) {
+    id = id.slice(0, -ACTION_ID_MARKER.length);
+    return (async () => {
+      const mod = await importServerReference(id);
+      serverReferenceMap.set(id, mod);
+    })();
+  }
+  return;
+}
+
+export function initializeWebpackReactServer() {
+  __global.serverReferenceWebpackRequire = serverReferenceWebpackRequire;
+  __global.serverReferenceWebpackChunkLoad = serverReferenceWebpackChunkLoad;
+}
+
+export async function importServerReference(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
     return await __global.dev.reactServer.ssrLoadModule(id);
   } else {
