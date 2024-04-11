@@ -14,10 +14,7 @@ import {
   ActionContext,
   type ActionResult,
 } from "../features/server-action/react-server";
-import {
-  ejectActionId,
-  unwrapStreamActionRequest,
-} from "../features/server-action/utils";
+import { unwrapStreamActionRequest } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
@@ -153,35 +150,28 @@ function createRouter() {
 
 // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
-  let id: string;
-  let args: unknown[];
-  const streamAction = unwrapStreamActionRequest(request);
-  if (streamAction) {
-    id = streamAction.id;
-    const formData = await request.formData();
-    args = await reactServerDomServer.decodeReply(formData);
-  } else {
-    const formData = await request.formData();
-    id = ejectActionId(formData);
-    args = [formData];
-  }
-
-  let action: Function;
-  const [file, name] = id.split("::") as [string, string];
-  if (import.meta.env.DEV) {
-    const mod: any = await __global.dev.reactServer.ssrLoadModule(file);
-    action = mod[name];
-  } else {
-    // include all "use server" files via virtual module on build
-    const virtual = await import("virtual:rsc-use-server" as string);
-    const mod = await virtual.default[file]();
-    action = mod[name];
-  }
-
   const context = new ActionContext(request);
-  const result: ActionResult = { id, context };
+  const streamAction = unwrapStreamActionRequest(request);
+  let boundAction: Function;
+  if (streamAction) {
+    const formData = await request.formData();
+    const args = await reactServerDomServer.decodeReply(formData);
+    const action = await importServerAction(streamAction.id);
+    boundAction = () => action.apply(context, args);
+  } else {
+    const formData = await request.formData();
+    const bundlerConfig = createBundlerConfig();
+    // TODO: this requires __webpack_require__ globals in react-server.
+    // TODO: no context
+    boundAction = await reactServerDomServer.decodeAction(
+      formData,
+      bundlerConfig,
+    );
+  }
+
+  const result: ActionResult = { id: "no....", context };
   try {
-    result.data = await action.apply(context, args);
+    result.data = await boundAction();
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
@@ -191,4 +181,17 @@ async function actionHandler({ request }: { request: Request }) {
     };
   }
   return result;
+}
+
+async function importServerAction(id: string): Promise<Function> {
+  const [file, name] = id.split("::") as [string, string];
+  let mod: any;
+  if (import.meta.env.DEV) {
+    mod = await __global.dev.reactServer.ssrLoadModule(file);
+  } else {
+    // include all "use server" files via virtual module on build
+    const virtual = await import("virtual:rsc-use-server" as string);
+    mod = await virtual.default[file]();
+  }
+  return mod[name];
 }
