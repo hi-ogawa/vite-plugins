@@ -119,6 +119,7 @@ export function ActionDataTest() {
 }
 
 export function UseActionStateTest() {
+  // TODO: useFormState uses `action.bind` internally
   const [data, formAction, isPending] = ReactDom.useFormState(
     actionCheckAnswer2,
     null,
