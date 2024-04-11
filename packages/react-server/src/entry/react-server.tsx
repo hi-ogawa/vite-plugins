@@ -3,6 +3,7 @@ import {
   objectMapKeys,
   objectMapValues,
   objectPick,
+  tinyassert,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
@@ -15,7 +16,10 @@ import {
   type ActionResult,
 } from "../features/server-action/react-server";
 import { ejectActionId } from "../features/server-action/utils";
-import { unwrapStreamRequest } from "../features/server-component/utils";
+import {
+  isStreamRequest,
+  unwrapStreamRequest,
+} from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
   DEFAULT_ERROR_CONTEXT,
@@ -148,13 +152,21 @@ function createRouter() {
 // server action
 //
 
+// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
-  const formData = await request.formData();
-  if (0) {
-    // TODO: proper decoding?
-    await reactServerDomServer.decodeReply(formData);
+  let id: string;
+  let args: unknown[];
+  if (isStreamRequest(request)) {
+    const headerId = request.headers.get("x-server-action-id");
+    tinyassert(headerId);
+    id = headerId;
+    const formData = await request.formData();
+    args = await reactServerDomServer.decodeReply(formData);
+  } else {
+    const formData = await request.formData();
+    id = ejectActionId(formData);
+    args = [formData];
   }
-  const id = ejectActionId(formData);
 
   let action: Function;
   const [file, name] = id.split("::") as [string, string];
@@ -171,7 +183,7 @@ async function actionHandler({ request }: { request: Request }) {
   const context = new ActionContext(request);
   const result: ActionResult = { id, context };
   try {
-    result.data = await action.apply(context, [formData]);
+    result.data = await action.apply(context, args);
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {

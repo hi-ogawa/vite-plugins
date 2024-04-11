@@ -46,15 +46,17 @@ export async function start() {
   //
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
-    if (0) {
+    let body: BodyInit;
+    if (1) {
       // TODO: proper encoding?
-      await reactServerDomClient.encodeReply(args);
+      body = await reactServerDomClient.encodeReply(args);
     } else {
       // $ACTION_ID is injected during SSR
       // but it can stripped away on client re-render (e.g. HMR?)
       // so we do it here again to inject on client.
       tinyassert(args[0] instanceof FormData);
       injectActionId(args[0], id);
+      body = args[0];
     }
     const request = new Request(
       wrapStreamRequestUrl(history.location.href, {
@@ -62,7 +64,10 @@ export async function start() {
       }),
       {
         method: "POST",
-        body: args[0],
+        body,
+        headers: {
+          "x-server-action-id": id,
+        },
       },
     );
     __startActionTransition(() => {
