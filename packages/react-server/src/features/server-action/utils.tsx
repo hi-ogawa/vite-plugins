@@ -16,6 +16,17 @@ export function ejectActionId(formData: FormData) {
   return id;
 }
 
+export function getFormActionId(formData: FormData) {
+  let id: string | undefined;
+  formData.forEach((_v, k) => {
+    if (k.startsWith(ACTION_ID_PREFIX)) {
+      id = k.slice(ACTION_ID_PREFIX.length);
+    }
+  });
+  tinyassert(id);
+  return id;
+}
+
 const ACTION_ID_HEADER = "x-server-action-id";
 
 export function wrapStreamActionRequest(id: string) {

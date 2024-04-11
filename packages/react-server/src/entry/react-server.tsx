@@ -14,8 +14,13 @@ import {
   ActionContext,
   type ActionResult,
   createActionBundlerConfig,
+  importServerReference,
+  importServerReferencePromiseCache,
 } from "../features/server-action/react-server";
-import { unwrapStreamActionRequest } from "../features/server-action/utils";
+import {
+  getFormActionId,
+  unwrapStreamActionRequest,
+} from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
@@ -151,6 +156,10 @@ function createRouter() {
 
 // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
+  if (import.meta.env.DEV) {
+    importServerReferencePromiseCache.clear();
+  }
+
   const context = new ActionContext(request);
   const streamAction = unwrapStreamActionRequest(request);
   let boundAction: Function;
@@ -162,14 +171,20 @@ async function actionHandler({ request }: { request: Request }) {
     id = streamAction.id;
     boundAction = () => action.apply(context, args);
   } else {
+    // TODO: still extracting id myself...
     const formData = await request.formData();
-    const bundlerConfig = createActionBundlerConfig();
+    id = getFormActionId(formData);
+    const file = id.split("::")[0]!;
+    const reference = await importServerReference(file);
+    __global.serverReferenceMap ??= new Map();
+    __global.serverReferenceMap.set(file, reference);
     // TODO: __webpack_require__ globals in react-server.
     // TODO: cannot bind context
     // TODO: decodeFormState
+    // __global.importServerReference = importServerReference;
     boundAction = await reactServerDomServer.decodeAction(
       formData,
-      bundlerConfig,
+      createActionBundlerConfig(),
     );
   }
 
@@ -189,13 +204,6 @@ async function actionHandler({ request }: { request: Request }) {
 
 async function importServerAction(id: string): Promise<Function> {
   const [file, name] = id.split("::") as [string, string];
-  let mod: any;
-  if (import.meta.env.DEV) {
-    mod = await __global.dev.reactServer.ssrLoadModule(file);
-  } else {
-    // include all "use server" files via virtual module on build
-    const virtual = await import("virtual:rsc-use-server" as string);
-    mod = await virtual.default[file]();
-  }
+  const mod: any = await importServerReference(file);
   return mod[name];
 }

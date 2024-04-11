@@ -29,6 +29,8 @@ import type { ReactServerHandlerStreamResult } from "./react-server";
 const debug = createDebug("react-server:ssr");
 
 export async function handler(request: Request): Promise<Response> {
+  initializeWebpackSsr();
+
   // dev only api endpoint to test internal
   if (
     import.meta.env.DEV &&
@@ -65,8 +67,6 @@ export async function renderHtml(
   request: Request,
   result: ReactServerHandlerStreamResult,
 ) {
-  initializeWebpackSsr();
-
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.edge"
   );

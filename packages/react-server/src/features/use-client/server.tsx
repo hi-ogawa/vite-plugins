@@ -1,4 +1,5 @@
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { __global } from "../../lib/global";
 import type {
   ImportManifestEntry,
   ModuleMap,
@@ -38,7 +39,9 @@ async function ssrImport(id: string) {
 
 export function initializeWebpackSsr() {
   Object.assign(globalThis, {
-    __webpack_require__: ssrWebpackRequire,
+    __webpack_require__: (id: string) => {
+      return __global.serverReferenceMap?.get(id) ?? ssrWebpackRequire(id);
+    },
     __webpack_chunk_load__: () => {
       throw new Error("todo: __webpack_chunk_load__");
     },
