@@ -35,3 +35,13 @@ export async function actionCheckAnswer(formData: FormData) {
   const message = answer === 2 ? "Correct!" : "Wrong!";
   return { message };
 }
+
+export async function actionStateTest(prevArg: unknown, formData: FormData) {
+  const result = { prev: prevArg, form: [...formData.entries()] };
+  console.log("[actionStateTest]", result);
+  return result;
+}
+
+export async function actionBindTest(boundArg: string, formData: FormData) {
+  console.log("[actionBindTest]", { boundArg, form: [...formData.entries()] });
+}

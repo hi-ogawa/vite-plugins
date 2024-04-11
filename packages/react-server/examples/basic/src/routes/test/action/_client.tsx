@@ -4,7 +4,9 @@ import { useActionData } from "@hiogawa/react-server/client";
 import React from "react";
 import ReactDom from "react-dom";
 import {
+  actionBindTest,
   actionCheckAnswer,
+  actionStateTest,
   addMessage,
   changeCounter,
   type getMessages,
@@ -99,7 +101,6 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
   );
 }
 
-// TODO: React.useActionState
 export function ActionDataTest() {
   const data = useActionData(actionCheckAnswer);
   return (
@@ -114,6 +115,39 @@ export function ActionDataTest() {
         />
         <div>{data?.message}</div>
       </div>
+    </form>
+  );
+}
+
+// TODO
+export function UseActionStateTest() {
+  const [data, formAction, isPending] = ReactDom.useFormState(
+    actionStateTest,
+    null,
+  );
+
+  React.useEffect(() => {
+    console.log("[useActionState]", data, isPending);
+  }, [data, isPending]);
+
+  return (
+    <form action={formAction} className="flex flex-col gap-2">
+      <input type="hidden" name="hello" value="world" />
+      <button className="antd-input p-1 text-sm max-w-30">
+        useActionState Test
+      </button>
+    </form>
+  );
+}
+
+export function ClientActionBindTest() {
+  const formAction = actionBindTest.bind(null, "bound!!");
+  return (
+    <form action={formAction} className="flex flex-col gap-2">
+      <input type="hidden" name="hello" value="world" />
+      <button className="antd-input p-1 text-sm max-w-30">
+        Client Action Bind Test
+      </button>
     </form>
   );
 }
