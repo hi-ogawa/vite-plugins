@@ -22,7 +22,7 @@ declare module "react-server-dom-webpack/client.edge" {
     id: string,
     callServer: import("./types").CallServerCallback,
     encodeFormAction?: unknown,
-  ): unknown;
+  ): Function;
 
   export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
@@ -40,7 +40,7 @@ declare module "react-server-dom-webpack/client.browser" {
     id: string,
     callServer: import("./types").CallServerCallback,
     encodeFormAction?: unknown,
-  ): unknown;
+  ): Function;
 
   export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,

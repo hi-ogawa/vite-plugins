@@ -1,10 +1,14 @@
-import { tinyassert } from "@hiogawa/utils";
 import reactServerDomClient from "react-server-dom-webpack/client.edge";
 
-console.log("[import]", import.meta.url);
-
 export function createServerReferenceServer(id: string) {
-  return reactServerDomClient.createServerReference(id, async () => {
-    tinyassert(false);
-  });
+  const reference = reactServerDomClient.createServerReference(
+    id,
+    (...args) => {
+      console.log(args);
+      throw new Error("no callServer for SSR?");
+    },
+  );
+  // for now, this is for our custom `useActionData` system
+  Object.assign(reference, { $$id: id });
+  return reference;
 }

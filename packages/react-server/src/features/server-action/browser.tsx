@@ -1,10 +1,10 @@
 import reactServerDomClient from "react-server-dom-webpack/client.browser";
 import { __global } from "../../lib/global";
 
-console.log("[import]", import.meta.url);
-
 export function createServerReferenceBrowser(id: string) {
-  return reactServerDomClient.createServerReference(id, async (...args) => {
-    return __global.callServer(...args);
-  });
+  const reference = reactServerDomClient.createServerReference(id, (...args) =>
+    __global.callServer(...args),
+  );
+  Object.assign(reference, { $$id: id });
+  return reference;
 }
