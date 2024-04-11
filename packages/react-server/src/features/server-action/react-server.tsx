@@ -1,3 +1,5 @@
+import { tinyassert } from "@hiogawa/utils";
+import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
 
 export function createServerReference(id: string, action: Function): React.FC {
@@ -20,7 +22,7 @@ export function createServerReference(id: string, action: Function): React.FC {
 }
 
 export type ActionResult = {
-  id: string;
+  id?: string;
   error?: ReactServerErrorContext;
   data?: unknown;
   responseHeaders?: Record<string, string>;
@@ -34,4 +36,21 @@ export class ActionContext {
   revalidate = false;
 
   constructor(public request: Request) {}
+}
+
+const REFERENCE_SEP = "::";
+
+export function createActionBundlerConfig(): BundlerConfig {
+  return new Proxy(
+    {},
+    {
+      get(_target, $$id, _receiver) {
+        tinyassert(typeof $$id === "string");
+        let [id, name] = $$id.split(REFERENCE_SEP);
+        tinyassert(id);
+        tinyassert(name);
+        return { id, name, chunks: [] } satisfies ImportManifestEntry;
+      },
+    },
+  );
 }

@@ -13,6 +13,7 @@ import {
 import {
   ActionContext,
   type ActionResult,
+  createActionBundlerConfig,
 } from "../features/server-action/react-server";
 import { unwrapStreamActionRequest } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
@@ -153,23 +154,26 @@ async function actionHandler({ request }: { request: Request }) {
   const context = new ActionContext(request);
   const streamAction = unwrapStreamActionRequest(request);
   let boundAction: Function;
+  let id: string | undefined;
   if (streamAction) {
     const formData = await request.formData();
     const args = await reactServerDomServer.decodeReply(formData);
     const action = await importServerAction(streamAction.id);
+    id = streamAction.id;
     boundAction = () => action.apply(context, args);
   } else {
     const formData = await request.formData();
-    const bundlerConfig = createBundlerConfig();
-    // TODO: this requires __webpack_require__ globals in react-server.
-    // TODO: no context
+    const bundlerConfig = createActionBundlerConfig();
+    // TODO: __webpack_require__ globals in react-server.
+    // TODO: cannot bind context
+    // TODO: decodeFormState
     boundAction = await reactServerDomServer.decodeAction(
       formData,
       bundlerConfig,
     );
   }
 
-  const result: ActionResult = { id: "no....", context };
+  const result: ActionResult = { id, context };
   try {
     result.data = await boundAction();
   } catch (e) {
