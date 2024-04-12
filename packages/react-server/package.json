@@ -22,6 +22,14 @@
       "types": "./dist/client-internal.d.ts",
       "default": "./dist/client-internal.js"
     },
+    "./runtime-browser": {
+      "types": "./dist/runtime-browser.d.ts",
+      "default": "./dist/runtime-browser.js"
+    },
+    "./runtime-server": {
+      "types": "./dist/runtime-server.d.ts",
+      "default": "./dist/runtime-server.js"
+    },
     "./server": {
       "types": "./dist/server.d.ts",
       "default": "./dist/server.js"
