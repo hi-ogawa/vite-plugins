@@ -603,7 +603,7 @@ function noramlizeClientReferenceId(id: string) {
 }
 
 /*
-transform "use server" directive
+transform "use server" directive on client
 
 [input]
 "use server"
@@ -655,6 +655,19 @@ function vitePluginClientUseServer({
   };
 }
 
+/*
+transform "use server" directive on react-server
+
+[input]
+"use server"
+export function hello() { ... }
+
+[output]
+import { registerServerReference } from "...runtime..."
+
+export function hello() { ... }
+hello = createServerReference(hello, "<id>", "hello");
+*/
 function vitePluginServerUseServer({
   manager,
 }: {
