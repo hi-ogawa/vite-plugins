@@ -31,13 +31,16 @@ import {
 
 const debug = createDebug("react-server:plugin");
 
-// resolve import paths for `createClientReference` and `createServerReference`
-// since `import "@hiogawa/react-server"` is not necessary visible for exernal library.
-const CLIENT_INTERNAL_PATH = fileURLToPath(
-  new URL("../client-internal.js", import.meta.url),
+// resolve import paths for `createClientReference`, `createServerReference`, etc...
+// since `import "@hiogawa/react-server"` is not always visible for exernal library.
+const RUNTIME_BROWSER_PATH = fileURLToPath(
+  new URL("../runtime-browser.js", import.meta.url),
 );
-const SERVER_INTERNAL_PATH = fileURLToPath(
-  new URL("../server-internal.js", import.meta.url),
+const RUNTIME_SERVER_PATH = fileURLToPath(
+  new URL("../runtime-server.js", import.meta.url),
+);
+const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
+  new URL("../runtime-react-server.js", import.meta.url),
 );
 
 // convenient singleton to share states
@@ -399,10 +402,10 @@ export function vitePluginReactServer(options?: {
       }
       // build
       if (manager.buildType === "client") {
-        // import "client-internal" for preload
+        // import "runtime-client" for preload
         return /* js */ `
           import "virtual:react-server-css.js";
-          import("@hiogawa/react-server/client-internal");
+          import("@hiogawa/react-server/runtime-client");
           import "${ENTRY_CLIENT}";
         `;
       }
@@ -448,8 +451,8 @@ transform "use client" directive on react server code
 export function Counter() {}
 
 [output]
-import { createClientReference } from "/src/runtime/rsc"
-export const Counter = createClientReference("<id>::Counter");
+import { registerClientReference as $$register } from "...runtime..."
+export const Counter = $$register("<id>", "Counter");
 */
 function vitePluginServerUseClient({
   manager,
@@ -504,15 +507,7 @@ function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
-        let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
-        for (const name of exportNames) {
-          if (name === "default") {
-            result += `const $$default = createClientReference("${id}::${name}");\n`;
-            result += `export default $$default;\n`;
-          } else {
-            result += `export const ${name} = createClientReference("${id}::${name}");\n`;
-          }
-        }
+        const result = generateClientReferenceCode(id, exportNames);
         debug("[rsc.use-client-node-modules.load]", {
           source,
           meta,
@@ -544,15 +539,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
-      let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
-      for (const name of exportNames) {
-        if (name === "default") {
-          result += `const $$default = createClientReference("${id}::${name}");\n`;
-          result += `export default $$default;\n`;
-        } else {
-          result += `export const ${name} = createClientReference("${id}::${name}");\n`;
-        }
-      }
+      const result = generateClientReferenceCode(id, exportNames);
       debug(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
@@ -588,6 +575,19 @@ function vitePluginServerUseClient({
   return [pluginUseClientNodeModules, pluginUseClientLocal];
 }
 
+function generateClientReferenceCode(id: string, exportNames: Set<string>) {
+  let result = `import { registerClientReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`;
+  for (const name of exportNames) {
+    if (name === "default") {
+      result += `const $$default = $$register("${id}", "${name}");\n`;
+      result += `export default $$default;\n`;
+    } else {
+      result += `export const ${name} = $$register("${id}", "${name}");\n`;
+    }
+  }
+  return result;
+}
+
 // Apply same noramlizaion as Vite's dev import analysis
 // to avoid dual package with "/xyz" and "/@fs/xyz" for example.
 // For now this tries to cover simple cases
@@ -606,15 +606,15 @@ function noramlizeClientReferenceId(id: string) {
 }
 
 /*
-transform "use server" directive
+transform "use server" directive on client
 
 [input]
 "use server"
 export function hello() {}
 
 [output] (client / ssr)
-import { createServerReference } from "/src/runtime/shared"
-export const hello = createServerReference("<id>::hello");
+import { createServerReference } from "...runtime..."
+export const hello = createServerReference("<id>#hello");
 */
 function vitePluginClientUseServer({
   manager,
@@ -623,7 +623,7 @@ function vitePluginClientUseServer({
 }): Plugin {
   return {
     name: vitePluginClientUseServer.name,
-    async transform(code, id, _options) {
+    async transform(code, id, options) {
       if (!code.match(USE_SERVER_RE)) {
         return;
       }
@@ -644,13 +644,13 @@ function vitePluginClientUseServer({
       if (manager.buildType) {
         id = hashString(id);
       }
-      let result = `import { createServerReference } from "${CLIENT_INTERNAL_PATH}";\n`;
+      let result = `import { createServerReference as $$create } from "${options?.ssr ? RUNTIME_SERVER_PATH : RUNTIME_BROWSER_PATH}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
-          result += `const $$default = createServerReference("${id}::${name}");\n`;
+          result += `const $$default = $$create("${id}#${name}");\n`;
           result += `export default $$default;\n`;
         } else {
-          result += `export const ${name} = createServerReference("${id}::${name}");\n`;
+          result += `export const ${name} = $$create("${id}#${name}");\n`;
         }
       }
       return result;
@@ -658,6 +658,19 @@ function vitePluginClientUseServer({
   };
 }
 
+/*
+transform "use server" directive on react-server
+
+[input]
+"use server"
+export function hello() { ... }
+
+[output]
+import { registerServerReference } from "...runtime..."
+
+export function hello() { ... }
+hello = createServerReference(hello, "<id>", "hello");
+*/
 function vitePluginServerUseServer({
   manager,
 }: {
@@ -678,16 +691,14 @@ function vitePluginServerUseServer({
         exportNames,
       });
       mcode.prepend(
-        `import { createServerReference } from "${SERVER_INTERNAL_PATH}";\n`,
+        `import { registerServerReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`,
       );
       // obfuscate reference
       if (manager.buildType) {
         id = hashString(id);
       }
       for (const name of exportNames) {
-        mcode.append(
-          `${name} = createServerReference("${id}::${name}", ${name});\n`,
-        );
+        mcode.append(`${name} = $$register(${name}, "${id}", "${name}");\n`);
       }
       return {
         code: mcode.toString(),
