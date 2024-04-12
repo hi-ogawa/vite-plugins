@@ -610,8 +610,8 @@ transform "use server" directive
 export function hello() {}
 
 [output] (client / ssr)
-import { createServerReference } from "/src/runtime/shared"
-export const hello = createServerReference("<id>::hello");
+import { createServerReference } from "...runtime..."
+export const hello = createServerReference("<id>#hello");
 */
 function vitePluginClientUseServer({
   manager,
@@ -644,10 +644,10 @@ function vitePluginClientUseServer({
       let result = `import { createServerReference } from "${CLIENT_INTERNAL_PATH}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
-          result += `const $$default = createServerReference("${id}::${name}");\n`;
+          result += `const $$default = createServerReference("${id}#${name}");\n`;
           result += `export default $$default;\n`;
         } else {
-          result += `export const ${name} = createServerReference("${id}::${name}");\n`;
+          result += `export const ${name} = createServerReference("${id}#${name}");\n`;
         }
       }
       return result;
@@ -675,16 +675,14 @@ function vitePluginServerUseServer({
         exportNames,
       });
       mcode.prepend(
-        `import { createServerReference } from "${SERVER_INTERNAL_PATH}";\n`,
+        `import { registerServerReference as $$register } from "${SERVER_INTERNAL_PATH}";\n`,
       );
       // obfuscate reference
       if (manager.buildType) {
         id = hashString(id);
       }
       for (const name of exportNames) {
-        mcode.append(
-          `${name} = createServerReference("${id}::${name}", ${name});\n`,
-        );
+        mcode.append(`${name} = $$register(${name}, "${id}", "${name}");\n`);
       }
       return {
         code: mcode.toString(),
