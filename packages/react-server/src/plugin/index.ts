@@ -31,7 +31,7 @@ import {
 
 const debug = createDebug("react-server:plugin");
 
-// resolve import paths for `createClientReference` and `createServerReference`
+// resolve import paths for `createClientReference`, `createServerReference`, etc...
 // since `import "@hiogawa/react-server"` is not always visible for exernal library.
 const RUNTIME_BROWSER_PATH = fileURLToPath(
   new URL("../runtime-browser.js", import.meta.url),
@@ -39,8 +39,8 @@ const RUNTIME_BROWSER_PATH = fileURLToPath(
 const RUNTIME_SERVER_PATH = fileURLToPath(
   new URL("../runtime-server.js", import.meta.url),
 );
-const SERVER_INTERNAL_PATH = fileURLToPath(
-  new URL("../server-internal.js", import.meta.url),
+const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
+  new URL("../runtime-react-server.js", import.meta.url),
 );
 
 // convenient singleton to share states
@@ -402,10 +402,10 @@ export function vitePluginReactServer(options?: {
       }
       // build
       if (manager.buildType === "client") {
-        // import "client-internal" for preload
+        // import "runtime-client" for preload
         return /* js */ `
           import "virtual:react-server-css.js";
-          import("@hiogawa/react-server/client-internal");
+          import("@hiogawa/react-server/runtime-client");
           import "${ENTRY_CLIENT}";
         `;
       }
@@ -576,7 +576,7 @@ function vitePluginServerUseClient({
 }
 
 function generateClientReferenceCode(id: string, exportNames: Set<string>) {
-  let result = `import { registerClientReference as $$register } from "${SERVER_INTERNAL_PATH}";\n`;
+  let result = `import { registerClientReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`;
   for (const name of exportNames) {
     if (name === "default") {
       result += `const $$default = $$register("${id}", "${name}");\n`;
@@ -691,7 +691,7 @@ function vitePluginServerUseServer({
         exportNames,
       });
       mcode.prepend(
-        `import { registerServerReference as $$register } from "${SERVER_INTERNAL_PATH}";\n`,
+        `import { registerServerReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`,
       );
       // obfuscate reference
       if (manager.buildType) {
