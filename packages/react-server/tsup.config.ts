@@ -11,6 +11,8 @@ export default defineConfig([
       "src/entry/react-server.tsx",
       "src/entry/server.tsx",
       "src/entry/browser.tsx",
+      "src/runtime-server.ts",
+      "src/runtime-browser.ts",
       "src/plugin/index.ts",
     ],
     format: ["esm"],
