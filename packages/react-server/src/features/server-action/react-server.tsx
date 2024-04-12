@@ -96,7 +96,7 @@ async function importServerReference(id: string): Promise<unknown> {
 }
 
 export async function importServerAction(id: string): Promise<Function> {
-  const [file, name] = id.split("::") as [string, string];
+  const [file, name] = id.split(REFERENCE_SEP) as [string, string];
   const mod: any = await importServerReference(file);
   return mod[name];
 }
