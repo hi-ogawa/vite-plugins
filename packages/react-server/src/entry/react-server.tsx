@@ -157,7 +157,7 @@ async function actionHandler({ request }: { request: Request }) {
   const id = ejectActionId(formData);
 
   let action: Function;
-  const [file, name] = id.split("::") as [string, string];
+  const [file, name] = id.split("#") as [string, string];
   if (import.meta.env.DEV) {
     const mod: any = await __global.dev.reactServer.ssrLoadModule(file);
     action = mod[name];
