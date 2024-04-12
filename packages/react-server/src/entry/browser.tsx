@@ -176,7 +176,10 @@ export async function start() {
   if (document.documentElement.dataset["noHydate"]) {
     reactDomClient.createRoot(document).render(reactRootEl);
   } else {
-    reactDomClient.hydrateRoot(document, reactRootEl);
+    reactDomClient.hydrateRoot(document, reactRootEl, {
+      // @ts-ignore TODO
+      formState: null,
+    });
   }
 
   // custom event for RSC reload

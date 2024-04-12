@@ -1,33 +1,17 @@
 import { tinyassert } from "@hiogawa/utils";
+import reactServerDomWebpack from "react-server-dom-webpack/server.edge";
 import { __global } from "../../lib/global";
 import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
 
-export function createServerReference(id: string, action: Function): React.FC {
-  return Object.defineProperties(action, {
-    $$typeof: {
-      value: Symbol.for("react.server.reference"),
-    },
-    $$id: {
-      value: id,
-      configurable: true,
-    },
-    $$bound: { value: null, configurable: true },
-    // TODO: no async server reference
-    // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js#L131-L132
-    // $$async: {
-    //   value: true,
-    //   enumerable: true,
-    // },
+// https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
 
-    // TODO
-    // bind: {
-    //   value: () => {
-    //     throw new Error("todo: createServerReference.bind");
-    //   },
-    //   configurable: true,
-    // },
-  }) as any;
+export function registerServerReference(
+  action: Function,
+  id: string,
+  name: string,
+) {
+  return reactServerDomWebpack.registerServerReference(action, id, name);
 }
 
 export type ActionResult = {

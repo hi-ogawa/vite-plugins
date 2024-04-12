@@ -1,14 +1,14 @@
 import reactServerDomClient from "react-server-dom-webpack/client.edge";
 
-export function createServerReferenceServer(id: string) {
+export function createServerReference(id: string) {
   const reference = reactServerDomClient.createServerReference(
     id,
     (...args) => {
-      console.log(args);
-      throw new Error("no callServer for SSR?");
+      console.error(args);
+      throw new Error("unexpected callServer during SSR");
     },
   );
-  // for now, this is for our custom `useActionData` system
+  // for now, this is for our DIY `useActionData` system.
   Object.assign(reference, { $$id: id });
   return reference;
 }
