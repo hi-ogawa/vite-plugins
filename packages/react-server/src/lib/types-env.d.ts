@@ -13,6 +13,18 @@ declare module "react-server-dom-webpack/server.edge" {
     },
   ): ReadableStream<Uint8Array>;
 
+  export function registerClientReference<T>(
+    ref: T,
+    id: string,
+    name: string,
+  ): T;
+
+  export function registerServerReference<T>(
+    ref: T,
+    id: string,
+    name: string,
+  ): T;
+
   export function decodeReply(body: string | FormData): Promise<unknown>;
 }
 
