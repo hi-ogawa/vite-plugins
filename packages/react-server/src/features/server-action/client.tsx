@@ -5,6 +5,7 @@ import { RedirectBoundary } from "../../runtime-client";
 import { createError } from "../../server";
 import { LayoutStateContext } from "../router/client";
 
+// TODO: replace with React.useActionState
 export function useActionData<T extends (...args: any[]) => any>(
   action: T,
 ): Awaited<ReturnType<T>> | undefined {
