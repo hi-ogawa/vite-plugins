@@ -402,10 +402,10 @@ export function vitePluginReactServer(options?: {
       }
       // build
       if (manager.buildType === "client") {
-        // import "client-internal" for preload
+        // import "runtime-client" for preload
         return /* js */ `
           import "virtual:react-server-css.js";
-          import("@hiogawa/react-server/client-internal");
+          import("@hiogawa/react-server/runtime-client");
           import "${ENTRY_CLIENT}";
         `;
       }

@@ -58,7 +58,7 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
 
 // use own "use client" components as external
 function importRuntimeClient(): Promise<typeof import("../runtime-client")> {
-  return import("@hiogawa/react-server/client-internal" as string);
+  return import("@hiogawa/react-server/runtime-client" as string);
 }
 
 function renderPage(node: RouteTreeNode, props: PageProps) {
