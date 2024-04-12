@@ -31,7 +31,7 @@ export class ActionContext {
   constructor(public request: Request) {}
 }
 
-const REFERENCE_SEP = "::";
+const REFERENCE_SEP = "#";
 const ACTION_ID_MARKER = "@";
 
 export function createActionBundlerConfig(): BundlerConfig {
