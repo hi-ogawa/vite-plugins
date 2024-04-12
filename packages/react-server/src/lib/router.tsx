@@ -57,7 +57,7 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
 }
 
 // use own "use client" components as external
-function importClientInternal(): Promise<typeof import("../client-internal")> {
+function importRuntimeClient(): Promise<typeof import("../runtime-client")> {
   return import("@hiogawa/react-server/client-internal" as string);
 }
 
@@ -72,7 +72,7 @@ async function renderLayout(
   name: string,
 ) {
   const { ErrorBoundary, RedirectBoundary, LayoutContent } =
-    await importClientInternal();
+    await importRuntimeClient();
 
   let acc = <LayoutContent name={name} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
