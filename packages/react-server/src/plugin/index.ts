@@ -448,8 +448,8 @@ transform "use client" directive on react server code
 export function Counter() {}
 
 [output]
-import { createClientReference } from "/src/runtime/rsc"
-export const Counter = createClientReference("<id>::Counter");
+import { registerClientReference as $$register } from "...runtime..."
+export const Counter = $$register("<id>", "Counter");
 */
 function vitePluginServerUseClient({
   manager,
@@ -504,15 +504,7 @@ function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
-        let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
-        for (const name of exportNames) {
-          if (name === "default") {
-            result += `const $$default = createClientReference("${id}::${name}");\n`;
-            result += `export default $$default;\n`;
-          } else {
-            result += `export const ${name} = createClientReference("${id}::${name}");\n`;
-          }
-        }
+        const result = generateClientReferenceCode(id, exportNames);
         debug("[rsc.use-client-node-modules.load]", {
           source,
           meta,
@@ -544,15 +536,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
-      let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
-      for (const name of exportNames) {
-        if (name === "default") {
-          result += `const $$default = createClientReference("${id}::${name}");\n`;
-          result += `export default $$default;\n`;
-        } else {
-          result += `export const ${name} = createClientReference("${id}::${name}");\n`;
-        }
-      }
+      const result = generateClientReferenceCode(id, exportNames);
       debug(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
@@ -586,6 +570,19 @@ function vitePluginServerUseClient({
     },
   };
   return [pluginUseClientNodeModules, pluginUseClientLocal];
+}
+
+function generateClientReferenceCode(id: string, exportNames: Set<string>) {
+  let result = `import { registerClientReference as $$register } from "${SERVER_INTERNAL_PATH}";\n`;
+  for (const name of exportNames) {
+    if (name === "default") {
+      result += `const $$default = $$register("${id}", "${name}");\n`;
+      result += `export default $$default;\n`;
+    } else {
+      result += `export const ${name} = $$register("${id}", "${name}");\n`;
+    }
+  }
+  return result;
 }
 
 // Apply same noramlizaion as Vite's dev import analysis
