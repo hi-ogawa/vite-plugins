@@ -18,9 +18,13 @@
       "types": "./dist/client.d.ts",
       "default": "./dist/client.js"
     },
-    "./client-internal": {
-      "types": "./dist/client-internal.d.ts",
-      "default": "./dist/client-internal.js"
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    },
+    "./runtime-client": {
+      "types": "./dist/runtime-client.d.ts",
+      "default": "./dist/runtime-client.js"
     },
     "./runtime-browser": {
       "types": "./dist/runtime-browser.d.ts",
@@ -30,13 +34,9 @@
       "types": "./dist/runtime-server.d.ts",
       "default": "./dist/runtime-server.js"
     },
-    "./server": {
-      "types": "./dist/server.d.ts",
-      "default": "./dist/server.js"
-    },
-    "./server-internal": {
-      "types": "./dist/server-internal.d.ts",
-      "default": "./dist/server-internal.js"
+    "./runtime-react-server": {
+      "types": "./dist/runtime-react-server.d.ts",
+      "default": "./dist/runtime-react-server.js"
     },
     "./entry-browser": {
       "types": "./dist/entry/browser.d.ts",

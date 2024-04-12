@@ -1,7 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { RedirectBoundary } from "../../client-internal";
 import { __global } from "../../lib/global";
+import { RedirectBoundary } from "../../runtime-client";
 import { createError } from "../../server";
 import { LayoutStateContext } from "../router/client";
 
