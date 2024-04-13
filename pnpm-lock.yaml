@@ -70,7 +70,7 @@ importers:
         version: 0.30.8
       use-sync-external-store:
         specifier: ^1.2.0
-        version: 1.2.0(react@18.3.0-canary-14898b6a9-20240318)
+        version: 1.2.0(react@19.0.0-canary-4c12339ce-20240408)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -88,14 +88,14 @@ importers:
         specifier: ^0.0.6
         version: 0.0.6
       react:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408
       react-dom:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318(react@18.3.0-canary-14898b6a9-20240318)
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
       react-server-dom-webpack:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318(react-dom@18.3.0-canary-14898b6a9-20240318)(react@18.3.0-canary-14898b6a9-20240318)(webpack@5.90.3)
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3)
 
   packages/react-server/examples/basic:
     dependencies:
@@ -104,25 +104,25 @@ importers:
         version: link:../..
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
-        version: file:packages/react-server/examples/basic/deps/server-component(react@18.3.0-canary-14898b6a9-20240318)
+        version: file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-canary-4c12339ce-20240408)
       '@hiogawa/test-dep-use-client':
         specifier: file:deps/use-client
-        version: file:packages/react-server/examples/basic/deps/use-client(react@18.3.0-canary-14898b6a9-20240318)
+        version: file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-canary-4c12339ce-20240408)
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
       react:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408
       react-dom:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318(react@18.3.0-canary-14898b6a9-20240318)
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
       react-server-dom-webpack:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318(react-dom@18.3.0-canary-14898b6a9-20240318)(react@18.3.0-canary-14898b6a9-20240318)(webpack@5.90.3)
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3)
       react-wrap-balancer:
         specifier: ^1.1.0
-        version: 1.1.0(react@18.3.0-canary-14898b6a9-20240318)
+        version: 1.1.0(react@19.0.0-canary-4c12339ce-20240408)
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.44
@@ -170,14 +170,14 @@ importers:
         specifier: latest
         version: link:../..
       react:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408
       react-dom:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318(react@18.3.0-canary-14898b6a9-20240318)
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
       react-server-dom-webpack:
-        specifier: 18.3.0-canary-14898b6a9-20240318
-        version: 18.3.0-canary-14898b6a9-20240318(react-dom@18.3.0-canary-14898b6a9-20240318)(react@18.3.0-canary-14898b6a9-20240318)(webpack@5.90.3)
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3)
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.44
@@ -6107,14 +6107,13 @@ packages:
       react: 18.2.0
       scheduler: 0.23.0
 
-  /react-dom@18.3.0-canary-14898b6a9-20240318(react@18.3.0-canary-14898b6a9-20240318):
-    resolution: {integrity: sha512-OFf18ypcXn0V6dOjGZoXQiRkqy+HiDAFV9xIReEhLdUfyhzRki7OuTlbLKSBl9Wc3YbJkeLoIfUIShgrTiBPDw==}
+  /react-dom@19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408):
+    resolution: {integrity: sha512-dMttAQ6IA63sUCCw+ZBE4QBO87PGjEcgNhNTYGHmw15ONqeUKQ8XmGEUKBOTmux7CIV9gdmKr3BGUFdGeT5ERA==}
     peerDependencies:
-      react: 18.3.0-canary-14898b6a9-20240318
+      react: 19.0.0-canary-4c12339ce-20240408
     dependencies:
-      loose-envify: 1.4.0
-      react: 18.3.0-canary-14898b6a9-20240318
-      scheduler: 0.24.0-canary-14898b6a9-20240318
+      react: 19.0.0-canary-4c12339ce-20240408
+      scheduler: 0.25.0-canary-4c12339ce-20240408
 
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
@@ -6145,27 +6144,26 @@ packages:
       '@remix-run/router': 1.15.3
       react: 18.2.0
 
-  /react-server-dom-webpack@18.3.0-canary-14898b6a9-20240318(react-dom@18.3.0-canary-14898b6a9-20240318)(react@18.3.0-canary-14898b6a9-20240318)(webpack@5.90.3):
-    resolution: {integrity: sha512-MmdQVyifrCbmxQzILpLBS1nrS13g7vu6eL8K/bDIwvwyYxVC98VXYlHtez04NHPOUTeprFDOO9fzV8A9xv4Izw==}
+  /react-server-dom-webpack@19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3):
+    resolution: {integrity: sha512-elO6awJXbj1liRJKORVGPb/Teeu/8FDJUuinrOHdvTRAx4kXgXW4FlVr7QRuGQzi8JauT042ql0qYLfhGBD5qA==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
-      react: 18.3.0-canary-14898b6a9-20240318
-      react-dom: 18.3.0-canary-14898b6a9-20240318
+      react: 19.0.0-canary-4c12339ce-20240408
+      react-dom: 19.0.0-canary-4c12339ce-20240408
       webpack: ^5.59.0
     dependencies:
       acorn-loose: 8.4.0
-      loose-envify: 1.4.0
       neo-async: 2.6.2
-      react: 18.3.0-canary-14898b6a9-20240318
-      react-dom: 18.3.0-canary-14898b6a9-20240318(react@18.3.0-canary-14898b6a9-20240318)
+      react: 19.0.0-canary-4c12339ce-20240408
+      react-dom: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
       webpack: 5.90.3(esbuild@0.20.2)
 
-  /react-wrap-balancer@1.1.0(react@18.3.0-canary-14898b6a9-20240318):
+  /react-wrap-balancer@1.1.0(react@19.0.0-canary-4c12339ce-20240408):
     resolution: {integrity: sha512-EhF3jOZm5Fjx+Cx41e423qOv2c2aOvXAtym2OHqrGeMUnwERIyNsRBgnfT3plB170JmuYvts8K2KSPEIerKr5A==}
     peerDependencies:
       react: '>=16.8.0 || ^17.0.0 || ^18'
     dependencies:
-      react: 18.3.0-canary-14898b6a9-20240318
+      react: 19.0.0-canary-4c12339ce-20240408
     dev: false
 
   /react@18.2.0:
@@ -6174,11 +6172,9 @@ packages:
     dependencies:
       loose-envify: 1.4.0
 
-  /react@18.3.0-canary-14898b6a9-20240318:
-    resolution: {integrity: sha512-v7DaMx1oNRNNHjqS3htQ5ZHo3klcaX8qyN391ymlAJLVs6FR97q4YdvL7juB0Z1BO718JuYAxzDehozvwKZwUw==}
+  /react@19.0.0-canary-4c12339ce-20240408:
+    resolution: {integrity: sha512-QdQl76CTAmYrwjxq6fZRDWw2/MHPNxkYQ1xZVir2MbK/wxK62vFAPGr2j/AXs36ADVUq+tUGx4XNmdgnfL4f1Q==}
     engines: {node: '>=0.10.0'}
-    dependencies:
-      loose-envify: 1.4.0
 
   /readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
@@ -6374,10 +6370,8 @@ packages:
     dependencies:
       loose-envify: 1.4.0
 
-  /scheduler@0.24.0-canary-14898b6a9-20240318:
-    resolution: {integrity: sha512-ifDO3bUdooS4OlxvGxMyoDEC/aq14MvJLDd0thjrUSZGeLJA7WBc+sr9NZxIxrXfVqMl1GTGGPwXqRJZDNW76w==}
-    dependencies:
-      loose-envify: 1.4.0
+  /scheduler@0.25.0-canary-4c12339ce-20240408:
+    resolution: {integrity: sha512-XGG/Y5q5jeJy+rKp963+nlz81H/eDEMDmwem8QFHkuufjW/IEhM9ha6PO76m9qA6Qr59HVjlTGJ6D1bH1lemeQ==}
 
   /schema-utils@3.3.0:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
@@ -7132,12 +7126,12 @@ packages:
   /urlpattern-polyfill@10.0.0:
     resolution: {integrity: sha512-H/A06tKD7sS1O1X2SshBVeA5FLycRpjqiBeqGKmBwBDBy28EnRjORxTNe269KSSr5un5qyWi1iL61wLxpd+ZOg==}
 
-  /use-sync-external-store@1.2.0(react@18.3.0-canary-14898b6a9-20240318):
+  /use-sync-external-store@1.2.0(react@19.0.0-canary-4c12339ce-20240408):
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      react: 18.3.0-canary-14898b6a9-20240318
+      react: 19.0.0-canary-4c12339ce-20240408
     dev: false
 
   /util-deprecate@1.0.2:
@@ -7571,22 +7565,22 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  file:packages/react-server/examples/basic/deps/server-component(react@18.3.0-canary-14898b6a9-20240318):
+  file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-canary-4c12339ce-20240408):
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
     id: file:packages/react-server/examples/basic/deps/server-component
     name: '@hiogawa/test-dep-use-client'
     peerDependencies:
       react: '*'
     dependencies:
-      react: 18.3.0-canary-14898b6a9-20240318
+      react: 19.0.0-canary-4c12339ce-20240408
     dev: false
 
-  file:packages/react-server/examples/basic/deps/use-client(react@18.3.0-canary-14898b6a9-20240318):
+  file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-canary-4c12339ce-20240408):
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
     id: file:packages/react-server/examples/basic/deps/use-client
     name: '@hiogawa/test-dep-use-client'
     peerDependencies:
       react: '*'
     dependencies:
-      react: 18.3.0-canary-14898b6a9-20240318
+      react: 19.0.0-canary-4c12339ce-20240408
     dev: false
