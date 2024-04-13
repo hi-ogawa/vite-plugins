@@ -14,9 +14,10 @@ export default defineConfig({
   plugins: [
     react(),
     unocss(),
-    vitePluginErrorOverlay({
-      patchConsoleError: true,
-    }),
+    !process.env["CI"] &&
+      vitePluginErrorOverlay({
+        patchConsoleError: true,
+      }),
     vitePluginReactServer({
       plugins: [
         testVitePluginVirtual(),
