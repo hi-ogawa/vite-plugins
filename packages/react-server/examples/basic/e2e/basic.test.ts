@@ -524,7 +524,7 @@ test("server action after client render", async ({ page }) => {
   await checkClientState();
 
   // check layout doesn't re-render
-  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
   await page.getByText(`[effect: ${count}]`).click();
 });
 
