@@ -39,7 +39,7 @@ export function getExportNames(
            * export const foo = 1, bar = 2
            */
           // replace "const" to "let"
-          if (toWritable) {
+          if (node.declaration.kind === "const" && toWritable) {
             toWritable.code.remove(
               node.declaration.start,
               node.declaration.start + 5,
