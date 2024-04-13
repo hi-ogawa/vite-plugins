@@ -1,0 +1,20 @@
+{
+  "name": "@hiogawa/vite-plugin-error-overlay-examples-react",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && vite build --ssr",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@hiogawa/vite-plugin-ssr-middleware": "latest",
+    "@hiogawa/vite-plugin-error-overlay": "latest",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "react": "19.0.0-canary-4c12339ce-20240408",
+    "react-dom": "19.0.0-canary-4c12339ce-20240408",
+    "vite": "latest"
+  }
+}

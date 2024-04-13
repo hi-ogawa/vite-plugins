@@ -57,6 +57,39 @@ importers:
         specifier: ^3.34.2
         version: 3.34.2
 
+  packages/error-overlay:
+    dependencies:
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
+
+  packages/error-overlay/examples/basic:
+    dependencies:
+      '@hiogawa/vite-plugin-error-overlay':
+        specifier: latest
+        version: link:../..
+      '@hiogawa/vite-plugin-ssr-middleware':
+        specifier: latest
+        version: link:../../../vite-plugin-ssr-middleware
+      '@types/react':
+        specifier: ^18.2.66
+        version: 18.2.66
+      '@types/react-dom':
+        specifier: ^18.2.22
+        version: 18.2.22
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.2.3)
+      react:
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408
+      react-dom:
+        specifier: 19.0.0-canary-4c12339ce-20240408
+        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
+
   packages/react-server:
     dependencies:
       '@tanstack/history':
