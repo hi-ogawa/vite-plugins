@@ -21,9 +21,9 @@
     "@hiogawa/test-dep-server-component": "file:deps/server-component",
     "@hiogawa/test-dep-use-client": "file:deps/use-client",
     "cookie": "^0.6.0",
-    "react": "18.3.0-canary-14898b6a9-20240318",
-    "react-dom": "18.3.0-canary-14898b6a9-20240318",
-    "react-server-dom-webpack": "18.3.0-canary-14898b6a9-20240318",
+    "react": "19.0.0-canary-4c12339ce-20240408",
+    "react-dom": "19.0.0-canary-4c12339ce-20240408",
+    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408",
     "react-wrap-balancer": "^1.1.0"
   },
   "devDependencies": {
