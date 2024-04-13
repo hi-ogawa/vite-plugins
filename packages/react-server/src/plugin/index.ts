@@ -686,10 +686,6 @@ function vitePluginServerUseServer({
       const ast: Program = await parseAstAsync(code);
       const mcode = new MagicString(code);
       const exportNames = getExportNames(ast, { toWritable: { code: mcode } });
-      debug(`[${vitePluginServerUseServer.name}:transform]`, {
-        id,
-        exportNames,
-      });
       mcode.prepend(
         `import { registerServerReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`,
       );
@@ -700,8 +696,14 @@ function vitePluginServerUseServer({
       for (const name of exportNames) {
         mcode.append(`${name} = $$register(${name}, "${id}", "${name}");\n`);
       }
+      const outCode = mcode.toString();
+      debug(`[${vitePluginServerUseServer.name}:transform]`, {
+        id,
+        exportNames,
+        outCode,
+      });
       return {
-        code: mcode.toString(),
+        code: outCode,
         map: mcode.generateMap(),
       };
     },
