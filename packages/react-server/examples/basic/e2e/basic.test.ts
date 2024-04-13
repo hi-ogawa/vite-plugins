@@ -31,7 +31,7 @@ test("render count", async ({ page }) => {
   await page.goto("/test");
   await waitForHydration(page);
 
-  // no dev double effect since canary 20240408
+  // no strict mode double effect since canary 20240408 ?
   const count = process.env.E2E_PREVIEW ? 1 : 1;
   await page.getByText(`[effect: ${count}]`).click();
   await page.getByRole("link", { name: "/test/other" }).click();
