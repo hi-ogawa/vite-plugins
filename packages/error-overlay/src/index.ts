@@ -23,6 +23,7 @@ export function vitePluginErrorOverlay(options?: {
 // cf. https://github.com/vitejs/vite/blob/f8e0791e3f7c7c39c041a563e77396eca706d05e/packages/vite/src/client/client.ts#L313
 const CLIENT_SCRIPT = /* js */ `
 
+// TODO: base?
 import { ErrorOverlay } from "/@vite/client";
 
 function createErrorOverlay(err) {
