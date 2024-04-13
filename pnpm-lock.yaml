@@ -166,6 +166,9 @@ importers:
       '@hiogawa/utils':
         specifier: ^1.6.3
         version: 1.6.3
+      '@hiogawa/vite-plugin-error-overlay':
+        specifier: latest
+        version: link:../../../error-overlay
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware

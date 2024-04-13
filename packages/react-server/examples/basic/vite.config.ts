@@ -1,5 +1,6 @@
 import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
+import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
 import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
@@ -13,6 +14,10 @@ export default defineConfig({
   plugins: [
     react(),
     unocss(),
+    !process.env["CI"] &&
+      vitePluginErrorOverlay({
+        patchConsoleError: true,
+      }),
     vitePluginReactServer({
       plugins: [
         testVitePluginVirtual(),
