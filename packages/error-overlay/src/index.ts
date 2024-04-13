@@ -72,31 +72,44 @@ export function vitePluginErrorOverlay(options?: {
 
 const MESSAGE_TYPE = `${packageName}:error`;
 
+// cf. https://github.com/vitejs/vite/blob/f8e0791e3f7c7c39c041a563e77396eca706d05e/packages/vite/src/client/client.ts#L313
 const CLIENT_SCRIPT = /* js */ `
 
-import { createHotContext, ErrorOverlay } from "/@vite/client";
+// import { createHotContext, ErrorOverlay } from "/@vite/client";
+import { ErrorOverlay } from "/@vite/client";
 
-// fake file path to instantiate import.meta.hot
-const hot = createHotContext("__${packageName}__");
+function createErrorOverlay(err) {
+  document.querySelectorAll("vite-error-overlay").forEach((n) => n.close());
+  document.body.appendChild(new ErrorOverlay(err));
+};
 
-function sendError(error) {
-  if (!(error instanceof Error)) {
-    error = new Error("(unknown runtime error)");
-  }
-  const serialized = {
-    name: error.name,
-    message: error.message,
-    stack: error.stack,
-  };
-  hot.send("${MESSAGE_TYPE}", serialized);
-}
+// document.querySelectorAll(overlayId).forEach((n) => n.close());
+
+// document.querySelectorAll<ErrorOverlay>(overlayId).forEach((n) => n.close());
+
+// // fake file path to instantiate import.meta.hot
+// const hot = createHotContext("__${packageName}__");
+
+// function sendError(error) {
+//   if (!(error instanceof Error)) {
+//     error = new Error("(unknown runtime error)");
+//   }
+//   const serialized = {
+//     name: error.name,
+//     message: error.message,
+//     stack: error.stack,
+//   };
+//   hot.send("${MESSAGE_TYPE}", serialized);
+// }
 
 window.addEventListener("error", (evt) => {
-  sendError(evt.error);
+  // sendError(evt.error);
+  createErrorOverlay(evt.error);
 });
 
 window.addEventListener("unhandledrejection", (evt) => {
-  sendError(evt.reason);
+  // sendError(evt.reason);
+  createErrorOverlay(evt.reason);
 });
 
 `;
