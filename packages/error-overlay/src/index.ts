@@ -3,9 +3,12 @@ import { name as packageName } from "../package.json";
 
 const virtualName = "virtual:runtime-error-overlay";
 
-export function vitePluginErrorOverlay(options?: {
-  filter?: (error: Error) => boolean;
-}): Plugin {
+export function vitePluginErrorOverlay(
+  options: {
+    filter?: (error: Error) => boolean;
+    patchConsoleError?: boolean;
+  } = {},
+): Plugin {
   return {
     name: packageName,
     apply: "serve",
@@ -23,7 +26,7 @@ export function vitePluginErrorOverlay(options?: {
     },
     load(id, _options) {
       if (id === "\0" + virtualName) {
-        return `(${clientScriptFn.toString()})()`;
+        return `(${clientScriptFn.toString()})(${JSON.stringify(options)})`;
       }
       return;
     },
@@ -45,7 +48,7 @@ export function vitePluginErrorOverlay(options?: {
   };
 }
 
-function clientScriptFn() {
+function clientScriptFn(options: { patchConsoleError?: boolean }) {
   if (import.meta.hot) {
     window.addEventListener("error", (evt) => {
       sendError(evt.error);
@@ -54,6 +57,21 @@ function clientScriptFn() {
     window.addEventListener("unhandledrejection", (evt) => {
       sendError(evt.reason);
     });
+
+    // monkey-patch console.error to collect errors handled by error boundaries
+    // https://github.com/facebook/react/blob/9defcd56bc3cd53ac2901ed93f29218007010434/packages/react-reconciler/src/ReactFiberErrorLogger.js#L24-L31
+    // https://github.com/vercel/next.js/blob/904908cf33bda1dfc50d81a19f3fc60c2c20f8da/packages/next/src/client/components/react-dev-overlay/internal/helpers/hydration-error-info.ts#L56
+    if (options.patchConsoleError) {
+      const oldFn = console.error;
+      console.error = function (...args) {
+        for (const arg of args) {
+          if (arg instanceof Error) {
+            sendError(arg);
+          }
+        }
+        oldFn.apply(this, args);
+      };
+    }
 
     function sendError(e: unknown) {
       const error =

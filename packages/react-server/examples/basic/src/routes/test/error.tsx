@@ -6,7 +6,7 @@ import React from "react";
 export default function ErrorPage(props: ErrorPageProps) {
   React.useEffect(() => {
     (async () => {
-      throw props.error;
+      // throw props.error;
     })();
   }, []);
 
