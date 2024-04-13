@@ -14,7 +14,7 @@ export function App() {
       }}
     >
       <h2>Example</h2>
-      <div>{import.meta.env.SSR ? "Hey server!" : "Yo client!"}</div>
+      <div>{import.meta.env.SSR ? "Hey server!" : "Hi client!"}</div>
       <div>Input {input}</div>
       <input
         value={input}
