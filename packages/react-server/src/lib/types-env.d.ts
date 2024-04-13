@@ -13,11 +13,29 @@ declare module "react-server-dom-webpack/server.edge" {
     },
   ): ReadableStream<Uint8Array>;
 
+  export function registerClientReference<T>(
+    ref: T,
+    id: string,
+    name: string,
+  ): T;
+
+  export function registerServerReference<T>(
+    ref: T,
+    id: string,
+    name: string,
+  ): T;
+
   export function decodeReply(body: string | FormData): Promise<unknown>;
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMClientEdge.js
 declare module "react-server-dom-webpack/client.edge" {
+  export function createServerReference(
+    id: string,
+    callServer: import("./types").CallServerCallback,
+    encodeFormAction?: unknown,
+  ): Function;
+
   export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
     options: {
@@ -30,6 +48,12 @@ declare module "react-server-dom-webpack/client.edge" {
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMClientBrowser.js
 declare module "react-server-dom-webpack/client.browser" {
+  export function createServerReference(
+    id: string,
+    callServer: import("./types").CallServerCallback,
+    encodeFormAction?: unknown,
+  ): Function;
+
   export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
     options?: {
