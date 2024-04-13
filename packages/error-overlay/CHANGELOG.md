@@ -2,7 +2,7 @@
 
 ## v0.0.1
 
-- feat: collect errors from `console.error`
+- feat: collect errors from `console.error` ([#273](https://github.com/hi-ogawa/vite-plugins/pull/293))
 
 ## v0.0.0
 
