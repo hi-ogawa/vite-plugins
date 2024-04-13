@@ -41,9 +41,9 @@ export function vitePluginErrorOverlay(options?: {
         type: "error",
         err: {
           message: "",
-          stack: ""
+          stack: "",
         },
-      })
+      });
       server.hot.on(MESSAGE_TYPE, (...args: any[]) => {
         const [data, client] = args as [unknown, WebSocketClient];
 

@@ -2,7 +2,7 @@
 
 Vite plugin to show client runtime error via builtin error overlay.
 
-Based on the idea from https://github.com/vitejs/vite/pull/6274#issuecomment-1087749460
+cf. https://github.com/vitejs/vite/pull/6274
 
 ## usage
 
