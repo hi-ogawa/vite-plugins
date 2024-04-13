@@ -13,6 +13,7 @@ export function vitePluginErrorOverlay(options?: {
       return [
         {
           tag: "script",
+          // TODO: base?
           attrs: { type: "module", src: "/@id/__x00__" + virtualName },
         },
       ];
