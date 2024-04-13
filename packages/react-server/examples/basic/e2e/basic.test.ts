@@ -31,8 +31,8 @@ test("render count", async ({ page }) => {
   await page.goto("/test");
   await waitForHydration(page);
 
-  // strict mode doubles initial effect
-  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  // no strict mode double effect since canary 20240408 ?
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
   await page.getByText(`[effect: ${count}]`).click();
   await page.getByRole("link", { name: "/test/other" }).click();
   await page.getByText(`[effect: ${count}]`).click();
@@ -492,7 +492,39 @@ test("server action with js", async ({ page }) => {
   await checkClientState();
 
   // check layout doesn't re-render
-  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
+  await page.getByText(`[effect: ${count}]`).click();
+});
+
+test("server action after client render", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  // on client render, the form doesn't have hidden $ACTION_ID_...
+  await page.getByRole("link", { name: "/test/action" }).click();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await page.getByText("Count: 0").click();
+  await page.getByRole("button", { name: "+1" }).first().click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "+1" }).nth(1).click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "+1" }).nth(2).click();
+  await page.getByText("Count: 3").click();
+  await page.getByRole("button", { name: "-1" }).first().click();
+  await page.getByText("Count: 2").click();
+  await page.getByRole("button", { name: "-1" }).nth(1).click();
+  await page.getByText("Count: 1").click();
+  await page.getByRole("button", { name: "-1" }).nth(2).click();
+  await page.getByText("Count: 0").click();
+
+  await checkClientState();
+
+  // check layout doesn't re-render
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
   await page.getByText(`[effect: ${count}]`).click();
 });
 
@@ -692,7 +724,7 @@ test("revalidate on action", async ({ page }) => {
 
   const checkClientState = await setupCheckClientState(page);
 
-  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
   await page.getByText(`[effect: ${count}]`).click();
   await page.getByRole("button", { name: "Action" }).click();
   await page.getByText(`[effect: ${count + 1}]`).click();
@@ -708,7 +740,7 @@ test("revalidate on navigation", async ({ page }) => {
 
   const checkClientState = await setupCheckClientState(page);
 
-  const count = process.env.E2E_PREVIEW ? 1 : 2;
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
   await page.getByText(`[effect: ${count}]`).click();
   await page.getByRole("link", { name: "Navigation" }).click();
   await page.getByText(`[effect: ${count + 1}]`).click();

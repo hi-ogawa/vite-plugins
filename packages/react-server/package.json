@@ -18,17 +18,25 @@
       "types": "./dist/client.d.ts",
       "default": "./dist/client.js"
     },
-    "./client-internal": {
-      "types": "./dist/client-internal.d.ts",
-      "default": "./dist/client-internal.js"
-    },
     "./server": {
       "types": "./dist/server.d.ts",
       "default": "./dist/server.js"
     },
-    "./server-internal": {
-      "types": "./dist/server-internal.d.ts",
-      "default": "./dist/server-internal.js"
+    "./runtime-client": {
+      "types": "./dist/runtime-client.d.ts",
+      "default": "./dist/runtime-client.js"
+    },
+    "./runtime-browser": {
+      "types": "./dist/runtime-browser.d.ts",
+      "default": "./dist/runtime-browser.js"
+    },
+    "./runtime-server": {
+      "types": "./dist/runtime-server.d.ts",
+      "default": "./dist/runtime-server.js"
+    },
+    "./runtime-react-server": {
+      "types": "./dist/runtime-react-server.d.ts",
+      "default": "./dist/runtime-react-server.js"
     },
     "./entry-browser": {
       "types": "./dist/entry/browser.d.ts",
@@ -69,14 +77,14 @@
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
     "@types/use-sync-external-store": "^0.0.6",
-    "react": "18.3.0-canary-14898b6a9-20240318",
-    "react-dom": "18.3.0-canary-14898b6a9-20240318",
-    "react-server-dom-webpack": "18.3.0-canary-14898b6a9-20240318"
+    "react": "19.0.0-canary-4c12339ce-20240408",
+    "react-dom": "19.0.0-canary-4c12339ce-20240408",
+    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408"
   },
   "peerDependencies": {
-    "react": "18.3.0-canary-14898b6a9-20240318",
-    "react-dom": "18.3.0-canary-14898b6a9-20240318",
-    "react-server-dom-webpack": "18.3.0-canary-14898b6a9-20240318",
+    "react": "19.0.0-canary-4c12339ce-20240408",
+    "react-dom": "19.0.0-canary-4c12339ce-20240408",
+    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408",
     "vite": "*"
   }
 }
