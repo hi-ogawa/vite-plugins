@@ -23,7 +23,6 @@ import {
   createError,
   getErrorContext,
 } from "../lib/error";
-import { __global } from "../lib/global";
 import { generateRouteTree, renderRouteMap } from "../lib/router";
 
 const debug = createDebug("react-server:rsc");
@@ -159,7 +158,7 @@ async function actionHandler({ request }: { request: Request }) {
   let action: Function;
   const [file, name] = id.split("#") as [string, string];
   if (import.meta.env.DEV) {
-    const mod: any = await __global.dev.reactServer.ssrLoadModule(file);
+    const mod: any = await import(/* @vite-ignore */ file);
     action = mod[name];
   } else {
     // include all "use server" files via virtual module on build
