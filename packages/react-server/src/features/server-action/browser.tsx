@@ -4,9 +4,7 @@ import { __global } from "../../lib/global";
 // https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-client/src/ReactFlightReplyClient.js#L758
 
 export function createServerReference(id: string) {
-  const reference = reactServerDomClient.createServerReference(id, (...args) =>
+  return reactServerDomClient.createServerReference(id, (...args) =>
     __global.callServer(...args),
   );
-  Object.assign(reference, { $$id: id });
-  return reference;
 }

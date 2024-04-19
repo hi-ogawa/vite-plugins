@@ -1,25 +1,8 @@
-import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { __global } from "../../lib/global";
 import { RedirectBoundary } from "../../runtime-client";
 import { createError } from "../../server";
 import { LayoutStateContext } from "../router/client";
-
-// TODO: replace with React.useActionState
-export function useActionData<T extends (...args: any[]) => any>(
-  action: T,
-): Awaited<ReturnType<T>> | undefined {
-  const actionId = (action as any).$$id;
-  tinyassert(actionId);
-  const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
-  if (data.action) {
-    if (data.action.id === actionId) {
-      return data.action.data as any;
-    }
-  }
-  return;
-}
 
 export function ActionRedirectHandler() {
   return (
