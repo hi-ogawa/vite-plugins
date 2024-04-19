@@ -1,4 +1,4 @@
-import { tinyassert } from "@hiogawa/utils";
+import { memoize, tinyassert } from "@hiogawa/utils";
 import reactServerDomWebpack from "react-server-dom-webpack/server.edge";
 import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
@@ -44,32 +44,29 @@ export function createActionBundlerConfig(): BundlerConfig {
         return {
           id,
           name,
-          chunks: [id],
+          chunks: [],
         } satisfies ImportManifestEntry;
       },
     },
   );
 }
 
-const serverReferenceMap = new Map<string, unknown>();
+// same as packages/react-server/src/features/use-client/server.tsx
+export const serverReferenceImportPromiseCache = new Map<
+  string,
+  Promise<unknown>
+>();
 
-export function serverReferenceWebpackRequire(id: string): unknown {
-  const mod = serverReferenceMap.get(id);
-  tinyassert(mod);
-  return mod;
-}
-
-export async function serverReferenceWebpackChunkLoad(
-  id: string,
-): Promise<void> {
-  const mod = await importServerReference(id);
-  serverReferenceMap.set(id, mod);
-}
+const serverReferenceWebpackRequire = memoize(importServerReference, {
+  cache: serverReferenceImportPromiseCache,
+});
 
 export function initializeWebpackReactServer() {
   Object.assign(globalThis, {
     __vite_react_server_webpack_require__: serverReferenceWebpackRequire,
-    __vite_react_server_webpack_chunk_load__: serverReferenceWebpackChunkLoad,
+    __vite_react_server_webpack_chunk_load__: () => {
+      throw new Error("todo: __webpack_chunk_load__");
+    },
   });
 }
 

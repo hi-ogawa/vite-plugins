@@ -16,6 +16,7 @@ import {
   createActionBundlerConfig,
   importServerAction,
   initializeWebpackReactServer,
+  serverReferenceImportPromiseCache,
 } from "../features/server-action/react-server";
 import { unwrapStreamActionRequest } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
@@ -50,6 +51,10 @@ export type ReactServerHandlerResult =
 
 export const handler: ReactServerHandler = async (ctx) => {
   initializeWebpackReactServer();
+
+  if (import.meta.env.DEV) {
+    serverReferenceImportPromiseCache.clear();
+  }
 
   // action
   let actionResult: ActionResult | undefined;
