@@ -170,6 +170,26 @@ export function vitePluginReactServer(options?: {
         },
       ),
 
+      {
+        // rename webpack markers in react server runtime
+        // to avoid conflict with ssr runtime.
+        name: "replace-webpack-globals",
+        transform(code, id, _options) {
+          if (id.includes("react-server-dom-webpack")) {
+            code = code.replaceAll(
+              "__webpack_require__",
+              "__vite_react_server_webpack_require__",
+            );
+            code = code.replaceAll(
+              "__webpack_chunk_load__",
+              "__vite_react_server_webpack_chunk_load__",
+            );
+            return code;
+          }
+          return;
+        },
+      },
+
       ...(options?.plugins ?? []),
     ],
     build: {
@@ -298,6 +318,7 @@ export function vitePluginReactServer(options?: {
     },
   };
 
+  // plugins for main vite dev server (browser / ssr)
   return [
     rscParentPlugin,
     vitePluginSilenceUseClientBuildWarning(),

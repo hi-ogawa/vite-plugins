@@ -39,16 +39,8 @@ async function ssrImport(id: string) {
 
 export function initializeWebpackSsr() {
   Object.assign(globalThis, {
-    __webpack_require__: (id: string) => {
-      return (
-        __global.serverReferenceWebpackRequire(id) ?? ssrWebpackRequire(id)
-      );
-    },
-    __webpack_chunk_load__: (id: string) => {
-      const promise = __global.serverReferenceWebpackChunkLoad(id);
-      if (promise) {
-        return promise;
-      }
+    __webpack_require__: ssrWebpackRequire,
+    __webpack_chunk_load__: (_id: string) => {
       throw new Error("todo: __webpack_chunk_load__");
     },
   });

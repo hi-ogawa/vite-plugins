@@ -32,7 +32,6 @@ export class ActionContext {
 }
 
 const REFERENCE_SEP = "#";
-const ACTION_ID_MARKER = "@";
 
 export function createActionBundlerConfig(): BundlerConfig {
   return new Proxy(
@@ -43,7 +42,6 @@ export function createActionBundlerConfig(): BundlerConfig {
         let [id, name] = $$id.split(REFERENCE_SEP);
         tinyassert(id);
         tinyassert(name);
-        id += ACTION_ID_MARKER;
         return {
           id,
           name,
@@ -56,32 +54,24 @@ export function createActionBundlerConfig(): BundlerConfig {
 
 const serverReferenceMap = new Map<string, unknown>();
 
-export function serverReferenceWebpackRequire(id: string): unknown | undefined {
-  if (id.endsWith(ACTION_ID_MARKER)) {
-    id = id.slice(0, -ACTION_ID_MARKER.length);
-    const mod = serverReferenceMap.get(id);
-    tinyassert(mod);
-    return mod;
-  }
-  return;
+export function serverReferenceWebpackRequire(id: string): unknown {
+  const mod = serverReferenceMap.get(id);
+  tinyassert(mod);
+  return mod;
 }
 
-export function serverReferenceWebpackChunkLoad(
+export async function serverReferenceWebpackChunkLoad(
   id: string,
-): Promise<unknown> | undefined {
-  if (id.endsWith(ACTION_ID_MARKER)) {
-    id = id.slice(0, -ACTION_ID_MARKER.length);
-    return (async () => {
-      const mod = await importServerReference(id);
-      serverReferenceMap.set(id, mod);
-    })();
-  }
-  return;
+): Promise<void> {
+  const mod = await importServerReference(id);
+  serverReferenceMap.set(id, mod);
 }
 
 export function initializeWebpackReactServer() {
-  __global.serverReferenceWebpackRequire = serverReferenceWebpackRequire;
-  __global.serverReferenceWebpackChunkLoad = serverReferenceWebpackChunkLoad;
+  Object.assign(globalThis, {
+    __vite_react_server_webpack_require__: serverReferenceWebpackRequire,
+    __vite_react_server_webpack_chunk_load__: serverReferenceWebpackChunkLoad,
+  });
 }
 
 async function importServerReference(id: string): Promise<unknown> {
