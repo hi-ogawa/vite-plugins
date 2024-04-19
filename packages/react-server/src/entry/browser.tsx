@@ -52,13 +52,12 @@ export async function start() {
         headers: wrapStreamActionRequest(id),
       },
     );
-    __startActionTransition(() => {
-      __setLayout(
-        reactServerDomClient.createFromFetch<ServerRouterData>(fetch(request), {
-          callServer,
-        }),
-      );
-    });
+    const result = reactServerDomClient.createFromFetch<ServerRouterData>(
+      fetch(request),
+      { callServer },
+    );
+    __startActionTransition(() => __setLayout(result));
+    return result.then((v) => v.action?.data);
   };
 
   // expose as global to be used for createServerReference
