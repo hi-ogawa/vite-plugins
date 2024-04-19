@@ -173,7 +173,7 @@ export async function start() {
   //
 
   // full client render on SSR error
-  if (document.documentElement.dataset["noHydate"]) {
+  if (document.documentElement.dataset["noHydrate"]) {
     reactDomClient.createRoot(document).render(reactRootEl);
   } else {
     reactDomClient.hydrateRoot(document, reactRootEl, {
