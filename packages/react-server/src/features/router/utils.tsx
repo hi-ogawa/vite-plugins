@@ -9,7 +9,7 @@ export type LayoutRequest = Record<
 >;
 
 export type ServerRouterData = {
-  action?: Pick<ActionResult, "id" | "error" | "data">;
+  action?: Pick<ActionResult, "error" | "data">;
   layout: Record<string, React.ReactNode>;
 };
 

@@ -104,7 +104,7 @@ async function render({
     {
       layout: nodeMap,
       action: actionResult
-        ? objectPick(actionResult, ["id", "data", "error"])
+        ? objectPick(actionResult, ["data", "error"])
         : undefined,
     },
     bundlerConfig,
@@ -162,21 +162,21 @@ async function actionHandler({ request }: { request: Request }) {
   const context = new ActionContext(request);
   const streamAction = unwrapStreamActionRequest(request);
   let boundAction: Function;
-  let id: string | undefined;
   if (streamAction) {
     const formData = await request.formData();
     const args = await reactServerDomServer.decodeReply(formData);
     const action = await importServerAction(streamAction.id);
-    id = streamAction.id;
     boundAction = () => action.apply(context, args);
   } else {
     // TODO: cannot bind context
     const formData = await request.formData();
     const decodedAction = await reactServerDomServer.decodeAction(
       formData,
+      // TODO: manipulate some uniq tag through bundler config?
       createActionBundlerConfig(),
     );
     boundAction = async () => {
+      // TODO: synchronous context would suffice?
       const result = await decodedAction();
       const formState = await reactServerDomServer.decodeFormState(
         result,
@@ -186,7 +186,7 @@ async function actionHandler({ request }: { request: Request }) {
     };
   }
 
-  const result: ActionResult = { id, context };
+  const result: ActionResult = { context };
   try {
     result.data = await boundAction();
   } catch (e) {
