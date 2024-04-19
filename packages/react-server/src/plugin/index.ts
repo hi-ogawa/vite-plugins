@@ -185,7 +185,7 @@ export function vitePluginReactServer(options?: {
               "__vite_react_server_webpack_chunk_load__",
             );
 
-            // make server reference async for simplicity (no stale chunkCache)
+            // make server reference async for simplicity (stale chunkCache, etc...)
             // see TODO in https://github.com/facebook/react/blob/33a32441e991e126e5e874f831bd3afc237a3ecf/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js#L131-L132
             code = code.replaceAll("if (isAsyncImport(metadata))", "if (true)");
             code = code.replaceAll("4===a.length", "true");
