@@ -172,7 +172,7 @@ export function vitePluginReactServer(options?: {
 
       {
         // rename webpack markers in react server runtime
-        // to avoid conflict with ssr runtime.
+        // to avoid conflict with ssr runtime which shares same globals
         name: "replace-webpack-globals",
         transform(code, id, _options) {
           if (id.includes("react-server-dom-webpack")) {
