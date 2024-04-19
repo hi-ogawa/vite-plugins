@@ -52,14 +52,12 @@ export async function start() {
         headers: wrapStreamActionRequest(id),
       },
     );
-    const result = await reactServerDomClient.createFromFetch<ServerRouterData>(
+    const result = reactServerDomClient.createFromFetch<ServerRouterData>(
       fetch(request),
       { callServer },
     );
-    // TODO: needs to await action return value before transition,
-    //       but that kills a whole point of "action pending" state
-    __startActionTransition(() => __setLayout(Promise.resolve(result)));
-    return result.action?.data;
+    __startActionTransition(() => __setLayout(result));
+    return (await result).action?.data;
   };
 
   // expose as global to be used for createServerReference

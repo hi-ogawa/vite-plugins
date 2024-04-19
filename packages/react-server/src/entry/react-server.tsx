@@ -171,7 +171,6 @@ async function actionHandler({ request }: { request: Request }) {
     boundAction = () => action.apply(context, args);
   } else {
     // TODO: cannot bind context
-    // TODO: decodeFormState
     const formData = await request.formData();
     const decodedAction = await reactServerDomServer.decodeAction(
       formData,
