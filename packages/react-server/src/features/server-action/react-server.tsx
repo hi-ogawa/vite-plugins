@@ -1,6 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
 import reactServerDomWebpack from "react-server-dom-webpack/server.edge";
-import { __global } from "../../lib/global";
 import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
 
@@ -76,7 +75,7 @@ export function initializeWebpackReactServer() {
 
 async function importServerReference(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
-    return await __global.dev.reactServer.ssrLoadModule(id);
+    return await import(/* @vite-ignore */ id);
   } else {
     const mod = await import("virtual:rsc-use-server" as string);
     const dynImport = mod.default[id];
