@@ -125,7 +125,7 @@ export async function renderHtml(
   let status = 200;
   try {
     ssrStream = await reactDomServer.renderToReadableStream(reactRootEl, {
-      bootstrapModules: url.search.includes("__noJs")
+      bootstrapModules: url.search.includes("__nojs")
         ? []
         : assets.bootstrapModules,
       onError(error, errorInfo) {
