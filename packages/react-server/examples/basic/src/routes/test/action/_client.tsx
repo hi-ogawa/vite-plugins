@@ -1,6 +1,5 @@
 "use client";
 
-import { useActionData } from "@hiogawa/react-server/client";
 import React from "react";
 import ReactDom from "react-dom";
 import {
@@ -101,10 +100,24 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
   );
 }
 
+// https://github.com/facebook/react/pull/28491
+type ReactUseActionState = <State, Payload>(
+  action: (state: Awaited<State>, payload: Payload) => State | Promise<State>,
+  initialState: Awaited<State>,
+  permalink?: string,
+) => [
+  state: Awaited<State>,
+  dispatch: (payload: Payload) => void,
+  isPending: boolean,
+];
+
+const useActionState: ReactUseActionState = (React as any).useActionState;
+
 export function ActionDataTest() {
-  const data = useActionData(actionCheckAnswer);
+  const [data, formAction] = useActionState(actionCheckAnswer, null);
+
   return (
-    <form action={actionCheckAnswer} className="flex flex-col gap-2">
+    <form action={formAction} className="flex flex-col gap-2">
       <h4 className="font-bold">Action Data</h4>
       <div className="flex gap-2">
         <div>1 + 1 = </div>
@@ -121,11 +134,7 @@ export function ActionDataTest() {
 
 // TODO
 export function UseActionStateTest() {
-  // @ts-ignore
-  const [data, formAction, isPending] = React.useActionState(
-    actionStateTest,
-    null,
-  );
+  const [data, formAction, isPending] = useActionState(actionStateTest, null);
 
   React.useEffect(() => {
     console.log("[useActionState]", data, isPending);

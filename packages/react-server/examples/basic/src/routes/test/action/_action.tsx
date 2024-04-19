@@ -30,7 +30,7 @@ export async function slowAction(formData: FormData) {
   await sleep(Number(formData.get("sleep")));
 }
 
-export async function actionCheckAnswer(formData: FormData) {
+export async function actionCheckAnswer(_prev: unknown, formData: FormData) {
   const answer = Number(formData.get("answer"));
   const message = answer === 2 ? "Correct!" : "Wrong!";
   return { message };
