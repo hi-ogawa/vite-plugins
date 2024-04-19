@@ -173,10 +173,18 @@ async function actionHandler({ request }: { request: Request }) {
     // TODO: cannot bind context
     // TODO: decodeFormState
     const formData = await request.formData();
-    boundAction = await reactServerDomServer.decodeAction(
+    const decodedAction = await reactServerDomServer.decodeAction(
       formData,
       createActionBundlerConfig(),
     );
+    boundAction = async () => {
+      const result = await decodedAction();
+      const formState = await reactServerDomServer.decodeFormState(
+        result,
+        formData,
+      );
+      return formState;
+    };
   }
 
   const result: ActionResult = { id, context };

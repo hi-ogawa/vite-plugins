@@ -31,6 +31,12 @@ declare module "react-server-dom-webpack/server.edge" {
     body: FormData,
     bundlerConfig: import("./types").BundlerConfig,
   ): Promise<() => Promise<unknown>>;
+
+  export function decodeFormState(
+    actionResult: unknown,
+    body: FormData,
+    serverManifest?: unknown,
+  ): Promise<unknown>;
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMClientEdge.js

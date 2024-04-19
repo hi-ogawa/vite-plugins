@@ -66,11 +66,13 @@ export async function start() {
   __global.callServer = callServer;
 
   // prepare initial layout data from inline <script>
-  const initialLayoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerRouterData>(
+  // TODO: needs to await for hydration formState?
+  const initialLayout =
+    await reactServerDomClient.createFromReadableStream<ServerRouterData>(
       readStreamScript<string>().pipeThrough(new TextEncoderStream()),
       { callServer },
     );
+  const initialLayoutPromise = Promise.resolve(initialLayout);
 
   //
   // browser root
@@ -174,8 +176,8 @@ export async function start() {
     reactDomClient.createRoot(document).render(reactRootEl);
   } else {
     reactDomClient.hydrateRoot(document, reactRootEl, {
-      // @ts-ignore TODO
-      formState: null,
+      // @ts-expect-error no type yet
+      formState: initialLayout.action?.data,
     });
   }
 

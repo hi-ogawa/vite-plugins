@@ -661,7 +661,7 @@ test("action return value @js", async ({ page }) => {
   await testActionReturnValue(page, { js: true });
 });
 
-test.skip("action return value @nojs", async ({ browser }) => {
+test("action return value @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/action");
