@@ -25,10 +25,6 @@ import { readStreamScript } from "../utils/stream-script";
 const debug = createDebug("react-server:browser");
 
 export async function start() {
-  if (window.location.search.includes("__noCsr")) {
-    return;
-  }
-
   initializeWebpackBrowser();
 
   const { default: reactServerDomClient } = await import(
