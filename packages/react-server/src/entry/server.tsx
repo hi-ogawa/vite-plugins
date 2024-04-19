@@ -149,7 +149,7 @@ export async function renderHtml(
     // TODO: proper two-pass SSR with error route tracking?
     // TODO: meta tag system
     const errorRoot = (
-      <html data-no-hydate>
+      <html data-no-hydrate>
         <head>
           <meta charSet="utf-8" />
         </head>

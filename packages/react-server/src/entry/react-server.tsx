@@ -26,7 +26,6 @@ import {
   createError,
   getErrorContext,
 } from "../lib/error";
-import { __global } from "../lib/global";
 import { generateRouteTree, renderRouteMap } from "../lib/router";
 
 const debug = createDebug("react-server:rsc");
