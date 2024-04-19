@@ -121,7 +121,8 @@ export function ActionDataTest() {
 
 // TODO
 export function UseActionStateTest() {
-  const [data, formAction, isPending] = ReactDom.useFormState(
+  // @ts-ignore
+  const [data, formAction, isPending] = React.useActionState(
     actionStateTest,
     null,
   );
