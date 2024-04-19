@@ -13,11 +13,12 @@ import {
 import {
   ActionContext,
   type ActionResult,
+  createActionBundlerConfig,
+  importServerAction,
+  initializeWebpackReactServer,
+  serverReferenceImportPromiseCache,
 } from "../features/server-action/react-server";
-import {
-  ejectActionId,
-  unwrapStreamActionRequest,
-} from "../features/server-action/utils";
+import { unwrapStreamActionRequest } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
@@ -49,6 +50,12 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
+  initializeWebpackReactServer();
+
+  if (import.meta.env.DEV) {
+    serverReferenceImportPromiseCache.clear();
+  }
+
   // action
   let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
@@ -152,35 +159,29 @@ function createRouter() {
 
 // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
-  let id: string;
-  let args: unknown[];
-  const streamAction = unwrapStreamActionRequest(request);
-  if (streamAction) {
-    id = streamAction.id;
-    const formData = await request.formData();
-    args = await reactServerDomServer.decodeReply(formData);
-  } else {
-    const formData = await request.formData();
-    id = ejectActionId(formData);
-    args = [formData];
-  }
-
-  let action: Function;
-  const [file, name] = id.split("#") as [string, string];
-  if (import.meta.env.DEV) {
-    const mod: any = await import(/* @vite-ignore */ file);
-    action = mod[name];
-  } else {
-    // include all "use server" files via virtual module on build
-    const virtual = await import("virtual:rsc-use-server" as string);
-    const mod = await virtual.default[file]();
-    action = mod[name];
-  }
-
   const context = new ActionContext(request);
+  const streamAction = unwrapStreamActionRequest(request);
+  let boundAction: Function;
+  let id: string | undefined;
+  if (streamAction) {
+    const formData = await request.formData();
+    const args = await reactServerDomServer.decodeReply(formData);
+    const action = await importServerAction(streamAction.id);
+    id = streamAction.id;
+    boundAction = () => action.apply(context, args);
+  } else {
+    // TODO: cannot bind context
+    // TODO: decodeFormState
+    const formData = await request.formData();
+    boundAction = await reactServerDomServer.decodeAction(
+      formData,
+      createActionBundlerConfig(),
+    );
+  }
+
   const result: ActionResult = { id, context };
   try {
-    result.data = await action.apply(context, args);
+    result.data = await boundAction();
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
