@@ -10,6 +10,7 @@ import {
   type LayoutRequest,
   type ServerRouterData,
 } from "../features/router/utils";
+import { runActionContext } from "../features/server-action/context";
 import {
   ActionContext,
   type ActionResult,
@@ -166,17 +167,14 @@ async function actionHandler({ request }: { request: Request }) {
     const formData = await request.formData();
     const args = await reactServerDomServer.decodeReply(formData);
     const action = await importServerAction(streamAction.id);
-    boundAction = () => action.apply(context, args);
+    boundAction = () => action.apply(null, args);
   } else {
-    // TODO: cannot bind context
     const formData = await request.formData();
     const decodedAction = await reactServerDomServer.decodeAction(
       formData,
-      // TODO: manipulate some uniq tag through bundler config?
       createActionBundlerConfig(),
     );
     boundAction = async () => {
-      // TODO: synchronous context would suffice?
       const result = await decodedAction();
       const formState = await reactServerDomServer.decodeFormState(
         result,
@@ -188,7 +186,7 @@ async function actionHandler({ request }: { request: Request }) {
 
   const result: ActionResult = { context };
   try {
-    result.data = await boundAction();
+    result.data = await runActionContext(context, () => boundAction());
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
