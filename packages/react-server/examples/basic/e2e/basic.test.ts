@@ -685,7 +685,7 @@ test("action context @js", async ({ page }) => {
   await testActionContext(page);
 });
 
-test.skip("action context @nojs", async ({ browser }) => {
+test("action context @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/session");
