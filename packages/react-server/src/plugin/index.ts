@@ -84,10 +84,10 @@ export function vitePluginReactServer(options?: {
     clearScreen: false,
     configFile: false,
     cacheDir: "./node_modules/.vite-rsc",
-    server: {
-      // TODO: for now this is to silence build only virtual:... resolution error
-      preTransformRequests: false,
-    },
+    // server: {
+    //   // TODO: for now this is to silence build only virtual:... resolution error
+    //   preTransformRequests: false,
+    // },
     optimizeDeps: {
       noDiscovery: true,
       include: [],
@@ -119,45 +119,33 @@ export function vitePluginReactServer(options?: {
       vitePluginServerUseClient({ manager }),
 
       // expose server references for RSC build via virtual module
-      {
-        name: "virtual-rsc-use-server",
-        apply: "build",
-        async buildStart(_options) {
-          // we need to crawl file system to collect server references ("use server")
-          // since we currently needs RSC -> Client -> SSR build pipeline
-          // to collect client references first in RSC.
-          // TODO: what if "use server" is provided from 3rd party library?
-          const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
-            absolute: true,
-            ignore: ["**/node_modules/**"],
-          });
-          for (const file of files) {
-            const data = await fs.promises.readFile(file, "utf-8");
-            if (data.match(/^("use server")|('use server')/)) {
-              manager.rscUseServerIds.add(file);
-            }
+      createVirtualPlugin("rsc-use-server", async () => {
+        tinyassert(manager.buildType === "rsc");
+        // we need to crawl file system to collect server references ("use server")
+        // since we currently needs RSC -> Client -> SSR build pipeline
+        // to collect client references first in RSC.
+        // TODO: what if "use server" is provided from 3rd party library?
+        //       as a workaround, users can re-export them locally.
+        const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
+          absolute: true,
+          ignore: ["**/node_modules/**"],
+        });
+        const ids: string[] = [];
+        for (const file of files) {
+          const data = await fs.promises.readFile(file, "utf-8");
+          if (USE_SERVER_RE.test(data)) {
+            ids.push(file);
           }
-          debug("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
-        },
-        resolveId(source, _importer, _options) {
-          if (source === "virtual:rsc-use-server") {
-            return "\0" + source;
-          }
-          return;
-        },
-        async load(id, _options) {
-          if (id === "\0virtual:rsc-use-server") {
-            let result = `export default {\n`;
-            for (const id of manager.rscUseServerIds) {
-              let key = manager.buildType ? hashString(id) : id;
-              result += `"${key}": () => import("${id}"),\n`;
-            }
-            result += "};\n";
-            return result;
-          }
-          return;
-        },
-      },
+        }
+        let result = `export default {\n`;
+        for (const id of ids) {
+          let key = manager.buildType ? hashString(id) : id;
+          result += `"${key}": () => import("${id}"),\n`;
+        }
+        result += "};\n";
+        debug("[virtual-rsc-use-server]", result);
+        return result;
+      }),
 
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
