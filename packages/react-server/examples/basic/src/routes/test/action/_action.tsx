@@ -45,6 +45,12 @@ export async function actionCheckAnswer(
   return { message, count: (prev?.count ?? 0) + 1 };
 }
 
-export async function actionBindTest(boundArg: string, formData: FormData) {
-  console.log("[actionBindTest]", { boundArg, form: [...formData.entries()] });
+let actionBindResult = "(none)";
+
+export function getActionBindResult() {
+  return actionBindResult;
+}
+
+export async function actionBindTest(bound: string) {
+  actionBindResult = bound;
 }

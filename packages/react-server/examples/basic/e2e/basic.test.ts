@@ -684,33 +684,26 @@ async function testActionReturnValue(page: Page, options: { js: boolean }) {
   await page.getByText("Correct! (tried 2 times)").click();
 }
 
-// test("action bind client @js", async ({ page }) => {
-//   checkNoError(page);
-//   await page.goto("/test/action");
-//   await waitForHydration(page);
-//   // await testActionReturnValue(page, { js: true });
-// });
+test("action bind @js", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await testActionBind(page);
+});
 
-// test("action bind client @nojs", async ({ browser }) => {
-//   const page = await browser.newPage({ javaScriptEnabled: false });
-//   checkNoError(page);
-//   await page.goto("/test/action");
-//   // await testActionReturnValue(page, { js: false });
-// });
+test("action bind @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+  await page.goto("/test/action");
+  await testActionBind(page);
+});
 
-// test("action bind server @js", async ({ page }) => {
-//   checkNoError(page);
-//   await page.goto("/test/action");
-//   await waitForHydration(page);
-//   // await testActionReturnValue(page, { js: true });
-// });
-
-// test("action bind server @nojs", async ({ browser }) => {
-//   const page = await browser.newPage({ javaScriptEnabled: false });
-//   checkNoError(page);
-//   await page.goto("/test/action");
-//   // await testActionReturnValue(page, { js: false });
-// });
+async function testActionBind(page: Page) {
+  await page.getByRole("button", { name: "Action Bind Test (server)" }).click();
+  await expect(page.getByTestId("action-bind")).toContainText("server-bind");
+  await page.getByRole("button", { name: "Action Bind Test (client)" }).click();
+  await expect(page.getByTestId("action-bind")).toContainText("client-bind");
+}
 
 test("action context @js", async ({ page }) => {
   await page.goto("/test/session");

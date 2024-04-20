@@ -1,6 +1,7 @@
 import {
   actionBindTest,
   changeCounter,
+  getActionBindResult,
   getCounter,
   getMessages,
 } from "./_action";
@@ -23,8 +24,12 @@ export default async function Page() {
       </div>
       <Chat messages={getMessages()} />
       <ActionDataTest />
-      <ServerActionBindTest />
-      <ClientActionBindTest />
+      <div className="flex flex-col gap-2">
+        <h4 className="font-bold">Action Bind</h4>
+        <ServerActionBindTest />
+        <ClientActionBindTest />
+        <div data-testid="action-bind">{getActionBindResult()}</div>
+      </div>
       <FormStateTest />
     </div>
   );
