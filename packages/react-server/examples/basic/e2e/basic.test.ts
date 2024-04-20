@@ -658,17 +658,17 @@ test("useActionState @js", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/action");
   await waitForHydration(page);
-  await testActionReturnValue(page, { js: true });
+  await testUseActionState(page, { js: true });
 });
 
 test("useActionState @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/action");
-  await testActionReturnValue(page, { js: false });
+  await testUseActionState(page, { js: false });
 });
 
-async function testActionReturnValue(page: Page, options: { js: boolean }) {
+async function testUseActionState(page: Page, options: { js: boolean }) {
   await page.getByPlaceholder("Answer?").fill("3");
   await page.getByPlaceholder("Answer?").press("Enter");
   if (options.js) {
@@ -683,6 +683,19 @@ async function testActionReturnValue(page: Page, options: { js: boolean }) {
   await page.getByPlaceholder("Answer?").press("Enter");
   await page.getByText("Correct! (tried 2 times)").click();
 }
+
+test("non-form aciton", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await page.getByPlaceholder("Number...").fill("1");
+  await page.getByPlaceholder("Number...").press("Enter");
+  await expect(page.getByTestId("non-form-action-state")).toHaveText("...");
+  await expect(page.getByTestId("non-form-action-state")).toHaveText("1");
+  await page.getByPlaceholder("Number...").fill("-1");
+  await page.getByPlaceholder("Number...").press("Enter");
+  await expect(page.getByTestId("non-form-action-state")).toHaveText("0");
+});
 
 test("action bind @js", async ({ page }) => {
   checkNoError(page);

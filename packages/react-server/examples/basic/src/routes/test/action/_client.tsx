@@ -163,7 +163,9 @@ export function NonFormActionTest() {
           required
         />
         <button className="antd-btn antd-btn-default px-2">Add</button>
-        <div>{isPending ? "..." : data}</div>
+        <div data-testid="non-form-action-state">
+          {isPending ? "..." : data}
+        </div>
       </div>
     </form>
   );
