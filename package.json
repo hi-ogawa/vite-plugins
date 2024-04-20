@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm -r '--filter=!*example*' build",
+    "build": "pnpm -r '--filter=!*example*' '--filter=!@hiogawa/vite-node-miniflare' build",
     "changelog": "pnpm dlx @hiogawa/changelog --repo https://github.com/hi-ogawa/vite-plugins",
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json",
     "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
