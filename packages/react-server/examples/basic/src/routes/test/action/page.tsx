@@ -12,6 +12,7 @@ import {
   Counter,
   Counter2,
   FormStateTest,
+  NonFormActionTest,
 } from "./_client";
 
 export default async function Page() {
@@ -24,6 +25,7 @@ export default async function Page() {
       </div>
       <Chat messages={getMessages()} />
       <ActionDataTest />
+      <NonFormActionTest />
       <div className="flex flex-col gap-2">
         <h4 className="font-bold">Action Bind</h4>
         <ServerActionBindTest />
@@ -59,7 +61,6 @@ function Counter3() {
   );
 }
 
-// TODO(test)
 function ServerActionBindTest() {
   const formAction = actionBindTest.bind(null, "server-bind");
   return (

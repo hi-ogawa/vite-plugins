@@ -54,3 +54,11 @@ export function getActionBindResult() {
 export async function actionBindTest(bound: string) {
   actionBindResult = bound;
 }
+
+let nonFormActionCounter = 0;
+
+export async function nonFormAction(_prev: unknown, delta: number) {
+  await sleep(500);
+  nonFormActionCounter += delta;
+  return nonFormActionCounter;
+}

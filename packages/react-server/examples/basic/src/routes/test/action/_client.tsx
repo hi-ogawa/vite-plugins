@@ -8,6 +8,7 @@ import {
   addMessage,
   changeCounter,
   type getMessages,
+  nonFormAction,
   slowAction,
 } from "./_action";
 
@@ -141,7 +142,33 @@ export function ActionDataTest() {
   );
 }
 
-// TODO(test)
+export function NonFormActionTest() {
+  const [data, formAction, isPending] = useActionState(nonFormAction, null);
+  return (
+    <form
+      className="flex flex-col gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const delta = Number(formData.get("delta"));
+        formAction(delta);
+      }}
+    >
+      <h4 className="font-bold">Non-form-action action</h4>
+      <div className="flex gap-2">
+        <input
+          className="antd-input px-2 max-w-30"
+          name="delta"
+          placeholder="Number..."
+          required
+        />
+        <button className="antd-btn antd-btn-default px-2">Add</button>
+        <div>{isPending ? "..." : data}</div>
+      </div>
+    </form>
+  );
+}
+
 export function ClientActionBindTest() {
   const formAction = actionBindTest.bind(null, "client-bind");
   return (
