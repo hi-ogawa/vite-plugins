@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionState } from "@hiogawa/react-server/client";
 import React from "react";
 import ReactDom from "react-dom";
 import {
@@ -99,19 +100,6 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
     </div>
   );
 }
-
-// https://github.com/facebook/react/pull/28491
-type ReactUseActionState = <State, Payload>(
-  action: (state: Awaited<State>, payload: Payload) => State | Promise<State>,
-  initialState: Awaited<State>,
-  permalink?: string,
-) => [
-  state: Awaited<State>,
-  dispatch: (payload: Payload) => void,
-  isPending: boolean,
-];
-
-const useActionState: ReactUseActionState = (React as any).useActionState;
 
 export function ActionDataTest() {
   const [data, formAction, isPending] = useActionState(actionCheckAnswer, null);
