@@ -164,8 +164,11 @@ async function actionHandler({ request }: { request: Request }) {
   const streamAction = unwrapStreamActionRequest(request);
   let boundAction: Function;
   if (streamAction) {
-    const formData = await request.formData();
-    const args = await reactServerDomServer.decodeReply(formData);
+    const contentType = request.headers.get("content-type");
+    const body = contentType?.startsWith("multipart/form-data")
+      ? await request.formData()
+      : await request.text();
+    const args = await reactServerDomServer.decodeReply(body);
     const action = await importServerAction(streamAction.id);
     boundAction = () => action.apply(null, args);
   } else {

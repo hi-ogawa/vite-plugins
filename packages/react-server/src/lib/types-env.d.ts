@@ -25,7 +25,7 @@ declare module "react-server-dom-webpack/server.edge" {
     name: string,
   ): T;
 
-  export function decodeReply(body: FormData): Promise<unknown[]>;
+  export function decodeReply(body: string | FormData): Promise<unknown[]>;
 
   export function decodeAction(
     body: FormData,
@@ -79,5 +79,5 @@ declare module "react-server-dom-webpack/client.browser" {
     },
   ): Promise<T>;
 
-  export function encodeReply(v: unknown[]): Promise<FormData>;
+  export function encodeReply(v: unknown[]): Promise<string | FormData>;
 }
