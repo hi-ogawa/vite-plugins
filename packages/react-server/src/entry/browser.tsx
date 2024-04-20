@@ -64,7 +64,7 @@ export async function start() {
   __global.callServer = callServer;
 
   // prepare initial layout data from inline <script>
-  // TODO: needs to await for hydration formState?
+  // TODO: needs to await for hydration formState. does it affect startup perf?
   const initialLayout =
     await reactServerDomClient.createFromReadableStream<ServerRouterData>(
       readStreamScript<string>().pipeThrough(new TextEncoderStream()),
@@ -92,7 +92,7 @@ export async function start() {
               ...current.layout,
               ...next.layout,
             },
-          };
+          } satisfies ServerRouterData;
         }),
       );
     };
