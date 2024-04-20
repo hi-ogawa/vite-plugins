@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.18
+
+- feat: support `useActionState` ([#282](https://github.com/hi-ogawa/vite-plugins/pull/282))
+- feat: collect errors from `console.error` ([#293](https://github.com/hi-ogawa/vite-plugins/pull/293))
+- refactor: use official `encodeReply/decodeReply/decodeAction/decodeFormState` ([#282](https://github.com/hi-ogawa/vite-plugins/pull/282))
+- refactor: use official `createServerReference` ([#287](https://github.com/hi-ogawa/vite-plugins/pull/287))
+- refactor: use official `registerServerReference` ([#286](https://github.com/hi-ogawa/vite-plugins/pull/286))
+- refactor: use official `registerClientReference` ([#285](https://github.com/hi-ogawa/vite-plugins/pull/285))
+- refactor: replace `ssrLoadModule` with `import` ([#294](https://github.com/hi-ogawa/vite-plugins/pull/294))
+- fix: fix server action `const/let` transform ([#290](https://github.com/hi-ogawa/vite-plugins/pull/290))
+- fix: preload root js assets ([#277](https://github.com/hi-ogawa/vite-plugins/pull/277))
+- chore: react canary 20240408 ([#280](https://github.com/hi-ogawa/vite-plugins/pull/280))
+
 ## v0.1.17
 
 - fix: consistent history pathname encoding ([#276](https://github.com/hi-ogawa/vite-plugins/pull/276))
