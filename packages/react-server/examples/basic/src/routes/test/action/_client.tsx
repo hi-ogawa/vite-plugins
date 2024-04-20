@@ -114,11 +114,11 @@ type ReactUseActionState = <State, Payload>(
 const useActionState: ReactUseActionState = (React as any).useActionState;
 
 export function ActionDataTest() {
-  const [data, formAction] = useActionState(actionCheckAnswer, null);
+  const [data, formAction, isPending] = useActionState(actionCheckAnswer, null);
 
   return (
     <form action={formAction} className="flex flex-col gap-2">
-      <h4 className="font-bold">Action Data</h4>
+      <h4 className="font-bold">useActionState</h4>
       <div className="flex gap-2">
         <div>1 + 1 = </div>
         <input
@@ -126,13 +126,15 @@ export function ActionDataTest() {
           name="answer"
           placeholder="Answer?"
         />
-        <div>{data?.message}</div>
+        <div data-testid="action-state">
+          {isPending ? "..." : data?.message}
+        </div>
       </div>
     </form>
   );
 }
 
-// TODO
+// TODO(test)
 export function UseActionStateTest() {
   const [data, formAction, isPending] = useActionState(actionStateTest, null);
 
@@ -141,22 +143,21 @@ export function UseActionStateTest() {
   }, [data, isPending]);
 
   return (
-    <form action={formAction} className="flex flex-col gap-2">
+    <form action={formAction} className="flex flex-col items-start gap-2">
       <input type="hidden" name="hello" value="world" />
-      <button className="antd-input p-1 text-sm max-w-30">
-        useActionState Test
-      </button>
+      <button className="antd-input p-1 text-sm">useActionState Test</button>
     </form>
   );
 }
 
+// TODO(test)
 export function ClientActionBindTest() {
-  const formAction = actionBindTest.bind(null, "bound!!");
+  const formAction = actionBindTest.bind(null, "client-bind");
   return (
-    <form action={formAction} className="flex flex-col gap-2">
+    <form action={formAction} className="flex flex-col items-start gap-2">
       <input type="hidden" name="hello" value="world" />
-      <button className="antd-input p-1 text-sm max-w-30">
-        Client Action Bind Test
+      <button className="antd-input p-1 text-sm">
+        Action Bind Test (client)
       </button>
     </form>
   );
@@ -177,7 +178,7 @@ function FormStateTestInner() {
 
   return (
     <>
-      <h4 className="font-bold">Form Status</h4>
+      <h4 className="font-bold">useFormStatus</h4>
       <div className="flex gap-2">
         <button
           className="antd-btn antd-btn-default px-2"

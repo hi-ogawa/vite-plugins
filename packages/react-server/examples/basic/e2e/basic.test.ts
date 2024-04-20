@@ -654,30 +654,63 @@ test("redirect server action @js", async ({ page }) => {
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
-test("action return value @js", async ({ page }) => {
+test("useActionState @js", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/action");
   await waitForHydration(page);
   await testActionReturnValue(page, { js: true });
 });
 
-test("action return value @nojs", async ({ browser }) => {
+test("useActionState @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/action");
   await testActionReturnValue(page, { js: false });
 });
 
-async function testActionReturnValue(page: Page, { js }: { js: boolean }) {
+async function testActionReturnValue(page: Page, options: { js: boolean }) {
   await page.getByPlaceholder("Answer?").fill("3");
   await page.getByPlaceholder("Answer?").press("Enter");
+  if (options.js) {
+    await expect(page.getByTestId("action-state")).toHaveText("...");
+  }
   await page.getByText("Wrong!").click();
-  await expect(page.getByPlaceholder("Answer?")).toHaveValue(js ? "3" : "");
+  await expect(page.getByPlaceholder("Answer?")).toHaveValue(
+    options.js ? "3" : "",
+  );
 
   await page.getByPlaceholder("Answer?").fill("2");
   await page.getByPlaceholder("Answer?").press("Enter");
   await page.getByText("Correct!").click();
 }
+
+// test("action bind client @js", async ({ page }) => {
+//   checkNoError(page);
+//   await page.goto("/test/action");
+//   await waitForHydration(page);
+//   // await testActionReturnValue(page, { js: true });
+// });
+
+// test("action bind client @nojs", async ({ browser }) => {
+//   const page = await browser.newPage({ javaScriptEnabled: false });
+//   checkNoError(page);
+//   await page.goto("/test/action");
+//   // await testActionReturnValue(page, { js: false });
+// });
+
+// test("action bind server @js", async ({ page }) => {
+//   checkNoError(page);
+//   await page.goto("/test/action");
+//   await waitForHydration(page);
+//   // await testActionReturnValue(page, { js: true });
+// });
+
+// test("action bind server @nojs", async ({ browser }) => {
+//   const page = await browser.newPage({ javaScriptEnabled: false });
+//   checkNoError(page);
+//   await page.goto("/test/action");
+//   // await testActionReturnValue(page, { js: false });
+// });
 
 test("action context @js", async ({ page }) => {
   await page.goto("/test/session");
