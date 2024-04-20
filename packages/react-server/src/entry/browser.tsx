@@ -18,7 +18,7 @@ import {
   createEncodedBrowserHistory,
   useRouter,
 } from "../lib/client/router";
-import { __global } from "../lib/global";
+import { $__global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
 import { readStreamScript } from "../utils/stream-script";
 
@@ -61,7 +61,7 @@ export async function start() {
   };
 
   // expose as global to be used for createServerReference
-  __global.callServer = callServer;
+  $__global.callServer = callServer;
 
   // prepare initial layout data from inline <script>
   // TODO: needs to await for hydration formState. does it affect startup perf?

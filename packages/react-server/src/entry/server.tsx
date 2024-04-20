@@ -16,7 +16,7 @@ import {
   getStatusText,
   isRedirectError,
 } from "../lib/error";
-import { __global } from "../lib/global";
+import { $__global } from "../lib/global";
 import {
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
@@ -53,7 +53,7 @@ export async function importReactServer(): Promise<
   typeof import("./react-server")
 > {
   if (import.meta.env.DEV) {
-    return __global.dev.reactServer.ssrLoadModule(
+    return $__global.dev.reactServer.ssrLoadModule(
       ENTRY_REACT_SERVER_WRAPPER,
     ) as any;
   } else {
@@ -109,8 +109,8 @@ export async function renderHtml(
 
   if (import.meta.env.DEV) {
     // ensure latest css
-    invalidateModule(__global.dev.server, "\0virtual:react-server-css.js");
-    invalidateModule(__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
+    invalidateModule($__global.dev.server, "\0virtual:react-server-css.js");
+    invalidateModule($__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
   }
   const assets: SsrAssetsType = (await import("virtual:ssr-assets" as string))
     .default;
@@ -208,10 +208,10 @@ async function devInspectHandler(request: Request) {
   if (data.type === "module") {
     let mod: ModuleNode | undefined;
     if (data.environment === "ssr") {
-      mod = await getModuleNode(__global.dev.server, data.url, true);
+      mod = await getModuleNode($__global.dev.server, data.url, true);
     }
     if (data.environment === "react-server") {
-      mod = await getModuleNode(__global.dev.reactServer, data.url, true);
+      mod = await getModuleNode($__global.dev.reactServer, data.url, true);
     }
     const result = mod && {
       id: mod.id,

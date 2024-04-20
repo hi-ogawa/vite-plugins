@@ -1,7 +1,7 @@
 import React from "react";
 import { RedirectHandler } from "../../lib/client/error-boundary";
 import { isRedirectError } from "../../lib/error";
-import { __global } from "../../lib/global";
+import { $__global } from "../../lib/global";
 import { ActionRedirectHandler } from "../server-action/client";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
