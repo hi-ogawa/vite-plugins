@@ -18,7 +18,7 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
-import { __global } from "../lib/global";
+import { $__global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import {
@@ -84,10 +84,6 @@ export function vitePluginReactServer(options?: {
     clearScreen: false,
     configFile: false,
     cacheDir: "./node_modules/.vite-rsc",
-    server: {
-      // TODO: for now this is to silence build only virtual:... resolution error
-      preTransformRequests: false,
-    },
     optimizeDeps: {
       noDiscovery: true,
       include: [],
@@ -119,45 +115,34 @@ export function vitePluginReactServer(options?: {
       vitePluginServerUseClient({ manager }),
 
       // expose server references for RSC build via virtual module
-      {
-        name: "virtual-rsc-use-server",
-        apply: "build",
-        async buildStart(_options) {
-          // we need to crawl file system to collect server references ("use server")
-          // since we currently needs RSC -> Client -> SSR build pipeline
-          // to collect client references first in RSC.
-          // TODO: what if "use server" is provided from 3rd party library?
-          const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
-            absolute: true,
-            ignore: ["**/node_modules/**"],
-          });
-          for (const file of files) {
-            const data = await fs.promises.readFile(file, "utf-8");
-            if (data.match(/^("use server")|('use server')/)) {
-              manager.rscUseServerIds.add(file);
-            }
+      createVirtualPlugin("server-references", async () => {
+        tinyassert(manager.buildType === "rsc");
+        // we need to crawl file system to collect server references ("use server")
+        // since we currently needs RSC -> Client -> SSR build pipeline
+        // to collect client references first in RSC.
+        // TODO: what if "use server" is provided from 3rd party library?
+        //       as a workaround, users can re-export them locally.
+        const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
+          absolute: true,
+          ignore: ["**/node_modules/**"],
+        });
+        const ids: string[] = [];
+        for (const file of files) {
+          const data = await fs.promises.readFile(file, "utf-8");
+          if (USE_SERVER_RE.test(data)) {
+            ids.push(file);
+            manager.rscUseServerIds.add(file);
           }
-          debug("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
-        },
-        resolveId(source, _importer, _options) {
-          if (source === "virtual:rsc-use-server") {
-            return "\0" + source;
-          }
-          return;
-        },
-        async load(id, _options) {
-          if (id === "\0virtual:rsc-use-server") {
-            let result = `export default {\n`;
-            for (const id of manager.rscUseServerIds) {
-              let key = manager.buildType ? hashString(id) : id;
-              result += `"${key}": () => import("${id}"),\n`;
-            }
-            result += "};\n";
-            return result;
-          }
-          return;
-        },
-      },
+        }
+        let result = `export default {\n`;
+        for (const id of ids) {
+          let key = manager.buildType ? hashString(id) : id;
+          result += `"${key}": () => import("${id}"),\n`;
+        }
+        result += "};\n";
+        debug("[virtual:server-references]", result);
+        return result;
+      }),
 
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
@@ -256,7 +241,7 @@ export function vitePluginReactServer(options?: {
         tinyassert(parentServer);
         const reactServer = await createServer(rscConfig);
         reactServer.pluginContainer.buildStart({});
-        __global.dev = {
+        $__global.dev = {
           server: parentServer,
           reactServer: reactServer,
         };
@@ -273,8 +258,8 @@ export function vitePluginReactServer(options?: {
     },
     async buildEnd(_options) {
       if (parentEnv.command === "serve") {
-        await __global.dev.reactServer.close();
-        delete (__global as any).dev;
+        await $__global.dev.reactServer.close();
+        delete ($__global as any).dev;
       }
     },
     transform(_code, id, _options) {
@@ -300,7 +285,6 @@ export function vitePluginReactServer(options?: {
         // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
         if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
-          // in this case
           for (const m of ctx.modules) {
             for (const imod of m.importers) {
               await parentServer.reloadModule(imod);
@@ -311,17 +295,6 @@ export function vitePluginReactServer(options?: {
       }
       return ctx.modules;
     },
-    resolveId(source, _importer, _options) {
-      // weird trick to silence import analysis error during dev
-      // by pointing to a file which always exists
-      if (
-        parentEnv.command === "serve" &&
-        source === "/dist/rsc/client-references.js"
-      ) {
-        return "/package.json";
-      }
-      return;
-    },
   };
 
   // plugins for main vite dev server (browser / ssr)
@@ -329,6 +302,10 @@ export function vitePluginReactServer(options?: {
     rscParentPlugin,
     vitePluginSilenceUseClientBuildWarning(),
     vitePluginClientUseServer({ manager }),
+    createVirtualPlugin("client-references", () => {
+      tinyassert(manager.buildType && manager.buildType !== "rsc");
+      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
+    }),
     {
       name: "client-virtual-use-client-node-modules",
       resolveId(source, _importer, _options) {
@@ -354,7 +331,7 @@ export function vitePluginReactServer(options?: {
       // dev
       if (!manager.buildType) {
         // extract <head> injected by plugins
-        const html = await __global.dev.server.transformIndexHtml(
+        const html = await $__global.dev.server.transformIndexHtml(
           "/",
           "<html><head></head></html>",
         );
@@ -442,9 +419,9 @@ export function vitePluginReactServer(options?: {
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle(__global.dev.reactServer, [ENTRY_REACT_SERVER]),
+        collectStyle($__global.dev.reactServer, [ENTRY_REACT_SERVER]),
         `/******* client **************/`,
-        collectStyle(__global.dev.server, [ENTRY_CLIENT]),
+        collectStyle($__global.dev.server, [ENTRY_CLIENT]),
       ]);
       return styles.join("\n\n");
     }),
@@ -452,7 +429,7 @@ export function vitePluginReactServer(options?: {
       // virtual module proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        const urls = await collectStyleUrls(__global.dev.reactServer, [
+        const urls = await collectStyleUrls($__global.dev.reactServer, [
           ENTRY_REACT_SERVER,
         ]);
         const code = urls.map((url) => `import "${url}";\n`).join("");

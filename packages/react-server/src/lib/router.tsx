@@ -2,7 +2,6 @@ import { objectHas, sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
-import { __global } from "./global";
 
 // TODO: move to features/router/react-server
 
