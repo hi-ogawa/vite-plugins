@@ -11,7 +11,6 @@ import {
   Counter,
   Counter2,
   FormStateTest,
-  UseActionStateTest,
 } from "./_client";
 
 export default async function Page() {
@@ -24,7 +23,6 @@ export default async function Page() {
       </div>
       <Chat messages={getMessages()} />
       <ActionDataTest />
-      <UseActionStateTest />
       <ServerActionBindTest />
       <ClientActionBindTest />
       <FormStateTest />

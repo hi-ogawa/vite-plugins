@@ -5,7 +5,6 @@ import ReactDom from "react-dom";
 import {
   actionBindTest,
   actionCheckAnswer,
-  actionStateTest,
   addMessage,
   changeCounter,
   type getMessages,
@@ -138,22 +137,6 @@ export function ActionDataTest() {
           ) : null}
         </div>
       </div>
-    </form>
-  );
-}
-
-// TODO(test)
-export function UseActionStateTest() {
-  const [data, formAction, isPending] = useActionState(actionStateTest, null);
-
-  React.useEffect(() => {
-    console.log("[useActionState]", data, isPending);
-  }, [data, isPending]);
-
-  return (
-    <form action={formAction} className="flex flex-col items-start gap-2">
-      <input type="hidden" name="hello" value="world" />
-      <button className="antd-input p-1 text-sm">useActionState Test</button>
     </form>
   );
 }

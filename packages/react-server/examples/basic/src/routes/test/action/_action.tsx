@@ -45,12 +45,6 @@ export async function actionCheckAnswer(
   return { message, count: (prev?.count ?? 0) + 1 };
 }
 
-export async function actionStateTest(prevArg: unknown, formData: FormData) {
-  const result = { prev: prevArg, form: [...formData.entries()] };
-  console.log("[actionStateTest]", result);
-  return result;
-}
-
 export async function actionBindTest(boundArg: string, formData: FormData) {
   console.log("[actionBindTest]", { boundArg, form: [...formData.entries()] });
 }
