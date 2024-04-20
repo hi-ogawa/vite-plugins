@@ -15,17 +15,50 @@ export function changeCounter(formData: FormData) {
 let messageId = 1;
 let messages: [number, string][] = [];
 
-export function getMessages() {
+export let getMessages = () => {
   return messages;
-}
+};
 
-export function addMessage(formData: FormData) {
+export const addMessage = (formData: FormData) => {
   const message = formData.get("message");
   tinyassert(typeof message === "string");
   messages.push([messageId++, message]);
   messages = messages.slice(-5);
-}
+};
 
 export async function slowAction(formData: FormData) {
   await sleep(Number(formData.get("sleep")));
+}
+
+type CheckAnswerState = {
+  message: string;
+  count: number;
+};
+
+export async function actionCheckAnswer(
+  prev: CheckAnswerState | null,
+  formData: FormData,
+) {
+  await sleep(500);
+  const answer = Number(formData.get("answer"));
+  const message = answer === 2 ? "Correct!" : "Wrong!";
+  return { message, count: (prev?.count ?? 0) + 1 };
+}
+
+let actionBindResult = "(none)";
+
+export function getActionBindResult() {
+  return actionBindResult;
+}
+
+export async function actionBindTest(bound: string) {
+  actionBindResult = bound;
+}
+
+let nonFormActionCounter = 0;
+
+export async function nonFormAction(_prev: unknown, delta: number) {
+  await sleep(500);
+  nonFormActionCounter += delta;
+  return nonFormActionCounter;
 }

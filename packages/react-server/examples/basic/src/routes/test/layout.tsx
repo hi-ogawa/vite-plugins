@@ -11,14 +11,17 @@ export default async function Layout(props: LayoutProps) {
         links={[
           "/test",
           "/test/other",
+          "/test/dynamic",
           "/test/action",
           "/test/deps",
           "/test/head",
           "/test/css",
           "/test/error",
-          "/test/not-found",
           "/test/transition",
-          "/test/transition-action",
+          "/test/redirect",
+          "/test/session",
+          "/test/client",
+          "/test/revalidate",
         ]}
       />
       <div className="flex items-center gap-2 text-sm">

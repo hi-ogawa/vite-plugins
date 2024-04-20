@@ -43,3 +43,30 @@ export async function editFile(
   }
   await fs.promises.writeFile(filepath, edit(data));
 }
+
+export async function inspectDevModules<T extends string>(
+  page: Page,
+  urls: readonly T[],
+) {
+  const result = {} as Record<T, Record<"ssr" | "react-server", any>>;
+  for (const url of urls) {
+    result[url] = {
+      ssr: await requestApi(page, {
+        type: "module",
+        environment: "ssr",
+        url,
+      }),
+      "react-server": await requestApi(page, {
+        type: "module",
+        environment: "react-server",
+        url,
+      }),
+    };
+  }
+  return result;
+
+  async function requestApi(page: Page, data: any) {
+    const res = await page.request.post("/__react_server_dev", { data });
+    return await res.json();
+  }
+}

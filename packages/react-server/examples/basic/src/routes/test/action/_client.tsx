@@ -1,11 +1,15 @@
 "use client";
 
+import { useActionState } from "@hiogawa/react-server/client";
 import React from "react";
 import ReactDom from "react-dom";
 import {
+  actionBindTest,
+  actionCheckAnswer,
   addMessage,
   changeCounter,
   type getMessages,
+  nonFormAction,
   slowAction,
 } from "./_action";
 
@@ -97,6 +101,76 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
   );
 }
 
+export function ActionDataTest() {
+  const [data, formAction, isPending] = useActionState(actionCheckAnswer, null);
+
+  return (
+    <form action={formAction} className="flex flex-col gap-2">
+      <h4 className="font-bold">useActionState</h4>
+      <div className="flex gap-2">
+        <div>1 + 1 = </div>
+        <input
+          className="antd-input px-2 max-w-30"
+          name="answer"
+          placeholder="Answer?"
+          required
+        />
+        <div data-testid="action-state">
+          {isPending ? (
+            "..."
+          ) : data ? (
+            <>
+              {data.message} (tried{" "}
+              {data.count === 1 ? "once" : data.count + " times"})
+            </>
+          ) : null}
+        </div>
+      </div>
+    </form>
+  );
+}
+
+export function NonFormActionTest() {
+  const [data, formAction, isPending] = useActionState(nonFormAction, null);
+  return (
+    <form
+      className="flex flex-col gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const delta = Number(formData.get("delta"));
+        formAction(delta);
+      }}
+    >
+      <h4 className="font-bold">Non-form-action action</h4>
+      <div className="flex gap-2">
+        <input
+          className="antd-input px-2 max-w-30"
+          name="delta"
+          placeholder="Number..."
+          required
+        />
+        <button className="antd-btn antd-btn-default px-2">Add</button>
+        <div data-testid="non-form-action-state">
+          {isPending ? "..." : data}
+        </div>
+      </div>
+    </form>
+  );
+}
+
+export function ClientActionBindTest() {
+  const formAction = actionBindTest.bind(null, "client-bind");
+  return (
+    <form action={formAction} className="flex flex-col items-start gap-2">
+      <input type="hidden" name="hello" value="world" />
+      <button className="antd-input p-1 text-sm">
+        Action Bind Test (client)
+      </button>
+    </form>
+  );
+}
+
 // https://react.dev/reference/react-dom/hooks/useFormStatus
 export function FormStateTest() {
   return (
@@ -112,7 +186,7 @@ function FormStateTestInner() {
 
   return (
     <>
-      <h4 className="font-bold">Form Status</h4>
+      <h4 className="font-bold">useFormStatus</h4>
       <div className="flex gap-2">
         <button
           className="antd-btn antd-btn-default px-2"

@@ -2,7 +2,7 @@ import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, memoize, tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { Program } from "estree";
 import fg from "fast-glob";
 import MagicString from "magic-string";
@@ -18,7 +18,7 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
-import { __global } from "../lib/global";
+import { $__global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import {
@@ -31,13 +31,16 @@ import {
 
 const debug = createDebug("react-server:plugin");
 
-// resolve import paths for `createClientReference` and `createServerReference`
-// since `import "@hiogawa/react-server"` is not necessary visible for exernal library.
-const CLIENT_INTERNAL_PATH = fileURLToPath(
-  new URL("../client-internal.js", import.meta.url),
+// resolve import paths for `createClientReference`, `createServerReference`, etc...
+// since `import "@hiogawa/react-server"` is not always visible for exernal library.
+const RUNTIME_BROWSER_PATH = fileURLToPath(
+  new URL("../runtime-browser.js", import.meta.url),
 );
-const SERVER_INTERNAL_PATH = fileURLToPath(
-  new URL("../server-internal.js", import.meta.url),
+const RUNTIME_SERVER_PATH = fileURLToPath(
+  new URL("../runtime-server.js", import.meta.url),
+);
+const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
+  new URL("../runtime-react-server.js", import.meta.url),
 );
 
 // convenient singleton to share states
@@ -84,10 +87,6 @@ export function vitePluginReactServer(options?: {
     clearScreen: false,
     configFile: false,
     cacheDir: "./node_modules/.vite-rsc",
-    server: {
-      // TODO: for now this is to silence build only virtual:... resolution error
-      preTransformRequests: false,
-    },
     optimizeDeps: {
       noDiscovery: true,
       include: [],
@@ -119,45 +118,34 @@ export function vitePluginReactServer(options?: {
       vitePluginServerUseClient({ manager }),
 
       // expose server references for RSC build via virtual module
-      {
-        name: "virtual-rsc-use-server",
-        apply: "build",
-        async buildStart(_options) {
-          // we need to crawl file system to collect server references ("use server")
-          // since we currently needs RSC -> Client -> SSR build pipeline
-          // to collect client references first in RSC.
-          // TODO: what if "use server" is provided from 3rd party library?
-          const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
-            absolute: true,
-            ignore: ["**/node_modules/**"],
-          });
-          for (const file of files) {
-            const data = await fs.promises.readFile(file, "utf-8");
-            if (data.match(/^("use server")|('use server')/)) {
-              manager.rscUseServerIds.add(file);
-            }
+      createVirtualPlugin("server-references", async () => {
+        tinyassert(manager.buildType === "rsc");
+        // we need to crawl file system to collect server references ("use server")
+        // since we currently needs RSC -> Client -> SSR build pipeline
+        // to collect client references first in RSC.
+        // TODO: what if "use server" is provided from 3rd party library?
+        //       as a workaround, users can re-export them locally.
+        const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
+          absolute: true,
+          ignore: ["**/node_modules/**"],
+        });
+        const ids: string[] = [];
+        for (const file of files) {
+          const data = await fs.promises.readFile(file, "utf-8");
+          if (USE_SERVER_RE.test(data)) {
+            ids.push(file);
+            manager.rscUseServerIds.add(file);
           }
-          debug("[virtual-rsc-use-server]", [...manager.rscUseServerIds]);
-        },
-        resolveId(source, _importer, _options) {
-          if (source === "virtual:rsc-use-server") {
-            return "\0" + source;
-          }
-          return;
-        },
-        async load(id, _options) {
-          if (id === "\0virtual:rsc-use-server") {
-            let result = `export default {\n`;
-            for (const id of manager.rscUseServerIds) {
-              let key = manager.buildType ? hashString(id) : id;
-              result += `"${key}": () => import("${id}"),\n`;
-            }
-            result += "};\n";
-            return result;
-          }
-          return;
-        },
-      },
+        }
+        let result = `export default {\n`;
+        for (const id of ids) {
+          let key = manager.buildType ? hashString(id) : id;
+          result += `"${key}": () => import("${id}"),\n`;
+        }
+        result += "};\n";
+        debug("[virtual:server-references]", result);
+        return result;
+      }),
 
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
@@ -169,6 +157,32 @@ export function vitePluginReactServer(options?: {
           `;
         },
       ),
+
+      {
+        name: "patch-react-server-dom-webpack",
+        transform(code, id, _options) {
+          if (id.includes("react-server-dom-webpack")) {
+            // rename webpack markers in react server runtime
+            // to avoid conflict with ssr runtime which shares same globals
+            code = code.replaceAll(
+              "__webpack_require__",
+              "__vite_react_server_webpack_require__",
+            );
+            code = code.replaceAll(
+              "__webpack_chunk_load__",
+              "__vite_react_server_webpack_chunk_load__",
+            );
+
+            // make server reference async for simplicity (stale chunkCache, etc...)
+            // see TODO in https://github.com/facebook/react/blob/33a32441e991e126e5e874f831bd3afc237a3ecf/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js#L131-L132
+            code = code.replaceAll("if (isAsyncImport(metadata))", "if (true)");
+            code = code.replaceAll("4===a.length", "true");
+
+            return code;
+          }
+          return;
+        },
+      },
 
       ...(options?.plugins ?? []),
     ],
@@ -230,7 +244,7 @@ export function vitePluginReactServer(options?: {
         tinyassert(parentServer);
         const reactServer = await createServer(rscConfig);
         reactServer.pluginContainer.buildStart({});
-        __global.dev = {
+        $__global.dev = {
           server: parentServer,
           reactServer: reactServer,
         };
@@ -243,8 +257,8 @@ export function vitePluginReactServer(options?: {
     },
     async closeBundle() {
       if (parentEnv.command === "serve") {
-        await __global.dev.reactServer.close();
-        delete (__global as any).dev;
+        await $__global.dev.reactServer.close();
+        delete ($__global as any).dev;
       }
       if (parentEnv.command === "build" && manager.buildType === "client") {
         manager.buildType = "ssr";
@@ -278,7 +292,6 @@ export function vitePluginReactServer(options?: {
         // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
         if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
-          // in this case
           for (const m of ctx.modules) {
             for (const imod of m.importers) {
               await parentServer.reloadModule(imod);
@@ -289,23 +302,17 @@ export function vitePluginReactServer(options?: {
       }
       return ctx.modules;
     },
-    resolveId(source, _importer, _options) {
-      // weird trick to silence import analysis error during dev
-      // by pointing to a file which always exists
-      if (
-        parentEnv.command === "serve" &&
-        source === "/dist/rsc/client-references.js"
-      ) {
-        return "/package.json";
-      }
-      return;
-    },
   };
 
+  // plugins for main vite dev server (browser / ssr)
   return [
     rscParentPlugin,
     vitePluginSilenceUseClientBuildWarning(),
     vitePluginClientUseServer({ manager }),
+    createVirtualPlugin("client-references", () => {
+      tinyassert(manager.buildType && manager.buildType !== "rsc");
+      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
+    }),
     {
       name: "client-virtual-use-client-node-modules",
       resolveId(source, _importer, _options) {
@@ -331,7 +338,7 @@ export function vitePluginReactServer(options?: {
       // dev
       if (!manager.buildType) {
         // extract <head> injected by plugins
-        const html = await __global.dev.server.transformIndexHtml(
+        const html = await $__global.dev.server.transformIndexHtml(
           "/",
           "<html><head></head></html>",
         );
@@ -374,9 +381,15 @@ export function vitePluginReactServer(options?: {
         );
         const entry = manifest[ENTRY_CLIENT_WRAPPER];
         tinyassert(entry);
-        const head = (entry.css ?? [])
-          .map((url) => `<link rel="stylesheet" href="/${url}" />`)
-          .join("");
+        const css = entry.css ?? [];
+        const js =
+          entry.dynamicImports
+            ?.map((k) => manifest[k]?.file)
+            .filter(typedBoolean) ?? [];
+        const head = [
+          ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
+          ...js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
+        ].join("\n");
         const result: SsrAssetsType = {
           bootstrapModules: [`/${entry.file}`],
           head,
@@ -400,9 +413,11 @@ export function vitePluginReactServer(options?: {
       }
       // build
       if (manager.buildType === "client") {
+        // import "runtime-client" for preload
         return /* js */ `
           import "virtual:react-server-css.js";
-          import "${ENTRY_CLIENT}"
+          import("@hiogawa/react-server/runtime-client");
+          import "${ENTRY_CLIENT}";
         `;
       }
       tinyassert(false);
@@ -411,9 +426,9 @@ export function vitePluginReactServer(options?: {
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle(__global.dev.reactServer, [ENTRY_REACT_SERVER]),
+        collectStyle($__global.dev.reactServer, [ENTRY_REACT_SERVER]),
         `/******* client **************/`,
-        collectStyle(__global.dev.server, [ENTRY_CLIENT]),
+        collectStyle($__global.dev.server, [ENTRY_CLIENT]),
       ]);
       return styles.join("\n\n");
     }),
@@ -421,7 +436,7 @@ export function vitePluginReactServer(options?: {
       // virtual module proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        const urls = await collectStyleUrls(__global.dev.reactServer, [
+        const urls = await collectStyleUrls($__global.dev.reactServer, [
           ENTRY_REACT_SERVER,
         ]);
         const code = urls.map((url) => `import "${url}";\n`).join("");
@@ -447,8 +462,8 @@ transform "use client" directive on react server code
 export function Counter() {}
 
 [output]
-import { createClientReference } from "/src/runtime/rsc"
-export const Counter = createClientReference("<id>::Counter");
+import { registerClientReference as $$register } from "...runtime..."
+export const Counter = $$register("<id>", "Counter");
 */
 function vitePluginServerUseClient({
   manager,
@@ -503,15 +518,7 @@ function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = noramlizeClientReferenceId(id);
-        let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
-        for (const name of exportNames) {
-          if (name === "default") {
-            result += `const $$default = createClientReference("${id}::${name}");\n`;
-            result += `export default $$default;\n`;
-          } else {
-            result += `export const ${name} = createClientReference("${id}::${name}");\n`;
-          }
-        }
+        const result = generateClientReferenceCode(id, exportNames);
         debug("[rsc.use-client-node-modules.load]", {
           source,
           meta,
@@ -543,15 +550,7 @@ function vitePluginServerUseClient({
         // obfuscate reference
         id = hashString(id);
       }
-      let result = `import { createClientReference } from "${SERVER_INTERNAL_PATH}";\n`;
-      for (const name of exportNames) {
-        if (name === "default") {
-          result += `const $$default = createClientReference("${id}::${name}");\n`;
-          result += `export default $$default;\n`;
-        } else {
-          result += `export const ${name} = createClientReference("${id}::${name}");\n`;
-        }
-      }
+      const result = generateClientReferenceCode(id, exportNames);
       debug(`[${vitePluginServerUseClient.name}:transform]`, {
         id,
         exportNames,
@@ -568,8 +567,8 @@ function vitePluginServerUseClient({
      *   "some-file1": () => import("some-file1"),
      * }
      */
-    writeBundle: {
-      async handler(options, _bundle) {
+    closeBundle: {
+      async handler() {
         let result = `export default {\n`;
         for (let id of manager.rscUseClientIds) {
           // virtual module needs to be mapped back to the original form
@@ -580,15 +579,24 @@ function vitePluginServerUseClient({
           result += `"${id}": () => import("${to}"),\n`;
         }
         result += "};\n";
-        tinyassert(options.dir);
-        await fs.promises.writeFile(
-          path.join(options.dir, "client-references.js"),
-          result,
-        );
+        await fs.promises.writeFile("dist/rsc/client-references.js", result);
       },
     },
   };
   return [pluginUseClientNodeModules, pluginUseClientLocal];
+}
+
+function generateClientReferenceCode(id: string, exportNames: Set<string>) {
+  let result = `import { registerClientReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`;
+  for (const name of exportNames) {
+    if (name === "default") {
+      result += `const $$default = $$register("${id}", "${name}");\n`;
+      result += `export default $$default;\n`;
+    } else {
+      result += `export const ${name} = $$register("${id}", "${name}");\n`;
+    }
+  }
+  return result;
 }
 
 // Apply same noramlizaion as Vite's dev import analysis
@@ -609,15 +617,15 @@ function noramlizeClientReferenceId(id: string) {
 }
 
 /*
-transform "use server" directive
+transform "use server" directive on client
 
 [input]
 "use server"
 export function hello() {}
 
 [output] (client / ssr)
-import { createServerReference } from "/src/runtime/shared"
-export const hello = createServerReference("<id>::hello");
+import { createServerReference } from "...runtime..."
+export const hello = createServerReference("<id>#hello");
 */
 function vitePluginClientUseServer({
   manager,
@@ -626,7 +634,7 @@ function vitePluginClientUseServer({
 }): Plugin {
   return {
     name: vitePluginClientUseServer.name,
-    async transform(code, id, _options) {
+    async transform(code, id, options) {
       if (!code.match(USE_SERVER_RE)) {
         return;
       }
@@ -647,13 +655,13 @@ function vitePluginClientUseServer({
       if (manager.buildType) {
         id = hashString(id);
       }
-      let result = `import { createServerReference } from "${CLIENT_INTERNAL_PATH}";\n`;
+      let result = `import { createServerReference as $$create } from "${options?.ssr ? RUNTIME_SERVER_PATH : RUNTIME_BROWSER_PATH}";\n`;
       for (const name of exportNames) {
         if (name === "default") {
-          result += `const $$default = createServerReference("${id}::${name}");\n`;
+          result += `const $$default = $$create("${id}#${name}");\n`;
           result += `export default $$default;\n`;
         } else {
-          result += `export const ${name} = createServerReference("${id}::${name}");\n`;
+          result += `export const ${name} = $$create("${id}#${name}");\n`;
         }
       }
       return result;
@@ -661,6 +669,19 @@ function vitePluginClientUseServer({
   };
 }
 
+/*
+transform "use server" directive on react-server
+
+[input]
+"use server"
+export function hello() { ... }
+
+[output]
+import { registerServerReference } from "...runtime..."
+
+export function hello() { ... }
+hello = createServerReference(hello, "<id>", "hello");
+*/
 function vitePluginServerUseServer({
   manager,
 }: {
@@ -676,24 +697,24 @@ function vitePluginServerUseServer({
       const ast: Program = await parseAstAsync(code);
       const mcode = new MagicString(code);
       const exportNames = getExportNames(ast, { toWritable: { code: mcode } });
-      debug(`[${vitePluginServerUseServer.name}:transform]`, {
-        id,
-        exportNames,
-      });
       mcode.prepend(
-        `import { createServerReference } from "${SERVER_INTERNAL_PATH}";\n`,
+        `import { registerServerReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`,
       );
       // obfuscate reference
       if (manager.buildType) {
         id = hashString(id);
       }
       for (const name of exportNames) {
-        mcode.append(
-          `${name} = createServerReference("${id}::${name}", ${name});\n`,
-        );
+        mcode.append(`${name} = $$register(${name}, "${id}", "${name}");\n`);
       }
+      const outCode = mcode.toString();
+      debug(`[${vitePluginServerUseServer.name}:transform]`, {
+        id,
+        exportNames,
+        outCode,
+      });
       return {
-        code: mcode.toString(),
+        code: outCode,
         map: mcode.generateMap(),
       };
     },

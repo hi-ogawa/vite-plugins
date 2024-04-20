@@ -1,11 +1,7 @@
-import { createDebug } from "@hiogawa/utils";
-
-const debug = createDebug("react-server:default");
-
-// TODO: accomodate redirection error convention?
 // TODO: custom (de)serialization?
 export interface ReactServerErrorContext {
   status: number;
+  headers?: Record<string, string>;
 }
 
 export class ReactServerDigestError extends Error {
@@ -17,6 +13,27 @@ export class ReactServerDigestError extends Error {
 export function createError(ctx: ReactServerErrorContext) {
   const digest = `__REACT_SERVER_ERROR__:${JSON.stringify(ctx)}`;
   return new ReactServerDigestError(digest);
+}
+
+export function redirect(
+  location: string,
+  options?: { status?: number; headers?: Record<string, string> },
+) {
+  return createError({
+    status: options?.status ?? 302,
+    headers: {
+      ...options?.headers,
+      location,
+    },
+  });
+}
+
+export function isRedirectError(ctx: ReactServerErrorContext) {
+  const location = ctx.headers?.["location"];
+  if (300 <= ctx.status && ctx.status <= 399 && typeof location === "string") {
+    return { location };
+  }
+  return false;
 }
 
 export function getErrorContext(
@@ -32,12 +49,14 @@ export function getErrorContext(
       try {
         return JSON.parse(m[1]);
       } catch (e) {
-        debug("[getErrorContext]", e);
+        console.error(e);
       }
     }
   }
   return;
 }
+
+export const DEFAULT_ERROR_CONTEXT: ReactServerErrorContext = { status: 500 };
 
 const STATUS_TEXT_MAP = new Map([
   [400, "Bad Request"],

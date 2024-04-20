@@ -1,3 +1,5 @@
+import type { ActionResult } from "../server-action/react-server";
+
 export type LayoutRequest = Record<
   string,
   {
@@ -6,9 +8,10 @@ export type LayoutRequest = Record<
   }
 >;
 
-export type ServerLayoutData = Record<string, React.ReactNode>;
-
-export type ClientLayoutData = Record<string, Promise<React.ReactNode>>;
+export type ServerRouterData = {
+  action?: Pick<ActionResult, "error" | "data">;
+  layout: Record<string, React.ReactNode>;
+};
 
 export const LAYOUT_ROOT_NAME = "__root";
 

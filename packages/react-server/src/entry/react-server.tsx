@@ -2,20 +2,32 @@ import {
   createDebug,
   objectMapKeys,
   objectMapValues,
-  objectPickBy,
+  objectPick,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import reactServerDomServer from "react-server-dom-webpack/server.edge";
 import {
   type LayoutRequest,
-  type ServerLayoutData,
-  createLayoutContentRequest,
+  type ServerRouterData,
 } from "../features/router/utils";
-import { ejectActionId } from "../features/server-action/utils";
-import { unwrapRscRequest } from "../features/server-component/utils";
+import { runActionContext } from "../features/server-action/context";
+import {
+  ActionContext,
+  type ActionResult,
+  createActionBundlerConfig,
+  importServerAction,
+  initializeWebpackReactServer,
+  serverReferenceImportPromiseCache,
+} from "../features/server-action/react-server";
+import { unwrapStreamActionRequest } from "../features/server-action/utils";
+import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
-import { ReactServerDigestError, createError } from "../lib/error";
-import { __global } from "../lib/global";
+import {
+  DEFAULT_ERROR_CONTEXT,
+  ReactServerDigestError,
+  createError,
+  getErrorContext,
+} from "../lib/error";
 import { generateRouteTree, renderRouteMap } from "../lib/router";
 
 const debug = createDebug("react-server:rsc");
@@ -31,7 +43,7 @@ export interface ReactServerHandlerContext {
 
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
-  layoutRequest: LayoutRequest;
+  actionResult?: ActionResult;
 }
 
 export type ReactServerHandlerResult =
@@ -39,34 +51,35 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
+  initializeWebpackReactServer();
+
+  if (import.meta.env.DEV) {
+    serverReferenceImportPromiseCache.clear();
+  }
+
   // action
+  let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
-    await actionHandler(ctx);
+    actionResult = await actionHandler(ctx);
   }
 
-  // check rsc-only request
-  const rscOnly = unwrapRscRequest(ctx.request);
-  const request = rscOnly?.request ?? ctx.request;
-  const url = new URL(request.url);
-  let layoutRequest = createLayoutContentRequest(url.pathname);
+  // check stream only request
+  const { request, layoutRequest, isStream } = unwrapStreamRequest(
+    ctx.request,
+    actionResult,
+  );
+  const stream = await render({ request, layoutRequest, actionResult });
 
-  if (rscOnly) {
-    layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
-      rscOnly.newKeys.includes(k),
-    );
-  }
-
-  const stream = await render({ request, layoutRequest });
-
-  if (rscOnly) {
+  if (isStream) {
     return new Response(stream, {
       headers: {
+        ...actionResult?.responseHeaders,
         "content-type": "text/x-component; charset=utf-8",
       },
     });
   }
 
-  return { stream, layoutRequest };
+  return { stream, actionResult };
 };
 
 //
@@ -76,9 +89,11 @@ export const handler: ReactServerHandler = async (ctx) => {
 async function render({
   request,
   layoutRequest,
+  actionResult,
 }: {
   request: Request;
   layoutRequest: LayoutRequest;
+  actionResult?: ActionResult;
 }) {
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
@@ -86,8 +101,13 @@ async function render({
     (v) => result[`${v.type}s`][v.name],
   );
   const bundlerConfig = createBundlerConfig();
-  return reactServerDomServer.renderToReadableStream<ServerLayoutData>(
-    nodeMap,
+  return reactServerDomServer.renderToReadableStream<ServerRouterData>(
+    {
+      layout: nodeMap,
+      action: actionResult
+        ? objectPick(actionResult, ["data", "error"])
+        : undefined,
+    },
     bundlerConfig,
     {
       onError: reactServerOnError,
@@ -103,6 +123,9 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
     error,
     errorInfo,
   });
+  if (!(error instanceof ReactServerDigestError)) {
+    console.error("[react-server:renderToReadableStream]", error);
+  }
   const serverError =
     error instanceof ReactServerDigestError
       ? error
@@ -135,26 +158,45 @@ function createRouter() {
 // server action
 //
 
+// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
-  const formData = await request.formData();
-  if (0) {
-    // TODO: proper decoding?
-    await reactServerDomServer.decodeReply(formData);
-  }
-  const id = ejectActionId(formData);
-
-  let action: Function;
-  const [file, name] = id.split("::") as [string, string];
-  if (import.meta.env.DEV) {
-    const mod: any = await __global.dev.reactServer.ssrLoadModule(file);
-    action = mod[name];
+  const context = new ActionContext(request);
+  const streamAction = unwrapStreamActionRequest(request);
+  let boundAction: Function;
+  if (streamAction) {
+    const contentType = request.headers.get("content-type");
+    const body = contentType?.startsWith("multipart/form-data")
+      ? await request.formData()
+      : await request.text();
+    const args = await reactServerDomServer.decodeReply(body);
+    const action = await importServerAction(streamAction.id);
+    boundAction = () => action.apply(null, args);
   } else {
-    // include all "use server" files via virtual module on build
-    const virtual = await import("virtual:rsc-use-server" as string);
-    const mod = await virtual.default[file]();
-    action = mod[name];
+    const formData = await request.formData();
+    const decodedAction = await reactServerDomServer.decodeAction(
+      formData,
+      createActionBundlerConfig(),
+    );
+    boundAction = async () => {
+      const result = await decodedAction();
+      const formState = await reactServerDomServer.decodeFormState(
+        result,
+        formData,
+      );
+      return formState;
+    };
   }
 
-  // TODO: action return value?
-  await action(formData);
+  const result: ActionResult = { context };
+  try {
+    result.data = await runActionContext(context, () => boundAction());
+  } catch (e) {
+    result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+  } finally {
+    result.responseHeaders = {
+      ...context.responseHeaders,
+      ...result.error?.headers,
+    };
+  }
+  return result;
 }

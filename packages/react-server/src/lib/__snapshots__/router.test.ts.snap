@@ -7,13 +7,31 @@ exports[`generateRouteTree > basic > (0) "/" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
     <//layout.tsx>,
   },
   "pages": {
@@ -21,7 +39,23 @@ exports[`generateRouteTree > basic > (0) "/" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
         }
       }
     />,
@@ -36,24 +70,60 @@ exports[`generateRouteTree > basic > (1) "/other" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/other",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/other",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/other",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
     <//layout.tsx>,
-    "/other": <LayoutContent
-      name="/other"
-    />,
+    "/other": <RedirectBoundary>
+      <LayoutContent
+        name="/other"
+      />
+    </RedirectBoundary>,
   },
   "pages": {
     "/other": </other/page.tsx
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/other",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/other",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/other",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
         }
       }
     />,
@@ -68,24 +138,60 @@ exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/not-found",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/not-found",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/not-found",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
     <//layout.tsx>,
-    "/not-found": <LayoutContent
-      name="/not-found"
-    />,
+    "/not-found": <RedirectBoundary>
+      <LayoutContent
+        name="/not-found"
+      />
+    </RedirectBoundary>,
   },
   "pages": {
     "/not-found": <ThrowNotFound
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/not-found",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/not-found",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/not-found",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
         }
       }
     />,
@@ -100,25 +206,61 @@ exports[`generateRouteTree > basic > (3) "/test" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
     <//layout.tsx>,
     "/test": </test/layout.tsx
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/test"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/test"
+        />
+      </RedirectBoundary>
     <//test/layout.tsx>,
   },
   "pages": {
@@ -126,7 +268,23 @@ exports[`generateRouteTree > basic > (3) "/test" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
         }
       }
     />,
@@ -141,36 +299,90 @@ exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test/other",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test/other",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test/other",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
     <//layout.tsx>,
     "/test": </test/layout.tsx
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test/other",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test/other",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test/other",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/test"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/test"
+        />
+      </RedirectBoundary>
     <//test/layout.tsx>,
-    "/test/other": <LayoutContent
-      name="/test/other"
-    />,
+    "/test/other": <RedirectBoundary>
+      <LayoutContent
+        name="/test/other"
+      />
+    </RedirectBoundary>,
   },
   "pages": {
     "/test/other": </test/other/page.tsx
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test/other",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test/other",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test/other",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
         }
       }
     />,
@@ -185,29 +397,67 @@ exports[`generateRouteTree > basic > (5) "/test/not-found" 1`] = `
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test/not-found",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test/not-found",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test/not-found",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
     <//layout.tsx>,
     "/test": </test/layout.tsx
       params={{}}
       request={
         {
+          "headers": {},
           "url": "https://test.local/test/not-found",
         }
       }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test/not-found",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test/not-found",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
     >
-      <LayoutContent
-        name="/test"
-      />
+      <RedirectBoundary>
+        <LayoutContent
+          name="/test"
+        />
+      </RedirectBoundary>
     <//test/layout.tsx>,
-    "/test/not-found": <LayoutContent
-      name="/test/not-found"
-    />,
+    "/test/not-found": <RedirectBoundary>
+      <LayoutContent
+        name="/test/not-found"
+      />
+    </RedirectBoundary>,
   },
   "pages": {
     "/test/not-found": </test/[dynamic]/page.tsx
@@ -218,7 +468,23 @@ exports[`generateRouteTree > basic > (5) "/test/not-found" 1`] = `
       }
       request={
         {
+          "headers": {},
           "url": "https://test.local/test/not-found",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/test/not-found",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/test/not-found",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
         }
       }
     />,

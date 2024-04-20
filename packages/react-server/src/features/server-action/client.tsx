@@ -1,41 +1,38 @@
-import { __global } from "../../lib/global";
-import { injectActionId } from "./utils";
+import React from "react";
+import { RedirectBoundary } from "../../runtime-client";
+import { createError } from "../../server";
+import { LayoutStateContext } from "../router/client";
 
-// https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
-// https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-client/src/ReactFlightReplyClient.js#L671-L678
-
-export function createServerReference(id: string): React.FC {
-  return Object.defineProperties(
-    (...args: unknown[]) => {
-      return __global.callServer(id, args);
-    },
-    {
-      $$typeof: {
-        value: Symbol.for("react.server.reference"),
-      },
-      $$id: {
-        value: id,
-        configurable: true,
-      },
-      $$bound: { value: null, configurable: true },
-      $$FORM_ACTION: {
-        value: (name: string) => {
-          const data = new FormData();
-          injectActionId(data, id);
-          return {
-            name,
-            method: "POST",
-            encType: "multipart/form-data",
-            data,
-          };
-        },
-      },
-      bind: {
-        value: () => {
-          throw new Error("todo: createServerReference.bind");
-        },
-        configurable: true,
-      },
-    },
-  ) as any;
+export function ActionRedirectHandler() {
+  return (
+    <RedirectBoundary>
+      <ThrowActionError />
+    </RedirectBoundary>
+  );
 }
+
+// TODO: how to trigger nearest error page on action error?
+function ThrowActionError() {
+  const ctx = React.useContext(LayoutStateContext);
+  const data = React.use(ctx.data);
+  if (data.action?.error) {
+    throw createError(data.action?.error);
+  }
+  return null;
+}
+
+// re-export React.useActionState since the type is not officially available yet
+export const useActionState: ReactUseActionState = (...args) =>
+  (React as any).useActionState(...args);
+
+// type is copied from ReactDOM.useFormState
+// https://github.com/facebook/react/pull/28491
+type ReactUseActionState = <State, Payload>(
+  action: (state: Awaited<State>, payload: Payload) => State | Promise<State>,
+  initialState: Awaited<State>,
+  permalink?: string,
+) => [
+  state: Awaited<State>,
+  dispatch: (payload: Payload) => void,
+  isPending: boolean,
+];

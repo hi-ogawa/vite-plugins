@@ -4,12 +4,19 @@ name: ci
     branches:
       - main
   pull_request:
+
+# copied from vitest
+# https://github.com/vitest-dev/vitest/blob/e4e939ba2ab48c67ee14b82ec957fc9a8a52756c/.github/workflows/ci.yml#L12-L14
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: corepack enable
@@ -22,8 +29,8 @@ jobs:
   test-react-server:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: corepack enable
@@ -38,8 +45,8 @@ jobs:
   test-vite-node-miniflare:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: corepack enable
@@ -54,8 +61,8 @@ jobs:
   test-vite-glob-routes:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: corepack enable

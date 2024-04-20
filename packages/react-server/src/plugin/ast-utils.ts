@@ -39,7 +39,7 @@ export function getExportNames(
            * export const foo = 1, bar = 2
            */
           // replace "const" to "let"
-          if (toWritable) {
+          if (node.declaration.kind === "const" && toWritable) {
             toWritable.code.remove(
               node.declaration.start,
               node.declaration.start + 5,
@@ -110,5 +110,5 @@ export function getExportNames(
   return exportNames;
 }
 
-export const USE_CLIENT_RE = /^("use client")|('use client')/;
-export const USE_SERVER_RE = /^("use server")|('use server')/;
+export const USE_CLIENT_RE = /^("use client"|'use client')/;
+export const USE_SERVER_RE = /^("use server"|'use server')/;

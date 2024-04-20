@@ -4,6 +4,7 @@ import {
 } from "@hiogawa/react-server/entry-react-server";
 
 export const handler: ReactServerHandler = async (ctx) => {
+  // custom handler example
   const url = new URL(ctx.request.url);
   if (url.pathname === "/test/__rpc") {
     return new Response(JSON.stringify({ hello: "world" }), {

@@ -21,6 +21,10 @@ export function GlobalProgress() {
           isActionPending ? "opacity-100" : "opacity-0",
         )}
       ></div>
+      <div
+        data-testid="transition"
+        data-test-transition={JSON.stringify({ isPending, isActionPending })}
+      />
     </>
   );
 }

@@ -28,7 +28,7 @@ async function ssrImport(id: string) {
     return import(/* @vite-ignore */ id);
   } else {
     const clientReferences = await import(
-      "/dist/rsc/client-references.js" as string
+      "virtual:client-references" as string
     );
     const dynImport = clientReferences.default[id];
     tinyassert(dynImport, `client reference not found '${id}'`);
