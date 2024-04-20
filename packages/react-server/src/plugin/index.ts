@@ -285,7 +285,6 @@ export function vitePluginReactServer(options?: {
         // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
         if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
-          // in this case
           for (const m of ctx.modules) {
             for (const imod of m.importers) {
               await parentServer.reloadModule(imod);
