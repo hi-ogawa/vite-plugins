@@ -115,7 +115,7 @@ export function vitePluginReactServer(options?: {
       vitePluginServerUseClient({ manager }),
 
       // expose server references for RSC build via virtual module
-      createVirtualPlugin("rsc-use-server", async () => {
+      createVirtualPlugin("server-references", async () => {
         tinyassert(manager.buildType === "rsc");
         // we need to crawl file system to collect server references ("use server")
         // since we currently needs RSC -> Client -> SSR build pipeline
@@ -140,7 +140,7 @@ export function vitePluginReactServer(options?: {
           result += `"${key}": () => import("${id}"),\n`;
         }
         result += "};\n";
-        debug("[virtual-rsc-use-server]", result);
+        debug("[virtual:server-references]", result);
         return result;
       }),
 
