@@ -674,14 +674,14 @@ async function testActionReturnValue(page: Page, options: { js: boolean }) {
   if (options.js) {
     await expect(page.getByTestId("action-state")).toHaveText("...");
   }
-  await page.getByText("Wrong!").click();
+  await page.getByText("Wrong! (tried once)").click();
   await expect(page.getByPlaceholder("Answer?")).toHaveValue(
     options.js ? "3" : "",
   );
 
   await page.getByPlaceholder("Answer?").fill("2");
   await page.getByPlaceholder("Answer?").press("Enter");
-  await page.getByText("Correct!").click();
+  await page.getByText("Correct! (tried 2 times)").click();
 }
 
 // test("action bind client @js", async ({ page }) => {

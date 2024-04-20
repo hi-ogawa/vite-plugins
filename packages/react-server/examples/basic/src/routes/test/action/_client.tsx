@@ -125,9 +125,17 @@ export function ActionDataTest() {
           className="antd-input px-2 max-w-30"
           name="answer"
           placeholder="Answer?"
+          required
         />
         <div data-testid="action-state">
-          {isPending ? "..." : data?.message}
+          {isPending ? (
+            "..."
+          ) : data ? (
+            <>
+              {data.message} (tried{" "}
+              {data.count === 1 ? "once" : data.count + " times"})
+            </>
+          ) : null}
         </div>
       </div>
     </form>

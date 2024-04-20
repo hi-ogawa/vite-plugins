@@ -30,11 +30,19 @@ export async function slowAction(formData: FormData) {
   await sleep(Number(formData.get("sleep")));
 }
 
-export async function actionCheckAnswer(_prev: unknown, formData: FormData) {
+type CheckAnswerState = {
+  message: string;
+  count: number;
+};
+
+export async function actionCheckAnswer(
+  prev: CheckAnswerState | null,
+  formData: FormData,
+) {
   await sleep(500);
   const answer = Number(formData.get("answer"));
   const message = answer === 2 ? "Correct!" : "Wrong!";
-  return { message };
+  return { message, count: (prev?.count ?? 0) + 1 };
 }
 
 export async function actionStateTest(prevArg: unknown, formData: FormData) {
