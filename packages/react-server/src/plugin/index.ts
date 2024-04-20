@@ -131,6 +131,7 @@ export function vitePluginReactServer(options?: {
           const data = await fs.promises.readFile(file, "utf-8");
           if (USE_SERVER_RE.test(data)) {
             ids.push(file);
+            manager.rscUseServerIds.add(file);
           }
         }
         let result = `export default {\n`;
