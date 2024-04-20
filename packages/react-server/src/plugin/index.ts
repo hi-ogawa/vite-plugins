@@ -17,7 +17,10 @@ import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
 } from "../features/server-action/plugin";
-import { vitePluginServerUseClient } from "../features/use-client/plugin";
+import {
+  vitePluginClientUseClient,
+  vitePluginServerUseClient,
+} from "../features/use-client/plugin";
 import { $__global } from "../lib/global";
 import { USE_SERVER_RE } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
@@ -317,31 +320,11 @@ export function vitePluginReactServer(options?: {
       runtimePath: RUNTIME_BROWSER_PATH,
       ssrRuntimePath: RUNTIME_SERVER_PATH,
     }),
+    vitePluginClientUseClient({ manager }),
     createVirtualPlugin("client-references", () => {
       tinyassert(manager.buildType && manager.buildType !== "rsc");
       return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
     }),
-    {
-      name: "client-virtual-use-client-node-modules",
-      resolveId(source, _importer, _options) {
-        if (source.startsWith("virtual:use-client-node-module/")) {
-          return "\0" + source;
-        }
-        return;
-      },
-      load(id, _options) {
-        if (id.startsWith("\0virtual:use-client-node-module/")) {
-          const source = id.slice("\0virtual:use-client-node-module/".length);
-          const meta = manager.nodeModules.useClient.get(source);
-          debug("[parent.use-client-node-modules]", { source, meta });
-          tinyassert(meta);
-          return `export {${[...meta.exportNames].join(
-            ", ",
-          )}} from "${source}"`;
-        }
-        return;
-      },
-    },
     createVirtualPlugin("ssr-assets", async () => {
       // dev
       if (!manager.buildType) {

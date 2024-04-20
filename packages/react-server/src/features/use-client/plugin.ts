@@ -15,7 +15,7 @@ transform "use client" directive on react server code
 "use client"
 export function Counter() {}
 
-[output]
+[output] (react-server)
 import { registerClientReference as $$register } from "...runtime..."
 export const Counter = $$register("<id>", "Counter");
 */
@@ -54,7 +54,7 @@ export function vitePluginServerUseClient({
               id,
               exportNames: new Set(),
             });
-            return `\0virtual:use-client-node-module/${source}`;
+            return `\0${VIRTUAL_PREFIX}${source}`;
           }
         }
         return;
@@ -62,8 +62,8 @@ export function vitePluginServerUseClient({
       return;
     } satisfies Plugin["resolveId"]),
     async load(id, _options) {
-      if (id.startsWith("\0virtual:use-client-node-module/")) {
-        const source = id.slice("\0virtual:use-client-node-module/".length);
+      if (id.startsWith(`\0${VIRTUAL_PREFIX}`)) {
+        const source = id.slice(`\0${VIRTUAL_PREFIX}`.length);
         const meta = manager.nodeModules.useClient.get(source);
         tinyassert(meta);
         // node_modules is already transpiled so we can parse it right away
@@ -178,4 +178,32 @@ export function noramlizeClientReferenceId(id: string) {
     id = id.startsWith(`/@id`) ? id : `/@id/${id.replace("\0", "__x00__")}`;
   }
   return id;
+}
+
+const VIRTUAL_PREFIX = "virtual:use-client-node-module/";
+
+export function vitePluginClientUseClient({
+  manager,
+}: {
+  manager: ReactServerManager;
+}): Plugin {
+  return {
+    name: vitePluginClientUseClient.name,
+    resolveId(source, _importer, _options) {
+      if (source.startsWith(VIRTUAL_PREFIX)) {
+        return "\0" + source;
+      }
+      return;
+    },
+    load(id, _options) {
+      if (id.startsWith(`\0${VIRTUAL_PREFIX}`)) {
+        const source = id.slice(`\0${VIRTUAL_PREFIX}`.length);
+        const meta = manager.nodeModules.useClient.get(source);
+        debug("[parent.use-client-node-modules]", { source, meta });
+        tinyassert(meta);
+        return `export {${[...meta.exportNames].join(", ")}} from "${source}"`;
+      }
+      return;
+    },
+  };
 }
