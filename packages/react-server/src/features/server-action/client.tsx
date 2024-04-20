@@ -1,24 +1,8 @@
-import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { __global } from "../../lib/global";
 import { RedirectBoundary } from "../../runtime-client";
 import { createError } from "../../server";
 import { LayoutStateContext } from "../router/client";
-
-export function useActionData<T extends (...args: any[]) => any>(
-  action: T,
-): Awaited<ReturnType<T>> | undefined {
-  const actionId = (action as any).$$id;
-  tinyassert(actionId);
-  const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
-  if (data.action) {
-    if (data.action.id === actionId) {
-      return data.action.data as any;
-    }
-  }
-  return;
-}
 
 export function ActionRedirectHandler() {
   return (
@@ -37,3 +21,19 @@ function ThrowActionError() {
   }
   return null;
 }
+
+// re-export React.useActionState since the type is not officially available yet
+export const useActionState: ReactUseActionState = (...args) =>
+  (React as any).useActionState(...args);
+
+// type is copied from ReactDOM.useFormState
+// https://github.com/facebook/react/pull/28491
+type ReactUseActionState = <State, Payload>(
+  action: (state: Awaited<State>, payload: Payload) => State | Promise<State>,
+  initialState: Awaited<State>,
+  permalink?: string,
+) => [
+  state: Awaited<State>,
+  dispatch: (payload: Payload) => void,
+  isPending: boolean,
+];

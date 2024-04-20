@@ -10,11 +10,16 @@ import {
   type LayoutRequest,
   type ServerRouterData,
 } from "../features/router/utils";
+import { runActionContext } from "../features/server-action/context";
 import {
   ActionContext,
   type ActionResult,
+  createActionBundlerConfig,
+  importServerAction,
+  initializeWebpackReactServer,
+  serverReferenceImportPromiseCache,
 } from "../features/server-action/react-server";
-import { ejectActionId } from "../features/server-action/utils";
+import { unwrapStreamActionRequest } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
@@ -46,6 +51,12 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
+  initializeWebpackReactServer();
+
+  if (import.meta.env.DEV) {
+    serverReferenceImportPromiseCache.clear();
+  }
+
   // action
   let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
@@ -94,7 +105,7 @@ async function render({
     {
       layout: nodeMap,
       action: actionResult
-        ? objectPick(actionResult, ["id", "data", "error"])
+        ? objectPick(actionResult, ["data", "error"])
         : undefined,
     },
     bundlerConfig,
@@ -147,30 +158,38 @@ function createRouter() {
 // server action
 //
 
+// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
-  const formData = await request.formData();
-  if (0) {
-    // TODO: proper decoding?
-    await reactServerDomServer.decodeReply(formData);
-  }
-  const id = ejectActionId(formData);
-
-  let action: Function;
-  const [file, name] = id.split("#") as [string, string];
-  if (import.meta.env.DEV) {
-    const mod: any = await import(/* @vite-ignore */ file);
-    action = mod[name];
-  } else {
-    // include all "use server" files via virtual module on build
-    const virtual = await import("virtual:rsc-use-server" as string);
-    const mod = await virtual.default[file]();
-    action = mod[name];
-  }
-
   const context = new ActionContext(request);
-  const result: ActionResult = { id, context };
+  const streamAction = unwrapStreamActionRequest(request);
+  let boundAction: Function;
+  if (streamAction) {
+    const contentType = request.headers.get("content-type");
+    const body = contentType?.startsWith("multipart/form-data")
+      ? await request.formData()
+      : await request.text();
+    const args = await reactServerDomServer.decodeReply(body);
+    const action = await importServerAction(streamAction.id);
+    boundAction = () => action.apply(null, args);
+  } else {
+    const formData = await request.formData();
+    const decodedAction = await reactServerDomServer.decodeAction(
+      formData,
+      createActionBundlerConfig(),
+    );
+    boundAction = async () => {
+      const result = await decodedAction();
+      const formState = await reactServerDomServer.decodeFormState(
+        result,
+        formData,
+      );
+      return formState;
+    };
+  }
+
+  const result: ActionResult = { context };
   try {
-    result.data = await action.apply(context, [formData]);
+    result.data = await runActionContext(context, () => boundAction());
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {

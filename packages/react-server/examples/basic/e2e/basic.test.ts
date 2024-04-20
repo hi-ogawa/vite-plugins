@@ -654,29 +654,68 @@ test("redirect server action @js", async ({ page }) => {
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
-test("action return value @js", async ({ page }) => {
+test("useActionState @js", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/action");
   await waitForHydration(page);
-  await testActionReturnValue(page, { js: true });
+  await testUseActionState(page, { js: true });
 });
 
-test("action return value @nojs", async ({ browser }) => {
+test("useActionState @nojs", async ({ browser }) => {
   const page = await browser.newPage({ javaScriptEnabled: false });
   checkNoError(page);
   await page.goto("/test/action");
-  await testActionReturnValue(page, { js: false });
+  await testUseActionState(page, { js: false });
 });
 
-async function testActionReturnValue(page: Page, { js }: { js: boolean }) {
+async function testUseActionState(page: Page, options: { js: boolean }) {
   await page.getByPlaceholder("Answer?").fill("3");
   await page.getByPlaceholder("Answer?").press("Enter");
-  await page.getByText("Wrong!").click();
-  await expect(page.getByPlaceholder("Answer?")).toHaveValue(js ? "3" : "");
+  if (options.js) {
+    await expect(page.getByTestId("action-state")).toHaveText("...");
+  }
+  await page.getByText("Wrong! (tried once)").click();
+  await expect(page.getByPlaceholder("Answer?")).toHaveValue(
+    options.js ? "3" : "",
+  );
 
   await page.getByPlaceholder("Answer?").fill("2");
   await page.getByPlaceholder("Answer?").press("Enter");
-  await page.getByText("Correct!").click();
+  await page.getByText("Correct! (tried 2 times)").click();
+}
+
+test("non-form aciton", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await page.getByPlaceholder("Number...").fill("1");
+  await page.getByPlaceholder("Number...").press("Enter");
+  await expect(page.getByTestId("non-form-action-state")).toHaveText("...");
+  await expect(page.getByTestId("non-form-action-state")).toHaveText("1");
+  await page.getByPlaceholder("Number...").fill("-1");
+  await page.getByPlaceholder("Number...").press("Enter");
+  await expect(page.getByTestId("non-form-action-state")).toHaveText("0");
+});
+
+test("action bind @js", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await testActionBind(page);
+});
+
+test("action bind @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+  await page.goto("/test/action");
+  await testActionBind(page);
+});
+
+async function testActionBind(page: Page) {
+  await page.getByRole("button", { name: "Action Bind Test (server)" }).click();
+  await expect(page.getByTestId("action-bind")).toContainText("server-bind");
+  await page.getByRole("button", { name: "Action Bind Test (client)" }).click();
+  await expect(page.getByTestId("action-bind")).toContainText("client-bind");
 }
 
 test("action context @js", async ({ page }) => {

@@ -1,4 +1,4 @@
-import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, memoize } from "@hiogawa/utils";
 import React from "react";
 import reactDomClient from "react-dom/client";
 import {
@@ -8,7 +8,7 @@ import {
   routerRevalidate,
 } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
-import { injectActionId } from "../features/server-action/utils";
+import { wrapStreamActionRequest } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeWebpackBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
@@ -42,43 +42,35 @@ export async function start() {
   //
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
-    if (0) {
-      // TODO: proper encoding?
-      await reactServerDomClient.encodeReply(args);
-    } else {
-      // $ACTION_ID is injected during SSR
-      // but it can stripped away on client re-render (e.g. HMR?)
-      // so we do it here again to inject on client.
-      tinyassert(args[0] instanceof FormData);
-      injectActionId(args[0], id);
-    }
     const request = new Request(
       wrapStreamRequestUrl(history.location.href, {
         lastPathname: history.location.pathname,
       }),
       {
         method: "POST",
-        body: args[0],
+        body: await reactServerDomClient.encodeReply(args),
+        headers: wrapStreamActionRequest(id),
       },
     );
-    __startActionTransition(() => {
-      __setLayout(
-        reactServerDomClient.createFromFetch<ServerRouterData>(fetch(request), {
-          callServer,
-        }),
-      );
-    });
+    const result = reactServerDomClient.createFromFetch<ServerRouterData>(
+      fetch(request),
+      { callServer },
+    );
+    __startActionTransition(() => __setLayout(result));
+    return (await result).action?.data;
   };
 
   // expose as global to be used for createServerReference
   __global.callServer = callServer;
 
   // prepare initial layout data from inline <script>
-  const initialLayoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerRouterData>(
+  // TODO: needs to await for hydration formState. does it affect startup perf?
+  const initialLayout =
+    await reactServerDomClient.createFromReadableStream<ServerRouterData>(
       readStreamScript<string>().pipeThrough(new TextEncoderStream()),
       { callServer },
     );
+  const initialLayoutPromise = Promise.resolve(initialLayout);
 
   //
   // browser root
@@ -100,7 +92,7 @@ export async function start() {
               ...current.layout,
               ...next.layout,
             },
-          };
+          } satisfies ServerRouterData;
         }),
       );
     };
@@ -181,7 +173,10 @@ export async function start() {
   if (document.documentElement.dataset["noHydrate"]) {
     reactDomClient.createRoot(document).render(reactRootEl);
   } else {
-    reactDomClient.hydrateRoot(document, reactRootEl);
+    reactDomClient.hydrateRoot(document, reactRootEl, {
+      // @ts-expect-error no type yet
+      formState: initialLayout.action?.data,
+    });
   }
 
   // custom event for RSC reload

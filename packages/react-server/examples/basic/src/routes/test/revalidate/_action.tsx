@@ -1,7 +1,7 @@
 "use server";
 
-import type { ActionContext } from "@hiogawa/react-server/server";
+import { useActionContext } from "@hiogawa/react-server/server";
 
-export async function actionTestRevalidate(this: ActionContext) {
-  this.revalidate = true;
+export async function actionTestRevalidate() {
+  useActionContext().revalidate = true;
 }

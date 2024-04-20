@@ -1,10 +1,18 @@
-import { changeCounter, getCounter, getMessages } from "./_action";
+import {
+  actionBindTest,
+  changeCounter,
+  getActionBindResult,
+  getCounter,
+  getMessages,
+} from "./_action";
 import {
   ActionDataTest,
   Chat,
+  ClientActionBindTest,
   Counter,
   Counter2,
   FormStateTest,
+  NonFormActionTest,
 } from "./_client";
 
 export default async function Page() {
@@ -17,6 +25,13 @@ export default async function Page() {
       </div>
       <Chat messages={getMessages()} />
       <ActionDataTest />
+      <NonFormActionTest />
+      <div className="flex flex-col gap-2">
+        <h4 className="font-bold">Action Bind</h4>
+        <ServerActionBindTest />
+        <ClientActionBindTest />
+        <div data-testid="action-bind">{getActionBindResult()}</div>
+      </div>
       <FormStateTest />
     </div>
   );
@@ -42,6 +57,18 @@ function Counter3() {
         </button>
         <div>(server form)</div>
       </div>
+    </form>
+  );
+}
+
+function ServerActionBindTest() {
+  const formAction = actionBindTest.bind(null, "server-bind");
+  return (
+    <form action={formAction} className="flex flex-col items-start gap-2">
+      <input type="hidden" name="hello" value="world" />
+      <button className="antd-input p-1 text-sm">
+        Action Bind Test (server)
+      </button>
     </form>
   );
 }
