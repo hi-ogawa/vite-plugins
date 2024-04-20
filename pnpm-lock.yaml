@@ -234,6 +234,18 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
 
+  packages/server-action:
+    dependencies:
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.2
+      magic-string:
+        specifier: ^0.30.8
+        version: 0.30.8
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
+
   packages/vite-glob-routes:
     dependencies:
       vite:
