@@ -1,11 +1,8 @@
-import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDebug, memoize, tinyassert, typedBoolean } from "@hiogawa/utils";
-import type { Program } from "estree";
 import fg from "fast-glob";
-import MagicString from "magic-string";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -18,6 +15,10 @@ import {
   createServer,
   parseAstAsync,
 } from "vite";
+import {
+  vitePluginClientUseServer,
+  vitePluginServerUseServer,
+} from "../features/server-action/plugin";
 import { $__global } from "../lib/global";
 import { USE_CLIENT_RE, USE_SERVER_RE, getExportNames } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
@@ -27,6 +28,9 @@ import {
   ENTRY_REACT_SERVER,
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
+  createVirtualPlugin,
+  hashString,
+  vitePluginSilenceDirectiveBuildWarning,
 } from "./utils";
 
 const debug = createDebug("react-server:plugin");
@@ -44,6 +48,8 @@ const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
 );
 
 // convenient singleton to share states
+export type { ReactServerManager };
+
 class ReactServerManager {
   buildType?: "rsc" | "client" | "ssr";
 
@@ -109,7 +115,10 @@ export function vitePluginReactServer(options?: {
     },
     plugins: [
       // expose server reference for RSC itself
-      vitePluginServerUseServer({ manager }),
+      vitePluginServerUseServer({
+        manager,
+        runtimePath: RUNTIME_REACT_SERVER_PATH,
+      }),
 
       // transform "use client" into client referecnes
       vitePluginServerUseClient({ manager }),
@@ -300,8 +309,12 @@ export function vitePluginReactServer(options?: {
   // plugins for main vite dev server (browser / ssr)
   return [
     rscParentPlugin,
-    vitePluginSilenceUseClientBuildWarning(),
-    vitePluginClientUseServer({ manager }),
+    vitePluginSilenceDirectiveBuildWarning(),
+    vitePluginClientUseServer({
+      manager,
+      runtimePath: RUNTIME_BROWSER_PATH,
+      ssrRuntimePath: RUNTIME_SERVER_PATH,
+    }),
     createVirtualPlugin("client-references", () => {
       tinyassert(manager.buildType && manager.buildType !== "rsc");
       return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
@@ -607,170 +620,4 @@ function noramlizeClientReferenceId(id: string) {
     id = id.startsWith(`/@id`) ? id : `/@id/${id.replace("\0", "__x00__")}`;
   }
   return id;
-}
-
-/*
-transform "use server" directive on client
-
-[input]
-"use server"
-export function hello() {}
-
-[output] (client / ssr)
-import { createServerReference } from "...runtime..."
-export const hello = createServerReference("<id>#hello");
-*/
-function vitePluginClientUseServer({
-  manager,
-}: {
-  manager: ReactServerManager;
-}): Plugin {
-  return {
-    name: vitePluginClientUseServer.name,
-    async transform(code, id, options) {
-      if (!code.match(USE_SERVER_RE)) {
-        return;
-      }
-      const ast = await parseAstAsync(code);
-      const exportNames = getExportNames(ast);
-      debug(`[${vitePluginClientUseServer.name}:transform]`, {
-        id,
-        exportNames,
-      });
-      // validate server reference used by client is properly generated in rsc build
-      if (manager.buildType === "client") {
-        tinyassert(
-          manager.rscUseServerIds.has(id),
-          `missing server references in RSC build: ${id}`,
-        );
-      }
-      // obfuscate reference
-      if (manager.buildType) {
-        id = hashString(id);
-      }
-      let result = `import { createServerReference as $$create } from "${options?.ssr ? RUNTIME_SERVER_PATH : RUNTIME_BROWSER_PATH}";\n`;
-      for (const name of exportNames) {
-        if (name === "default") {
-          result += `const $$default = $$create("${id}#${name}");\n`;
-          result += `export default $$default;\n`;
-        } else {
-          result += `export const ${name} = $$create("${id}#${name}");\n`;
-        }
-      }
-      return result;
-    },
-  };
-}
-
-/*
-transform "use server" directive on react-server
-
-[input]
-"use server"
-export function hello() { ... }
-
-[output]
-import { registerServerReference } from "...runtime..."
-
-export function hello() { ... }
-hello = createServerReference(hello, "<id>", "hello");
-*/
-function vitePluginServerUseServer({
-  manager,
-}: {
-  manager: ReactServerManager;
-}): Plugin {
-  return {
-    name: vitePluginServerUseClient.name,
-    async transform(code, id, _options) {
-      if (!code.match(USE_SERVER_RE)) {
-        return;
-      }
-      // cf. https://github.com/hi-ogawa/vite-plugins/blob/5f8e6936fa12e1f7524891e3c1e2a21065d50250/packages/vite-plugin-simple-hmr/src/transform.ts#L73
-      const ast: Program = await parseAstAsync(code);
-      const mcode = new MagicString(code);
-      const exportNames = getExportNames(ast, { toWritable: { code: mcode } });
-      mcode.prepend(
-        `import { registerServerReference as $$register } from "${RUNTIME_REACT_SERVER_PATH}";\n`,
-      );
-      // obfuscate reference
-      if (manager.buildType) {
-        id = hashString(id);
-      }
-      for (const name of exportNames) {
-        mcode.append(`${name} = $$register(${name}, "${id}", "${name}");\n`);
-      }
-      const outCode = mcode.toString();
-      debug(`[${vitePluginServerUseServer.name}:transform]`, {
-        id,
-        exportNames,
-        outCode,
-      });
-      return {
-        code: outCode,
-        map: mcode.generateMap(),
-      };
-    },
-  };
-}
-
-function hashString(v: string) {
-  return nodeCrypto
-    .createHash("sha256")
-    .update(v)
-    .digest()
-    .toString("base64url");
-}
-
-function createVirtualPlugin(name: string, load: Plugin["load"]) {
-  name = "virtual:" + name;
-  return {
-    name: `virtual-${name}`,
-    resolveId(source, _importer, _options) {
-      return source === name ? "\0" + name : undefined;
-    },
-    load(id, options) {
-      if (id === "\0" + name) {
-        return (load as any)(id, options);
-      }
-    },
-  } satisfies Plugin;
-}
-
-// silence warning due to "use client"
-// https://github.com/vitejs/vite-plugin-react/blob/814ed8043d321f4b4679a9f4a781d1ed14f185e4/packages/plugin-react/src/index.ts#L303
-function vitePluginSilenceUseClientBuildWarning(): Plugin {
-  return {
-    name: vitePluginSilenceUseClientBuildWarning.name,
-    enforce: "post",
-    config(config, _env) {
-      return {
-        build: {
-          rollupOptions: {
-            onwarn(warning, defaultHandler) {
-              // https://github.com/vitejs/vite/issues/15012#issuecomment-1948550039
-              if (
-                warning.code === "SOURCEMAP_ERROR" &&
-                warning.message.includes("(1:0)")
-              ) {
-                return;
-              }
-              // https://github.com/TanStack/query/pull/5161#issuecomment-1506683450
-              if (
-                warning.code === "MODULE_LEVEL_DIRECTIVE" &&
-                warning.message.includes(`"use client"`)
-              ) {
-                return;
-              }
-              if (config.build?.rollupOptions?.onwarn) {
-                config.build.rollupOptions.onwarn(warning, defaultHandler);
-              } else {
-                defaultHandler(warning);
-              }
-            },
-          },
-        },
-      };
-    },
-  };
 }
