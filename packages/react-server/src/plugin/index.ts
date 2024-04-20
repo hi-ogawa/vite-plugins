@@ -84,10 +84,6 @@ export function vitePluginReactServer(options?: {
     clearScreen: false,
     configFile: false,
     cacheDir: "./node_modules/.vite-rsc",
-    // server: {
-    //   // TODO: for now this is to silence build only virtual:... resolution error
-    //   preTransformRequests: false,
-    // },
     optimizeDeps: {
       noDiscovery: true,
       include: [],
