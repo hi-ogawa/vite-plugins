@@ -295,17 +295,6 @@ export function vitePluginReactServer(options?: {
       }
       return ctx.modules;
     },
-    resolveId(source, _importer, _options) {
-      // weird trick to silence import analysis error during dev
-      // by pointing to a file which always exists
-      if (
-        parentEnv.command === "serve" &&
-        source === "/dist/rsc/client-references.js"
-      ) {
-        return "/package.json";
-      }
-      return;
-    },
   };
 
   // plugins for main vite dev server (browser / ssr)
@@ -313,6 +302,10 @@ export function vitePluginReactServer(options?: {
     rscParentPlugin,
     vitePluginSilenceUseClientBuildWarning(),
     vitePluginClientUseServer({ manager }),
+    createVirtualPlugin("client-references", () => {
+      tinyassert(manager.buildType && manager.buildType !== "rsc");
+      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
+    }),
     {
       name: "client-virtual-use-client-node-modules",
       resolveId(source, _importer, _options) {
