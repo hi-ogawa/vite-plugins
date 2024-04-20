@@ -34,8 +34,8 @@ export async function start() {
   const history = createEncodedBrowserHistory();
   const router = new Router(history);
 
-  let __setLayout: (v: Promise<ServerRouterData>) => void;
-  let __startActionTransition: React.TransitionStartFunction;
+  let $__setLayout: (v: Promise<ServerRouterData>) => void;
+  let $__startActionTransition: React.TransitionStartFunction;
 
   //
   // server action callback
@@ -56,7 +56,7 @@ export async function start() {
       fetch(request),
       { callServer },
     );
-    __startActionTransition(() => __setLayout(result));
+    $__startActionTransition(() => $__setLayout(result));
     return (await result).action?.data;
   };
 
@@ -81,7 +81,7 @@ export async function start() {
       React.useState<Promise<ServerRouterData>>(initialLayoutPromise);
 
     // very shaky trick to merge with current layout
-    __setLayout = (nextPromise) => {
+    $__setLayout = (nextPromise) => {
       setLayoutPromise(
         memoize(async (currentPromise: Promise<ServerRouterData>) => {
           const current = await currentPromise;
@@ -99,7 +99,7 @@ export async function start() {
 
     const [isPending, startTransition] = React.useTransition();
     const [isActionPending, startActionTransition] = React.useTransition();
-    __startActionTransition = startActionTransition;
+    $__startActionTransition = startActionTransition;
 
     React.useEffect(() => router.setup(), []);
 
@@ -134,7 +134,7 @@ export async function start() {
         }),
       );
       startTransition(() => {
-        __setLayout(
+        $__setLayout(
           reactServerDomClient.createFromFetch<ServerRouterData>(
             fetch(request),
             {
