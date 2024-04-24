@@ -19,6 +19,7 @@ export default function Layout(props: LayoutProps) {
           "/test/dynamic/catchall/x",
           "/test/dynamic/catchall/x/y",
           "/test/dynamic/catchall/x/y/z",
+          "/test/dynamic/catchall/x/y/w",
         ]}
         activeProps={{
           "aria-current": "page",
