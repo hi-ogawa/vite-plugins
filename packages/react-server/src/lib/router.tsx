@@ -94,30 +94,41 @@ export async function renderRouteMap(
   const url = serializeUrl(new URL(request.url));
   const pathname = normalizePathname(url.pathname);
   const prefixes = getPathPrefixes(pathname);
+  const baseProps: Omit<BaseProps, "params"> = {
+    url,
+    request: {
+      url: request.url,
+      headers: serializeHeaders(request.headers),
+    },
+  };
 
   let node = tree;
   let params: BaseProps["params"] = {};
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
-  for (const prefix of prefixes) {
+  for (let i = 0; i < prefixes.length; i++) {
+    const prefix = prefixes[i]!;
     const key = prefix.split("/").at(-1)!;
     const next = matchChild(key, node);
     if (next?.child) {
       node = next.child;
-      if (next.param) {
+      if (next?.catchAll) {
+        const rest = pathname.slice(prefixes[i - 1]!.length + 1);
+        params = { ...params, [next.param]: decodeURI(rest) };
+        const props: BaseProps = { ...baseProps, params };
+        layouts[prefix] = await renderLayout(node, props, prefix);
+        for (const prefix of prefixes.slice(i)) {
+          layouts[prefix] = await renderLayout(initNode(), props, prefix);
+        }
+        pages[pathname] = renderPage(node, props);
+        break;
+      } else if (next.param) {
         params = { ...params, [next.param]: decodeURI(key) };
       }
     } else {
       node = initNode();
     }
-    const props: BaseProps = {
-      url,
-      request: {
-        url: request.url,
-        headers: serializeHeaders(request.headers),
-      },
-      params,
-    };
+    const props: BaseProps = { ...baseProps, params };
     layouts[prefix] = await renderLayout(node, props, prefix);
     if (prefix === pathname) {
       pages[prefix] = renderPage(node, props);
@@ -171,13 +182,20 @@ export interface ErrorPageProps {
   reset: () => void;
 }
 
+const DYNAMIC_RE = /^\[(\w*)\]$/;
+const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
+
 function matchChild(input: string, node: RouteTreeNode) {
   if (!node.children) {
     return;
   }
-  // TODO: catch-all route
   for (const [segment, child] of Object.entries(node.children)) {
-    const m = segment.match(/^\[(.*)\]$/);
+    const mAll = segment.match(CATCH_ALL_RE);
+    if (mAll) {
+      tinyassert(1 in mAll);
+      return { param: mAll[1], child, catchAll: true };
+    }
+    const m = segment.match(DYNAMIC_RE);
     if (m) {
       tinyassert(1 in m);
       return { param: m[1], child };
