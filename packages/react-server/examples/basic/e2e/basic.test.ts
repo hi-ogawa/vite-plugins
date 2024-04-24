@@ -819,6 +819,9 @@ test("dynamic routes", async ({ page }) => {
   await page.getByText("pathname: /test/dynamic/abc/def").click();
   await page.getByText('params: {"id":"abc","nested":"def"}').click();
 
+  // regardless of Link.href prop
+  // - pathname is always encoded
+  // - param is always decoded
   await page.getByRole("link", { name: "/test/dynamic/✅" }).click();
   await page.getByText('params: {"id":"✅"}').click();
   await page.waitForURL("/test/dynamic/✅");
@@ -839,6 +842,58 @@ test("dynamic routes", async ({ page }) => {
     page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }),
   ).toHaveAttribute("aria-current", "page");
 });
+
+test("catch-all routes @js", async ({ page }) => {
+  checkNoError(page);
+  await testCatchallRoute(page, { js: true });
+});
+
+test("catch-all routes @nojs", async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false });
+  checkNoError(page);
+  await testCatchallRoute(page, { js: false });
+});
+
+async function testCatchallRoute(page: Page, options: { js: boolean }) {
+  await page.goto("/test/dynamic/catchall");
+  await page
+    .getByRole("link", { name: "• /test/dynamic/catchall/static" })
+    .click();
+  await page.getByText("params: {}").click();
+  await page.getByText("file: /test/dynamic/catchall/").click();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/catchall/x", exact: true })
+    .click();
+  await page.getByText('params: {"any":"x"}').click();
+  await page.getByText("file: /test/dynamic/catchall").click();
+  await page.getByLabel("test state").check();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/catchall/x/y", exact: true })
+    .click();
+  await page.getByText("file: /test/dynamic/catchall").click();
+  await page.getByText('params: {"any":"x/y"}').click();
+  // state is not preserved
+  await expect(page.getByLabel("test state")).not.toBeChecked();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/catchall/x/y/z" })
+    .click();
+  await page.getByText("file: /test/dynamic/catchall").click();
+  await page.getByText('params: {"any":"x/y/z"}').click();
+  await page.getByLabel("test state").check();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/catchall/x/y/w" })
+    .click();
+  await page.getByText("file: /test/dynamic/catchall").click();
+  await page.getByText('params: {"any":"x/y/w"}').click();
+  // state is preserved
+  await expect(page.getByLabel("test state")).toBeChecked({
+    checked: options.js,
+  });
+}
 
 test("full client route", async ({ page }) => {
   checkNoError(page);
