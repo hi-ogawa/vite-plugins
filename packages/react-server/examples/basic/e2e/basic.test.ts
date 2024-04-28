@@ -827,6 +827,7 @@ test("dynamic routes", async ({ page }) => {
 
 test("catch-all routes @js", async ({ page }) => {
   checkNoError(page);
+  await waitForHydration(page);
   await testCatchallRoute(page, { js: true });
 });
 
