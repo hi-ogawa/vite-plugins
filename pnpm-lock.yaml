@@ -234,6 +234,12 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
 
+  packages/ssr-css:
+    dependencies:
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
+
   packages/vite-glob-routes:
     dependencies:
       vite:
@@ -297,6 +303,9 @@ importers:
       '@hiogawa/vite-null-export':
         specifier: workspace:*
         version: link:../../../vite-null-export
+      '@hiogawa/vite-plugin-ssr-css':
+        specifier: workspace:*
+        version: link:../../../ssr-css
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../../../vite-plugin-ssr-middleware
