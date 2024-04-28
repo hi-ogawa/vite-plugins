@@ -3,6 +3,7 @@ import process from "node:process";
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
 import { importDevServerPlugin } from "@hiogawa/vite-import-dev-server";
 import { viteNullExportPlugin } from "@hiogawa/vite-null-export";
+import { vitePluginSsrCss } from "@hiogawa/vite-plugin-ssr-css";
 import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
@@ -10,12 +11,10 @@ import {
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
 import { defineConfig } from "vite";
-import { vitePluginSsrCss } from "./vite-plugin-ssr-css";
 
 export default defineConfig((ctx) => ({
   plugins: [
-    // TODO
-    react() as any,
+    react(),
     unocss(),
     importDevServerPlugin(),
     globRoutesPlugin({ root: "/src/routes" }),
@@ -25,7 +24,7 @@ export default defineConfig((ctx) => ({
       preview: path.resolve("./dist/server/index.js"),
     }),
     vitePluginSsrCss({
-      entry: ["./src/client/index.tsx"],
+      entries: ["/src/client/index"],
     }),
     viteNullExportPlugin({
       serverOnly: "**/server/**",
