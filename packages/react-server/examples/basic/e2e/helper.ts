@@ -70,3 +70,7 @@ export async function inspectDevModules<T extends string>(
     return await res.json();
   }
 }
+
+export const testNoJs = test.extend({
+  javaScriptEnabled: ({}, use) => use(false),
+});
