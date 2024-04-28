@@ -1,6 +1,6 @@
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
-import type { Page } from "@playwright/test";
+import { type Page, test } from "@playwright/test";
 
 const execPromise = promisify(exec);
 
@@ -19,3 +19,7 @@ export async function getSessionCookie(name: string): Promise<string> {
 export async function isPageReady(page: Page) {
   await page.locator("#root.hydrated").waitFor({ state: "attached" });
 }
+
+export const testNoJs = test.extend({
+  javaScriptEnabled: ({}, use) => use(false),
+});
