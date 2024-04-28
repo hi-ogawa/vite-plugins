@@ -827,17 +827,18 @@ test("dynamic routes", async ({ page }) => {
 
 test("catch-all routes @js", async ({ page }) => {
   checkNoError(page);
+  await page.goto("/test/dynamic/catchall");
   await waitForHydration(page);
   await testCatchallRoute(page, { js: true });
 });
 
 testNoJs("catch-all routes @nojs", async ({ page }) => {
   checkNoError(page);
+  await page.goto("/test/dynamic/catchall");
   await testCatchallRoute(page, { js: false });
 });
 
 async function testCatchallRoute(page: Page, options: { js: boolean }) {
-  await page.goto("/test/dynamic/catchall");
   await page
     .getByRole("link", { name: "• /test/dynamic/catchall/static" })
     .click();
