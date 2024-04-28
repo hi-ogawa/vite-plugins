@@ -207,7 +207,7 @@ test("style @js", async ({ page }) => {
   await expect(page.locator("header")).toHaveCSS("display", "flex");
 });
 
-testNoJs.only("style @nojs", async ({ page }) => {
+testNoJs("style @nojs", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("header")).toHaveCSS("display", "flex");
 });
