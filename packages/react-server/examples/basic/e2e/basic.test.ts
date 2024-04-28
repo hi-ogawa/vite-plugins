@@ -1,5 +1,5 @@
 import { type Page, expect, test } from "@playwright/test";
-import { checkNoError, editFile, inspectDevModules } from "./helper";
+import { checkNoError, editFile, inspectDevModules, testNoJs } from "./helper";
 
 test("basic", async ({ page }) => {
   checkNoError(page);
@@ -390,7 +390,7 @@ test("unocss hmr @dev", async ({ page, browser }) => {
   ).toHaveCSS("font-weight", "300");
 });
 
-test("react-server css", async ({ page }) => {
+test("react-server css @js", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/css");
@@ -404,9 +404,7 @@ test("react-server css", async ({ page }) => {
   );
 });
 
-test("react-server css @nojs", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
-
+testNoJs("react-server css @nojs", async ({ page }) => {
   await page.goto("/test/css");
   await expect(page.getByText("css normal")).toHaveCSS(
     "background-color",
@@ -467,7 +465,7 @@ test("react-server css hmr @dev", async ({ page, browser }) => {
   }
 });
 
-test("server action with js", async ({ page }) => {
+test("server action @js", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/action");
@@ -506,21 +504,7 @@ test("server action after client render", async ({ page }) => {
   await page.getByRole("link", { name: "/test/action" }).click();
 
   const checkClientState = await setupCheckClientState(page);
-
-  await page.getByText("Count: 0").click();
-  await page.getByRole("button", { name: "+1" }).first().click();
-  await page.getByText("Count: 1").click();
-  await page.getByRole("button", { name: "+1" }).nth(1).click();
-  await page.getByText("Count: 2").click();
-  await page.getByRole("button", { name: "+1" }).nth(2).click();
-  await page.getByText("Count: 3").click();
-  await page.getByRole("button", { name: "-1" }).first().click();
-  await page.getByText("Count: 2").click();
-  await page.getByRole("button", { name: "-1" }).nth(1).click();
-  await page.getByText("Count: 1").click();
-  await page.getByRole("button", { name: "-1" }).nth(2).click();
-  await page.getByText("Count: 0").click();
-
+  await testServerActionCounter(page);
   await checkClientState();
 
   // check layout doesn't re-render
@@ -528,9 +512,12 @@ test("server action after client render", async ({ page }) => {
   await page.getByText(`[effect: ${count}]`).click();
 });
 
-test("server action no js", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
+testNoJs("server action @nojs", async ({ page }) => {
   await page.goto("/test/action");
+  await testServerActionCounter(page);
+});
+
+async function testServerActionCounter(page: Page) {
   await page.getByText("Count: 0").click();
   await page.getByRole("button", { name: "+1" }).first().click();
   await page.getByText("Count: 1").click();
@@ -544,7 +531,7 @@ test("server action no js", async ({ browser }) => {
   await page.getByText("Count: 1").click();
   await page.getByRole("button", { name: "-1" }).nth(2).click();
   await page.getByText("Count: 0").click();
-});
+}
 
 test("ReactDom.useFormStatus", async ({ page }) => {
   await page.goto("/test/action");
@@ -611,8 +598,7 @@ test("head in rsc", async ({ page }) => {
   );
 });
 
-test("redirect server component @nojs", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
+testNoJs("redirect server component @nojs", async ({ page }) => {
   checkNoError(page);
 
   const res = await page.request.get("/test/redirect?from-server-component", {
@@ -638,8 +624,7 @@ test("redirect server component @js", async ({ page }) => {
   await page.waitForURL("/test/redirect?ok=server-component");
 });
 
-test("redirect server action @nojs", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
+testNoJs("redirect server action @nojs", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/redirect");
@@ -661,8 +646,7 @@ test("useActionState @js", async ({ page }) => {
   await testUseActionState(page, { js: true });
 });
 
-test("useActionState @nojs", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
+testNoJs("useActionState @nojs", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/action");
   await testUseActionState(page, { js: false });
@@ -704,8 +688,7 @@ test("action bind @js", async ({ page }) => {
   await testActionBind(page);
 });
 
-test("action bind @nojs", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
+testNoJs("action bind @nojs", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/action");
   await testActionBind(page);
@@ -724,8 +707,7 @@ test("action context @js", async ({ page }) => {
   await testActionContext(page);
 });
 
-test("action context @nojs", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
+testNoJs("action context @nojs", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/session");
   await testActionContext(page);
@@ -848,8 +830,7 @@ test("catch-all routes @js", async ({ page }) => {
   await testCatchallRoute(page, { js: true });
 });
 
-test("catch-all routes @nojs", async ({ browser }) => {
-  const page = await browser.newPage({ javaScriptEnabled: false });
+testNoJs("catch-all routes @nojs", async ({ page }) => {
   checkNoError(page);
   await testCatchallRoute(page, { js: false });
 });
