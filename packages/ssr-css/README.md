@@ -2,7 +2,9 @@
 
 This plugin provides `virtual:ssr-css.css` to collect styles reachable from `entries`.
 
-Currently this works only during development.
+When using `ViteDevServer.transformIndexHtml`, it will inject `<link rel="stylesheet" href="/@id/__x00__virtual:ssr-css.css" />` to `<head>`.
+
+This works only during development.
 
 ## usage
 
