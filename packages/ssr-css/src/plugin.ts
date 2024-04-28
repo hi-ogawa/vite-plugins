@@ -7,11 +7,22 @@ const VIRTUAL_ENTRY = "virtual:ssr-css.css";
 export function vitePluginSsrCss(pluginOpts: { entries: string[] }): Plugin {
   let server: ViteDevServer;
 
+  // TODO: base
+  const virtualHref = "/@id/__x00__" + VIRTUAL_ENTRY;
+
   return {
     name: packageName,
     apply: "serve",
     configureServer(server_) {
       server = server_;
+
+      // invalidate virtual modules for each direct request
+      server.middlewares.use((req, _res, next) => {
+        if (req.url === virtualHref) {
+          invalidateModule(server, "\0" + VIRTUAL_ENTRY + "?direct");
+        }
+        next();
+      });
     },
 
     // virtual module
@@ -40,7 +51,7 @@ export function vitePluginSsrCss(pluginOpts: { entries: string[] }): Plugin {
             injectTo: "head",
             attrs: {
               rel: "stylesheet",
-              href: "/@id/__x00__" + VIRTUAL_ENTRY, // TODO: base
+              href: virtualHref,
               "data-ssr-css": true,
             },
           },
@@ -62,4 +73,11 @@ export function vitePluginSsrCss(pluginOpts: { entries: string[] }): Plugin {
       },
     },
   };
+}
+
+function invalidateModule(server: ViteDevServer, id: string) {
+  const mod = server.moduleGraph.getModuleById(id);
+  if (mod) {
+    server.moduleGraph.invalidateModule(mod);
+  }
 }
