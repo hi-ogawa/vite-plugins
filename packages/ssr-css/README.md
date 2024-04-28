@@ -1,6 +1,8 @@
 # vite-plugin-ssr-css
 
-Provides `virtual:ssr-css.css` to collect styles reachable from `entries`.
+This plugin provides `virtual:ssr-css.css` to collect styles reachable from `entries`.
+
+Currently this works only during development.
 
 ## usage
 
