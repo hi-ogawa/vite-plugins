@@ -16,11 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup
         with:
-          node-version: 20
-      - run: corepack enable
-      - run: pnpm i
+          build: false
+          playwright: false
       - run: pnpm lint-check
       - run: pnpm build
       - run: pnpm tsc
@@ -30,13 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: corepack enable
-      - run: pnpm i
-      - run: pnpm build
-      - run: npx playwright install chromium
+      - uses: ./.github/actions/setup
       - run: pnpm -C packages/react-server/examples/basic test-e2e
       - run: pnpm -C packages/react-server/examples/basic build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
@@ -46,13 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: corepack enable
-      - run: pnpm i
-      - run: pnpm build
-      - run: npx playwright install chromium
+      - uses: ./.github/actions/setup
       - run: pnpm -C packages/vite-node-miniflare/examples/basic test-e2e
       - run: pnpm -C packages/vite-node-miniflare/examples/react test-e2e
       - run: pnpm -C packages/vite-node-miniflare/examples/react-router test-e2e
@@ -62,13 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: corepack enable
-      - run: pnpm i
-      - run: pnpm build
-      - run: npx playwright install chromium
+      - uses: ./.github/actions/setup
       - run: pnpm -C packages/vite-glob-routes/examples/demo test-e2e
       - run: pnpm -C packages/vite-glob-routes/examples/demo build
       - run: pnpm -C packages/vite-glob-routes/examples/demo test-e2e-preview
