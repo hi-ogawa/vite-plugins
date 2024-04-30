@@ -27,7 +27,10 @@ export function hashString(v: string) {
     .toString("base64url");
 }
 
-export function createVirtualPlugin(name: string, load: Plugin["load"]) {
+export function createVirtualPlugin(
+  name: string,
+  load: Plugin["load"],
+): Plugin {
   name = "virtual:" + name;
   return {
     name: `virtual-${name}`,
@@ -39,7 +42,7 @@ export function createVirtualPlugin(name: string, load: Plugin["load"]) {
         return (load as any)(id, options);
       }
     },
-  } satisfies Plugin;
+  };
 }
 
 // silence warning due to "use ..." directives

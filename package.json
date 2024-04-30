@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm -r '--filter=!*example*' build",
+    "build": "pnpm -r '--filter=!*example*' '--filter=!@hiogawa/vite-node-miniflare' build",
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json",
     "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
     "test": "pnpm -r --sequential test run",
@@ -27,7 +27,7 @@
     "tsup": "^8.0.2",
     "tsx": "^4.7.1",
     "typescript": "^5.4.2",
-    "vite": "^5.2.3",
+    "vite": "6.0.0-alpha.3",
     "vitest": "^1.4.0",
     "wrangler": "^3.34.2"
   },
