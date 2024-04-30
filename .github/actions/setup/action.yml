@@ -14,9 +14,17 @@ runs:
     - uses: actions/setup-node@v4
       with:
         node-version: 20
+
     - run: corepack enable
+      shell: bash
+
     - run: pnpm i
+      shell: bash
+
     - run: pnpm build
+      shell: bash
       if: ${{ inputs.build }}
+
     - run: npx playwright install chromium
+      shell: bash
       if: ${{ inputs.playwright }}
