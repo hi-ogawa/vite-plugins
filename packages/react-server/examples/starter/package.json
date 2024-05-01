@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
-    "react": "19.0.0-canary-4c12339ce-20240408",
-    "react-dom": "19.0.0-canary-4c12339ce-20240408",
-    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408"
+    "react": "19.0.0-beta-4508873393-20240430",
+    "react-dom": "19.0.0-beta-4508873393-20240430",
+    "react-server-dom-webpack": "19.0.0-beta-4508873393-20240430"
   },
   "devDependencies": {
     "@hattip/adapter-node": "^0.0.44",
