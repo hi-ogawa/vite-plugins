@@ -115,6 +115,7 @@ export function ActionDataTest() {
           className="antd-input px-2 max-w-30"
           name="answer"
           placeholder="Answer?"
+          defaultValue={data?.answer}
           required
         />
         <div data-testid="action-state">
