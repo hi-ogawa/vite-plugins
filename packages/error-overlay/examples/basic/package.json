@@ -8,13 +8,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hiogawa/vite-plugin-error-overlay": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
+    "@hiogawa/vite-plugin-error-overlay": "latest",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
-    "react": "19.0.0-beta-4508873393-20240430",
-    "react-dom": "19.0.0-beta-4508873393-20240430",
+    "react": "19.0.0-canary-4c12339ce-20240408",
+    "react-dom": "19.0.0-canary-4c12339ce-20240408",
     "vite": "latest"
   }
 }

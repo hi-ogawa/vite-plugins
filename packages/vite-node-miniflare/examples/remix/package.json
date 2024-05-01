@@ -11,14 +11,14 @@
     "@remix-run/react": "2.8.1",
     "@remix-run/server-runtime": "2.8.1",
     "isbot": "^5.1.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240314.0",
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "@remix-run/dev": "2.8.1",
-    "@types/react": "18.3.1",
-    "@types/react-dom": "18.3.0"
+    "@types/react": "18.2.66",
+    "@types/react-dom": "18.2.22"
   }
 }
