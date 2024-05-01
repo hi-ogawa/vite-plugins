@@ -66,13 +66,6 @@ export function Counter2({
 }
 
 export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
-  const [input, setInput] = React.useState("");
-
-  // clear input after submit (really this way?)
-  React.useEffect(() => {
-    setInput("");
-  }, [props.messages]);
-
   return (
     <div className="flex flex-col gap-2">
       <h4 className="font-bold">Messages</h4>
@@ -90,8 +83,6 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
             className="antd-input px-2"
             placeholder="write something..."
             required
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
           />
           <button className="antd-btn antd-btn-default px-2">Send</button>
         </div>
