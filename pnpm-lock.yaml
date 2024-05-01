@@ -72,11 +72,11 @@ importers:
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: ^18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: ^18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -251,10 +251,10 @@ importers:
         version: 0.0.44
       react-router:
         specifier: ^6.22.3
-        version: 6.22.3(react@18.2.0)
+        version: 6.22.3(react@18.3.1)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@18.3.1)(react@18.3.1)
 
   packages/vite-glob-routes/examples/demo:
     devDependencies:
@@ -278,19 +278,19 @@ importers:
         version: 0.0.4-pre.1
       '@hiogawa/tiny-form':
         specifier: 0.0.1-pre.10
-        version: 0.0.1-pre.10(react@18.2.0)
+        version: 0.0.1-pre.10(react@18.3.1)
       '@hiogawa/tiny-jwt':
         specifier: 0.2.8-pre.2
         version: 0.2.8-pre.2
       '@hiogawa/tiny-progress':
         specifier: 0.0.1-pre.4
-        version: 0.0.1-pre.4(react@18.2.0)
+        version: 0.0.1-pre.4(react@18.3.1)
       '@hiogawa/tiny-rpc':
         specifier: 0.2.3-pre.18
         version: 0.2.3-pre.18
       '@hiogawa/tiny-toast':
         specifier: 0.1.1-pre.10
-        version: 0.1.1-pre.10(react@18.2.0)
+        version: 0.1.1-pre.10(react@18.3.1)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
         version: 2.2.1-pre.7(unocss@0.58.6)
@@ -314,10 +314,10 @@ importers:
         version: 1.1.20
       '@tanstack/react-query':
         specifier: ^5.28.4
-        version: 5.28.4(react@18.2.0)
+        version: 5.28.4(react@18.3.1)
       '@tanstack/react-query-devtools':
         specifier: ^5.28.4
-        version: 5.28.4(@tanstack/react-query@5.28.4)(react@18.2.0)
+        version: 5.28.4(@tanstack/react-query@5.28.4)(react@18.3.1)
       '@types/cookie':
         specifier: ^0.6.0
         version: 0.6.0
@@ -328,11 +328,11 @@ importers:
         specifier: ^20.11.28
         version: 20.11.28
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: ^18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: ^18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -343,17 +343,17 @@ importers:
         specifier: ^4.18.3
         version: 4.18.3
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-router:
         specifier: 6.22.3
-        version: 6.22.3(react@18.2.0)
+        version: 6.22.3(react@18.3.1)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@18.3.1)(react@18.3.1)
       unocss:
         specifier: ^0.58.6
         version: 0.58.6(postcss@8.4.38)(vite@5.2.3)
@@ -373,23 +373,23 @@ importers:
         specifier: latest
         version: link:../../../vite-import-dev-server
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: ^18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: ^18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@18.3.1)(react@18.3.1)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -424,11 +424,11 @@ importers:
         specifier: ^20.11.28
         version: 20.11.28
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: ^18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: ^18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -439,14 +439,14 @@ importers:
         specifier: ^4.18.3
         version: 4.18.3
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@18.3.1)(react@18.3.1)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -500,11 +500,11 @@ importers:
         specifier: latest
         version: link:../..
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: ^18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: ^18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -512,11 +512,11 @@ importers:
         specifier: ^3.20240304.2
         version: 3.20240304.2
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -536,11 +536,11 @@ importers:
         specifier: latest
         version: link:../..
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: ^18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: ^18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -548,14 +548,14 @@ importers:
         specifier: ^3.20240304.2
         version: 3.20240304.2
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@18.3.1)(react@18.3.1)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -564,7 +564,7 @@ importers:
     dependencies:
       '@remix-run/react':
         specifier: 2.8.1
-        version: 2.8.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)
+        version: 2.8.1(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.2)
       '@remix-run/server-runtime':
         specifier: 2.8.1
         version: 2.8.1(typescript@5.4.2)
@@ -572,11 +572,11 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240314.0
@@ -619,11 +619,11 @@ importers:
   packages/vite-plugin-simple-hmr/examples/react:
     dependencies:
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@hiogawa/vite-plugin-simple-hmr':
         specifier: workspace:*
@@ -650,20 +650,20 @@ importers:
         specifier: latest
         version: link:../..
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: ^18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: ^18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -1962,7 +1962,7 @@ packages:
     resolution: {integrity: sha512-3z/qYXDyROVX8oaFdqMyiLL8ZZE9dEaEw02ZYXOxmUF6U5MM3pskzLZId/KMvT+ZnLCLI4CUBuga6AIf56JXTw==}
     dev: true
 
-  /@hiogawa/tiny-form@0.0.1-pre.10(react@18.2.0):
+  /@hiogawa/tiny-form@0.0.1-pre.10(react@18.3.1):
     resolution: {integrity: sha512-BIvGs22O+RNCDclikqSAMMxuLTi4Onz0fpMK1qGtxA3ga+jBN3hRfOxUWl1Mei2lPo07ralKGNhKBTxhIlQ3eA==}
     peerDependencies:
       react: '*'
@@ -1970,7 +1970,7 @@ packages:
       react:
         optional: true
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     dev: true
 
   /@hiogawa/tiny-jwt@0.2.8-pre.2:
@@ -1978,7 +1978,7 @@ packages:
     hasBin: true
     dev: true
 
-  /@hiogawa/tiny-progress@0.0.1-pre.4(react@18.2.0):
+  /@hiogawa/tiny-progress@0.0.1-pre.4(react@18.3.1):
     resolution: {integrity: sha512-7v367ZbgmJRE4gMGvo7sqwx6eAf5FegipkS6FGCUwZd6iiyfrTVpRYmtg8ITUhkIR2LNnmMRllbVIcebWsD1Og==}
     peerDependencies:
       react: '*'
@@ -1986,7 +1986,7 @@ packages:
       react:
         optional: true
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     dev: true
 
   /@hiogawa/tiny-react@0.0.2-pre.9(vite@5.2.3):
@@ -2004,7 +2004,7 @@ packages:
     resolution: {integrity: sha512-BiNHrutG9G9yV622QvkxZxF+PhkaH2Aspp4/X1KYTfnaQTcg4fFUTBWf5Kf533swon2SuVJwi6U6H1LQbhVOQQ==}
     dev: true
 
-  /@hiogawa/tiny-toast@0.1.1-pre.10(react@18.2.0):
+  /@hiogawa/tiny-toast@0.1.1-pre.10(react@18.3.1):
     resolution: {integrity: sha512-vA0kmobSc0KSQw/ff3Fm9pQBkJkhaHcvjuhpBYnBjev4dC2qeCGOvUax/+iUMYns816z6/X3XAr3Mwp92qZtuQ==}
     peerDependencies:
       react: ^18.0.0
@@ -2012,7 +2012,7 @@ packages:
       react:
         optional: true
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     dev: true
 
   /@hiogawa/unocss-preset-antd@2.2.1-pre.7(unocss@0.58.6):
@@ -2333,7 +2333,7 @@ packages:
       typescript: 5.4.2
     dev: true
 
-  /@remix-run/react@2.8.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2):
+  /@remix-run/react@2.8.1(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.2):
     resolution: {integrity: sha512-HTPm1U8+xz2jPaVjZnssrckfmFMA8sUZUdaWnoF5lmLWdReqcQv+XlBhIrQQ3jO9L8iYYdnzaSZZcRFYSdpTYg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
@@ -2346,10 +2346,10 @@ packages:
     dependencies:
       '@remix-run/router': 1.15.3
       '@remix-run/server-runtime': 2.8.1(typescript@5.4.2)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.22.3(react@18.2.0)
-      react-router-dom: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-router: 6.22.3(react@18.3.1)
+      react-router-dom: 6.22.3(react-dom@18.3.1)(react@18.3.1)
       typescript: 5.4.2
     dev: false
 
@@ -2540,24 +2540,24 @@ packages:
     resolution: {integrity: sha512-Kxch05PVnxLUAyRiz2gXYQhXATHfXbQQwvz858YPjYYQyi7yk8SyS9Z5hyw90bRb0pd3rjelXyGFCsNMWvEghw==}
     dev: true
 
-  /@tanstack/react-query-devtools@5.28.4(@tanstack/react-query@5.28.4)(react@18.2.0):
+  /@tanstack/react-query-devtools@5.28.4(@tanstack/react-query@5.28.4)(react@18.3.1):
     resolution: {integrity: sha512-oS+3INjCIX4Nkh0IAV6LH2mgLqJjkcd/DDxp8dwdWCGloLrz6IBj+bOuuI2wD0zb8r7l45wIAYIhl4Z6XyTupQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.28.4
       react: ^18.0.0
     dependencies:
       '@tanstack/query-devtools': 5.28.3
-      '@tanstack/react-query': 5.28.4(react@18.2.0)
-      react: 18.2.0
+      '@tanstack/react-query': 5.28.4(react@18.3.1)
+      react: 18.3.1
     dev: true
 
-  /@tanstack/react-query@5.28.4(react@18.2.0):
+  /@tanstack/react-query@5.28.4(react@18.3.1):
     resolution: {integrity: sha512-BErcoB/QQG6YwLSUKnaGxF+lSc270RH2w3kMBpG0i4YzDCsFs2pdxPX1WVknQvFk9bNgukMb158hc2Zb4SdwSA==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
       '@tanstack/query-core': 5.28.4
-      react: 18.2.0
+      react: 18.3.1
     dev: true
 
   /@tsconfig/strictest@2.0.3:
@@ -2716,7 +2716,13 @@ packages:
   /@types/react-dom@18.2.22:
     resolution: {integrity: sha512-fHkBXPeNtfvri6gdsMYyW+dW7RXFo6Ad09nLFK0VQWR7yGLai/Cyvyj696gbwYvBnhGtevUG9cET0pmUbMtoPQ==}
     dependencies:
-      '@types/react': 18.2.66
+      '@types/react': 18.3.1
+    dev: true
+
+  /@types/react-dom@18.3.0:
+    resolution: {integrity: sha512-EhwApuTmMBmXuFOikhQLIBUn6uFg81SwLMOAUgodJF14SOBOCMdU04gDoYi0WOJJHD144TL32z4yDqCW3dnkQg==}
+    dependencies:
+      '@types/react': 18.3.1
 
   /@types/react@18.2.66:
     resolution: {integrity: sha512-OYTmMI4UigXeFMF/j4uv0lBBEbongSgptPrHBxqME44h9+yNov+oL6Z3ocJKo0WyXR84sQUNeyIp9MRfckvZpg==}
@@ -2724,9 +2730,17 @@ packages:
       '@types/prop-types': 15.7.11
       '@types/scheduler': 0.16.8
       csstype: 3.1.3
+    dev: true
+
+  /@types/react@18.3.1:
+    resolution: {integrity: sha512-V0kuGBX3+prX+DQ/7r2qsv1NsdfnCLnTgnRJ1pYnxykBhGMz+qj+box5lq7XsO5mtZsBqpjwwTu/7wszPfMBcw==}
+    dependencies:
+      '@types/prop-types': 15.7.11
+      csstype: 3.1.3
 
   /@types/scheduler@0.16.8:
     resolution: {integrity: sha512-WZLiwShhwLRmeV6zH+GkbOFT6Z6VklCItrDioxUnv+u4Ll+8vKeFySoFyK/0ctcRpOmwAicELfmys1sDc/Rw+A==}
+    dev: true
 
   /@types/send@0.17.4:
     resolution: {integrity: sha512-x2EM6TJOybec7c52BX0ZspPodMsQUd5L6PRwOunVyVUhXiBSKf3AezDL8Dgvgt5o0UfKNfuA0eMLr2wLT4AiBA==}
@@ -6143,14 +6157,14 @@ packages:
       unpipe: 1.0.0
     dev: true
 
-  /react-dom@18.2.0(react@18.2.0):
-    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+  /react-dom@18.3.1(react@18.3.1):
+    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
-      react: ^18.2.0
+      react: ^18.3.1
     dependencies:
       loose-envify: 1.4.0
-      react: 18.2.0
-      scheduler: 0.23.0
+      react: 18.3.1
+      scheduler: 0.23.2
 
   /react-dom@19.0.0-beta-4508873393-20240430(react@19.0.0-beta-4508873393-20240430):
     resolution: {integrity: sha512-/j97ai1qF3c6O3XV0nVzzExPV/0U2v8M75Sq6ThXYxePCi33kAnm+xRsCDpZOZOrIjz6nurLU/FzzPZIzXVvKQ==}
@@ -6168,7 +6182,7 @@ packages:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
 
-  /react-router-dom@6.22.3(react-dom@18.2.0)(react@18.2.0):
+  /react-router-dom@6.22.3(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-7ZILI7HjcE+p31oQvwbokjk6OA/bnFxrhJ19n82Ex9Ph8fNAq+Hm/7KchpMGlTgWhUxRHMMCut+vEtNpWpowKw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -6176,18 +6190,18 @@ packages:
       react-dom: '>=16.8'
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.22.3(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-router: 6.22.3(react@18.3.1)
 
-  /react-router@6.22.3(react@18.2.0):
+  /react-router@6.22.3(react@18.3.1):
     resolution: {integrity: sha512-dr2eb3Mj5zK2YISHK++foM9w4eBnO23eKnZEDs7c880P6oKbrjz/Svg9+nxqtHQK+oMW4OtjZca0RqPglXxguQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 18.2.0
+      react: 18.3.1
 
   /react-server-dom-webpack@19.0.0-beta-4508873393-20240430(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-4508873393-20240430)(webpack@5.90.3):
     resolution: {integrity: sha512-/rRIMqNoeReqyioWwfLyqu/qUfZ39YLXOfkhLrXOStzG2g7Q2a5DoLD0eZOcCIpvpWg+/QRw1xOGZLm75mK+Aw==}
@@ -6211,8 +6225,8 @@ packages:
       react: 19.0.0-beta-4508873393-20240430
     dev: false
 
-  /react@18.2.0:
-    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
+  /react@18.3.1:
+    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
@@ -6410,8 +6424,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
-  /scheduler@0.23.0:
-    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
+  /scheduler@0.23.2:
+    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
     dependencies:
       loose-envify: 1.4.0
 
