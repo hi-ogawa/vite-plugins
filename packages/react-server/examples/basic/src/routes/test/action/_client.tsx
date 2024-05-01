@@ -1,6 +1,5 @@
 "use client";
 
-import { useActionState } from "@hiogawa/react-server/client";
 import React from "react";
 import ReactDom from "react-dom";
 import {
@@ -102,7 +101,10 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
 }
 
 export function ActionDataTest() {
-  const [data, formAction, isPending] = useActionState(actionCheckAnswer, null);
+  const [data, formAction, isPending] = React.useActionState(
+    actionCheckAnswer,
+    null,
+  );
 
   return (
     <form action={formAction} className="flex flex-col gap-2">
@@ -131,7 +133,10 @@ export function ActionDataTest() {
 }
 
 export function NonFormActionTest() {
-  const [data, formAction, isPending] = useActionState(nonFormAction, null);
+  const [data, formAction, isPending] = React.useActionState(
+    nonFormAction,
+    null,
+  );
   return (
     <form
       className="flex flex-col gap-2"
