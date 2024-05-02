@@ -32,14 +32,3 @@ export type WebpackRequire = (id: string) => Promise<unknown>;
 export type WebpackChunkLoad = (id: string) => Promise<unknown>;
 
 export type CallServerCallback = (id: any, args: any) => Promise<unknown>;
-
-// https://github.com/facebook/react/pull/28491
-export type ReactUseActionState = <State, Payload>(
-  action: (state: Awaited<State>, payload: Payload) => State | Promise<State>,
-  initialState: Awaited<State>,
-  permalink?: string,
-) => [
-  state: Awaited<State>,
-  dispatch: (payload: Payload) => void,
-  isPending: boolean,
-];

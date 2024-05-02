@@ -74,17 +74,17 @@
   },
   "devDependencies": {
     "@types/estree": "^1.0.5",
-    "@types/react": "18.2.66",
-    "@types/react-dom": "18.2.22",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
     "@types/use-sync-external-store": "^0.0.6",
-    "react": "19.0.0-canary-4c12339ce-20240408",
-    "react-dom": "19.0.0-canary-4c12339ce-20240408",
-    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408"
+    "react": "19.0.0-beta-4508873393-20240430",
+    "react-dom": "19.0.0-beta-4508873393-20240430",
+    "react-server-dom-webpack": "19.0.0-beta-4508873393-20240430"
   },
   "peerDependencies": {
-    "react": "19.0.0-canary-4c12339ce-20240408",
-    "react-dom": "19.0.0-canary-4c12339ce-20240408",
-    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408",
+    "react": "19.0.0-beta-4508873393-20240430",
+    "react-dom": "19.0.0-beta-4508873393-20240430",
+    "react-server-dom-webpack": "19.0.0-beta-4508873393-20240430",
     "vite": "*"
   }
 }

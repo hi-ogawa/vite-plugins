@@ -676,9 +676,7 @@ async function testUseActionState(page: Page, options: { js: boolean }) {
     await expect(page.getByTestId("action-state")).toHaveText("...");
   }
   await page.getByText("Wrong! (tried once)").click();
-  await expect(page.getByPlaceholder("Answer?")).toHaveValue(
-    options.js ? "3" : "",
-  );
+  await expect(page.getByPlaceholder("Answer?")).toHaveValue("3");
 
   await page.getByPlaceholder("Answer?").fill("2");
   await page.getByPlaceholder("Answer?").press("Enter");

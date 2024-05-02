@@ -37,7 +37,12 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "$vite"
+      "vite": "$vite",
+      "react": "19.0.0-beta-4508873393-20240430",
+      "react-dom": "19.0.0-beta-4508873393-20240430",
+      "react-is": "19.0.0-beta-4508873393-20240430",
+      "@types/react": "18.3.1",
+      "@types/react-dom": "18.3.0"
     }
   }
 }

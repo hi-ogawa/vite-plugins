@@ -31,6 +31,7 @@ export async function slowAction(formData: FormData) {
 }
 
 type CheckAnswerState = {
+  answer?: number;
   message: string;
   count: number;
 };
@@ -42,7 +43,7 @@ export async function actionCheckAnswer(
   await sleep(500);
   const answer = Number(formData.get("answer"));
   const message = answer === 2 ? "Correct!" : "Wrong!";
-  return { message, count: (prev?.count ?? 0) + 1 };
+  return { answer, message, count: (prev?.count ?? 0) + 1 };
 }
 
 let actionBindResult = "(none)";
