@@ -176,6 +176,11 @@ test("rsc hmr @dev", async ({ page }) => {
   await waitForHydration(page);
 
   await checkClientState();
+
+  const res = await page.reload();
+  await waitForHydration(page);
+  const resText = await res?.text();
+  expect(resText).toContain("RSC (EDIT) Experiment");
 });
 
 test("common hmr @dev", async ({ page }) => {
@@ -196,6 +201,16 @@ test("common hmr @dev", async ({ page }) => {
   await waitForHydration(page);
 
   await checkClientState();
+
+  const res = await page.reload();
+  await waitForHydration(page);
+  const resText = await res?.text();
+  expect(resText).toContain(
+    "Common (EDIT) component (<!-- -->from server<!-- -->)",
+  );
+  expect(resText).toContain(
+    "Common (EDIT) component (<!-- -->from client<!-- -->)",
+  );
 });
 
 test("client hmr @dev", async ({ page }) => {
@@ -216,8 +231,10 @@ test("client hmr @dev", async ({ page }) => {
   await checkClientState();
 
   // SSR should also use a fresh module
-  const res = await page.request.get("/test");
-  expect(await res.text()).toContain("<div>test-hmr-edit-div</div>");
+  const res = await page.reload();
+  await waitForHydration(page);
+  const resText = await res?.text();
+  expect(resText).toContain("<div>test-hmr-edit-div</div>");
 });
 
 test("rsc + client + rsc hmr @dev", async ({ page }) => {
