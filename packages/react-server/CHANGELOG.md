@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.19
+
+- feat: support catch-all dynamic route ([#301](https://github.com/hi-ogawa/vite-plugins/pull/301))
+- refactor: organize features ([#299](https://github.com/hi-ogawa/vite-plugins/pull/299))
+- chore: update react 20240430 ([#306](https://github.com/hi-ogawa/vite-plugins/pull/306))
+
 ## v0.1.18
 
 - feat: support `useActionState` ([#282](https://github.com/hi-ogawa/vite-plugins/pull/282))
