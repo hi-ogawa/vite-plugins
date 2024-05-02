@@ -203,8 +203,12 @@ test("common hmr @dev", async ({ page }) => {
 
   const res = await page.request.get("/test");
   const resText = await res.text();
-  expect(resText).toContain("Common (EDIT) component (from server)");
-  expect(resText).toContain("Common (EDIT) component (from client)");
+  expect(resText).toContain(
+    "Common (EDIT) component (<!-- -->from server<!-- -->)",
+  );
+  expect(resText).toContain(
+    "Common (EDIT) component (<!-- -->from client<!-- -->)",
+  );
 });
 
 test("client hmr @dev", async ({ page }) => {
