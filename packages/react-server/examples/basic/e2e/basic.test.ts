@@ -176,6 +176,10 @@ test("rsc hmr @dev", async ({ page }) => {
   await waitForHydration(page);
 
   await checkClientState();
+
+  const res = await page.request.get("/test");
+  const resText = await res.text();
+  expect(resText).toContain("RSC (EDIT) Experiment");
 });
 
 test("common hmr @dev", async ({ page }) => {
@@ -196,6 +200,11 @@ test("common hmr @dev", async ({ page }) => {
   await waitForHydration(page);
 
   await checkClientState();
+
+  const res = await page.request.get("/test");
+  const resText = await res.text();
+  expect(resText).toContain("Common (EDIT) component (from server)");
+  expect(resText).toContain("Common (EDIT) component (from client)");
 });
 
 test("client hmr @dev", async ({ page }) => {
