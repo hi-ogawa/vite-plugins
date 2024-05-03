@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import type http from "node:http";
 import { renderToString } from "react-dom/server";
 import type { ViteDevServer } from "vite";
@@ -10,10 +9,10 @@ export default async function handler(
 ) {
   let html: string;
   if (import.meta.env.DEV) {
-    html = await fs.promises.readFile("./index.html", "utf-8");
+    html = (await import("/index.html?raw")).default;
     html = await req.viteDevServer.transformIndexHtml("/", html);
   } else {
-    html = await fs.promises.readFile("./dist/client/index.html", "utf-8");
+    html = (await import("/dist/client/index.html?raw")).default;
   }
 
   const ssrHtml = renderToString(<App />);
