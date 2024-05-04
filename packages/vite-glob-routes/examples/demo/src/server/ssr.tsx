@@ -62,7 +62,7 @@ export function ssrHandler(): RequestHandler {
     }
 
     let html = await importIndexHtml();
-    html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
+    html = html.replace("<!--@INJECT_SSR@-->", () => ssrHtml);
 
     // for initial prefetch link + client side lazy resolution
     const matchRouteIds = routerResult.context.matches.map((m) => m.route.id);
@@ -72,8 +72,7 @@ export function ssrHandler(): RequestHandler {
       manifest,
     );
 
-    html = html.replace(
-      "<!--@INJECT_HEAD@-->",
+    html = html.replace("<!--@INJECT_HEAD@-->", () =>
       // prettier-ignore
       [
         generateThemeScript({

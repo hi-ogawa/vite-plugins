@@ -14,7 +14,7 @@ export default {
 
     // ssr
     const ssrHtml = renderToString(h(App, { url: request.url }));
-    html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
+    html = html.replace("<!--@INJECT_SSR@-->", () => ssrHtml);
     return new Response(html, {
       headers: {
         "content-type": "text/html",

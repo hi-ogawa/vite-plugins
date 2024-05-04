@@ -17,7 +17,7 @@ export default async function handler(
   }
 
   const ssrHtml = renderToString(<App />);
-  html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
+  html = html.replace("<!--@INJECT_SSR@-->", () => ssrHtml);
 
   res.setHeader("content-type", "text/html").end(html);
 }

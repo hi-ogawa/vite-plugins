@@ -57,12 +57,13 @@ export function ssrHandler(): RequestHandler {
       html = (await import("/dist/client/index.html?raw")).default;
     }
 
-    html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
+    html = html.replace("<!--@INJECT_SSR@-->", () => ssrHtml);
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      `<script>window.__serverLoaderRouteIds = ${JSON.stringify(
-        serverLoaderRouteIds,
-      )}</script>`,
+      () =>
+        `<script>window.__serverLoaderRouteIds = ${JSON.stringify(
+          serverLoaderRouteIds,
+        )}</script>`,
     );
 
     return new Response(html, {
