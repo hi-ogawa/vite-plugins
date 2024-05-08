@@ -48,12 +48,13 @@ export function ssrHandler(): RequestHandler {
     }
 
     let html = await importIndexHtml();
-    html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
+    html = html.replace("<!--@INJECT_SSR@-->", () => ssrHtml);
     html = html.replace(
       "<!--@INJECT_HEAD@-->",
-      `<script>window.__serverLoaderRouteIds = ${JSON.stringify(
-        serverLoaderRouteIds,
-      )}</script>`,
+      () =>
+        `<script>window.__serverLoaderRouteIds = ${JSON.stringify(
+          serverLoaderRouteIds,
+        )}</script>`,
     );
     return new Response(html, {
       status: routerResult.context.statusCode,
