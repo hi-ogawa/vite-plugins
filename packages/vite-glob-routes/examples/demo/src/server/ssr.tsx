@@ -73,7 +73,6 @@ export function ssrHandler(): RequestHandler {
     );
 
     html = html.replace("<!--@INJECT_HEAD@-->", () =>
-      // prettier-ignore
       [
         generateThemeScript({
           storageKey: "vite-plugins-demo:theme",

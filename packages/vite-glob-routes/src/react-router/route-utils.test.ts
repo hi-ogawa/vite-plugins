@@ -394,7 +394,6 @@ describe(createGlobPageRoutes, () => {
 });
 
 describe(splitPathSegment, () => {
-  // prettier-ignore
   it("basic", () => {
     expect(splitPathSegment("/")).toMatchInlineSnapshot(`
       [
