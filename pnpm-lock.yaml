@@ -16,9 +16,6 @@ importers:
 
   .:
     devDependencies:
-      '@hiogawa/isort-ts':
-        specifier: 1.1.2-pre.2
-        version: 1.1.2-pre.2(prettier@3.2.5)(typescript@5.4.2)
       '@hiogawa/tiny-cli':
         specifier: 0.0.4-pre.1
         version: 0.0.4-pre.1
@@ -40,9 +37,6 @@ importers:
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
-      prettier:
-        specifier: ^3.2.5
-        version: 3.2.5
       tsup:
         specifier: ^8.0.2
         version: 8.0.2(typescript@5.4.2)
@@ -1928,20 +1922,6 @@ packages:
       '@hattip/headers': 0.0.44
       cac: 6.7.14
       mime-types: 2.1.35
-
-  /@hiogawa/isort-ts@1.1.2-pre.2(prettier@3.2.5)(typescript@5.4.2):
-    resolution: {integrity: sha512-1+AGjS2YcnJMvlQn6l2i+5FkdUwKWlbuZ6f48SwVqmtjYHnFClFIOKYCS8Cr2xulKFpUwJATiqOXbL9Pz4eNDg==}
-    hasBin: true
-    peerDependencies:
-      prettier: '*'
-      typescript: '*'
-    peerDependenciesMeta:
-      prettier:
-        optional: true
-    dependencies:
-      prettier: 3.2.5
-      typescript: 5.4.2
-    dev: true
 
   /@hiogawa/query-proxy@0.1.1-pre.3:
     resolution: {integrity: sha512-0m7KSB2Tn8eC7rCnzbL3NwuyAgC3HWIweyMkltazGQ0ZMLZTNpIKbIwkaFzRCuZraAw66ysSnU4K0dWL2vLHrg==}
@@ -6016,12 +5996,6 @@ packages:
   /prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
-    hasBin: true
-    dev: true
-
-  /prettier@3.2.5:
-    resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
-    engines: {node: '>=14'}
     hasBin: true
     dev: true
 
