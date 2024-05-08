@@ -50,7 +50,9 @@ export function vitePluginClientUseServer({
       if (manager.buildType) {
         id = hashString(id);
       }
-      let result = `import { createServerReference as $$create } from "${options?.ssr ? ssrRuntimePath : runtimePath}";\n`;
+      let result = `import { createServerReference as $$create } from "${
+        options?.ssr ? ssrRuntimePath : runtimePath
+      }";\n`;
       for (const name of exportNames) {
         if (name === "default") {
           result += `const $$default = $$create("${id}#${name}");\n`;

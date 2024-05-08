@@ -1,6 +1,0 @@
-pnpm-lock.yaml
-node_modules
-dist
-.vercel
-.vite-node
-.wrangler

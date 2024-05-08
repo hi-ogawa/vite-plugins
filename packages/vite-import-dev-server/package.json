@@ -23,11 +23,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "runtime.js",
-    "runtime.d.ts",
-    "dist"
-  ],
+  "files": ["runtime.js", "runtime.d.ts", "dist"],
   "scripts": {
     "build": "tsup",
     "release": "pnpm publish --no-git-checks --access public"
