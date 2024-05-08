@@ -2,8 +2,8 @@ import { TestVirtualUseClient } from "virtual:test-use-client";
 import { TestDepServerComponent } from "@hiogawa/test-dep-server-component";
 import { TestDepUseClient } from "@hiogawa/test-dep-use-client";
 import {
-  Balancer as BalancerNamed,
   default as BalancerDefault,
+  Balancer as BalancerNamed,
 } from "react-wrap-balancer";
 
 export default function Page() {

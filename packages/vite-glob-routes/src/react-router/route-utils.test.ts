@@ -414,5 +414,5 @@ describe(splitPathSegment, () => {
         "def",
       ]
     `);
-  })
+  });
 });
