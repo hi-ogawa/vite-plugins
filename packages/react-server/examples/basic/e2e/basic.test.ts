@@ -579,7 +579,14 @@ test("server compnoent > fixture", async ({ page }) => {
   await page.getByText("TestDepServerComponent").click();
 });
 
-test("client module imported at the boundary and not at the boundary", async ({
+test("client module used at the boundary and not at the boundary basic", async ({
+  page,
+}) => {
+  await page.goto("/test/deps");
+  await page.getByText("Client2Context [ok]").click();
+});
+
+test("client module used at the boundary and not at the boundary hmr @dev", async ({
   page,
 }) => {
   await page.goto("/test/deps");
