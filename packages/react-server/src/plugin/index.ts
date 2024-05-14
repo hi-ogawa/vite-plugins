@@ -338,7 +338,7 @@ export function vitePluginReactServer(options?: {
         let head = match[1];
 
         // expose raw dynamic `import` which doesn't go through vite's transform
-        // as it injects `<id>?import` and causes dual packages when
+        // since it would inject `<id>?import` and cause dual packages when
         // client code is both imported at the boundary (as `<id>?import`)
         // and not at the boundary (as `<id>`).
         head += `<script>globalThis.__raw_import = (id) => import(id)</script>\n`;
