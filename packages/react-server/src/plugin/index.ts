@@ -337,6 +337,12 @@ export function vitePluginReactServer(options?: {
         tinyassert(match && 1 in match);
         let head = match[1];
 
+        // expose raw dynamic `import` which doesn't go through vite's transform
+        // since it would inject `<id>?import` and cause dual packages when
+        // client code is both imported at the boundary (as `<id>?import`)
+        // and not at the boundary (as `<id>`).
+        head += `<script>globalThis.__raw_import = (id) => import(id)</script>\n`;
+
         // serve dev css as ?direct so that ssr html won't get too huge.
         // also remove style on first hot update.
         head += `\

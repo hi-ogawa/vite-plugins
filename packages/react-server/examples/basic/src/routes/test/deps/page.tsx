@@ -5,6 +5,8 @@ import {
   default as BalancerDefault,
   Balancer as BalancerNamed,
 } from "react-wrap-balancer";
+import { Client1 } from "./_client1";
+import { Client2Provider } from "./_client2";
 
 export default function Page() {
   return (
@@ -18,6 +20,11 @@ export default function Page() {
       </div>
       <div>
         <TestDepServerComponent />
+      </div>
+      <div>
+        <Client2Provider>
+          <Client1 />
+        </Client2Provider>
       </div>
       <div className="border p-2">
         <a
