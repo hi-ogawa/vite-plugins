@@ -9,6 +9,7 @@ export function GlobalProgress() {
 
   return (
     <>
+      <pre>hmmm</pre>
       <div
         className={cls(
           "antd-spin w-5 h-5 text-colorInfo transition duration-500",
