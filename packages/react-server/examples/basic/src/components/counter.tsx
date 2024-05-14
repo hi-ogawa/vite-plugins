@@ -2,14 +2,12 @@
 
 import React from "react";
 import { CommonComponent } from "./common";
-import { GlobalProgress } from "./global-progress";
 
 export function Counter() {
   const [count, setCount] = React.useState(0);
 
   return (
     <div className="flex flex-col items-start gap-2 p-2">
-      <GlobalProgress />
       <h3 className="font-bold">Client component</h3>
       <div className="flex items-center gap-2">
         <div>Count: {count}</div>
