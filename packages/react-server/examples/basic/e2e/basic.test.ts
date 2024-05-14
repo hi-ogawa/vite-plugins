@@ -579,6 +579,27 @@ test("server compnoent > fixture", async ({ page }) => {
   await page.getByText("TestDepServerComponent").click();
 });
 
+test("client module imported at the boundary and not at the boundary", async ({
+  page,
+}) => {
+  await page.goto("/test/deps");
+  await page.getByText("Client2Context [ok]").click();
+
+  await waitForHydration(page);
+
+  await editFile("./src/routes/test/deps/_client2.tsx", (s) =>
+    s.replace(`value="ok"`, `value="okok"`),
+  );
+  await page.getByText("Client2Context [okok]").click();
+
+  // TODO: still dual package after HMR due to
+  // `<id>?t=...` imported by client component
+  // `<id>` imported by server component (as client reference)
+  await page.reload();
+  await waitForHydration(page);
+  await page.getByText("Client2Context [not-ok]").click();
+});
+
 test("RouteProps.request", async ({ page }) => {
   await page.goto("/test/other");
   await waitForHydration(page);
