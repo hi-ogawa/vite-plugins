@@ -53,6 +53,8 @@ const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
 export type { ReactServerManager };
 
 class ReactServerManager {
+  parentServer?: ViteDevServer;
+
   buildType?: "rsc" | "client" | "ssr";
 
   // expose "use client" node modules to client via virtual modules
@@ -249,6 +251,7 @@ export function vitePluginReactServer(options?: {
     },
     async configureServer(server) {
       parentServer = server;
+      manager.parentServer = server;
     },
     async buildStart(_options) {
       if (parentEnv.command === "serve") {

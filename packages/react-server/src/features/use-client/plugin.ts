@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import nodePath from "node:path";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { type Plugin, type PluginOption, parseAstAsync } from "vite";
+import {
+  type Plugin,
+  type PluginOption,
+  type ViteDevServer,
+  parseAstAsync,
+} from "vite";
 import type { ReactServerManager } from "../../plugin";
 import { USE_CLIENT_RE, getExportNames } from "../../plugin/ast-utils";
 import { hashString } from "../../plugin/utils";
@@ -26,6 +31,11 @@ export function vitePluginServerUseClient({
   manager: ReactServerManager;
   runtimePath: string;
 }): PluginOption {
+  // TODO:
+  // eventually we should try entirely virtual module approach for client reference (not only node_modules)
+  // so that we can delegate precise resolution (e.g. `?v=` deps optimization hash, `?t=` hmr timestamp)
+  // to actual client (browser, ssr) environment instead of faking out things on RSC module graph
+
   // intercept Vite's node resolve to virtualize "use client" in node_modules
   const pluginUseClientNodeModules: Plugin = {
     name: "server-virtual-use-client-node-modules",
@@ -73,7 +83,7 @@ export function vitePluginServerUseClient({
         meta.exportNames = exportNames;
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
-        id = noramlizeClientReferenceId(id);
+        id = wrapId(id);
         const result = generateClientReferenceCode(
           id,
           exportNames,
@@ -105,7 +115,8 @@ export function vitePluginServerUseClient({
       // normalize client reference during dev
       // to align with Vite's import analysis
       if (!manager.buildType) {
-        id = noramlizeClientReferenceId(id);
+        tinyassert(manager.parentServer);
+        id = await noramlizeClientReferenceId(id, manager.parentServer);
       } else {
         // obfuscate reference
         id = hashString(id);
@@ -165,19 +176,30 @@ function generateClientReferenceCode(
 
 // Apply same noramlizaion as Vite's dev import analysis
 // to avoid dual package with "/xyz" and "/@fs/xyz" for example.
-// For now this tries to cover simple cases
 // https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
-export function noramlizeClientReferenceId(id: string) {
-  const root = process.cwd(); // TODO: pass vite root config
+export async function noramlizeClientReferenceId(
+  id: string,
+  parentServer: ViteDevServer,
+) {
+  const root = parentServer.config.root;
   if (id.startsWith(root)) {
     id = id.slice(root.length);
   } else if (nodePath.isAbsolute(id)) {
     id = "/@fs" + id;
   } else {
-    // aka wrapId
-    id = id.startsWith(`/@id`) ? id : `/@id/${id.replace("\0", "__x00__")}`;
+    id = wrapId(id);
+  }
+  // this is needed only for browser, so we'll strip it off
+  // during ssr client reference import
+  const mod = await parentServer.moduleGraph.getModuleByUrl(id);
+  if (mod && mod.lastHMRTimestamp > 0) {
+    id += `?t=${mod.lastHMRTimestamp}`;
   }
   return id;
+}
+
+function wrapId(id: string) {
+  return id.startsWith(`/@id`) ? id : `/@id/${id.replace("\0", "__x00__")}`;
 }
 
 const VIRTUAL_PREFIX = "virtual:use-client-node-module/";

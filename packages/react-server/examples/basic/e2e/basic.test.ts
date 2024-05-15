@@ -256,26 +256,28 @@ test("rsc + client + rsc hmr @dev", async ({ page }) => {
 
   // edit client
   await editFile("./src/components/counter.tsx", (s) =>
-    s.replace("test-hmr-div", "test-hmr-edit-div"),
+    s.replace("test-hmr-div", "test-hmr-edit1-div"),
   );
-  await page.getByText("test-hmr-edit-div").click();
+  await page.getByText("test-hmr-edit1-div").click();
   await page.getByText("Count: 1").click();
 
-  // edit server again re-mounts client
+  // edit server again
   await editFile("./src/routes/test/page.tsx", (s) =>
     s.replace("Server (EDIT 1) Time", "Server (EDIT 2) Time"),
   );
   await page.getByText("Server (EDIT 2) Time").click();
-  await page.getByText("Count: 0").click();
+  await page.getByText("Count: 1").click();
 
-  // edit client again should work
-  await page.getByRole("button", { name: "+" }).click();
-  await page.getByText("Count: 1").click();
+  // edit client again
   await editFile("./src/components/counter.tsx", (s) =>
-    s.replace("test-hmr-edit-div", "test-hmr-edit-edit-div"),
+    s.replace("test-hmr-edit1-div", "test-hmr-edit2-div"),
   );
-  await page.getByText("test-hmr-edit-edit-div").click();
+  await page.getByText("test-hmr-edit2-div").click();
   await page.getByText("Count: 1").click();
+
+  // check no hydration error after reload
+  await page.reload();
+  await waitForHydration(page);
 });
 
 test("module invalidation @dev", async ({ page }) => {
@@ -599,12 +601,9 @@ test("client module used at boundary and non-boundary hmr @dev", async ({
   );
   await page.getByText("Client2Context [okok]").click();
 
-  // TODO: still dual package after HMR due to
-  // `<id>?t=...` imported by client component
-  // `<id>` imported by server component (as client reference)
   await page.reload();
   await waitForHydration(page);
-  await page.getByText("Client2Context [not-ok]").click();
+  await page.getByText("Client2Context [okok]").click();
 });
 
 test("RouteProps.request", async ({ page }) => {
