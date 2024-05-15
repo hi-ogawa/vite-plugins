@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import nodePath from "node:path";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { type Plugin, type PluginOption, parseAstAsync } from "vite";
+import {
+  type Plugin,
+  type PluginOption,
+  type ViteDevServer,
+  parseAstAsync,
+} from "vite";
 import type { ReactServerManager } from "../../plugin";
 import { USE_CLIENT_RE, getExportNames } from "../../plugin/ast-utils";
 import { hashString } from "../../plugin/utils";
@@ -110,7 +115,8 @@ export function vitePluginServerUseClient({
       // normalize client reference during dev
       // to align with Vite's import analysis
       if (!manager.buildType) {
-        id = noramlizeClientReferenceId(id);
+        tinyassert(manager.parentServer);
+        id = await noramlizeClientReferenceId(id, manager.parentServer);
       } else {
         // obfuscate reference
         id = hashString(id);
@@ -170,17 +176,23 @@ function generateClientReferenceCode(
 
 // Apply same noramlizaion as Vite's dev import analysis
 // to avoid dual package with "/xyz" and "/@fs/xyz" for example.
-// For now this tries to cover simple cases
-// TODO: most notably this doesn't include `?t=...` (hmr timestamp query)
 // https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
-export function noramlizeClientReferenceId(id: string) {
-  const root = process.cwd(); // TODO: pass vite root config
+export async function noramlizeClientReferenceId(
+  id: string,
+  parentServer: ViteDevServer,
+) {
+  const root = parentServer.config.root;
   if (id.startsWith(root)) {
     id = id.slice(root.length);
   } else if (nodePath.isAbsolute(id)) {
     id = "/@fs" + id;
   } else {
     id = wrapId(id);
+  }
+  // TODO: this is needed only for browser, but not ssr?
+  const mod = await parentServer.moduleGraph.getModuleByUrl(id);
+  if (mod && mod.lastHMRTimestamp > 0) {
+    id += (id.includes("?") ? "&t" : "?t") + `=${mod.lastHMRTimestamp}`;
   }
   return id;
 }
