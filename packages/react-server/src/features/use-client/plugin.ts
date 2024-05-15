@@ -32,9 +32,9 @@ export function vitePluginServerUseClient({
   runtimePath: string;
 }): PluginOption {
   // TODO:
-  // during dev, it might be simpler to always wrap all client references (not only node_modules)
-  // with virtual module and let browser environment deal with
-  // precise resolution (e.g. `?v=` deps optimization hash, `?t=` hmr timestamp)
+  // eventually we should try entirely virtual module approach for client reference (not only node_modules)
+  // so that we can delegate precise resolution (e.g. `?v=` deps optimization hash, `?t=` hmr timestamp)
+  // to actual client (browser, ssr) environment instead of faking out things on RSC module graph
 
   // intercept Vite's node resolve to virtualize "use client" in node_modules
   const pluginUseClientNodeModules: Plugin = {
