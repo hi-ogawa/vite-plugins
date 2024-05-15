@@ -189,7 +189,8 @@ export async function noramlizeClientReferenceId(
   } else {
     id = wrapId(id);
   }
-  // TODO: this is needed only for browser, but not ssr?
+  // this is needed only for browser, so we'll strip it off
+  // during ssr client reference import
   const mod = await parentServer.moduleGraph.getModuleByUrl(id);
   if (mod && mod.lastHMRTimestamp > 0) {
     id += `?t=${mod.lastHMRTimestamp}`;
