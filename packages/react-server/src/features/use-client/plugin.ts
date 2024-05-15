@@ -192,7 +192,7 @@ export async function noramlizeClientReferenceId(
   // TODO: this is needed only for browser, but not ssr?
   const mod = await parentServer.moduleGraph.getModuleByUrl(id);
   if (mod && mod.lastHMRTimestamp > 0) {
-    id += (id.includes("?") ? "&t" : "?t") + `=${mod.lastHMRTimestamp}`;
+    id += `?t=${mod.lastHMRTimestamp}`;
   }
   return id;
 }

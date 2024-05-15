@@ -24,6 +24,8 @@ const ssrWebpackRequire: WebpackRequire = memoize(ssrImport, {
 async function ssrImport(id: string) {
   debug("[__webpack_require__]", { id });
   if (import.meta.env.DEV) {
+    // strip off `?t=` added for browser by noramlizeClientReferenceId
+    id = id.split("?t=")[0]!;
     // transformed to "ssrLoadModule" during dev
     return import(/* @vite-ignore */ id);
   } else {

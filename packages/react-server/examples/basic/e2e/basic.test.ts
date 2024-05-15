@@ -601,12 +601,9 @@ test("client module used at boundary and non-boundary hmr @dev", async ({
   );
   await page.getByText("Client2Context [okok]").click();
 
-  // TODO: still dual package after HMR due to
-  // `<id>?t=...` imported by client component
-  // `<id>` imported by server component (as client reference)
   await page.reload();
   await waitForHydration(page);
-  await page.getByText("Client2Context [not-ok]").click();
+  await page.getByText("Client2Context [okok]").click();
 });
 
 test("RouteProps.request", async ({ page }) => {
