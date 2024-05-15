@@ -26,6 +26,11 @@ export function vitePluginServerUseClient({
   manager: ReactServerManager;
   runtimePath: string;
 }): PluginOption {
+  // TODO:
+  // during dev, it might be simpler to always wrap all client references (not only node_modules)
+  // with virtual module and let browser environment deal with
+  // precise resolution (e.g. `?v=` deps optimization hash, `?t=` hmr timestamp)
+
   // intercept Vite's node resolve to virtualize "use client" in node_modules
   const pluginUseClientNodeModules: Plugin = {
     name: "server-virtual-use-client-node-modules",
