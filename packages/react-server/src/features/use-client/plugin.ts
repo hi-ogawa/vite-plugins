@@ -73,7 +73,7 @@ export function vitePluginServerUseClient({
         meta.exportNames = exportNames;
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
-        id = noramlizeClientReferenceId(id);
+        id = wrapId(id);
         const result = generateClientReferenceCode(
           id,
           exportNames,
@@ -166,6 +166,7 @@ function generateClientReferenceCode(
 // Apply same noramlizaion as Vite's dev import analysis
 // to avoid dual package with "/xyz" and "/@fs/xyz" for example.
 // For now this tries to cover simple cases
+// TODO: most notably this doesn't include `?t=...` (hmr timestamp query)
 // https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
 export function noramlizeClientReferenceId(id: string) {
   const root = process.cwd(); // TODO: pass vite root config
@@ -174,10 +175,13 @@ export function noramlizeClientReferenceId(id: string) {
   } else if (nodePath.isAbsolute(id)) {
     id = "/@fs" + id;
   } else {
-    // aka wrapId
-    id = id.startsWith(`/@id`) ? id : `/@id/${id.replace("\0", "__x00__")}`;
+    id = wrapId(id);
   }
   return id;
+}
+
+function wrapId(id: string) {
+  return id.startsWith(`/@id`) ? id : `/@id/${id.replace("\0", "__x00__")}`;
 }
 
 const VIRTUAL_PREFIX = "virtual:use-client-node-module/";
