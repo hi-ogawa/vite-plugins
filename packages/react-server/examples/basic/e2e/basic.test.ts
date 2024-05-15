@@ -274,6 +274,10 @@ test("rsc + client + rsc hmr @dev", async ({ page }) => {
   );
   await page.getByText("test-hmr-edit2-div").click();
   await page.getByText("Count: 1").click();
+
+  // check no hydration error after reload
+  await page.reload();
+  await waitForHydration(page);
 });
 
 test("module invalidation @dev", async ({ page }) => {
