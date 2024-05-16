@@ -189,9 +189,6 @@ importers:
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
-      '@unocss/postcss':
-        specifier: ^0.58.6
-        version: 0.58.6(postcss@8.4.38)
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
