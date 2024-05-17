@@ -6,9 +6,9 @@ settings:
 
 overrides:
   vite: ^5.2.3
-  react: 19.0.0-rc-915b914b3a-20240515
-  react-dom: 19.0.0-rc-915b914b3a-20240515
-  react-is: 19.0.0-rc-915b914b3a-20240515
+  react: 19.0.0-beta-9d76c954cf-20240510
+  react-dom: 19.0.0-beta-9d76c954cf-20240510
+  react-is: 19.0.0-beta-9d76c954cf-20240510
   '@types/react': 18.3.1
   '@types/react-dom': 18.3.0
 
@@ -83,11 +83,11 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -105,7 +105,7 @@ importers:
         version: 0.30.8
       use-sync-external-store:
         specifier: ^1.2.0
-        version: 1.2.0(react@19.0.0-rc-915b914b3a-20240515)
+        version: 1.2.0(react@19.0.0-beta-9d76c954cf-20240510)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -123,14 +123,14 @@ importers:
         specifier: ^0.0.6
         version: 0.0.6
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)(webpack@5.90.3)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)(webpack@5.90.3)
 
   packages/react-server/examples/basic:
     dependencies:
@@ -139,25 +139,25 @@ importers:
         version: link:../..
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
-        version: file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-915b914b3a-20240515)
+        version: file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-beta-9d76c954cf-20240510)
       '@hiogawa/test-dep-use-client':
         specifier: file:deps/use-client
-        version: file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-915b914b3a-20240515)
+        version: file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-beta-9d76c954cf-20240510)
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)(webpack@5.90.3)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)(webpack@5.90.3)
       react-wrap-balancer:
         specifier: ^1.1.0
-        version: 1.1.0(react@19.0.0-rc-915b914b3a-20240515)
+        version: 1.1.0(react@19.0.0-beta-9d76c954cf-20240510)
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.44
@@ -205,14 +205,14 @@ importers:
         specifier: latest
         version: link:../..
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)(webpack@5.90.3)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)(webpack@5.90.3)
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.44
@@ -250,10 +250,10 @@ importers:
         version: 0.0.44
       react-router:
         specifier: ^6.22.3
-        version: 6.22.3(react@19.0.0-rc-915b914b3a-20240515)
+        version: 6.22.3(react@19.0.0-beta-9d76c954cf-20240510)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)
+        version: 6.22.3(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)
 
   packages/vite-glob-routes/examples/demo:
     devDependencies:
@@ -277,19 +277,19 @@ importers:
         version: 0.0.4-pre.1
       '@hiogawa/tiny-form':
         specifier: 0.0.1-pre.10
-        version: 0.0.1-pre.10(react@19.0.0-rc-915b914b3a-20240515)
+        version: 0.0.1-pre.10(react@19.0.0-beta-9d76c954cf-20240510)
       '@hiogawa/tiny-jwt':
         specifier: 0.2.8-pre.2
         version: 0.2.8-pre.2
       '@hiogawa/tiny-progress':
         specifier: 0.0.1-pre.4
-        version: 0.0.1-pre.4(react@19.0.0-rc-915b914b3a-20240515)
+        version: 0.0.1-pre.4(react@19.0.0-beta-9d76c954cf-20240510)
       '@hiogawa/tiny-rpc':
         specifier: 0.2.3-pre.18
         version: 0.2.3-pre.18
       '@hiogawa/tiny-toast':
         specifier: 0.1.1-pre.10
-        version: 0.1.1-pre.10(react@19.0.0-rc-915b914b3a-20240515)
+        version: 0.1.1-pre.10(react@19.0.0-beta-9d76c954cf-20240510)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
         version: 2.2.1-pre.7(unocss@0.58.6)
@@ -313,10 +313,10 @@ importers:
         version: 1.1.20
       '@tanstack/react-query':
         specifier: ^5.28.4
-        version: 5.28.4(react@19.0.0-rc-915b914b3a-20240515)
+        version: 5.28.4(react@19.0.0-beta-9d76c954cf-20240510)
       '@tanstack/react-query-devtools':
         specifier: ^5.28.4
-        version: 5.28.4(@tanstack/react-query@5.28.4)(react@19.0.0-rc-915b914b3a-20240515)
+        version: 5.28.4(@tanstack/react-query@5.28.4)(react@19.0.0-beta-9d76c954cf-20240510)
       '@types/cookie':
         specifier: ^0.6.0
         version: 0.6.0
@@ -342,17 +342,17 @@ importers:
         specifier: ^4.18.3
         version: 4.18.3
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       react-router:
         specifier: 6.22.3
-        version: 6.22.3(react@19.0.0-rc-915b914b3a-20240515)
+        version: 6.22.3(react@19.0.0-beta-9d76c954cf-20240510)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)
+        version: 6.22.3(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)
       unocss:
         specifier: ^0.58.6
         version: 0.58.6(postcss@8.4.38)(vite@5.2.3)
@@ -381,14 +381,14 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)
+        version: 6.22.3(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -438,14 +438,14 @@ importers:
         specifier: ^4.18.3
         version: 4.18.3
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)
+        version: 6.22.3(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -511,11 +511,11 @@ importers:
         specifier: ^3.20240304.2
         version: 3.20240304.2
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -547,14 +547,14 @@ importers:
         specifier: ^3.20240304.2
         version: 3.20240304.2
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)
+        version: 6.22.3(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -563,7 +563,7 @@ importers:
     dependencies:
       '@remix-run/react':
         specifier: 2.8.1
-        version: 2.8.1(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)(typescript@5.4.2)
+        version: 2.8.1(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)(typescript@5.4.2)
       '@remix-run/server-runtime':
         specifier: 2.8.1
         version: 2.8.1(typescript@5.4.2)
@@ -571,11 +571,11 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240314.0
@@ -618,11 +618,11 @@ importers:
   packages/vite-plugin-simple-hmr/examples/react:
     dependencies:
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
     devDependencies:
       '@hiogawa/vite-plugin-simple-hmr':
         specifier: workspace:*
@@ -658,11 +658,11 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510
       react-dom:
-        specifier: 19.0.0-rc-915b914b3a-20240515
-        version: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+        specifier: 19.0.0-beta-9d76c954cf-20240510
+        version: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -2035,15 +2035,15 @@ packages:
     resolution: {integrity: sha512-3z/qYXDyROVX8oaFdqMyiLL8ZZE9dEaEw02ZYXOxmUF6U5MM3pskzLZId/KMvT+ZnLCLI4CUBuga6AIf56JXTw==}
     dev: true
 
-  /@hiogawa/tiny-form@0.0.1-pre.10(react@19.0.0-rc-915b914b3a-20240515):
+  /@hiogawa/tiny-form@0.0.1-pre.10(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-BIvGs22O+RNCDclikqSAMMxuLTi4Onz0fpMK1qGtxA3ga+jBN3hRfOxUWl1Mei2lPo07ralKGNhKBTxhIlQ3eA==}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: true
 
   /@hiogawa/tiny-jwt@0.2.8-pre.2:
@@ -2051,15 +2051,15 @@ packages:
     hasBin: true
     dev: true
 
-  /@hiogawa/tiny-progress@0.0.1-pre.4(react@19.0.0-rc-915b914b3a-20240515):
+  /@hiogawa/tiny-progress@0.0.1-pre.4(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-7v367ZbgmJRE4gMGvo7sqwx6eAf5FegipkS6FGCUwZd6iiyfrTVpRYmtg8ITUhkIR2LNnmMRllbVIcebWsD1Og==}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: true
 
   /@hiogawa/tiny-react@0.0.2-pre.9(vite@5.2.3):
@@ -2077,15 +2077,15 @@ packages:
     resolution: {integrity: sha512-BiNHrutG9G9yV622QvkxZxF+PhkaH2Aspp4/X1KYTfnaQTcg4fFUTBWf5Kf533swon2SuVJwi6U6H1LQbhVOQQ==}
     dev: true
 
-  /@hiogawa/tiny-toast@0.1.1-pre.10(react@19.0.0-rc-915b914b3a-20240515):
+  /@hiogawa/tiny-toast@0.1.1-pre.10(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-vA0kmobSc0KSQw/ff3Fm9pQBkJkhaHcvjuhpBYnBjev4dC2qeCGOvUax/+iUMYns816z6/X3XAr3Mwp92qZtuQ==}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: true
 
   /@hiogawa/unocss-preset-antd@2.2.1-pre.7(unocss@0.58.6):
@@ -2406,12 +2406,12 @@ packages:
       typescript: 5.4.2
     dev: true
 
-  /@remix-run/react@2.8.1(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)(typescript@5.4.2):
+  /@remix-run/react@2.8.1(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)(typescript@5.4.2):
     resolution: {integrity: sha512-HTPm1U8+xz2jPaVjZnssrckfmFMA8sUZUdaWnoF5lmLWdReqcQv+XlBhIrQQ3jO9L8iYYdnzaSZZcRFYSdpTYg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
-      react-dom: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
+      react-dom: 19.0.0-beta-9d76c954cf-20240510
       typescript: ^5.1.0
     peerDependenciesMeta:
       typescript:
@@ -2419,10 +2419,10 @@ packages:
     dependencies:
       '@remix-run/router': 1.15.3
       '@remix-run/server-runtime': 2.8.1(typescript@5.4.2)
-      react: 19.0.0-rc-915b914b3a-20240515
-      react-dom: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
-      react-router: 6.22.3(react@19.0.0-rc-915b914b3a-20240515)
-      react-router-dom: 6.22.3(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)
+      react: 19.0.0-beta-9d76c954cf-20240510
+      react-dom: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
+      react-router: 6.22.3(react@19.0.0-beta-9d76c954cf-20240510)
+      react-router-dom: 6.22.3(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)
       typescript: 5.4.2
     dev: false
 
@@ -2613,24 +2613,24 @@ packages:
     resolution: {integrity: sha512-Kxch05PVnxLUAyRiz2gXYQhXATHfXbQQwvz858YPjYYQyi7yk8SyS9Z5hyw90bRb0pd3rjelXyGFCsNMWvEghw==}
     dev: true
 
-  /@tanstack/react-query-devtools@5.28.4(@tanstack/react-query@5.28.4)(react@19.0.0-rc-915b914b3a-20240515):
+  /@tanstack/react-query-devtools@5.28.4(@tanstack/react-query@5.28.4)(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-oS+3INjCIX4Nkh0IAV6LH2mgLqJjkcd/DDxp8dwdWCGloLrz6IBj+bOuuI2wD0zb8r7l45wIAYIhl4Z6XyTupQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.28.4
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
       '@tanstack/query-devtools': 5.28.3
-      '@tanstack/react-query': 5.28.4(react@19.0.0-rc-915b914b3a-20240515)
-      react: 19.0.0-rc-915b914b3a-20240515
+      '@tanstack/react-query': 5.28.4(react@19.0.0-beta-9d76c954cf-20240510)
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: true
 
-  /@tanstack/react-query@5.28.4(react@19.0.0-rc-915b914b3a-20240515):
+  /@tanstack/react-query@5.28.4(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-BErcoB/QQG6YwLSUKnaGxF+lSc270RH2w3kMBpG0i4YzDCsFs2pdxPX1WVknQvFk9bNgukMb158hc2Zb4SdwSA==}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
       '@tanstack/query-core': 5.28.4
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: true
 
   /@tsconfig/strictest@2.0.3:
@@ -6093,7 +6093,7 @@ packages:
     dependencies:
       '@jest/schemas': 29.6.3
       ansi-styles: 5.2.0
-      react-is: 19.0.0-rc-915b914b3a-20240515
+      react-is: 19.0.0-beta-9d76c954cf-20240510
     dev: true
 
   /pretty-ms@7.0.1:
@@ -6200,67 +6200,67 @@ packages:
       unpipe: 1.0.0
     dev: true
 
-  /react-dom@19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515):
-    resolution: {integrity: sha512-Njv9p2b7/3ZEk7hcWAzgxbLfYbYJfI01bwI0V+a1WKbhhxwth1o2mQejIsUtnDwkXZ34Oej8rIY5Z93pUfSCdQ==}
+  /react-dom@19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510):
+    resolution: {integrity: sha512-/Yh2B8Av7VBqRTRow4Scxrh5RO0z3vgANrO1UhomeQjq/Nz0oy6YtTNz3GXDlCAMqRuDVCBi4xCRO/KAjtsz1g==}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
-      scheduler: 0.25.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
+      scheduler: 0.25.0-beta-9d76c954cf-20240510
 
-  /react-is@19.0.0-rc-915b914b3a-20240515:
-    resolution: {integrity: sha512-rSje5quK1l2qD4AvOWK7evWh4AQnXPNzpv7plZqnbl/oS4AEIT/FsZauyoLRMzXyleGXPJY0xnMnNXhPN+5HRw==}
+  /react-is@19.0.0-beta-9d76c954cf-20240510:
+    resolution: {integrity: sha512-fHERig34ZW9kUJT//a7OqFf+wPpF720riRUtO2W6n0K5iymnN+vANNSORXH7hftsDOjNGSw/RdlzXYxoMiWPYA==}
     dev: true
 
   /react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
 
-  /react-router-dom@6.22.3(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515):
+  /react-router-dom@6.22.3(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-7ZILI7HjcE+p31oQvwbokjk6OA/bnFxrhJ19n82Ex9Ph8fNAq+Hm/7KchpMGlTgWhUxRHMMCut+vEtNpWpowKw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
-      react-dom: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
+      react-dom: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 19.0.0-rc-915b914b3a-20240515
-      react-dom: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
-      react-router: 6.22.3(react@19.0.0-rc-915b914b3a-20240515)
+      react: 19.0.0-beta-9d76c954cf-20240510
+      react-dom: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
+      react-router: 6.22.3(react@19.0.0-beta-9d76c954cf-20240510)
 
-  /react-router@6.22.3(react@19.0.0-rc-915b914b3a-20240515):
+  /react-router@6.22.3(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-dr2eb3Mj5zK2YISHK++foM9w4eBnO23eKnZEDs7c880P6oKbrjz/Svg9+nxqtHQK+oMW4OtjZca0RqPglXxguQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
 
-  /react-server-dom-webpack@19.0.0-rc-915b914b3a-20240515(react-dom@19.0.0-rc-915b914b3a-20240515)(react@19.0.0-rc-915b914b3a-20240515)(webpack@5.90.3):
-    resolution: {integrity: sha512-z+7cNxwH40dMfclXCLb/TF+wr6DkV44uz3/XzdeWogjOfJi+jI+WWFFcCKUba8qNSCTNddU7m10CUtPved1TkA==}
+  /react-server-dom-webpack@19.0.0-beta-9d76c954cf-20240510(react-dom@19.0.0-beta-9d76c954cf-20240510)(react@19.0.0-beta-9d76c954cf-20240510)(webpack@5.90.3):
+    resolution: {integrity: sha512-raAjv4kyBnZLO0X42Ta1QkiLF/x0FtMQw2BiflzY6MmWEXpMUGVVJAFKwmNX0M/OfXTUcSuG54WHlGzglXheaw==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
-      react-dom: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
+      react-dom: 19.0.0-beta-9d76c954cf-20240510
       webpack: ^5.59.0
     dependencies:
       acorn-loose: 8.4.0
       neo-async: 2.6.2
-      react: 19.0.0-rc-915b914b3a-20240515
-      react-dom: 19.0.0-rc-915b914b3a-20240515(react@19.0.0-rc-915b914b3a-20240515)
+      react: 19.0.0-beta-9d76c954cf-20240510
+      react-dom: 19.0.0-beta-9d76c954cf-20240510(react@19.0.0-beta-9d76c954cf-20240510)
       webpack: 5.90.3(esbuild@0.20.2)
 
-  /react-wrap-balancer@1.1.0(react@19.0.0-rc-915b914b3a-20240515):
+  /react-wrap-balancer@1.1.0(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-EhF3jOZm5Fjx+Cx41e423qOv2c2aOvXAtym2OHqrGeMUnwERIyNsRBgnfT3plB170JmuYvts8K2KSPEIerKr5A==}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: false
 
-  /react@19.0.0-rc-915b914b3a-20240515:
-    resolution: {integrity: sha512-/XKPm2pbDBheMbNUV/uRoL0/RZXg+CCyen3YBjDetySqGZjsRBQKKtK9sWMjQO8J6y8PoC02HzjAP4/OQ2Wmow==}
+  /react@19.0.0-beta-9d76c954cf-20240510:
+    resolution: {integrity: sha512-LNCQIqNkPCMz6/WstO1joeHev+jB36dG5+HD1iUxy3sL6RRhOQL8KNV7mra6P6Z92iAW1zCgM0jeFFi6+22Qyw==}
     engines: {node: '>=0.10.0'}
 
   /readable-stream@2.3.8:
@@ -6452,8 +6452,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
-  /scheduler@0.25.0-rc-915b914b3a-20240515:
-    resolution: {integrity: sha512-NeqcaiiRfnXjrrtI8CxyU9FlT9UTdRvpSCy/fnAK+hwwrMjk6BhtCmdziCOkCat5bI3p6uUIwR2NNCK2F/1bZg==}
+  /scheduler@0.25.0-beta-9d76c954cf-20240510:
+    resolution: {integrity: sha512-PK8FvV7a0BZeqGuN1L+pQvvG8Kqkd3nzGjdlKamDlF8A2kFHOnM3XRw0d9birdksqdraYONBxgJfQgkckBJgqw==}
 
   /schema-utils@3.3.0:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
@@ -7208,12 +7208,12 @@ packages:
   /urlpattern-polyfill@10.0.0:
     resolution: {integrity: sha512-H/A06tKD7sS1O1X2SshBVeA5FLycRpjqiBeqGKmBwBDBy28EnRjORxTNe269KSSr5un5qyWi1iL61wLxpd+ZOg==}
 
-  /use-sync-external-store@1.2.0(react@19.0.0-rc-915b914b3a-20240515):
+  /use-sync-external-store@1.2.0(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: false
 
   /util-deprecate@1.0.2:
@@ -7647,22 +7647,22 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-915b914b3a-20240515):
+  file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
     id: file:packages/react-server/examples/basic/deps/server-component
     name: '@hiogawa/test-dep-use-client'
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: false
 
-  file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-915b914b3a-20240515):
+  file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-beta-9d76c954cf-20240510):
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
     id: file:packages/react-server/examples/basic/deps/use-client
     name: '@hiogawa/test-dep-use-client'
     peerDependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dependencies:
-      react: 19.0.0-rc-915b914b3a-20240515
+      react: 19.0.0-beta-9d76c954cf-20240510
     dev: false
