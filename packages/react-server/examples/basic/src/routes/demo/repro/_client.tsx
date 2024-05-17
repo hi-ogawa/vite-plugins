@@ -11,5 +11,5 @@ export function Client1(props: { SomeComp: React.ComponentType }) {
 }
 
 export function Client2() {
-  return <div>[Client2]</div>;
+  return <span>[Client2]</span>;
 }
