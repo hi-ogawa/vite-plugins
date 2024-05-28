@@ -1,10 +1,11 @@
 # transforms
 
-## features
+## todo
 
-- server reference
-  - [x] "use server" file
+- [ ] server reference
+  - [ ] "use server" file
   - [x] "use server" inline
   - [ ] closure encryption
-- client reference
+- [ ] client reference
   - [ ] "use client" file
+- [ ] dead code elimination

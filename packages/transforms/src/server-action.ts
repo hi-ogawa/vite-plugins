@@ -7,6 +7,9 @@ import { hasDirective } from "./utils";
 
 const SERVER_DIRECTIVE = "use server";
 
+// cf.
+// https://github.com/hi-ogawa/experiments/blob/09ee2efc92ca2b1e517dc388975c4dcce62c9fc0/vue-server/src/demo/integrations/client-reference/plugin-utils.ts#L34
+
 export async function transformServerActionFile(
   input: string,
   { id, runtime }: { id: string; runtime: string },
@@ -19,11 +22,24 @@ export async function transformServerActionFile(
   id;
   runtime;
   output;
+
+  walk(parsed, {
+    enter(node) {
+      if (node.type === "ExportNamedDeclaration") {
+      }
+    },
+  });
 }
 
-export async function transformServerActionInline(
+// TODO: transformWrapExport
+
+export async function transformHoistInlineDirective(
   input: string,
-  { id, runtime }: { id: string; runtime: string },
+  {
+    id,
+    runtime,
+    directive,
+  }: { id: string; runtime: string; directive: string },
 ) {
   const parsed = await parseAstAsync(input);
   const output = new MagicString(input);
@@ -37,7 +53,7 @@ export async function transformServerActionInline(
           node.type === "FunctionDeclaration" ||
           node.type === "ArrowFunctionExpression") &&
         node.body.type === "BlockStatement" &&
-        hasDirective(node.body.body, SERVER_DIRECTIVE)
+        hasDirective(node.body.body, directive)
       ) {
         const scope = analyzed.map.get(node);
         tinyassert(scope);
@@ -58,7 +74,7 @@ export async function transformServerActionInline(
         ].join(", ");
 
         // append a new `FunctionDeclaration` at the end
-        const newName = `$$action_${names.length}`;
+        const newName = `$$hoist_${names.length}`;
         names.push(newName);
         output.update(
           node.start,

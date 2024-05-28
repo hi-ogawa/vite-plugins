@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { transformServerActionInline } from "./server-action";
+import { transformHoistInlineDirective } from "./server-action";
 import { debugSourceMap } from "./test-utils";
 
-describe(transformServerActionInline, () => {
+describe(transformHoistInlineDirective, () => {
   async function testTransform(input: string) {
-    const { output } = await transformServerActionInline(input, {
+    const { output } = await transformHoistInlineDirective(input, {
       id: "<id>",
       runtime: "$$register",
+      directive: "use server",
     });
     if (!output.hasChanged()) {
       return;
@@ -53,27 +54,27 @@ export default function w() {
       "
       const x = "x";
 
-      const f = $$register($$action_0, "<id>", "$$action_0");
+      const f = $$register($$hoist_0, "<id>", "$$hoist_0");
 
       async function g() {
       }
 
-      export const h = $$register($$action_1, "<id>", "$$action_1");
+      export const h = $$register($$hoist_1, "<id>", "$$hoist_1");
 
-      const w = $$register($$action_2, "<id>", "$$action_2");
+      const w = $$register($$hoist_2, "<id>", "$$hoist_2");
       export default w;
 
-      ;export async function $$action_0() {
+      ;export async function $$hoist_0() {
         "use server";
         return x;
       };
 
-      ;export async function $$action_1(formData) {
+      ;export async function $$hoist_1(formData) {
         "use server";
         return formData.get(x);
       };
 
-      ;export function $$action_2() {
+      ;export function $$hoist_2() {
         "use server";
       };
       "
@@ -102,12 +103,12 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = $$register($$action_0, "<id>", "$$action_0").bind(null, name);
+        const changeCount = $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
 
         return "something";
       }
 
-      ;export async function $$action_0(name, formData) {
+      ;export async function $$hoist_0(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -142,19 +143,19 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = $$register($$action_0, "<id>", "$$action_0").bind(null, name);
+        const changeCount = $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
 
-        const changeCount2 = $$register($$action_1, "<id>", "$$action_1").bind(null, name);
+        const changeCount2 = $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, name);
 
         return "something";
       }
 
-      ;export async function $$action_0(name, formData) {
+      ;export async function $$hoist_0(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
 
-      ;export async function $$action_1(name, formData) {
+      ;export async function $$hoist_1(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -187,11 +188,11 @@ function Counter() {
 
         return {
           type: "form",
-          action: $$register($$action_0, "<id>", "$$action_0").bind(null, name)
+          action: $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name)
         }
       }
 
-      ;export function $$action_0(name, formData) {
+      ;export function $$hoist_0(name, formData) {
             "use server";
             count += Number(formData.get(name));
           };
