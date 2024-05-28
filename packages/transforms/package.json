@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/transforms",
-  "version": "0.0.0",
+  "version": "0.0.0-pre.0",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/transforms",
   "repository": {
     "type": "git",
@@ -28,10 +28,10 @@
     "magic-string": "^0.30.8",
     "periscopic": "^4.0.2"
   },
-  "peerDependencies": {
-    "vite": "*"
-  },
   "devDependencies": {
     "@types/estree": "^1.0.5"
+  },
+  "peerDependencies": {
+    "vite": "*"
   }
 }
