@@ -7,9 +7,6 @@ import { hasDirective } from "./utils";
 
 const SERVER_DIRECTIVE = "use server";
 
-// cf.
-// https://github.com/hi-ogawa/experiments/blob/09ee2efc92ca2b1e517dc388975c4dcce62c9fc0/vue-server/src/demo/integrations/client-reference/plugin-utils.ts#L34
-
 export async function transformServerActionFile(
   input: string,
   { id, runtime }: { id: string; runtime: string },
@@ -30,8 +27,6 @@ export async function transformServerActionFile(
     },
   });
 }
-
-// TODO: transformWrapExport
 
 export async function transformHoistInlineDirective(
   input: string,
