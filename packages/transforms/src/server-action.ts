@@ -66,8 +66,8 @@ export async function transformServerActionInline(input: string, id: string) {
               node.async ? "async " : ""
             }(${liftParams}) => `,
           );
-          // output.appendLeft(node.end, ";\n");
-          output.move(node.start, node.end, input.length);
+          output.appendLeft(node.end, ";\n");
+          output.move(node.start, node.end, topStmt.start);
 
           // replace original declartion with action bind
           const bindParams = ["null", ...bindVars].join(", ");
@@ -94,11 +94,12 @@ export async function transformServerActionInline(input: string, id: string) {
           output.update(
             node.start,
             node.body.start,
-            `;\nlet ${liftName} = ${
+            `\n;let ${liftName} = ${
               node.async ? "async " : ""
             }(${liftParams}) => `,
           );
-          output.move(node.start, node.end, input.length); // move to the end
+          output.appendLeft(node.end, ";\n");
+          output.move(node.start, node.end, topStmt.start);
 
           // replace original declartion with action bind
           const bindParams = ["null", ...bindVars].join(", ");

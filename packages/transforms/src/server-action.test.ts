@@ -53,6 +53,11 @@ function Counter() {
       "
       let count = 0;
 
+
+      ;let $$action_0 = async (name, formData) => {
+          "use server";
+          count += Number(formData.get(name));
+        };
       function Counter() {
         const name = "value";
 
@@ -60,11 +65,7 @@ function Counter() {
 
         return "something";
       }
-
-      ;let $$action_0 = async (name, formData) => {
-          "use server";
-          count += Number(formData.get(name));
-        };
+      ;
       import { registerServerReference as $$register } from "/src/features/server-action/server";
       $$action_0 = $$register($$action_0, "<id>", "$$action_0");
       export { $$action_0 };
@@ -102,6 +103,16 @@ async function changeCount3(formData) {
       "
       let count = 0;
 
+
+      ;let $$action_0 = async (name, formData) => {
+          "use server";
+          count += Number(formData.get(name));
+        };
+
+      ;let $$action_1 = async (name, formData) => {
+          "use server";
+          count += Number(formData.get(name));
+        };
       function Counter() {
         const name = "value";
 
@@ -117,15 +128,7 @@ async function changeCount3(formData) {
         count += Number(formData.get(name));
       }
 
-
-      ;let $$action_0 = async (name, formData) => {
-          "use server";
-          count += Number(formData.get(name));
-        }
-      ;let $$action_1 = async (name, formData) => {
-          "use server";
-          count += Number(formData.get(name));
-        };
+      ;
       import { registerServerReference as $$register } from "/src/features/server-action/server";
       $$action_0 = $$register($$action_0, "<id>", "$$action_0");
       export { $$action_0 };
@@ -157,6 +160,11 @@ function Counter() {
       "
       let count = 0;
 
+
+      ;let $$action_0 = (name, formData) => {
+            "use server";
+            count += Number(formData.get(name));
+          };
       function Counter() {
         const name = "value";
 
@@ -166,10 +174,6 @@ function Counter() {
         }
       }
       ;
-      let $$action_0 = (name, formData) => {
-            "use server";
-            count += Number(formData.get(name));
-          };
       import { registerServerReference as $$register } from "/src/features/server-action/server";
       $$action_0 = $$register($$action_0, "<id>", "$$action_0");
       export { $$action_0 };
