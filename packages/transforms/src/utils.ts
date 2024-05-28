@@ -1,5 +1,5 @@
-import { tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
+import { extract_names } from "periscopic";
 
 export function hasDirective(
   body: Program["body"],
@@ -38,10 +38,7 @@ export function getExportNames(
            * export const foo = 1, bar = 2
            */
           for (const decl of node.declaration.declarations) {
-            // TODO: support non identifier e.g.
-            // export const { x } = { x: 0 }
-            tinyassert(decl.id.type === "Identifier");
-            exportNames.push(decl.id.name);
+            exportNames.push(...extract_names(decl.id));
           }
         } else {
           node.declaration satisfies never;

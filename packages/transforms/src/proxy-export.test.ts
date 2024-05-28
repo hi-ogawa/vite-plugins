@@ -32,6 +32,17 @@ export class Cls {};
     `);
   });
 
+  test("export destructuring", async () => {
+    const input = `
+export const { x, y: [z] } = { x: 0, y: [1] };
+`;
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      "export const x = $$proxy("<id>", "x");
+      export const z = $$proxy("<id>", "z");
+      "
+    `);
+  });
+
   test("default function", async () => {
     const input = `export default function Fn() {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
