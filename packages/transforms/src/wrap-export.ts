@@ -1,6 +1,14 @@
 import { tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import MagicString from "magic-string";
+import { extract_names } from "periscopic";
+
+// TODO:
+// needs to preserve reference? this would break everything....
+//   export let count = 0;
+//   ⇓
+//   const $$wrap_count = $$wrap(count, ...);
+//   export { $$wrap_count as count }
 
 export async function transformWrapExport(
   input: string,
@@ -45,6 +53,8 @@ export async function transformWrapExport(
           for (const decl of node.declaration.declarations) {
             // TODO: support non identifier e.g.
             // export const { x } = { x: 0 }
+            extract_names;
+
             tinyassert(decl.id.type === "Identifier");
             wrapExport(decl.id.name);
           }
