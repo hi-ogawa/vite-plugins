@@ -7,9 +7,9 @@ async function testTransform(input: string) {
   const { output } = await transformWrapExport(input, ast, {
     id: "<id>",
     runtime: "$$wrap",
-    throwExportAllDeclaration: false,
+    ignoreExportAllDeclaration: true,
   });
-  return output.toString();
+  return output.hasChanged() && output.toString();
 }
 
 describe(transformWrapExport, () => {
@@ -135,17 +135,11 @@ export { x as y }
 
   test("re-export all simple", async () => {
     const input = `export * from "./dep"`;
-    expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export * from "./dep";
-      "
-    `);
+    expect(await testTransform(input)).toMatchInlineSnapshot(`false`);
   });
 
   test("re-export all rename", async () => {
     const input = `export * as all from "./dep"`;
-    expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export * as all from "./dep";
-      "
-    `);
+    expect(await testTransform(input)).toMatchInlineSnapshot(`false`);
   });
 });

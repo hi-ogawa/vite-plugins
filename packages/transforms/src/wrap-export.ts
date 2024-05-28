@@ -8,7 +8,7 @@ export async function transformWrapExport(
   options: {
     id: string;
     runtime: string;
-    throwExportAllDeclaration?: boolean;
+    ignoreExportAllDeclaration?: boolean;
   },
 ) {
   const output = new MagicString(input);
@@ -34,6 +34,7 @@ export async function transformWrapExport(
           /**
            * export function foo() {}
            */
+          // strip export
           output.remove(node.start, node.start + 6);
           wrapExport(node.declaration.id.name);
         } else if (node.declaration.type === "VariableDeclaration") {
@@ -42,6 +43,8 @@ export async function transformWrapExport(
            */
           output.remove(node.start, node.start + 6);
           for (const decl of node.declaration.declarations) {
+            // TODO: support non identifier e.g.
+            // export const { x } = { x: 0 }
             tinyassert(decl.id.type === "Identifier");
             wrapExport(decl.id.name);
           }
@@ -80,7 +83,7 @@ export async function transformWrapExport(
     // for now we just give an option to not throw for this case.
     // https://github.com/vitejs/vite-plugin-vue/blob/30a97c1ddbdfb0e23b7dc14a1d2fb609668b9987/packages/plugin-vue/src/main.ts#L372
     if (
-      options.throwExportAllDeclaration &&
+      !options.ignoreExportAllDeclaration &&
       node.type === "ExportAllDeclaration"
     ) {
       throw new Error("unsupported ExportAllDeclaration");
@@ -110,7 +113,9 @@ export async function transformWrapExport(
     }
   }
 
-  output.append(["", ...toAppend, ""].join(";\n"));
+  if (toAppend.length > 0) {
+    output.append(["", ...toAppend, ""].join(";\n"));
+  }
 
   return { exportNames, output };
 }
