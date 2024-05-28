@@ -35,7 +35,7 @@ export async function transformServerActionInline(
         tinyassert(scope);
         const declName = node.type === "FunctionDeclaration" && node.id.name;
 
-        // filter variables which are neither global nor own scope
+        // bind variables which are neither global nor in own scope
         const bindVars = [...scope.references].filter((ref) => {
           // declared function itself is included as reference
           if (ref === declName) {
@@ -49,7 +49,7 @@ export async function transformServerActionInline(
           ...node.params.map((n) => input.slice(n.start, n.end)),
         ].join(", ");
 
-        // append a new `FunctionDeclaration` at the end since they can hoist automatically
+        // append a new `FunctionDeclaration` at the end
         const newName = `$$action_${names.length}`;
         names.push(newName);
         output.update(
