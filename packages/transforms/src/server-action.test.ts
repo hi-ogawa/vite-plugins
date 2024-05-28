@@ -4,7 +4,10 @@ import { debugSourceMap } from "./test-utils";
 
 describe(transformServerActionInline, () => {
   async function testTransform(input: string) {
-    const res = await transformServerActionInline(input, "<id>");
+    const res = await transformServerActionInline(input, {
+      id: "<id>",
+      runtime: "$$register",
+    });
     if (res?.output && process.env["DEBUG_SOURCEMAP"]) {
       await debugSourceMap(res.output);
     }
@@ -19,7 +22,15 @@ async function f() {
   return x;
 }
 `;
-    expect(await testTransform(input)).toMatchInlineSnapshot(`undefined`);
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      "
+      const x = "x";
+
+      async function f() {
+        return x;
+      }
+      "
+    `);
   });
 
   it("top level", async () => {
@@ -44,8 +55,7 @@ export default function w() {
 }
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "import { registerServerReference as $$register } from "/src/features/server-action/server";
-
+      "
       const x = "x";
 
       const f = $$register($$action_0, "<id>", "$$action_0");
@@ -91,8 +101,7 @@ function Counter() {
 }
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "import { registerServerReference as $$register } from "/src/features/server-action/server";
-
+      "
       let count = 0;
 
       function Counter() {
@@ -132,8 +141,7 @@ function Counter() {
 }
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "import { registerServerReference as $$register } from "/src/features/server-action/server";
-
+      "
       let count = 0;
 
       function Counter() {
@@ -176,8 +184,7 @@ function Counter() {
 }
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "import { registerServerReference as $$register } from "/src/features/server-action/server";
-
+      "
       let count = 0;
 
       function Counter() {

@@ -13,7 +13,10 @@ declare module "estree" {
   }
 }
 
-export async function transformServerActionInline(input: string, id: string) {
+export async function transformServerActionInline(
+  input: string,
+  { id, runtime }: { id: string; runtime: string },
+) {
   const parsed = await parseAstAsync(input);
   const output = new MagicString(input);
   const analyzed = analyze(parsed);
@@ -32,7 +35,7 @@ export async function transformServerActionInline(input: string, id: string) {
         tinyassert(scope);
         const declName = node.type === "FunctionDeclaration" && node.id.name;
 
-        // filter bind variables
+        // filter variables which are neither global nor own scope
         const bindVars = [...scope.references].filter((ref) => {
           // declared function itself is included as reference
           if (ref === declName) {
@@ -60,7 +63,7 @@ export async function transformServerActionInline(input: string, id: string) {
         output.move(node.start, node.end, input.length);
 
         // replace original declartion with action register + bind
-        let newCode = `$$register(${newName}, "${id}", "${newName}")`;
+        let newCode = `${runtime}(${newName}, "${id}", "${newName}")`;
         if (bindVars.length > 0) {
           newCode = `${newCode}.bind(${["null", ...bindVars].join(", ")})`;
         }
@@ -75,14 +78,6 @@ export async function transformServerActionInline(input: string, id: string) {
       }
     },
   });
-
-  if (names.length === 0) {
-    return;
-  }
-
-  output.prepend(
-    `import { registerServerReference as $$register } from "/src/features/server-action/server";\n`,
-  );
 
   return {
     output,
