@@ -108,8 +108,6 @@ export async function transformServerActionInline(input: string, id: string) {
     },
   });
 
-  console.log(names);
-
   if (names.length === 0) {
     return;
   }
