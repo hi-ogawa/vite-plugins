@@ -43,7 +43,7 @@ export class Cls {};
     `);
   });
 
-  test("not preserving reference", async () => {
+  test("preserve reference", async () => {
     const input = `
 export let count = 0;
 export function changeCount() {
@@ -61,6 +61,22 @@ export function changeCount() {
       export { count };
       changeCount = $$wrap(changeCount, "<id>", "changeCount");
       export { changeCount };
+      "
+    `);
+  });
+
+  test("export destructuring", async () => {
+    const input = `
+export const { x, y: [z] } = { x: 0, y: [1] };
+`;
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      "
+      let { x, y: [z] } = { x: 0, y: [1] };
+      ;
+      x = $$wrap(x, "<id>", "x");
+      export { x };
+      z = $$wrap(z, "<id>", "z");
+      export { z };
       "
     `);
   });

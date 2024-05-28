@@ -1,4 +1,3 @@
-import { tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
@@ -60,12 +59,9 @@ export async function transformWrapExport(
             );
           }
           for (const decl of node.declaration.declarations) {
-            // TODO: support non identifier e.g.
-            // export const { x } = { x: 0 }
-            extract_names;
-
-            tinyassert(decl.id.type === "Identifier");
-            wrapSimple(decl.id.name);
+            for (const name of extract_names(decl.id)) {
+              wrapSimple(name);
+            }
           }
         } else {
           node.declaration satisfies never;
