@@ -6,5 +6,6 @@
   - [x] basic
   - [ ] closure encryption
 - [x] transformWrapExport (for "use server" and "use client" file)
+  - [ ] preserve export reference?
 - [x] transformProxyExport (for "use server" and "use client" file)
 - [ ] dead code elimination

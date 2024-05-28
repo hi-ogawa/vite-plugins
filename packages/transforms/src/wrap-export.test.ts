@@ -43,6 +43,28 @@ export class Cls {};
     `);
   });
 
+  test("not preserving reference", async () => {
+    const input = `
+export let count = 0;
+export function changeCount() {
+  count += 1;
+}
+`;
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      "
+       let count = 0;
+       function changeCount() {
+        count += 1;
+      }
+      ;
+      const $$wrap_count = $$wrap(count, "<id>", "count");
+      export { $$wrap_count as count };
+      const $$wrap_changeCount = $$wrap(changeCount, "<id>", "changeCount");
+      export { $$wrap_changeCount as changeCount };
+      "
+    `);
+  });
+
   test("default function", async () => {
     const input = `export default function Fn() {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
