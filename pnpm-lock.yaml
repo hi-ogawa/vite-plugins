@@ -253,6 +253,10 @@ importers:
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
+    devDependencies:
+      '@types/estree':
+        specifier: ^1.0.5
+        version: 1.0.5
 
   packages/vite-glob-routes:
     dependencies:
