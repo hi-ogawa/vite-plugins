@@ -20,7 +20,7 @@ export async function transformServerActionInline(input: string, id: string) {
   const names: string[] = [];
 
   walk(parsed, {
-    enter(node) {
+    enter(node, parent) {
       if (
         (node.type === "FunctionExpression" ||
           node.type === "FunctionDeclaration" ||
@@ -65,8 +65,11 @@ export async function transformServerActionInline(input: string, id: string) {
           newCode = `${newCode}.bind(${["null", ...bindVars].join(", ")})`;
         }
         if (declName) {
-          // TODO: broken when "export default"
-          newCode = `const ${node.id.name} = ${newCode};`;
+          newCode = `const ${declName} = ${newCode};`;
+          if (parent?.type === "ExportDefaultDeclaration") {
+            output.remove(parent.start, node.start);
+            newCode = `${newCode}\nexport default ${declName};`;
+          }
         }
         output.appendLeft(node.start, newCode);
       }

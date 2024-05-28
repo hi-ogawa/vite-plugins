@@ -44,7 +44,8 @@ export default function w() {
 
       export const h = $$register($$lift_1, "<id>", "$$lift_1");
 
-      export default const w = $$register($$lift_2, "<id>", "$$lift_2");
+      const w = $$register($$lift_2, "<id>", "$$lift_2");
+      export default w;
 
       ;export async function $$lift_0() {
         "use server";
