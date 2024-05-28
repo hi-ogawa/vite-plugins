@@ -1,5 +1,20 @@
 import type { Program } from "estree";
-import { getExportNames } from "./utils";
+import { getExportNames, hasDirective } from "./utils";
+
+export async function transformDirectiveProxyExport(
+  ast: Program,
+  options: {
+    directive: string;
+    id: string;
+    runtime: string;
+    ignoreExportAllDeclaration?: boolean;
+  },
+) {
+  if (!hasDirective(ast.body, options.directive)) {
+    return;
+  }
+  return transformProxyExport(ast, options);
+}
 
 export function transformProxyExport(
   ast: Program,
