@@ -9,7 +9,7 @@ async function testTransform(input: string) {
     id: "<id>",
     runtime: "$$proxy",
   });
-  return output;
+  return output.toString();
 }
 
 describe(transformWrapExport, () => {
@@ -23,8 +23,7 @@ export class Cls {};
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       "export const Arrow = $$proxy("<id>", "Arrow");
-      const $$default = $$proxy("<id>", "default");
-      export default $$default;
+      export default $$proxy("<id>", "default");
       export const Fn = $$proxy("<id>", "Fn");
       export const AsyncFn = $$proxy("<id>", "AsyncFn");
       export const Cls = $$proxy("<id>", "Cls");
@@ -47,8 +46,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     const input = `export default function Fn() {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
-      "const $$default = $$proxy("<id>", "default");
-      export default $$default;
+      "export default $$proxy("<id>", "default");
       "
     `,
     );
@@ -58,8 +56,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     const input = `export default function () {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
-      "const $$default = $$proxy("<id>", "default");
-      export default $$default;
+      "export default $$proxy("<id>", "default");
       "
     `,
     );
@@ -69,8 +66,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     const input = `export default class Cls {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
-      "const $$default = $$proxy("<id>", "default");
-      export default $$default;
+      "export default $$proxy("<id>", "default");
       "
     `,
     );

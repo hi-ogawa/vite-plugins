@@ -1,4 +1,5 @@
 import type { Program } from "estree";
+import MagicString from "magic-string";
 import { getExportNames, hasDirective } from "./utils";
 
 export async function transformDirectiveProxyExport(
@@ -29,11 +30,10 @@ export function transformProxyExport(
   for (const name of exportNames) {
     const expr = `${options.runtime}("${options.id}", "${name}")`;
     if (name === "default") {
-      output += `const $$default = ${expr};\n`;
-      output += `export default $$default;\n`;
+      output += `export default ${expr};\n`;
     } else {
       output += `export const ${name} = ${expr};\n`;
     }
   }
-  return output;
+  return new MagicString(output);
 }
