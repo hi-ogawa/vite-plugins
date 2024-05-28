@@ -32,11 +32,9 @@ export async function transformServerActionInline(input: string, id: string) {
         tinyassert(scope);
         const declName = node.type === "FunctionDeclaration" && node.id.name;
 
-        // lambda lifting
-        const newName = `$$lift_${names.length}`;
-        names.push(newName);
+        // filter bind variables
         const bindVars = [...scope.references].filter((ref) => {
-          // function name itself is included as reference
+          // declared function itself is included as reference
           if (ref === declName) {
             return false;
           }
@@ -49,6 +47,8 @@ export async function transformServerActionInline(input: string, id: string) {
         ].join(", ");
 
         // append a new `FunctionDeclaration` at the end since they can hoist automatically
+        const newName = `$$action_${names.length}`;
+        names.push(newName);
         output.update(
           node.start,
           node.body.start,
@@ -84,7 +84,10 @@ export async function transformServerActionInline(input: string, id: string) {
     `import { registerServerReference as $$register } from "/src/features/server-action/server";\n`,
   );
 
-  return output;
+  return {
+    output,
+    names,
+  };
 }
 
 function getFunctionDirective(body: estree.Statement[]): string | undefined {

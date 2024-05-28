@@ -4,11 +4,11 @@ import { debugSourceMap } from "./test-utils";
 
 describe(transformServerActionInline, () => {
   async function testTransform(input: string) {
-    const output = await transformServerActionInline(input, "<id>");
-    if (output && process.env["DEBUG_SOURCEMAP"]) {
-      await debugSourceMap(output);
+    const res = await transformServerActionInline(input, "<id>");
+    if (res?.output && process.env["DEBUG_SOURCEMAP"]) {
+      await debugSourceMap(res.output);
     }
-    return output?.toString();
+    return res?.output.toString();
   }
 
   it("none", async () => {
@@ -48,27 +48,27 @@ export default function w() {
 
       const x = "x";
 
-      const f = $$register($$lift_0, "<id>", "$$lift_0");
+      const f = $$register($$action_0, "<id>", "$$action_0");
 
       async function g() {
       }
 
-      export const h = $$register($$lift_1, "<id>", "$$lift_1");
+      export const h = $$register($$action_1, "<id>", "$$action_1");
 
-      const w = $$register($$lift_2, "<id>", "$$lift_2");
+      const w = $$register($$action_2, "<id>", "$$action_2");
       export default w;
 
-      ;export async function $$lift_0() {
+      ;export async function $$action_0() {
         "use server";
         return x;
       };
 
-      ;export async function $$lift_1(formData) {
+      ;export async function $$action_1(formData) {
         "use server";
         return formData.get(x);
       };
 
-      ;export function $$lift_2() {
+      ;export function $$action_2() {
         "use server";
       };
       "
@@ -98,12 +98,12 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = $$register($$lift_0, "<id>", "$$lift_0").bind(null, name);
+        const changeCount = $$register($$action_0, "<id>", "$$action_0").bind(null, name);
 
         return "something";
       }
 
-      ;export async function $$lift_0(name, formData) {
+      ;export async function $$action_0(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -139,19 +139,19 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = $$register($$lift_0, "<id>", "$$lift_0").bind(null, name);
+        const changeCount = $$register($$action_0, "<id>", "$$action_0").bind(null, name);
 
-        const changeCount2 = $$register($$lift_1, "<id>", "$$lift_1").bind(null, name);
+        const changeCount2 = $$register($$action_1, "<id>", "$$action_1").bind(null, name);
 
         return "something";
       }
 
-      ;export async function $$lift_0(name, formData) {
+      ;export async function $$action_0(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
 
-      ;export async function $$lift_1(name, formData) {
+      ;export async function $$action_1(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -185,11 +185,11 @@ function Counter() {
 
         return {
           type: "form",
-          action: $$register($$lift_0, "<id>", "$$lift_0").bind(null, name)
+          action: $$register($$action_0, "<id>", "$$action_0").bind(null, name)
         }
       }
 
-      ;export function $$lift_0(name, formData) {
+      ;export function $$action_0(name, formData) {
             "use server";
             count += Number(formData.get(name));
           };
