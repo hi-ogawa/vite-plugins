@@ -29,15 +29,15 @@ export class Cls {};
        async function AsyncFn() {};
        class Cls {};
       ;
-      const $$wrap_Arrow = $$wrap(Arrow, <id>, "Arrow");
+      const $$wrap_Arrow = $$wrap(Arrow, "<id>", "Arrow");
       export { $$wrap_Arrow as Arrow };
-      const $$wrap_$$default = $$wrap($$default, <id>, "default");
+      const $$wrap_$$default = $$wrap($$default, "<id>", "default");
       export { $$wrap_$$default as default };
-      const $$wrap_Fn = $$wrap(Fn, <id>, "Fn");
+      const $$wrap_Fn = $$wrap(Fn, "<id>", "Fn");
       export { $$wrap_Fn as Fn };
-      const $$wrap_AsyncFn = $$wrap(AsyncFn, <id>, "AsyncFn");
+      const $$wrap_AsyncFn = $$wrap(AsyncFn, "<id>", "AsyncFn");
       export { $$wrap_AsyncFn as AsyncFn };
-      const $$wrap_Cls = $$wrap(Cls, <id>, "Cls");
+      const $$wrap_Cls = $$wrap(Cls, "<id>", "Cls");
       export { $$wrap_Cls as Cls };
       "
     `);
@@ -48,7 +48,7 @@ export class Cls {};
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
       "function Fn() {};
-      const $$wrap_Fn = $$wrap(Fn, <id>, "default");
+      const $$wrap_Fn = $$wrap(Fn, "<id>", "default");
       export { $$wrap_Fn as default };
       "
     `,
@@ -60,7 +60,7 @@ export class Cls {};
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
       "const $$default = function () {};
-      const $$wrap_$$default = $$wrap($$default, <id>, "default");
+      const $$wrap_$$default = $$wrap($$default, "<id>", "default");
       export { $$wrap_$$default as default };
       "
     `,
@@ -72,7 +72,7 @@ export class Cls {};
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
       "class Cls {};
-      const $$wrap_Cls = $$wrap(Cls, <id>, "default");
+      const $$wrap_Cls = $$wrap(Cls, "<id>", "default");
       export { $$wrap_Cls as default };
       "
     `,
@@ -89,7 +89,7 @@ export { x }
       const x = 0;
 
       ;
-      const $$wrap_x = $$wrap(x, <id>, "x");
+      const $$wrap_x = $$wrap(x, "<id>", "x");
       export { $$wrap_x as x };
       "
     `);
@@ -105,7 +105,7 @@ export { x as y }
       const x = 0;
 
       ;
-      const $$wrap_x = $$wrap(x, <id>, "y");
+      const $$wrap_x = $$wrap(x, "<id>", "y");
       export { $$wrap_x as y };
       "
     `);
@@ -116,7 +116,7 @@ export { x as y }
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       ";
       import { x as $$import_x } from "./dep";
-      const $$wrap_$$import_x = $$wrap($$import_x, <id>, "x");
+      const $$wrap_$$import_x = $$wrap($$import_x, "<id>", "x");
       export { $$wrap_$$import_x as x };
       "
     `);
@@ -127,7 +127,7 @@ export { x as y }
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       ";
       import { x as $$import_x } from "./dep";
-      const $$wrap_$$import_x = $$wrap($$import_x, <id>, "y");
+      const $$wrap_$$import_x = $$wrap($$import_x, "<id>", "y");
       export { $$wrap_$$import_x as y };
       "
     `);

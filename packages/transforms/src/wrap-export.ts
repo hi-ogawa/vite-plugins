@@ -18,7 +18,7 @@ export async function transformWrapExport(
   function wrapExport(name: string, exportName = name) {
     exportNames.push(exportName);
     toAppend.push(
-      `const $$wrap_${name} = ${options.runtime}(${name}, ${options.id}, "${exportName}")`,
+      `const $$wrap_${name} = ${options.runtime}(${name}, "${options.id}", "${exportName}")`,
       `export { $$wrap_${name} as ${exportName} }`,
     );
   }
