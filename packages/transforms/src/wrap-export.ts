@@ -3,13 +3,6 @@ import type { Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 
-// TODO:
-// needs to preserve reference? this would break everything....
-//   export let count = 0;
-//   ⇓
-//   const $$wrap_count = $$wrap(count, ...);
-//   export { $$wrap_count as count }
-
 export async function transformWrapExport(
   input: string,
   ast: Program,
@@ -23,8 +16,15 @@ export async function transformWrapExport(
   const exportNames: string[] = [];
   const toAppend: string[] = [];
 
-  function wrapExport(name: string, exportName = name) {
-    exportNames.push(exportName);
+  function wrapSimple(name: string) {
+    // preserve reference export
+    toAppend.push(
+      `${name} = ${options.runtime}(${name}, "${options.id}", "${name}")`,
+      `export { ${name} }`,
+    );
+  }
+
+  function wrapExport(name: string, exportName: string) {
     toAppend.push(
       `const $$wrap_${name} = ${options.runtime}(${name}, "${options.id}", "${exportName}")`,
       `export { $$wrap_${name} as ${exportName} }`,
@@ -43,20 +43,29 @@ export async function transformWrapExport(
            * export function foo() {}
            */
           // strip export
-          output.remove(node.start, node.start + 6);
-          wrapExport(node.declaration.id.name);
+          output.remove(node.start, node.declaration.start);
+          wrapSimple(node.declaration.id.name);
         } else if (node.declaration.type === "VariableDeclaration") {
           /**
            * export const foo = 1, bar = 2
            */
-          output.remove(node.start, node.start + 6);
+          // strip export
+          output.remove(node.start, node.declaration.start);
+          // rewrite from "const" to "let"
+          if (node.declaration.kind === "const") {
+            output.update(
+              node.declaration.start,
+              node.declaration.start + 5,
+              "let",
+            );
+          }
           for (const decl of node.declaration.declarations) {
             // TODO: support non identifier e.g.
             // export const { x } = { x: 0 }
             extract_names;
 
             tinyassert(decl.id.type === "Identifier");
-            wrapExport(decl.id.name);
+            wrapSimple(decl.id.name);
           }
         } else {
           node.declaration satisfies never;

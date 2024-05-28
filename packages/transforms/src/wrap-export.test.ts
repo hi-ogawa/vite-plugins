@@ -23,22 +23,22 @@ export class Cls {};
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       "
-       const Arrow = () => {};
+      let Arrow = () => {};
       const $$default = "hi";
-       function Fn() {};
-       async function AsyncFn() {};
-       class Cls {};
+      function Fn() {};
+      async function AsyncFn() {};
+      class Cls {};
       ;
-      const $$wrap_Arrow = $$wrap(Arrow, "<id>", "Arrow");
-      export { $$wrap_Arrow as Arrow };
+      Arrow = $$wrap(Arrow, "<id>", "Arrow");
+      export { Arrow };
       const $$wrap_$$default = $$wrap($$default, "<id>", "default");
       export { $$wrap_$$default as default };
-      const $$wrap_Fn = $$wrap(Fn, "<id>", "Fn");
-      export { $$wrap_Fn as Fn };
-      const $$wrap_AsyncFn = $$wrap(AsyncFn, "<id>", "AsyncFn");
-      export { $$wrap_AsyncFn as AsyncFn };
-      const $$wrap_Cls = $$wrap(Cls, "<id>", "Cls");
-      export { $$wrap_Cls as Cls };
+      Fn = $$wrap(Fn, "<id>", "Fn");
+      export { Fn };
+      AsyncFn = $$wrap(AsyncFn, "<id>", "AsyncFn");
+      export { AsyncFn };
+      Cls = $$wrap(Cls, "<id>", "Cls");
+      export { Cls };
       "
     `);
   });
@@ -52,15 +52,15 @@ export function changeCount() {
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       "
-       let count = 0;
-       function changeCount() {
+      let count = 0;
+      function changeCount() {
         count += 1;
       }
       ;
-      const $$wrap_count = $$wrap(count, "<id>", "count");
-      export { $$wrap_count as count };
-      const $$wrap_changeCount = $$wrap(changeCount, "<id>", "changeCount");
-      export { $$wrap_changeCount as changeCount };
+      count = $$wrap(count, "<id>", "count");
+      export { count };
+      changeCount = $$wrap(changeCount, "<id>", "changeCount");
+      export { changeCount };
       "
     `);
   });
