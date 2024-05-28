@@ -19,14 +19,8 @@ export async function transformServerActionInline(input: string, id: string) {
   const analyzed = analyze(parsed);
   const names: string[] = [];
 
-  // track current top level statement to hoist an action right before
-  let topStmt: estree.Node;
-
   walk(parsed, {
-    enter(node, parent) {
-      if (parent === parsed) {
-        topStmt = node;
-      }
+    enter(node) {
       if (
         (node.type === "FunctionExpression" ||
           node.type === "FunctionDeclaration" ||
@@ -39,10 +33,10 @@ export async function transformServerActionInline(input: string, id: string) {
 
         if (node.type === "FunctionDeclaration") {
           // top level function
-          if (scope.parent === analyzed.scope) {
-            names.push(node.id.name);
-            return;
-          }
+          // if (scope.parent === analyzed.scope) {
+          //   names.push(node.id.name);
+          //   return;
+          // }
 
           // otherwise lift closure by overwrite + move
           const liftName = `$$action_${names.length}`;
@@ -59,20 +53,26 @@ export async function transformServerActionInline(input: string, id: string) {
             ...bindVars,
             ...node.params.map((n) => input.slice(n.start, n.end)),
           ].join(", ");
+
+          // we append a new `FunctionDeclaration` at the end since they can hoist automatically
           output.update(
             node.start,
             node.body.start,
-            `\n;let ${liftName} = ${
+            `\n;export ${
               node.async ? "async " : ""
-            }(${liftParams}) => `,
+            }function ${liftName}(${liftParams}) `,
           );
-          output.appendLeft(node.end, ";\n");
-          output.move(node.start, node.end, topStmt.start);
+          output.move(node.start, node.end, input.length);
 
-          // replace original declartion with action bind
-          const bindParams = ["null", ...bindVars].join(", ");
-          const bindCode = `const ${node.id.name} = ${liftName}.bind(${bindParams});`;
-          output.appendLeft(node.start, bindCode);
+          // replace original declartion with action register + bind
+          let actionExpr = `$$register(${liftName}, "${id}", "${liftName}")`;
+          if (bindVars.length > 0) {
+            actionExpr += `.bind(${["null", ...bindVars].join(", ")})`;
+          }
+          output.appendLeft(
+            node.start,
+            `const ${node.id.name} = ${actionExpr};`,
+          );
           return;
         }
 
@@ -99,7 +99,7 @@ export async function transformServerActionInline(input: string, id: string) {
             }(${liftParams}) => `,
           );
           output.appendLeft(node.end, ";\n");
-          output.move(node.start, node.end, topStmt.start);
+          output.move(node.start, node.end, input.length);
 
           // replace original declartion with action bind
           const bindParams = ["null", ...bindVars].join(", ");
