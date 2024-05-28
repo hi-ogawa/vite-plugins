@@ -11,6 +11,17 @@ describe(transformServerActionInline, () => {
     return output?.toString();
   }
 
+  it("none", async () => {
+    const input = `
+const x = "x";
+
+async function f() {
+  return x;
+}
+`;
+    expect(await testTransform(input)).toMatchInlineSnapshot(`undefined`);
+  });
+
   it("top level", async () => {
     const input = `
 const x = "x";
