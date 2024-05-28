@@ -2,10 +2,8 @@
 
 ## todo
 
-- [ ] transformHoistInlineDirective (for inline server action)
-  - [x] basic
+- [x] transformHoistInlineDirective (for inline server action)
   - [ ] closure encryption
 - [x] transformWrapExport (for "use server" and "use client" file)
-  - [ ] preserve export reference?
 - [x] transformProxyExport (for "use server" and "use client" file)
 - [ ] dead code elimination
