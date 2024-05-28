@@ -7,31 +7,23 @@ import { transformWrapExport } from "./wrap-export";
 export async function transformServerActionServer(
   input: string,
   ast: Program,
-  { id, runtime }: { id: string; runtime: string },
+  options: { id: string; runtime: string },
 ) {
   if (hasDirective(ast.body, "use server")) {
-    return transformWrapExport(input, ast, {
-      id,
-      runtime,
-      ignoreExportAllDeclaration: true,
-    });
+    return transformWrapExport(input, ast, options);
   }
   return transformHoistInlineDirective(input, ast, {
-    id,
-    runtime,
+    ...options,
     directive: "use server",
   });
 }
 
 export async function transformServerActionClient(
   ast: Program,
-  { id, runtime }: { id: string; runtime: string },
+  options: { id: string; runtime: string },
 ) {
   if (!hasDirective(ast.body, "use server")) {
     return;
   }
-  return transformProxyExport(ast, {
-    id,
-    runtime,
-  });
+  return transformProxyExport(ast, options);
 }
