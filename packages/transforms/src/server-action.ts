@@ -1,16 +1,24 @@
 import { tinyassert } from "@hiogawa/utils";
-import type * as estree from "estree";
 import { walk } from "estree-walker";
 import MagicString from "magic-string";
 import { analyze } from "periscopic";
 import { parseAstAsync } from "vite";
+import { hasDirective } from "./utils";
 
-// extend types for rollup ast with node position
-declare module "estree" {
-  interface BaseNode {
-    start: number;
-    end: number;
+const SERVER_DIRECTIVE = "use server";
+
+export async function transformServerActionFile(
+  input: string,
+  { id, runtime }: { id: string; runtime: string },
+) {
+  const parsed = await parseAstAsync(input);
+  if (!hasDirective(parsed.body, SERVER_DIRECTIVE)) {
+    return;
   }
+  const output = new MagicString(input);
+  id;
+  runtime;
+  output;
 }
 
 export async function transformServerActionInline(
@@ -29,7 +37,7 @@ export async function transformServerActionInline(
           node.type === "FunctionDeclaration" ||
           node.type === "ArrowFunctionExpression") &&
         node.body.type === "BlockStatement" &&
-        getFunctionDirective(node.body.body) === SERVER_DIRECTIVE
+        hasDirective(node.body.body, SERVER_DIRECTIVE)
       ) {
         const scope = analyzed.map.get(node);
         tinyassert(scope);
@@ -84,18 +92,3 @@ export async function transformServerActionInline(
     names,
   };
 }
-
-function getFunctionDirective(body: estree.Statement[]): string | undefined {
-  const stmt = body[0];
-  if (
-    stmt &&
-    stmt.type === "ExpressionStatement" &&
-    stmt.expression.type === "Literal" &&
-    typeof stmt.expression.value === "string"
-  ) {
-    return stmt.expression.value;
-  }
-  return;
-}
-
-const SERVER_DIRECTIVE = "use server";
