@@ -4,14 +4,17 @@ import { debugSourceMap } from "./test-utils";
 
 describe(transformServerActionInline, () => {
   async function testTransform(input: string) {
-    const res = await transformServerActionInline(input, {
+    const { output } = await transformServerActionInline(input, {
       id: "<id>",
       runtime: "$$register",
     });
-    if (res?.output && process.env["DEBUG_SOURCEMAP"]) {
-      await debugSourceMap(res.output);
+    if (!output.hasChanged()) {
+      return;
     }
-    return res?.output.toString();
+    if (process.env["DEBUG_SOURCEMAP"]) {
+      await debugSourceMap(output);
+    }
+    return output.toString();
   }
 
   it("none", async () => {
@@ -22,15 +25,7 @@ async function f() {
   return x;
 }
 `;
-    expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "
-      const x = "x";
-
-      async function f() {
-        return x;
-      }
-      "
-    `);
+    expect(await testTransform(input)).toMatchInlineSnapshot(`undefined`);
   });
 
   it("top level", async () => {
