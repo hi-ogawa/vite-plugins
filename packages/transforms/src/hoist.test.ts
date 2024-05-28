@@ -1,10 +1,12 @@
+import { parseAstAsync } from "vite";
 import { describe, expect, it } from "vitest";
-import { transformHoistInlineDirective } from "./server-action";
+import { transformHoistInlineDirective } from "./hoist";
 import { debugSourceMap } from "./test-utils";
 
 describe(transformHoistInlineDirective, () => {
   async function testTransform(input: string) {
-    const { output } = await transformHoistInlineDirective(input, {
+    const ast = await parseAstAsync(input);
+    const { output } = await transformHoistInlineDirective(input, ast, {
       id: "<id>",
       runtime: "$$register",
       directive: "use server",
