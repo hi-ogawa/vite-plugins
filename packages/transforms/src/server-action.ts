@@ -1,9 +1,9 @@
+import { tinyassert } from "@hiogawa/utils";
+import type * as estree from "estree";
+import { walk } from "estree-walker";
 import MagicString from "magic-string";
 import { analyze } from "periscopic";
 import { parseAstAsync } from "vite";
-import { walk } from "estree-walker";
-import type * as estree from "estree";
-import { tinyassert } from "@hiogawa/utils";
 
 // extend types for rollup ast with node position
 declare module "estree" {
@@ -14,12 +14,10 @@ declare module "estree" {
 }
 
 export async function transformServerActionInline(input: string, id: string) {
-  return;
   const parsed = await parseAstAsync(input);
   const output = new MagicString(input);
   const analyzed = analyze(parsed);
   const names: string[] = [];
-
 
   // track current top level statement to hoist an action right before
   let topStmt: estree.Node;
@@ -110,7 +108,7 @@ export async function transformServerActionInline(input: string, id: string) {
     },
   });
 
-  console.log(names)
+  console.log(names);
 
   if (names.length === 0) {
     return;
