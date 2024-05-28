@@ -119,12 +119,6 @@ function Counter() {
 
   return "something";
 }
-
-async function changeCount3(formData) {
-  "use server";
-  count += Number(formData.get(name));
-}
-
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       "import { registerServerReference as $$register } from "/src/features/server-action/server";
@@ -141,9 +135,6 @@ async function changeCount3(formData) {
         return "something";
       }
 
-      const changeCount3 = $$register($$lift_2, "<id>", "$$lift_2");
-
-
       ;export async function $$lift_0(name, formData) {
           "use server";
           count += Number(formData.get(name));
@@ -153,11 +144,6 @@ async function changeCount3(formData) {
           "use server";
           count += Number(formData.get(name));
         };
-
-      ;export async function $$lift_2(formData) {
-        "use server";
-        count += Number(formData.get(name));
-      };
       "
     `);
   });
