@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/transforms",
-  "version": "0.0.0-pre.0",
+  "version": "0.0.0-pre.3",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/transforms",
   "repository": {
     "type": "git",
@@ -20,8 +20,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest",
-    "prepack": "tsup --clean",
-    "release": "pnpm publish --no-git-checks --access public"
+    "prepack": "tsup --clean"
   },
   "dependencies": {
     "estree-walker": "^3.0.3",

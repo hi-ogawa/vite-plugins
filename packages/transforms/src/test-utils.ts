@@ -7,7 +7,7 @@ export async function debugSourceMap(output: MagicString) {
   // load it directly to https://evanw.github.io/source-map-visualization
   const code = output.toString();
   const map = output.generateMap({ includeContent: true, hires: "boundary" });
-  const filepath = `dist/.sourcemap/${hashString(code)}.js`;
+  const filepath = `.debug/sourcemap/${hashString(code)}.js`;
   await mkdir(dirname(filepath), { recursive: true });
   await writeFile(filepath, inlineSourceMap(code, map));
 }
