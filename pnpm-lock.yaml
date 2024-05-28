@@ -250,9 +250,6 @@ importers:
       periscopic:
         specifier: ^4.0.2
         version: 4.0.2
-      vite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@20.11.28)
     devDependencies:
       '@types/estree':
         specifier: ^1.0.5
