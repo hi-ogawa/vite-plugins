@@ -552,6 +552,47 @@ async function testServerActionCounter(page: Page) {
   await page.getByText("Count: 0").click();
 }
 
+test("server action extra @js", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test");
+  await waitForHydration(page);
+
+  // on client render, the form doesn't have hidden $ACTION_ID_...
+  await page.getByRole("link", { name: "/test/action/extra" }).nth(0).click();
+  await waitForHydration(page);
+
+  const checkClientState = await setupCheckClientState(page);
+  await testServerAction(page, "counter1");
+  await testServerAction(page, "counter2");
+  await testServerAction(page, "counter3");
+  await testServerAction(page, "counter4");
+  await testServerAction(page, "counter5");
+  await checkClientState();
+
+  // check layout doesn't re-render
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
+  await page.getByText(`[effect: ${count}]`).click();
+});
+
+testNoJs.only("server action extra @nojs", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/action/extra");
+  await testServerAction(page, "counter1");
+  await testServerAction(page, "counter2");
+  await testServerAction(page, "counter3");
+  await testServerAction(page, "counter4");
+  await testServerAction(page, "counter5");
+});
+
+async function testServerAction(page: Page, testId: string) {
+  await page.getByTestId(testId).getByText("Count: 0").click();
+  await page.getByTestId(testId).getByRole("button", { name: "+" }).click();
+  await page.getByTestId(testId).getByText("Count: 1").click();
+  await page.getByTestId(testId).getByRole("button", { name: "-" }).click();
+  await page.getByTestId(testId).getByText("Count: 0").click();
+}
+
 test("ReactDom.useFormStatus", async ({ page }) => {
   await page.goto("/test/action");
   await waitForHydration(page);
