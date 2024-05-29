@@ -131,6 +131,8 @@ export function vitePluginReactServer(options?: {
       }),
 
       // expose server references for RSC build via virtual module
+      // TODO: try "scan" build like in
+      // https://github.com/hi-ogawa/vite-environment-examples/blob/440212b4208fc66a14d69a1bcbc7c5254b7daa91/examples/react-server/vite.config.ts#L79-L84
       createVirtualPlugin("server-references", async () => {
         tinyassert(manager.buildType === "rsc");
         // we need to crawl file system to collect server references ("use server")

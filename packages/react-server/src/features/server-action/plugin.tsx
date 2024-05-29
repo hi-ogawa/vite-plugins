@@ -1,3 +1,4 @@
+import { transformServerActionServer } from "@hiogawa/transforms";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import MagicString from "magic-string";
 import { type Plugin, parseAstAsync } from "vite";
@@ -88,6 +89,27 @@ export function vitePluginServerUseServer({
   return {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
+      if (1) {
+        if (!code.includes("use server")) {
+          return;
+        }
+        const ast = await parseAstAsync(code);
+        const { output } = await transformServerActionServer(code, ast, {
+          id: manager.buildType ? hashString(id) : id,
+          runtime: "$$register",
+        });
+        if (output.hasChanged()) {
+          output.prepend(
+            `import { registerServerReference as $$register } from "${runtimePath}";\n`,
+          );
+          debug(`[${vitePluginServerUseServer.name}:transform]`, {
+            id,
+            outCode: output.toString(),
+          });
+          return { code: output.toString(), map: output.generateMap() };
+        }
+        return;
+      }
       if (!code.match(USE_SERVER_RE)) {
         return;
       }
