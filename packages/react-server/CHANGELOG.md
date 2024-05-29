@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.20
+
+- feat: use transforms package for inline server action support ([#320](https://github.com/hi-ogawa/vite-plugins/pull/320))
+- fix: noramlize client reference with `?t=` query (hmr timestamp) ([#316](https://github.com/hi-ogawa/vite-plugins/pull/316))
+- fix: fix `?import` query dual package when client module is used at both boundary and non-boundary ([#315](https://github.com/hi-ogawa/vite-plugins/pull/315))
+- chore(deps): react from 04b058868c-20240508 to 8f3c0525f9-20240521 ([#318](https://github.com/hi-ogawa/vite-plugins/pull/318))
+- chore(deps): react 20240508 ([#314](https://github.com/hi-ogawa/vite-plugins/pull/314))
+
 ## v0.1.19
 
 - feat: support catch-all dynamic route ([#301](https://github.com/hi-ogawa/vite-plugins/pull/301))

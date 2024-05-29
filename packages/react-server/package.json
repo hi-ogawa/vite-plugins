@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server",
@@ -61,8 +61,7 @@
     "build": "tsup",
     "prepack": "tsup --clean",
     "test": "vitest",
-    "test-e2e": "bash misc/test.sh",
-    "release": "pnpm publish --no-git-checks --access public"
+    "test-e2e": "bash misc/test.sh"
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
