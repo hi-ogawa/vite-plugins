@@ -9,8 +9,6 @@ import {
   ActionDataTest,
   Chat,
   ClientActionBindTest,
-  Counter,
-  Counter2,
   FormStateTest,
   NonFormActionTest,
 } from "./_client";
@@ -19,9 +17,7 @@ export default async function Page() {
   return (
     <div className="flex flex-col gap-4 p-2">
       <div className="flex flex-col gap-2">
-        <Counter value={getCounter()} />
-        <Counter2 action={changeCounter} />
-        <Counter3 />
+        <Counter />
       </div>
       <Chat messages={getMessages()} />
       <ActionDataTest />
@@ -37,9 +33,10 @@ export default async function Page() {
   );
 }
 
-function Counter3() {
+function Counter() {
   return (
     <form action={changeCounter} className="flex flex-col items-start gap-2">
+      <div className="font-bold">Count: {getCounter()}</div>
       <div className="flex gap-2">
         <button
           className="antd-btn antd-btn-default px-2"
@@ -55,7 +52,6 @@ function Counter3() {
         >
           +1
         </button>
-        <div>(server form)</div>
       </div>
     </form>
   );

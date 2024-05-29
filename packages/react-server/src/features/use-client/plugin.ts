@@ -1,5 +1,9 @@
 import fs from "node:fs";
 import nodePath from "node:path";
+import {
+  getExportNames,
+  transformDirectiveProxyExport,
+} from "@hiogawa/transforms";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import {
   type Plugin,
@@ -8,7 +12,7 @@ import {
   parseAstAsync,
 } from "vite";
 import type { ReactServerManager } from "../../plugin";
-import { USE_CLIENT_RE, getExportNames } from "../../plugin/ast-utils";
+import { USE_CLIENT_RE } from "../../plugin/ast-utils";
 import { hashString } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:use-client");
@@ -79,7 +83,7 @@ export function vitePluginServerUseClient({
         // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
         const ast = await parseAstAsync(code);
-        const exportNames = getExportNames(ast);
+        const exportNames = new Set(getExportNames(ast, {}).exportNames);
         meta.exportNames = exportNames;
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
@@ -101,33 +105,40 @@ export function vitePluginServerUseClient({
     },
   };
 
+  async function normalizeId(id: string) {
+    if (!manager.buildType) {
+      // normalize client reference during dev
+      // to align with Vite's import analysis
+      tinyassert(manager.parentServer);
+      return await noramlizeClientReferenceId(id, manager.parentServer);
+    } else {
+      // obfuscate reference
+      return hashString(id);
+    }
+  }
+
   const pluginUseClientLocal: Plugin = {
     name: "use-client-local",
     async transform(code, id, _options) {
       manager.rscIds.add(id);
       manager.rscUseClientIds.delete(id);
-      if (!code.match(USE_CLIENT_RE)) {
+      if (!code.includes("use client")) {
         return;
       }
       const ast = await parseAstAsync(code);
-      const exportNames = getExportNames(ast);
-      manager.rscUseClientIds.add(id);
-      // normalize client reference during dev
-      // to align with Vite's import analysis
-      if (!manager.buildType) {
-        tinyassert(manager.parentServer);
-        id = await noramlizeClientReferenceId(id, manager.parentServer);
-      } else {
-        // obfuscate reference
-        id = hashString(id);
-      }
-      const result = generateClientReferenceCode(id, exportNames, runtimePath);
-      debug(`[${vitePluginServerUseClient.name}:transform]`, {
-        id,
-        exportNames,
-        result,
+      const output = await transformDirectiveProxyExport(ast, {
+        directive: "use client",
+        id: await normalizeId(id),
+        runtime: "$$proxy",
       });
-      return result;
+      if (!output) {
+        return;
+      }
+      output.prepend(
+        `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
+      );
+      manager.rscUseClientIds.add(id);
+      return { code: output.toString(), map: output.generateMap() };
     },
 
     /**
@@ -162,13 +173,12 @@ function generateClientReferenceCode(
   exportNames: Set<string>,
   runtimePath: string,
 ) {
-  let result = `import { registerClientReference as $$register } from "${runtimePath}";\n`;
+  let result = `import { registerClientReference as $$proxy } from "${runtimePath}";\n`;
   for (const name of exportNames) {
     if (name === "default") {
-      result += `const $$default = $$register("${id}", "${name}");\n`;
-      result += `export default $$default;\n`;
+      result += `export default $$proxy("${id}", "${name}");\n`;
     } else {
-      result += `export const ${name} = $$register("${id}", "${name}");\n`;
+      result += `export const ${name} = $$proxy("${id}", "${name}");\n`;
     }
   }
   return result;

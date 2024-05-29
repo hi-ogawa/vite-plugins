@@ -94,15 +94,15 @@ importers:
 
   packages/react-server:
     dependencies:
+      '@hiogawa/transforms':
+        specifier: workspace:*
+        version: link:../transforms
       '@tanstack/history':
         specifier: ^1.15.13
         version: 1.15.13
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
-      magic-string:
-        specifier: ^0.30.8
-        version: 0.30.8
       use-sync-external-store:
         specifier: ^1.2.0
         version: 1.2.0(react@19.0.0-rc-8f3c0525f9-20240521)

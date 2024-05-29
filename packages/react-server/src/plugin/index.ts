@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
+import { transformServerActionServer } from "@hiogawa/transforms";
 import { createDebug, tinyassert, typedBoolean } from "@hiogawa/utils";
 import fg from "fast-glob";
 import {
@@ -12,6 +13,8 @@ import {
   build,
   createLogger,
   createServer,
+  parseAstAsync,
+  transformWithEsbuild,
 } from "vite";
 import {
   vitePluginClientUseServer,
@@ -22,7 +25,6 @@ import {
   vitePluginServerUseClient,
 } from "../features/use-client/plugin";
 import { $__global } from "../lib/global";
-import { USE_SERVER_RE } from "./ast-utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import {
   ENTRY_CLIENT,
@@ -133,6 +135,9 @@ export function vitePluginReactServer(options?: {
       // expose server references for RSC build via virtual module
       createVirtualPlugin("server-references", async () => {
         tinyassert(manager.buildType === "rsc");
+        // TODO: try "scan" build like in
+        // https://github.com/hi-ogawa/vite-environment-examples/blob/440212b4208fc66a14d69a1bcbc7c5254b7daa91/examples/react-server/vite.config.ts#L79-L84
+
         // we need to crawl file system to collect server references ("use server")
         // since we currently needs RSC -> Client -> SSR build pipeline
         // to collect client references first in RSC.
@@ -140,14 +145,27 @@ export function vitePluginReactServer(options?: {
         //       as a workaround, users can re-export them locally.
         const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
           absolute: true,
-          ignore: ["**/node_modules/**"],
         });
         const ids: string[] = [];
         for (const file of files) {
-          const data = await fs.promises.readFile(file, "utf-8");
-          if (USE_SERVER_RE.test(data)) {
-            ids.push(file);
-            manager.rscUseServerIds.add(file);
+          const code = await fs.promises.readFile(file, "utf-8");
+          try {
+            const transpiled = await transformWithEsbuild(code, file);
+            const ast = await parseAstAsync(transpiled.code);
+            const result = await transformServerActionServer(
+              transpiled.code,
+              ast,
+              {
+                id: "<id>",
+                runtime: "<runtime>",
+              },
+            );
+            if (result.output.hasChanged()) {
+              ids.push(file);
+              manager.rscUseServerIds.add(file);
+            }
+          } catch (e) {
+            console.error("[server transform error]", file, e);
           }
         }
         let result = `export default {\n`;
@@ -163,7 +181,7 @@ export function vitePluginReactServer(options?: {
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
         () => {
-          // this virtual is not necessary anymore but have been used in the past
+          // this virtual is not necessary anymore but has been used in the past
           // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
           return /* js */ `
             export * from "${ENTRY_REACT_SERVER}";
