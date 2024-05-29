@@ -67,7 +67,6 @@
   "dependencies": {
     "@tanstack/history": "^1.15.13",
     "fast-glob": "^3.3.2",
-    "magic-string": "^0.30.8",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
