@@ -94,9 +94,6 @@ importers:
 
   packages/react-server:
     dependencies:
-      '@hiogawa/transforms':
-        specifier: workspace:*
-        version: link:../transforms
       '@tanstack/history':
         specifier: ^1.15.13
         version: 1.15.13
@@ -113,6 +110,9 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
     devDependencies:
+      '@hiogawa/transforms':
+        specifier: workspace:*
+        version: link:../transforms
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
