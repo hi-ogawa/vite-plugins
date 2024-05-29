@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { transformServerActionServer } from "@hiogawa/transforms";
 import { createDebug, tinyassert, typedBoolean } from "@hiogawa/utils";
@@ -33,7 +32,6 @@ import {
   ENTRY_REACT_SERVER,
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
-  collectFiles,
   createVirtualPlugin,
   hashString,
   vitePluginSilenceDirectiveBuildWarning,
@@ -145,12 +143,11 @@ export function vitePluginReactServer(options?: {
         // to collect client references first in RSC.
         // TODO: what if "use server" is provided from 3rd party library?
         //       as a workaround, users can re-export them locally.
-        const files = await collectFiles(resolve("./src"));
+        const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
+          absolute: true,
+        });
         const ids: string[] = [];
         for (const file of files) {
-          if (!/(ts|tsx|js|jsx)$/.test(file)) {
-            continue;
-          }
           const code = await fs.promises.readFile(file, "utf-8");
           try {
             const transpiled = await transformWithEsbuild(code, file);
