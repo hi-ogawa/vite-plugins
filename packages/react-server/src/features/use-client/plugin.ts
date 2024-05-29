@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import nodePath from "node:path";
+import { transformDirectiveProxyExport } from "@hiogawa/transforms";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import {
   type Plugin,
@@ -101,9 +102,39 @@ export function vitePluginServerUseClient({
     },
   };
 
+  async function normalizeId(id: string) {
+    if (!manager.buildType) {
+      // normalize client reference during dev
+      // to align with Vite's import analysis
+      tinyassert(manager.parentServer);
+      return await noramlizeClientReferenceId(id, manager.parentServer);
+    } else {
+      // obfuscate reference
+      return hashString(id);
+    }
+  }
+
   const pluginUseClientLocal: Plugin = {
     name: "use-client-local",
     async transform(code, id, _options) {
+      if (1) {
+        manager.rscIds.add(id);
+        manager.rscUseClientIds.delete(id);
+        if (!code.includes("use client")) {
+          return;
+        }
+        const ast = await parseAstAsync(code);
+        const output = await transformDirectiveProxyExport(ast, {
+          directive: "use client",
+          id: await normalizeId(id),
+          runtime: "$$proxy",
+        });
+        if (!output) {
+          return;
+        }
+        manager.rscUseClientIds.add(id);
+        return { code: output.toString(), map: output.generateMap() };
+      }
       manager.rscIds.add(id);
       manager.rscUseClientIds.delete(id);
       if (!code.match(USE_CLIENT_RE)) {
