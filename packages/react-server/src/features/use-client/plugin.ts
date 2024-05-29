@@ -132,6 +132,9 @@ export function vitePluginServerUseClient({
         if (!output) {
           return;
         }
+        output.prepend(
+          `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
+        );
         manager.rscUseClientIds.add(id);
         return { code: output.toString(), map: output.generateMap() };
       }
