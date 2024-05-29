@@ -117,51 +117,25 @@ export function vitePluginServerUseClient({
   const pluginUseClientLocal: Plugin = {
     name: "use-client-local",
     async transform(code, id, _options) {
-      if (1) {
-        manager.rscIds.add(id);
-        manager.rscUseClientIds.delete(id);
-        if (!code.includes("use client")) {
-          return;
-        }
-        const ast = await parseAstAsync(code);
-        const output = await transformDirectiveProxyExport(ast, {
-          directive: "use client",
-          id: await normalizeId(id),
-          runtime: "$$proxy",
-        });
-        if (!output) {
-          return;
-        }
-        output.prepend(
-          `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
-        );
-        manager.rscUseClientIds.add(id);
-        return { code: output.toString(), map: output.generateMap() };
-      }
       manager.rscIds.add(id);
       manager.rscUseClientIds.delete(id);
-      if (!code.match(USE_CLIENT_RE)) {
+      if (!code.includes("use client")) {
         return;
       }
       const ast = await parseAstAsync(code);
-      const exportNames = getExportNames(ast);
-      manager.rscUseClientIds.add(id);
-      // normalize client reference during dev
-      // to align with Vite's import analysis
-      if (!manager.buildType) {
-        tinyassert(manager.parentServer);
-        id = await noramlizeClientReferenceId(id, manager.parentServer);
-      } else {
-        // obfuscate reference
-        id = hashString(id);
-      }
-      const result = generateClientReferenceCode(id, exportNames, runtimePath);
-      debug(`[${vitePluginServerUseClient.name}:transform]`, {
-        id,
-        exportNames,
-        result,
+      const output = await transformDirectiveProxyExport(ast, {
+        directive: "use client",
+        id: await normalizeId(id),
+        runtime: "$$proxy",
       });
-      return result;
+      if (!output) {
+        return;
+      }
+      output.prepend(
+        `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
+      );
+      manager.rscUseClientIds.add(id);
+      return { code: output.toString(), map: output.generateMap() };
     },
 
     /**
