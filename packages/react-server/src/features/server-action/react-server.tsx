@@ -10,6 +10,9 @@ export function registerServerReference(
   id: string,
   name: string,
 ) {
+  if (typeof action !== "function") {
+    return action;
+  }
   return reactServerDomWebpack.registerServerReference(action, id, name);
 }
 
