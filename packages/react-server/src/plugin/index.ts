@@ -155,10 +155,14 @@ export function vitePluginReactServer(options?: {
           try {
             const transpiled = await transformWithEsbuild(code, file);
             const ast = await parseAstAsync(transpiled.code);
-            const result = await transformServerActionServer(transpiled.code, ast, {
-              id: "<id>",
-              runtime: "<runtime>",
-            });
+            const result = await transformServerActionServer(
+              transpiled.code,
+              ast,
+              {
+                id: "<id>",
+                runtime: "<runtime>",
+              },
+            );
             if (result.output.hasChanged()) {
               ids.push(file);
               manager.rscUseServerIds.add(file);
