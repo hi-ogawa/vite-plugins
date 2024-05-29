@@ -61,8 +61,7 @@
     "build": "tsup",
     "prepack": "tsup --clean",
     "test": "vitest",
-    "test-e2e": "bash misc/test.sh",
-    "release": "pnpm publish --no-git-checks --access public"
+    "test-e2e": "bash misc/test.sh"
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
