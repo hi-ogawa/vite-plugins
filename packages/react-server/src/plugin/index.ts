@@ -15,6 +15,7 @@ import {
   createLogger,
   createServer,
   parseAstAsync,
+  transformWithEsbuild,
 } from "vite";
 import {
   vitePluginClientUseServer,
@@ -147,10 +148,14 @@ export function vitePluginReactServer(options?: {
         const files = await collectFiles(resolve("./src"));
         const ids: string[] = [];
         for (const file of files) {
+          if (!/(ts|tsx|js|jsx)$/.test(file)) {
+            continue;
+          }
           const code = await fs.promises.readFile(file, "utf-8");
           try {
-            const ast = await parseAstAsync(code);
-            const result = await transformServerActionServer(code, ast, {
+            const transpiled = await transformWithEsbuild(code, file);
+            const ast = await parseAstAsync(transpiled.code);
+            const result = await transformServerActionServer(transpiled.code, ast, {
               id: "<id>",
               runtime: "<runtime>",
             });
