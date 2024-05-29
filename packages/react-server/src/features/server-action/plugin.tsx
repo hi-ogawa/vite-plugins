@@ -1,6 +1,5 @@
 import {
-  hasDirective,
-  transformProxyExport,
+  transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
 import { createDebug } from "@hiogawa/utils";
@@ -36,13 +35,14 @@ export function vitePluginClientUseServer({
         return;
       }
       const ast = await parseAstAsync(code);
-      if (!hasDirective(ast.body, "use server")) {
-        return;
-      }
-      const output = transformProxyExport(ast, {
+      const output = await transformDirectiveProxyExport(ast, {
+        directive: "use server",
         id: manager.buildType ? hashString(id) : id,
         runtime: "$$proxy",
       });
+      if (!output) {
+        return;
+      }
       const importPath = options?.ssr ? ssrRuntimePath : runtimePath;
       output.prepend(`\
 import { createServerReference } from "${importPath}";

@@ -2,6 +2,7 @@ import type { Program } from "estree";
 import MagicString from "magic-string";
 import { getExportNames, hasDirective } from "./utils";
 
+// TODO: remove async
 export async function transformDirectiveProxyExport(
   ast: Program,
   options: {
