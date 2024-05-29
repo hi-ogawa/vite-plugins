@@ -1,6 +1,9 @@
 import fs from "node:fs";
 import nodePath from "node:path";
-import { transformDirectiveProxyExport } from "@hiogawa/transforms";
+import {
+  getExportNames,
+  transformDirectiveProxyExport,
+} from "@hiogawa/transforms";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import {
   type Plugin,
@@ -9,7 +12,7 @@ import {
   parseAstAsync,
 } from "vite";
 import type { ReactServerManager } from "../../plugin";
-import { USE_CLIENT_RE, getExportNames } from "../../plugin/ast-utils";
+import { USE_CLIENT_RE } from "../../plugin/ast-utils";
 import { hashString } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:use-client");
@@ -80,7 +83,7 @@ export function vitePluginServerUseClient({
         // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
         const ast = await parseAstAsync(code);
-        const exportNames = getExportNames(ast);
+        const exportNames = new Set(getExportNames(ast, {}).exportNames);
         meta.exportNames = exportNames;
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
@@ -170,13 +173,12 @@ function generateClientReferenceCode(
   exportNames: Set<string>,
   runtimePath: string,
 ) {
-  let result = `import { registerClientReference as $$register } from "${runtimePath}";\n`;
+  let result = `import { registerClientReference as $$proxy } from "${runtimePath}";\n`;
   for (const name of exportNames) {
     if (name === "default") {
-      result += `const $$default = $$register("${id}", "${name}");\n`;
-      result += `export default $$default;\n`;
+      result += `export default $$proxy("${id}", "${name}");\n`;
     } else {
-      result += `export const ${name} = $$register("${id}", "${name}");\n`;
+      result += `export const ${name} = $$proxy("${id}", "${name}");\n`;
     }
   }
   return result;
