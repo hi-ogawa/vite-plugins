@@ -1,23 +1,24 @@
-import { transformServerActionServer } from "@hiogawa/transforms";
-import { createDebug, tinyassert } from "@hiogawa/utils";
-import MagicString from "magic-string";
+import {
+  hasDirective,
+  transformProxyExport,
+  transformServerActionServer,
+} from "@hiogawa/transforms";
+import { createDebug } from "@hiogawa/utils";
 import { type Plugin, parseAstAsync } from "vite";
 import type { ReactServerManager } from "../../plugin";
-import { USE_SERVER_RE, getExportNames } from "../../plugin/ast-utils";
 import { hashString } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:server-action");
 
 /*
-transform "use server" directive on client
+transform "use server" directive on client (browser / ssr)
 
 [input]
 "use server"
 export function hello() {}
 
-[output] (client / ssr)
-import { createServerReference } from "...runtime..."
-export const hello = createServerReference("<id>#hello");
+[output]
+export const hello = $$proxy("<id>", "hello");
 */
 export function vitePluginClientUseServer({
   manager,
@@ -31,38 +32,27 @@ export function vitePluginClientUseServer({
   return {
     name: vitePluginClientUseServer.name,
     async transform(code, id, options) {
-      if (!code.match(USE_SERVER_RE)) {
+      if (!code.includes("use server")) {
         return;
       }
       const ast = await parseAstAsync(code);
-      const exportNames = getExportNames(ast);
+      if (!hasDirective(ast.body, "use server")) {
+        return;
+      }
+      const output = transformProxyExport(ast, {
+        id: manager.buildType ? hashString(id) : id,
+        runtime: "$$proxy",
+      });
+      const importPath = options?.ssr ? ssrRuntimePath : runtimePath;
+      output.prepend(`\
+import { createServerReference } from "${importPath}";
+const $$proxy = (id, name) => createServerReference(id + "#" + name);
+`);
       debug(`[${vitePluginClientUseServer.name}:transform]`, {
         id,
-        exportNames,
+        outCode: output.toString(),
       });
-      // validate server reference used by client is properly generated in rsc build
-      if (manager.buildType === "client") {
-        tinyassert(
-          manager.rscUseServerIds.has(id),
-          `missing server references in RSC build: ${id}`,
-        );
-      }
-      // obfuscate reference
-      if (manager.buildType) {
-        id = hashString(id);
-      }
-      let result = `import { createServerReference as $$create } from "${
-        options?.ssr ? ssrRuntimePath : runtimePath
-      }";\n`;
-      for (const name of exportNames) {
-        if (name === "default") {
-          result += `const $$default = $$create("${id}#${name}");\n`;
-          result += `export default $$default;\n`;
-        } else {
-          result += `export const ${name} = $$create("${id}#${name}");\n`;
-        }
-      }
-      return result;
+      return { code: output.toString(), map: output.generateMap() };
     },
   };
 }
@@ -76,8 +66,7 @@ export function hello() { ... }
 
 [output]
 export function hello() { ... }
-import { registerServerReference } from "...runtime..."
-hello = createServerReference(hello, "<id>", "hello");
+hello = $$register(hello, "<id>", "hello");
 */
 export function vitePluginServerUseServer({
   manager,
@@ -89,54 +78,25 @@ export function vitePluginServerUseServer({
   return {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
-      if (1) {
-        if (!code.includes("use server")) {
-          return;
-        }
-        const ast = await parseAstAsync(code);
-        const { output } = await transformServerActionServer(code, ast, {
-          id: manager.buildType ? hashString(id) : id,
-          runtime: "$$register",
-        });
-        if (output.hasChanged()) {
-          output.prepend(
-            `import { registerServerReference as $$register } from "${runtimePath}";\n`,
-          );
-          debug(`[${vitePluginServerUseServer.name}:transform]`, {
-            id,
-            outCode: output.toString(),
-          });
-          return { code: output.toString(), map: output.generateMap() };
-        }
+      if (!code.includes("use server")) {
         return;
       }
-      if (!code.match(USE_SERVER_RE)) {
-        return;
-      }
-      // cf. https://github.com/hi-ogawa/vite-plugins/blob/5f8e6936fa12e1f7524891e3c1e2a21065d50250/packages/vite-plugin-simple-hmr/src/transform.ts#L73
       const ast = await parseAstAsync(code);
-      const mcode = new MagicString(code);
-      const exportNames = getExportNames(ast, { toWritable: { code: mcode } });
-      mcode.prepend(
-        `import { registerServerReference as $$register } from "${runtimePath}";\n`,
-      );
-      // obfuscate reference
-      if (manager.buildType) {
-        id = hashString(id);
-      }
-      for (const name of exportNames) {
-        mcode.append(`${name} = $$register(${name}, "${id}", "${name}");\n`);
-      }
-      const outCode = mcode.toString();
-      debug(`[${vitePluginServerUseServer.name}:transform]`, {
-        id,
-        exportNames,
-        outCode,
+      const { output } = await transformServerActionServer(code, ast, {
+        id: manager.buildType ? hashString(id) : id,
+        runtime: "$$register",
       });
-      return {
-        code: outCode,
-        map: mcode.generateMap(),
-      };
+      if (output.hasChanged()) {
+        output.prepend(
+          `import { registerServerReference as $$register } from "${runtimePath}";\n`,
+        );
+        debug(`[${vitePluginServerUseServer.name}:transform]`, {
+          id,
+          outCode: output.toString(),
+        });
+        return { code: output.toString(), map: output.generateMap() };
+      }
+      return;
     },
   };
 }
