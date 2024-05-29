@@ -1,7 +1,6 @@
 "use server";
 
 // this server file is only imported by client
-// to test if build pre-pass can discover this file
 
 let count3 = 0;
 
