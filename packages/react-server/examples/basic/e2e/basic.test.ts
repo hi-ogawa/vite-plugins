@@ -520,7 +520,7 @@ test("server action after client render", async ({ page }) => {
   await waitForHydration(page);
 
   // on client render, the form doesn't have hidden $ACTION_ID_...
-  await page.getByRole("link", { name: "/test/action" }).click();
+  await page.getByRole("link", { name: "/test/action" }).nth(0).click();
 
   const checkClientState = await setupCheckClientState(page);
   await testServerActionCounter(page);
