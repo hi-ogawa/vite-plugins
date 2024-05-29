@@ -1,4 +1,6 @@
 import nodeCrypto from "node:crypto";
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
 import type { Plugin, ViteDevServer } from "vite";
 
 export function invalidateModule(server: ViteDevServer, id: string) {
@@ -79,4 +81,9 @@ export function vitePluginSilenceDirectiveBuildWarning(): Plugin {
       };
     },
   };
+}
+
+export async function collectFiles(dir: string) {
+  const files = await readdir(dir, { recursive: true, withFileTypes: true });
+  return files.filter((f) => f.isFile()).map((f) => join(f.path, f.name));
 }
