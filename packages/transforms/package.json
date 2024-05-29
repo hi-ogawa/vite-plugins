@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/transforms",
-  "version": "0.0.0-pre.8",
+  "version": "0.0.0",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/transforms",
   "repository": {
     "type": "git",
