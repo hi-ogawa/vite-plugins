@@ -125,7 +125,6 @@ export async function renderHtml(
   let status = 200;
   try {
     ssrStream = await reactDomServer.renderToReadableStream(reactRootEl, {
-      // @ts-expect-error no type yet
       formState: result.actionResult?.data,
       bootstrapModules: url.search.includes("__nojs")
         ? []
@@ -232,4 +231,10 @@ async function devInspectHandler(request: Request) {
 async function getModuleNode(server: ViteDevServer, url: string, ssr: boolean) {
   const resolved = await server.moduleGraph.resolveUrl(url, ssr);
   return server.moduleGraph.getModuleById(resolved[1]);
+}
+
+declare module "react-dom/server" {
+  interface RenderToReadableStreamOptions {
+    formState?: unknown;
+  }
 }
