@@ -124,6 +124,8 @@ export function vitePluginReactServer(options?: {
       },
     },
     plugins: [
+      vitePluginSilenceDirectiveBuildWarning(),
+
       // expose server reference to react-server itself
       vitePluginServerUseServer({
         manager,
