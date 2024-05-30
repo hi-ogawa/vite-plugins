@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.0
+
+- refactor!: extra build step to discover references ([#323](https://github.com/hi-ogawa/vite-plugins/pull/323))
+
 ## v0.1.20
 
 - feat: use transforms package for inline server action support ([#320](https://github.com/hi-ogawa/vite-plugins/pull/320))
