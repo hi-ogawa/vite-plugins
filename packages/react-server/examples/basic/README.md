@@ -8,5 +8,5 @@ npx tiged hi-ogawa/vite-plugins/packages/react-server/examples/basic my-app
 cd my-app
 
 pnpm i
-pnpm dev dev
+pnpm dev
 ```
