@@ -12,11 +12,11 @@ See https://github.com/hi-ogawa/vite-plugins/issues/174 for known issues.
   - [Stackblitz](https://stackblitz.com/https://github.com/hi-ogawa/react-server-demo-remix-tutorial)
   - https://react-server-demo-remix-tutorial.hiro18181.workers.dev
 - [`./examples/basic`](./examples/basic)
-  - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
+  - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/basic)
   - https://rsc-experiment.hiro18181.workers.dev/test
   - https://rsc-experiment-hiroshi.vercel.app/test
 - [`./examples/starter`](./examples/starter)
-  - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/basic)
+  - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/starter)
   - https://react-server-starter.hiro18181.workers.dev
 
 ## Quick start
