@@ -78,6 +78,7 @@ export function vitePluginServerUseServer({
   return {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
+      manager.rscUseServerIds.delete(id);
       if (!code.includes("use server")) {
         return;
       }
@@ -87,6 +88,7 @@ export function vitePluginServerUseServer({
         runtime: "$$register",
       });
       if (output.hasChanged()) {
+        manager.rscUseServerIds.add(id);
         output.prepend(
           `import { registerServerReference as $$register } from "${runtimePath}";\n`,
         );

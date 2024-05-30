@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import { transformServerActionServer } from "@hiogawa/transforms";
 import { createDebug, tinyassert, typedBoolean } from "@hiogawa/utils";
 import fg from "fast-glob";
 import {
@@ -13,8 +12,6 @@ import {
   build,
   createLogger,
   createServer,
-  parseAstAsync,
-  transformWithEsbuild,
 } from "vite";
 import {
   vitePluginClientUseServer,
@@ -57,7 +54,7 @@ export type { ReactServerManager };
 class ReactServerManager {
   parentServer?: ViteDevServer;
 
-  buildType?: "rsc" | "client" | "ssr";
+  buildType?: "scan" | "rsc" | "client" | "ssr";
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -81,10 +78,17 @@ class ReactServerManager {
   }
 }
 
+// persist singleton during build
+if (!process.argv.includes("build")) {
+  delete (globalThis as any).__VITE_REACT_SERVER_MANAGER;
+}
+const manager: ReactServerManager = ((
+  globalThis as any
+).__VITE_REACT_SERVER_MANAGER ??= new ReactServerManager());
+
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
 }): Plugin[] {
-  const manager = new ReactServerManager();
   let parentServer: ViteDevServer | undefined;
   let parentEnv: ConfigEnv;
 
@@ -120,6 +124,8 @@ export function vitePluginReactServer(options?: {
       },
     },
     plugins: [
+      vitePluginSilenceDirectiveBuildWarning(),
+
       // expose server reference to react-server itself
       vitePluginServerUseServer({
         manager,
@@ -134,42 +140,12 @@ export function vitePluginReactServer(options?: {
 
       // expose server references for RSC build via virtual module
       createVirtualPlugin("server-references", async () => {
-        tinyassert(manager.buildType === "rsc");
-        // TODO: try "scan" build like in
-        // https://github.com/hi-ogawa/vite-environment-examples/blob/440212b4208fc66a14d69a1bcbc7c5254b7daa91/examples/react-server/vite.config.ts#L79-L84
-
-        // we need to crawl file system to collect server references ("use server")
-        // since we currently needs RSC -> Client -> SSR build pipeline
-        // to collect client references first in RSC.
-        // TODO: what if "use server" is provided from 3rd party library?
-        //       as a workaround, users can re-export them locally.
-        const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
-          absolute: true,
-        });
-        const ids: string[] = [];
-        for (const file of files) {
-          const code = await fs.promises.readFile(file, "utf-8");
-          try {
-            const transpiled = await transformWithEsbuild(code, file);
-            const ast = await parseAstAsync(transpiled.code);
-            const result = await transformServerActionServer(
-              transpiled.code,
-              ast,
-              {
-                id: "<id>",
-                runtime: "<runtime>",
-              },
-            );
-            if (result.output.hasChanged()) {
-              ids.push(file);
-              manager.rscUseServerIds.add(file);
-            }
-          } catch (e) {
-            console.error("[server transform error]", file, e);
-          }
+        if (manager.buildType === "scan") {
+          return `export default {}`;
         }
+        tinyassert(manager.buildType === "rsc");
         let result = `export default {\n`;
-        for (const id of ids) {
+        for (const id of manager.rscUseServerIds) {
           let key = manager.buildType ? hashString(id) : id;
           result += `"${key}": () => import("${id}"),\n`;
         }
@@ -281,15 +257,6 @@ export function vitePluginReactServer(options?: {
           reactServer: reactServer,
         };
       }
-      if (parentEnv.command === "build") {
-        if (parentEnv.isSsrBuild) {
-          manager.buildType = "ssr";
-        } else {
-          manager.buildType = "rsc";
-          await build(reactServerViteConfig);
-          manager.buildType = "client";
-        }
-      }
     },
     async buildEnd(_options) {
       if (parentEnv.command === "serve") {
@@ -332,9 +299,39 @@ export function vitePluginReactServer(options?: {
     },
   };
 
+  // orchestrate four builds from a single vite (browser) build
+  const buildOrchestrationPlugin: Plugin = {
+    name: vitePluginReactServer.name + ":build",
+    apply: "build",
+    async buildStart(_options) {
+      if (!manager.buildType) {
+        console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
+        manager.buildType = "scan";
+        await build(reactServerViteConfig);
+        console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
+        manager.buildType = "rsc";
+        await build(reactServerViteConfig);
+        console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
+        manager.buildType = "client";
+      }
+    },
+    async closeBundle() {
+      if (manager.buildType === "client") {
+        console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
+        manager.buildType = "ssr";
+        await build({
+          build: {
+            ssr: true,
+          },
+        });
+      }
+    },
+  };
+
   // plugins for main vite dev server (browser / ssr)
   return [
     rscParentPlugin,
+    buildOrchestrationPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
     vitePluginClientUseServer({
       manager,

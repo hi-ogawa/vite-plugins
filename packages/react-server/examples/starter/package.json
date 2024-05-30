@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && vite build --ssr",
+    "build": "vite build",
     "preview": "vite preview",
     "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
     "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
