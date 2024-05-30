@@ -222,6 +222,7 @@ export function vitePluginReactServer(options?: {
               "react",
               "react/jsx-runtime",
               "react/jsx-dev-runtime",
+              "react-dom",
               "react-dom/server.edge",
               "react-server-dom-webpack/client.edge",
               "@hiogawa/react-server > use-sync-external-store/shim/with-selector.js",
