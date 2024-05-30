@@ -83,9 +83,13 @@ export function vitePluginServerUseClient({
         // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
         const ast = await parseAstAsync(code);
+        meta.exportNames = new Set(getExportNames(ast, {}).exportNames);
+        // we need to transform to client reference directly
+        // otherwise `soruce` will be resolved infinitely by recursion
+        id = wrapId(id);
         const output = await transformDirectiveProxyExport(ast, {
           directive: "use client",
-          id: wrapId(id),
+          id,
           runtime: "$$proxy",
         });
         tinyassert(output);
@@ -93,7 +97,6 @@ export function vitePluginServerUseClient({
           `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
         );
         const result = output.toString();
-        meta.exportNames = new Set(getExportNames(ast, {}).exportNames);
         debug("[rsc.use-client-node-modules.load]", {
           source,
           meta,
