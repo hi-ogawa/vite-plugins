@@ -13,7 +13,8 @@ cp -r examples/basic "$test_dir"
 cd "$test_dir"
 rm -rf dist node_modules
 
-pnpm i "@hiogawa/react-server@file:$lib_dir"
+node "$lib_dir/misc/overrides.mjs" "$test_dir/package.json"
+pnpm i
 
 if test "${CI:-}" = "true"; then
   npx playwright install chromium

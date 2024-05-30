@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.1.18",
+  "version": "0.1.20",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server",
@@ -55,36 +55,33 @@
       "default": "./dist/plugin/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
     "prepack": "tsup --clean",
     "test": "vitest",
-    "test-e2e": "bash misc/test.sh",
-    "release": "pnpm publish --no-git-checks --access public"
+    "test-e2e": "bash misc/test.sh"
   },
   "dependencies": {
+    "@hiogawa/transforms": "workspace:*",
     "@tanstack/history": "^1.15.13",
     "fast-glob": "^3.3.2",
-    "magic-string": "^0.30.8",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
     "@types/estree": "^1.0.5",
-    "@types/react": "18.2.66",
-    "@types/react-dom": "18.2.22",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
     "@types/use-sync-external-store": "^0.0.6",
-    "react": "19.0.0-canary-4c12339ce-20240408",
-    "react-dom": "19.0.0-canary-4c12339ce-20240408",
-    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408"
+    "react": "19.0.0-rc-8f3c0525f9-20240521",
+    "react-dom": "19.0.0-rc-8f3c0525f9-20240521",
+    "react-server-dom-webpack": "19.0.0-rc-8f3c0525f9-20240521"
   },
   "peerDependencies": {
-    "react": "19.0.0-canary-4c12339ce-20240408",
-    "react-dom": "19.0.0-canary-4c12339ce-20240408",
-    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408",
+    "react": "19.0.0-rc-8f3c0525f9-20240521",
+    "react-dom": "19.0.0-rc-8f3c0525f9-20240521",
+    "react-server-dom-webpack": "19.0.0-rc-8f3c0525f9-20240521",
     "vite": "*"
   }
 }

@@ -6,14 +6,19 @@ settings:
 
 overrides:
   vite: ^5.2.3
+  react: 19.0.0-rc-8f3c0525f9-20240521
+  react-dom: 19.0.0-rc-8f3c0525f9-20240521
+  react-is: 19.0.0-rc-8f3c0525f9-20240521
+  '@types/react': 18.3.1
+  '@types/react-dom': 18.3.0
 
 importers:
 
   .:
     devDependencies:
-      '@hiogawa/isort-ts':
-        specifier: 1.1.2-pre.2
-        version: 1.1.2-pre.2(prettier@3.2.5)(typescript@5.4.2)
+      '@biomejs/biome':
+        specifier: ^1.7.3
+        version: 1.7.3
       '@hiogawa/tiny-cli':
         specifier: 0.0.4-pre.1
         version: 0.0.4-pre.1
@@ -35,9 +40,6 @@ importers:
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
-      prettier:
-        specifier: ^3.2.5
-        version: 3.2.5
       tsup:
         specifier: ^8.0.2
         version: 8.0.2(typescript@5.4.2)
@@ -72,38 +74,38 @@ importers:
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
 
   packages/react-server:
     dependencies:
+      '@hiogawa/transforms':
+        specifier: workspace:*
+        version: link:../transforms
       '@tanstack/history':
         specifier: ^1.15.13
         version: 1.15.13
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
-      magic-string:
-        specifier: ^0.30.8
-        version: 0.30.8
       use-sync-external-store:
         specifier: ^1.2.0
-        version: 1.2.0(react@19.0.0-canary-4c12339ce-20240408)
+        version: 1.2.0(react@19.0.0-rc-8f3c0525f9-20240521)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -112,23 +114,23 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       '@types/react':
-        specifier: 18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: 18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@types/use-sync-external-store':
         specifier: ^0.0.6
         version: 0.0.6
       react:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       react-server-dom-webpack:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)(webpack@5.90.3)
 
   packages/react-server/examples/basic:
     dependencies:
@@ -137,25 +139,25 @@ importers:
         version: link:../..
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
-        version: file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-canary-4c12339ce-20240408)
+        version: file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-8f3c0525f9-20240521)
       '@hiogawa/test-dep-use-client':
         specifier: file:deps/use-client
-        version: file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-canary-4c12339ce-20240408)
+        version: file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-8f3c0525f9-20240521)
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
       react:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       react-server-dom-webpack:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)(webpack@5.90.3)
       react-wrap-balancer:
         specifier: ^1.1.0
-        version: 1.1.0(react@19.0.0-canary-4c12339ce-20240408)
+        version: 1.1.0(react@19.0.0-rc-8f3c0525f9-20240521)
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.44
@@ -182,14 +184,11 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0
       '@types/react':
-        specifier: 18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: 18.2.22
-        version: 18.2.22
-      '@unocss/postcss':
-        specifier: ^0.58.6
-        version: 0.58.6(postcss@8.4.38)
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -206,14 +205,14 @@ importers:
         specifier: latest
         version: link:../..
       react:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       react-server-dom-webpack:
-        specifier: 19.0.0-canary-4c12339ce-20240408
-        version: 19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)(webpack@5.90.3)
     devDependencies:
       '@hattip/adapter-node':
         specifier: ^0.0.44
@@ -222,17 +221,39 @@ importers:
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
-        specifier: 18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: 18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
+
+  packages/ssr-css:
+    dependencies:
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)
+
+  packages/transforms:
+    dependencies:
+      estree-walker:
+        specifier: ^3.0.3
+        version: 3.0.3
+      magic-string:
+        specifier: ^0.30.8
+        version: 0.30.8
+      periscopic:
+        specifier: ^4.0.2
+        version: 4.0.2
+    devDependencies:
+      '@types/estree':
+        specifier: ^1.0.5
+        version: 1.0.5
 
   packages/vite-glob-routes:
     dependencies:
@@ -245,10 +266,10 @@ importers:
         version: 0.0.44
       react-router:
         specifier: ^6.22.3
-        version: 6.22.3(react@18.2.0)
+        version: 6.22.3(react@19.0.0-rc-8f3c0525f9-20240521)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)
 
   packages/vite-glob-routes/examples/demo:
     devDependencies:
@@ -272,19 +293,19 @@ importers:
         version: 0.0.4-pre.1
       '@hiogawa/tiny-form':
         specifier: 0.0.1-pre.10
-        version: 0.0.1-pre.10(react@18.2.0)
+        version: 0.0.1-pre.10(react@19.0.0-rc-8f3c0525f9-20240521)
       '@hiogawa/tiny-jwt':
         specifier: 0.2.8-pre.2
         version: 0.2.8-pre.2
       '@hiogawa/tiny-progress':
         specifier: 0.0.1-pre.4
-        version: 0.0.1-pre.4(react@18.2.0)
+        version: 0.0.1-pre.4(react@19.0.0-rc-8f3c0525f9-20240521)
       '@hiogawa/tiny-rpc':
         specifier: 0.2.3-pre.18
         version: 0.2.3-pre.18
       '@hiogawa/tiny-toast':
         specifier: 0.1.1-pre.10
-        version: 0.1.1-pre.10(react@18.2.0)
+        version: 0.1.1-pre.10(react@19.0.0-rc-8f3c0525f9-20240521)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
         version: 2.2.1-pre.7(unocss@0.58.6)
@@ -297,6 +318,9 @@ importers:
       '@hiogawa/vite-null-export':
         specifier: workspace:*
         version: link:../../../vite-null-export
+      '@hiogawa/vite-plugin-ssr-css':
+        specifier: workspace:*
+        version: link:../../../ssr-css
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../../../vite-plugin-ssr-middleware
@@ -305,10 +329,10 @@ importers:
         version: 1.1.20
       '@tanstack/react-query':
         specifier: ^5.28.4
-        version: 5.28.4(react@18.2.0)
+        version: 5.28.4(react@19.0.0-rc-8f3c0525f9-20240521)
       '@tanstack/react-query-devtools':
         specifier: ^5.28.4
-        version: 5.28.4(@tanstack/react-query@5.28.4)(react@18.2.0)
+        version: 5.28.4(@tanstack/react-query@5.28.4)(react@19.0.0-rc-8f3c0525f9-20240521)
       '@types/cookie':
         specifier: ^0.6.0
         version: 0.6.0
@@ -319,11 +343,11 @@ importers:
         specifier: ^20.11.28
         version: 20.11.28
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -334,17 +358,17 @@ importers:
         specifier: ^4.18.3
         version: 4.18.3
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       react-router:
         specifier: 6.22.3
-        version: 6.22.3(react@18.2.0)
+        version: 6.22.3(react@19.0.0-rc-8f3c0525f9-20240521)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)
       unocss:
         specifier: ^0.58.6
         version: 0.58.6(postcss@8.4.38)(vite@5.2.3)
@@ -364,23 +388,23 @@ importers:
         specifier: latest
         version: link:../../../vite-import-dev-server
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -415,11 +439,11 @@ importers:
         specifier: ^20.11.28
         version: 20.11.28
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -430,14 +454,14 @@ importers:
         specifier: ^4.18.3
         version: 4.18.3
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -491,11 +515,11 @@ importers:
         specifier: latest
         version: link:../..
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -503,11 +527,11 @@ importers:
         specifier: ^3.20240304.2
         version: 3.20240304.2
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -527,11 +551,11 @@ importers:
         specifier: latest
         version: link:../..
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
@@ -539,14 +563,14 @@ importers:
         specifier: ^3.20240304.2
         version: 3.20240304.2
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+        version: 6.22.3(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -555,7 +579,7 @@ importers:
     dependencies:
       '@remix-run/react':
         specifier: 2.8.1
-        version: 2.8.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)
+        version: 2.8.1(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)(typescript@5.4.2)
       '@remix-run/server-runtime':
         specifier: 2.8.1
         version: 2.8.1(typescript@5.4.2)
@@ -563,11 +587,11 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240314.0
@@ -579,11 +603,11 @@ importers:
         specifier: 2.8.1
         version: 2.8.1(@types/node@20.11.28)(typescript@5.4.2)(vite@5.2.3)(wrangler@3.34.2)
       '@types/react':
-        specifier: 18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: 18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
 
   packages/vite-null-export:
     dependencies:
@@ -610,11 +634,11 @@ importers:
   packages/vite-plugin-simple-hmr/examples/react:
     dependencies:
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
     devDependencies:
       '@hiogawa/vite-plugin-simple-hmr':
         specifier: workspace:*
@@ -623,11 +647,11 @@ importers:
         specifier: workspace:*
         version: link:../../../vite-plugin-ssr-middleware
       '@types/react':
-        specifier: 18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: 18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
 
   packages/vite-plugin-ssr-middleware:
     dependencies:
@@ -641,20 +665,20 @@ importers:
         specifier: latest
         version: link:../..
       '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.66
+        specifier: 18.3.1
+        version: 18.3.1
       '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.22
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3)
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: 19.0.0-rc-8f3c0525f9-20240521
+        version: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)
@@ -1004,6 +1028,94 @@ packages:
       '@babel/helper-string-parser': 7.23.4
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
+
+  /@biomejs/biome@1.7.3:
+    resolution: {integrity: sha512-ogFQI+fpXftr+tiahA6bIXwZ7CSikygASdqMtH07J2cUzrpjyTMVc9Y97v23c7/tL1xCZhM+W9k4hYIBm7Q6cQ==}
+    engines: {node: '>=14.21.3'}
+    hasBin: true
+    requiresBuild: true
+    optionalDependencies:
+      '@biomejs/cli-darwin-arm64': 1.7.3
+      '@biomejs/cli-darwin-x64': 1.7.3
+      '@biomejs/cli-linux-arm64': 1.7.3
+      '@biomejs/cli-linux-arm64-musl': 1.7.3
+      '@biomejs/cli-linux-x64': 1.7.3
+      '@biomejs/cli-linux-x64-musl': 1.7.3
+      '@biomejs/cli-win32-arm64': 1.7.3
+      '@biomejs/cli-win32-x64': 1.7.3
+    dev: true
+
+  /@biomejs/cli-darwin-arm64@1.7.3:
+    resolution: {integrity: sha512-eDvLQWmGRqrPIRY7AIrkPHkQ3visEItJKkPYSHCscSDdGvKzYjmBJwG1Gu8+QC5ed6R7eiU63LEC0APFBobmfQ==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@biomejs/cli-darwin-x64@1.7.3:
+    resolution: {integrity: sha512-JXCaIseKRER7dIURsVlAJacnm8SG5I0RpxZ4ya3dudASYUc68WGl4+FEN03ABY3KMIq7hcK1tzsJiWlmXyosZg==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@biomejs/cli-linux-arm64-musl@1.7.3:
+    resolution: {integrity: sha512-c8AlO45PNFZ1BYcwaKzdt46kYbuP6xPGuGQ6h4j3XiEDpyseRRUy/h+6gxj07XovmyxKnSX9GSZ6nVbZvcVUAw==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@biomejs/cli-linux-arm64@1.7.3:
+    resolution: {integrity: sha512-phNTBpo7joDFastnmZsFjYcDYobLTx4qR4oPvc9tJ486Bd1SfEVPHEvJdNJrMwUQK56T+TRClOQd/8X1nnjA9w==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@biomejs/cli-linux-x64-musl@1.7.3:
+    resolution: {integrity: sha512-UdEHKtYGWEX3eDmVWvQeT+z05T9/Sdt2+F/7zmMOFQ7boANeX8pcO6EkJPK3wxMudrApsNEKT26rzqK6sZRTRA==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@biomejs/cli-linux-x64@1.7.3:
+    resolution: {integrity: sha512-vnedYcd5p4keT3iD48oSKjOIRPYcjSNNbd8MO1bKo9ajg3GwQXZLAH+0Cvlr+eMsO67/HddWmscSQwTFrC/uPA==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@biomejs/cli-win32-arm64@1.7.3:
+    resolution: {integrity: sha512-unNCDqUKjujYkkSxs7gFIfdasttbDC4+z0kYmcqzRk6yWVoQBL4dNLcCbdnJS+qvVDNdI9rHp2NwpQ0WAdla4Q==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@biomejs/cli-win32-x64@1.7.3:
+    resolution: {integrity: sha512-ZmByhbrnmz/UUFYB622CECwhKIPjJLLPr5zr3edhu04LzbfcOrz16VYeNq5dpO1ADG70FORhAJkaIGdaVBG00w==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
 
   /@cloudflare/kv-asset-handler@0.3.1:
     resolution: {integrity: sha512-lKN2XCfKCmpKb86a1tl4GIwsJYDy9TGuwjhDELLmpKygQhw8X2xR4dusgpC5Tg7q1pB96Eb0rBo81kxSILQMwA==}
@@ -1915,20 +2027,6 @@ packages:
       cac: 6.7.14
       mime-types: 2.1.35
 
-  /@hiogawa/isort-ts@1.1.2-pre.2(prettier@3.2.5)(typescript@5.4.2):
-    resolution: {integrity: sha512-1+AGjS2YcnJMvlQn6l2i+5FkdUwKWlbuZ6f48SwVqmtjYHnFClFIOKYCS8Cr2xulKFpUwJATiqOXbL9Pz4eNDg==}
-    hasBin: true
-    peerDependencies:
-      prettier: '*'
-      typescript: '*'
-    peerDependenciesMeta:
-      prettier:
-        optional: true
-    dependencies:
-      prettier: 3.2.5
-      typescript: 5.4.2
-    dev: true
-
   /@hiogawa/query-proxy@0.1.1-pre.3:
     resolution: {integrity: sha512-0m7KSB2Tn8eC7rCnzbL3NwuyAgC3HWIweyMkltazGQ0ZMLZTNpIKbIwkaFzRCuZraAw66ysSnU4K0dWL2vLHrg==}
     peerDependencies:
@@ -1953,15 +2051,15 @@ packages:
     resolution: {integrity: sha512-3z/qYXDyROVX8oaFdqMyiLL8ZZE9dEaEw02ZYXOxmUF6U5MM3pskzLZId/KMvT+ZnLCLI4CUBuga6AIf56JXTw==}
     dev: true
 
-  /@hiogawa/tiny-form@0.0.1-pre.10(react@18.2.0):
+  /@hiogawa/tiny-form@0.0.1-pre.10(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-BIvGs22O+RNCDclikqSAMMxuLTi4Onz0fpMK1qGtxA3ga+jBN3hRfOxUWl1Mei2lPo07ralKGNhKBTxhIlQ3eA==}
     peerDependencies:
-      react: '*'
+      react: 19.0.0-rc-8f3c0525f9-20240521
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      react: 18.2.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: true
 
   /@hiogawa/tiny-jwt@0.2.8-pre.2:
@@ -1969,15 +2067,15 @@ packages:
     hasBin: true
     dev: true
 
-  /@hiogawa/tiny-progress@0.0.1-pre.4(react@18.2.0):
+  /@hiogawa/tiny-progress@0.0.1-pre.4(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-7v367ZbgmJRE4gMGvo7sqwx6eAf5FegipkS6FGCUwZd6iiyfrTVpRYmtg8ITUhkIR2LNnmMRllbVIcebWsD1Og==}
     peerDependencies:
-      react: '*'
+      react: 19.0.0-rc-8f3c0525f9-20240521
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      react: 18.2.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: true
 
   /@hiogawa/tiny-react@0.0.2-pre.9(vite@5.2.3):
@@ -1995,15 +2093,15 @@ packages:
     resolution: {integrity: sha512-BiNHrutG9G9yV622QvkxZxF+PhkaH2Aspp4/X1KYTfnaQTcg4fFUTBWf5Kf533swon2SuVJwi6U6H1LQbhVOQQ==}
     dev: true
 
-  /@hiogawa/tiny-toast@0.1.1-pre.10(react@18.2.0):
+  /@hiogawa/tiny-toast@0.1.1-pre.10(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-vA0kmobSc0KSQw/ff3Fm9pQBkJkhaHcvjuhpBYnBjev4dC2qeCGOvUax/+iUMYns816z6/X3XAr3Mwp92qZtuQ==}
     peerDependencies:
-      react: ^18.0.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      react: 18.2.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: true
 
   /@hiogawa/unocss-preset-antd@2.2.1-pre.7(unocss@0.58.6):
@@ -2324,12 +2422,12 @@ packages:
       typescript: 5.4.2
     dev: true
 
-  /@remix-run/react@2.8.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2):
+  /@remix-run/react@2.8.1(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)(typescript@5.4.2):
     resolution: {integrity: sha512-HTPm1U8+xz2jPaVjZnssrckfmFMA8sUZUdaWnoF5lmLWdReqcQv+XlBhIrQQ3jO9L8iYYdnzaSZZcRFYSdpTYg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
+      react-dom: 19.0.0-rc-8f3c0525f9-20240521
       typescript: ^5.1.0
     peerDependenciesMeta:
       typescript:
@@ -2337,10 +2435,10 @@ packages:
     dependencies:
       '@remix-run/router': 1.15.3
       '@remix-run/server-runtime': 2.8.1(typescript@5.4.2)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.22.3(react@18.2.0)
-      react-router-dom: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+      react: 19.0.0-rc-8f3c0525f9-20240521
+      react-dom: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
+      react-router: 6.22.3(react@19.0.0-rc-8f3c0525f9-20240521)
+      react-router-dom: 6.22.3(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)
       typescript: 5.4.2
     dev: false
 
@@ -2531,24 +2629,24 @@ packages:
     resolution: {integrity: sha512-Kxch05PVnxLUAyRiz2gXYQhXATHfXbQQwvz858YPjYYQyi7yk8SyS9Z5hyw90bRb0pd3rjelXyGFCsNMWvEghw==}
     dev: true
 
-  /@tanstack/react-query-devtools@5.28.4(@tanstack/react-query@5.28.4)(react@18.2.0):
+  /@tanstack/react-query-devtools@5.28.4(@tanstack/react-query@5.28.4)(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-oS+3INjCIX4Nkh0IAV6LH2mgLqJjkcd/DDxp8dwdWCGloLrz6IBj+bOuuI2wD0zb8r7l45wIAYIhl4Z6XyTupQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.28.4
-      react: ^18.0.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
       '@tanstack/query-devtools': 5.28.3
-      '@tanstack/react-query': 5.28.4(react@18.2.0)
-      react: 18.2.0
+      '@tanstack/react-query': 5.28.4(react@19.0.0-rc-8f3c0525f9-20240521)
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: true
 
-  /@tanstack/react-query@5.28.4(react@18.2.0):
+  /@tanstack/react-query@5.28.4(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-BErcoB/QQG6YwLSUKnaGxF+lSc270RH2w3kMBpG0i4YzDCsFs2pdxPX1WVknQvFk9bNgukMb158hc2Zb4SdwSA==}
     peerDependencies:
-      react: ^18.0.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
       '@tanstack/query-core': 5.28.4
-      react: 18.2.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: true
 
   /@tsconfig/strictest@2.0.3:
@@ -2704,20 +2802,16 @@ packages:
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
     dev: true
 
-  /@types/react-dom@18.2.22:
-    resolution: {integrity: sha512-fHkBXPeNtfvri6gdsMYyW+dW7RXFo6Ad09nLFK0VQWR7yGLai/Cyvyj696gbwYvBnhGtevUG9cET0pmUbMtoPQ==}
+  /@types/react-dom@18.3.0:
+    resolution: {integrity: sha512-EhwApuTmMBmXuFOikhQLIBUn6uFg81SwLMOAUgodJF14SOBOCMdU04gDoYi0WOJJHD144TL32z4yDqCW3dnkQg==}
     dependencies:
-      '@types/react': 18.2.66
+      '@types/react': 18.3.1
 
-  /@types/react@18.2.66:
-    resolution: {integrity: sha512-OYTmMI4UigXeFMF/j4uv0lBBEbongSgptPrHBxqME44h9+yNov+oL6Z3ocJKo0WyXR84sQUNeyIp9MRfckvZpg==}
+  /@types/react@18.3.1:
+    resolution: {integrity: sha512-V0kuGBX3+prX+DQ/7r2qsv1NsdfnCLnTgnRJ1pYnxykBhGMz+qj+box5lq7XsO5mtZsBqpjwwTu/7wszPfMBcw==}
     dependencies:
       '@types/prop-types': 15.7.11
-      '@types/scheduler': 0.16.8
       csstype: 3.1.3
-
-  /@types/scheduler@0.16.8:
-    resolution: {integrity: sha512-WZLiwShhwLRmeV6zH+GkbOFT6Z6VklCItrDioxUnv+u4Ll+8vKeFySoFyK/0ctcRpOmwAicELfmys1sDc/Rw+A==}
 
   /@types/send@0.17.4:
     resolution: {integrity: sha512-x2EM6TJOybec7c52BX0ZspPodMsQUd5L6PRwOunVyVUhXiBSKf3AezDL8Dgvgt5o0UfKNfuA0eMLr2wLT4AiBA==}
@@ -4121,7 +4215,6 @@ packages:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
     dependencies:
       '@types/estree': 1.0.5
-    dev: true
 
   /etag@1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
@@ -4722,7 +4815,6 @@ packages:
     resolution: {integrity: sha512-v3rht/LgVcsdZa3O2Nqs+NMowLOxeOm7Ay9+/ARQ2F+qEoANRcqrjAZKGN0v8ymUetZGgkp26LTnGT7H0Qo9Pg==}
     dependencies:
       '@types/estree': 1.0.5
-    dev: true
 
   /is-stream@2.0.1:
     resolution: {integrity: sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg==}
@@ -4917,12 +5009,6 @@ packages:
   /longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
     dev: true
-
-  /loose-envify@1.4.0:
-    resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
-    hasBin: true
-    dependencies:
-      js-tokens: 4.0.0
 
   /loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
@@ -5850,6 +5936,14 @@ packages:
       is-reference: 3.0.2
     dev: true
 
+  /periscopic@4.0.2:
+    resolution: {integrity: sha512-sqpQDUy8vgB7ycLkendSKS6HnVz1Rneoc3Rc+ZBUCe2pbqlVuCC5vF52l0NJ1aiMg/r1qfYF9/myz8CZeI2rjA==}
+    dependencies:
+      '@types/estree': 1.0.5
+      is-reference: 3.0.2
+      zimmerframe: 1.1.2
+    dev: false
+
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
 
@@ -6015,19 +6109,13 @@ packages:
     hasBin: true
     dev: true
 
-  /prettier@3.2.5:
-    resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dev: true
-
   /pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/schemas': 29.6.3
       ansi-styles: 5.2.0
-      react-is: 18.2.0
+      react-is: 19.0.0-rc-8f3c0525f9-20240521
     dev: true
 
   /pretty-ms@7.0.1:
@@ -6134,82 +6222,67 @@ packages:
       unpipe: 1.0.0
     dev: true
 
-  /react-dom@18.2.0(react@18.2.0):
-    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+  /react-dom@19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521):
+    resolution: {integrity: sha512-fLopgMEm6RQxfCXVoLKfGFcLJSqqxfFIDxznJCJsYUFrZIYLXTSJCwlSoCuU/LPHyweAoJh871l/9695jqnWaw==}
     peerDependencies:
-      react: ^18.2.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
-      loose-envify: 1.4.0
-      react: 18.2.0
-      scheduler: 0.23.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
+      scheduler: 0.25.0-rc-8f3c0525f9-20240521
 
-  /react-dom@19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408):
-    resolution: {integrity: sha512-dMttAQ6IA63sUCCw+ZBE4QBO87PGjEcgNhNTYGHmw15ONqeUKQ8XmGEUKBOTmux7CIV9gdmKr3BGUFdGeT5ERA==}
-    peerDependencies:
-      react: 19.0.0-canary-4c12339ce-20240408
-    dependencies:
-      react: 19.0.0-canary-4c12339ce-20240408
-      scheduler: 0.25.0-canary-4c12339ce-20240408
-
-  /react-is@18.2.0:
-    resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+  /react-is@19.0.0-rc-8f3c0525f9-20240521:
+    resolution: {integrity: sha512-GnMAsKT8fh3lacOG741zE9n3sI62/wJMBaEDIL+EpfS1oI3jV618R+tFNkS9Idrv7kkkc2CYpfWXQCHrM/VeqA==}
     dev: true
 
   /react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
 
-  /react-router-dom@6.22.3(react-dom@18.2.0)(react@18.2.0):
+  /react-router-dom@6.22.3(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-7ZILI7HjcE+p31oQvwbokjk6OA/bnFxrhJ19n82Ex9Ph8fNAq+Hm/7KchpMGlTgWhUxRHMMCut+vEtNpWpowKw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: '>=16.8'
-      react-dom: '>=16.8'
+      react: 19.0.0-rc-8f3c0525f9-20240521
+      react-dom: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.22.3(react@18.2.0)
+      react: 19.0.0-rc-8f3c0525f9-20240521
+      react-dom: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
+      react-router: 6.22.3(react@19.0.0-rc-8f3c0525f9-20240521)
 
-  /react-router@6.22.3(react@18.2.0):
+  /react-router@6.22.3(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-dr2eb3Mj5zK2YISHK++foM9w4eBnO23eKnZEDs7c880P6oKbrjz/Svg9+nxqtHQK+oMW4OtjZca0RqPglXxguQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: '>=16.8'
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 18.2.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
 
-  /react-server-dom-webpack@19.0.0-canary-4c12339ce-20240408(react-dom@19.0.0-canary-4c12339ce-20240408)(react@19.0.0-canary-4c12339ce-20240408)(webpack@5.90.3):
-    resolution: {integrity: sha512-elO6awJXbj1liRJKORVGPb/Teeu/8FDJUuinrOHdvTRAx4kXgXW4FlVr7QRuGQzi8JauT042ql0qYLfhGBD5qA==}
+  /react-server-dom-webpack@19.0.0-rc-8f3c0525f9-20240521(react-dom@19.0.0-rc-8f3c0525f9-20240521)(react@19.0.0-rc-8f3c0525f9-20240521)(webpack@5.90.3):
+    resolution: {integrity: sha512-pzbj+T5d76qRCH8ynKhO37gXMKUfKuI3d+CqACzysaSlDhkv2b0Q+pqoPRf19S7zGrLsAaBHF2vHXnSdDtyg6Q==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
-      react: 19.0.0-canary-4c12339ce-20240408
-      react-dom: 19.0.0-canary-4c12339ce-20240408
+      react: 19.0.0-rc-8f3c0525f9-20240521
+      react-dom: 19.0.0-rc-8f3c0525f9-20240521
       webpack: ^5.59.0
     dependencies:
       acorn-loose: 8.4.0
       neo-async: 2.6.2
-      react: 19.0.0-canary-4c12339ce-20240408
-      react-dom: 19.0.0-canary-4c12339ce-20240408(react@19.0.0-canary-4c12339ce-20240408)
+      react: 19.0.0-rc-8f3c0525f9-20240521
+      react-dom: 19.0.0-rc-8f3c0525f9-20240521(react@19.0.0-rc-8f3c0525f9-20240521)
       webpack: 5.90.3(esbuild@0.20.2)
 
-  /react-wrap-balancer@1.1.0(react@19.0.0-canary-4c12339ce-20240408):
+  /react-wrap-balancer@1.1.0(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-EhF3jOZm5Fjx+Cx41e423qOv2c2aOvXAtym2OHqrGeMUnwERIyNsRBgnfT3plB170JmuYvts8K2KSPEIerKr5A==}
     peerDependencies:
-      react: '>=16.8.0 || ^17.0.0 || ^18'
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
-      react: 19.0.0-canary-4c12339ce-20240408
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: false
 
-  /react@18.2.0:
-    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
-    engines: {node: '>=0.10.0'}
-    dependencies:
-      loose-envify: 1.4.0
-
-  /react@19.0.0-canary-4c12339ce-20240408:
-    resolution: {integrity: sha512-QdQl76CTAmYrwjxq6fZRDWw2/MHPNxkYQ1xZVir2MbK/wxK62vFAPGr2j/AXs36ADVUq+tUGx4XNmdgnfL4f1Q==}
+  /react@19.0.0-rc-8f3c0525f9-20240521:
+    resolution: {integrity: sha512-xZsfCREYO7jV4BXnUeLQaQq55FFQBw8alIL9JiexnbJEFq1Wl1TtOwoq00qIncNaDqBVqRNlPElGJgPq4WJoVA==}
     engines: {node: '>=0.10.0'}
 
   /readable-stream@2.3.8:
@@ -6401,13 +6474,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
-  /scheduler@0.23.0:
-    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
-    dependencies:
-      loose-envify: 1.4.0
-
-  /scheduler@0.25.0-canary-4c12339ce-20240408:
-    resolution: {integrity: sha512-XGG/Y5q5jeJy+rKp963+nlz81H/eDEMDmwem8QFHkuufjW/IEhM9ha6PO76m9qA6Qr59HVjlTGJ6D1bH1lemeQ==}
+  /scheduler@0.25.0-rc-8f3c0525f9-20240521:
+    resolution: {integrity: sha512-i27QJ0bghG46kJ1/XXTe69zPjRqKr9AO9tjRkqERkIof3wfsueI0IRYJqyS3ENWXnleG8ifBI63p7CsNAjEiVA==}
 
   /schema-utils@3.3.0:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
@@ -7162,12 +7230,12 @@ packages:
   /urlpattern-polyfill@10.0.0:
     resolution: {integrity: sha512-H/A06tKD7sS1O1X2SshBVeA5FLycRpjqiBeqGKmBwBDBy28EnRjORxTNe269KSSr5un5qyWi1iL61wLxpd+ZOg==}
 
-  /use-sync-external-store@1.2.0(react@19.0.0-canary-4c12339ce-20240408):
+  /use-sync-external-store@1.2.0(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
-      react: 19.0.0-canary-4c12339ce-20240408
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: false
 
   /util-deprecate@1.0.2:
@@ -7594,6 +7662,10 @@ packages:
       mustache: 4.2.0
       stacktracey: 2.1.8
 
+  /zimmerframe@1.1.2:
+    resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
+    dev: false
+
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
@@ -7601,22 +7673,22 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-canary-4c12339ce-20240408):
+  file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
     id: file:packages/react-server/examples/basic/deps/server-component
     name: '@hiogawa/test-dep-use-client'
     peerDependencies:
-      react: '*'
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
-      react: 19.0.0-canary-4c12339ce-20240408
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: false
 
-  file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-canary-4c12339ce-20240408):
+  file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-8f3c0525f9-20240521):
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
     id: file:packages/react-server/examples/basic/deps/use-client
     name: '@hiogawa/test-dep-use-client'
     peerDependencies:
-      react: '*'
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dependencies:
-      react: 19.0.0-canary-4c12339ce-20240408
+      react: 19.0.0-rc-8f3c0525f9-20240521
     dev: false

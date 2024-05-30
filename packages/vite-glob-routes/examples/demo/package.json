@@ -29,6 +29,7 @@
     "@hiogawa/vite-glob-routes": "workspace:*",
     "@hiogawa/vite-import-dev-server": "workspace:*",
     "@hiogawa/vite-null-export": "workspace:*",
+    "@hiogawa/vite-plugin-ssr-css": "workspace:*",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@iconify-json/ri": "^1.1.20",
     "@tanstack/react-query": "^5.28.4",

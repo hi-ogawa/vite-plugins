@@ -13,6 +13,7 @@ export default async function Layout(props: LayoutProps) {
           "/test/other",
           "/test/dynamic",
           "/test/action",
+          "/test/action/extra",
           "/test/deps",
           "/test/head",
           "/test/css",

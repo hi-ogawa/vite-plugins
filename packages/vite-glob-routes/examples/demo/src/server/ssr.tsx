@@ -62,7 +62,7 @@ export function ssrHandler(): RequestHandler {
     }
 
     let html = await importIndexHtml();
-    html = html.replace("<!--@INJECT_SSR@-->", ssrHtml);
+    html = html.replace("<!--@INJECT_SSR@-->", () => ssrHtml);
 
     // for initial prefetch link + client side lazy resolution
     const matchRouteIds = routerResult.context.matches.map((m) => m.route.id);
@@ -72,9 +72,7 @@ export function ssrHandler(): RequestHandler {
       manifest,
     );
 
-    html = html.replace(
-      "<!--@INJECT_HEAD@-->",
-      // prettier-ignore
+    html = html.replace("<!--@INJECT_HEAD@-->", () =>
       [
         generateThemeScript({
           storageKey: "vite-plugins-demo:theme",
@@ -89,13 +87,19 @@ export function ssrHandler(): RequestHandler {
         //
         // only __initialMatchRouteIds depends on request,
         // so other data could be hard-coded somewhere after build?
-        matchRouteDeps.js.map((href) => `<link rel="modulepreload" href="${href}" />`),
+        matchRouteDeps.js.map(
+          (href) => `<link rel="modulepreload" href="${href}" />`,
+        ),
         `<script>
           window.__viteManifest = ${JSON.stringify(manifest)};
-          window.__serverLoaderRouteIds = ${JSON.stringify(serverLoaderRouteIds)};
+          window.__serverLoaderRouteIds = ${JSON.stringify(
+            serverLoaderRouteIds,
+          )};
           window.__initialMatchRouteIds = ${JSON.stringify(matchRouteIds)};
         </script>`,
-      ].flat().join("\n"),
+      ]
+        .flat()
+        .join("\n"),
     );
 
     return new Response(html, {

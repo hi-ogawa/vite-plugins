@@ -1,0 +1,33 @@
+{
+  "name": "@hiogawa/transforms",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/transforms",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/transforms"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "prepack": "tsup --clean"
+  },
+  "dependencies": {
+    "estree-walker": "^3.0.3",
+    "magic-string": "^0.30.8",
+    "periscopic": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/estree": "^1.0.5"
+  }
+}

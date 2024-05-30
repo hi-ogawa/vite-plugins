@@ -1,6 +1,6 @@
 import { tinyassert } from "@hiogawa/utils";
 import { type Page, expect, test } from "@playwright/test";
-import { isPageReady } from "./helper";
+import { isPageReady, testNoJs } from "./helper";
 
 test("basic", async ({ page }) => {
   await page.goto("/");
@@ -200,4 +200,14 @@ test("api-dynamic-route", async ({ page }) => {
 
   const res = await page.goto("/api/dynamic/hello/goodbye/again");
   expect(res?.status()).toBe(404);
+});
+
+test("style @js", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("header")).toHaveCSS("display", "flex");
+});
+
+testNoJs("style @nojs", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("header")).toHaveCSS("display", "flex");
 });

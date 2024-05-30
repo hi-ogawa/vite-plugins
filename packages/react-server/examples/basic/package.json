@@ -21,9 +21,9 @@
     "@hiogawa/test-dep-server-component": "file:deps/server-component",
     "@hiogawa/test-dep-use-client": "file:deps/use-client",
     "cookie": "^0.6.0",
-    "react": "19.0.0-canary-4c12339ce-20240408",
-    "react-dom": "19.0.0-canary-4c12339ce-20240408",
-    "react-server-dom-webpack": "19.0.0-canary-4c12339ce-20240408",
+    "react": "19.0.0-rc-8f3c0525f9-20240521",
+    "react-dom": "19.0.0-rc-8f3c0525f9-20240521",
+    "react-server-dom-webpack": "19.0.0-rc-8f3c0525f9-20240521",
     "react-wrap-balancer": "^1.1.0"
   },
   "devDependencies": {
@@ -35,9 +35,8 @@
     "@iconify-json/ri": "^1.1.20",
     "@playwright/test": "^1.42.1",
     "@types/cookie": "^0.6.0",
-    "@types/react": "18.2.66",
-    "@types/react-dom": "18.2.22",
-    "@unocss/postcss": "^0.58.6",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "unocss": "^0.58.6",
     "vite": "latest"
