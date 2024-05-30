@@ -41,7 +41,7 @@ export function vitePluginServerUseClient({
   // to actual client (browser, ssr) environment instead of faking out things on RSC module graph
 
   // intercept Vite's node resolve to virtualize "use client" in node_modules
-  const pluginUseClientNodeModules: Plugin = {
+  const useClientExternalPlugin: Plugin = {
     name: "server-virtual-use-client-node-modules",
     enforce: "pre", // "pre" to steal Vite's node resolve
     apply: "serve",
@@ -83,23 +83,24 @@ export function vitePluginServerUseClient({
         // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
         const ast = await parseAstAsync(code);
-        const exportNames = new Set(getExportNames(ast, {}).exportNames);
-        meta.exportNames = exportNames;
-        // we need to transform to client reference directly
-        // otherwise `soruce` will be resolved infinitely by recursion
-        id = wrapId(id);
-        const result = generateClientReferenceCode(
-          id,
-          exportNames,
-          runtimePath,
+        const output = await transformDirectiveProxyExport(ast, {
+          directive: "use client",
+          id: wrapId(id),
+          runtime: "$$proxy",
+        });
+        tinyassert(output);
+        output.prepend(
+          `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
         );
+        const result = output.toString();
+        meta.exportNames = new Set(getExportNames(ast, {}).exportNames);
         debug("[rsc.use-client-node-modules.load]", {
           source,
           meta,
           id,
           result,
         });
-        return result;
+        return output.toString();
       }
       return;
     },
@@ -117,8 +118,8 @@ export function vitePluginServerUseClient({
     }
   }
 
-  const pluginUseClientLocal: Plugin = {
-    name: "use-client-local",
+  const useClientPlugin: Plugin = {
+    name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
       manager.rscIds.add(id);
       manager.rscUseClientIds.delete(id);
@@ -169,23 +170,7 @@ export function vitePluginServerUseClient({
       },
     },
   };
-  return [pluginUseClientNodeModules, pluginUseClientLocal];
-}
-
-function generateClientReferenceCode(
-  id: string,
-  exportNames: Set<string>,
-  runtimePath: string,
-) {
-  let result = `import { registerClientReference as $$proxy } from "${runtimePath}";\n`;
-  for (const name of exportNames) {
-    if (name === "default") {
-      result += `export default $$proxy("${id}", "${name}");\n`;
-    } else {
-      result += `export const ${name} = $$proxy("${id}", "${name}");\n`;
-    }
-  }
-  return result;
+  return [useClientExternalPlugin, useClientPlugin];
 }
 
 // Apply same noramlizaion as Vite's dev import analysis
