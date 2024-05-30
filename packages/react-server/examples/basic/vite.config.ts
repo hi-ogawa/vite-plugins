@@ -22,13 +22,15 @@ export default defineConfig({
       plugins: [
         testVitePluginVirtual(),
         {
-          name: "cusotm-react-server-config",
+          name: "custom-react-server-config",
           config() {
             return {
               ssr: {
                 optimizeDeps: {
                   include: ["cookie"],
                 },
+                // bundle "use client"
+                noExternal: ["react-wrap-balancer"],
               },
             };
           },

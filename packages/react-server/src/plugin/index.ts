@@ -109,6 +109,7 @@ export function vitePluginReactServer(options?: {
         conditions: ["react-server"],
         externalConditions: ["react-server"],
       },
+      noExternal: ["@hiogawa/react-server"],
     },
     plugins: [
       vitePluginSilenceDirectiveBuildWarning(),
