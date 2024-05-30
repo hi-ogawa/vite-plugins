@@ -174,7 +174,6 @@ export async function start() {
     reactDomClient.createRoot(document).render(reactRootEl);
   } else {
     reactDomClient.hydrateRoot(document, reactRootEl, {
-      // @ts-expect-error no type yet
       formState: initialLayout.action?.data,
     });
   }
@@ -189,7 +188,10 @@ export async function start() {
 }
 
 declare module "react-dom/client" {
-  // TODO: full document CSR works fine?
+  interface HydrationOptions {
+    formState?: unknown;
+  }
+
   interface DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_CREATE_ROOT_CONTAINERS {
     Document: Document;
   }
