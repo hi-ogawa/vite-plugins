@@ -1,7 +1,7 @@
 import fs from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert, typedBoolean } from "@hiogawa/utils";
-import fg from "fast-glob";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -445,8 +445,14 @@ export function vitePluginReactServer(options?: {
       }
       if (manager.buildType === "client") {
         // TODO: probe manifest to collect css?
-        const files = await fg("./dist/rsc/assets/*.css", { absolute: true });
-        const code = files.map((url) => `import "${url}";\n`).join("");
+        const files = await fs.promises.readdir("./dist/rsc/assets", {
+          withFileTypes: true,
+        });
+        const code = files
+          .filter((f) => f.isFile() && f.name.endsWith(".css"))
+          .map((f) => path.join(f.path, f.name))
+          .map((url) => `import "/${url}";\n`)
+          .join("");
         return code;
       }
       tinyassert(false);
