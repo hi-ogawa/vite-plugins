@@ -466,7 +466,7 @@ export function vitePluginReactServer(options?: {
         const code = files
           .filter((f) => f.isFile() && f.name.endsWith(".css"))
           .map((f) => path.join(f.path, f.name))
-          .map((url) => `import "/${url}";\n`)
+          .map((f) => `import "/${f}";\n`)
           .join("");
         return code;
       }
