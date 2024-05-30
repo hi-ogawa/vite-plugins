@@ -305,15 +305,19 @@ export function vitePluginReactServer(options?: {
     apply: "build",
     async buildStart(_options) {
       if (!manager.buildType) {
+        console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         await build(reactServerViteConfig);
+        console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "rsc";
         await build(reactServerViteConfig);
+        console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
         manager.buildType = "client";
       }
     },
     async closeBundle() {
       if (manager.buildType === "client") {
+        console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
         manager.buildType = "ssr";
         await build({
           build: {
