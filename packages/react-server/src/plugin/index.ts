@@ -257,26 +257,11 @@ export function vitePluginReactServer(options?: {
           reactServer: reactServer,
         };
       }
-      if (parentEnv.command === "build" && !manager.buildType) {
-        manager.buildType = "scan";
-        await build(reactServerViteConfig);
-        manager.buildType = "rsc";
-        await build(reactServerViteConfig);
-        manager.buildType = "client";
-      }
     },
     async closeBundle() {
       if (parentEnv.command === "serve") {
         await $__global.dev.reactServer.close();
         delete ($__global as any).dev;
-      }
-      if (parentEnv.command === "build" && manager.buildType === "client") {
-        manager.buildType = "ssr";
-        await build({
-          build: {
-            ssr: true,
-          },
-        });
       }
     },
     transform(_code, id, _options) {
@@ -314,9 +299,35 @@ export function vitePluginReactServer(options?: {
     },
   };
 
+  // orchestrate four builds from a single vite (browser) build
+  const buildOrchestrationPlugin: Plugin = {
+    name: vitePluginReactServer.name + ":build",
+    apply: "build",
+    async buildStart(_options) {
+      if (!manager.buildType) {
+        manager.buildType = "scan";
+        await build(reactServerViteConfig);
+        manager.buildType = "rsc";
+        await build(reactServerViteConfig);
+        manager.buildType = "client";
+      }
+    },
+    async closeBundle() {
+      if (manager.buildType === "client") {
+        manager.buildType = "ssr";
+        await build({
+          build: {
+            ssr: true,
+          },
+        });
+      }
+    },
+  };
+
   // plugins for main vite dev server (browser / ssr)
   return [
     rscParentPlugin,
+    buildOrchestrationPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
     vitePluginClientUseServer({
       manager,
