@@ -57,7 +57,7 @@ export type { ReactServerManager };
 class ReactServerManager {
   parentServer?: ViteDevServer;
 
-  buildType?: "rsc" | "client" | "ssr";
+  buildType?: "scan" | "rsc" | "client" | "ssr";
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -81,6 +81,10 @@ class ReactServerManager {
   }
 }
 
+// persist singleton during build
+if (!process.argv.includes("build")) {
+  delete (globalThis as any).__VITE_REACT_SERVER_MANAGER;
+}
 const manager: ReactServerManager = ((
   globalThis as any
 ).__VITE_REACT_SERVER_MANAGER ??= new ReactServerManager());
@@ -137,6 +141,9 @@ export function vitePluginReactServer(options?: {
 
       // expose server references for RSC build via virtual module
       createVirtualPlugin("server-references", async () => {
+        if (manager.buildType === "scan") {
+          return `export default {}`;
+        }
         tinyassert(manager.buildType === "rsc");
         // TODO: try "scan" build like in
         // https://github.com/hi-ogawa/vite-environment-examples/blob/440212b4208fc66a14d69a1bcbc7c5254b7daa91/examples/react-server/vite.config.ts#L79-L84
@@ -285,6 +292,8 @@ export function vitePluginReactServer(options?: {
         };
       }
       if (parentEnv.command === "build" && !manager.buildType) {
+        manager.buildType = "scan";
+        await build(reactServerViteConfig);
         manager.buildType = "rsc";
         await build(reactServerViteConfig);
         manager.buildType = "client";
