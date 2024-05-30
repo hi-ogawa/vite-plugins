@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_OPTIONS='--conditions react-server' vite dev",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "NODE_OPTIONS='--conditions react-server' vite preview",
     "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
     "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"

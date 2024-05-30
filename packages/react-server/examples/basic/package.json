@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_OPTIONS='--conditions react-server' vite dev",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "NODE_OPTIONS='--conditions react-server' vite preview",
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "vc-build": "pnpm build && bash misc/vercel-serverless/build.sh",
