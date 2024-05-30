@@ -109,7 +109,14 @@ export function vitePluginReactServer(options?: {
         conditions: ["react-server"],
         externalConditions: ["react-server"],
       },
-      noExternal: ["@hiogawa/react-server"],
+      noExternal: [
+        "@hiogawa/react-server",
+        // for now, we need to patch __webpack_require__ etc...
+        "react-server-dom-webpack",
+      ],
+      optimizeDeps: {
+        include: ["react-server-dom-webpack/server.edge"],
+      },
     },
     plugins: [
       vitePluginSilenceDirectiveBuildWarning(),
