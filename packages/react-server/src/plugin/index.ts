@@ -107,20 +107,7 @@ export function vitePluginReactServer(options?: {
     ssr: {
       resolve: {
         conditions: ["react-server"],
-      },
-      // no external to ensure loading all deps with react-server condition
-      // TODO: but probably users should be able to exclude
-      //       node builtin or non-react related dependencies.
-      noExternal: true,
-      // pre-bundle cjs deps
-      // TODO: should crawl user's cjs react 3rd party libs? (like svelte does?)
-      optimizeDeps: {
-        include: [
-          "react",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime",
-          "react-server-dom-webpack/server.edge",
-        ],
+        externalConditions: ["react-server"],
       },
     },
     plugins: [
@@ -227,9 +214,17 @@ export function vitePluginReactServer(options?: {
           ],
         },
         ssr: {
-          noExternal: ["@hiogawa/react-server"],
+          noExternal: true,
           optimizeDeps: {
             exclude: ["@hiogawa/react-server"],
+            include: [
+              "react",
+              "react/jsx-runtime",
+              "react/jsx-dev-runtime",
+              "react-dom/server.edge",
+              "react-server-dom-webpack/client.edge",
+              "@hiogawa/react-server > use-sync-external-store/shim/with-selector.js",
+            ],
           },
         },
         build: {
