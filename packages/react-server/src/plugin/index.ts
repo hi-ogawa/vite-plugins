@@ -258,7 +258,7 @@ export function vitePluginReactServer(options?: {
         };
       }
     },
-    async closeBundle() {
+    async buildEnd(_options) {
       if (parentEnv.command === "serve") {
         await $__global.dev.reactServer.close();
         delete ($__global as any).dev;
