@@ -138,6 +138,10 @@ export function vitePluginServerUseClient({
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
       manager.rscUseClientIds.add(id);
+      if (manager.buildType === "scan") {
+        // only collect references without transform during the scan
+        return;
+      }
       return { code: output.toString(), map: output.generateMap() };
     },
 

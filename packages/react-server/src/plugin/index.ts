@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import { transformServerActionServer } from "@hiogawa/transforms";
 import { createDebug, tinyassert, typedBoolean } from "@hiogawa/utils";
 import fg from "fast-glob";
 import {
@@ -13,8 +12,6 @@ import {
   build,
   createLogger,
   createServer,
-  parseAstAsync,
-  transformWithEsbuild,
 } from "vite";
 import {
   vitePluginClientUseServer,
@@ -145,41 +142,8 @@ export function vitePluginReactServer(options?: {
           return `export default {}`;
         }
         tinyassert(manager.buildType === "rsc");
-        // TODO: try "scan" build like in
-        // https://github.com/hi-ogawa/vite-environment-examples/blob/440212b4208fc66a14d69a1bcbc7c5254b7daa91/examples/react-server/vite.config.ts#L79-L84
-
-        // we need to crawl file system to collect server references ("use server")
-        // since we currently needs RSC -> Client -> SSR build pipeline
-        // to collect client references first in RSC.
-        // TODO: what if "use server" is provided from 3rd party library?
-        //       as a workaround, users can re-export them locally.
-        const files = await fg("./src/**/*.(js|jsx|ts|tsx)", {
-          absolute: true,
-        });
-        const ids: string[] = [];
-        for (const file of files) {
-          const code = await fs.promises.readFile(file, "utf-8");
-          try {
-            const transpiled = await transformWithEsbuild(code, file);
-            const ast = await parseAstAsync(transpiled.code);
-            const result = await transformServerActionServer(
-              transpiled.code,
-              ast,
-              {
-                id: "<id>",
-                runtime: "<runtime>",
-              },
-            );
-            if (result.output.hasChanged()) {
-              ids.push(file);
-              manager.rscUseServerIds.add(file);
-            }
-          } catch (e) {
-            console.error("[server transform error]", file, e);
-          }
-        }
         let result = `export default {\n`;
-        for (const id of ids) {
+        for (const id of manager.rscUseServerIds) {
           let key = manager.buildType ? hashString(id) : id;
           result += `"${key}": () => import("${id}"),\n`;
         }
