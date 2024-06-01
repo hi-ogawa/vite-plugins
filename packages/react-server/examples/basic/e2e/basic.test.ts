@@ -849,7 +849,7 @@ test("remount on dynamic segment change", async ({ page }) => {
   await page.getByRole("link", { name: "• /test/dynamic/abc/def" }).click();
   await page.waitForURL("/test/dynamic/abc/def");
   await page.getByText("pathname: /test/dynamic/abc/def").click();
-  await expect(page.getByPlaceholder("dynamic-test")).toHaveValue("");
+  await expect(page.getByPlaceholder("dynamic-test")).toHaveValue("hello");
 
   // remount on new segment
   await page.getByRole("link", { name: "• /test/dynamic/✅" }).click();
