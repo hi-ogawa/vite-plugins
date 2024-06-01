@@ -843,10 +843,18 @@ test("dynamic routes", async ({ page }) => {
 test("remount on dynamic segment change", async ({ page }) => {
   await page.goto("/test/dynamic/abc");
   await waitForHydration(page);
-  await page.getByPlaceholder("dynamic-input").fill("hello");
+  await page.getByPlaceholder("dynamic-test").fill("hello");
+
+  // no remount on same segment
+  await page.getByRole("link", { name: "• /test/dynamic/abc/def" }).click();
+  await page.waitForURL("/test/dynamic/abc/def");
+  await page.getByText("pathname: /test/dynamic/abc/def").click();
+  await expect(page.getByPlaceholder("dynamic-test")).toHaveValue("hello");
+
+  // remount on new segment
   await page.getByRole("link", { name: "• /test/dynamic/✅" }).click();
   await page.waitForURL("/test/dynamic/✅");
-  await expect(page.getByPlaceholder("dynamic-input")).toHaveValue("");
+  await expect(page.getByPlaceholder("dynamic-test")).toHaveValue("");
 });
 
 test("catch-all routes @js", async ({ page }) => {
