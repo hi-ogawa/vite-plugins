@@ -69,6 +69,7 @@ async function renderLayout(
   node: RouteTreeNode,
   props: PageProps,
   name: string,
+  key?: string,
 ) {
   const { ErrorBoundary, RedirectBoundary, LayoutContent } =
     await importRuntimeClient();
@@ -82,7 +83,13 @@ async function renderLayout(
   }
   const Layout = node.value?.layout?.default;
   if (Layout) {
-    return <Layout {...props}>{acc}</Layout>;
+    acc = (
+      <Layout key={key} {...props}>
+        {acc}
+      </Layout>
+    );
+  } else {
+    acc = <React.Fragment key={key}>{acc}</React.Fragment>;
   }
   return acc;
 }
@@ -129,7 +136,9 @@ export async function renderRouteMap(
       node = initNode();
     }
     const props: BaseProps = { ...baseProps, params };
-    layouts[prefix] = await renderLayout(node, props, prefix);
+    // re-mount subtree when dynamic segment changes
+    const cacheKey = [i, next?.param ?? "", key].join("");
+    layouts[prefix] = await renderLayout(node, props, prefix, cacheKey);
     if (prefix === pathname) {
       pages[prefix] = renderPage(node, props);
     }

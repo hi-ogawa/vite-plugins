@@ -96,11 +96,13 @@ exports[`generateRouteTree > basic > (1) "/other" 1`] = `
         />
       </RedirectBoundary>
     <//layout.tsx>,
-    "/other": <RedirectBoundary>
-      <LayoutContent
-        name="/other"
-      />
-    </RedirectBoundary>,
+    "/other": <React.Fragment>
+      <RedirectBoundary>
+        <LayoutContent
+          name="/other"
+        />
+      </RedirectBoundary>
+    </React.Fragment>,
   },
   "pages": {
     "/other": </other/page.tsx
@@ -164,11 +166,13 @@ exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
         />
       </RedirectBoundary>
     <//layout.tsx>,
-    "/not-found": <RedirectBoundary>
-      <LayoutContent
-        name="/not-found"
-      />
-    </RedirectBoundary>,
+    "/not-found": <React.Fragment>
+      <RedirectBoundary>
+        <LayoutContent
+          name="/not-found"
+        />
+      </RedirectBoundary>
+    </React.Fragment>,
   },
   "pages": {
     "/not-found": <ThrowNotFound
@@ -355,11 +359,13 @@ exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
         />
       </RedirectBoundary>
     <//test/layout.tsx>,
-    "/test/other": <RedirectBoundary>
-      <LayoutContent
-        name="/test/other"
-      />
-    </RedirectBoundary>,
+    "/test/other": <React.Fragment>
+      <RedirectBoundary>
+        <LayoutContent
+          name="/test/other"
+        />
+      </RedirectBoundary>
+    </React.Fragment>,
   },
   "pages": {
     "/test/other": </test/other/page.tsx
@@ -453,11 +459,13 @@ exports[`generateRouteTree > basic > (5) "/test/not-found" 1`] = `
         />
       </RedirectBoundary>
     <//test/layout.tsx>,
-    "/test/not-found": <RedirectBoundary>
-      <LayoutContent
-        name="/test/not-found"
-      />
-    </RedirectBoundary>,
+    "/test/not-found": <React.Fragment>
+      <RedirectBoundary>
+        <LayoutContent
+          name="/test/not-found"
+        />
+      </RedirectBoundary>
+    </React.Fragment>,
   },
   "pages": {
     "/test/not-found": </test/[dynamic]/page.tsx
