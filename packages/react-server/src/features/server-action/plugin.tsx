@@ -35,14 +35,15 @@ export function vitePluginClientUseServer({
         return;
       }
       const ast = await parseAstAsync(code);
-      const output = await transformDirectiveProxyExport(ast, {
+      const result = transformDirectiveProxyExport(ast, {
         directive: "use server",
         id: manager.buildType ? hashString(id) : id,
         runtime: "$$proxy",
       });
-      if (!output) {
+      if (!result) {
         return;
       }
+      const output = result.output;
       const importPath = options?.ssr ? ssrRuntimePath : runtimePath;
       output.prepend(`\
 import { createServerReference } from "${importPath}";
