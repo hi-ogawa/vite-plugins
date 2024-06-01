@@ -2,20 +2,24 @@ import type { PageProps } from "@hiogawa/react-server/server";
 import { sleep } from "@hiogawa/utils";
 import React from "react";
 
-// TODO: userland implementation?
-export default function PageWrapper(props: PageProps) {
+// TODO: userland `loading` implementation?
+export default function PageWithLoading(props: PageProps) {
   return (
-    <React.Suspense fallback={"loading...."} key={props.params.id}>
+    <React.Suspense fallback={<Loading />}>
       <Page {...props} />
     </React.Suspense>
   );
+}
+
+function Loading() {
+  return <div className="antd-spin size-10" />;
 }
 
 async function Page(props: PageProps) {
   await sleep(1000);
   return (
     <div>
-      <pre>{JSON.stringify(props.params, null, 2)}</pre>
+      <pre>params {JSON.stringify(props.params)}</pre>
     </div>
   );
 }
