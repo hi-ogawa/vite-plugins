@@ -840,6 +840,15 @@ test("dynamic routes", async ({ page }) => {
   ).toHaveAttribute("aria-current", "page");
 });
 
+test("remount on dynamic segment change", async ({ page }) => {
+  await page.goto("/test/dynamic/abc");
+  await waitForHydration(page);
+  await page.getByPlaceholder("dynamic-input").fill("hello");
+  await page.getByRole("link", { name: "• /test/dynamic/✅" }).click();
+  await page.waitForURL("/test/dynamic/✅");
+  await expect(page.getByPlaceholder("dynamic-input")).toHaveValue("");
+});
+
 test("catch-all routes @js", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/dynamic/catchall");
