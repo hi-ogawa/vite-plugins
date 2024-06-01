@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.1
+
+- feat: remount subtree on dynamic segment change ([#328](https://github.com/hi-ogawa/vite-plugins/pull/pull/328))
+
 ## v0.2.0
 
 - refactor!: extra build step to discover references ([#323](https://github.com/hi-ogawa/vite-plugins/pull/323))
