@@ -12,8 +12,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.3",
-    "@hiogawa/tiny-cli": "0.0.4-pre.1",
-    "@hiogawa/utils": "^1.6.4-pre.2",
+    "@hiogawa/utils": "^1.7.0",
     "@playwright/test": "^1.42.1",
     "@tsconfig/strictest": "^2.0.3",
     "@types/node": "^20.11.28",
@@ -28,7 +27,7 @@
   },
   "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2",
   "volta": {
-    "node": "20.11.1"
+    "node": "20.14.0"
   },
   "pnpm": {
     "overrides": {

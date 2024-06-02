@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@hattip/compose": "^0.0.44",
-    "@hiogawa/utils": "^1.6.3",
+    "@hiogawa/utils": "latest",
     "@hiogawa/vite-glob-routes": "latest",
     "@hiogawa/vite-node-miniflare": "latest",
     "@types/react": "^18.2.66",
