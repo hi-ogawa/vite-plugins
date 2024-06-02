@@ -113,8 +113,8 @@ export function vitePluginServerUseClient({
     if (!manager.buildType) {
       // normalize client reference during dev
       // to align with Vite's import analysis
-      tinyassert(manager.parentServer);
-      return await noramlizeClientReferenceId(id, manager.parentServer);
+      tinyassert(manager.server);
+      return await noramlizeClientReferenceId(id, manager.server);
     } else {
       // obfuscate reference
       return hashString(id);

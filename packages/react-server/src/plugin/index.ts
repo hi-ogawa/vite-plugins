@@ -50,7 +50,8 @@ const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
 export type { PluginStateManager };
 
 class PluginStateManager {
-  parentServer?: ViteDevServer;
+  server?: ViteDevServer;
+  configEnv!: ConfigEnv;
 
   buildType?: "scan" | "rsc" | "client" | "ssr";
 
@@ -87,9 +88,6 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
 }): Plugin[] {
-  let parentServer: ViteDevServer | undefined;
-  let parentEnv: ConfigEnv;
-
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
       prefix: "[react-server]",
@@ -187,7 +185,7 @@ export function vitePluginReactServer(options?: {
   const rscParentPlugin: Plugin = {
     name: vitePluginReactServer.name,
     config(_config, env) {
-      parentEnv = env;
+      manager.configEnv = env;
       return {
         optimizeDeps: {
           // this can potentially include unnecessary server only deps for client,
@@ -222,22 +220,21 @@ export function vitePluginReactServer(options?: {
       };
     },
     async configureServer(server) {
-      parentServer = server;
-      manager.parentServer = server;
+      manager.server = server;
     },
     async buildStart(_options) {
-      if (parentEnv.command === "serve") {
-        tinyassert(parentServer);
+      if (manager.configEnv.command === "serve") {
+        tinyassert(manager.server);
         const reactServer = await createServer(reactServerViteConfig);
         reactServer.pluginContainer.buildStart({});
         $__global.dev = {
-          server: parentServer,
+          server: manager.server,
           reactServer: reactServer,
         };
       }
     },
     async buildEnd(_options) {
-      if (parentEnv.command === "serve") {
+      if (manager.configEnv.command === "serve") {
         await $__global.dev.reactServer.close();
         delete ($__global as any).dev;
       }
@@ -248,11 +245,11 @@ export function vitePluginReactServer(options?: {
       }
     },
     async handleHotUpdate(ctx) {
-      tinyassert(parentServer);
+      tinyassert(manager.server);
 
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
-        parentServer.hot.send({
+        manager.server.hot.send({
           type: "custom",
           event: "rsc:update",
           data: {
@@ -267,7 +264,7 @@ export function vitePluginReactServer(options?: {
         if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
           for (const m of ctx.modules) {
             for (const imod of m.importers) {
-              await parentServer.reloadModule(imod);
+              await manager.server.reloadModule(imod);
             }
           }
           return [];
