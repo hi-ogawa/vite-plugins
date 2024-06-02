@@ -8,11 +8,6 @@ export function invalidateModule(server: ViteDevServer, id: string) {
   }
 }
 
-export interface SsrAssetsType {
-  bootstrapModules: string[];
-  head: string;
-}
-
 // TODO: configurable?
 export const ENTRY_CLIENT = "/src/entry-client";
 export const ENTRY_REACT_SERVER = "/src/entry-react-server";
@@ -32,11 +27,14 @@ export function createVirtualPlugin(name: string, load: Plugin["load"]) {
   return {
     name: `virtual-${name}`,
     resolveId(source, _importer, _options) {
-      return source === name ? "\0" + name : undefined;
+      if (source === name || source.startsWith(`${name}?`)) {
+        return `\0${source}`;
+      }
+      return;
     },
     load(id, options) {
-      if (id === "\0" + name) {
-        return (load as any)(id, options);
+      if (id === `\0${name}` || id.startsWith(`\0${name}?`)) {
+        return (load as any).apply(this, [id, options]);
       }
     },
   } satisfies Plugin;

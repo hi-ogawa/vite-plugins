@@ -11,9 +11,9 @@ import {
   type ViteDevServer,
   parseAstAsync,
 } from "vite";
-import type { ReactServerManager } from "../../plugin";
+import type { PluginStateManager } from "../../plugin";
 import { USE_CLIENT_RE } from "../../plugin/ast-utils";
-import { hashString } from "../../plugin/utils";
+import { createVirtualPlugin, hashString } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:use-client");
 
@@ -32,7 +32,7 @@ export function vitePluginServerUseClient({
   manager,
   runtimePath,
 }: {
-  manager: ReactServerManager;
+  manager: PluginStateManager;
   runtimePath: string;
 }): PluginOption {
   // TODO:
@@ -113,8 +113,8 @@ export function vitePluginServerUseClient({
     if (!manager.buildType) {
       // normalize client reference during dev
       // to align with Vite's import analysis
-      tinyassert(manager.parentServer);
-      return await noramlizeClientReferenceId(id, manager.parentServer);
+      tinyassert(manager.server);
+      return await noramlizeClientReferenceId(id, manager.server);
     } else {
       // obfuscate reference
       return hashString(id);
@@ -209,10 +209,11 @@ const VIRTUAL_PREFIX = "virtual:use-client-node-module/";
 export function vitePluginClientUseClient({
   manager,
 }: {
-  manager: ReactServerManager;
-}): Plugin {
-  return {
-    name: vitePluginClientUseClient.name,
+  manager: PluginStateManager;
+}): Plugin[] {
+  const devExternalPlugin: Plugin = {
+    name: vitePluginClientUseClient.name + ":dev-external",
+    apply: "serve",
     resolveId(source, _importer, _options) {
       if (source.startsWith(VIRTUAL_PREFIX)) {
         return "\0" + source;
@@ -230,4 +231,12 @@ export function vitePluginClientUseClient({
       return;
     },
   };
+
+  return [
+    devExternalPlugin,
+    createVirtualPlugin("client-references", () => {
+      tinyassert(manager.buildType && manager.buildType !== "rsc");
+      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
+    }),
+  ];
 }

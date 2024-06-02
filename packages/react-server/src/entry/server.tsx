@@ -2,6 +2,7 @@ import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
+import type { SsrAssetsType } from "../features/assets/plugin";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
 import {
@@ -17,11 +18,7 @@ import {
   isRedirectError,
 } from "../lib/error";
 import { $__global } from "../lib/global";
-import {
-  ENTRY_REACT_SERVER_WRAPPER,
-  type SsrAssetsType,
-  invalidateModule,
-} from "../plugin/utils";
+import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 import { jsonStringifyTransform } from "../utils/stream";
 import { injectStreamScript } from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./react-server";

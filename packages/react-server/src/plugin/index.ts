@@ -1,11 +1,8 @@
-import fs from "node:fs";
-import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createDebug, tinyassert, typedBoolean } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
   type ConfigEnv,
   type InlineConfig,
-  type Manifest,
   type Plugin,
   type PluginOption,
   type ViteDevServer,
@@ -13,6 +10,10 @@ import {
   createLogger,
   createServer,
 } from "vite";
+import {
+  SERVER_CSS_PROXY,
+  vitePluginServerAssets,
+} from "../features/assets/plugin";
 import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
@@ -22,15 +23,12 @@ import {
   vitePluginServerUseClient,
 } from "../features/use-client/plugin";
 import { $__global } from "../lib/global";
-import { collectStyle, collectStyleUrls } from "./css";
 import {
   ENTRY_CLIENT,
   ENTRY_CLIENT_WRAPPER,
   ENTRY_REACT_SERVER,
   ENTRY_REACT_SERVER_WRAPPER,
-  type SsrAssetsType,
   createVirtualPlugin,
-  hashString,
   vitePluginSilenceDirectiveBuildWarning,
 } from "./utils";
 
@@ -49,10 +47,11 @@ const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
 );
 
 // convenient singleton to share states
-export type { ReactServerManager };
+export type { PluginStateManager };
 
-class ReactServerManager {
-  parentServer?: ViteDevServer;
+class PluginStateManager {
+  server?: ViteDevServer;
+  configEnv!: ConfigEnv;
 
   buildType?: "scan" | "rsc" | "client" | "ssr";
 
@@ -82,16 +81,13 @@ class ReactServerManager {
 if (!process.argv.includes("build")) {
   delete (globalThis as any).__VITE_REACT_SERVER_MANAGER;
 }
-const manager: ReactServerManager = ((
+const manager: PluginStateManager = ((
   globalThis as any
-).__VITE_REACT_SERVER_MANAGER ??= new ReactServerManager());
+).__VITE_REACT_SERVER_MANAGER ??= new PluginStateManager());
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
 }): Plugin[] {
-  let parentServer: ViteDevServer | undefined;
-  let parentEnv: ConfigEnv;
-
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
       prefix: "[react-server]",
@@ -138,31 +134,11 @@ export function vitePluginReactServer(options?: {
         runtimePath: RUNTIME_REACT_SERVER_PATH,
       }),
 
-      // expose server references for RSC build via virtual module
-      createVirtualPlugin("server-references", async () => {
-        if (manager.buildType === "scan") {
-          return `export default {}`;
-        }
-        tinyassert(manager.buildType === "rsc");
-        let result = `export default {\n`;
-        for (const id of manager.rscUseServerIds) {
-          let key = manager.buildType ? hashString(id) : id;
-          result += `"${key}": () => import("${id}"),\n`;
-        }
-        result += "};\n";
-        debug("[virtual:server-references]", result);
-        return result;
-      }),
-
+      // this virtual is not necessary anymore but has been used in the past
+      // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
-        () => {
-          // this virtual is not necessary anymore but has been used in the past
-          // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
-          return /* js */ `
-            export * from "${ENTRY_REACT_SERVER}";
-          `;
-        },
+        () => `export * from "${ENTRY_REACT_SERVER}";\n`,
       ),
 
       {
@@ -209,7 +185,7 @@ export function vitePluginReactServer(options?: {
   const rscParentPlugin: Plugin = {
     name: vitePluginReactServer.name,
     config(_config, env) {
-      parentEnv = env;
+      manager.configEnv = env;
       return {
         optimizeDeps: {
           // this can potentially include unnecessary server only deps for client,
@@ -244,22 +220,21 @@ export function vitePluginReactServer(options?: {
       };
     },
     async configureServer(server) {
-      parentServer = server;
-      manager.parentServer = server;
+      manager.server = server;
     },
     async buildStart(_options) {
-      if (parentEnv.command === "serve") {
-        tinyassert(parentServer);
+      if (manager.configEnv.command === "serve") {
+        tinyassert(manager.server);
         const reactServer = await createServer(reactServerViteConfig);
         reactServer.pluginContainer.buildStart({});
         $__global.dev = {
-          server: parentServer,
+          server: manager.server,
           reactServer: reactServer,
         };
       }
     },
     async buildEnd(_options) {
-      if (parentEnv.command === "serve") {
+      if (manager.configEnv.command === "serve") {
         await $__global.dev.reactServer.close();
         delete ($__global as any).dev;
       }
@@ -270,11 +245,11 @@ export function vitePluginReactServer(options?: {
       }
     },
     async handleHotUpdate(ctx) {
-      tinyassert(parentServer);
+      tinyassert(manager.server);
 
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
-        parentServer.hot.send({
+        manager.server.hot.send({
           type: "custom",
           event: "rsc:update",
           data: {
@@ -289,7 +264,7 @@ export function vitePluginReactServer(options?: {
         if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
           for (const m of ctx.modules) {
             for (const imod of m.importers) {
-              await parentServer.reloadModule(imod);
+              await manager.server.reloadModule(imod);
             }
           }
           return [];
@@ -338,88 +313,14 @@ export function vitePluginReactServer(options?: {
       runtimePath: RUNTIME_BROWSER_PATH,
       ssrRuntimePath: RUNTIME_SERVER_PATH,
     }),
-    vitePluginClientUseClient({ manager }),
-    createVirtualPlugin("client-references", () => {
-      tinyassert(manager.buildType && manager.buildType !== "rsc");
-      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
-    }),
-    createVirtualPlugin("ssr-assets", async () => {
-      // dev
-      if (!manager.buildType) {
-        // extract <head> injected by plugins
-        const html = await $__global.dev.server.transformIndexHtml(
-          "/",
-          "<html><head></head></html>",
-        );
-        const match = html.match(/<head>(.*)<\/head>/s);
-        tinyassert(match && 1 in match);
-        let head = match[1];
-
-        // expose raw dynamic `import` which doesn't go through vite's transform
-        // since it would inject `<id>?import` and cause dual packages when
-        // client code is both imported at the boundary (as `<id>?import`)
-        // and not at the boundary (as `<id>`).
-        head += `<script>globalThis.__raw_import = (id) => import(id)</script>\n`;
-
-        // serve dev css as ?direct so that ssr html won't get too huge.
-        // also remove style on first hot update.
-        head += `\
-          <link
-            data-ssr-dev-css
-            rel="stylesheet"
-            href="/@id/__x00__virtual:dev-ssr-css.css?direct"
-          />
-          <script type="module">
-            import { createHotContext } from "/@vite/client";
-            const hot = createHotContext("hot-data-ssr-dev-css");
-            hot.on("vite:afterUpdate", () => {
-              document
-                .querySelectorAll("[data-ssr-dev-css]")
-                .forEach(node => node.remove());
-            });
-          </script>
-        `;
-        const result: SsrAssetsType = {
-          bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
-          head,
-        };
-        return `export default ${JSON.stringify(result)}`;
-      }
-
-      // build
-      if (manager.buildType === "ssr") {
-        const manifest: Manifest = JSON.parse(
-          await fs.promises.readFile(
-            "dist/client/.vite/manifest.json",
-            "utf-8",
-          ),
-        );
-        const entry = manifest[ENTRY_CLIENT_WRAPPER];
-        tinyassert(entry);
-        const css = entry.css ?? [];
-        const js =
-          entry.dynamicImports
-            ?.map((k) => manifest[k]?.file)
-            .filter(typedBoolean) ?? [];
-        const head = [
-          ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
-          ...js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
-        ].join("\n");
-        const result: SsrAssetsType = {
-          bootstrapModules: [`/${entry.file}`],
-          head,
-        };
-        return `export default ${JSON.stringify(result)}`;
-      }
-
-      tinyassert(false);
-    }),
+    ...vitePluginClientUseClient({ manager }),
+    ...vitePluginServerAssets({ manager }),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
         // wrapper entry to ensure client entry runs after vite/react inititialization
         return /* js */ `
-          import "virtual:react-server-css.js";
+          import "${SERVER_CSS_PROXY}";
           for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
             await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
           }
@@ -430,45 +331,10 @@ export function vitePluginReactServer(options?: {
       if (manager.buildType === "client") {
         // import "runtime-client" for preload
         return /* js */ `
-          import "virtual:react-server-css.js";
+          import "${SERVER_CSS_PROXY}";
           import("@hiogawa/react-server/runtime-client");
           import "${ENTRY_CLIENT}";
         `;
-      }
-      tinyassert(false);
-    }),
-    createVirtualPlugin("dev-ssr-css.css?direct", async () => {
-      tinyassert(!manager.buildType);
-      const styles = await Promise.all([
-        `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, [ENTRY_REACT_SERVER]),
-        `/******* client **************/`,
-        collectStyle($__global.dev.server, [ENTRY_CLIENT]),
-      ]);
-      return styles.join("\n\n");
-    }),
-    createVirtualPlugin("react-server-css.js", async () => {
-      // virtual module proxy css imports from react server to client
-      // TODO: invalidate + full reload when add/remove css file?
-      if (!manager.buildType) {
-        const urls = await collectStyleUrls($__global.dev.reactServer, [
-          ENTRY_REACT_SERVER,
-        ]);
-        const code = urls.map((url) => `import "${url}";\n`).join("");
-        // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
-        return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
-      }
-      if (manager.buildType === "client") {
-        // TODO: probe manifest to collect css?
-        const files = await fs.promises.readdir("./dist/rsc/assets", {
-          withFileTypes: true,
-        });
-        const code = files
-          .filter((f) => f.isFile() && f.name.endsWith(".css"))
-          .map((f) => path.join(f.path, f.name))
-          .map((f) => `import "/${f}";\n`)
-          .join("");
-        return code;
       }
       tinyassert(false);
     }),
