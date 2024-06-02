@@ -30,7 +30,6 @@ import {
   ENTRY_REACT_SERVER_WRAPPER,
   type SsrAssetsType,
   createVirtualPlugin,
-  hashString,
   vitePluginSilenceDirectiveBuildWarning,
 } from "./utils";
 
@@ -138,31 +137,11 @@ export function vitePluginReactServer(options?: {
         runtimePath: RUNTIME_REACT_SERVER_PATH,
       }),
 
-      // expose server references for RSC build via virtual module
-      createVirtualPlugin("server-references", async () => {
-        if (manager.buildType === "scan") {
-          return `export default {}`;
-        }
-        tinyassert(manager.buildType === "rsc");
-        let result = `export default {\n`;
-        for (const id of manager.rscUseServerIds) {
-          let key = manager.buildType ? hashString(id) : id;
-          result += `"${key}": () => import("${id}"),\n`;
-        }
-        result += "};\n";
-        debug("[virtual:server-references]", result);
-        return result;
-      }),
-
+      // this virtual is not necessary anymore but has been used in the past
+      // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
-        () => {
-          // this virtual is not necessary anymore but has been used in the past
-          // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
-          return /* js */ `
-            export * from "${ENTRY_REACT_SERVER}";
-          `;
-        },
+        () => `export * from "${ENTRY_REACT_SERVER}";\n`,
       ),
 
       {

@@ -2,10 +2,10 @@ import {
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
-import { createDebug } from "@hiogawa/utils";
-import { type Plugin, parseAstAsync } from "vite";
+import { createDebug, tinyassert } from "@hiogawa/utils";
+import { type Plugin, type PluginOption, parseAstAsync } from "vite";
 import type { ReactServerManager } from "../../plugin";
-import { hashString } from "../../plugin/utils";
+import { createVirtualPlugin, hashString } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:server-action");
 
@@ -74,8 +74,8 @@ export function vitePluginServerUseServer({
 }: {
   manager: ReactServerManager;
   runtimePath: string;
-}): Plugin {
-  return {
+}): PluginOption {
+  const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
       manager.rscUseServerIds.delete(id);
@@ -101,4 +101,22 @@ export function vitePluginServerUseServer({
       return;
     },
   };
+
+  // expose server references for RSC build via virtual module
+  const virtualPlugin = createVirtualPlugin("server-references", async () => {
+    if (manager.buildType === "scan") {
+      return `export default {}`;
+    }
+    tinyassert(manager.buildType === "rsc");
+    let result = `export default {\n`;
+    for (const id of manager.rscUseServerIds) {
+      let key = manager.buildType ? hashString(id) : id;
+      result += `"${key}": () => import("${id}"),\n`;
+    }
+    result += "};\n";
+    debug("[virtual:server-references]", result);
+    return result;
+  });
+
+  return [transformPlugin, virtualPlugin];
 }
