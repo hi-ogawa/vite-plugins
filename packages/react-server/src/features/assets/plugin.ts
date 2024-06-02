@@ -36,7 +36,7 @@ export function vitePluginServerAssets({
         head += `<script>globalThis.__raw_import = (id) => import(id)</script>\n`;
 
         // serve dev css as ?direct so that ssr html won't get too huge.
-        // also remove style on first hot update.
+        // then remove this injected style on first hot update.
         head += `\
           <link
             data-ssr-dev-css
