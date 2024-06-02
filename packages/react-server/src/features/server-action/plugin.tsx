@@ -4,7 +4,7 @@ import {
 } from "@hiogawa/transforms";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { type Plugin, type PluginOption, parseAstAsync } from "vite";
-import type { ReactServerManager } from "../../plugin";
+import type { PluginStateManager } from "../../plugin";
 import { createVirtualPlugin, hashString } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:server-action");
@@ -24,7 +24,7 @@ export function vitePluginClientUseServer({
   runtimePath,
   ssrRuntimePath,
 }: {
-  manager: ReactServerManager;
+  manager: PluginStateManager;
   runtimePath: string;
   ssrRuntimePath: string;
 }): Plugin {
@@ -72,7 +72,7 @@ export function vitePluginServerUseServer({
   manager,
   runtimePath,
 }: {
-  manager: ReactServerManager;
+  manager: PluginStateManager;
   runtimePath: string;
 }): PluginOption {
   const transformPlugin: Plugin = {

@@ -47,10 +47,9 @@ const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
 );
 
 // convenient singleton to share states
-export type { ReactServerManager };
+export type { PluginStateManager };
 
-// TODO: rename to PluginStateManager
-class ReactServerManager {
+class PluginStateManager {
   parentServer?: ViteDevServer;
 
   buildType?: "scan" | "rsc" | "client" | "ssr";
@@ -81,9 +80,9 @@ class ReactServerManager {
 if (!process.argv.includes("build")) {
   delete (globalThis as any).__VITE_REACT_SERVER_MANAGER;
 }
-const manager: ReactServerManager = ((
+const manager: PluginStateManager = ((
   globalThis as any
-).__VITE_REACT_SERVER_MANAGER ??= new ReactServerManager());
+).__VITE_REACT_SERVER_MANAGER ??= new PluginStateManager());
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];

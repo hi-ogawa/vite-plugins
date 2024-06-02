@@ -11,7 +11,7 @@ import {
   type ViteDevServer,
   parseAstAsync,
 } from "vite";
-import type { ReactServerManager } from "../../plugin";
+import type { PluginStateManager } from "../../plugin";
 import { USE_CLIENT_RE } from "../../plugin/ast-utils";
 import { createVirtualPlugin, hashString } from "../../plugin/utils";
 
@@ -32,7 +32,7 @@ export function vitePluginServerUseClient({
   manager,
   runtimePath,
 }: {
-  manager: ReactServerManager;
+  manager: PluginStateManager;
   runtimePath: string;
 }): PluginOption {
   // TODO:
@@ -209,7 +209,7 @@ const VIRTUAL_PREFIX = "virtual:use-client-node-module/";
 export function vitePluginClientUseClient({
   manager,
 }: {
-  manager: ReactServerManager;
+  manager: PluginStateManager;
 }): Plugin[] {
   const devExternalPlugin: Plugin = {
     name: vitePluginClientUseClient.name + ":dev-external",
