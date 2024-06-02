@@ -8,6 +8,7 @@ export function invalidateModule(server: ViteDevServer, id: string) {
   }
 }
 
+// TODO: move to features/assets/ssr.ts
 export interface SsrAssetsType {
   bootstrapModules: string[];
   head: string;
@@ -32,11 +33,14 @@ export function createVirtualPlugin(name: string, load: Plugin["load"]) {
   return {
     name: `virtual-${name}`,
     resolveId(source, _importer, _options) {
-      return source === name ? "\0" + name : undefined;
+      if (source === name || source.startsWith(`${name}?`)) {
+        return `\0${source}`;
+      }
+      return;
     },
     load(id, options) {
-      if (id === "\0" + name) {
-        return (load as any)(id, options);
+      if (id === `\0${name}` || id.startsWith(`\0${name}?`)) {
+        return (load as any).apply(this, [id, options]);
       }
     },
   } satisfies Plugin;
