@@ -12,7 +12,7 @@
     "vc-release": "vercel deploy --prebuilt --prod ."
   },
   "devDependencies": {
-    "@hiogawa/utils": "^1.6.3",
+    "@hiogawa/utils": "latest",
     "@hiogawa/vite-glob-routes": "latest",
     "@hiogawa/vite-import-dev-server": "latest",
     "@types/react": "^18.2.66",

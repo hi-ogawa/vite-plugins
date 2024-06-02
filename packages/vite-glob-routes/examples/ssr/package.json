@@ -16,7 +16,7 @@
     "@hattip/adapter-node": "^0.0.44",
     "@hattip/adapter-vercel-edge": "^0.0.44",
     "@hattip/compose": "^0.0.44",
-    "@hiogawa/utils": "^1.6.3",
+    "@hiogawa/utils": "latest",
     "@hiogawa/vite-glob-routes": "latest",
     "@hiogawa/vite-import-dev-server": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
