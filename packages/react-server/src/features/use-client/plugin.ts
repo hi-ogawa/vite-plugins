@@ -13,7 +13,7 @@ import {
 } from "vite";
 import type { ReactServerManager } from "../../plugin";
 import { USE_CLIENT_RE } from "../../plugin/ast-utils";
-import { hashString } from "../../plugin/utils";
+import { createVirtualPlugin, hashString } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:use-client");
 
@@ -210,9 +210,10 @@ export function vitePluginClientUseClient({
   manager,
 }: {
   manager: ReactServerManager;
-}): Plugin {
-  return {
-    name: vitePluginClientUseClient.name,
+}): Plugin[] {
+  const devExternalPlugin: Plugin = {
+    name: vitePluginClientUseClient.name + ":dev-external",
+    apply: "serve",
     resolveId(source, _importer, _options) {
       if (source.startsWith(VIRTUAL_PREFIX)) {
         return "\0" + source;
@@ -230,4 +231,12 @@ export function vitePluginClientUseClient({
       return;
     },
   };
+
+  return [
+    devExternalPlugin,
+    createVirtualPlugin("client-references", () => {
+      tinyassert(manager.buildType && manager.buildType !== "rsc");
+      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
+    }),
+  ];
 }

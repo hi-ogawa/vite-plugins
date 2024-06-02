@@ -317,22 +317,12 @@ export function vitePluginReactServer(options?: {
       runtimePath: RUNTIME_BROWSER_PATH,
       ssrRuntimePath: RUNTIME_SERVER_PATH,
     }),
-    vitePluginClientUseClient({ manager }),
-    createVirtualPlugin("client-references", () => {
-      tinyassert(manager.buildType && manager.buildType !== "rsc");
-      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
-    }),
+    ...vitePluginClientUseClient({ manager }),
     createVirtualPlugin("ssr-assets", async () => {
       // dev
       if (!manager.buildType) {
         // extract <head> injected by plugins
-        const html = await $__global.dev.server.transformIndexHtml(
-          "/",
-          "<html><head></head></html>",
-        );
-        const match = html.match(/<head>(.*)<\/head>/s);
-        tinyassert(match && 1 in match);
-        let head = match[1];
+        let { head } = await getIndexHtmlTransform($__global.dev.server);
 
         // expose raw dynamic `import` which doesn't go through vite's transform
         // since it would inject `<id>?import` and cause dual packages when
@@ -452,4 +442,15 @@ export function vitePluginReactServer(options?: {
       tinyassert(false);
     }),
   ];
+}
+
+async function getIndexHtmlTransform(server: ViteDevServer) {
+  const html = await server.transformIndexHtml(
+    "/",
+    "<html><head></head></html>",
+  );
+  const match = html.match(/<head>(.*)<\/head>/s);
+  tinyassert(match && 1 in match);
+  const head = match[1];
+  return { head };
 }
