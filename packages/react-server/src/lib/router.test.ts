@@ -90,11 +90,16 @@ describe(generateRouteModuleTree, () => {
       }
     `);
 
-    function testMatch(pathname: string) {
-      return renderRouteMap(tree, {
+    async function testMatch(pathname: string) {
+      const match = await renderRouteMap(tree, {
         url: "https://test.local" + pathname,
         headers: new Headers(),
       });
+      return {
+        // inject pathname for the ease of reading snapshot
+        __pathname: pathname,
+        ...match,
+      };
     }
 
     const testCases = [
@@ -107,7 +112,7 @@ describe(generateRouteModuleTree, () => {
     ];
     for (const i of range(testCases.length)) {
       const testCase = testCases[i]!;
-      expect(await testMatch(testCase)).matchSnapshot(`(${i}) "${testCase}"`);
+      expect(await testMatch(testCase)).matchSnapshot();
     }
   });
 });
