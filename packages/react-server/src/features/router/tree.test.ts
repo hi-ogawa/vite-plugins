@@ -1,4 +1,3 @@
-import { objectMapValues } from "@hiogawa/utils";
 import { describe, expect, it } from "vitest";
 import { createFsRouteTree, matchRouteTree } from "./tree";
 
