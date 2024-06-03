@@ -1,7 +1,7 @@
 import React from "react";
 import {
   type TreeNode,
-  generateRouteTree,
+  createFsRouteTree,
   initTreeNode,
   matchRouteChild,
 } from "../features/router/tree";
@@ -27,7 +27,7 @@ interface RouteEntry {
 type RouteModuleNode = TreeNode<RouteEntry>;
 
 export function generateRouteModuleTree(globEntries: Record<string, unknown>) {
-  return generateRouteTree(globEntries) as RouteModuleNode;
+  return createFsRouteTree(globEntries) as RouteModuleNode;
 }
 
 // use own "use client" components as external
