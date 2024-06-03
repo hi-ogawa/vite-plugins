@@ -1,9 +1,9 @@
 import { range } from "@hiogawa/utils";
 import { describe, expect, it } from "vitest";
 import { getPathPrefixes } from "../features/router/utils";
-import { generateRouteTree, renderRouteMap } from "./router";
+import { generateRouteModuleTree, renderRouteMap } from "./router";
 
-describe(generateRouteTree, () => {
+describe(generateRouteModuleTree, () => {
   it("basic", async () => {
     const files = [
       "/layout.tsx",
@@ -18,7 +18,7 @@ describe(generateRouteTree, () => {
       "/demo/page.tsx",
     ];
     const input = Object.fromEntries(files.map((k) => [k, { default: k }]));
-    const tree = generateRouteTree(input);
+    const tree = generateRouteModuleTree(input);
     expect(tree).toMatchInlineSnapshot(`
       {
         "children": {
