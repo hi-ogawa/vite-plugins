@@ -41,14 +41,12 @@ function renderPage(node: RouteModuleNode, props: PageProps) {
 async function renderLayout(
   node: RouteModuleNode,
   props: PageProps,
-  name: string,
-  // TODO: key can be just prefix?
-  key?: string,
+  prefix: string,
 ) {
   const { ErrorBoundary, RedirectBoundary, LayoutContent } =
     await importRuntimeClient();
 
-  let acc = <LayoutContent name={name} />;
+  let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
   const ErrorPage = node.value?.error?.default;
@@ -58,12 +56,12 @@ async function renderLayout(
   const Layout = node.value?.layout?.default;
   if (Layout) {
     acc = (
-      <Layout key={key} {...props}>
+      <Layout key={prefix} {...props}>
         {acc}
       </Layout>
     );
   } else {
-    acc = <React.Fragment key={key}>{acc}</React.Fragment>;
+    acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
   }
   return acc;
 }
