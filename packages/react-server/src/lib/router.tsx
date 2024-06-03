@@ -69,6 +69,7 @@ async function renderLayout(
   return acc;
 }
 
+// TODO: implement on top of matchRouteTree
 export async function renderRouteMap(
   tree: RouteModuleNode,
   request: Pick<Request, "url" | "headers">,

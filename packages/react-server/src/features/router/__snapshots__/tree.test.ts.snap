@@ -1,0 +1,462 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createFsRouteTree > basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": "/demo/layout.tsx",
+            "page": "/demo/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/other/page.tsx",
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": "/test/[dynamic]/hello/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/test/[dynamic]/page.tsx",
+              },
+            },
+            "other": {
+              "value": {
+                "page": "/test/other/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "layout": "/test/layout.tsx",
+            "page": "/test/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 2`] = `
+{
+  "__pathname": "/",
+  "nodes": [
+    {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": "/demo/layout.tsx",
+            "page": "/demo/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/other/page.tsx",
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": "/test/[dynamic]/hello/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/test/[dynamic]/page.tsx",
+              },
+            },
+            "other": {
+              "value": {
+                "page": "/test/other/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "layout": "/test/layout.tsx",
+            "page": "/test/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 3`] = `
+{
+  "__pathname": "/other",
+  "nodes": [
+    {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": "/demo/layout.tsx",
+            "page": "/demo/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/other/page.tsx",
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": "/test/[dynamic]/hello/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/test/[dynamic]/page.tsx",
+              },
+            },
+            "other": {
+              "value": {
+                "page": "/test/other/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "layout": "/test/layout.tsx",
+            "page": "/test/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+    },
+    {
+      "value": {
+        "page": "/other/page.tsx",
+      },
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 4`] = `
+{
+  "__pathname": "/not-found",
+  "nodes": [
+    {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": "/demo/layout.tsx",
+            "page": "/demo/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/other/page.tsx",
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": "/test/[dynamic]/hello/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/test/[dynamic]/page.tsx",
+              },
+            },
+            "other": {
+              "value": {
+                "page": "/test/other/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "layout": "/test/layout.tsx",
+            "page": "/test/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+    },
+    {},
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 5`] = `
+{
+  "__pathname": "/test",
+  "nodes": [
+    {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": "/demo/layout.tsx",
+            "page": "/demo/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/other/page.tsx",
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": "/test/[dynamic]/hello/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/test/[dynamic]/page.tsx",
+              },
+            },
+            "other": {
+              "value": {
+                "page": "/test/other/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "layout": "/test/layout.tsx",
+            "page": "/test/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+    },
+    {
+      "children": {
+        "[dynamic]": {
+          "children": {
+            "hello": {
+              "value": {
+                "page": "/test/[dynamic]/hello/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "page": "/test/[dynamic]/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/test/other/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/test/layout.tsx",
+        "page": "/test/page.tsx",
+      },
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 6`] = `
+{
+  "__pathname": "/test/other",
+  "nodes": [
+    {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": "/demo/layout.tsx",
+            "page": "/demo/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/other/page.tsx",
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": "/test/[dynamic]/hello/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/test/[dynamic]/page.tsx",
+              },
+            },
+            "other": {
+              "value": {
+                "page": "/test/other/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "layout": "/test/layout.tsx",
+            "page": "/test/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+    },
+    {
+      "children": {
+        "[dynamic]": {
+          "children": {
+            "hello": {
+              "value": {
+                "page": "/test/[dynamic]/hello/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "page": "/test/[dynamic]/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/test/other/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/test/layout.tsx",
+        "page": "/test/page.tsx",
+      },
+    },
+    {
+      "value": {
+        "page": "/test/other/page.tsx",
+      },
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 7`] = `
+{
+  "__pathname": "/test/not-found",
+  "nodes": [
+    {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": "/demo/layout.tsx",
+            "page": "/demo/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/other/page.tsx",
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": "/test/[dynamic]/hello/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/test/[dynamic]/page.tsx",
+              },
+            },
+            "other": {
+              "value": {
+                "page": "/test/other/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "layout": "/test/layout.tsx",
+            "page": "/test/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+    },
+    {
+      "children": {
+        "[dynamic]": {
+          "children": {
+            "hello": {
+              "value": {
+                "page": "/test/[dynamic]/hello/page.tsx",
+              },
+            },
+          },
+          "value": {
+            "page": "/test/[dynamic]/page.tsx",
+          },
+        },
+        "other": {
+          "value": {
+            "page": "/test/other/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "layout": "/test/layout.tsx",
+        "page": "/test/page.tsx",
+      },
+    },
+    {
+      "children": {
+        "hello": {
+          "value": {
+            "page": "/test/[dynamic]/hello/page.tsx",
+          },
+        },
+      },
+      "value": {
+        "page": "/test/[dynamic]/page.tsx",
+      },
+    },
+  ],
+}
+`;

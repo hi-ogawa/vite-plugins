@@ -21,6 +21,7 @@ describe(generateRouteModuleTree, () => {
     const tree = generateRouteModuleTree(input);
     expect(tree).toMatchSnapshot();
 
+    // TODO: test pure utility `matchRouteTree`
     async function testMatch(pathname: string) {
       const match = await renderRouteMap(tree, {
         url: "https://test.local" + pathname,
