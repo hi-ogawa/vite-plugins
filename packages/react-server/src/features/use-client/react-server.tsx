@@ -9,6 +9,7 @@ import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 // id: /src/components/counter.tsx
 // name: Counter
 
+/* @__NO_SIDE_EFFECTS__ */
 export function registerClientReference(id: string, name: string) {
   // reuse everything but { $$async: true }.
   // `$$async` is not strictly necessary if we use `__webpack_chunk_load__` trick

@@ -5,6 +5,7 @@ import type { ReactServerErrorContext } from "../../server";
 
 // https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
 
+/* @__NO_SIDE_EFFECT */
 export function registerServerReference(
   action: Function,
   id: string,
