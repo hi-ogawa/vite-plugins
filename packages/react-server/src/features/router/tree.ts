@@ -71,7 +71,7 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
         params = { ...params, [next.param]: decodeURI(rest) };
         result.matches.push({ prefix, type: "layout", node, params });
-        for (const prefix of prefixes.slice(i)) {
+        for (const prefix of prefixes.slice(i + 1)) {
           result.matches.push({
             prefix,
             type: "layout",
@@ -79,7 +79,7 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
             params,
           });
         }
-        result.matches.push({ prefix, type: "page", node, params });
+        result.matches.push({ prefix: pathname, type: "page", node, params });
         break;
       }
       if (next.param) {
