@@ -870,7 +870,7 @@ testNoJs("catch-all routes @nojs", async ({ page }) => {
   await testCatchallRoute(page, { js: false });
 });
 
-async function testCatchallRoute(page: Page, options: { js: boolean }) {
+async function testCatchallRoute(page: Page, _options: { js: boolean }) {
   await page
     .getByRole("link", { name: "• /test/dynamic/catchall/static" })
     .click();
@@ -904,10 +904,8 @@ async function testCatchallRoute(page: Page, options: { js: boolean }) {
     .click();
   await page.getByText("file: /test/dynamic/catchall").click();
   await page.getByText('params: {"any":"x/y/w"}').click();
-  // state is preserved
-  await expect(page.getByLabel("test state")).toBeChecked({
-    checked: options.js,
-  });
+  // state is not preserved
+  await expect(page.getByLabel("test state")).not.toBeChecked();
 }
 
 test("full client route", async ({ page }) => {
