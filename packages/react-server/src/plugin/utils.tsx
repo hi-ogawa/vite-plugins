@@ -15,7 +15,6 @@ export const ENTRY_CLIENT_WRAPPER = "virtual:entry-client-wrapper";
 export const ENTRY_REACT_SERVER_WRAPPER = "virtual:entry-react-server-wrapper";
 
 export const USE_CLIENT_RE = /^("use client"|'use client')/;
-export const USE_SERVER_RE = /^("use server"|'use server')/;
 export const USE_CLIENT = "use client";
 export const USE_SERVER = "use server";
 
