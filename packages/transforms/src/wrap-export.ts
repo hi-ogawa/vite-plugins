@@ -2,7 +2,7 @@ import type { Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 
-export async function transformWrapExport(
+export function transformWrapExport(
   input: string,
   ast: Program,
   options: {
@@ -12,7 +12,6 @@ export async function transformWrapExport(
   },
 ) {
   const output = new MagicString(input);
-  const exportNames: string[] = [];
   const toAppend: string[] = [];
 
   function wrapSimple(name: string) {
@@ -132,5 +131,5 @@ export async function transformWrapExport(
     output.append(["", ...toAppend, ""].join(";\n"));
   }
 
-  return { exportNames, output };
+  return { output };
 }

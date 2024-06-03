@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import nodePath from "node:path";
-import {
-  getExportNames,
-  transformDirectiveProxyExport,
-} from "@hiogawa/transforms";
+import { transformDirectiveProxyExport } from "@hiogawa/transforms";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import {
   type Plugin,
@@ -83,16 +80,17 @@ export function vitePluginServerUseClient({
         // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
         const ast = await parseAstAsync(code);
-        meta.exportNames = new Set(getExportNames(ast, {}).exportNames);
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = wrapId(id);
-        const output = await transformDirectiveProxyExport(ast, {
+        const transformed = transformDirectiveProxyExport(ast, {
           directive: "use client",
           id,
           runtime: "$$proxy",
         });
-        tinyassert(output);
+        tinyassert(transformed);
+        meta.exportNames = new Set(transformed.exportNames);
+        const output = transformed.output;
         output.prepend(
           `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
         );
@@ -130,14 +128,15 @@ export function vitePluginServerUseClient({
         return;
       }
       const ast = await parseAstAsync(code);
-      const output = await transformDirectiveProxyExport(ast, {
+      const result = transformDirectiveProxyExport(ast, {
         directive: "use client",
         id: await normalizeId(id),
         runtime: "$$proxy",
       });
-      if (!output) {
+      if (!result) {
         return;
       }
+      const output = result.output;
       output.prepend(
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
