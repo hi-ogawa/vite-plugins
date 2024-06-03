@@ -52,6 +52,7 @@ type MatchResult<T> = {
 };
 
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
+  // TODO: normalize somewhere else?
   pathname = normalizePathname(pathname);
   const prefixes = getPathPrefixes(pathname);
 
@@ -60,16 +61,22 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
   const result: MatchResult<T> = { matches: {} };
   for (let i = 0; i < prefixes.length; i++) {
     const prefix = prefixes[i]!;
-    const key = prefix.split("/").at(-1)!;
-    const next = matchRouteChild(key, node);
+    const segment = prefix.split("/").at(-1)!;
+    const next = matchRouteChild(segment, node);
     if (next?.child) {
       node = next.child;
       if (next.catchAll) {
-        // TODO: catch-all route
+        const rest = pathname.slice(prefixes[i - 1]!.length + 1);
+        params = { ...params, [next.param]: decodeURI(rest) };
+        result.matches[prefix] = { node, params };
+        for (const prefix of prefixes.slice(i)) {
+          result.matches[prefix] = { node: initTreeNode(), params };
+        }
+        result.matches[pathname] = { node, params };
         break;
       }
       if (next.param) {
-        params = { ...params, [next.param]: decodeURI(key) };
+        params = { ...params, [next.param]: decodeURI(segment) };
       }
     } else {
       node = initTreeNode();

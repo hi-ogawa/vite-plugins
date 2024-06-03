@@ -4,7 +4,6 @@ import { createFsRouteTree, matchRouteTree } from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
-    // TODO: test [...catchall]
     const files = [
       "/layout.tsx",
       "/page.tsx",
@@ -12,10 +11,15 @@ describe(createFsRouteTree, () => {
       "/test/layout.tsx",
       "/test/page.tsx",
       "/test/other/page.tsx",
-      "/test/[dynamic]/page.tsx",
-      "/test/[dynamic]/hello/page.tsx",
-      "/demo/layout.tsx",
-      "/demo/page.tsx",
+      "/dynamic/page.tsx",
+      "/dynamic/layout.tsx",
+      "/dynamic/static/page.tsx",
+      "/dynamic/[id]/page.tsx",
+      "/dynamic/[id]/layout.tsx",
+      "/dynamic/[id]/[nested]/page.tsx",
+      "/dynamic/catchall/page.tsx",
+      "/dynamic/catchall/static/page.tsx",
+      "/dynamic/catchall/[...any]/page.tsx",
     ];
     const input = Object.fromEntries(files.map((k) => [k, k]));
     const tree = createFsRouteTree(input);
@@ -39,6 +43,16 @@ describe(createFsRouteTree, () => {
       "/test",
       "/test/other",
       "/test/not-found",
+      "/dynamic",
+      "/dynamic/static",
+      "/dynamic/abc",
+      "/dynamic/abc/def",
+      "/dynamic/%E2%9C%85",
+      "/dynamic/catchall",
+      "/dynamic/catchall/static",
+      "/dynamic/catchall/x",
+      "/dynamic/catchall/x/y",
+      "/dynamic/catchall/x/y/z",
     ];
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();

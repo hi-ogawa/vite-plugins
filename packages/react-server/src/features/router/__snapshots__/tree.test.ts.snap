@@ -5,10 +5,47 @@ exports[`createFsRouteTree > basic 1`] = `
   "children": {
     "": {
       "children": {
-        "demo": {
+        "dynamic": {
+          "children": {
+            "[id]": {
+              "children": {
+                "[nested]": {
+                  "value": {
+                    "page": "/dynamic/[id]/[nested]/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "layout": "/dynamic/[id]/layout.tsx",
+                "page": "/dynamic/[id]/page.tsx",
+              },
+            },
+            "catchall": {
+              "children": {
+                "[...any]": {
+                  "value": {
+                    "page": "/dynamic/catchall/[...any]/page.tsx",
+                  },
+                },
+                "static": {
+                  "value": {
+                    "page": "/dynamic/catchall/static/page.tsx",
+                  },
+                },
+              },
+              "value": {
+                "page": "/dynamic/catchall/page.tsx",
+              },
+            },
+            "static": {
+              "value": {
+                "page": "/dynamic/static/page.tsx",
+              },
+            },
+          },
           "value": {
-            "layout": "/demo/layout.tsx",
-            "page": "/demo/page.tsx",
+            "layout": "/dynamic/layout.tsx",
+            "page": "/dynamic/page.tsx",
           },
         },
         "other": {
@@ -18,18 +55,6 @@ exports[`createFsRouteTree > basic 1`] = `
         },
         "test": {
           "children": {
-            "[dynamic]": {
-              "children": {
-                "hello": {
-                  "value": {
-                    "page": "/test/[dynamic]/hello/page.tsx",
-                  },
-                },
-              },
-              "value": {
-                "page": "/test/[dynamic]/page.tsx",
-              },
-            },
             "other": {
               "value": {
                 "page": "/test/other/page.tsx",
@@ -175,11 +200,347 @@ exports[`createFsRouteTree > basic 7`] = `
       "params": {},
     },
     "/test/not-found": {
+      "nodeValue": undefined,
+      "params": {},
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 8`] = `
+{
+  "__pathname": "/dynamic",
+  "match": {
+    "/": {
       "nodeValue": {
-        "page": "/test/[dynamic]/page.tsx",
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 9`] = `
+{
+  "__pathname": "/dynamic/static",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/static": {
+      "nodeValue": {
+        "page": "/dynamic/static/page.tsx",
+      },
+      "params": {},
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 10`] = `
+{
+  "__pathname": "/dynamic/abc",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/abc": {
+      "nodeValue": {
+        "layout": "/dynamic/[id]/layout.tsx",
+        "page": "/dynamic/[id]/page.tsx",
       },
       "params": {
-        "dynamic": "not-found",
+        "id": "abc",
+      },
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 11`] = `
+{
+  "__pathname": "/dynamic/abc/def",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/abc": {
+      "nodeValue": {
+        "layout": "/dynamic/[id]/layout.tsx",
+        "page": "/dynamic/[id]/page.tsx",
+      },
+      "params": {
+        "id": "abc",
+      },
+    },
+    "/dynamic/abc/def": {
+      "nodeValue": {
+        "page": "/dynamic/[id]/[nested]/page.tsx",
+      },
+      "params": {
+        "id": "abc",
+        "nested": "def",
+      },
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 12`] = `
+{
+  "__pathname": "/dynamic/%E2%9C%85",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/%E2%9C%85": {
+      "nodeValue": {
+        "layout": "/dynamic/[id]/layout.tsx",
+        "page": "/dynamic/[id]/page.tsx",
+      },
+      "params": {
+        "id": "✅",
+      },
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 13`] = `
+{
+  "__pathname": "/dynamic/catchall",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/page.tsx",
+      },
+      "params": {},
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 14`] = `
+{
+  "__pathname": "/dynamic/catchall/static",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall/static": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/static/page.tsx",
+      },
+      "params": {},
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 15`] = `
+{
+  "__pathname": "/dynamic/catchall/x",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall/x": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/[...any]/page.tsx",
+      },
+      "params": {
+        "any": "x",
+      },
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 16`] = `
+{
+  "__pathname": "/dynamic/catchall/x/y",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall/x": {
+      "nodeValue": undefined,
+      "params": {
+        "any": "x/y",
+      },
+    },
+    "/dynamic/catchall/x/y": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/[...any]/page.tsx",
+      },
+      "params": {
+        "any": "x/y",
+      },
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 17`] = `
+{
+  "__pathname": "/dynamic/catchall/x/y/z",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic": {
+      "nodeValue": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/page.tsx",
+      },
+      "params": {},
+    },
+    "/dynamic/catchall/x": {
+      "nodeValue": undefined,
+      "params": {
+        "any": "x/y/z",
+      },
+    },
+    "/dynamic/catchall/x/y": {
+      "nodeValue": undefined,
+      "params": {
+        "any": "x/y/z",
+      },
+    },
+    "/dynamic/catchall/x/y/z": {
+      "nodeValue": {
+        "page": "/dynamic/catchall/[...any]/page.tsx",
+      },
+      "params": {
+        "any": "x/y/z",
       },
     },
   },
