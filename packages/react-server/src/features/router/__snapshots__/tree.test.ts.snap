@@ -155,6 +155,28 @@ exports[`createFsRouteTree > basic 5`] = `
 
 exports[`createFsRouteTree > basic 6`] = `
 {
+  "__pathname": "/test/",
+  "match": {
+    "/": {
+      "nodeValue": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+    },
+    "/test": {
+      "nodeValue": {
+        "layout": "/test/layout.tsx",
+        "page": "/test/page.tsx",
+      },
+      "params": {},
+    },
+  },
+}
+`;
+
+exports[`createFsRouteTree > basic 7`] = `
+{
   "__pathname": "/test/other",
   "match": {
     "/": {
@@ -181,7 +203,7 @@ exports[`createFsRouteTree > basic 6`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 7`] = `
+exports[`createFsRouteTree > basic 8`] = `
 {
   "__pathname": "/test/not-found",
   "match": {
@@ -207,7 +229,7 @@ exports[`createFsRouteTree > basic 7`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 8`] = `
+exports[`createFsRouteTree > basic 9`] = `
 {
   "__pathname": "/dynamic",
   "match": {
@@ -229,7 +251,7 @@ exports[`createFsRouteTree > basic 8`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 9`] = `
+exports[`createFsRouteTree > basic 10`] = `
 {
   "__pathname": "/dynamic/static",
   "match": {
@@ -257,7 +279,7 @@ exports[`createFsRouteTree > basic 9`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 10`] = `
+exports[`createFsRouteTree > basic 11`] = `
 {
   "__pathname": "/dynamic/abc",
   "match": {
@@ -288,7 +310,7 @@ exports[`createFsRouteTree > basic 10`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 11`] = `
+exports[`createFsRouteTree > basic 12`] = `
 {
   "__pathname": "/dynamic/abc/def",
   "match": {
@@ -328,7 +350,7 @@ exports[`createFsRouteTree > basic 11`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 12`] = `
+exports[`createFsRouteTree > basic 13`] = `
 {
   "__pathname": "/dynamic/%E2%9C%85",
   "match": {
@@ -359,7 +381,7 @@ exports[`createFsRouteTree > basic 12`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 13`] = `
+exports[`createFsRouteTree > basic 14`] = `
 {
   "__pathname": "/dynamic/catchall",
   "match": {
@@ -387,7 +409,7 @@ exports[`createFsRouteTree > basic 13`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 14`] = `
+exports[`createFsRouteTree > basic 15`] = `
 {
   "__pathname": "/dynamic/catchall/static",
   "match": {
@@ -421,7 +443,7 @@ exports[`createFsRouteTree > basic 14`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 15`] = `
+exports[`createFsRouteTree > basic 16`] = `
 {
   "__pathname": "/dynamic/catchall/x",
   "match": {
@@ -457,7 +479,7 @@ exports[`createFsRouteTree > basic 15`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 16`] = `
+exports[`createFsRouteTree > basic 17`] = `
 {
   "__pathname": "/dynamic/catchall/x/y",
   "match": {
@@ -499,7 +521,7 @@ exports[`createFsRouteTree > basic 16`] = `
 }
 `;
 
-exports[`createFsRouteTree > basic 17`] = `
+exports[`createFsRouteTree > basic 18`] = `
 {
   "__pathname": "/dynamic/catchall/x/y/z",
   "match": {

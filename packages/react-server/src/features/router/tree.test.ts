@@ -41,6 +41,7 @@ describe(createFsRouteTree, () => {
       "/other",
       "/not-found",
       "/test",
+      "/test/",
       "/test/other",
       "/test/not-found",
       "/dynamic",

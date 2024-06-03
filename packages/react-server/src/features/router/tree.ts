@@ -52,7 +52,7 @@ type MatchResult<T> = {
 };
 
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
-  // TODO: normalize somewhere else?
+  // TODO: more uniform handling of trailing slash
   pathname = normalizePathname(pathname);
   const prefixes = getPathPrefixes(pathname);
 
