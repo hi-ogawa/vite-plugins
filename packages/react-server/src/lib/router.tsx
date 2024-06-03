@@ -2,11 +2,8 @@ import React from "react";
 import {
   type TreeNode,
   createFsRouteTree,
-  initTreeNode,
-  matchRouteChild,
   matchRouteTree,
 } from "../features/router/tree";
-import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
 
 // TODO: move to features/router/react-server
@@ -45,6 +42,7 @@ async function renderLayout(
   node: RouteModuleNode,
   props: PageProps,
   name: string,
+  // TODO: key can be just prefix?
   key?: string,
 ) {
   const { ErrorBoundary, RedirectBoundary, LayoutContent } =
@@ -70,15 +68,11 @@ async function renderLayout(
   return acc;
 }
 
-// TODO: implement on top of matchRouteTree
 export async function renderRouteMap(
   tree: RouteModuleNode,
   request: Pick<Request, "url" | "headers">,
 ) {
   const url = serializeUrl(new URL(request.url));
-  const pathname = normalizePathname(url.pathname);
-  const result = matchRouteTree(tree, pathname);
-  const prefixes = getPathPrefixes(pathname);
   const baseProps: Omit<BaseProps, "params"> = {
     url,
     request: {
@@ -86,42 +80,19 @@ export async function renderRouteMap(
       headers: serializeHeaders(request.headers),
     },
   };
-
-  let node = tree;
-  let params: BaseProps["params"] = {};
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
-  for (let i = 0; i < prefixes.length; i++) {
-    const prefix = prefixes[i]!;
-    const key = prefix.split("/").at(-1)!;
-    const next = matchRouteChild(key, node);
-    if (next?.child) {
-      node = next.child;
-      if (next?.catchAll) {
-        const rest = pathname.slice(prefixes[i - 1]!.length + 1);
-        params = { ...params, [next.param]: decodeURI(rest) };
-        const props: BaseProps = { ...baseProps, params };
-        layouts[prefix] = await renderLayout(node, props, prefix);
-        for (const prefix of prefixes.slice(i)) {
-          layouts[prefix] = await renderLayout(initTreeNode(), props, prefix);
-        }
-        pages[pathname] = renderPage(node, props);
-        break;
-      } else if (next.param) {
-        params = { ...params, [next.param]: decodeURI(key) };
-      }
+  const result = matchRouteTree(tree, url.pathname);
+  for (const m of result.matches) {
+    const props: BaseProps = { ...baseProps, params: m.params };
+    if (m.type === "layout") {
+      layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
+    } else if (m.type === "page") {
+      pages[m.prefix] = renderPage(m.node, props);
     } else {
-      node = initTreeNode();
-    }
-    const props: BaseProps = { ...baseProps, params };
-    // re-mount subtree when dynamic segment changes
-    const cacheKey = [i, next?.param ?? "", key].join("");
-    layouts[prefix] = await renderLayout(node, props, prefix, cacheKey);
-    if (prefix === pathname) {
-      pages[prefix] = renderPage(node, props);
+      m.type satisfies never;
     }
   }
-
   return { pages, layouts };
 }
 
