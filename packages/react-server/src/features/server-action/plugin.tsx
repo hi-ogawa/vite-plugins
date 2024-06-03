@@ -5,7 +5,11 @@ import {
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { type Plugin, type PluginOption, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
-import { createVirtualPlugin, hashString } from "../../plugin/utils";
+import {
+  USE_SERVER,
+  createVirtualPlugin,
+  hashString,
+} from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:server-action");
 
@@ -31,7 +35,7 @@ export function vitePluginClientUseServer({
   return {
     name: vitePluginClientUseServer.name,
     async transform(code, id, options) {
-      if (!code.includes("use server")) {
+      if (!code.includes(USE_SERVER)) {
         return;
       }
       const ast = await parseAstAsync(code);
@@ -79,7 +83,7 @@ export function vitePluginServerUseServer({
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
       manager.rscUseServerIds.delete(id);
-      if (!code.includes("use server")) {
+      if (!code.includes(USE_SERVER)) {
         return;
       }
       const ast = await parseAstAsync(code);
