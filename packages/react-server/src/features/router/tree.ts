@@ -52,9 +52,10 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
   let params: Record<string, string> = {};
   for (const prefix of prefixes) {
     const key = prefix.split("/").at(-1)!;
-    // TODO: catch-all route
     const next = matchRouteChild(key, node);
-    if (next?.child) {
+    if (next?.catchAll) {
+      // TODO: catch-all route
+    } else if (next?.child) {
       node = next.child;
       if (next.param) {
         params = { ...params, [next.param]: key };
