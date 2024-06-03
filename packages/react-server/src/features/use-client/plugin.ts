@@ -13,6 +13,7 @@ import {
 } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
+  USE_CLIENT,
   USE_CLIENT_RE,
   createVirtualPlugin,
   hashString,
@@ -91,7 +92,7 @@ export function vitePluginServerUseClient({
         // otherwise `soruce` will be resolved infinitely by recursion
         id = wrapId(id);
         const output = await transformDirectiveProxyExport(ast, {
-          directive: "use client",
+          directive: USE_CLIENT,
           id,
           runtime: "$$proxy",
         });
