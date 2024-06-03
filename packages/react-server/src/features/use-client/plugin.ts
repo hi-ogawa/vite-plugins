@@ -12,8 +12,11 @@ import {
   parseAstAsync,
 } from "vite";
 import type { PluginStateManager } from "../../plugin";
-import { USE_CLIENT_RE } from "../../plugin/ast-utils";
-import { createVirtualPlugin, hashString } from "../../plugin/utils";
+import {
+  USE_CLIENT_RE,
+  createVirtualPlugin,
+  hashString,
+} from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:use-client");
 
