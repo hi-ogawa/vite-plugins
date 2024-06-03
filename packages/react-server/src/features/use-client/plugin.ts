@@ -130,12 +130,12 @@ export function vitePluginServerUseClient({
     async transform(code, id, _options) {
       manager.rscIds.add(id);
       manager.rscUseClientIds.delete(id);
-      if (!code.includes("use client")) {
+      if (!code.includes(USE_CLIENT)) {
         return;
       }
       const ast = await parseAstAsync(code);
       const output = await transformDirectiveProxyExport(ast, {
-        directive: "use client",
+        directive: USE_CLIENT,
         id: await normalizeId(id),
         runtime: "$$proxy",
       });
