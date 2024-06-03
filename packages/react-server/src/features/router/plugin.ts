@@ -65,7 +65,6 @@ export function routeManifestPluginClient({
                 }),
               ),
           );
-          console.log(manager.routeToClientAssets);
         }
       },
     },
