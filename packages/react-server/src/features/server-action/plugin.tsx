@@ -40,7 +40,7 @@ export function vitePluginClientUseServer({
       }
       const ast = await parseAstAsync(code);
       const output = await transformDirectiveProxyExport(ast, {
-        directive: "use server",
+        directive: USE_SERVER,
         id: manager.buildType ? hashString(id) : id,
         runtime: "$$proxy",
       });
