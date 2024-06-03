@@ -8,6 +8,13 @@ export function invalidateModule(server: ViteDevServer, id: string) {
   }
 }
 
+// cf. https://github.com/vercel/next.js/blob/5ae286ffd664e5c76841ed64f6e2da85a0835922/packages/next/src/build/webpack/loaders/get-module-build-info.ts#L8
+export type CustomModuleMeta = {
+  $$rsc?: {
+    type: "client";
+  };
+};
+
 // TODO: configurable?
 export const ENTRY_CLIENT = "/src/entry-client";
 export const ENTRY_REACT_SERVER = "/src/entry-react-server";
