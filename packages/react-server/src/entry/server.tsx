@@ -4,6 +4,7 @@ import reactDomServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { LayoutRoot, LayoutStateContext } from "../features/router/client";
+import type { RouteManifest } from "../features/router/manifest";
 import type { ServerRouterData } from "../features/router/utils";
 import {
   createModuleMap,
@@ -92,6 +93,8 @@ export async function renderHtml(
   });
   const router = new Router(history);
 
+  const routeManifest = await importRouteManifest();
+
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <LayoutStateContext.Provider value={{ data: layoutPromise }}>
@@ -111,11 +114,16 @@ export async function renderHtml(
   }
   const assets: SsrAssetsType = (await import("virtual:ssr-assets" as string))
     .default;
+  let head = assets.head;
 
   // inject DEBUG variable
   if (globalThis?.process?.env?.["DEBUG"]) {
-    assets.head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
+    head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
+
+  head += `<script>globalThis.__routeManifest = ${JSON.stringify(
+    routeManifest,
+  )}</script>\n`;
 
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
@@ -163,7 +171,7 @@ export async function renderHtml(
 
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
-    .pipeThrough(injectToHead(assets.head))
+    .pipeThrough(injectToHead(head))
     .pipeThrough(
       injectStreamScript(
         stream2
@@ -198,6 +206,17 @@ function injectToHead(data: string) {
   });
 }
 
+async function importRouteManifest(): Promise<RouteManifest> {
+  if (import.meta.env.DEV) {
+    return { routeToClientAssets: {} };
+  } else {
+    const mod = await import("virtual:route-manifest" as string);
+    return mod.default;
+  }
+}
+
+//#region debug dev module graph
+
 async function devInspectHandler(request: Request) {
   tinyassert(request.method === "POST");
   const data = await request.json();
@@ -229,6 +248,8 @@ async function getModuleNode(server: ViteDevServer, url: string, ssr: boolean) {
   const resolved = await server.moduleGraph.resolveUrl(url, ssr);
   return server.moduleGraph.getModuleById(resolved[1]);
 }
+
+//#endregion
 
 declare module "react-dom/server" {
   interface RenderToReadableStreamOptions {

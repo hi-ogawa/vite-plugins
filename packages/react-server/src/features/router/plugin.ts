@@ -4,6 +4,7 @@ import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { type CustomModuleMeta, createVirtualPlugin } from "../../plugin/utils";
+import type { RouteManifest } from "./manifest";
 
 export function routeManifestPluginServer({
   manager,
@@ -29,7 +30,8 @@ export function routeManifestPluginServer({
                 ids.push(id);
               }
             }
-            manager.routeToClientReferences[routeFile] = ids;
+            const routeKey = routeFile.slice("./src/routes".length);
+            manager.routeToClientReferences[routeKey] = ids;
           }
         }
       },
@@ -68,7 +70,10 @@ export function routeManifestPluginClient({
       },
     },
     createVirtualPlugin("route-manifest", () => {
-      return `export default "todo"`;
+      const routeManaifest: RouteManifest = {
+        routeToClientAssets: manager.routeToClientAssets,
+      };
+      return `export default ${JSON.stringify(routeManaifest, null, 2)}`;
     }),
   ];
 }
