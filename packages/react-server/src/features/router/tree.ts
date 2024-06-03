@@ -42,7 +42,7 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
   }
 }
 
-// TODO: support
+// TODO: refactor with `renderRouteMap`
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
   pathname = normalizePathname(pathname);
   const prefixes = getPathPrefixes(pathname);
@@ -52,6 +52,7 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
   let params: Record<string, string> = {};
   for (const prefix of prefixes) {
     const key = prefix.split("/").at(-1)!;
+    // TODO: catch-all route
     const next = matchRouteChild(key, node);
     if (next?.child) {
       node = next.child;
@@ -66,14 +67,20 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
   return { nodes };
 }
 
+const DYNAMIC_RE = /^\[(\w*)\]$/;
+const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
+
 export function matchRouteChild<T>(input: string, node: TreeNode<T>) {
   if (!node.children) {
     return;
   }
-  // TODO: sort to dynmaic one come last
-  // TODO: catch-all route
   for (const [segment, child] of Object.entries(node.children)) {
-    const m = segment.match(/^\[(.*)\]$/);
+    const mAll = segment.match(CATCH_ALL_RE);
+    if (mAll) {
+      tinyassert(1 in mAll);
+      return { param: mAll[1], child, catchAll: true };
+    }
+    const m = segment.match(DYNAMIC_RE);
     if (m) {
       tinyassert(1 in m);
       return { param: m[1], child };

@@ -1,9 +1,9 @@
-import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import {
   type TreeNode,
   generateRouteTree,
   initTreeNode,
+  matchRouteChild,
 } from "../features/router/tree";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
@@ -91,7 +91,7 @@ export async function renderRouteMap(
   for (let i = 0; i < prefixes.length; i++) {
     const prefix = prefixes[i]!;
     const key = prefix.split("/").at(-1)!;
-    const next = matchChild(key, node);
+    const next = matchRouteChild(key, node);
     if (next?.child) {
       node = next.child;
       if (next?.catchAll) {
@@ -164,29 +164,4 @@ export interface ErrorPageProps {
   error: Error;
   serverError?: ReactServerErrorContext;
   reset: () => void;
-}
-
-const DYNAMIC_RE = /^\[(\w*)\]$/;
-const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
-
-function matchChild(input: string, node: RouteModuleNode) {
-  if (!node.children) {
-    return;
-  }
-  for (const [segment, child] of Object.entries(node.children)) {
-    const mAll = segment.match(CATCH_ALL_RE);
-    if (mAll) {
-      tinyassert(1 in mAll);
-      return { param: mAll[1], child, catchAll: true };
-    }
-    const m = segment.match(DYNAMIC_RE);
-    if (m) {
-      tinyassert(1 in m);
-      return { param: m[1], child };
-    }
-    if (segment === input) {
-      return { child };
-    }
-  }
-  return;
 }
