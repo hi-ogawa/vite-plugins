@@ -1,5 +1,76 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`generateRouteModuleTree > basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": {
+              "default": "/demo/layout.tsx",
+            },
+            "page": {
+              "default": "/demo/page.tsx",
+            },
+          },
+        },
+        "other": {
+          "value": {
+            "page": {
+              "default": "/other/page.tsx",
+            },
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": {
+                      "default": "/test/[dynamic]/hello/page.tsx",
+                    },
+                  },
+                },
+              },
+              "value": {
+                "page": {
+                  "default": "/test/[dynamic]/page.tsx",
+                },
+              },
+            },
+            "other": {
+              "value": {
+                "page": {
+                  "default": "/test/other/page.tsx",
+                },
+              },
+            },
+          },
+          "value": {
+            "layout": {
+              "default": "/test/layout.tsx",
+            },
+            "page": {
+              "default": "/test/page.tsx",
+            },
+          },
+        },
+      },
+      "value": {
+        "layout": {
+          "default": "/layout.tsx",
+        },
+        "page": {
+          "default": "/page.tsx",
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`generateRouteModuleTree > basic 2`] = `
 {
   "__pathname": "/",

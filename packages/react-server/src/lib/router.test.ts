@@ -19,76 +19,7 @@ describe(generateRouteModuleTree, () => {
     ];
     const input = Object.fromEntries(files.map((k) => [k, { default: k }]));
     const tree = generateRouteModuleTree(input);
-    expect(tree).toMatchInlineSnapshot(`
-      {
-        "children": {
-          "": {
-            "children": {
-              "demo": {
-                "value": {
-                  "layout": {
-                    "default": "/demo/layout.tsx",
-                  },
-                  "page": {
-                    "default": "/demo/page.tsx",
-                  },
-                },
-              },
-              "other": {
-                "value": {
-                  "page": {
-                    "default": "/other/page.tsx",
-                  },
-                },
-              },
-              "test": {
-                "children": {
-                  "[dynamic]": {
-                    "children": {
-                      "hello": {
-                        "value": {
-                          "page": {
-                            "default": "/test/[dynamic]/hello/page.tsx",
-                          },
-                        },
-                      },
-                    },
-                    "value": {
-                      "page": {
-                        "default": "/test/[dynamic]/page.tsx",
-                      },
-                    },
-                  },
-                  "other": {
-                    "value": {
-                      "page": {
-                        "default": "/test/other/page.tsx",
-                      },
-                    },
-                  },
-                },
-                "value": {
-                  "layout": {
-                    "default": "/test/layout.tsx",
-                  },
-                  "page": {
-                    "default": "/test/page.tsx",
-                  },
-                },
-              },
-            },
-            "value": {
-              "layout": {
-                "default": "/layout.tsx",
-              },
-              "page": {
-                "default": "/page.tsx",
-              },
-            },
-          },
-        },
-      }
-    `);
+    expect(tree).toMatchSnapshot();
 
     async function testMatch(pathname: string) {
       const match = await renderRouteMap(tree, {
