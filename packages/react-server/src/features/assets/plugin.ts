@@ -4,13 +4,13 @@ import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { Manifest, Plugin, ViteDevServer } from "vite";
 import { $__global } from "../../lib/global";
 import type { PluginStateManager } from "../../plugin";
-import { collectStyle, collectStyleUrls } from "../../plugin/css";
 import {
   ENTRY_CLIENT,
   ENTRY_CLIENT_WRAPPER,
   ENTRY_REACT_SERVER,
   createVirtualPlugin,
 } from "../../plugin/utils";
+import { collectStyle, collectStyleUrls } from "./css";
 
 export interface SsrAssetsType {
   bootstrapModules: string[];
