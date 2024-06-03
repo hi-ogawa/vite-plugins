@@ -1,8 +1,10 @@
+import { objectMapValues } from "@hiogawa/utils";
 import { describe, expect, it } from "vitest";
 import { createFsRouteTree, matchRouteTree } from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
+    // TODO: test [...catchall]
     const files = [
       "/layout.tsx",
       "/page.tsx",
@@ -20,10 +22,13 @@ describe(createFsRouteTree, () => {
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
-      const match = matchRouteTree(tree, pathname);
+      const result = matchRouteTree(tree, pathname);
       return {
         __pathname: pathname,
-        ...match,
+        match: objectMapValues(result.matches, (v) => ({
+          nodeValue: v.node.value,
+          params: v.params,
+        })),
       };
     }
 

@@ -42,30 +42,41 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
   }
 }
 
-// TODO: refactor with `renderRouteMap`
+type MatchNodeEntry<T> = {
+  node: TreeNode<T>;
+  params: Record<string, string>;
+};
+
+type MatchResult<T> = {
+  matches: Record<string, MatchNodeEntry<T>>;
+};
+
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
   pathname = normalizePathname(pathname);
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;
-  let nodes: TreeNode<T>[] = [];
   let params: Record<string, string> = {};
-  for (const prefix of prefixes) {
+  const result: MatchResult<T> = { matches: {} };
+  for (let i = 0; i < prefixes.length; i++) {
+    const prefix = prefixes[i]!;
     const key = prefix.split("/").at(-1)!;
     const next = matchRouteChild(key, node);
-    if (next?.catchAll) {
-      // TODO: catch-all route
-    } else if (next?.child) {
+    if (next?.child) {
       node = next.child;
+      if (next.catchAll) {
+        // TODO: catch-all route
+        break;
+      }
       if (next.param) {
-        params = { ...params, [next.param]: key };
+        params = { ...params, [next.param]: decodeURI(key) };
       }
     } else {
       node = initTreeNode();
     }
-    nodes.push(node);
+    result.matches[prefix] = { node, params };
   }
-  return { nodes };
+  return result;
 }
 
 const DYNAMIC_RE = /^\[(\w*)\]$/;
