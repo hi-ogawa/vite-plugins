@@ -209,7 +209,7 @@ function injectToHead(data: string) {
 
 async function importRouteManifest(): Promise<RouteManifest> {
   if (import.meta.env.DEV) {
-    return { routeToClientAssets: {} };
+    return { routeTree: {} };
   } else {
     const mod = await import("virtual:route-manifest" as string);
     return mod.default;

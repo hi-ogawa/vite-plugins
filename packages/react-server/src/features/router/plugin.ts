@@ -4,7 +4,8 @@ import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { type CustomModuleMeta, createVirtualPlugin } from "../../plugin/utils";
-import type { RouteManifest } from "./manifest";
+import type { AssetDeps, RouteManifest } from "./manifest";
+import { createFsRouteTree } from "./tree";
 
 export function routeManifestPluginServer({
   manager,
@@ -68,9 +69,20 @@ export function routeManifestPluginClient({
         }
       },
     },
-    createVirtualPlugin("route-manifest", () => {
+    createVirtualPlugin("route-manifest", async () => {
+      tinyassert(manager.buildType === "ssr");
       const routeManaifest: RouteManifest = {
-        routeToClientAssets: manager.routeToClientAssets,
+        routeTree: createFsRouteTree(
+          objectMapValues(
+            manager.routeToClientAssets,
+            (files) =>
+              ({
+                js: files,
+                // TODO
+                css: [],
+              }) satisfies AssetDeps,
+          ),
+        ),
       };
       return `export default ${JSON.stringify(routeManaifest, null, 2)}`;
     }),
