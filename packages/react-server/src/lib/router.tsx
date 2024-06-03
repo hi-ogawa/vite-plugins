@@ -4,6 +4,7 @@ import {
   createFsRouteTree,
   initTreeNode,
   matchRouteChild,
+  matchRouteTree,
 } from "../features/router/tree";
 import { getPathPrefixes, normalizePathname } from "../features/router/utils";
 import { type ReactServerErrorContext, createError } from "./error";
@@ -76,6 +77,7 @@ export async function renderRouteMap(
 ) {
   const url = serializeUrl(new URL(request.url));
   const pathname = normalizePathname(url.pathname);
+  const result = matchRouteTree(tree, pathname);
   const prefixes = getPathPrefixes(pathname);
   const baseProps: Omit<BaseProps, "params"> = {
     url,

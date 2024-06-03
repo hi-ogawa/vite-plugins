@@ -29,9 +29,9 @@ describe(createFsRouteTree, () => {
       const result = matchRouteTree(tree, pathname);
       return {
         __pathname: pathname,
-        match: objectMapValues(result.matches, (v) => ({
-          nodeValue: v.node.value,
-          params: v.params,
+        matches: result.matches.map((m) => ({
+          ...m,
+          node: m.node.value,
         })),
       };
     }

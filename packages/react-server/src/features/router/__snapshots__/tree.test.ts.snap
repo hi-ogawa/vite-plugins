@@ -79,492 +79,771 @@ exports[`createFsRouteTree > basic 1`] = `
 exports[`createFsRouteTree > basic 2`] = `
 {
   "__pathname": "/",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "layout": "/layout.tsx",
+        "page": "/page.tsx",
+      },
+      "params": {},
+      "prefix": "/",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 3`] = `
 {
   "__pathname": "/other",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/other": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/other/page.tsx",
       },
       "params": {},
+      "prefix": "/other",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "page": "/other/page.tsx",
+      },
+      "params": {},
+      "prefix": "/other",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 4`] = `
 {
   "__pathname": "/not-found",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/not-found": {
-      "nodeValue": undefined,
+    {
+      "node": undefined,
       "params": {},
+      "prefix": "/not-found",
+      "type": "layout",
     },
-  },
+    {
+      "node": undefined,
+      "params": {},
+      "prefix": "/not-found",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 5`] = `
 {
   "__pathname": "/test",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/test": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/test/layout.tsx",
         "page": "/test/page.tsx",
       },
       "params": {},
+      "prefix": "/test",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "layout": "/test/layout.tsx",
+        "page": "/test/page.tsx",
+      },
+      "params": {},
+      "prefix": "/test",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 6`] = `
 {
   "__pathname": "/test/",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/test": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/test/layout.tsx",
         "page": "/test/page.tsx",
       },
       "params": {},
+      "prefix": "/test",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "layout": "/test/layout.tsx",
+        "page": "/test/page.tsx",
+      },
+      "params": {},
+      "prefix": "/test",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 7`] = `
 {
   "__pathname": "/test/other",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/test": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/test/layout.tsx",
         "page": "/test/page.tsx",
       },
       "params": {},
+      "prefix": "/test",
+      "type": "layout",
     },
-    "/test/other": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/test/other/page.tsx",
       },
       "params": {},
+      "prefix": "/test/other",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "page": "/test/other/page.tsx",
+      },
+      "params": {},
+      "prefix": "/test/other",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 8`] = `
 {
   "__pathname": "/test/not-found",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/test": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/test/layout.tsx",
         "page": "/test/page.tsx",
       },
       "params": {},
+      "prefix": "/test",
+      "type": "layout",
     },
-    "/test/not-found": {
-      "nodeValue": undefined,
+    {
+      "node": undefined,
       "params": {},
+      "prefix": "/test/not-found",
+      "type": "layout",
     },
-  },
+    {
+      "node": undefined,
+      "params": {},
+      "prefix": "/test/not-found",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 9`] = `
 {
   "__pathname": "/dynamic",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "layout": "/dynamic/layout.tsx",
+        "page": "/dynamic/page.tsx",
+      },
+      "params": {},
+      "prefix": "/dynamic",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 10`] = `
 {
   "__pathname": "/dynamic/static",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/static": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/static/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic/static",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "page": "/dynamic/static/page.tsx",
+      },
+      "params": {},
+      "prefix": "/dynamic/static",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 11`] = `
 {
   "__pathname": "/dynamic/abc",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/abc": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/[id]/layout.tsx",
         "page": "/dynamic/[id]/page.tsx",
       },
       "params": {
         "id": "abc",
       },
+      "prefix": "/dynamic/abc",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "layout": "/dynamic/[id]/layout.tsx",
+        "page": "/dynamic/[id]/page.tsx",
+      },
+      "params": {
+        "id": "abc",
+      },
+      "prefix": "/dynamic/abc",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 12`] = `
 {
   "__pathname": "/dynamic/abc/def",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/abc": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/[id]/layout.tsx",
         "page": "/dynamic/[id]/page.tsx",
       },
       "params": {
         "id": "abc",
       },
+      "prefix": "/dynamic/abc",
+      "type": "layout",
     },
-    "/dynamic/abc/def": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/[id]/[nested]/page.tsx",
       },
       "params": {
         "id": "abc",
         "nested": "def",
       },
+      "prefix": "/dynamic/abc/def",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "page": "/dynamic/[id]/[nested]/page.tsx",
+      },
+      "params": {
+        "id": "abc",
+        "nested": "def",
+      },
+      "prefix": "/dynamic/abc/def",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 13`] = `
 {
   "__pathname": "/dynamic/%E2%9C%85",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/%E2%9C%85": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/[id]/layout.tsx",
         "page": "/dynamic/[id]/page.tsx",
       },
       "params": {
         "id": "✅",
       },
+      "prefix": "/dynamic/%E2%9C%85",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "layout": "/dynamic/[id]/layout.tsx",
+        "page": "/dynamic/[id]/page.tsx",
+      },
+      "params": {
+        "id": "✅",
+      },
+      "prefix": "/dynamic/%E2%9C%85",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 14`] = `
 {
   "__pathname": "/dynamic/catchall",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/catchall": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic/catchall",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "page": "/dynamic/catchall/page.tsx",
+      },
+      "params": {},
+      "prefix": "/dynamic/catchall",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 15`] = `
 {
   "__pathname": "/dynamic/catchall/static",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/catchall": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic/catchall",
+      "type": "layout",
     },
-    "/dynamic/catchall/static": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/static/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic/catchall/static",
+      "type": "layout",
     },
-  },
+    {
+      "node": {
+        "page": "/dynamic/catchall/static/page.tsx",
+      },
+      "params": {},
+      "prefix": "/dynamic/catchall/static",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 16`] = `
 {
   "__pathname": "/dynamic/catchall/x",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/catchall": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic/catchall",
+      "type": "layout",
     },
-    "/dynamic/catchall/x": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/[...any]/page.tsx",
       },
       "params": {
         "any": "x",
       },
+      "prefix": "/dynamic/catchall/x",
+      "type": "layout",
     },
-  },
+    {
+      "node": undefined,
+      "params": {
+        "any": "x",
+      },
+      "prefix": "/dynamic/catchall/x",
+      "type": "layout",
+    },
+    {
+      "node": {
+        "page": "/dynamic/catchall/[...any]/page.tsx",
+      },
+      "params": {
+        "any": "x",
+      },
+      "prefix": "/dynamic/catchall/x",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 17`] = `
 {
   "__pathname": "/dynamic/catchall/x/y",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/catchall": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic/catchall",
+      "type": "layout",
     },
-    "/dynamic/catchall/x": {
-      "nodeValue": undefined,
-      "params": {
-        "any": "x/y",
-      },
-    },
-    "/dynamic/catchall/x/y": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/[...any]/page.tsx",
       },
       "params": {
         "any": "x/y",
       },
+      "prefix": "/dynamic/catchall/x",
+      "type": "layout",
     },
-  },
+    {
+      "node": undefined,
+      "params": {
+        "any": "x/y",
+      },
+      "prefix": "/dynamic/catchall/x",
+      "type": "layout",
+    },
+    {
+      "node": undefined,
+      "params": {
+        "any": "x/y",
+      },
+      "prefix": "/dynamic/catchall/x/y",
+      "type": "layout",
+    },
+    {
+      "node": {
+        "page": "/dynamic/catchall/[...any]/page.tsx",
+      },
+      "params": {
+        "any": "x/y",
+      },
+      "prefix": "/dynamic/catchall/x",
+      "type": "page",
+    },
+  ],
 }
 `;
 
 exports[`createFsRouteTree > basic 18`] = `
 {
   "__pathname": "/dynamic/catchall/x/y/z",
-  "match": {
-    "/": {
-      "nodeValue": {
+  "matches": [
+    {
+      "node": {
         "layout": "/layout.tsx",
         "page": "/page.tsx",
       },
       "params": {},
+      "prefix": "/",
+      "type": "layout",
     },
-    "/dynamic": {
-      "nodeValue": {
+    {
+      "node": {
         "layout": "/dynamic/layout.tsx",
         "page": "/dynamic/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic",
+      "type": "layout",
     },
-    "/dynamic/catchall": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/page.tsx",
       },
       "params": {},
+      "prefix": "/dynamic/catchall",
+      "type": "layout",
     },
-    "/dynamic/catchall/x": {
-      "nodeValue": undefined,
-      "params": {
-        "any": "x/y/z",
-      },
-    },
-    "/dynamic/catchall/x/y": {
-      "nodeValue": undefined,
-      "params": {
-        "any": "x/y/z",
-      },
-    },
-    "/dynamic/catchall/x/y/z": {
-      "nodeValue": {
+    {
+      "node": {
         "page": "/dynamic/catchall/[...any]/page.tsx",
       },
       "params": {
         "any": "x/y/z",
       },
+      "prefix": "/dynamic/catchall/x",
+      "type": "layout",
     },
-  },
+    {
+      "node": undefined,
+      "params": {
+        "any": "x/y/z",
+      },
+      "prefix": "/dynamic/catchall/x",
+      "type": "layout",
+    },
+    {
+      "node": undefined,
+      "params": {
+        "any": "x/y/z",
+      },
+      "prefix": "/dynamic/catchall/x/y",
+      "type": "layout",
+    },
+    {
+      "node": undefined,
+      "params": {
+        "any": "x/y/z",
+      },
+      "prefix": "/dynamic/catchall/x/y/z",
+      "type": "layout",
+    },
+    {
+      "node": {
+        "page": "/dynamic/catchall/[...any]/page.tsx",
+      },
+      "params": {
+        "any": "x/y/z",
+      },
+      "prefix": "/dynamic/catchall/x",
+      "type": "page",
+    },
+  ],
 }
 `;

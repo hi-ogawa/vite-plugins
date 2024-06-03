@@ -43,12 +43,14 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
 }
 
 type MatchNodeEntry<T> = {
+  prefix: string;
+  type: "layout" | "page";
   node: TreeNode<T>;
   params: Record<string, string>;
 };
 
 type MatchResult<T> = {
-  matches: Record<string, MatchNodeEntry<T>>;
+  matches: MatchNodeEntry<T>[];
 };
 
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
@@ -58,7 +60,7 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
 
   let node = tree;
   let params: Record<string, string> = {};
-  const result: MatchResult<T> = { matches: {} };
+  const result: MatchResult<T> = { matches: [] };
   for (let i = 0; i < prefixes.length; i++) {
     const prefix = prefixes[i]!;
     const segment = prefix.split("/").at(-1)!;
@@ -68,11 +70,16 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
       if (next.catchAll) {
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
         params = { ...params, [next.param]: decodeURI(rest) };
-        result.matches[prefix] = { node, params };
+        result.matches.push({ prefix, type: "layout", node, params });
         for (const prefix of prefixes.slice(i)) {
-          result.matches[prefix] = { node: initTreeNode(), params };
+          result.matches.push({
+            prefix,
+            type: "layout",
+            node: initTreeNode(),
+            params,
+          });
         }
-        result.matches[pathname] = { node, params };
+        result.matches.push({ prefix, type: "page", node, params });
         break;
       }
       if (next.param) {
@@ -81,7 +88,10 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
     } else {
       node = initTreeNode();
     }
-    result.matches[prefix] = { node, params };
+    result.matches.push({ prefix, type: "layout", node, params });
+    if (prefix === pathname) {
+      result.matches.push({ prefix, type: "page", node, params });
+    }
   }
   return result;
 }
