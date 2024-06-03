@@ -20,6 +20,7 @@ import {
 } from "../lib/error";
 import { $__global } from "../lib/global";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+import { escpaeScriptString } from "../utils/escape";
 import { jsonStringifyTransform } from "../utils/stream";
 import { injectStreamScript } from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./react-server";
@@ -121,8 +122,8 @@ export async function renderHtml(
     head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
 
-  head += `<script>globalThis.__routeManifest = ${JSON.stringify(
-    routeManifest,
+  head += `<script>globalThis.__routeManifest = ${escpaeScriptString(
+    JSON.stringify(routeManifest),
   )}</script>\n`;
 
   // two pass SSR to re-render on error
