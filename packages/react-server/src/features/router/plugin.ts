@@ -77,7 +77,7 @@ export function routeManifestPluginClient({
             manager.routeToClientAssets,
             (files) =>
               ({
-                js: files,
+                js: files.map((file) => `/${file}`),
                 // TODO
                 css: [],
               }) satisfies AssetDeps,

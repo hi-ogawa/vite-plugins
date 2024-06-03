@@ -3,8 +3,15 @@ import { createMemoryHistory } from "@tanstack/history";
 import reactDomServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
-import { LayoutRoot, LayoutStateContext } from "../features/router/client";
-import type { RouteManifest } from "../features/router/manifest";
+import {
+  LayoutRoot,
+  LayoutStateContext,
+  preloadAssetDeps,
+} from "../features/router/client";
+import {
+  type RouteManifest,
+  getRouteAssetDeps,
+} from "../features/router/manifest";
 import type { ServerRouterData } from "../features/router/utils";
 import {
   createModuleMap,
@@ -96,10 +103,16 @@ export async function renderHtml(
 
   const routeManifest = await importRouteManifest();
 
+  function ServerPreload() {
+    preloadAssetDeps(getRouteAssetDeps(routeManifest, url.pathname));
+    return null;
+  }
+
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <LayoutStateContext.Provider value={{ data: layoutPromise }}>
         <LayoutRoot />
+        <ServerPreload />
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
   );

@@ -1,7 +1,9 @@
 import React from "react";
+import ReactDom from "react-dom";
 import { RedirectHandler } from "../../lib/client/error-boundary";
 import { isRedirectError } from "../../lib/error";
 import { ActionRedirectHandler } from "../server-action/client";
+import type { AssetDeps } from "./manifest";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -51,4 +53,13 @@ export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
 
 export function routerRevalidate() {
   return { [ROUTER_REVALIDATE_KEY]: true };
+}
+
+export function preloadAssetDeps(deps: AssetDeps) {
+  for (const href of deps.js) {
+    ReactDom.preloadModule(href);
+  }
+  for (const href of deps.css) {
+    ReactDom.preload(href, { as: "style" });
+  }
 }

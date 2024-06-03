@@ -11,8 +11,8 @@ export type AssetDeps = {
 };
 
 export function getRouteAssetDeps(
-  pathname: string,
   manifest: RouteManifest,
+  pathname: string,
 ): AssetDeps {
   const result = matchRouteTree(manifest.routeTree, pathname);
   const deps = result.matches.flatMap((m) => {
