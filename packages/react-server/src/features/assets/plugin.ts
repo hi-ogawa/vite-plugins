@@ -62,6 +62,7 @@ export function vitePluginServerAssets({
 
       // build
       if (manager.buildType === "ssr") {
+        // TODO: (refactor) use RouteManifest?
         const manifest: Manifest = JSON.parse(
           await fs.promises.readFile(
             "dist/client/.vite/manifest.json",
