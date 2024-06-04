@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
-    "react": "19.0.0-rc-8f3c0525f9-20240521",
-    "react-dom": "19.0.0-rc-8f3c0525f9-20240521",
-    "react-server-dom-webpack": "19.0.0-rc-8f3c0525f9-20240521"
+    "react": "19.0.0-rc.0",
+    "react-dom": "19.0.0-rc.0",
+    "react-server-dom-webpack": "19.0.0-rc.0"
   },
   "devDependencies": {
     "@hattip/adapter-node": "^0.0.44",
