@@ -1,6 +1,20 @@
 import fs from "node:fs";
 import test, { type Page, expect } from "@playwright/test";
 
+export async function waitForHydration(page: Page) {
+  await expect(page.getByText("[hydrated: 1]")).toBeVisible();
+}
+
+export async function setupCheckClientState(page: Page) {
+  // setup client state
+  await page.getByPlaceholder("test-input").fill("hello");
+
+  return async () => {
+    // verify client state is preserved
+    await expect(page.getByPlaceholder("test-input")).toHaveValue("hello");
+  };
+}
+
 //
 // page error check
 //

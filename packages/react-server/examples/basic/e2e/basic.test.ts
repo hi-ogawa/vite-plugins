@@ -1,7 +1,14 @@
 import fs from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
 import type { Manifest } from "vite";
-import { checkNoError, editFile, inspectDevModules, testNoJs } from "./helper";
+import {
+  checkNoError,
+  editFile,
+  inspectDevModules,
+  setupCheckClientState,
+  testNoJs,
+  waitForHydration,
+} from "./helper";
 
 test("basic", async ({ page }) => {
   checkNoError(page);
@@ -943,18 +950,4 @@ function getClientManifest(): Manifest {
   return JSON.parse(
     fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
   );
-}
-
-async function setupCheckClientState(page: Page) {
-  // setup client state
-  await page.getByPlaceholder("test-input").fill("hello");
-
-  return async () => {
-    // verify client state is preserved
-    await expect(page.getByPlaceholder("test-input")).toHaveValue("hello");
-  };
-}
-
-async function waitForHydration(page: Page) {
-  await expect(page.getByText("[hydrated: 1]")).toBeVisible();
 }

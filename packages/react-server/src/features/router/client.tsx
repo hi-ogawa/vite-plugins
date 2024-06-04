@@ -1,7 +1,5 @@
 import React from "react";
 import ReactDom from "react-dom";
-import { RedirectHandler } from "../../lib/client/error-boundary";
-import { isRedirectError } from "../../lib/error";
 import { ActionRedirectHandler } from "../server-action/client";
 import {
   type AssetDeps,
@@ -31,26 +29,6 @@ export function LayoutRoot() {
       <ActionRedirectHandler />
     </>
   );
-}
-
-// TODO: remove
-// TODO: handle non redirect action error
-export function ServerActionRedirectHandler() {
-  const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
-
-  if (data.action?.error) {
-    const redirect = isRedirectError(data.action.error);
-    if (redirect) {
-      return (
-        <RedirectHandler
-          suspensionKey={data.action.error}
-          redirectLocation={redirect.location}
-        />
-      );
-    }
-  }
-  return null;
 }
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
