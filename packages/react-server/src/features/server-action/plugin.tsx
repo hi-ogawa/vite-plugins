@@ -6,6 +6,7 @@ import { createDebug, tinyassert } from "@hiogawa/utils";
 import { type Plugin, type PluginOption, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
+  type CustomModuleMeta,
   USE_SERVER,
   createVirtualPlugin,
   hashString,
@@ -56,7 +57,15 @@ const $$proxy = (id, name) => createServerReference(id + "#" + name);
         id,
         outCode: output.toString(),
       });
-      return { code: output.toString(), map: output.generateMap() };
+      return {
+        code: output.toString(),
+        map: output.generateMap(),
+        meta: {
+          $$rsc: {
+            type: "server",
+          },
+        } satisfies CustomModuleMeta,
+      };
     },
   };
 }
@@ -100,7 +109,15 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
-        return { code: output.toString(), map: output.generateMap() };
+        return {
+          code: output.toString(),
+          map: output.generateMap(),
+          meta: {
+            $$rsc: {
+              type: "server",
+            },
+          } satisfies CustomModuleMeta,
+        };
       }
       return;
     },
