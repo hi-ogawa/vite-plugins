@@ -5,6 +5,7 @@ import {
   type InlineConfig,
   type Plugin,
   type PluginOption,
+  type ResolvedConfig,
   type ViteDevServer,
   build,
   createLogger,
@@ -14,6 +15,10 @@ import {
   SERVER_CSS_PROXY,
   vitePluginServerAssets,
 } from "../features/assets/plugin";
+import {
+  routeManifestPluginClient,
+  routeManifestPluginServer,
+} from "../features/router/plugin";
 import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
@@ -51,9 +56,13 @@ export type { PluginStateManager };
 
 class PluginStateManager {
   server?: ViteDevServer;
+  config!: ResolvedConfig;
   configEnv!: ConfigEnv;
 
   buildType?: "scan" | "rsc" | "client" | "ssr";
+
+  routeToClientReferences: Record<string, string[]> = {};
+  routeToClientAssets: Record<string, string[]> = {};
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -133,6 +142,8 @@ export function vitePluginReactServer(options?: {
         manager,
         runtimePath: RUNTIME_REACT_SERVER_PATH,
       }),
+
+      routeManifestPluginServer({ manager }),
 
       // this virtual is not necessary anymore but has been used in the past
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
@@ -219,6 +230,9 @@ export function vitePluginReactServer(options?: {
         },
       };
     },
+    configResolved(config) {
+      manager.config = config;
+    },
     async configureServer(server) {
       manager.server = server;
     },
@@ -285,6 +299,7 @@ export function vitePluginReactServer(options?: {
         await build(reactServerViteConfig);
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "rsc";
+        manager.rscUseClientIds.clear();
         await build(reactServerViteConfig);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
         manager.buildType = "client";
@@ -315,6 +330,7 @@ export function vitePluginReactServer(options?: {
     }),
     ...vitePluginClientUseClient({ manager }),
     ...vitePluginServerAssets({ manager }),
+    ...routeManifestPluginClient({ manager }),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {

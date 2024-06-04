@@ -66,6 +66,7 @@
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
     "@tanstack/history": "^1.15.13",
+    "fast-glob": "^3.3.2",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {

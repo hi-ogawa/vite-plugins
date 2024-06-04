@@ -13,6 +13,7 @@ import {
 } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
+  type CustomModuleMeta,
   USE_CLIENT,
   USE_CLIENT_RE,
   createVirtualPlugin,
@@ -147,10 +148,19 @@ export function vitePluginServerUseClient({
       );
       manager.rscUseClientIds.add(id);
       if (manager.buildType === "scan") {
-        // only collect references without transform during the scan
+        // to discover server references imported only by client
+        // we keep code as is and continue crawling
         return;
       }
-      return { code: output.toString(), map: output.generateMap() };
+      return {
+        code: output.toString(),
+        map: output.generateMap(),
+        meta: {
+          $$rsc: {
+            type: "client",
+          },
+        } satisfies CustomModuleMeta,
+      };
     },
 
     /**
