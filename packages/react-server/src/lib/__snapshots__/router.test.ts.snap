@@ -1,7 +1,79 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`generateRouteTree > basic > (0) "/" 1`] = `
+exports[`generateRouteModuleTree > basic 1`] = `
 {
+  "children": {
+    "": {
+      "children": {
+        "demo": {
+          "value": {
+            "layout": {
+              "default": "/demo/layout.tsx",
+            },
+            "page": {
+              "default": "/demo/page.tsx",
+            },
+          },
+        },
+        "other": {
+          "value": {
+            "page": {
+              "default": "/other/page.tsx",
+            },
+          },
+        },
+        "test": {
+          "children": {
+            "[dynamic]": {
+              "children": {
+                "hello": {
+                  "value": {
+                    "page": {
+                      "default": "/test/[dynamic]/hello/page.tsx",
+                    },
+                  },
+                },
+              },
+              "value": {
+                "page": {
+                  "default": "/test/[dynamic]/page.tsx",
+                },
+              },
+            },
+            "other": {
+              "value": {
+                "page": {
+                  "default": "/test/other/page.tsx",
+                },
+              },
+            },
+          },
+          "value": {
+            "layout": {
+              "default": "/test/layout.tsx",
+            },
+            "page": {
+              "default": "/test/page.tsx",
+            },
+          },
+        },
+      },
+      "value": {
+        "layout": {
+          "default": "/layout.tsx",
+        },
+        "page": {
+          "default": "/page.tsx",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateRouteModuleTree > basic 2`] = `
+{
+  "__pathname": "/",
   "layouts": {
     "/": </layout.tsx
       params={{}}
@@ -63,8 +135,9 @@ exports[`generateRouteTree > basic > (0) "/" 1`] = `
 }
 `;
 
-exports[`generateRouteTree > basic > (1) "/other" 1`] = `
+exports[`generateRouteModuleTree > basic 3`] = `
 {
+  "__pathname": "/other",
   "layouts": {
     "/": </layout.tsx
       params={{}}
@@ -133,8 +206,9 @@ exports[`generateRouteTree > basic > (1) "/other" 1`] = `
 }
 `;
 
-exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
+exports[`generateRouteModuleTree > basic 4`] = `
 {
+  "__pathname": "/not-found",
   "layouts": {
     "/": </layout.tsx
       params={{}}
@@ -203,8 +277,9 @@ exports[`generateRouteTree > basic > (2) "/not-found" 1`] = `
 }
 `;
 
-exports[`generateRouteTree > basic > (3) "/test" 1`] = `
+exports[`generateRouteModuleTree > basic 5`] = `
 {
+  "__pathname": "/test",
   "layouts": {
     "/": </layout.tsx
       params={{}}
@@ -296,8 +371,9 @@ exports[`generateRouteTree > basic > (3) "/test" 1`] = `
 }
 `;
 
-exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
+exports[`generateRouteModuleTree > basic 6`] = `
 {
+  "__pathname": "/test/other",
   "layouts": {
     "/": </layout.tsx
       params={{}}
@@ -396,8 +472,9 @@ exports[`generateRouteTree > basic > (4) "/test/other" 1`] = `
 }
 `;
 
-exports[`generateRouteTree > basic > (5) "/test/not-found" 1`] = `
+exports[`generateRouteModuleTree > basic 7`] = `
 {
+  "__pathname": "/test/not-found",
   "layouts": {
     "/": </layout.tsx
       params={{}}

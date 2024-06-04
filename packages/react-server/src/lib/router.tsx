@@ -1,6 +1,9 @@
-import { objectHas, sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { getPathPrefixes, normalizePathname } from "../features/router/utils";
+import {
+  type TreeNode,
+  createFsRouteTree,
+  matchRouteTree,
+} from "../features/router/tree";
 import { type ReactServerErrorContext, createError } from "./error";
 
 // TODO: move to features/router/react-server
@@ -19,40 +22,10 @@ interface RouteEntry {
   };
 }
 
-type RouteTreeNode = TreeNode<RouteEntry>;
+type RouteModuleNode = TreeNode<RouteEntry>;
 
-// generate component tree from glob import such as
-//   import.meta.glob("/**/(page|layout).(js|jsx|ts|tsx)"
-export function generateRouteTree(globEntries: Record<string, unknown>) {
-  const entries: Record<string, RouteEntry> = {};
-  for (const [k, v] of Object.entries(globEntries)) {
-    const m = k.match(/^(.*)\/(page|layout|error)\.\w*$/);
-    tinyassert(m && 1 in m && 2 in m);
-    tinyassert(objectHas(v, "default"), `no deafult export found in '${k}'`);
-    ((entries[m[1]] ??= {}) as any)[m[2]] = v;
-  }
-
-  const flatTree = Object.entries(entries).map(([k, v]) => ({
-    keys: k.split("/"),
-    value: v,
-  }));
-  const tree = createTree(flatTree);
-
-  // sort to match static route first before dynamic route
-  sortDynamicRoutes(tree);
-
-  return tree;
-}
-
-function sortDynamicRoutes<T>(tree: TreeNode<T>) {
-  if (tree.children) {
-    tree.children = Object.fromEntries(
-      sortBy(Object.entries(tree.children), ([k]) => k.includes("[")),
-    );
-    for (const v of Object.values(tree.children)) {
-      sortDynamicRoutes(v);
-    }
-  }
+export function generateRouteModuleTree(globEntries: Record<string, unknown>) {
+  return createFsRouteTree(globEntries) as RouteModuleNode;
 }
 
 // use own "use client" components as external
@@ -60,21 +33,20 @@ function importRuntimeClient(): Promise<typeof import("../runtime-client")> {
   return import("@hiogawa/react-server/runtime-client" as string);
 }
 
-function renderPage(node: RouteTreeNode, props: PageProps) {
+function renderPage(node: RouteModuleNode, props: PageProps) {
   const Page = node.value?.page?.default ?? ThrowNotFound;
   return <Page {...props} />;
 }
 
 async function renderLayout(
-  node: RouteTreeNode,
+  node: RouteModuleNode,
   props: PageProps,
-  name: string,
-  key?: string,
+  prefix: string,
 ) {
   const { ErrorBoundary, RedirectBoundary, LayoutContent } =
     await importRuntimeClient();
 
-  let acc = <LayoutContent name={name} />;
+  let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
   const ErrorPage = node.value?.error?.default;
@@ -84,23 +56,21 @@ async function renderLayout(
   const Layout = node.value?.layout?.default;
   if (Layout) {
     acc = (
-      <Layout key={key} {...props}>
+      <Layout key={prefix} {...props}>
         {acc}
       </Layout>
     );
   } else {
-    acc = <React.Fragment key={key}>{acc}</React.Fragment>;
+    acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
   }
   return acc;
 }
 
 export async function renderRouteMap(
-  tree: RouteTreeNode,
+  tree: RouteModuleNode,
   request: Pick<Request, "url" | "headers">,
 ) {
   const url = serializeUrl(new URL(request.url));
-  const pathname = normalizePathname(url.pathname);
-  const prefixes = getPathPrefixes(pathname);
   const baseProps: Omit<BaseProps, "params"> = {
     url,
     request: {
@@ -108,42 +78,19 @@ export async function renderRouteMap(
       headers: serializeHeaders(request.headers),
     },
   };
-
-  let node = tree;
-  let params: BaseProps["params"] = {};
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
-  for (let i = 0; i < prefixes.length; i++) {
-    const prefix = prefixes[i]!;
-    const key = prefix.split("/").at(-1)!;
-    const next = matchChild(key, node);
-    if (next?.child) {
-      node = next.child;
-      if (next?.catchAll) {
-        const rest = pathname.slice(prefixes[i - 1]!.length + 1);
-        params = { ...params, [next.param]: decodeURI(rest) };
-        const props: BaseProps = { ...baseProps, params };
-        layouts[prefix] = await renderLayout(node, props, prefix);
-        for (const prefix of prefixes.slice(i)) {
-          layouts[prefix] = await renderLayout(initNode(), props, prefix);
-        }
-        pages[pathname] = renderPage(node, props);
-        break;
-      } else if (next.param) {
-        params = { ...params, [next.param]: decodeURI(key) };
-      }
+  const result = matchRouteTree(tree, url.pathname);
+  for (const m of result.matches) {
+    const props: BaseProps = { ...baseProps, params: m.params };
+    if (m.type === "layout") {
+      layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
+    } else if (m.type === "page") {
+      pages[m.prefix] = renderPage(m.node, props);
     } else {
-      node = initNode();
-    }
-    const props: BaseProps = { ...baseProps, params };
-    // re-mount subtree when dynamic segment changes
-    const cacheKey = [i, next?.param ?? "", key].join("");
-    layouts[prefix] = await renderLayout(node, props, prefix, cacheKey);
-    if (prefix === pathname) {
-      pages[prefix] = renderPage(node, props);
+      m.type satisfies never;
     }
   }
-
   return { pages, layouts };
 }
 
@@ -189,57 +136,4 @@ export interface ErrorPageProps {
   error: Error;
   serverError?: ReactServerErrorContext;
   reset: () => void;
-}
-
-const DYNAMIC_RE = /^\[(\w*)\]$/;
-const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
-
-function matchChild(input: string, node: RouteTreeNode) {
-  if (!node.children) {
-    return;
-  }
-  for (const [segment, child] of Object.entries(node.children)) {
-    const mAll = segment.match(CATCH_ALL_RE);
-    if (mAll) {
-      tinyassert(1 in mAll);
-      return { param: mAll[1], child, catchAll: true };
-    }
-    const m = segment.match(DYNAMIC_RE);
-    if (m) {
-      tinyassert(1 in m);
-      return { param: m[1], child };
-    }
-    if (segment === input) {
-      return { child };
-    }
-  }
-  return;
-}
-
-//
-// general tree utils copied from vite-glob-routes
-// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
-//
-
-type TreeNode<T> = {
-  value?: T;
-  children?: Record<string, TreeNode<T>>;
-};
-
-function initNode<T>(): TreeNode<T> {
-  return {};
-}
-
-function createTree<T>(entries: { value: T; keys: string[] }[]): TreeNode<T> {
-  const root = initNode<T>();
-
-  for (const e of entries) {
-    let node = root;
-    for (const key of e.keys) {
-      node = (node.children ??= {})[key] ??= initNode();
-    }
-    node.value = e.value;
-  }
-
-  return root;
 }
