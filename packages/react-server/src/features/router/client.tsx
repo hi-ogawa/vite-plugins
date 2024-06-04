@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDom from "react-dom";
+import { useRouter } from "../../client";
 import { ActionRedirectHandler } from "../server-action/client";
 import {
   type AssetDeps,
@@ -37,13 +38,34 @@ export function routerRevalidate() {
   return { [ROUTER_REVALIDATE_KEY]: true };
 }
 
-export function preloadAssetDeps(deps: AssetDeps) {
+function preloadAssetDeps(deps: AssetDeps) {
   for (const href of deps.js) {
     ReactDom.preloadModule(href);
   }
   for (const href of deps.css) {
     ReactDom.preload(href, { as: "style" });
   }
+}
+
+export function RouteAssetLinks() {
+  const pathname = useRouter((s) => s.location.pathname);
+  const routeManifest = React.useContext(RouteManifestContext);
+  const deps = React.useMemo(
+    () => getRouteAssetDeps(routeManifest, pathname),
+    [pathname, routeManifest],
+  );
+  return (
+    <>
+      {deps.js.map((href) => (
+        <link key={href} rel="modulepreload" href={href} />
+      ))}
+      {deps.css.map((href) => (
+        // @ts-expect-error precedence to force head rendering
+        // https://react.dev/reference/react-dom/components/link#special-rendering-behavior
+        <link key={href} rel="stylesheet" href={href} precedence="high" />
+      ))}
+    </>
+  );
 }
 
 export const RouteManifestContext = React.createContext<RouteManifest>(

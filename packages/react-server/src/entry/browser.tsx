@@ -5,6 +5,7 @@ import {
   LayoutRoot,
   LayoutStateContext,
   ROUTER_REVALIDATE_KEY,
+  RouteAssetLinks,
   RouteManifestContext,
   routerRevalidate,
 } from "../features/router/client";
@@ -160,6 +161,7 @@ export async function start() {
           <RouteManifestContext.Provider
             value={(globalThis as any).__routeManifest}
           >
+            <RouteAssetLinks />
             <LayoutRoot />
           </RouteManifestContext.Provider>
         </LayoutHandler>

@@ -6,13 +6,10 @@ import type { SsrAssetsType } from "../features/assets/plugin";
 import {
   LayoutRoot,
   LayoutStateContext,
+  RouteAssetLinks,
   RouteManifestContext,
-  preloadAssetDeps,
 } from "../features/router/client";
-import {
-  type RouteManifest,
-  getRouteAssetDeps,
-} from "../features/router/manifest";
+import type { RouteManifest } from "../features/router/manifest";
 import type { ServerRouterData } from "../features/router/utils";
 import {
   createModuleMap,
@@ -104,19 +101,12 @@ export async function renderHtml(
 
   const routeManifest = await importRouteManifest();
 
-  function ServerPreload() {
-    preloadAssetDeps(getRouteAssetDeps(routeManifest, url.pathname));
-    return null;
-  }
-
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <LayoutStateContext.Provider value={{ data: layoutPromise }}>
-        <RouteManifestContext.Provider
-          value={(globalThis as any).__routeManifest}
-        >
+        <RouteManifestContext.Provider value={routeManifest}>
+          <RouteAssetLinks />
           <LayoutRoot />
-          <ServerPreload />
         </RouteManifestContext.Provider>
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
