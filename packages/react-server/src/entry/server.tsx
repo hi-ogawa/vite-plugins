@@ -130,6 +130,7 @@ export async function renderHtml(
     head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
 
+  // TODO: too huge?
   head += `<script>globalThis.__routeManifest = ${escpaeScriptString(
     JSON.stringify(routeManifest),
   )}</script>\n`;
