@@ -6,6 +6,7 @@ import type { SsrAssetsType } from "../features/assets/plugin";
 import {
   LayoutRoot,
   LayoutStateContext,
+  RouteManifestContext,
   preloadAssetDeps,
 } from "../features/router/client";
 import {
@@ -111,8 +112,12 @@ export async function renderHtml(
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <LayoutStateContext.Provider value={{ data: layoutPromise }}>
-        <LayoutRoot />
-        <ServerPreload />
+        <RouteManifestContext.Provider
+          value={(globalThis as any).__routeManifest}
+        >
+          <LayoutRoot />
+          <ServerPreload />
+        </RouteManifestContext.Provider>
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
   );

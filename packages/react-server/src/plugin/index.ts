@@ -306,6 +306,7 @@ export function vitePluginReactServer(options?: {
       }
     },
     async closeBundle() {
+      // TODO: build ssr only when client build succeeds
       if (manager.buildType === "client") {
         console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
         manager.buildType = "ssr";

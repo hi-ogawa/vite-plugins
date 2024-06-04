@@ -5,6 +5,7 @@ import {
   LayoutRoot,
   LayoutStateContext,
   ROUTER_REVALIDATE_KEY,
+  RouteManifestContext,
   routerRevalidate,
 } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
@@ -156,7 +157,11 @@ export async function start() {
     <RouterContext.Provider value={router}>
       <RootErrorBoundary>
         <LayoutHandler>
-          <LayoutRoot />
+          <RouteManifestContext.Provider
+            value={(globalThis as any).__routeManifest}
+          >
+            <LayoutRoot />
+          </RouteManifestContext.Provider>
         </LayoutHandler>
       </RootErrorBoundary>
     </RouterContext.Provider>
