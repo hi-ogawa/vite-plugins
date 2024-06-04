@@ -57,14 +57,8 @@ export function routeManifestPluginClient({
           }
           manager.routeToClientAssets = objectMapValues(
             manager.routeToClientReferences,
-            (ids) =>
-              uniq(
-                ids.flatMap((id) => {
-                  const deps = facadeModuleDeps[id];
-                  tinyassert(deps);
-                  return deps;
-                }),
-              ),
+            // facade module might not exist when dynamic import is also imported statically
+            (ids) => uniq(ids.flatMap((id) => facadeModuleDeps[id] ?? [])),
           );
         }
       },
