@@ -15,6 +15,7 @@ import {
   SERVER_CSS_PROXY,
   vitePluginServerAssets,
 } from "../features/assets/plugin";
+import type { RouteManifest } from "../features/router/manifest";
 import {
   routeManifestPluginClient,
   routeManifestPluginServer,
@@ -62,7 +63,7 @@ class PluginStateManager {
   buildType?: "scan" | "rsc" | "client" | "ssr";
 
   routeToClientReferences: Record<string, string[]> = {};
-  routeToClientAssets: Record<string, string[]> = {};
+  routeManifest?: RouteManifest;
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
