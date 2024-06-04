@@ -82,7 +82,7 @@ export function NonFormActionTest() {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const delta = Number(formData.get("delta"));
-        formAction(delta);
+        React.startTransition(() => formAction(delta));
       }}
     >
       <h4 className="font-bold">Non-form-action action</h4>
