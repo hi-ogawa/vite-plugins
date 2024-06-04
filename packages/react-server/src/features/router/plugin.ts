@@ -4,7 +4,7 @@ import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { type CustomModuleMeta, createVirtualPlugin } from "../../plugin/utils";
-import type { AssetDeps, RouteManifest } from "./manifest";
+import { type AssetDeps, mergeAssetDeps } from "./manifest";
 import { createFsRouteTree } from "./tree";
 
 export function routeManifestPluginServer({
@@ -49,7 +49,7 @@ export function routeManifestPluginClient({
       apply: "build",
       generateBundle(_options, bundle) {
         if (manager.buildType === "client") {
-          const facadeModuleDeps: Record<string, string[]> = {};
+          const facadeModuleDeps: Record<string, AssetDeps> = {};
           for (const [k, v] of Object.entries(bundle)) {
             if (v.type === "chunk" && v.facadeModuleId) {
               facadeModuleDeps[v.facadeModuleId] = collectAssetDeps(k, bundle);
@@ -58,30 +58,22 @@ export function routeManifestPluginClient({
               v.viteMetadata?.importedCss;
             }
           }
-          manager.routeToClientAssets = objectMapValues(
+          const routeToAssetDeps = objectMapValues(
             manager.routeToClientReferences,
             // facade module might not exist when dynamic import is also imported statically
-            (ids) => uniq(ids.flatMap((id) => facadeModuleDeps[id] ?? [])),
+            (ids) =>
+              mergeAssetDeps(ids.flatMap((id) => facadeModuleDeps[id] ?? [])),
           );
+          manager.routeManifest = {
+            routeTree: createFsRouteTree(routeToAssetDeps),
+          };
         }
       },
     },
     createVirtualPlugin("route-manifest", async () => {
       tinyassert(manager.buildType === "ssr");
-      const routeManaifest: RouteManifest = {
-        routeTree: createFsRouteTree(
-          objectMapValues(
-            manager.routeToClientAssets,
-            (files) =>
-              ({
-                js: files.map((file) => `/${file}`),
-                // TODO
-                css: [],
-              }) satisfies AssetDeps,
-          ),
-        ),
-      };
-      return `export default ${JSON.stringify(routeManaifest, null, 2)}`;
+      tinyassert(manager.routeManifest);
+      return `export default ${JSON.stringify(manager.routeManifest, null, 2)}`;
     }),
   ];
 }
@@ -103,8 +95,12 @@ function collectModuleDeps(id: string, ctx: Rollup.PluginContext) {
   return [...visited];
 }
 
-function collectAssetDeps(fileName: string, bundle: Rollup.OutputBundle) {
+function collectAssetDeps(
+  fileName: string,
+  bundle: Rollup.OutputBundle,
+): AssetDeps {
   const visited = new Set<string>();
+  const css: string[] = [];
 
   function recurse(k: string) {
     if (visited.has(k)) return;
@@ -112,6 +108,7 @@ function collectAssetDeps(fileName: string, bundle: Rollup.OutputBundle) {
     const v = bundle[k];
     tinyassert(v);
     if (v.type === "chunk") {
+      css.push(...(v.viteMetadata?.importedCss ?? []));
       for (const k2 of v.imports) {
         recurse(k2);
       }
@@ -119,5 +116,8 @@ function collectAssetDeps(fileName: string, bundle: Rollup.OutputBundle) {
   }
 
   recurse(fileName);
-  return [...visited];
+  return {
+    js: [...visited].map((file) => `/${file}`),
+    css: uniq(css).map((file) => `/${file}`),
+  };
 }
