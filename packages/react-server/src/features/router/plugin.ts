@@ -1,5 +1,10 @@
 import path from "node:path";
-import { objectMapValues, tinyassert, uniq } from "@hiogawa/utils";
+import {
+  objectMapValues,
+  tinyassert,
+  typedBoolean,
+  uniq,
+} from "@hiogawa/utils";
 import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
@@ -59,7 +64,9 @@ export function routeManifestPluginClient({
             manager.routeToClientReferences,
             // facade module might not exist when dynamic import is also imported statically
             (ids) =>
-              mergeAssetDeps(ids.flatMap((id) => facadeModuleDeps[id] ?? [])),
+              mergeAssetDeps(
+                ids.map((id) => facadeModuleDeps[id]).filter(typedBoolean),
+              ),
           );
           manager.routeManifest = {
             routeTree: createFsRouteTree(routeToAssetDeps),
