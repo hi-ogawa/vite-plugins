@@ -297,7 +297,7 @@ export function vitePluginReactServer(options?: {
     },
   };
 
-  // orchestrate four builds from a single vite (browser) build
+  // orchestrate four builds from a single vite (ssr) build
   const buildOrchestrationPlugin: Plugin = {
     name: vitePluginReactServer.name + ":build",
     apply: "build",
@@ -306,24 +306,18 @@ export function vitePluginReactServer(options?: {
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         await build(reactServerViteConfig);
+
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "rsc";
         manager.rscUseClientIds.clear();
         await build(reactServerViteConfig);
+
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
         manager.buildType = "client";
-      }
-    },
-    async closeBundle() {
-      // TODO: build ssr only when client build succeeds
-      if (manager.buildType === "client") {
+        await build();
+
         console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
         manager.buildType = "ssr";
-        await build({
-          build: {
-            ssr: true,
-          },
-        });
       }
     },
   };
