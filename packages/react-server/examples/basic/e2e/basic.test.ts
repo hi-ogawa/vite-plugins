@@ -1,5 +1,6 @@
-import { tinyassert } from "@hiogawa/utils";
+import fs from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
+import type { Manifest } from "vite";
 import { checkNoError, editFile, inspectDevModules, testNoJs } from "./helper";
 
 test("basic", async ({ page }) => {
@@ -916,14 +917,33 @@ test("full client route", async ({ page }) => {
   await page.getByRole("heading", { name: '"use client" page' }).click();
 });
 
-test("ssr preload @build", async ({ page }) => {
-  const res = await page.goto("/test");
-  tinyassert(res);
+test("preload ssr @build", async ({ request }) => {
+  const file = getClientManifest()["virtual:test-use-client"].file;
+
+  const res = await request.get("/test/deps");
   const resText = await res.text();
-  expect(resText).toMatch(
-    /<link rel="modulepreload" href="\/assets\/counter-\w{8}.js"\/>/,
-  );
+  expect(resText).toContain(`<link rel="modulepreload" href="/${file}"/>`);
 });
+
+test("preload client @build", async ({ page }) => {
+  const file = getClientManifest()["virtual:test-use-client"].file;
+
+  await page.goto("/test");
+  await waitForHydration(page);
+  await expect(page.locator(`link[href="/${file}"]`)).not.toBeAttached();
+
+  // mouse over to /test/deps
+  await page
+    .getByRole("link", { name: "/test/deps" })
+    .dispatchEvent("mouseover");
+  await expect(page.locator(`link[href="/${file}"]`)).toBeAttached();
+});
+
+function getClientManifest(): Manifest {
+  return JSON.parse(
+    fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
+  );
+}
 
 async function setupCheckClientState(page: Page) {
   // setup client state
