@@ -117,7 +117,7 @@ function collectAssetDeps(
 
   recurse(fileName);
   return {
-    js: [...visited],
-    css: uniq(css),
+    js: [...visited].map((file) => `/${file}`),
+    css: uniq(css).map((file) => `/${file}`),
   };
 }
