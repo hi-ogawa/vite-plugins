@@ -62,7 +62,7 @@ export function routeManifestPluginClient({
           }
           const routeToAssetDeps = objectMapValues(
             manager.routeToClientReferences,
-            // facade module might not exist when dynamic import is also imported statically
+            // facade module might not exist when dynamic import is also imported statically?
             (ids) =>
               mergeAssetDeps(
                 ids.map((id) => facadeModuleDeps[id]).filter(typedBoolean),
