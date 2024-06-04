@@ -4,6 +4,8 @@ import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { type CustomModuleMeta, createVirtualPlugin } from "../../plugin/utils";
+import type { AssetDeps, RouteManifest } from "./manifest";
+import { createFsRouteTree } from "./tree";
 
 export function routeManifestPluginServer({
   manager,
@@ -29,7 +31,8 @@ export function routeManifestPluginServer({
                 ids.push(id);
               }
             }
-            manager.routeToClientReferences[routeFile] = ids;
+            const routeKey = routeFile.slice("./src/routes".length);
+            manager.routeToClientReferences[routeKey] = ids;
           }
         }
       },
@@ -63,12 +66,25 @@ export function routeManifestPluginClient({
                 }),
               ),
           );
-          console.log(manager.routeToClientAssets);
         }
       },
     },
-    createVirtualPlugin("route-manifest", () => {
-      return `export default "todo"`;
+    createVirtualPlugin("route-manifest", async () => {
+      tinyassert(manager.buildType === "ssr");
+      const routeManaifest: RouteManifest = {
+        routeTree: createFsRouteTree(
+          objectMapValues(
+            manager.routeToClientAssets,
+            (files) =>
+              ({
+                js: files.map((file) => `/${file}`),
+                // TODO
+                css: [],
+              }) satisfies AssetDeps,
+          ),
+        ),
+      };
+      return `export default ${JSON.stringify(routeManaifest, null, 2)}`;
     }),
   ];
 }

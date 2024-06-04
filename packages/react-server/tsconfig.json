@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src", "vitest.config.ts", "tsup.config.ts"],
   "compilerOptions": {
-    "types": ["vite/client", "react/experimental"],
+    "types": ["vite/client", "react/experimental", "react-dom/experimental"],
     "jsx": "react-jsx"
   }
 }

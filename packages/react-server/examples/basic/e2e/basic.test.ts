@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import { type Page, expect, test } from "@playwright/test";
 import { checkNoError, editFile, inspectDevModules, testNoJs } from "./helper";
 
@@ -913,6 +914,15 @@ test("full client route", async ({ page }) => {
   await page.goto("/test/client/full");
   await page.getByRole("heading", { name: '"use client" layout' }).click();
   await page.getByRole("heading", { name: '"use client" page' }).click();
+});
+
+test("ssr preload @build", async ({ page }) => {
+  const res = await page.goto("/test");
+  tinyassert(res);
+  const resText = await res.text();
+  expect(resText).toMatch(
+    /<link rel="modulepreload" href="\/assets\/counter-\w{8}.js"\/>/,
+  );
 });
 
 async function setupCheckClientState(page: Page) {
