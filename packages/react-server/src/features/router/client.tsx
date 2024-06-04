@@ -3,7 +3,11 @@ import ReactDom from "react-dom";
 import { RedirectHandler } from "../../lib/client/error-boundary";
 import { isRedirectError } from "../../lib/error";
 import { ActionRedirectHandler } from "../server-action/client";
-import type { AssetDeps } from "./manifest";
+import {
+  type AssetDeps,
+  type RouteManifest,
+  getRouteAssetDeps,
+} from "./manifest";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -62,4 +66,28 @@ export function preloadAssetDeps(deps: AssetDeps) {
   for (const href of deps.css) {
     ReactDom.preload(href, { as: "style" });
   }
+}
+
+export const RouteManifestContext = React.createContext<RouteManifest>(
+  undefined!,
+);
+
+export function usePreloadHandlers({
+  href,
+  preload,
+}: { href: string; preload?: boolean }) {
+  const routeManifest = React.useContext(RouteManifestContext);
+  const callback = React.useCallback(() => {
+    if (!preload) return;
+
+    const url = new URL(href, window.location.href);
+    const deps = getRouteAssetDeps(routeManifest, url.pathname);
+    preloadAssetDeps(deps);
+  }, [href, preload, routeManifest]);
+
+  return {
+    onMouseEnter: callback,
+    onTouchStart: callback,
+    onFocus: callback,
+  } satisfies JSX.IntrinsicElements["a"];
 }

@@ -53,18 +53,15 @@ export function routeManifestPluginClient({
           for (const [k, v] of Object.entries(bundle)) {
             if (v.type === "chunk" && v.facadeModuleId) {
               facadeModuleDeps[v.facadeModuleId] = collectAssetDeps(k, bundle);
+              // TODO: css
+              // https://github.com/vitejs/vite/blob/147e9228bb1c75db153873761eb7a120a2bd09a4/packages/vite/src/node/plugins/manifest.ts#L91-L96
+              v.viteMetadata?.importedCss;
             }
           }
           manager.routeToClientAssets = objectMapValues(
             manager.routeToClientReferences,
-            (ids) =>
-              uniq(
-                ids.flatMap((id) => {
-                  const deps = facadeModuleDeps[id];
-                  tinyassert(deps);
-                  return deps;
-                }),
-              ),
+            // facade module might not exist when dynamic import is also imported statically
+            (ids) => uniq(ids.flatMap((id) => facadeModuleDeps[id] ?? [])),
           );
         }
       },

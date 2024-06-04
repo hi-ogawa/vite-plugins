@@ -16,7 +16,7 @@ type RouterState = {
 export class Router {
   public store: TinyStore<RouterState>;
 
-  constructor(public history: RouterHistory) {
+  constructor(private history: RouterHistory) {
     this.store = new TinyStore<RouterState>({
       history,
       location: history.location,

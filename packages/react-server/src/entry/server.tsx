@@ -6,6 +6,7 @@ import type { SsrAssetsType } from "../features/assets/plugin";
 import {
   LayoutRoot,
   LayoutStateContext,
+  RouteManifestContext,
   preloadAssetDeps,
 } from "../features/router/client";
 import {
@@ -27,6 +28,7 @@ import {
 } from "../lib/error";
 import { $__global } from "../lib/global";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+import { escpaeScriptString } from "../utils/escape";
 import { jsonStringifyTransform } from "../utils/stream";
 import { injectStreamScript } from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./react-server";
@@ -110,8 +112,12 @@ export async function renderHtml(
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <LayoutStateContext.Provider value={{ data: layoutPromise }}>
-        <LayoutRoot />
-        <ServerPreload />
+        <RouteManifestContext.Provider
+          value={(globalThis as any).__routeManifest}
+        >
+          <LayoutRoot />
+          <ServerPreload />
+        </RouteManifestContext.Provider>
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
   );
@@ -133,6 +139,10 @@ export async function renderHtml(
   if (globalThis?.process?.env?.["DEBUG"]) {
     head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
+
+  head += `<script>globalThis.__routeManifest = ${escpaeScriptString(
+    JSON.stringify(routeManifest),
+  )}</script>\n`;
 
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
