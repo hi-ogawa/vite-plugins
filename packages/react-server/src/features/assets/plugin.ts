@@ -96,7 +96,11 @@ export function vitePluginServerAssets({
         `/******* react-server ********/`,
         collectStyle($__global.dev.reactServer, [ENTRY_REACT_SERVER]),
         `/******* client **************/`,
-        collectStyle($__global.dev.server, [ENTRY_CLIENT]),
+        collectStyle($__global.dev.server, [
+          ENTRY_CLIENT,
+          // TODO: dev should also use RouteManifest to manage client css
+          ...manager.rscUseClientIds,
+        ]),
       ]);
       return styles.join("\n\n");
     }),

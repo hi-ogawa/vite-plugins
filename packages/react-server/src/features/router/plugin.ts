@@ -1,5 +1,10 @@
 import path from "node:path";
-import { objectMapValues, tinyassert, uniq } from "@hiogawa/utils";
+import {
+  objectMapValues,
+  tinyassert,
+  typedBoolean,
+  uniq,
+} from "@hiogawa/utils";
 import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
@@ -53,16 +58,15 @@ export function routeManifestPluginClient({
           for (const [k, v] of Object.entries(bundle)) {
             if (v.type === "chunk" && v.facadeModuleId) {
               facadeModuleDeps[v.facadeModuleId] = collectAssetDeps(k, bundle);
-              // TODO: css
-              // https://github.com/vitejs/vite/blob/147e9228bb1c75db153873761eb7a120a2bd09a4/packages/vite/src/node/plugins/manifest.ts#L91-L96
-              v.viteMetadata?.importedCss;
             }
           }
           const routeToAssetDeps = objectMapValues(
             manager.routeToClientReferences,
             // facade module might not exist when dynamic import is also imported statically
             (ids) =>
-              mergeAssetDeps(ids.flatMap((id) => facadeModuleDeps[id] ?? [])),
+              mergeAssetDeps(
+                ids.map((id) => facadeModuleDeps[id]).filter(typedBoolean),
+              ),
           );
           manager.routeManifest = {
             routeTree: createFsRouteTree(routeToAssetDeps),

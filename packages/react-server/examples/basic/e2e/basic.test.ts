@@ -493,6 +493,100 @@ test("react-server css hmr @dev", async ({ page, browser }) => {
   }
 });
 
+test("client css @js", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/css");
+  await expect(page.getByText("css client normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await expect(page.getByText("css client module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+});
+
+testNoJs("client css @nojs", async ({ page }) => {
+  await page.goto("/test/css");
+  await expect(page.getByText("css client normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await expect(page.getByText("css client module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+});
+
+test("client css hmr @dev", async ({ page, browser }) => {
+  checkNoError(page);
+
+  await page.goto("/test/css");
+  await waitForHydration(page);
+
+  const checkClientState = await setupCheckClientState(page);
+
+  await expect(page.getByText("css client normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+  await editFile("./src/routes/test/css/css-client-normal.css", (s) =>
+    s.replace("rgb(250, 250, 200)", "rgb(250, 250, 123)"),
+  );
+  await expect(page.getByText("css client normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 123)",
+  );
+
+  await checkClientState();
+
+  // verify new style is applied without js
+  {
+    const page = await browser.newPage({ javaScriptEnabled: false });
+    await page.goto("/test/css");
+    await expect(page.getByText("css client normal")).toHaveCSS(
+      "background-color",
+      "rgb(250, 250, 123)",
+    );
+  }
+});
+
+// TODO: is this vite's default behavior?
+test("client css module no hmr @dev", async ({ page, browser }) => {
+  checkNoError(page);
+
+  await page.goto("/test/css");
+  await waitForHydration(page);
+
+  // check client state is reset (i.e. no hmr)
+  await page.getByPlaceholder("test-input").fill("hello");
+
+  await expect(page.getByText("css client module")).toHaveCSS(
+    "background-color",
+    "rgb(200, 250, 250)",
+  );
+  await editFile("./src/routes/test/css/css-client-module.module.css", (s) =>
+    s.replace("rgb(200, 250, 250)", "rgb(123, 250, 250)"),
+  );
+  await expect(page.getByText("css client module")).toHaveCSS(
+    "background-color",
+    "rgb(123, 250, 250)",
+  );
+
+  await expect(page.getByPlaceholder("test-input")).toHaveValue("");
+
+  // verify new style is applied without js
+  {
+    const page = await browser.newPage({ javaScriptEnabled: false });
+    await page.goto("/test/css");
+    await expect(page.getByText("css client module")).toHaveCSS(
+      "background-color",
+      "rgb(123, 250, 250)",
+    );
+  }
+});
+
 test("server action @js", async ({ page }) => {
   checkNoError(page);
 
