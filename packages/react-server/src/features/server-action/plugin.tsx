@@ -155,6 +155,11 @@ export function vitePluginServerUseServer({
       return `export default {}`;
     }
     tinyassert(manager.buildType === "rsc");
+    // need to have fake timer to avoid this error?
+    //   Error: Unexpected early exit. This happens when Promises returned by plugins cannot resolve. Unfinished hook action(s) on exit
+    const fakeTimeout = setTimeout(() => {}, 1e8);
+    // await manager.deferServerBuild;
+    clearTimeout(fakeTimeout);
     if (1) {
       return `export default "** PLACEHOLDER **"`;
     }
