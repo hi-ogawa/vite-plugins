@@ -142,22 +142,25 @@ export function vitePluginServerUseServer({
   };
 
   // expose server references for RSC build via virtual module
-  const virtualPlugin = createVirtualPlugin("server-references", async () => {
-    // if (manager.buildType === "scan") {
-    //   return `export default {}`;
-    // }
-    tinyassert(manager.buildType === "parallel");
-    tinyassert(manager.buildContextServer);
-    await manager.buildContextServer.load({ id: "\0virtual:wait-for-idle" });
-    console.log("[virtual:server-references]", manager.rscUseServerIds);
-    let result = `export default {\n`;
-    for (const id of manager.rscUseServerIds) {
-      result += `"${hashString(id)}": () => import("${id}"),\n`;
-    }
-    result += "};\n";
-    debug("[virtual:server-references]", result);
-    return result;
-  });
+  const virtualPlugin = createVirtualPlugin(
+    "server-references",
+    async function () {
+      // if (manager.buildType === "scan") {
+      //   return `export default {}`;
+      // }
+      tinyassert(manager.buildType === "parallel");
+      tinyassert(manager.buildContextServer);
+      await manager.buildContextServer.load({ id: "\0virtual:wait-for-idle" });
+      console.log("[virtual:server-references]", manager.rscUseServerIds);
+      let result = `export default {\n`;
+      for (const id of manager.rscUseServerIds) {
+        result += `"${hashString(id)}": () => import("${id}"),\n`;
+      }
+      result += "};\n";
+      debug("[virtual:server-references]", result);
+      return result;
+    },
+  );
 
   return [transformPlugin, virtualPlugin, ...waitForIdlePlugin()];
 }
