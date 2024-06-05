@@ -114,12 +114,6 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
-        if (manager.buildType === "rsc") {
-          manager.serverReferenceMap[id] = this.emitFile({
-            type: "chunk",
-            id,
-          });
-        }
         return {
           code: output.toString(),
           map: output.generateMap(),
