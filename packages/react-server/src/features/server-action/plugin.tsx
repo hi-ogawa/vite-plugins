@@ -109,6 +109,12 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
+        if (manager.buildType === "rsc") {
+          manager.serverReferenceMap[id] = this.emitFile({
+            type: "chunk",
+            id,
+          });
+        }
         return {
           code: output.toString(),
           map: output.generateMap(),
@@ -121,23 +127,48 @@ export function vitePluginServerUseServer({
       }
       return;
     },
+    generateBundle(_options, bundle) {
+      if (manager.buildType === "rsc") {
+        let result = `export default {\n`;
+        for (const [id, refId] of Object.entries(manager.serverReferenceMap)) {
+          const fileName = this.getFileName(refId);
+          result += `  "${hashString(id)}": () => import("../${fileName}"),\n`;
+        }
+        result += "};\n";
+        for (const [_k, v] of Object.entries(bundle)) {
+          if (
+            v.type === "chunk" &&
+            v.facadeModuleId === "\0virtual:server-references"
+          ) {
+            // TODO: how to content hash?
+            // server reference virtual is fine, but it's critical for client reference
+            v.code = result;
+          }
+        }
+      }
+    },
   };
 
   // expose server references for RSC build via virtual module
-  const virtualPlugin = createVirtualPlugin("server-references", async () => {
-    if (manager.buildType === "scan") {
-      return `export default {}`;
-    }
-    tinyassert(manager.buildType === "rsc");
-    let result = `export default {\n`;
-    for (const id of manager.rscUseServerIds) {
-      let key = manager.buildType ? hashString(id) : id;
-      result += `"${key}": () => import("${id}"),\n`;
-    }
-    result += "};\n";
-    debug("[virtual:server-references]", result);
-    return result;
-  });
+  const virtualPlugin = createVirtualPlugin(
+    "server-references",
+    async function () {
+      if (manager.buildType === "scan") {
+        return `export default {}`;
+      }
+      tinyassert(manager.buildType === "rsc");
+      if (1) {
+        return `export default "** to be replaced later **"`;
+      }
+      let result = `export default {\n`;
+      for (const id of manager.rscUseServerIds) {
+        result += `"${hashString(id)}": () => import("${id}"),\n`;
+      }
+      result += "};\n";
+      debug("[virtual:server-references]", result);
+      return result;
+    },
+  );
 
   return [transformPlugin, virtualPlugin];
 }
