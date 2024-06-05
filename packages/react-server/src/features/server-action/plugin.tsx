@@ -109,6 +109,12 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
+        if (manager.buildType === "rsc") {
+          manager.serverReferenceMap[id] = this.emitFile({
+            type: "chunk",
+            id,
+          });
+        }
         return {
           code: output.toString(),
           map: output.generateMap(),
@@ -120,6 +126,26 @@ export function vitePluginServerUseServer({
         };
       }
       return;
+    },
+    generateBundle(_options, bundle) {
+      if (manager.buildType === "rsc") {
+        let result = `export default {\n`;
+        for (const [id, refId] of Object.entries(manager.serverReferenceMap)) {
+          const fileName = this.getFileName(refId);
+          result += `  "${hashString(id)}": () => import("../${fileName}"),\n`;
+        }
+        result += "};\n";
+        for (const [_k, v] of Object.entries(bundle)) {
+          if (
+            v.type === "chunk" &&
+            v.facadeModuleId === "\0virtual:server-references"
+          ) {
+            // TODO: how to content hash?
+            // server reference virtual is fine, but it's critical for client reference
+            v.code = result;
+          }
+        }
+      }
     },
   };
 
