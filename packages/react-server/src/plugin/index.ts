@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, createManualPromise, tinyassert } from "@hiogawa/utils";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -66,6 +66,7 @@ class PluginStateManager {
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
   serverReferenceMap: Record<string, string> = {};
+  deferServerBuild = createManualPromise<void>();
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
