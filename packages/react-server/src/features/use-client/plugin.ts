@@ -234,7 +234,7 @@ export function vitePluginClientUseClient({
      * }
      */
     createVirtualPlugin("client-references", () => {
-      tinyassert(manager.buildType && manager.buildType !== "rsc");
+      tinyassert(manager.buildType === "client" || manager.buildType === "ssr");
       let result = `export default {\n`;
       for (let id of manager.rscUseClientIds) {
         // virtual module needs to be mapped back to the original form

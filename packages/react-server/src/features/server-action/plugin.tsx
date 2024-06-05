@@ -114,8 +114,7 @@ export function vitePluginServerUseServer({
     tinyassert(manager.buildType === "rsc");
     let result = `export default {\n`;
     for (const id of manager.rscUseServerIds) {
-      let key = manager.buildType ? hashString(id) : id;
-      result += `"${key}": () => import("${id}"),\n`;
+      result += `"${hashString(id)}": () => import("${id}"),\n`;
     }
     result += "};\n";
     debug("[virtual:server-references]", result);
