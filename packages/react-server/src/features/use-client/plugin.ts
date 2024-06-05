@@ -162,30 +162,6 @@ export function vitePluginServerUseClient({
         } satisfies CustomModuleMeta,
       };
     },
-
-    /**
-     * emit client-references as dynamic import map
-     * TODO: re-export only used exports via virtual modules?
-     *
-     * export default {
-     *   "some-file1": () => import("some-file1"),
-     * }
-     */
-    closeBundle: {
-      async handler() {
-        let result = `export default {\n`;
-        for (let id of manager.rscUseClientIds) {
-          // virtual module needs to be mapped back to the original form
-          const to = id.startsWith("\0") ? id.slice(1) : id;
-          if (manager.buildType) {
-            id = hashString(id);
-          }
-          result += `"${id}": () => import("${to}"),\n`;
-        }
-        result += "};\n";
-        await fs.promises.writeFile("dist/rsc/client-references.js", result);
-      },
-    },
   };
   return [useClientExternalPlugin, useClientPlugin];
 }
@@ -248,9 +224,25 @@ export function vitePluginClientUseClient({
 
   return [
     devExternalPlugin,
+
+    /**
+     * emit client-references as dynamic import map
+     * TODO: re-export only used exports via virtual modules?
+     *
+     * export default {
+     *   "some-file1": () => import("some-file1"),
+     * }
+     */
     createVirtualPlugin("client-references", () => {
-      tinyassert(manager.buildType && manager.buildType !== "rsc");
-      return fs.promises.readFile("dist/rsc/client-references.js", "utf-8");
+      tinyassert(manager.buildType === "client" || manager.buildType === "ssr");
+      let result = `export default {\n`;
+      for (let id of manager.rscUseClientIds) {
+        // virtual module needs to be mapped back to the original form
+        const to = id.startsWith("\0") ? id.slice(1) : id;
+        result += `"${hashString(id)}": () => import("${to}"),\n`;
+      }
+      result += "};\n";
+      return { code: result, map: null };
     }),
   ];
 }
