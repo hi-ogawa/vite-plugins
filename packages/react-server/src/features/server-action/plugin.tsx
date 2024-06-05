@@ -66,7 +66,7 @@ const $$proxy = (id, name) => createServerReference(id + "#" + name);
         tinyassert(manager.buildContextServer);
         manager.buildContextServer.emitFile({
           type: "chunk",
-          id,
+          id: id.replace(/^\0/, ""),
         });
       }
       return {

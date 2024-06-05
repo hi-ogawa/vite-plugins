@@ -152,7 +152,8 @@ export function vitePluginServerUseClient({
         tinyassert(manager.buildContextBrowser);
         manager.buildContextBrowser.emitFile({
           type: "chunk",
-          id,
+          // unwrap virtual
+          id: id.replace(/^\0/, ""),
         });
       }
       // if (manager.buildType === "scan") {
