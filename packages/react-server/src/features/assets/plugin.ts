@@ -117,6 +117,7 @@ export function vitePluginServerAssets({
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
       if (manager.buildType) {
+        // TODO: this virtual also needs to wait for server build
         // TODO: probe manifest to collect css?
         const files = await fs.promises.readdir("./dist/rsc/assets", {
           withFileTypes: true,
