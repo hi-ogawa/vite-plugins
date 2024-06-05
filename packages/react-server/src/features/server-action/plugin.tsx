@@ -2,7 +2,7 @@ import {
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, sleep, tinyassert } from "@hiogawa/utils";
 import { type Plugin, type PluginOption, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
@@ -173,5 +173,72 @@ export function vitePluginServerUseServer({
     return result;
   });
 
-  return [transformPlugin, virtualPlugin];
+  return [
+    transformPlugin,
+    virtualPlugin,
+    // https://github.com/rollup/rollup/issues/4985#issuecomment-1936333388
+    // https://github.com/ArnaudBarre/downwind/blob/1d47b6a3f1e7bc271d0bb5bd96cfbbea68445510/src/vitePlugin.ts#L164
+    {
+      name: "wip",
+      apply: () => manager.buildType === "rsc",
+      enforce: "pre",
+      buildStart() {
+        this.emitFile({
+          type: "chunk",
+          id: "virtual:wip-defer",
+        });
+      },
+    },
+
+    // getModuleIds + load approach not working
+    // (it still needs some timeout between loop to `getModuleIds` to fill up new ids)
+    createVirtualPlugin("wip-defer", async function () {
+      await sleep(100);
+      {
+        // https://github.com/vitejs/vite/issues/6011#issuecomment-1229390631
+        const seen = new Set<string>();
+        seen.add("\0virtual:wip-defer");
+        let modulesToWait = [];
+        do {
+          console.log("!!!!!!!! loop");
+          modulesToWait = [];
+          for (const id of this.getModuleIds()) {
+            if (seen.has(id)) continue;
+            console.log("[id]", id);
+            seen.add(id);
+            // if (id.startsWith('\0')) continue
+            // const info = this.getModuleInfo(id)
+            // if (info?.isExternal) continue
+            modulesToWait.push(this.load({ id }).catch(() => {}));
+          }
+          // TODO: timeout if too long
+          await Promise.all(modulesToWait);
+        } while (modulesToWait.length > 0);
+      }
+
+      // {
+      //   // https://github.com/rollup/rollup/issues/4294#issuecomment-990633777
+      //   const loadedIds = new Set<string>(["\0virtual:wip-defer"]);
+      //   while (true) {
+      //     console.log("[delayLoad] before = ", loadedIds.size);
+      //     let done = true;
+      //     const ids = this.getModuleIds();
+      //     console.log({ ids });
+      //     for (const id of ids) {
+      //       if (!loadedIds.has(id)) {
+      //         loadedIds.add(id);
+      //         done = false;
+      //         console.log("[load]", { id });
+      //         await this.load({ id });
+      //       }
+      //     }
+      //     console.log("[delayLoad] after = ", loadedIds.size);
+      //     if (done) {
+      //       break;
+      //     }
+      //   }
+      // }
+      return `export default "** defer!! **"`;
+    }),
+  ];
 }
