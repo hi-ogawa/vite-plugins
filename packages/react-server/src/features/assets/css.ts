@@ -46,5 +46,5 @@ export async function collectStyleUrls(
 }
 
 // cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
-const CSS_LANGS_RE =
+export const CSS_LANGS_RE =
   /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
