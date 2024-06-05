@@ -65,7 +65,6 @@ class PluginStateManager {
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
-  serverReferenceMap: Record<string, string> = {};
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
