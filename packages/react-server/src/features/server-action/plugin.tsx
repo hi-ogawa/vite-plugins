@@ -114,6 +114,12 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
+        if (manager.buildType === "rsc") {
+          this.emitFile({
+            type: "chunk",
+            id,
+          });
+        }
         return {
           code: output.toString(),
           map: output.generateMap(),
@@ -154,7 +160,10 @@ export function vitePluginServerUseServer({
 // https://github.com/ArnaudBarre/downwind/blob/1d47b6a3f1e7bc271d0bb5bd96cfbbea68445510/src/vitePlugin.ts#L164
 function waitForIdlePlugin(): Plugin[] {
   const idlePromise = createManualPromise<void>();
-  const notIdle = debounce(() => {
+  let done = false;
+  const notIdle = debounce((...args) => {
+    console.log("[wait-for-idle:done]", { args });
+    done = true;
     idlePromise.resolve();
   }, 200);
 
@@ -169,9 +178,9 @@ function waitForIdlePlugin(): Plugin[] {
           id: "virtual:wait-for-idle",
         });
       },
-      resolveId: () => notIdle(),
-      load: () => notIdle(),
-      transform: () => notIdle(),
+      resolveId: notIdle,
+      load: notIdle,
+      transform: notIdle,
     },
     createVirtualPlugin("wait-for-idle", async () => {
       await idlePromise;
