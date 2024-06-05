@@ -155,6 +155,9 @@ export function vitePluginServerUseServer({
       return `export default {}`;
     }
     tinyassert(manager.buildType === "rsc");
+    if (1) {
+      return `export default "** PLACEHOLDER **"`;
+    }
     let result = `export default {\n`;
     for (const id of manager.rscUseServerIds) {
       result += `"${hashString(id)}": () => import("${id}"),\n`;
