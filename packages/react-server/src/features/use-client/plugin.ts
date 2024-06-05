@@ -252,6 +252,7 @@ export function vitePluginClientUseClient({
           id: "\0virtual:wait-for-idle",
         });
         console.log("[virtual:client-references]", manager.rscUseClientIds);
+        manager.buildSteps.virtualClientReferenes.resolve();
       }
       let result = `export default {\n`;
       for (let id of manager.rscUseClientIds) {

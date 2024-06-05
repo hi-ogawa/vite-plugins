@@ -71,6 +71,7 @@ class PluginStateManager {
     buildStartServer: createManualPromise<void>(),
     buildEndBrowser: createManualPromise<void>(),
     buildEndServer: createManualPromise<void>(),
+    virtualClientReferenes: createManualPromise<void>(),
   };
 
   routeToClientReferences: Record<string, string[]> = {};

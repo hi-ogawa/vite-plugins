@@ -149,8 +149,7 @@ export function vitePluginServerUseServer({
       //   return `export default {}`;
       // }
       tinyassert(manager.buildType === "parallel");
-      tinyassert(manager.buildContextServer);
-      await manager.buildContextServer.load({ id: "\0virtual:wait-for-idle" });
+      await manager.buildSteps.virtualClientReferenes;
       console.log("[virtual:server-references]", manager.rscUseServerIds);
       let result = `export default {\n`;
       for (const id of manager.rscUseServerIds) {
@@ -162,7 +161,7 @@ export function vitePluginServerUseServer({
     },
   );
 
-  return [transformPlugin, virtualPlugin, ...waitForIdlePlugin()];
+  return [transformPlugin, virtualPlugin];
 }
 
 // https://github.com/rollup/rollup/issues/4985#issuecomment-1936333388
