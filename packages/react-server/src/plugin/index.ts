@@ -324,7 +324,7 @@ export function vitePluginReactServer(options?: {
         // manager.buildType = "scan";
         // await build(reactServerViteConfig);
 
-        console.log("▶▶▶ REACT SERVER BUILD (server, browser) [(2,3)/4]");
+        console.log("▶▶▶ REACT SERVER BUILD (server, browser) [(1,2)/3]");
         manager.buildType = "parallel";
         await Promise.all([build(reactServerViteConfig), build()]);
 
@@ -336,7 +336,7 @@ export function vitePluginReactServer(options?: {
         // manager.buildType = "client";
         // await build();
 
-        console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
+        console.log("▶▶▶ REACT SERVER BUILD (ssr) [3/3]");
         manager.buildType = "ssr";
       }
     },
