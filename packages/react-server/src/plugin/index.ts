@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, createManualPromise, tinyassert } from "@hiogawa/utils";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -66,6 +66,12 @@ class PluginStateManager {
   buildType?: "parallel" | "ssr";
   buildContextServer?: Rollup.PluginContext;
   buildContextBrowser?: Rollup.PluginContext;
+  buildSteps = {
+    buildStartBrowser: createManualPromise<void>(),
+    buildStartServer: createManualPromise<void>(),
+    buildEndBrowser: createManualPromise<void>(),
+    buildEndServer: createManualPromise<void>(),
+  };
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
@@ -188,12 +194,26 @@ export function vitePluginReactServer(options?: {
       // ensure both `buildContextBrowser` and `buildContextServer`
       // are ready during `buildStart`
       {
-        name: "build-context-server",
+        name: "build-steps-server",
         apply: "build",
-        buildStart() {
-          if (manager.buildType === "parallel") {
-            manager.buildContextServer = this;
-          }
+        buildStart: {
+          order: "pre",
+          async handler() {
+            if (manager.buildType === "parallel") {
+              manager.buildContextServer = this;
+              manager.buildSteps.buildStartServer.resolve();
+              await manager.buildSteps.buildStartBrowser;
+            }
+          },
+        },
+        buildEnd: {
+          order: "post",
+          async handler() {
+            if (manager.buildType === "parallel") {
+              manager.buildSteps.buildEndServer.resolve();
+              await manager.buildSteps.buildEndBrowser;
+            }
+          },
         },
       },
 
@@ -347,12 +367,26 @@ export function vitePluginReactServer(options?: {
     rscParentPlugin,
     buildOrchestrationPlugin,
     {
-      name: "build-context-browser",
+      name: "build-steps-browser",
       apply: "build",
-      buildStart() {
-        if (manager.buildType === "parallel") {
-          manager.buildContextBrowser = this;
-        }
+      buildStart: {
+        order: "pre",
+        async handler() {
+          if (manager.buildType === "parallel") {
+            manager.buildContextBrowser = this;
+            manager.buildSteps.buildStartBrowser.resolve();
+            await manager.buildSteps.buildStartServer;
+          }
+        },
+      },
+      buildEnd: {
+        order: "post",
+        async handler() {
+          if (manager.buildType === "parallel") {
+            manager.buildSteps.buildEndBrowser.resolve();
+            await manager.buildSteps.buildEndServer;
+          }
+        },
       },
     },
     vitePluginSilenceDirectiveBuildWarning(),
