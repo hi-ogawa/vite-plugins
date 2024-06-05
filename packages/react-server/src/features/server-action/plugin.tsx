@@ -179,7 +179,7 @@ export function waitForIdlePlugin(): Plugin[] {
     }
     done = true;
     idlePromise.resolve();
-  }, 200);
+  }, 1000);
 
   return [
     {
