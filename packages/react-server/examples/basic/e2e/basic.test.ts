@@ -552,15 +552,13 @@ test("client css hmr @dev", async ({ page, browser }) => {
   }
 });
 
-// TODO: is this vite's default behavior?
-test("client css module no hmr @dev", async ({ page, browser }) => {
+test("client css module hmr @dev", async ({ page, browser }) => {
   checkNoError(page);
 
   await page.goto("/test/css");
   await waitForHydration(page);
 
-  // check client state is reset (i.e. no hmr)
-  await page.getByPlaceholder("test-input").fill("hello");
+  const checkClientState = await setupCheckClientState(page);
 
   await expect(page.getByText("css client module")).toHaveCSS(
     "background-color",
@@ -574,7 +572,7 @@ test("client css module no hmr @dev", async ({ page, browser }) => {
     "rgb(123, 250, 250)",
   );
 
-  await expect(page.getByPlaceholder("test-input")).toHaveValue("");
+  await checkClientState();
 
   // verify new style is applied without js
   {
