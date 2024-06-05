@@ -1,4 +1,4 @@
-import type { ViteDevServer } from "vite";
+import { type ViteDevServer, isCSSRequest } from "vite";
 
 // cf
 // https://github.com/hi-ogawa/vite-plugins/blob/3c496fa1bb5ac66d2880986877a37ed262f1d2a6/packages/vite-glob-routes/examples/demo/vite-plugin-ssr-css.ts
@@ -42,9 +42,5 @@ export async function collectStyleUrls(
   // traverse
   await Promise.all(entries.map((url) => traverse(url)));
 
-  return [...visited].filter((url) => url.match(CSS_LANGS_RE));
+  return [...visited].filter((url) => isCSSRequest(url));
 }
-
-// cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
-export const CSS_LANGS_RE =
-  /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;

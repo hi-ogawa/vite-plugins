@@ -10,8 +10,8 @@ import {
   build,
   createLogger,
   createServer,
+  isCSSRequest,
 } from "vite";
-import { CSS_LANGS_RE } from "../features/assets/css";
 import {
   SERVER_CSS_PROXY,
   vitePluginServerAssets,
@@ -290,7 +290,7 @@ export function vitePluginReactServer(options?: {
       // css module is not self-accepting, so we filter out
       // `?direct` module (used for SSR CSS) to avoid browser full reload.
       // (see packages/react-server/src/features/assets/css.ts)
-      if (CSS_LANGS_RE.test(ctx.file)) {
+      if (isCSSRequest(ctx.file)) {
         return ctx.modules.filter((m) => !m.id?.includes("?direct"));
       }
       return;
