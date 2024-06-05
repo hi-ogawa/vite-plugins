@@ -19,6 +19,7 @@ import {
   createVirtualPlugin,
   hashString,
 } from "../../plugin/utils";
+import { waitForIdlePlugin } from "../server-action/plugin";
 
 const debug = createDebug("react-server:plugin:use-client");
 
@@ -232,6 +233,7 @@ export function vitePluginClientUseClient({
 
   return [
     devExternalPlugin,
+    ...waitForIdlePlugin(),
 
     /**
      * emit client-references as dynamic import map
@@ -241,8 +243,15 @@ export function vitePluginClientUseClient({
      *   "some-file1": () => import("some-file1"),
      * }
      */
-    createVirtualPlugin("client-references", () => {
+    createVirtualPlugin("client-references", async () => {
       tinyassert(manager.buildType);
+      if (manager.buildType === "parallel") {
+        tinyassert(manager.buildContextBrowser);
+        await manager.buildContextBrowser.load({
+          id: "\0virtual:wait-for-idle",
+        });
+        console.log("[virtual:client-references]", manager.rscUseClientIds);
+      }
       let result = `export default {\n`;
       for (let id of manager.rscUseClientIds) {
         // virtual module needs to be mapped back to the original form

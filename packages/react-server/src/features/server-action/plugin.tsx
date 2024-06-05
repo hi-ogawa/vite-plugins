@@ -8,7 +8,7 @@ import {
   debounce,
   tinyassert,
 } from "@hiogawa/utils";
-import { type Plugin, type PluginOption, parseAstAsync } from "vite";
+import { type Plugin, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
   type CustomModuleMeta,
@@ -99,7 +99,7 @@ export function vitePluginServerUseServer({
 }: {
   manager: PluginStateManager;
   runtimePath: string;
-}): PluginOption {
+}): Plugin[] {
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
@@ -142,31 +142,29 @@ export function vitePluginServerUseServer({
   };
 
   // expose server references for RSC build via virtual module
-  const virtualPlugin = createVirtualPlugin(
-    "server-references",
-    async function () {
-      // if (manager.buildType === "scan") {
-      //   return `export default {}`;
-      // }
-      tinyassert(manager.buildType === "parallel");
-      await this.load({ id: "\0virtual:wait-for-idle" });
-      console.log("[server-references]", manager.rscUseServerIds);
-      let result = `export default {\n`;
-      for (const id of manager.rscUseServerIds) {
-        result += `"${hashString(id)}": () => import("${id}"),\n`;
-      }
-      result += "};\n";
-      debug("[virtual:server-references]", result);
-      return result;
-    },
-  );
+  const virtualPlugin = createVirtualPlugin("server-references", async () => {
+    // if (manager.buildType === "scan") {
+    //   return `export default {}`;
+    // }
+    tinyassert(manager.buildType === "parallel");
+    tinyassert(manager.buildContextServer);
+    await manager.buildContextServer.load({ id: "\0virtual:wait-for-idle" });
+    console.log("[virtual:server-references]", manager.rscUseServerIds);
+    let result = `export default {\n`;
+    for (const id of manager.rscUseServerIds) {
+      result += `"${hashString(id)}": () => import("${id}"),\n`;
+    }
+    result += "};\n";
+    debug("[virtual:server-references]", result);
+    return result;
+  });
 
-  return [transformPlugin, virtualPlugin, waitForIdlePlugin()];
+  return [transformPlugin, virtualPlugin, ...waitForIdlePlugin()];
 }
 
 // https://github.com/rollup/rollup/issues/4985#issuecomment-1936333388
 // https://github.com/ArnaudBarre/downwind/blob/1d47b6a3f1e7bc271d0bb5bd96cfbbea68445510/src/vitePlugin.ts#L164
-function waitForIdlePlugin(): Plugin[] {
+export function waitForIdlePlugin(): Plugin[] {
   const idlePromise = createManualPromise<void>();
   let done = false;
   const notIdle = debounce((...args) => {
