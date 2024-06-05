@@ -6,6 +6,7 @@ import {
   type Plugin,
   type PluginOption,
   type ResolvedConfig,
+  Rollup,
   type ViteDevServer,
   build,
   createLogger,
@@ -62,6 +63,8 @@ class PluginStateManager {
   configEnv!: ConfigEnv;
 
   buildType?: "scan" | "rsc" | "client" | "ssr";
+  buildContextServer?: Rollup.PluginContext;
+  buildContextBrowser?: Rollup.PluginContext;
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
@@ -303,13 +306,12 @@ export function vitePluginReactServer(options?: {
     apply: "build",
     async buildStart(_options) {
       if (!manager.buildType) {
-        console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
-        manager.buildType = "scan";
-        await build(reactServerViteConfig);
+        // console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
+        // manager.buildType = "scan";
+        // await build(reactServerViteConfig);
 
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "rsc";
-        manager.rscUseClientIds.clear();
         await build(reactServerViteConfig);
 
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");

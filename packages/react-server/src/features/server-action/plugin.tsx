@@ -2,7 +2,12 @@ import {
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import {
+  createDebug,
+  createManualPromise,
+  debounce,
+  tinyassert,
+} from "@hiogawa/utils";
 import { type Plugin, type PluginOption, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
@@ -109,6 +114,12 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
+        if (manager.buildType === "rsc") {
+          this.emitFile({
+            type: "chunk",
+            id,
+          });
+        }
         return {
           code: output.toString(),
           map: output.generateMap(),
@@ -124,19 +135,56 @@ export function vitePluginServerUseServer({
   };
 
   // expose server references for RSC build via virtual module
-  const virtualPlugin = createVirtualPlugin("server-references", async () => {
-    if (manager.buildType === "scan") {
-      return `export default {}`;
-    }
-    tinyassert(manager.buildType === "rsc");
-    let result = `export default {\n`;
-    for (const id of manager.rscUseServerIds) {
-      result += `"${hashString(id)}": () => import("${id}"),\n`;
-    }
-    result += "};\n";
-    debug("[virtual:server-references]", result);
-    return result;
-  });
+  const virtualPlugin = createVirtualPlugin(
+    "server-references",
+    async function () {
+      if (manager.buildType === "scan") {
+        return `export default {}`;
+      }
+      tinyassert(manager.buildType === "rsc");
+      await this.load({ id: "\0virtual:wait-for-idle" });
+      let result = `export default {\n`;
+      for (const id of manager.rscUseServerIds) {
+        result += `"${hashString(id)}": () => import("${id}"),\n`;
+      }
+      result += "};\n";
+      debug("[virtual:server-references]", result);
+      return result;
+    },
+  );
 
-  return [transformPlugin, virtualPlugin];
+  return [transformPlugin, virtualPlugin, waitForIdlePlugin()];
+}
+
+// https://github.com/rollup/rollup/issues/4985#issuecomment-1936333388
+// https://github.com/ArnaudBarre/downwind/blob/1d47b6a3f1e7bc271d0bb5bd96cfbbea68445510/src/vitePlugin.ts#L164
+function waitForIdlePlugin(): Plugin[] {
+  const idlePromise = createManualPromise<void>();
+  let done = false;
+  const notIdle = debounce((...args) => {
+    console.log("[wait-for-idle:done]", { args });
+    done = true;
+    idlePromise.resolve();
+  }, 200);
+
+  return [
+    {
+      name: waitForIdlePlugin.name,
+      apply: "build",
+      enforce: "pre",
+      buildStart() {
+        this.emitFile({
+          type: "chunk",
+          id: "virtual:wait-for-idle",
+        });
+      },
+      resolveId: notIdle,
+      load: notIdle,
+      transform: notIdle,
+    },
+    createVirtualPlugin("wait-for-idle", async () => {
+      await idlePromise;
+      return `export default "** wait-for-idle **"`;
+    }),
+  ];
 }
