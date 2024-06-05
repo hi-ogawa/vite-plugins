@@ -160,7 +160,8 @@ export function vitePluginServerUseServer({
     }
     let result = `export default {\n`;
     for (const id of manager.rscUseServerIds) {
-      result += `"${hashString(id)}": () => import("${id}"),\n`;
+      let key = manager.buildType ? hashString(id) : id;
+      result += `"${key}": () => import("${id}"),\n`;
     }
     result += "};\n";
     debug("[virtual:server-references]", result);
