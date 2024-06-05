@@ -147,6 +147,13 @@ export function vitePluginServerUseClient({
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
       manager.rscUseClientIds.add(id);
+      if (manager.buildType === "parallel") {
+        tinyassert(manager.buildContextBrowser);
+        manager.buildContextBrowser.emitFile({
+          type: "chunk",
+          id,
+        });
+      }
       // if (manager.buildType === "scan") {
       //   // to discover server references imported only by client
       //   // we keep code as is and continue crawling
@@ -163,6 +170,7 @@ export function vitePluginServerUseClient({
       };
     },
   };
+
   return [useClientExternalPlugin, useClientPlugin];
 }
 

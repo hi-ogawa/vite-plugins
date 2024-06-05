@@ -184,6 +184,19 @@ export function vitePluginReactServer(options?: {
         },
       },
 
+      // TODO:
+      // ensure both `buildContextBrowser` and `buildContextServer`
+      // are ready during `buildStart`
+      {
+        name: "build-context-server",
+        apply: "build",
+        buildStart() {
+          if (manager.buildType === "parallel") {
+            manager.buildContextServer = this;
+          }
+        },
+      },
+
       ...(options?.plugins ?? []),
     ],
     build: {
@@ -333,6 +346,15 @@ export function vitePluginReactServer(options?: {
   return [
     rscParentPlugin,
     buildOrchestrationPlugin,
+    {
+      name: "build-context-browser",
+      apply: "build",
+      buildStart() {
+        if (manager.buildType === "parallel") {
+          manager.buildContextBrowser = this;
+        }
+      },
+    },
     vitePluginSilenceDirectiveBuildWarning(),
     vitePluginClientUseServer({
       manager,

@@ -62,6 +62,13 @@ const $$proxy = (id, name) => createServerReference(id + "#" + name);
         id,
         outCode: output.toString(),
       });
+      if (manager.buildType === "parallel") {
+        tinyassert(manager.buildContextServer);
+        manager.buildContextServer.emitFile({
+          type: "chunk",
+          id,
+        });
+      }
       return {
         code: output.toString(),
         map: output.generateMap(),
@@ -143,6 +150,7 @@ export function vitePluginServerUseServer({
       // }
       tinyassert(manager.buildType === "parallel");
       await this.load({ id: "\0virtual:wait-for-idle" });
+      console.log("[server-references]", manager.rscUseServerIds);
       let result = `export default {\n`;
       for (const id of manager.rscUseServerIds) {
         result += `"${hashString(id)}": () => import("${id}"),\n`;
@@ -162,10 +170,12 @@ function waitForIdlePlugin(): Plugin[] {
   const idlePromise = createManualPromise<void>();
   let done = false;
   const notIdle = debounce((...args) => {
-    if (done) {
-      console.log("[wait-for-idle:done-again]");
+    if (0) {
+      if (done) {
+        console.log("[wait-for-idle:done-again]");
+      }
+      console.log("[wait-for-idle:done]", { args });
     }
-    console.log("[wait-for-idle:done]", { args });
     done = true;
     idlePromise.resolve();
   }, 200);
