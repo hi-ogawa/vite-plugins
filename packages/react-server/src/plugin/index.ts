@@ -62,7 +62,8 @@ class PluginStateManager {
   config!: ResolvedConfig;
   configEnv!: ConfigEnv;
 
-  buildType?: "scan" | "rsc" | "client" | "ssr";
+  // buildType?: "scan" | "rsc" | "client" | "ssr";
+  buildType?: "parallel" | "ssr";
   buildContextServer?: Rollup.PluginContext;
   buildContextBrowser?: Rollup.PluginContext;
 
@@ -310,13 +311,17 @@ export function vitePluginReactServer(options?: {
         // manager.buildType = "scan";
         // await build(reactServerViteConfig);
 
-        console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
-        manager.buildType = "rsc";
-        await build(reactServerViteConfig);
+        console.log("▶▶▶ REACT SERVER BUILD (server, browser) [(2,3)/4]");
+        manager.buildType = "parallel";
+        await Promise.all([build(reactServerViteConfig), build()]);
 
-        console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
-        manager.buildType = "client";
-        await build();
+        // console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
+        // manager.buildType = "rsc";
+        // await build(reactServerViteConfig);
+
+        // console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
+        // manager.buildType = "client";
+        // await build();
 
         console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
         manager.buildType = "ssr";
@@ -350,7 +355,7 @@ export function vitePluginReactServer(options?: {
         `;
       }
       // build
-      if (manager.buildType === "client") {
+      if (manager.buildType === "parallel") {
         // import "runtime-client" for preload
         return /* js */ `
           import "${SERVER_CSS_PROXY}";

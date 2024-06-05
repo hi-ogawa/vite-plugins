@@ -147,11 +147,11 @@ export function vitePluginServerUseClient({
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
       manager.rscUseClientIds.add(id);
-      if (manager.buildType === "scan") {
-        // to discover server references imported only by client
-        // we keep code as is and continue crawling
-        return;
-      }
+      // if (manager.buildType === "scan") {
+      //   // to discover server references imported only by client
+      //   // we keep code as is and continue crawling
+      //   return;
+      // }
       return {
         code: output.toString(),
         map: output.generateMap(),
@@ -234,7 +234,7 @@ export function vitePluginClientUseClient({
      * }
      */
     createVirtualPlugin("client-references", () => {
-      tinyassert(manager.buildType === "client" || manager.buildType === "ssr");
+      tinyassert(manager.buildType);
       let result = `export default {\n`;
       for (let id of manager.rscUseClientIds) {
         // virtual module needs to be mapped back to the original form

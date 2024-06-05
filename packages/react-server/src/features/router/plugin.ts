@@ -20,7 +20,7 @@ export function routeManifestPluginServer({
       name: "server-route-manifest",
       apply: "build",
       async buildEnd() {
-        if (manager.buildType === "rsc") {
+        if (manager.buildType === "parallel") {
           const routeFiles = await FastGlob(
             "./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
           );
@@ -45,6 +45,9 @@ export function routeManifestPluginServer({
   ];
 }
 
+// TODO: route manifest also requires
+// - routeManifestPluginServer.buildEnd finishes before
+// - routeManifestPluginClient.generateBundle
 export function routeManifestPluginClient({
   manager,
 }: { manager: PluginStateManager }): Plugin[] {
@@ -53,7 +56,7 @@ export function routeManifestPluginClient({
       name: routeManifestPluginClient.name + ":bundle",
       apply: "build",
       generateBundle(_options, bundle) {
-        if (manager.buildType === "client") {
+        if (manager.buildType === "parallel") {
           const facadeModuleDeps: Record<string, AssetDeps> = {};
           for (const [k, v] of Object.entries(bundle)) {
             if (v.type === "chunk" && v.facadeModuleId) {

@@ -114,7 +114,7 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
-        if (manager.buildType === "rsc") {
+        if (manager.buildType) {
           this.emitFile({
             type: "chunk",
             id,
@@ -138,10 +138,10 @@ export function vitePluginServerUseServer({
   const virtualPlugin = createVirtualPlugin(
     "server-references",
     async function () {
-      if (manager.buildType === "scan") {
-        return `export default {}`;
-      }
-      tinyassert(manager.buildType === "rsc");
+      // if (manager.buildType === "scan") {
+      //   return `export default {}`;
+      // }
+      tinyassert(manager.buildType === "parallel");
       await this.load({ id: "\0virtual:wait-for-idle" });
       let result = `export default {\n`;
       for (const id of manager.rscUseServerIds) {
@@ -162,6 +162,9 @@ function waitForIdlePlugin(): Plugin[] {
   const idlePromise = createManualPromise<void>();
   let done = false;
   const notIdle = debounce((...args) => {
+    if (done) {
+      console.log("[wait-for-idle:done-again]");
+    }
     console.log("[wait-for-idle:done]", { args });
     done = true;
     idlePromise.resolve();
