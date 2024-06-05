@@ -45,9 +45,6 @@ export function routeManifestPluginServer({
   ];
 }
 
-// TODO: route manifest also requires
-// - routeManifestPluginServer.buildEnd finishes before
-// - routeManifestPluginClient.generateBundle
 export function routeManifestPluginClient({
   manager,
 }: { manager: PluginStateManager }): Plugin[] {
