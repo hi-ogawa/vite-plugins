@@ -8,6 +8,10 @@
       }
     },
     {
+      "src": "^/(.*)\\?__rsc",
+      "dest": "/$1/index.data"
+    },
+    {
       "handle": "filesystem"
     }
   ]
