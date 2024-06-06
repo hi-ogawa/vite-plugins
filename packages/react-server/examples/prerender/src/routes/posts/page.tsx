@@ -1,3 +1,3 @@
 export default function Page() {
-  return <div>Choose posts from the menu</div>;
+  return <div>Select a post from the menu.</div>;
 }
