@@ -1,0 +1,28 @@
+{
+  "name": "@hiogawa/react-server-example-prerender",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
+    "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
+    "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "latest",
+    "react": "19.0.0-rc.0",
+    "react-dom": "19.0.0-rc.0",
+    "react-server-dom-webpack": "19.0.0-rc.0"
+  },
+  "devDependencies": {
+    "@hattip/adapter-node": "^0.0.44",
+    "@hiogawa/vite-plugin-ssr-middleware": "latest",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "latest"
+  }
+}
