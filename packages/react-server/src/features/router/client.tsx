@@ -10,7 +10,7 @@ import {
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
-  data: Promise<ServerRouterData>;
+  data: ServerRouterData;
 };
 
 export const LayoutStateContext = React.createContext<LayoutStateContextType>(
@@ -19,8 +19,7 @@ export const LayoutStateContext = React.createContext<LayoutStateContextType>(
 
 export function LayoutContent(props: { name: string }) {
   const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
-  return data.layout[props.name];
+  return ctx.data.layout[props.name];
 }
 
 export function LayoutRoot() {
