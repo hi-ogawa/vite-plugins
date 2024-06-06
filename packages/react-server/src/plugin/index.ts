@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
@@ -341,33 +342,19 @@ export function vitePluginReactServer(options?: {
             path.resolve("dist/server/__entry_ssr.js")
           );
           for (const route of routes) {
-            console.log(`:: ${route}`);
-            // stream
-            {
-              const url = new URL(route, "https://prerender.local");
-              const request = new Request(url);
-              const response = await entrySsr.handler(request);
-              tinyassert(response.ok);
-              const html = await response.text();
-              const htmlFile = path.join("dist/client", route, "index.html");
-              await fs.promises.mkdir(path.dirname(htmlFile), {
-                recursive: true,
-              });
-              await fs.promises.writeFile(htmlFile, html);
-            }
-            // ssr
-            {
-              const url = new URL(route, "https://prerender.local");
-              const request = new Request(url);
-              const response = await entrySsr.handler(request);
-              tinyassert(response.ok);
-              const html = await response.text();
-              const htmlFile = path.join("dist/client", route, "index.html");
-              await fs.promises.mkdir(path.dirname(htmlFile), {
-                recursive: true,
-              });
-              await fs.promises.writeFile(htmlFile, html);
-            }
+            console.log(`+ ${route}`);
+            const url = new URL(route, "https://prerender.local");
+            const request = new Request(url);
+            const { stream, ssr } = await entrySsr.prerender(request);
+            const html = await ssr.text();
+            const data = Readable.from(stream as any);
+            const htmlFile = path.join("dist/client", route, "index.html");
+            const dataFile = path.join("dist/client", route, "index.data");
+            await fs.promises.mkdir(path.dirname(htmlFile), {
+              recursive: true,
+            });
+            await fs.promises.writeFile(htmlFile, html);
+            await fs.promises.writeFile(dataFile, data);
           }
         }
       }
