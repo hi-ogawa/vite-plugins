@@ -232,7 +232,7 @@ export function vitePluginReactServer(options?: {
             ? {
                 input: options?.prerender
                   ? {
-                      __entry_ssr: "@hiogawa/react-server/entry-server",
+                      __entry_prerender: "@hiogawa/react-server/entry-server",
                     }
                   : undefined,
               }
@@ -338,14 +338,14 @@ export function vitePluginReactServer(options?: {
         if (options?.prerender) {
           console.log("▶▶▶ PRE-RENDER");
           const routes = await options.prerender();
-          const entrySsr: typeof import("../entry/server") = await import(
-            path.resolve("dist/server/__entry_ssr.js")
+          const entry: typeof import("../entry/server") = await import(
+            path.resolve("dist/server/__entry_prerender.js")
           );
           for (const route of routes) {
-            console.log(`+ ${route}`);
+            console.log(`  > ${route}`);
             const url = new URL(route, "https://prerender.local");
             const request = new Request(url);
-            const { stream, ssr } = await entrySsr.prerender(request);
+            const { stream, ssr } = await entry.prerender(request);
             const html = await ssr.text();
             const data = Readable.from(stream as any);
             const htmlFile = path.join("dist/client", route, "index.html");
@@ -361,10 +361,32 @@ export function vitePluginReactServer(options?: {
     },
   };
 
+  const previewPrerenderPlugin: Plugin = {
+    name: "preview-prerender",
+    apply: (_config, env) => !!(options?.prerender && env.isPreview),
+    configurePreviewServer(server) {
+      const outDir = server.config.build.outDir;
+      server.middlewares.use((req, res, next) => {
+        // rewrite url if `index.html` exists
+        const url = new URL(req.url!, "https://test.local");
+        if (fs.existsSync(path.join(outDir, url.pathname, "index.html"))) {
+          if (url.searchParams.has("__rsc")) {
+            req.url = path.posix.join(url.pathname, "index.data");
+            res.setHeader("content-type", "text/x-component;charset=utf-8");
+          } else {
+            req.url = path.posix.join(url.pathname, "index.html");
+          }
+        }
+        next();
+      });
+    },
+  };
+
   // plugins for main vite dev server (browser / ssr)
   return [
     rscParentPlugin,
     buildOrchestrationPlugin,
+    previewPrerenderPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
     vitePluginClientUseServer({
       manager,
