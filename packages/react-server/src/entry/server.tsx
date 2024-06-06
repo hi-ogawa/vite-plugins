@@ -71,7 +71,7 @@ export async function renderHtml(
 ) {
   initializeReactClientSsr();
 
-  const { default: reactServerDomClient } = await import(
+  const { default: ReactClient } = await import(
     "react-server-dom-webpack/client.edge"
   );
 
@@ -85,13 +85,15 @@ export async function renderHtml(
 
   const [stream1, stream2] = result.stream.tee();
 
-  const layoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerRouterData>(stream1, {
+  const layoutPromise = ReactClient.createFromReadableStream<ServerRouterData>(
+    stream1,
+    {
       ssrManifest: {
         moduleMap: createModuleMap(),
         moduleLoading: null,
       },
-    });
+    },
+  );
 
   const url = new URL(request.url);
   const history = createMemoryHistory({
