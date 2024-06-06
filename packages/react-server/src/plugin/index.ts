@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, createManualPromise, tinyassert } from "@hiogawa/utils";
 import {
   type ConfigEnv,
   type InlineConfig,
@@ -62,9 +62,16 @@ class PluginStateManager {
   config!: ResolvedConfig;
   configEnv!: ConfigEnv;
 
-  buildType?: "scan" | "rsc" | "client" | "ssr";
+  // buildType?: "scan" | "rsc" | "client" | "ssr";
+  buildType?: "parallel" | "ssr";
   buildContextServer?: Rollup.PluginContext;
   buildContextBrowser?: Rollup.PluginContext;
+  buildSteps = {
+    buildStartBrowser: createManualPromise<void>(),
+    buildStartServer: createManualPromise<void>(),
+    virtualClientReferenes: createManualPromise<void>(),
+    closeBundleServer: createManualPromise<void>(),
+  };
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
@@ -180,6 +187,30 @@ export function vitePluginReactServer(options?: {
             return code;
           }
           return;
+        },
+      },
+
+      // TODO:
+      // ensure both `buildContextBrowser` and `buildContextServer`
+      // are ready during `buildStart`
+      {
+        name: "build-steps-server",
+        apply: "build",
+        buildStart: {
+          order: "pre",
+          async handler() {
+            if (manager.buildType === "parallel") {
+              manager.buildContextServer = this;
+              manager.buildSteps.buildStartServer.resolve();
+              await manager.buildSteps.buildStartBrowser;
+            }
+          },
+        },
+        closeBundle: {
+          order: "post",
+          async handler() {
+            manager.buildSteps.closeBundleServer.resolve();
+          },
         },
       },
 
@@ -310,15 +341,19 @@ export function vitePluginReactServer(options?: {
         // manager.buildType = "scan";
         // await build(reactServerViteConfig);
 
-        console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
-        manager.buildType = "rsc";
-        await build(reactServerViteConfig);
+        console.log("▶▶▶ REACT SERVER BUILD (server, browser) [(1,2)/3]");
+        manager.buildType = "parallel";
+        await Promise.all([build(reactServerViteConfig), build()]);
 
-        console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
-        manager.buildType = "client";
-        await build();
+        // console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
+        // manager.buildType = "rsc";
+        // await build(reactServerViteConfig);
 
-        console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
+        // console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
+        // manager.buildType = "client";
+        // await build();
+
+        console.log("▶▶▶ REACT SERVER BUILD (ssr) [3/3]");
         manager.buildType = "ssr";
       }
     },
@@ -328,6 +363,20 @@ export function vitePluginReactServer(options?: {
   return [
     rscParentPlugin,
     buildOrchestrationPlugin,
+    {
+      name: "build-steps-browser",
+      apply: "build",
+      buildStart: {
+        order: "pre",
+        async handler() {
+          if (manager.buildType === "parallel") {
+            manager.buildContextBrowser = this;
+            manager.buildSteps.buildStartBrowser.resolve();
+            await manager.buildSteps.buildStartServer;
+          }
+        },
+      },
+    },
     vitePluginSilenceDirectiveBuildWarning(),
     vitePluginClientUseServer({
       manager,
@@ -350,7 +399,7 @@ export function vitePluginReactServer(options?: {
         `;
       }
       // build
-      if (manager.buildType === "client") {
+      if (manager.buildType === "parallel") {
         // import "runtime-client" for preload
         return /* js */ `
           import "${SERVER_CSS_PROXY}";

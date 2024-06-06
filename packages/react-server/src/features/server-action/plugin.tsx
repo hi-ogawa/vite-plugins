@@ -8,7 +8,7 @@ import {
   debounce,
   tinyassert,
 } from "@hiogawa/utils";
-import { type Plugin, type PluginOption, parseAstAsync } from "vite";
+import { type Plugin, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
   type CustomModuleMeta,
@@ -62,6 +62,13 @@ const $$proxy = (id, name) => createServerReference(id + "#" + name);
         id,
         outCode: output.toString(),
       });
+      if (manager.buildType === "parallel") {
+        tinyassert(manager.buildContextServer);
+        manager.buildContextServer.emitFile({
+          type: "chunk",
+          id: id.replace(/^\0/, ""),
+        });
+      }
       return {
         code: output.toString(),
         map: output.generateMap(),
@@ -92,7 +99,7 @@ export function vitePluginServerUseServer({
 }: {
   manager: PluginStateManager;
   runtimePath: string;
-}): PluginOption {
+}): Plugin[] {
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
@@ -114,7 +121,7 @@ export function vitePluginServerUseServer({
           id,
           outCode: output.toString(),
         });
-        if (manager.buildType === "rsc") {
+        if (manager.buildType) {
           this.emitFile({
             type: "chunk",
             id,
@@ -138,11 +145,12 @@ export function vitePluginServerUseServer({
   const virtualPlugin = createVirtualPlugin(
     "server-references",
     async function () {
-      if (manager.buildType === "scan") {
-        return `export default {}`;
-      }
-      tinyassert(manager.buildType === "rsc");
-      await this.load({ id: "\0virtual:wait-for-idle" });
+      // if (manager.buildType === "scan") {
+      //   return `export default {}`;
+      // }
+      tinyassert(manager.buildType === "parallel");
+      await manager.buildSteps.virtualClientReferenes;
+      console.log("[virtual:server-references]", manager.rscUseServerIds);
       let result = `export default {\n`;
       for (const id of manager.rscUseServerIds) {
         result += `"${hashString(id)}": () => import("${id}"),\n`;
@@ -153,19 +161,24 @@ export function vitePluginServerUseServer({
     },
   );
 
-  return [transformPlugin, virtualPlugin, waitForIdlePlugin()];
+  return [transformPlugin, virtualPlugin];
 }
 
 // https://github.com/rollup/rollup/issues/4985#issuecomment-1936333388
 // https://github.com/ArnaudBarre/downwind/blob/1d47b6a3f1e7bc271d0bb5bd96cfbbea68445510/src/vitePlugin.ts#L164
-function waitForIdlePlugin(): Plugin[] {
+export function waitForIdlePlugin(): Plugin[] {
   const idlePromise = createManualPromise<void>();
   let done = false;
   const notIdle = debounce((...args) => {
-    console.log("[wait-for-idle:done]", { args });
+    if (0) {
+      if (done) {
+        console.log("[wait-for-idle:done-again]");
+      }
+      console.log("[wait-for-idle:done]", { args });
+    }
     done = true;
     idlePromise.resolve();
-  }, 200);
+  }, 1000);
 
   return [
     {

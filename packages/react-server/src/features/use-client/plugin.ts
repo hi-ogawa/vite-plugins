@@ -19,6 +19,7 @@ import {
   createVirtualPlugin,
   hashString,
 } from "../../plugin/utils";
+import { waitForIdlePlugin } from "../server-action/plugin";
 
 const debug = createDebug("react-server:plugin:use-client");
 
@@ -147,11 +148,19 @@ export function vitePluginServerUseClient({
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
       manager.rscUseClientIds.add(id);
-      if (manager.buildType === "scan") {
-        // to discover server references imported only by client
-        // we keep code as is and continue crawling
-        return;
+      if (manager.buildType === "parallel") {
+        tinyassert(manager.buildContextBrowser);
+        manager.buildContextBrowser.emitFile({
+          type: "chunk",
+          // unwrap virtual
+          id: id.replace(/^\0/, ""),
+        });
       }
+      // if (manager.buildType === "scan") {
+      //   // to discover server references imported only by client
+      //   // we keep code as is and continue crawling
+      //   return;
+      // }
       return {
         code: output.toString(),
         map: output.generateMap(),
@@ -163,6 +172,7 @@ export function vitePluginServerUseClient({
       };
     },
   };
+
   return [useClientExternalPlugin, useClientPlugin];
 }
 
@@ -224,6 +234,7 @@ export function vitePluginClientUseClient({
 
   return [
     devExternalPlugin,
+    ...waitForIdlePlugin(),
 
     /**
      * emit client-references as dynamic import map
@@ -233,8 +244,16 @@ export function vitePluginClientUseClient({
      *   "some-file1": () => import("some-file1"),
      * }
      */
-    createVirtualPlugin("client-references", () => {
-      tinyassert(manager.buildType === "client" || manager.buildType === "ssr");
+    createVirtualPlugin("client-references", async () => {
+      tinyassert(manager.buildType);
+      if (manager.buildType === "parallel") {
+        tinyassert(manager.buildContextBrowser);
+        await manager.buildContextBrowser.load({
+          id: "\0virtual:wait-for-idle",
+        });
+        console.log("[virtual:client-references]", manager.rscUseClientIds);
+        manager.buildSteps.virtualClientReferenes.resolve();
+      }
       let result = `export default {\n`;
       for (let id of manager.rscUseClientIds) {
         // virtual module needs to be mapped back to the original form

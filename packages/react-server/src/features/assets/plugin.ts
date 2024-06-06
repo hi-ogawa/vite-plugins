@@ -116,7 +116,8 @@ export function vitePluginServerAssets({
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
-      if (manager.buildType === "client") {
+      if (manager.buildType) {
+        await manager.buildSteps.closeBundleServer;
         // TODO: probe manifest to collect css?
         const files = await fs.promises.readdir("./dist/rsc/assets", {
           withFileTypes: true,
