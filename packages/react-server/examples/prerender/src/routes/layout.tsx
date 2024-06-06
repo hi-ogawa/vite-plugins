@@ -1,28 +1,30 @@
 import { Link } from "@hiogawa/react-server/client";
+import { Hydrated } from "./_client";
 
 export default function Layout(props: React.PropsWithChildren) {
   return (
     <html>
       <head>
         <meta charSet="UTF-8" />
-        <title>React Server Starter</title>
+        <title>React Server Prerender</title>
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        <h3>React Server Starter</h3>
+        <h3>React Server Prerender</h3>
         <a
           href="https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server"
           target="_blank"
         >
           GitHub
         </a>
+        <Hydrated />
         <nav>
           <ul>
             <li>
               <Link href="/">Home</Link>
             </li>
             <li>
-              <Link href="/use-state">Counter (useState)</Link>
+              <Link href="/counter">Counter</Link>
             </li>
           </ul>
         </nav>
