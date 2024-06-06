@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { Page, test } from "@playwright/test";
 import { createReloadChecker, testNoJs, waitForHydration } from "./helper";
 
 test("basic @js", async ({ page }) => {
@@ -14,6 +14,8 @@ test("basic @js", async ({ page }) => {
   await page.getByText("Count: 1").click();
   await page.getByRole("button", { name: "-" }).click();
   await page.getByText("Count: 0").click();
+
+  await testDyanmicRoute(page);
 });
 
 testNoJs("basic @nojs", async ({ page }) => {
@@ -23,4 +25,14 @@ testNoJs("basic @nojs", async ({ page }) => {
   await page.getByRole("link", { name: "Counter" }).click();
   await page.goto("/counter");
   await page.getByText("Count: 0").click();
+
+  await testDyanmicRoute(page);
 });
+
+async function testDyanmicRoute(page: Page) {
+  await page.getByRole("link", { name: "Posts" }).click();
+  await page.waitForURL("/posts");
+  await page.getByText("Select a post from the menu.").click();
+  await page.getByRole("link", { name: "qui est esse" }).click();
+  await page.waitForURL("/posts/2");
+}
