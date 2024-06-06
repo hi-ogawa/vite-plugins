@@ -121,10 +121,11 @@ export function serverAssetsPluginClient({
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
       if (manager.buildType === "client") {
+        // shaky way to keep css module import side effect
         const code = manager.serverCssIds
-          .map((url) => `import "${url}";\n`)
+          .map((url) => `export * from "${url}";\n`)
           .join("");
-        return { code, map: null };
+        return { code, map: null, moduleSideEffects: "no-treeshake" };
       }
       tinyassert(false);
     }),
