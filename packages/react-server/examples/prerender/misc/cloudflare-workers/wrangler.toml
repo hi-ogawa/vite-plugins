@@ -1,6 +1,0 @@
-name = "react-server-starter"
-
-main = "dist/server/index.js"
-assets = "dist/client"
-workers_dev = true
-compatibility_date = "2024-01-01"
