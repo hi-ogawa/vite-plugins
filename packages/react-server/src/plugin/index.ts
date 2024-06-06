@@ -14,7 +14,8 @@ import {
 import { CSS_LANGS_RE } from "../features/assets/css";
 import {
   SERVER_CSS_PROXY,
-  vitePluginServerAssets,
+  serverAssertsPluginServer,
+  serverAssetsPluginClient,
 } from "../features/assets/plugin";
 import type { RouteManifest } from "../features/router/manifest";
 import {
@@ -65,6 +66,8 @@ class PluginStateManager {
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
+
+  serverCssIds: string[] = [];
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -146,6 +149,8 @@ export function vitePluginReactServer(options?: {
       }),
 
       routeManifestPluginServer({ manager }),
+
+      serverAssertsPluginServer({ manager }),
 
       // this virtual is not necessary anymore but has been used in the past
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
@@ -339,7 +344,7 @@ export function vitePluginReactServer(options?: {
       ssrRuntimePath: RUNTIME_SERVER_PATH,
     }),
     ...vitePluginClientUseClient({ manager }),
-    ...vitePluginServerAssets({ manager }),
+    ...serverAssetsPluginClient({ manager }),
     ...routeManifestPluginClient({ manager }),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev

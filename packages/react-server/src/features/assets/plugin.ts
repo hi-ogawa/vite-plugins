@@ -1,7 +1,11 @@
 import fs from "node:fs";
-import path from "node:path";
 import { tinyassert, typedBoolean } from "@hiogawa/utils";
-import type { Manifest, Plugin, ViteDevServer } from "vite";
+import {
+  type Manifest,
+  type Plugin,
+  type ViteDevServer,
+  isCSSRequest,
+} from "vite";
 import { $__global } from "../../lib/global";
 import type { PluginStateManager } from "../../plugin";
 import {
@@ -19,7 +23,7 @@ export interface SsrAssetsType {
 
 export const SERVER_CSS_PROXY = "virtual:server-css-proxy.js";
 
-export function vitePluginServerAssets({
+export function serverAssetsPluginClient({
   manager,
 }: { manager: PluginStateManager }): Plugin[] {
   return [
@@ -117,19 +121,35 @@ export function vitePluginServerAssets({
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
       if (manager.buildType === "client") {
-        // TODO: probe manifest to collect css?
-        const files = await fs.promises.readdir("./dist/rsc/assets", {
-          withFileTypes: true,
-        });
-        const code = files
-          .filter((f) => f.isFile() && f.name.endsWith(".css"))
-          .map((f) => path.join(f.path, f.name))
-          .map((f) => `import "/${f}";\n`)
+        const code = manager.serverCssIds
+          .map((url) => `import "${url}";\n`)
           .join("");
-        return code;
+        return { code, map: null };
       }
       tinyassert(false);
     }),
+  ];
+}
+
+export function serverAssertsPluginServer({
+  manager,
+}: { manager: PluginStateManager }): Plugin[] {
+  // TODO
+  // - css should be processed on server plugin? (currently only id is passed over to client)
+  // - css code split by route?
+  // - css ordering?
+  return [
+    {
+      name: serverAssertsPluginServer.name + ":build",
+      apply: "build",
+      buildEnd() {
+        if (manager.buildType === "rsc") {
+          manager.serverCssIds = [...this.getModuleIds()].filter((id) =>
+            isCSSRequest(id),
+          );
+        }
+      },
+    },
   ];
 }
 
