@@ -85,15 +85,13 @@ export async function renderHtml(
 
   const [stream1, stream2] = result.stream.tee();
 
-  const layoutPromise = ReactClient.createFromReadableStream<ServerRouterData>(
-    stream1,
-    {
+  const serverData =
+    await ReactClient.createFromReadableStream<ServerRouterData>(stream1, {
       ssrManifest: {
         moduleMap: createModuleMap(),
         moduleLoading: null,
       },
-    },
-  );
+    });
 
   const url = new URL(request.url);
   const history = createMemoryHistory({
@@ -105,7 +103,7 @@ export async function renderHtml(
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
-      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
+      <LayoutStateContext.Provider value={{ data: serverData }}>
         <RouteManifestContext.Provider value={routeManifest}>
           <RouteAssetLinks />
           <LayoutRoot />

@@ -1,4 +1,4 @@
-import { createDebug, memoize } from "@hiogawa/utils";
+import { createDebug } from "@hiogawa/utils";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import {
@@ -36,7 +36,7 @@ export async function start() {
   const history = createEncodedBrowserHistory();
   const router = new Router(history);
 
-  let $__setLayout: (v: Promise<ServerRouterData>) => void;
+  let $__setLayout: (v: ServerRouterData) => void;
   let $__startActionTransition: React.TransitionStartFunction;
 
   //
@@ -58,7 +58,7 @@ export async function start() {
       fetch(request),
       { callServer },
     );
-    $__startActionTransition(() => $__setLayout(result));
+    $__startActionTransition(async () => $__setLayout(await result));
     return (await result).action?.data;
   };
 
@@ -72,7 +72,6 @@ export async function start() {
       readStreamScript<string>().pipeThrough(new TextEncoderStream()),
       { callServer },
     );
-  const initialLayoutPromise = Promise.resolve(initialLayout);
 
   //
   // browser root
@@ -80,23 +79,18 @@ export async function start() {
 
   function LayoutHandler(props: React.PropsWithChildren) {
     const [layoutPromise, setLayoutPromise] =
-      React.useState<Promise<ServerRouterData>>(initialLayoutPromise);
+      React.useState<ServerRouterData>(initialLayout);
 
-    // very shaky trick to merge with current layout
-    $__setLayout = (nextPromise) => {
-      setLayoutPromise(
-        memoize(async (currentPromise: Promise<ServerRouterData>) => {
-          const current = await currentPromise;
-          const next = await nextPromise;
-          return {
-            action: next.action,
-            layout: {
-              ...current.layout,
-              ...next.layout,
-            },
-          } satisfies ServerRouterData;
-        }),
-      );
+    $__setLayout = (next) => {
+      setLayoutPromise((current) => {
+        return {
+          action: next.action,
+          layout: {
+            ...current.layout,
+            ...next.layout,
+          },
+        } satisfies ServerRouterData;
+      });
     };
 
     const [isPending, startTransition] = React.useTransition();
@@ -135,9 +129,9 @@ export async function start() {
           revalidate: ROUTER_REVALIDATE_KEY in location.state,
         }),
       );
-      startTransition(() => {
+      startTransition(async () => {
         $__setLayout(
-          ReactClient.createFromFetch<ServerRouterData>(fetch(request), {
+          await ReactClient.createFromFetch<ServerRouterData>(fetch(request), {
             callServer,
           }),
         );
