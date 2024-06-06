@@ -69,9 +69,8 @@ class PluginStateManager {
   buildSteps = {
     buildStartBrowser: createManualPromise<void>(),
     buildStartServer: createManualPromise<void>(),
-    buildEndBrowser: createManualPromise<void>(),
-    buildEndServer: createManualPromise<void>(),
     virtualClientReferenes: createManualPromise<void>(),
+    closeBundleServer: createManualPromise<void>(),
   };
 
   routeToClientReferences: Record<string, string[]> = {};
@@ -207,13 +206,10 @@ export function vitePluginReactServer(options?: {
             }
           },
         },
-        buildEnd: {
+        closeBundle: {
           order: "post",
           async handler() {
-            if (manager.buildType === "parallel") {
-              manager.buildSteps.buildEndServer.resolve();
-              await manager.buildSteps.buildEndBrowser;
-            }
+            manager.buildSteps.closeBundleServer.resolve();
           },
         },
       },
@@ -377,15 +373,6 @@ export function vitePluginReactServer(options?: {
             manager.buildContextBrowser = this;
             manager.buildSteps.buildStartBrowser.resolve();
             await manager.buildSteps.buildStartServer;
-          }
-        },
-      },
-      buildEnd: {
-        order: "post",
-        async handler() {
-          if (manager.buildType === "parallel") {
-            manager.buildSteps.buildEndBrowser.resolve();
-            await manager.buildSteps.buildEndServer;
           }
         },
       },
