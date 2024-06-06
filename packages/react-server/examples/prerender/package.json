@@ -7,6 +7,8 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
+    "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
     "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
@@ -18,8 +20,9 @@
     "react-server-dom-webpack": "19.0.0-rc.0"
   },
   "devDependencies": {
-    "@hattip/adapter-node": "^0.0.44",
+    "@hiogawa/utils-node": "^0.0.1",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
+    "@playwright/test": "^1.42.1",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "^4.2.1",

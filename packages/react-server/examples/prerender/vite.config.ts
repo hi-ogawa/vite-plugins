@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginReactServer({
-      prerender: async () => ["/", "/use-state"],
+      prerender: async () => ["/", "/counter"],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({

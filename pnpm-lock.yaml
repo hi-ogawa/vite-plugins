@@ -211,12 +211,15 @@ importers:
         specifier: 19.0.0-rc.0
         version: 19.0.0-rc.0(react-dom@19.0.0-rc.0)(react@19.0.0-rc.0)(webpack@5.90.3)
     devDependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.44
-        version: 0.0.44
+      '@hiogawa/utils-node':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
+      '@playwright/test':
+        specifier: ^1.42.1
+        version: 1.42.1
       '@types/react':
         specifier: 18.3.1
         version: 18.3.1
@@ -2141,6 +2144,10 @@ packages:
       unocss: '*'
     dependencies:
       unocss: 0.58.6(postcss@8.4.38)(vite@5.2.3)
+    dev: true
+
+  /@hiogawa/utils-node@0.0.1:
+    resolution: {integrity: sha512-vEir6KhApTlPPT+0wX85wglFgZjxG/WZGjWGahSR7+ltNkpY0OpmxozbF5sLodYgXPObTK8cKgsQ4nzFLtZQ8g==}
     dev: true
 
   /@hiogawa/utils@1.7.0:
