@@ -418,7 +418,7 @@ test("unocss hmr @dev", async ({ page, browser }) => {
   ).toHaveCSS("font-weight", "300");
 });
 
-test("react-server css @js", async ({ page }) => {
+test("react-server css normal @js", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/css");
@@ -426,18 +426,28 @@ test("react-server css @js", async ({ page }) => {
     "background-color",
     "rgb(250, 250, 200)",
   );
+});
+
+testNoJs("react-server css normal @nojs", async ({ page }) => {
+  await page.goto("/test/css");
+  await expect(page.getByText("css normal")).toHaveCSS(
+    "background-color",
+    "rgb(250, 250, 200)",
+  );
+});
+
+test("react-server css module @js", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/css");
   await expect(page.getByText("css module")).toHaveCSS(
     "background-color",
     "rgb(200, 250, 250)",
   );
 });
 
-testNoJs("react-server css @nojs", async ({ page }) => {
+testNoJs("react-server css module @nojs", async ({ page }) => {
   await page.goto("/test/css");
-  await expect(page.getByText("css normal")).toHaveCSS(
-    "background-color",
-    "rgb(250, 250, 200)",
-  );
   await expect(page.getByText("css module")).toHaveCSS(
     "background-color",
     "rgb(200, 250, 250)",
