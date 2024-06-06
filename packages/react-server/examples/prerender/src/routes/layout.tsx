@@ -26,6 +26,9 @@ export default function Layout(props: React.PropsWithChildren) {
             <li>
               <Link href="/counter">Counter</Link>
             </li>
+            <li>
+              <Link href="/posts">Posts</Link>
+            </li>
           </ul>
         </nav>
         {props.children}
