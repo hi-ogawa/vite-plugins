@@ -213,6 +213,7 @@ export function vitePluginReactServer(options?: {
             "react",
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
+            "react-dom",
             "react-dom/client",
             "react-server-dom-webpack/client.browser",
             "@hiogawa/react-server > @tanstack/history",
