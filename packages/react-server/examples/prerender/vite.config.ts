@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
 import {
   vitePluginLogger,
