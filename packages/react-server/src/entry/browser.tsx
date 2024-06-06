@@ -29,7 +29,7 @@ const debug = createDebug("react-server:browser");
 export async function start() {
   initializeReactClientBrowser();
 
-  const { default: reactServerDomClient } = await import(
+  const { default: ReactClient } = await import(
     "react-server-dom-webpack/client.browser"
   );
 
@@ -50,11 +50,11 @@ export async function start() {
       }),
       {
         method: "POST",
-        body: await reactServerDomClient.encodeReply(args),
+        body: await ReactClient.encodeReply(args),
         headers: wrapStreamActionRequest(id),
       },
     );
-    const result = reactServerDomClient.createFromFetch<ServerRouterData>(
+    const result = ReactClient.createFromFetch<ServerRouterData>(
       fetch(request),
       { callServer },
     );
@@ -68,7 +68,7 @@ export async function start() {
   // prepare initial layout data from inline <script>
   // TODO: needs to await for hydration formState. does it affect startup perf?
   const initialLayout =
-    await reactServerDomClient.createFromReadableStream<ServerRouterData>(
+    await ReactClient.createFromReadableStream<ServerRouterData>(
       readStreamScript<string>().pipeThrough(new TextEncoderStream()),
       { callServer },
     );
@@ -137,12 +137,9 @@ export async function start() {
       );
       startTransition(() => {
         $__setLayout(
-          reactServerDomClient.createFromFetch<ServerRouterData>(
-            fetch(request),
-            {
-              callServer,
-            },
-          ),
+          ReactClient.createFromFetch<ServerRouterData>(fetch(request), {
+            callServer,
+          }),
         );
       });
     }, [location]);
