@@ -1,6 +1,6 @@
 import { createDebug, memoize } from "@hiogawa/utils";
 import React from "react";
-import reactDomClient from "react-dom/client";
+import ReactDOMClient from "react-dom/client";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -12,7 +12,7 @@ import {
 import type { ServerRouterData } from "../features/router/utils";
 import { wrapStreamActionRequest } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
-import { initializeWebpackBrowser } from "../features/use-client/browser";
+import { initializeReactClientBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
 import {
   Router,
@@ -27,9 +27,9 @@ import { readStreamScript } from "../utils/stream-script";
 const debug = createDebug("react-server:browser");
 
 export async function start() {
-  initializeWebpackBrowser();
+  initializeReactClientBrowser();
 
-  const { default: reactServerDomClient } = await import(
+  const { default: ReactClient } = await import(
     "react-server-dom-webpack/client.browser"
   );
 
@@ -50,11 +50,11 @@ export async function start() {
       }),
       {
         method: "POST",
-        body: await reactServerDomClient.encodeReply(args),
+        body: await ReactClient.encodeReply(args),
         headers: wrapStreamActionRequest(id),
       },
     );
-    const result = reactServerDomClient.createFromFetch<ServerRouterData>(
+    const result = ReactClient.createFromFetch<ServerRouterData>(
       fetch(request),
       { callServer },
     );
@@ -68,7 +68,7 @@ export async function start() {
   // prepare initial layout data from inline <script>
   // TODO: needs to await for hydration formState. does it affect startup perf?
   const initialLayout =
-    await reactServerDomClient.createFromReadableStream<ServerRouterData>(
+    await ReactClient.createFromReadableStream<ServerRouterData>(
       readStreamScript<string>().pipeThrough(new TextEncoderStream()),
       { callServer },
     );
@@ -137,12 +137,9 @@ export async function start() {
       );
       startTransition(() => {
         $__setLayout(
-          reactServerDomClient.createFromFetch<ServerRouterData>(
-            fetch(request),
-            {
-              callServer,
-            },
-          ),
+          ReactClient.createFromFetch<ServerRouterData>(fetch(request), {
+            callServer,
+          }),
         );
       });
     }, [location]);
@@ -178,9 +175,9 @@ export async function start() {
 
   // full client render on SSR error
   if (document.documentElement.dataset["noHydrate"]) {
-    reactDomClient.createRoot(document).render(reactRootEl);
+    ReactDOMClient.createRoot(document).render(reactRootEl);
   } else {
-    reactDomClient.hydrateRoot(document, reactRootEl, {
+    ReactDOMClient.hydrateRoot(document, reactRootEl, {
       formState: initialLayout.action?.data,
     });
   }

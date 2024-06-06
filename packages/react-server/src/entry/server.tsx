@@ -1,6 +1,6 @@
 import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
-import reactDomServer from "react-dom/server.edge";
+import ReactDOMServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import {
@@ -13,7 +13,7 @@ import type { RouteManifest } from "../features/router/manifest";
 import type { ServerRouterData } from "../features/router/utils";
 import {
   createModuleMap,
-  initializeWebpackSsr,
+  initializeReactClientSsr,
   ssrImportPromiseCache,
 } from "../features/use-client/server";
 import { Router, RouterContext } from "../lib/client/router";
@@ -69,9 +69,9 @@ export async function renderHtml(
   request: Request,
   result: ReactServerHandlerStreamResult,
 ) {
-  initializeWebpackSsr();
+  initializeReactClientSsr();
 
-  const { default: reactServerDomClient } = await import(
+  const { default: ReactClient } = await import(
     "react-server-dom-webpack/client.edge"
   );
 
@@ -85,13 +85,15 @@ export async function renderHtml(
 
   const [stream1, stream2] = result.stream.tee();
 
-  const layoutPromise =
-    reactServerDomClient.createFromReadableStream<ServerRouterData>(stream1, {
+  const layoutPromise = ReactClient.createFromReadableStream<ServerRouterData>(
+    stream1,
+    {
       ssrManifest: {
         moduleMap: createModuleMap(),
         moduleLoading: null,
       },
-    });
+    },
+  );
 
   const url = new URL(request.url);
   const history = createMemoryHistory({
@@ -139,7 +141,7 @@ export async function renderHtml(
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
   try {
-    ssrStream = await reactDomServer.renderToReadableStream(reactRootEl, {
+    ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
       formState: result.actionResult?.data,
       bootstrapModules: url.search.includes("__nojs")
         ? []
@@ -174,7 +176,7 @@ export async function renderHtml(
         </body>
       </html>
     );
-    ssrStream = await reactDomServer.renderToReadableStream(errorRoot, {
+    ssrStream = await ReactDOMServer.renderToReadableStream(errorRoot, {
       bootstrapModules: assets.bootstrapModules,
     });
   }
