@@ -337,13 +337,13 @@ export function vitePluginReactServer(options?: {
         });
 
         if (options?.prerender) {
-          console.log("▶▶▶ PRE-RENDER");
+          console.log("▶▶▶ PRERENDER");
           const routes = await options.prerender();
           const entry: typeof import("../entry/server") = await import(
             path.resolve("dist/server/__entry_prerender.js")
           );
           for (const route of routes) {
-            console.log(`  > ${route}`);
+            console.log(`  • ${route}`);
             const url = new URL(route, "https://prerender.local");
             const request = new Request(url);
             const { stream, ssr } = await entry.prerender(request);
