@@ -88,6 +88,7 @@ export async function start() {
         memoize(async (currentPromise: Promise<ServerRouterData>) => {
           const current = await currentPromise;
           const next = await nextPromise;
+          // TODO: tweak merge to reduce unnecessary re-rendering
           return {
             action: next.action,
             layout: {

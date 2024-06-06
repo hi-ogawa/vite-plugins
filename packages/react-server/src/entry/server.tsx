@@ -53,6 +53,22 @@ export async function handler(request: Request): Promise<Response> {
   return renderHtml(request, result);
 }
 
+// return stream and ssr at once for prerender
+export async function __prerender(
+  request: Request,
+): Promise<{ stream: ReadableStream<Uint8Array>; ssr: Response }> {
+  const reactServer = await importReactServer();
+
+  const result = await reactServer.handler({ request });
+  tinyassert(!(result instanceof Response));
+
+  const [stream, stream2] = result.stream.tee();
+  result.stream = stream2;
+
+  const ssr = await renderHtml(request, result);
+  return { stream, ssr };
+}
+
 export async function importReactServer(): Promise<
   typeof import("./react-server")
 > {
