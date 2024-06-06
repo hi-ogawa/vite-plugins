@@ -38,7 +38,7 @@ async function ssrImport(id: string) {
   }
 }
 
-export function initializeWebpackSsr() {
+export function initializeReactClientSsr() {
   Object.assign(globalThis, {
     __webpack_require__: ssrWebpackRequire,
     __webpack_chunk_load__: () => {

@@ -1,6 +1,6 @@
 import { createDebug, memoize } from "@hiogawa/utils";
 import React from "react";
-import reactDomClient from "react-dom/client";
+import ReactDOMClient from "react-dom/client";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -12,7 +12,7 @@ import {
 import type { ServerRouterData } from "../features/router/utils";
 import { wrapStreamActionRequest } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
-import { initializeWebpackBrowser } from "../features/use-client/browser";
+import { initializeReactClientBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
 import {
   Router,
@@ -27,7 +27,7 @@ import { readStreamScript } from "../utils/stream-script";
 const debug = createDebug("react-server:browser");
 
 export async function start() {
-  initializeWebpackBrowser();
+  initializeReactClientBrowser();
 
   const { default: reactServerDomClient } = await import(
     "react-server-dom-webpack/client.browser"
@@ -178,9 +178,9 @@ export async function start() {
 
   // full client render on SSR error
   if (document.documentElement.dataset["noHydrate"]) {
-    reactDomClient.createRoot(document).render(reactRootEl);
+    ReactDOMClient.createRoot(document).render(reactRootEl);
   } else {
-    reactDomClient.hydrateRoot(document, reactRootEl, {
+    ReactDOMClient.hydrateRoot(document, reactRootEl, {
       formState: initialLayout.action?.data,
     });
   }

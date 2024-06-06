@@ -5,7 +5,7 @@ import {
   objectPick,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
-import reactServerDomServer from "react-server-dom-webpack/server.edge";
+import ReactServer from "react-server-dom-webpack/server.edge";
 import {
   type LayoutRequest,
   type ServerRouterData,
@@ -16,7 +16,7 @@ import {
   type ActionResult,
   createActionBundlerConfig,
   importServerAction,
-  initializeWebpackReactServer,
+  initializeReactServer,
   serverReferenceImportPromiseCache,
 } from "../features/server-action/react-server";
 import { unwrapStreamActionRequest } from "../features/server-action/utils";
@@ -51,7 +51,7 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
-  initializeWebpackReactServer();
+  initializeReactServer();
 
   if (import.meta.env.DEV) {
     serverReferenceImportPromiseCache.clear();
@@ -101,7 +101,7 @@ async function render({
     (v) => result[`${v.type}s`][v.name],
   );
   const bundlerConfig = createBundlerConfig();
-  return reactServerDomServer.renderToReadableStream<ServerRouterData>(
+  return ReactServer.renderToReadableStream<ServerRouterData>(
     {
       layout: nodeMap,
       action: actionResult
@@ -168,21 +168,18 @@ async function actionHandler({ request }: { request: Request }) {
     const body = contentType?.startsWith("multipart/form-data")
       ? await request.formData()
       : await request.text();
-    const args = await reactServerDomServer.decodeReply(body);
+    const args = await ReactServer.decodeReply(body);
     const action = await importServerAction(streamAction.id);
     boundAction = () => action.apply(null, args);
   } else {
     const formData = await request.formData();
-    const decodedAction = await reactServerDomServer.decodeAction(
+    const decodedAction = await ReactServer.decodeAction(
       formData,
       createActionBundlerConfig(),
     );
     boundAction = async () => {
       const result = await decodedAction();
-      const formState = await reactServerDomServer.decodeFormState(
-        result,
-        formData,
-      );
+      const formState = await ReactServer.decodeFormState(result, formData);
       return formState;
     };
   }

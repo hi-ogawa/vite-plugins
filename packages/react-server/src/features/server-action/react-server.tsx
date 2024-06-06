@@ -1,5 +1,5 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
-import reactServerDomWebpack from "react-server-dom-webpack/server.edge";
+import ReactServer from "react-server-dom-webpack/server.edge";
 import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
 
@@ -14,7 +14,7 @@ export function registerServerReference(
   if (typeof action !== "function") {
     return action;
   }
-  return reactServerDomWebpack.registerServerReference(action, id, name);
+  return ReactServer.registerServerReference(action, id, name);
 }
 
 export type ActionResult = {
@@ -64,7 +64,7 @@ const serverReferenceWebpackRequire = memoize(importServerReference, {
   cache: serverReferenceImportPromiseCache,
 });
 
-export function initializeWebpackReactServer() {
+export function initializeReactServer() {
   Object.assign(globalThis, {
     __vite_react_server_webpack_require__: serverReferenceWebpackRequire,
     __vite_react_server_webpack_chunk_load__: () => {
