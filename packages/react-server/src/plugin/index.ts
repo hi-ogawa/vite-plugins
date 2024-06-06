@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
@@ -98,6 +100,7 @@ const manager: PluginStateManager = ((
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
+  prerender?: () => Promise<string[]>;
 }): Plugin[] {
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
@@ -225,7 +228,13 @@ export function vitePluginReactServer(options?: {
           manifest: true,
           outDir: env.isSsrBuild ? "dist/server" : "dist/client",
           rollupOptions: env.isSsrBuild
-            ? undefined
+            ? {
+                input: options?.prerender
+                  ? {
+                      __entry_ssr: "@hiogawa/react-server/entry-server",
+                    }
+                  : undefined,
+              }
             : {
                 input: ENTRY_CLIENT_WRAPPER,
               },
@@ -324,6 +333,43 @@ export function vitePluginReactServer(options?: {
             ssr: true,
           },
         });
+
+        if (options?.prerender) {
+          console.log("▶▶▶ PRE-RENDER");
+          const routes = await options.prerender();
+          const entrySsr: typeof import("../entry/server") = await import(
+            path.resolve("dist/server/__entry_ssr.js")
+          );
+          for (const route of routes) {
+            console.log(`:: ${route}`);
+            // stream
+            {
+              const url = new URL(route, "https://prerender.local");
+              const request = new Request(url);
+              const response = await entrySsr.handler(request);
+              tinyassert(response.ok);
+              const html = await response.text();
+              const htmlFile = path.join("dist/client", route, "index.html");
+              await fs.promises.mkdir(path.dirname(htmlFile), {
+                recursive: true,
+              });
+              await fs.promises.writeFile(htmlFile, html);
+            }
+            // ssr
+            {
+              const url = new URL(route, "https://prerender.local");
+              const request = new Request(url);
+              const response = await entrySsr.handler(request);
+              tinyassert(response.ok);
+              const html = await response.text();
+              const htmlFile = path.join("dist/client", route, "index.html");
+              await fs.promises.mkdir(path.dirname(htmlFile), {
+                recursive: true,
+              });
+              await fs.promises.writeFile(htmlFile, html);
+            }
+          }
+        }
       }
     },
   };
