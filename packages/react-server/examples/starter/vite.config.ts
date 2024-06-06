@@ -11,10 +11,7 @@ export default defineConfig({
   clearScreen: false,
   plugins: [
     react(),
-    // TODO: prepare separate example examples/ssg
-    vitePluginReactServer({
-      prerender: async () => ["/", "/use-state"],
-    }),
+    vitePluginReactServer(),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
