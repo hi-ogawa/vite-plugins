@@ -19,7 +19,7 @@ export function wrapStreamRequestUrl(
   return newUrl.toString();
 }
 
-export function unwrapStreamRequest2(request: Request) {
+export function unwrapStreamRequest(request: Request) {
   const url = new URL(request.url);
   const isStream = url.pathname.endsWith(RSC_PATH);
   if (!isStream) {
