@@ -5,8 +5,9 @@ import {
 } from "../router/utils";
 import type { ActionResult } from "../server-action/react-server";
 
-// TODO: use accept header x-component?
-const RSC_PARAM = "__rsc";
+// encode flight request as path for the ease of ssg deployment
+const RSC_PATH = "__f.data";
+const RSC_PARAM = "__f";
 
 type StreamRequestParam = {
   lastPathname?: string;
@@ -19,6 +20,7 @@ export function wrapStreamRequestUrl(
   param: StreamRequestParam,
 ): string {
   const newUrl = new URL(url, window.location.href);
+  newUrl.pathname += RSC_PATH;
   newUrl.searchParams.set(RSC_PARAM, JSON.stringify(param));
   return newUrl.toString();
 }
@@ -28,6 +30,11 @@ export function unwrapStreamRequest(
   actionResult?: ActionResult,
 ) {
   const url = new URL(request.url);
+  let isStream = false;
+  if (url.pathname.endsWith(RSC_PATH)) {
+    isStream = true;
+    url.pathname = url.pathname.slice(0, -RSC_PATH.length);
+  }
   const rscParam = url.searchParams.get(RSC_PARAM);
   url.searchParams.delete(RSC_PARAM);
 
@@ -48,6 +55,6 @@ export function unwrapStreamRequest(
       headers: request.headers,
     }),
     layoutRequest,
-    isStream: Boolean(rscParam),
+    isStream,
   };
 }

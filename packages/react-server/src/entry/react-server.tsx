@@ -160,6 +160,7 @@ function createRouter() {
 
 // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
 async function actionHandler({ request }: { request: Request }) {
+  // TODO: normalize stream request
   const context = new ActionContext(request);
   const streamAction = unwrapStreamActionRequest(request);
   let boundAction: Function;
