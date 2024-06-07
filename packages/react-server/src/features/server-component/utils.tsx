@@ -15,7 +15,7 @@ export function wrapStreamRequestUrl(
 ): string {
   const newUrl = new URL(url, window.location.href);
   newUrl.pathname = posixJoin(newUrl.pathname, RSC_PATH);
-  // TODO: remove params on prerender
+  // TODO: remove params on prerendered paths for better caching
   newUrl.searchParams.set(RSC_PARAM, JSON.stringify(param));
   return newUrl.toString();
 }
