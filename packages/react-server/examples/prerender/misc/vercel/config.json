@@ -8,22 +8,6 @@
       }
     },
     {
-      "src": "^(.*)",
-      "has": [
-        {
-          "type": "query",
-          "key": "__rsc"
-        }
-      ],
-      "dest": "$1/index.data"
-    },
-    {
-      "src": "^(.*)/index.data$",
-      "headers": {
-        "content-type": "text/x-component;charset=utf-8"
-      }
-    },
-    {
       "handle": "filesystem"
     }
   ]
