@@ -1,10 +1,3 @@
-import { objectPickBy } from "@hiogawa/utils";
-import {
-  createLayoutContentRequest,
-  getNewLayoutContentKeys,
-} from "../router/utils";
-import type { ActionResult } from "../server-action/react-server";
-
 // encode flight request as path for the ease of ssg deployment
 export const RSC_PATH = "/__f.data";
 const RSC_PARAM = "__f";
@@ -49,41 +42,6 @@ export function unwrapStreamRequest2(request: Request) {
     streamParam: rawParam
       ? (JSON.parse(rawParam) as StreamRequestParam)
       : undefined,
-  };
-}
-
-export function unwrapStreamRequest(
-  request: Request,
-  actionResult?: ActionResult,
-) {
-  const url = new URL(request.url);
-  let isStream = false;
-  if (url.pathname.endsWith(RSC_PATH)) {
-    isStream = true;
-    url.pathname = url.pathname.slice(0, -RSC_PATH.length) || "/";
-  }
-  const rscParam = url.searchParams.get(RSC_PARAM);
-  url.searchParams.delete(RSC_PARAM);
-
-  // TODO: separate this part
-  let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (rscParam && !actionResult?.context.revalidate) {
-    const param = JSON.parse(rscParam) as StreamRequestParam;
-    if (param.lastPathname && !param.revalidate) {
-      const newKeys = getNewLayoutContentKeys(param.lastPathname, url.pathname);
-      layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
-        newKeys.includes(k),
-      );
-    }
-  }
-
-  return {
-    request: new Request(url, {
-      method: request.method,
-      headers: request.headers,
-    }),
-    layoutRequest,
-    isStream,
   };
 }
 
