@@ -10,7 +10,7 @@ import {
   routerRevalidate,
 } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
-import { wrapStreamRequestUrl } from "../features/server-component/utils";
+import { createStreamRequest } from "../features/server-component/utils";
 import { initializeReactClientBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
 import {
@@ -43,16 +43,15 @@ export async function start() {
   //
   const callServer: CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
-    const request = new Request(
-      wrapStreamRequestUrl(history.location.href, {
-        lastPathname: history.location.pathname,
-        actionId: id,
-      }),
-      {
-        method: "POST",
-        body: await ReactClient.encodeReply(args),
-      },
-    );
+    const { url, headers } = createStreamRequest(history.location.href, {
+      lastPathname: history.location.pathname,
+      actionId: id,
+    });
+    const request = new Request(url, {
+      method: "POST",
+      body: await ReactClient.encodeReply(args),
+      headers,
+    });
     const result = ReactClient.createFromFetch<ServerRouterData>(
       fetch(request),
       { callServer },
@@ -128,12 +127,10 @@ export async function start() {
         pathname: location.pathname,
         lastPathname,
       });
-      const request = new Request(
-        wrapStreamRequestUrl(location.href, {
-          lastPathname,
-          revalidate: ROUTER_REVALIDATE_KEY in location.state,
-        }),
-      );
+      const request = createStreamRequest(location.href, {
+        lastPathname,
+        revalidate: ROUTER_REVALIDATE_KEY in location.state,
+      });
       startTransition(() => {
         $__setLayout(
           ReactClient.createFromFetch<ServerRouterData>(fetch(request), {
