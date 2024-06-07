@@ -1,26 +1,11 @@
 {
   "version": 3,
+  "trailingSlash": false,
   "routes": [
     {
       "src": "^/assets/(.*)$",
       "headers": {
         "cache-control": "public, immutable, max-age=31536000"
-      }
-    },
-    {
-      "src": "^(.*)",
-      "has": [
-        {
-          "type": "query",
-          "key": "__rsc"
-        }
-      ],
-      "dest": "$1/index.data"
-    },
-    {
-      "src": "^(.*)/index.data$",
-      "headers": {
-        "content-type": "text/x-component;charset=utf-8"
       }
     },
     {
