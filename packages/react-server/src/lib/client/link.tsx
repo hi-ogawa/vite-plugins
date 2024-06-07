@@ -96,13 +96,13 @@ export function LinkForm({
 }
 
 function mergeHandlers(
-  handler1?: Function,
-  handler2?: Function,
+  ...handlers: (Function | undefined)[]
 ): (e: React.SyntheticEvent) => void {
   return (e) => {
-    if (handler1) handler1(e);
-    if (e.isPropagationStopped()) return;
-    if (handler2) handler2(e);
+    for (const handler of handlers) {
+      if (e.isPropagationStopped()) break;
+      if (handler) handler(e);
+    }
   };
 }
 
