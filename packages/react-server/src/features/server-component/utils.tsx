@@ -6,7 +6,7 @@ import {
 import type { ActionResult } from "../server-action/react-server";
 
 // encode flight request as path for the ease of ssg deployment
-const RSC_PATH = "__f.data";
+export const RSC_PATH = "__f.data";
 const RSC_PARAM = "__f";
 
 type StreamRequestParam = {
