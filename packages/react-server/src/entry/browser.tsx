@@ -10,7 +10,6 @@ import {
   routerRevalidate,
 } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
-import { wrapStreamActionRequest } from "../features/server-action/utils";
 import { wrapStreamRequestUrl } from "../features/server-component/utils";
 import { initializeReactClientBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
@@ -47,11 +46,11 @@ export async function start() {
     const request = new Request(
       wrapStreamRequestUrl(history.location.href, {
         lastPathname: history.location.pathname,
+        actionId: id,
       }),
       {
         method: "POST",
         body: await ReactClient.encodeReply(args),
-        headers: wrapStreamActionRequest(id),
       },
     );
     const result = ReactClient.createFromFetch<ServerRouterData>(
