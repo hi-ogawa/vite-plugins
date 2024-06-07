@@ -54,7 +54,11 @@ export async function handler(request: Request): Promise<Response> {
 }
 
 // return stream and ssr at once for prerender
-export async function prerender(request: Request) {
+export async function prerender(request: Request): Promise<{
+  stream: ReadableStream<Uint8Array>;
+  html: string;
+  response: Response;
+}> {
   const reactServer = await importReactServer();
 
   const result = await reactServer.handler({ request });
