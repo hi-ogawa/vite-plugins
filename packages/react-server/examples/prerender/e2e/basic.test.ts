@@ -36,3 +36,25 @@ async function testDyanmicRoute(page: Page) {
   await page.getByRole("link", { name: "qui est esse" }).click();
   await page.waitForURL("/posts/2");
 }
+
+test("hybrid @js @build", async ({ page }) => {
+  await page.goto("/posts");
+  await waitForHydration(page);
+  await using _ = await createReloadChecker(page);
+  await testHybrid(page);
+});
+
+testNoJs("hybrid @nojs @build", async ({ page }) => {
+  await page.goto("/posts");
+  await testHybrid(page);
+});
+
+async function testHybrid(page: Page) {
+  await page.getByRole("link", { name: "qui est esse" }).click();
+  await page.waitForURL("/posts/2");
+  await page.getByText("[prerendered at").click();
+
+  await page.getByRole("link", { name: "nesciunt quas odio" }).click();
+  await page.waitForURL("/posts/5");
+  await page.getByText("[dynamically rendered at").click();
+}
