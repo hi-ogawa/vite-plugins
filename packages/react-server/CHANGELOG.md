@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.3
+
+- fix: merge Link props handlers ([#368](https://github.com/hi-ogawa/vite-plugins/pull/368))
+
 ## v0.2.2
 
 - refactor: encode stream request metadata in http header ([#363](https://github.com/hi-ogawa/vite-plugins/pull/363))
