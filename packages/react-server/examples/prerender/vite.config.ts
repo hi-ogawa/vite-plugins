@@ -1,3 +1,4 @@
+import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
 import {
   vitePluginLogger,
@@ -13,18 +14,20 @@ export default defineConfig({
     react(),
     vitePluginReactServer({
       prerender: async () => {
+        (globalThis as any).__reactServerPrerender = true;
         const posts = await fetchPosts();
         return [
           "/",
           "/counter",
           "/posts",
-          ...posts.map((p) => `/posts/${p.id}`),
+          ...posts.slice(0, 3).map((p) => `/posts/${p.id}`),
         ];
       },
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
+      preview: path.resolve("dist/server/index.js"),
     }),
   ],
 });
