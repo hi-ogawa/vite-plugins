@@ -129,16 +129,10 @@ export async function start() {
         lastPathname,
       });
       const request = new Request(
-        wrapStreamRequestUrl(
-          location.href,
-          // remove stream params on ssg to help caching
-          (globalThis as any).__prerender
-            ? undefined
-            : {
-                lastPathname,
-                revalidate: ROUTER_REVALIDATE_KEY in location.state,
-              },
-        ),
+        wrapStreamRequestUrl(location.href, {
+          lastPathname,
+          revalidate: ROUTER_REVALIDATE_KEY in location.state,
+        }),
       );
       startTransition(() => {
         $__setLayout(

@@ -347,7 +347,8 @@ export function vitePluginReactServer(options?: {
             console.log(`  • ${route}`);
             const url = new URL(route, "https://prerender.local");
             const request = new Request(url);
-            const { stream, html } = await entry.prerender(request);
+            const { stream, ssr } = await entry.prerender(request);
+            const html = await ssr.text();
             const data = Readable.from(stream as any);
             const htmlFile = path.join("dist/client", route, "index.html");
             const dataFile = path.join("dist/client", route, RSC_PATH);

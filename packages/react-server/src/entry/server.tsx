@@ -54,11 +54,9 @@ export async function handler(request: Request): Promise<Response> {
 }
 
 // return stream and ssr at once for prerender
-export async function prerender(request: Request): Promise<{
-  stream: ReadableStream<Uint8Array>;
-  html: string;
-  response: Response;
-}> {
+export async function prerender(
+  request: Request,
+): Promise<{ stream: ReadableStream<Uint8Array>; ssr: Response }> {
   const reactServer = await importReactServer();
 
   const result = await reactServer.handler({ request });
@@ -67,13 +65,8 @@ export async function prerender(request: Request): Promise<{
   const [stream, stream2] = result.stream.tee();
   result.stream = stream2;
 
-  const response = await renderHtml(request, result);
-  let html = await response.text();
-  html = html.replace(
-    "<head>",
-    () => `<head><script>globalThis.__prerender = true;</script>`,
-  );
-  return { stream, html, response };
+  const ssr = await renderHtml(request, result);
+  return { stream, ssr };
 }
 
 export async function importReactServer(): Promise<

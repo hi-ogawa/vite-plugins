@@ -9,4 +9,5 @@ export const $__global: {
     reactServer: ViteDevServer;
   };
   callServer: CallServerCallback;
+  prerender: boolean;
 } = ((globalThis as any).__REACT_SERVER_GLOBAL ??= {});

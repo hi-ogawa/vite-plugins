@@ -10,15 +10,14 @@ type StreamRequestParam = {
 };
 
 export function wrapStreamRequestUrl(
-  href: string,
-  param?: StreamRequestParam,
-): URL {
-  const url = new URL(href, window.location.href);
-  url.pathname = posixJoin(url.pathname, RSC_PATH);
-  if (param) {
-    url.searchParams.set(RSC_PARAM, JSON.stringify(param));
-  }
-  return url;
+  url: string,
+  param: StreamRequestParam,
+): string {
+  const newUrl = new URL(url, window.location.href);
+  newUrl.pathname = posixJoin(newUrl.pathname, RSC_PATH);
+  // TODO: remove params on prerendered paths for better caching
+  newUrl.searchParams.set(RSC_PARAM, JSON.stringify(param));
+  return newUrl.toString();
 }
 
 export function unwrapStreamRequest(request: Request) {
