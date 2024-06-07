@@ -7,15 +7,8 @@ export default async function Page() {
       <CommonComponent message="from server" />
       <div className="text-sm">
         <pre>Server Time: {new Date().toISOString()}</pre>
-        <Fetch url="https://unpkg.com/react@19.0.0-rc.0/package.json" />
       </div>
       <Counter />
     </div>
   );
-}
-
-async function Fetch({ url }: { url: string }) {
-  const res = await fetch(url);
-  const resText = await res.text();
-  return <pre>{`Fetch ${url}\n${resText.slice(0, 200)}...`}</pre>;
 }
