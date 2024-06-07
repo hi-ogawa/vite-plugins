@@ -3,12 +3,15 @@ import {
   objectMapKeys,
   objectMapValues,
   objectPick,
+  objectPickBy,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
   type LayoutRequest,
   type ServerRouterData,
+  createLayoutContentRequest,
+  getNewLayoutContentKeys,
 } from "../features/router/utils";
 import { runActionContext } from "../features/server-action/context";
 import {
@@ -19,7 +22,6 @@ import {
   initializeReactServer,
   serverReferenceImportPromiseCache,
 } from "../features/server-action/react-server";
-import { unwrapStreamActionRequest } from "../features/server-action/utils";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
@@ -57,17 +59,32 @@ export const handler: ReactServerHandler = async (ctx) => {
     serverReferenceImportPromiseCache.clear();
   }
 
+  // extract stream request details
+  const { url, request, isStream, streamParam } = unwrapStreamRequest(
+    ctx.request,
+  );
+
   // action
   let actionResult: ActionResult | undefined;
   if (ctx.request.method === "POST") {
-    actionResult = await actionHandler(ctx);
+    actionResult = await actionHandler({
+      request,
+      streamActionId: streamParam?.actionId,
+    });
   }
 
-  // check stream only request
-  const { request, layoutRequest, isStream } = unwrapStreamRequest(
-    ctx.request,
-    actionResult,
-  );
+  let layoutRequest = createLayoutContentRequest(url.pathname);
+  if (
+    streamParam?.lastPathname &&
+    !streamParam.revalidate &&
+    !actionResult?.context.revalidate
+  ) {
+    const newKeys = getNewLayoutContentKeys(
+      streamParam.lastPathname,
+      url.pathname,
+    );
+    layoutRequest = objectPickBy(layoutRequest, (_v, k) => newKeys.includes(k));
+  }
   const stream = await render({ request, layoutRequest, actionResult });
 
   if (isStream) {
@@ -159,17 +176,19 @@ function createRouter() {
 //
 
 // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
-async function actionHandler({ request }: { request: Request }) {
+async function actionHandler({
+  request,
+  streamActionId,
+}: { request: Request; streamActionId?: string }) {
   const context = new ActionContext(request);
-  const streamAction = unwrapStreamActionRequest(request);
   let boundAction: Function;
-  if (streamAction) {
+  if (streamActionId) {
     const contentType = request.headers.get("content-type");
     const body = contentType?.startsWith("multipart/form-data")
       ? await request.formData()
       : await request.text();
     const args = await ReactServer.decodeReply(body);
-    const action = await importServerAction(streamAction.id);
+    const action = await importServerAction(streamActionId);
     boundAction = () => action.apply(null, args);
   } else {
     const formData = await request.formData();

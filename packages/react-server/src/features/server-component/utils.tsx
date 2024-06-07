@@ -1,14 +1,9 @@
-import { objectPickBy } from "@hiogawa/utils";
-import {
-  createLayoutContentRequest,
-  getNewLayoutContentKeys,
-} from "../router/utils";
-import type { ActionResult } from "../server-action/react-server";
-
-// TODO: use accept header x-component?
-const RSC_PARAM = "__rsc";
+// encode flight request as path for the ease of ssg deployment
+const RSC_PATH = "__f.data";
+const RSC_PARAM = "__f";
 
 type StreamRequestParam = {
+  actionId?: string;
   lastPathname?: string;
   // TODO: refine revalitating each layout layer
   revalidate?: boolean;
@@ -19,35 +14,41 @@ export function wrapStreamRequestUrl(
   param: StreamRequestParam,
 ): string {
   const newUrl = new URL(url, window.location.href);
+  newUrl.pathname = posixJoin(newUrl.pathname, RSC_PATH);
   newUrl.searchParams.set(RSC_PARAM, JSON.stringify(param));
   return newUrl.toString();
 }
 
-export function unwrapStreamRequest(
-  request: Request,
-  actionResult?: ActionResult,
-) {
+export function unwrapStreamRequest(request: Request) {
   const url = new URL(request.url);
-  const rscParam = url.searchParams.get(RSC_PARAM);
+  const isStream = url.pathname.endsWith(RSC_PATH);
+  if (!isStream) {
+    return { url, request };
+  }
+  url.pathname = url.pathname.slice(0, -RSC_PATH.length) || "/";
+  const rawParam = url.searchParams.get(RSC_PARAM);
   url.searchParams.delete(RSC_PARAM);
 
-  let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (rscParam && !actionResult?.context.revalidate) {
-    const param = JSON.parse(rscParam) as StreamRequestParam;
-    if (param.lastPathname && !param.revalidate) {
-      const newKeys = getNewLayoutContentKeys(param.lastPathname, url.pathname);
-      layoutRequest = objectPickBy(layoutRequest, (_v, k) =>
-        newKeys.includes(k),
-      );
-    }
-  }
-
   return {
+    url,
     request: new Request(url, {
       method: request.method,
       headers: request.headers,
+      body: request.body,
+      // @ts-ignore undici
+      ...("duplex" in request ? { duplex: "half" } : {}),
     }),
-    layoutRequest,
-    isStream: Boolean(rscParam),
+    isStream,
+    streamParam: rawParam
+      ? (JSON.parse(rawParam) as StreamRequestParam)
+      : undefined,
   };
+}
+
+// posixJoin("/", "new") === "/new"
+// posixJoin("/", "/new") === "/new"
+// posixJoin("/xyz", "new") === "/xyz/new"
+// posixJoin("/xyz", "/new") === "/xyz/new"
+function posixJoin(...args: string[]) {
+  return args.join("/").replace(/\/\/+/g, "/");
 }
