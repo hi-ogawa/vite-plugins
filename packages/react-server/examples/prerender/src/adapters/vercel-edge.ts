@@ -1,5 +1,3 @@
 import { handler } from "../entry-server";
 
-export default {
-  fetch: handler,
-};
+export default handler;
