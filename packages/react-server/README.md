@@ -2,11 +2,10 @@
 
 ## Examples
 
-- [`react-server-demo-remix-tutorial`](https://github.com/hi-ogawa/react-server-demo-remix-tutorial/)
-  - [Stackblitz](https://stackblitz.com/https://github.com/hi-ogawa/react-server-demo-remix-tutorial)
-  - https://react-server-demo-remix-tutorial.hiro18181.workers.dev
 - [`rsc-on-vite/vercel-app-playground`](https://github.com/hi-ogawa/rsc-on-vite/tree/main/vercel-app-playground)
   - https://rsc-on-vite-vercel-app-playground.vercel.app
+- [`rsc-on-vite/remix-tutorial`](https://github.com/hi-ogawa/rsc-on-vite/tree/main/remix-tutorial)
+  - https://react-server-demo-remix-tutorial.hiro18181.workers.dev
 - [`./examples/basic`](./examples/basic)
   - [Stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/react-server/examples/basic)
   - https://rsc-experiment.hiro18181.workers.dev/test
