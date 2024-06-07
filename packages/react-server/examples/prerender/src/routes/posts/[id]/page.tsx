@@ -8,9 +8,16 @@ export default async function Page(props: PageProps) {
   const post: PostType = await res.json();
 
   return (
-    <div className="space-y-2">
-      <h4 className="text-xl font-bold underline">{post.title}</h4>
-      <div className="text-sm">{post.body}</div>
+    <div>
+      <h4>{post.title}</h4>
+      <div>{post.body}</div>
+      <pre>
+        [
+        {globalThis?.process?.env?.["REACT_SERVER_PRERENDER"]
+          ? "prerendered at"
+          : "dynamically rendered at"}{" "}
+        {new Date().toISOString()}]
+      </pre>
     </div>
   );
 }
