@@ -22,7 +22,7 @@ import {
   initializeReactServer,
   serverReferenceImportPromiseCache,
 } from "../features/server-action/react-server";
-import { unwrapStreamRequest2 } from "../features/server-component/utils";
+import { unwrapStreamRequest } from "../features/server-component/utils";
 import { createBundlerConfig } from "../features/use-client/react-server";
 import {
   DEFAULT_ERROR_CONTEXT,
@@ -60,7 +60,7 @@ export const handler: ReactServerHandler = async (ctx) => {
   }
 
   // extract stream request details
-  const { url, request, isStream, streamParam } = unwrapStreamRequest2(
+  const { url, request, isStream, streamParam } = unwrapStreamRequest(
     ctx.request,
   );
 
