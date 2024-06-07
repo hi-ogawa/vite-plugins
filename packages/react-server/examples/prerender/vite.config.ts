@@ -14,7 +14,7 @@ export default defineConfig({
     react(),
     vitePluginReactServer({
       prerender: async () => {
-        (globalThis as any).__reactServerPrerender = true;
+        process.env["REACT_SERVER_PRERENDER"] = "1";
         const posts = await fetchPosts();
         return [
           "/",

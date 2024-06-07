@@ -13,7 +13,7 @@ export default async function Page(props: PageProps) {
       <div>{post.body}</div>
       <pre>
         [
-        {(globalThis as any).__reactServerPrerender
+        {globalThis?.process?.env?.["REACT_SERVER_PRERENDER"]
           ? "prerendered at"
           : "dynamically rendered at"}{" "}
         {new Date().toISOString()}]
