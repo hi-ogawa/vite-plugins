@@ -1,0 +1,31 @@
+{
+  "name": "@hiogawa/react-server-example-prerender",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
+    "vc-build": "pnpm build && bash misc/vercel/build.sh",
+    "vc-release": "vercel deploy --prod --prebuilt misc/vercel",
+    "vc-release-staging": "vercel deploy --prebuilt misc/vercel"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "latest",
+    "react": "19.0.0-rc.0",
+    "react-dom": "19.0.0-rc.0",
+    "react-server-dom-webpack": "19.0.0-rc.0"
+  },
+  "devDependencies": {
+    "@hiogawa/utils-node": "^0.0.1",
+    "@hiogawa/vite-plugin-ssr-middleware": "latest",
+    "@playwright/test": "^1.42.1",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "latest"
+  }
+}

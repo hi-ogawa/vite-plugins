@@ -1,5 +1,5 @@
 // encode flight request as path for the ease of ssg deployment
-const RSC_PATH = "__f.data";
+export const RSC_PATH = "__f.data";
 const RSC_PARAM = "__f";
 
 type StreamRequestParam = {
@@ -15,6 +15,7 @@ export function wrapStreamRequestUrl(
 ): string {
   const newUrl = new URL(url, window.location.href);
   newUrl.pathname = posixJoin(newUrl.pathname, RSC_PATH);
+  // TODO: remove params on prerendered paths for better caching
   newUrl.searchParams.set(RSC_PARAM, JSON.stringify(param));
   return newUrl.toString();
 }

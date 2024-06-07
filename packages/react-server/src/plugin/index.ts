@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
@@ -25,6 +28,7 @@ import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
 } from "../features/server-action/plugin";
+import { RSC_PATH } from "../features/server-component/utils";
 import {
   vitePluginClientUseClient,
   vitePluginServerUseClient,
@@ -98,6 +102,7 @@ const manager: PluginStateManager = ((
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
+  prerender?: () => Promise<string[]>;
 }): Plugin[] {
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
@@ -209,6 +214,7 @@ export function vitePluginReactServer(options?: {
             "react",
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
+            "react-dom",
             "react-dom/client",
             "react-server-dom-webpack/client.browser",
             "@hiogawa/react-server > @tanstack/history",
@@ -225,7 +231,13 @@ export function vitePluginReactServer(options?: {
           manifest: true,
           outDir: env.isSsrBuild ? "dist/server" : "dist/client",
           rollupOptions: env.isSsrBuild
-            ? undefined
+            ? {
+                input: options?.prerender
+                  ? {
+                      __entry_prerender: "@hiogawa/react-server/entry-server",
+                    }
+                  : undefined,
+              }
             : {
                 input: ENTRY_CLIENT_WRAPPER,
               },
@@ -324,7 +336,45 @@ export function vitePluginReactServer(options?: {
             ssr: true,
           },
         });
+
+        if (options?.prerender) {
+          console.log("▶▶▶ PRERENDER");
+          const routes = await options.prerender();
+          const entry: typeof import("../entry/server") = await import(
+            path.resolve("dist/server/__entry_prerender.js")
+          );
+          for (const route of routes) {
+            console.log(`  • ${route}`);
+            const url = new URL(route, "https://prerender.local");
+            const request = new Request(url);
+            const { stream, html } = await entry.prerender(request);
+            const data = Readable.from(stream as any);
+            const htmlFile = path.join("dist/client", route, "index.html");
+            const dataFile = path.join("dist/client", route, RSC_PATH);
+            await fs.promises.mkdir(path.dirname(htmlFile), {
+              recursive: true,
+            });
+            await fs.promises.writeFile(htmlFile, html);
+            await fs.promises.writeFile(dataFile, data);
+          }
+        }
       }
+    },
+  };
+
+  const previewPrerenderPlugin: Plugin = {
+    name: "preview-prerender",
+    apply: (_config, env) => !!(options?.prerender && env.isPreview),
+    configurePreviewServer(server) {
+      const outDir = server.config.build.outDir;
+      server.middlewares.use((req, _res, next) => {
+        // rewrite to serve `index.html` in MPA style
+        const url = new URL(req.url!, "https://test.local");
+        if (fs.existsSync(path.join(outDir, url.pathname, "index.html"))) {
+          req.url = path.posix.join(url.pathname, "index.html");
+        }
+        next();
+      });
     },
   };
 
@@ -332,6 +382,7 @@ export function vitePluginReactServer(options?: {
   return [
     rscParentPlugin,
     buildOrchestrationPlugin,
+    previewPrerenderPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
     vitePluginClientUseServer({
       manager,
