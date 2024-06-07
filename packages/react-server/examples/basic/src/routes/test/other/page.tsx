@@ -1,6 +1,6 @@
 import { Link } from "@hiogawa/react-server/client";
 import type { PageProps } from "@hiogawa/react-server/server";
-import { LinkInClientComponent } from "./_client";
+import { LinkInClientComponent, LinkOnClickMerge } from "./_client";
 
 export default function Page(props: PageProps) {
   return (
@@ -8,6 +8,9 @@ export default function Page(props: PageProps) {
       <h4 className="font-bold">Other Page</h4>
       <div>
         <LinkInClientComponent />
+      </div>
+      <div>
+        <LinkOnClickMerge />
       </div>
       <h5 className="font-bold">props.request</h5>
       <div className="flex flex-col gap-2">
@@ -37,7 +40,7 @@ export default function Page(props: PageProps) {
       <h5 className="font-bold">custom entry</h5>
       <div>
         <a className="antd-link" href="/test/__rpc">
-          /text/__rpc
+          /test/__rpc
         </a>
       </div>
     </div>

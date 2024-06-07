@@ -123,6 +123,16 @@ test("Link modifier", async ({ page, context }) => {
   await page.waitForURL("/test");
 });
 
+test("Link onClick merge", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/other");
+  await waitForHydration(page);
+  await page.getByText("Count: 0").click();
+  await page.getByRole("link", { name: "LinkOnClickMerge" }).click();
+  await page.getByText("Count: 1").click();
+  await page.waitForURL("/test/other?count");
+});
+
 test("error", async ({ page }) => {
   const res = await page.goto("/test/error-not-found");
   expect(res?.status()).toBe(404);
