@@ -6,7 +6,7 @@ import {
 import type { ActionResult } from "../server-action/react-server";
 
 // encode flight request as path for the ease of ssg deployment
-export const RSC_PATH = "__f.data";
+export const RSC_PATH = "/__f.data";
 const RSC_PARAM = "__f";
 
 type StreamRequestParam = {
@@ -20,7 +20,7 @@ export function wrapStreamRequestUrl(
   param: StreamRequestParam,
 ): string {
   const newUrl = new URL(url, window.location.href);
-  newUrl.pathname += RSC_PATH;
+  newUrl.pathname = posixJoin(newUrl.pathname, RSC_PATH);
   newUrl.searchParams.set(RSC_PARAM, JSON.stringify(param));
   return newUrl.toString();
 }
@@ -33,7 +33,7 @@ export function unwrapStreamRequest(
   let isStream = false;
   if (url.pathname.endsWith(RSC_PATH)) {
     isStream = true;
-    url.pathname = url.pathname.slice(0, -RSC_PATH.length);
+    url.pathname = url.pathname.slice(0, -RSC_PATH.length) || "/";
   }
   const rscParam = url.searchParams.get(RSC_PARAM);
   url.searchParams.delete(RSC_PARAM);
@@ -57,4 +57,12 @@ export function unwrapStreamRequest(
     layoutRequest,
     isStream,
   };
+}
+
+// posixJoin("/", "new") === "/new"
+// posixJoin("/", "/new") === "/new"
+// posixJoin("/xyz", "new") === "/xyz/new"
+// posixJoin("/xyz", "/new") === "/xyz/new"
+function posixJoin(...args: string[]) {
+  return args.join("/").replace(/\/\/+/g, "/");
 }

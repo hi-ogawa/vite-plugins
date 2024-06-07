@@ -351,7 +351,7 @@ export function vitePluginReactServer(options?: {
             const html = await ssr.text();
             const data = Readable.from(stream as any);
             const htmlFile = path.join("dist/client", route, "index.html");
-            const dataFile = path.join("dist/client", route + RSC_PATH);
+            const dataFile = path.join("dist/client", route, RSC_PATH);
             await fs.promises.mkdir(path.dirname(htmlFile), {
               recursive: true,
             });
