@@ -11,7 +11,7 @@ export type PostType = {
 export async function fetchPosts() {
   const res = await fetch("https://jsonplaceholder.typicode.com/posts");
   const posts: PostType[] = await res.json();
-  return posts.slice(0, 10);
+  return posts.slice(0, 5);
 }
 
 export default async function Layout(props: LayoutProps) {
@@ -21,7 +21,7 @@ export default async function Layout(props: LayoutProps) {
     <div>
       <h2>Posts</h2>
       <ul>
-        {posts.slice(0, 10).map((post) => (
+        {posts.map((post) => (
           <li key={post.id}>
             <Link href={`/posts/${post.id}`}>
               {post.title.substring(0, 20)}
