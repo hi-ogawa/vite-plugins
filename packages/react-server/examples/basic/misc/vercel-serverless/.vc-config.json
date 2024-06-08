@@ -1,6 +1,4 @@
 {
-  "runtime": "nodejs18.x",
-  "handler": "index.mjs",
-  "launcherType": "Nodejs",
-  "regions": ["hnd1"]
+  "runtime": "edge",
+  "entrypoint": "index.js"
 }
