@@ -1,6 +1,6 @@
 // encode flight request as path for the ease of ssg deployment
 export const RSC_PATH = "__f.data";
-const RSC_PARAM = "x-flight-meta";
+const RSC_PARAM = "__f";
 
 type StreamRequestParam = {
   actionId?: string;
@@ -12,11 +12,8 @@ type StreamRequestParam = {
 export function createStreamRequest(href: string, param: StreamRequestParam) {
   const url = new URL(href, window.location.href);
   url.pathname = posixJoin(url.pathname, RSC_PATH);
-  return new Request(url, {
-    headers: {
-      [RSC_PARAM]: JSON.stringify(param),
-    },
-  });
+  url.searchParams.set(RSC_PARAM, JSON.stringify(param));
+  return new Request(url);
 }
 
 export function unwrapStreamRequest(request: Request) {
@@ -26,15 +23,14 @@ export function unwrapStreamRequest(request: Request) {
     return { url, request, isStream };
   }
   url.pathname = url.pathname.slice(0, -RSC_PATH.length) || "/";
-  const headers = new Headers(request.headers);
-  const rawParam = headers.get(RSC_PARAM);
-  headers.delete(RSC_PARAM);
+  const rawParam = url.searchParams.get(RSC_PARAM);
+  url.searchParams.delete(RSC_PARAM);
 
   return {
     url,
     request: new Request(url, {
       method: request.method,
-      headers,
+      headers: request.headers,
       body: request.body,
       // @ts-ignore undici
       ...("duplex" in request ? { duplex: "half" } : {}),
