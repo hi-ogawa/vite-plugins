@@ -78,6 +78,7 @@ export function usePreloadHandlers({
   preload,
 }: { href: string; preload?: boolean | "data" }) {
   const routeManifest = React.useContext(RouteManifestContext);
+  const currentPathname = useRouter((s) => s.location.pathname);
   const callback = React.useCallback(() => {
     if (!preload) return;
 
@@ -85,8 +86,10 @@ export function usePreloadHandlers({
     const deps = getRouteAssetDeps(routeManifest, url.pathname);
     preloadAssetDeps(deps);
 
-    if (preload === "data") {
-      const { url } = createStreamRequest(href, {});
+    if (preload === "data" && url.pathname !== currentPathname) {
+      const { url } = createStreamRequest(href, {
+        lastPathname: currentPathname,
+      });
       ReactDom.preload(url.slice(window.location.origin.length), {
         as: "fetch",
         crossOrigin: "",
