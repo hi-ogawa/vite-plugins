@@ -1,10 +1,5 @@
-import {
-  createDebug,
-  objectMapKeys,
-  objectMapValues,
-  objectPick,
-  objectPickBy,
-} from "@hiogawa/utils";
+import { objectPickBy } from "@hiogawa/utils";
+import { createDebug, objectMapKeys, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
@@ -115,15 +110,28 @@ async function render({
   layoutRequest: LayoutRequest;
   actionResult?: ActionResult;
 }) {
+  // TODO: can we return by keeping the same structure?
+  // we only need to filter out unnecessary map.
+  // then client can map back to each prefix.
   const result = await renderRouteMap(router.tree, request);
-  const nodeMap = objectMapValues(
-    layoutRequest,
-    (v) => result[`${v.type}s`][v.name],
-  );
+  const entries = {
+    layouts: objectPick(
+      result.layouts,
+      Object.values(layoutRequest)
+        .filter((v) => v.type === "layout")
+        .map((v) => v.name),
+    ),
+    pages: objectPick(
+      result.pages,
+      Object.values(layoutRequest)
+        .filter((v) => v.type === "page")
+        .map((v) => v.name),
+    ),
+  };
   const bundlerConfig = createBundlerConfig();
   return ReactServer.renderToReadableStream<ServerRouterData>(
     {
-      layout: nodeMap,
+      entries,
       action: actionResult
         ? objectPick(actionResult, ["data", "error"])
         : undefined,

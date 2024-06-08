@@ -11,7 +11,10 @@ import {
   RouteManifestContext,
 } from "../features/router/client";
 import type { RouteManifest } from "../features/router/manifest";
-import type { ServerRouterData } from "../features/router/utils";
+import {
+  type ServerRouterData,
+  createLayoutContentRequest,
+} from "../features/router/utils";
 import {
   createModuleMap,
   initializeReactClientSsr,
@@ -121,7 +124,12 @@ export async function renderHtml(
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
-      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
+      <LayoutStateContext.Provider
+        value={{
+          data: layoutPromise,
+          map: createLayoutContentRequest(url.pathname),
+        }}
+      >
         <RouteManifestContext.Provider value={routeManifest}>
           <RouteAssetLinks />
           <LayoutRoot />

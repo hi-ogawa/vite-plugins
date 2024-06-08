@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import ReactDom from "react-dom";
 import { useRouter } from "../../client";
@@ -7,9 +8,14 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
+import {
+  LAYOUT_ROOT_NAME,
+  type LayoutRequest,
+  type ServerRouterData,
+} from "./utils";
 
 type LayoutStateContextType = {
+  map: LayoutRequest;
   data: Promise<ServerRouterData>;
 };
 
@@ -20,7 +26,11 @@ export const LayoutStateContext = React.createContext<LayoutStateContextType>(
 export function LayoutContent(props: { name: string }) {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);
-  return data.layout[props.name];
+  const entry = ctx.map[props.name];
+  tinyassert(entry, `[LayoutContent] missing entry '${props.name}'`);
+  return entry.type === "layout"
+    ? data.entries?.layouts[entry.name]
+    : data.entries?.pages[entry.name];
 }
 
 export function LayoutRoot() {
