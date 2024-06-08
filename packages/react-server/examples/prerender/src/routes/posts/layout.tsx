@@ -23,7 +23,7 @@ export default async function Layout(props: LayoutProps) {
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
-            <Link href={`/posts/${post.id}`}>
+            <Link href={`/posts/${post.id}`} preload="data">
               {post.title.substring(0, 20)}
             </Link>
           </li>

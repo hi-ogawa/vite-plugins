@@ -86,7 +86,8 @@ export function usePreloadHandlers({
     preloadAssetDeps(deps);
 
     if (preload === "data") {
-      ReactDom.preload(createStreamRequest(href, {}).url, {
+      const { url } = createStreamRequest(href, {});
+      ReactDom.preload(url.slice(window.location.origin.length), {
         as: "fetch",
         crossOrigin: "",
       });
