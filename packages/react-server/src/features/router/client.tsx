@@ -2,6 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { useRouter } from "../../client";
 import { ActionRedirectHandler } from "../server-action/client";
+import { createStreamRequest } from "../server-component/utils";
 import {
   type AssetDeps,
   type RouteManifest,
@@ -75,7 +76,7 @@ export const RouteManifestContext = React.createContext<RouteManifest>(
 export function usePreloadHandlers({
   href,
   preload,
-}: { href: string; preload?: boolean }) {
+}: { href: string; preload?: boolean | "data" }) {
   const routeManifest = React.useContext(RouteManifestContext);
   const callback = React.useCallback(() => {
     if (!preload) return;
@@ -83,6 +84,14 @@ export function usePreloadHandlers({
     const url = new URL(href, window.location.href);
     const deps = getRouteAssetDeps(routeManifest, url.pathname);
     preloadAssetDeps(deps);
+
+    if (preload === "data") {
+      const { url } = createStreamRequest(href, {});
+      ReactDom.preload(url.slice(window.location.origin.length), {
+        as: "fetch",
+        crossOrigin: "",
+      });
+    }
   }, [href, preload, routeManifest]);
 
   return {

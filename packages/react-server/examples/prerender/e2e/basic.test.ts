@@ -1,4 +1,4 @@
-import { Page, test } from "@playwright/test";
+import { Page, Request, expect, test } from "@playwright/test";
 import { createReloadChecker, testNoJs, waitForHydration } from "./helper";
 
 test("basic @js", async ({ page }) => {
@@ -58,3 +58,32 @@ async function testHybrid(page: Page) {
   await page.waitForURL("/posts/5");
   await page.getByText("[dynamically rendered at").click();
 }
+
+test("preload @build", async ({ page }) => {
+  await page.goto("/posts");
+  await waitForHydration(page);
+
+  const requests: Request[] = [];
+  page.on("request", (request) => {
+    requests.push(request);
+  });
+
+  // preload on hover
+  const preloadPromise = page.waitForRequest("/posts/3/__f.data");
+  await page
+    .getByRole("link", { name: "ea molestias quasi e" })
+    .dispatchEvent("mouseover");
+  await expect(
+    page.locator(`link[rel="preload"][href="/posts/3/__f.data"]`),
+  ).toBeAttached();
+  await preloadPromise;
+
+  // navigate
+  await page.getByRole("link", { name: "ea molestias quasi e" }).click();
+  await page.waitForURL("/posts/3");
+
+  // requested only once
+  expect(requests.map((req) => new URL(req.url()).pathname)).toEqual([
+    "/posts/3/__f.data",
+  ]);
+});

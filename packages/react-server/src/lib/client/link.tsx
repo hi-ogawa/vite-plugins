@@ -12,7 +12,7 @@ import { useRouter } from "./router";
 interface LinkProps {
   revalidate?: boolean;
   activeProps?: JSX.IntrinsicElements["a"];
-  preload?: boolean;
+  preload?: boolean | "data";
 }
 
 function encodeHref(href: string) {
