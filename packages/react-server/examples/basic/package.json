@@ -27,9 +27,9 @@
     "react-wrap-balancer": "^1.1.0"
   },
   "devDependencies": {
-    "@hattip/adapter-node": "^0.0.44",
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.7",
     "@hiogawa/utils": "latest",
+    "@hiogawa/utils-node": "latest",
     "@hiogawa/vite-plugin-error-overlay": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@iconify-json/ri": "^1.1.20",

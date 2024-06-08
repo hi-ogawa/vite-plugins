@@ -1,4 +1,4 @@
-import { createMiddleware } from "@hattip/adapter-node/native-fetch";
+import { webToNodeHandler } from "@hiogawa/utils-node";
 import { handler } from "../entry-server";
 
-export default createMiddleware((ctx) => handler(ctx.request));
+export default webToNodeHandler(handler);
