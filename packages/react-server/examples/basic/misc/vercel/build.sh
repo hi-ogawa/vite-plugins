@@ -35,12 +35,11 @@ cp .vc-config.json .vercel/output/functions/index.func/.vc-config.json
 # https://github.com/evanw/esbuild/issues/2334
 
 npx esbuild ../../dist/server/index.js \
-  --outfile=.vercel/output/functions/index.func/index.mjs \
+  --outfile=.vercel/output/functions/index.func/index.js \
   --metafile=dist/esbuild-metafile.json \
-  --define:process.env.NODE_ENV='"production"' \
-  --banner:js="import { createRequire } from 'module'; const require = createRequire(import.meta.url);" \
   --log-override:ignored-bare-import=silent \
+  --define:process.env.NODE_ENV='"production"' \
   --bundle \
   --minify \
   --format=esm \
-  --platform=node
+  --platform=browser
