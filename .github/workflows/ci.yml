@@ -33,6 +33,8 @@ jobs:
       - run: pnpm -C packages/react-server/examples/basic test-e2e
       - run: pnpm -C packages/react-server/examples/basic build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
+      - run: pnpm -C packages/react-server/examples/basic cf-build
+      - run: pnpm -C packages/react-server/examples/basic test-e2e-cf-preview
       - run: pnpm -C packages/react-server/examples/prerender test-e2e
       - run: pnpm -C packages/react-server/examples/prerender build
       - run: pnpm -C packages/react-server/examples/prerender test-e2e-preview
