@@ -156,15 +156,15 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(react@19.0.0-rc.0)
     devDependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.44
-        version: 0.0.44
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
         version: 2.2.1-pre.7(unocss@0.58.6)
       '@hiogawa/utils':
         specifier: latest
         version: 1.7.0
+      '@hiogawa/utils-node':
+        specifier: latest
+        version: 0.0.1
       '@hiogawa/vite-plugin-error-overlay':
         specifier: latest
         version: link:../../../error-overlay
@@ -248,9 +248,9 @@ importers:
         specifier: 19.0.0-rc.0
         version: 19.0.0-rc.0(react-dom@19.0.0-rc.0)(react@19.0.0-rc.0)(webpack@5.90.3)
     devDependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.44
-        version: 0.0.44
+      '@hiogawa/utils-node':
+        specifier: latest
+        version: 0.0.1
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
