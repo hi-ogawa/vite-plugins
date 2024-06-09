@@ -8,7 +8,11 @@ pnpm dev
 pnpm build
 pnpm preview
 
-# deploy vercel static
+# deploy vercel (static + edge)
 pnpm vc-build
 pnpm vc-release
+
+# deploy cloudflare pages
+pnpm cf-build
+pnpm cf-release
 ```
