@@ -7,7 +7,10 @@ import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { RSC_PATH } from "../server-component/utils";
 
-export function prerenderPlugin(options: {
+export function prerenderPlugin({
+  manager,
+  prerender,
+}: {
   manager: PluginStateManager;
   prerender?: () => Promise<string[]> | string[];
 }): Plugin[] {
@@ -15,12 +18,11 @@ export function prerenderPlugin(options: {
     {
       name: prerenderPlugin + ":build",
       enforce: "post",
-      apply: () =>
-        !!(options?.prerender && options.manager.buildType === "ssr"),
+      apply: () => !!(prerender && manager.buildType === "ssr"),
       async closeBundle() {
         console.log("▶▶▶ PRERENDER");
-        tinyassert(options.prerender);
-        const routes = await options.prerender();
+        tinyassert(prerender);
+        const routes = await prerender();
         const entry: typeof import("../../entry/server") = await import(
           path.resolve("dist/server/__entry_prerender.js")
         );
@@ -57,7 +59,7 @@ export function prerenderPlugin(options: {
     },
     {
       name: prerenderPlugin + ":preview",
-      apply: (_config, env) => !!(options?.prerender && env.isPreview),
+      apply: (_config, env) => !!(prerender && env.isPreview),
       configurePreviewServer(server) {
         const outDir = server.config.build.outDir;
         server.middlewares.use((req, _res, next) => {
