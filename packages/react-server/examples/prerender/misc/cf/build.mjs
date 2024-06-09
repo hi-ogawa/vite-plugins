@@ -14,6 +14,7 @@ async function main() {
       prerendered.push(pathname);
 
       // rename /hello/index.html -> /hello.html
+      // TODO: probably the default prerender output should follow this
       if (f.path !== distDir) {
         await fs.promises.rename(
           path.join(f.path, "index.html"),
