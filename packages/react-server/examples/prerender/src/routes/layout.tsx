@@ -21,13 +21,19 @@ export default function Layout(props: React.PropsWithChildren) {
         <nav>
           <ul>
             <li>
-              <Link href="/">Home</Link>
+              <Link href="/" preload>
+                Home
+              </Link>
             </li>
             <li>
-              <Link href="/counter">Counter</Link>
+              <Link href="/counter" preload>
+                Counter
+              </Link>
             </li>
             <li>
-              <Link href="/posts">Posts</Link>
+              <Link href="/posts" preload>
+                Posts
+              </Link>
             </li>
           </ul>
         </nav>
