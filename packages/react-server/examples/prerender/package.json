@@ -12,6 +12,9 @@
     "cf-build": "SSR_ENTRY=/src/adapters/cf.ts pnpm build && bash misc/cf/build.sh",
     "cf-preview": "cd misc/cf && wrangler dev",
     "cf-release": "cd misc/cf && wrangler deploy",
+    "cf-pages-build": "SSR_ENTRY=/src/adapters/cf.ts pnpm build && bash misc/cf-pages/build.sh",
+    "cf-pages-preview": "cd misc/cf-pages && wrangler pages dev ./dist/client --compatibility-date=2024-01-01",
+    "cf-pages-release": "cd misc/cf-pages && wrangler pages deploy ./dist/client --commit-dirty --branch main --project-name demo-rsc-prerender",
     "vc-build": "SSR_ENTRY=/src/adapters/vercel-edge pnpm build && bash misc/vercel/build.sh",
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel",
     "vc-release-staging": "vercel deploy --prebuilt misc/vercel"
