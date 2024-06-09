@@ -9,7 +9,9 @@ mkdir -p dist/server dist/client
 
 # static
 cp -r ../../dist/client/. dist/client
-cp _headers _routes.json dist/client
+
+# post process assets
+node ./build.mjs
 
 # server
 npx esbuild ../../dist/server/index.js \
