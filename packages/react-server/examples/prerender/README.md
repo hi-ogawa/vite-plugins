@@ -1,5 +1,8 @@
 # react-server prerender
 
+- https://demo-rsc-prerender.vercel.app
+- https://demo-rsc-prerender.pages.dev
+
 ```sh
 pnpm i
 pnpm dev
