@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
-import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
@@ -19,6 +16,7 @@ import {
   SERVER_CSS_PROXY,
   vitePluginServerAssets,
 } from "../features/assets/plugin";
+import { prerenderPlugin } from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
 import {
   routeManifestPluginClient,
@@ -28,7 +26,6 @@ import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
 } from "../features/server-action/plugin";
-import { RSC_PATH } from "../features/server-component/utils";
 import {
   vitePluginClientUseClient,
   vitePluginServerUseClient,
@@ -102,7 +99,7 @@ const manager: PluginStateManager = ((
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
-  prerender?: () => Promise<string[]>;
+  prerender?: () => Promise<string[]> | string[];
 }): Plugin[] {
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
@@ -336,69 +333,7 @@ export function vitePluginReactServer(options?: {
             ssr: true,
           },
         });
-
-        if (options?.prerender) {
-          console.log("▶▶▶ PRERENDER");
-          const routes = await options.prerender();
-          const entry: typeof import("../entry/server") = await import(
-            path.resolve("dist/server/__entry_prerender.js")
-          );
-          const entries = Array<{
-            route: string;
-            html: string;
-            data: string;
-          }>();
-          for (const route of routes) {
-            console.log(`  • ${route}`);
-            const url = new URL(route, "https://prerender.local");
-            const request = new Request(url);
-            const { stream, html } = await entry.prerender(request);
-            const data = Readable.from(stream as any);
-            const htmlFile =
-              route + (route.endsWith("/") ? "index.html" : ".html");
-            const dataFile = route + RSC_PATH;
-            await fs.promises.mkdir(
-              path.dirname(path.join("dist/client", htmlFile)),
-              {
-                recursive: true,
-              },
-            );
-            await fs.promises.writeFile(
-              path.join("dist/client", htmlFile),
-              html,
-            );
-            await fs.promises.writeFile(
-              path.join("dist/client", dataFile),
-              data,
-            );
-            entries.push({
-              route,
-              html: htmlFile,
-              data: dataFile,
-            });
-          }
-          await fs.promises.writeFile(
-            "dist/client/__prerender.json",
-            JSON.stringify(entries, null, 2),
-          );
-        }
       }
-    },
-  };
-
-  const previewPrerenderPlugin: Plugin = {
-    name: "preview-prerender",
-    apply: (_config, env) => !!(options?.prerender && env.isPreview),
-    configurePreviewServer(server) {
-      const outDir = server.config.build.outDir;
-      server.middlewares.use((req, _res, next) => {
-        // rewrite `/abc` to `/abc.html` since Vite "mpa" mode doesn't support this
-        const url = new URL(req.url!, "https://test.local");
-        if (fs.existsSync(path.join(outDir, url.pathname + ".html"))) {
-          req.url = path.posix.join(url.pathname + ".html");
-        }
-        next();
-      });
     },
   };
 
@@ -406,7 +341,6 @@ export function vitePluginReactServer(options?: {
   return [
     rscParentPlugin,
     buildOrchestrationPlugin,
-    previewPrerenderPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
     vitePluginClientUseServer({
       manager,
@@ -416,6 +350,7 @@ export function vitePluginReactServer(options?: {
     ...vitePluginClientUseClient({ manager }),
     ...vitePluginServerAssets({ manager }),
     ...routeManifestPluginClient({ manager }),
+    ...prerenderPlugin({ manager, prerender: options?.prerender }),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
