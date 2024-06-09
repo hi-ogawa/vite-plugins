@@ -349,8 +349,11 @@ export function vitePluginReactServer(options?: {
             const request = new Request(url);
             const { stream, html } = await entry.prerender(request);
             const data = Readable.from(stream as any);
-            const htmlFile = path.join("dist/client", route, "index.html");
-            const dataFile = path.join("dist/client", route, RSC_PATH);
+            const htmlFile = path.join(
+              "dist/client",
+              route.endsWith("/") ? route + "/index.html" : route + ".html",
+            );
+            const dataFile = path.join("dist/client", route + RSC_PATH);
             await fs.promises.mkdir(path.dirname(htmlFile), {
               recursive: true,
             });
@@ -368,10 +371,10 @@ export function vitePluginReactServer(options?: {
     configurePreviewServer(server) {
       const outDir = server.config.build.outDir;
       server.middlewares.use((req, _res, next) => {
-        // rewrite to serve `index.html` in MPA style
+        // rewrite `/abc` to `/abc.html` since Vite "mpa" mode doesn't support this
         const url = new URL(req.url!, "https://test.local");
-        if (fs.existsSync(path.join(outDir, url.pathname, "index.html"))) {
-          req.url = path.posix.join(url.pathname, "index.html");
+        if (fs.existsSync(path.join(outDir, url.pathname + ".html"))) {
+          req.url = path.posix.join(url.pathname + ".html");
         }
         next();
       });

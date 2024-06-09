@@ -11,7 +11,7 @@ type StreamRequestParam = {
 
 export function createStreamRequest(href: string, param: StreamRequestParam) {
   const url = new URL(href, window.location.href);
-  url.pathname = posixJoin(url.pathname, RSC_PATH);
+  url.pathname += RSC_PATH;
   return new Request(url, {
     headers: {
       [RSC_PARAM]: JSON.stringify(param),
@@ -25,7 +25,7 @@ export function unwrapStreamRequest(request: Request) {
   if (!isStream) {
     return { url, request, isStream };
   }
-  url.pathname = url.pathname.slice(0, -RSC_PATH.length) || "/";
+  url.pathname = url.pathname.slice(0, -RSC_PATH.length);
   const headers = new Headers(request.headers);
   const rawParam = headers.get(RSC_PARAM);
   headers.delete(RSC_PARAM);
@@ -44,12 +44,4 @@ export function unwrapStreamRequest(request: Request) {
       ? (JSON.parse(rawParam) as StreamRequestParam)
       : undefined,
   };
-}
-
-// posixJoin("/", "new") === "/new"
-// posixJoin("/", "/new") === "/new"
-// posixJoin("/xyz", "new") === "/xyz/new"
-// posixJoin("/xyz", "/new") === "/xyz/new"
-function posixJoin(...args: string[]) {
-  return args.join("/").replace(/\/\/+/g, "/");
 }
