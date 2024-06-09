@@ -343,23 +343,44 @@ export function vitePluginReactServer(options?: {
           const entry: typeof import("../entry/server") = await import(
             path.resolve("dist/server/__entry_prerender.js")
           );
+          const entries = Array<{
+            route: string;
+            html: string;
+            data: string;
+          }>();
           for (const route of routes) {
             console.log(`  • ${route}`);
             const url = new URL(route, "https://prerender.local");
             const request = new Request(url);
             const { stream, html } = await entry.prerender(request);
             const data = Readable.from(stream as any);
-            const htmlFile = path.join(
-              "dist/client",
-              route.endsWith("/") ? route + "/index.html" : route + ".html",
+            const htmlFile =
+              route + (route.endsWith("/") ? "index.html" : ".html");
+            const dataFile = route + RSC_PATH;
+            await fs.promises.mkdir(
+              path.dirname(path.join("dist/client", htmlFile)),
+              {
+                recursive: true,
+              },
             );
-            const dataFile = path.join("dist/client", route + RSC_PATH);
-            await fs.promises.mkdir(path.dirname(htmlFile), {
-              recursive: true,
+            await fs.promises.writeFile(
+              path.join("dist/client", htmlFile),
+              html,
+            );
+            await fs.promises.writeFile(
+              path.join("dist/client", dataFile),
+              data,
+            );
+            entries.push({
+              route,
+              html: htmlFile,
+              data: dataFile,
             });
-            await fs.promises.writeFile(htmlFile, html);
-            await fs.promises.writeFile(dataFile, data);
           }
+          await fs.promises.writeFile(
+            "dist/client/__prerender.json",
+            JSON.stringify(entries, null, 2),
+          );
         }
       }
     },

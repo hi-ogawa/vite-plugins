@@ -3,31 +3,13 @@ import path from "node:path";
 
 async function main() {
   const distDir = path.join(import.meta.dirname, "dist/client");
-  const files = await fs.promises.readdir(distDir, {
-    recursive: true,
-    withFileTypes: true,
-  });
-  const prerendered = [];
-  for (const f of files) {
-    if (f.isFile() && f.name === "index.html") {
-      const pathname = f.path.slice(distDir.length) || "/";
-      prerendered.push(pathname);
-
-      // rename /hello/index.html -> /hello.html
-      // TODO: probably the default prerender output should follow this
-      if (f.path !== distDir) {
-        await fs.promises.rename(
-          path.join(f.path, "index.html"),
-          f.path + ".html",
-        );
-      }
-    }
-  }
+  const entries = JSON.parse(
+    fs.readFileSync(path.join(distDir, "__prerender.json"), "utf-8"),
+  );
   const exclude = [
     "/favicon.ico",
     "/assets/*",
-    ...prerendered,
-    ...prerendered.map((p) => path.join(p, "__f.data")),
+    ...entries.flatMap((e) => [e.route, e.data]),
   ];
   const routesJson = {
     version: 1,
