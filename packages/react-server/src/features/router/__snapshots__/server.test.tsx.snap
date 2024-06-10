@@ -9,32 +9,20 @@ exports[`generateRouteModuleTree > basic 1`] = `
           "children": {
             "y": {
               "value": {
-                "layout": {
-                  "default": "/X/Y/LAYOUT.TSX",
-                },
-                "page": {
-                  "default": "/X/Y/PAGE.TSX",
-                },
+                "layout": [Function],
+                "page": [Function],
               },
             },
           },
           "value": {
-            "error": {
-              "default": "/X/ERROR.TSX",
-            },
-            "page": {
-              "default": "/X/PAGE.TSX",
-            },
+            "error": [Function],
+            "page": [Function],
           },
         },
       },
       "value": {
-        "layout": {
-          "default": "/LAYOUT.TSX",
-        },
-        "page": {
-          "default": "/PAGE.TSX",
-        },
+        "layout": [Function],
+        "page": [Function],
       },
     },
   },
@@ -88,30 +76,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
     </React.Fragment>,
   },
   "pages": {
-    "/x": </X/PAGE.TSX
-      params={{}}
-      request={
-        {
-          "headers": {},
-          "url": "https://test.local/x",
-        }
-      }
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/x",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/x",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
-        }
-      }
-    />,
+    "/x": Promise {},
   },
 }
 `;
@@ -193,30 +158,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
     <//X/Y/LAYOUT.TSX>,
   },
   "pages": {
-    "/x/y": </X/Y/PAGE.TSX
-      params={{}}
-      request={
-        {
-          "headers": {},
-          "url": "https://test.local/x/y",
-        }
-      }
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/x/y",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/x/y",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
-        }
-      }
-    />,
+    "/x/y": Promise {},
   },
 }
 `;
@@ -264,30 +206,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
     </React.Fragment>,
   },
   "pages": {
-    "/z": <ThrowNotFound
-      params={{}}
-      request={
-        {
-          "headers": {},
-          "url": "https://test.local/z",
-        }
-      }
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/z",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/z",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
-        }
-      }
-    />,
+    "/z": Promise {},
   },
 }
 `;

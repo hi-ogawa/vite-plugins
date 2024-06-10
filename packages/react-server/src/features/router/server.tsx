@@ -1,19 +1,20 @@
+import { objectHas, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
-  page?: {
+  page?: () => Promise<{
     default: React.FC<PageProps>;
-  };
-  layout?: {
+  }>;
+  layout?: () => Promise<{
     default: React.FC<LayoutProps>;
-  };
-  error?: {
+  }>;
+  error?: () => Promise<{
     // TODO: warn if no "use client"
     default: React.FC<ErrorPageProps>;
-  };
+  }>;
 }
 
 type RouteModuleNode = TreeNode<RouteEntry>;
@@ -27,8 +28,8 @@ function importRuntimeClient(): Promise<typeof import("../../runtime-client")> {
   return import("@hiogawa/react-server/runtime-client" as string);
 }
 
-function renderPage(node: RouteModuleNode, props: PageProps) {
-  const Page = node.value?.page?.default ?? ThrowNotFound;
+async function renderPage(node: RouteModuleNode, props: PageProps) {
+  const Page = (await importDefault(node.value?.page)) ?? ThrowNotFound;
   return <Page {...props} />;
 }
 
@@ -43,11 +44,11 @@ async function renderLayout(
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
-  const ErrorPage = node.value?.error?.default;
+  const ErrorPage = await importDefault(node.value?.error);
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
-  const Layout = node.value?.layout?.default;
+  const Layout = await importDefault(node.value?.layout);
   if (Layout) {
     acc = (
       <Layout key={prefix} {...props}>
@@ -130,4 +131,15 @@ export interface ErrorPageProps {
   error: Error;
   serverError?: ReactServerErrorContext;
   reset: () => void;
+}
+
+async function importDefault<T>(
+  lazyMod?: () => Promise<{ default: T }>,
+): Promise<T | undefined> {
+  if (lazyMod) {
+    const mod = await lazyMod();
+    tinyassert(objectHas(mod, "default"), `no deafult export found`);
+    return mod.default;
+  }
+  return;
 }
