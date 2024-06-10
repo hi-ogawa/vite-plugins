@@ -2,8 +2,6 @@ import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
 
-// TODO: move to features/router/react-server
-
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
   page?: {
