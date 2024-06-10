@@ -24,6 +24,7 @@
     "react": "rc",
     "react-dom": "rc",
     "react-server-dom-webpack": "rc",
+    "react-tweet": "^3.2.1",
     "react-wrap-balancer": "^1.1.0",
     "styled-jsx": "^5.1.6"
   },
