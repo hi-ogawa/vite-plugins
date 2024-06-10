@@ -16,10 +16,7 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
   // cf. https://react.dev/reference/react/useOptimistic#optimistically-updating-with-forms
   const [optMessages, addOptMessage] = React.useOptimistic(
     props.messages,
-    (prev, newMessage: string) => [
-      ...prev,
-      ["?", newMessage] satisfies [string, string],
-    ],
+    (prev, data: string) => prev.concat({ id: 0, data }),
   );
 
   const [, addMessageClient, isPending] = React.useActionState(
@@ -34,9 +31,9 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
     <div className="flex flex-col gap-2">
       <h4 className="font-bold">Messages</h4>
       <ul>
-        {optMessages.map(([id, message], i) => (
-          <li key={i} className={id === "?" ? "text-colorTextSecondary" : ""}>
-            [{id}] {message}
+        {optMessages.map(({ id, data }, i) => (
+          <li key={i} className={id === 0 ? "text-colorTextSecondary" : ""}>
+            [{id || "?"}] {data}
           </li>
         ))}
       </ul>

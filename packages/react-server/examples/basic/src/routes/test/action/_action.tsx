@@ -13,7 +13,7 @@ export function changeCounter(formData: FormData) {
 }
 
 let messageId = 1;
-let messages: [string, string][] = [];
+let messages: { id: number; data: string }[] = [];
 
 export let getMessages = () => {
   return messages;
@@ -23,7 +23,7 @@ export const addMessage = async (formData: FormData) => {
   await sleep(500);
   const message = formData.get("message");
   tinyassert(typeof message === "string");
-  messages.push([String(messageId++), message]);
+  messages.push({ id: messageId++, data: message });
 };
 
 export async function slowAction(formData: FormData) {
