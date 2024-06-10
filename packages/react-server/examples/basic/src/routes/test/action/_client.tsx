@@ -22,8 +22,11 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
     ],
   );
 
-  const [, formAction, isPending] = React.useActionState(
-    (_: unknown, formData: FormData) => addMessage(formData),
+  const [, addMessageClient, isPending] = React.useActionState(
+    async (_: unknown, formData: FormData) => {
+      addOptMessage(formData.get("message") as any);
+      await addMessage(formData);
+    },
     null,
   );
 
@@ -39,14 +42,7 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
       </ul>
       <form
         className="flex flex-col items-start gap-2"
-        action={
-          !useHydrated()
-            ? addMessage
-            : (formData) => {
-                addOptMessage(formData.get("message") as any);
-                formAction(formData);
-              }
-        }
+        action={useHydrated() ? addMessageClient : addMessage}
       >
         <div className="flex gap-2">
           <input

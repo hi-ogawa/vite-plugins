@@ -20,7 +20,7 @@ export let getMessages = () => {
 };
 
 export const addMessage = async (formData: FormData) => {
-  await sleep(1000);
+  await sleep(500);
   const message = formData.get("message");
   tinyassert(typeof message === "string");
   messages.push([String(messageId++), message]);
