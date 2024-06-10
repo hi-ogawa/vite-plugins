@@ -19,6 +19,9 @@ exports[`generateRouteModuleTree > basic 1`] = `
             },
           },
           "value": {
+            "error": {
+              "default": "/X/ERROR.TSX",
+            },
             "page": {
               "default": "/X/PAGE.TSX",
             },
@@ -73,11 +76,15 @@ exports[`generateRouteModuleTree > basic 2`] = `
       </RedirectBoundary>
     <//LAYOUT.TSX>,
     "/x": <React.Fragment>
-      <RedirectBoundary>
-        <LayoutContent
-          name="/x"
-        />
-      </RedirectBoundary>
+      <ErrorBoundary
+        errorComponent="/X/ERROR.TSX"
+      >
+        <RedirectBoundary>
+          <LayoutContent
+            name="/x"
+          />
+        </RedirectBoundary>
+      </ErrorBoundary>
     </React.Fragment>,
   },
   "pages": {
@@ -144,11 +151,15 @@ exports[`generateRouteModuleTree > basic 3`] = `
       </RedirectBoundary>
     <//LAYOUT.TSX>,
     "/x": <React.Fragment>
-      <RedirectBoundary>
-        <LayoutContent
-          name="/x"
-        />
-      </RedirectBoundary>
+      <ErrorBoundary
+        errorComponent="/X/ERROR.TSX"
+      >
+        <RedirectBoundary>
+          <LayoutContent
+            name="/x"
+          />
+        </RedirectBoundary>
+      </ErrorBoundary>
     </React.Fragment>,
     "/x/y": </X/Y/LAYOUT.TSX
       params={{}}

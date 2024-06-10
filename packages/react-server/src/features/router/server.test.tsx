@@ -7,6 +7,7 @@ describe(generateRouteModuleTree, () => {
       "/layout.tsx",
       "/page.tsx",
       "/x/page.tsx",
+      "/x/error.tsx",
       "/x/y/layout.tsx",
       "/x/y/page.tsx",
     ];
