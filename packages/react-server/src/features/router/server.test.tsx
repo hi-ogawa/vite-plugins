@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { generateRouteModuleTree, renderRouteMap } from "../../lib/router";
+import { generateRouteModuleTree, renderRouteMap } from "./server";
 
 describe(generateRouteModuleTree, () => {
   it("basic", async () => {

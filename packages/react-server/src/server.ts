@@ -1,4 +1,8 @@
-export type { PageProps, LayoutProps, ErrorPageProps } from "./lib/router";
+export type {
+  PageProps,
+  LayoutProps,
+  ErrorPageProps,
+} from "./features/router/server";
 export {
   createError,
   redirect,

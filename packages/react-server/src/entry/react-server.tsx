@@ -8,6 +8,10 @@ import {
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
+  generateRouteModuleTree,
+  renderRouteMap,
+} from "../features/router/server";
+import {
   type LayoutRequest,
   type ServerRouterData,
   createLayoutContentRequest,
@@ -30,7 +34,6 @@ import {
   createError,
   getErrorContext,
 } from "../lib/error";
-import { generateRouteModuleTree, renderRouteMap } from "../lib/router";
 
 const debug = createDebug("react-server:rsc");
 
