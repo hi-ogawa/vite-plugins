@@ -636,6 +636,35 @@ async function testServerAction(page: Page, testId: string) {
   await page.getByTestId(testId).getByText("Count: 0").click();
 }
 
+test("server action and useOptimistic @js", async ({ page }) => {
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await testServerActionOptimistic(page, { js: true });
+});
+
+testNoJs("server action and useOptimistic @nojs", async ({ page }) => {
+  await page.goto("/test/action");
+  await testServerActionOptimistic(page, { js: false });
+});
+
+async function testServerActionOptimistic(
+  page: Page,
+  options: { js: boolean },
+) {
+  await page.getByPlaceholder("write something...").fill("first");
+  await page.getByPlaceholder("write something...").press("Enter");
+  if (options.js) {
+    await page.getByText("[?] first").click(); // optimistic state
+  }
+  await page.getByText("[1] first").click();
+  await expect(page.getByPlaceholder("write something...")).toHaveValue(""); // auto reset
+  await page.getByText("[1] first").click();
+  await page.getByPlaceholder("write something...").fill("second");
+  await page.getByPlaceholder("write something...").press("Enter");
+  await page.getByText("[2] second").click();
+  await page.getByRole("button", { name: "Clear" }).click();
+}
+
 test("ReactDom.useFormStatus", async ({ page }) => {
   await page.goto("/test/action");
   await waitForHydration(page);

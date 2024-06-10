@@ -2,33 +2,58 @@
 
 import React from "react";
 import ReactDom from "react-dom";
+import { useHydrated } from "../_client";
 import {
   actionBindTest,
   actionCheckAnswer,
   addMessage,
+  clearMessages,
   type getMessages,
   nonFormAction,
   slowAction,
 } from "./_action";
 
 export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
+  // cf. https://react.dev/reference/react/useOptimistic#optimistically-updating-with-forms
+  const [optMessages, addOptMessage] = React.useOptimistic(
+    props.messages,
+    (prev, data: string) => prev.concat({ id: 0, data }),
+  );
+
+  const [, addMessageClient, isPending] = React.useActionState(
+    async (_: unknown, formData: FormData) => {
+      addOptMessage(formData.get("message") as any);
+      await addMessage(formData);
+    },
+    null,
+  );
+  const formAction = useHydrated() ? addMessageClient : addMessage;
+
   return (
     <div className="flex flex-col gap-2">
-      <h4 className="font-bold">Messages</h4>
+      <div className="flex items-center gap-2">
+        <h4 className="font-bold">Messages</h4>
+        <form action={clearMessages}>
+          <button className="antd-btn antd-btn-default px-2 text-sm">
+            Clear
+          </button>
+        </form>
+      </div>
       <ul>
-        {props.messages.map(([id, message]) => (
-          <li key={id}>
-            [{id}] {message}
+        {optMessages.map(({ id, data }, i) => (
+          <li key={i} className={id === 0 ? "text-colorTextSecondary" : ""}>
+            [{id || "?"}] {data}
           </li>
         ))}
       </ul>
-      <form className="flex flex-col items-start gap-2" action={addMessage}>
+      <form className="flex flex-col items-start gap-2" action={formAction}>
         <div className="flex gap-2">
           <input
             name="message"
             className="antd-input px-2"
             placeholder="write something..."
             required
+            disabled={isPending}
           />
           <button className="antd-btn antd-btn-default px-2">Send</button>
         </div>
