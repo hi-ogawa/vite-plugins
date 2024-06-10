@@ -12,10 +12,8 @@ import {
   createServer,
 } from "vite";
 import { CSS_LANGS_RE } from "../features/assets/css";
-import {
-  SERVER_CSS_PROXY,
-  vitePluginServerAssets,
-} from "../features/assets/plugin";
+import { vitePluginServerAssets } from "../features/assets/plugin";
+import { SERVER_CSS_PROXY } from "../features/assets/shared";
 import { prerenderPlugin } from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
 import {
