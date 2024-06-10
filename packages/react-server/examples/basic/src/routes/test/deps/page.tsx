@@ -11,7 +11,6 @@ import { Client2Provider } from "./_client2";
 export default function Page() {
   return (
     <div className="flex flex-col items-start gap-2">
-      <h4 className="font-bold">Test Dependencies</h4>
       <div>
         <TestVirtualUseClient />
       </div>
