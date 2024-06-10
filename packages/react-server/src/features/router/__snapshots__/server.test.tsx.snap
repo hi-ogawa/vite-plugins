@@ -1,0 +1,282 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`generateRouteModuleTree > basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "x": {
+          "children": {
+            "y": {
+              "value": {
+                "layout": {
+                  "default": "/X/Y/LAYOUT.TSX",
+                },
+                "page": {
+                  "default": "/X/Y/PAGE.TSX",
+                },
+              },
+            },
+          },
+          "value": {
+            "page": {
+              "default": "/X/PAGE.TSX",
+            },
+          },
+        },
+      },
+      "value": {
+        "layout": {
+          "default": "/LAYOUT.TSX",
+        },
+        "page": {
+          "default": "/PAGE.TSX",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`generateRouteModuleTree > basic 2`] = `
+{
+  "__pathname": "/x",
+  "layouts": {
+    "/": </LAYOUT.TSX
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/x",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/x",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/x",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    >
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
+    <//LAYOUT.TSX>,
+    "/x": <React.Fragment>
+      <RedirectBoundary>
+        <LayoutContent
+          name="/x"
+        />
+      </RedirectBoundary>
+    </React.Fragment>,
+  },
+  "pages": {
+    "/x": </X/PAGE.TSX
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/x",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/x",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/x",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    />,
+  },
+}
+`;
+
+exports[`generateRouteModuleTree > basic 3`] = `
+{
+  "__pathname": "/x/y",
+  "layouts": {
+    "/": </LAYOUT.TSX
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/x/y",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/x/y",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/x/y",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    >
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
+    <//LAYOUT.TSX>,
+    "/x": <React.Fragment>
+      <RedirectBoundary>
+        <LayoutContent
+          name="/x"
+        />
+      </RedirectBoundary>
+    </React.Fragment>,
+    "/x/y": </X/Y/LAYOUT.TSX
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/x/y",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/x/y",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/x/y",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    >
+      <RedirectBoundary>
+        <LayoutContent
+          name="/x/y"
+        />
+      </RedirectBoundary>
+    <//X/Y/LAYOUT.TSX>,
+  },
+  "pages": {
+    "/x/y": </X/Y/PAGE.TSX
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/x/y",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/x/y",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/x/y",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    />,
+  },
+}
+`;
+
+exports[`generateRouteModuleTree > basic 4`] = `
+{
+  "__pathname": "/z",
+  "layouts": {
+    "/": </LAYOUT.TSX
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/z",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/z",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/z",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    >
+      <RedirectBoundary>
+        <LayoutContent
+          name="/"
+        />
+      </RedirectBoundary>
+    <//LAYOUT.TSX>,
+    "/z": <React.Fragment>
+      <RedirectBoundary>
+        <LayoutContent
+          name="/z"
+        />
+      </RedirectBoundary>
+    </React.Fragment>,
+  },
+  "pages": {
+    "/z": <ThrowNotFound
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/z",
+        }
+      }
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/z",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/z",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    />,
+  },
+}
+`;
