@@ -23,6 +23,7 @@ export const LayoutStateContext = React.createContext<LayoutStateContextType>(
   undefined!,
 );
 
+// TODO: name -> id
 export function LayoutContent(props: { name: string }) {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);

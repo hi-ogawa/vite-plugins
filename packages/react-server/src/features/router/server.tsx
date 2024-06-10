@@ -1,6 +1,12 @@
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
-import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
+import {
+  type TreeNode,
+  createFsRouteTree,
+  matchRouteTree,
+  toRouteId,
+} from "./tree";
+import type { RouteDataEntry, RouteDataKey } from "./utils";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -63,6 +69,7 @@ async function renderLayout(
 export async function renderRouteMap(
   tree: RouteModuleNode,
   request: Pick<Request, "url" | "headers">,
+  skipKeys: RouteDataKey[] = [],
 ) {
   const url = serializeUrl(new URL(request.url));
   const baseProps: Omit<BaseProps, "params"> = {
@@ -75,17 +82,24 @@ export async function renderRouteMap(
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
   const result = matchRouteTree(tree, url.pathname);
+  const entries: RouteDataEntry[] = [];
   for (const m of result.matches) {
-    const props: BaseProps = { ...baseProps, params: m.params };
-    if (m.type === "layout") {
-      layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
-    } else if (m.type === "page") {
-      pages[m.prefix] = renderPage(m.node, props);
-    } else {
-      m.type satisfies never;
+    if (skipKeys.some((k) => k.type === m.type && k.prefix === m.prefix)) {
+      continue;
     }
+    const props: BaseProps = { ...baseProps, params: m.params };
+    entries.push({
+      type: m.type,
+      prefix: m.prefix,
+      node:
+        m.type === "layout"
+          ? await renderLayout(m.node, props, m.prefix)
+          : m.type === "page"
+            ? renderPage(m.node, props)
+            : null,
+    });
   }
-  return { pages, layouts };
+  return { pages, layouts, entries };
 }
 
 const ThrowNotFound: React.FC = () => {
