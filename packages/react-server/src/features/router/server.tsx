@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  type TreeNode,
-  createFsRouteTree,
-  matchRouteTree,
-} from "../features/router/tree";
-import { type ReactServerErrorContext, createError } from "./error";
-
-// TODO: move to features/router/react-server
+import { type ReactServerErrorContext, createError } from "../../lib/error";
+import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -29,7 +23,7 @@ export function generateRouteModuleTree(globEntries: Record<string, unknown>) {
 }
 
 // use own "use client" components as external
-function importRuntimeClient(): Promise<typeof import("../runtime-client")> {
+function importRuntimeClient(): Promise<typeof import("../../runtime-client")> {
   return import("@hiogawa/react-server/runtime-client" as string);
 }
 

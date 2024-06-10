@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createLayoutContentRequest, getNewLayoutContentKeys } from "./utils";
+import {
+  createLayoutContentRequest,
+  getNewLayoutContentKeys,
+  getPathPrefixes,
+} from "./utils";
 
 describe(createLayoutContentRequest, () => {
   it("basic", () => {
@@ -100,6 +104,29 @@ describe(getNewLayoutContentKeys, () => {
         "/",
         "/a",
         "/a/b",
+      ]
+    `);
+  });
+});
+
+describe(getPathPrefixes, () => {
+  it("basic", () => {
+    expect(getPathPrefixes("/")).toMatchInlineSnapshot(`
+      [
+        "/",
+      ]
+    `);
+    expect(getPathPrefixes("/hello")).toMatchInlineSnapshot(`
+      [
+        "/",
+        "/hello",
+      ]
+    `);
+    expect(getPathPrefixes("/hello/world")).toMatchInlineSnapshot(`
+      [
+        "/",
+        "/hello",
+        "/hello/world",
       ]
     `);
   });

@@ -1,7 +1,7 @@
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
+import type { ErrorPageProps } from "../../features/router/server";
 import { getErrorContext, getStatusText, isRedirectError } from "../error";
-import type { ErrorPageProps } from "../router";
 import { useRouter } from "./router";
 
 // cf.
