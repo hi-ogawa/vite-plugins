@@ -81,7 +81,7 @@ export async function renderRouteMap(
     if (m.type === "layout") {
       layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
     } else if (m.type === "page") {
-      pages[m.prefix] = renderPage(m.node, props);
+      pages[m.prefix] = await renderPage(m.node, props);
     } else {
       m.type satisfies never;
     }
