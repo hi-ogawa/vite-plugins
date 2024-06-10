@@ -3,6 +3,7 @@ import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
+import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -135,8 +136,8 @@ export async function renderHtml(
 
   if (import.meta.env.DEV) {
     // ensure latest css
-    invalidateModule($__global.dev.server, "\0virtual:react-server-css.js");
-    invalidateModule($__global.dev.server, "\0virtual:dev-ssr-css.css?direct");
+    invalidateModule($__global.dev.server, `\0${SERVER_CSS_PROXY}`);
+    invalidateModule($__global.dev.server, `\0${DEV_SSR_CSS}?direct`);
   }
   const assets: SsrAssetsType = (await import("virtual:ssr-assets" as string))
     .default;

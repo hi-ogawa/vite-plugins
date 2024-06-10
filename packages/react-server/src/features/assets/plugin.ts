@@ -11,13 +11,12 @@ import {
   createVirtualPlugin,
 } from "../../plugin/utils";
 import { collectStyle, collectStyleUrls } from "./css";
+import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "./shared";
 
 export interface SsrAssetsType {
   bootstrapModules: string[];
   head: string;
 }
-
-export const SERVER_CSS_PROXY = "virtual:server-css-proxy.js";
 
 export function vitePluginServerAssets({
   manager,
@@ -41,7 +40,7 @@ export function vitePluginServerAssets({
           <link
             data-ssr-dev-css
             rel="stylesheet"
-            href="/@id/__x00__virtual:dev-ssr-css.css?direct"
+            href="/@id/__x00__${DEV_SSR_CSS}?direct"
           />
           <script type="module">
             import { createHotContext } from "/@vite/client";
@@ -90,7 +89,7 @@ export function vitePluginServerAssets({
       tinyassert(false);
     }),
 
-    createVirtualPlugin("dev-ssr-css.css", async () => {
+    createVirtualPlugin(DEV_SSR_CSS.split(":")[1]!, async () => {
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
@@ -105,7 +104,7 @@ export function vitePluginServerAssets({
       return styles.join("\n\n");
     }),
 
-    createVirtualPlugin(SERVER_CSS_PROXY.slice("virtual:".length), async () => {
+    createVirtualPlugin(SERVER_CSS_PROXY.split(":")[1]!, async () => {
       // virtual module to proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
