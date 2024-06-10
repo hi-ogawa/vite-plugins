@@ -636,6 +636,14 @@ async function testServerAction(page: Page, testId: string) {
   await page.getByTestId(testId).getByText("Count: 0").click();
 }
 
+test("server action and useOptimistic @js", async ({ page }) => {
+  page;
+});
+
+testNoJs("server action and useOptimistic @nojs", async ({ page }) => {
+  page;
+});
+
 test("ReactDom.useFormStatus", async ({ page }) => {
   await page.goto("/test/action");
   await waitForHydration(page);

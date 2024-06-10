@@ -26,6 +26,7 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
     },
     null,
   );
+  const formAction = useHydrated() ? addMessageClient : addMessage;
 
   return (
     <div className="flex flex-col gap-2">
@@ -37,10 +38,7 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
           </li>
         ))}
       </ul>
-      <form
-        className="flex flex-col items-start gap-2"
-        action={useHydrated() ? addMessageClient : addMessage}
-      >
+      <form className="flex flex-col items-start gap-2" action={formAction}>
         <div className="flex gap-2">
           <input
             name="message"
