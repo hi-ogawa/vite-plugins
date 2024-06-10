@@ -13,17 +13,17 @@ export function changeCounter(formData: FormData) {
 }
 
 let messageId = 1;
-let messages: [number, string][] = [];
+let messages: [string, string][] = [];
 
 export let getMessages = () => {
   return messages;
 };
 
-export const addMessage = (formData: FormData) => {
+export const addMessage = async (formData: FormData) => {
+  await sleep(1000);
   const message = formData.get("message");
   tinyassert(typeof message === "string");
-  messages.push([messageId++, message]);
-  messages = messages.slice(-5);
+  messages.push([String(messageId++), message]);
 };
 
 export async function slowAction(formData: FormData) {

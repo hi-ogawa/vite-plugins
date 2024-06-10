@@ -4,11 +4,7 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 
 export function Hydrated() {
-  const [hydrated, setHydrated] = React.useState(false);
-  React.useEffect(() => {
-    setHydrated(true);
-  }, []);
-  return <div>[hydrated: {Number(hydrated)}]</div>;
+  return <div>[hydrated: {Number(useHydrated())}]</div>;
 }
 
 // test client re-rendering
@@ -27,5 +23,13 @@ export function EffectCount() {
     <div>
       [effect: <span ref={elRef}>0</span>]
     </div>
+  );
+}
+
+export function useHydrated() {
+  return React.useSyncExternalStore(
+    React.useCallback(() => () => {}, []),
+    () => true,
+    () => false,
   );
 }

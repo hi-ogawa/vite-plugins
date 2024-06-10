@@ -2,6 +2,7 @@
 
 import React from "react";
 import ReactDom from "react-dom";
+import { useHydrated } from "../_client";
 import {
   actionBindTest,
   actionCheckAnswer,
@@ -12,23 +13,48 @@ import {
 } from "./_action";
 
 export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
+  // cf. https://react.dev/reference/react/useOptimistic#optimistically-updating-with-forms
+  const [optMessages, addOptMessage] = React.useOptimistic(
+    props.messages,
+    (prev, newMessage: string) => [
+      ...prev,
+      ["?", newMessage] satisfies [string, string],
+    ],
+  );
+
+  const [, formAction, isPending] = React.useActionState(
+    (_: unknown, formData: FormData) => addMessage(formData),
+    null,
+  );
+
   return (
     <div className="flex flex-col gap-2">
       <h4 className="font-bold">Messages</h4>
       <ul>
-        {props.messages.map(([id, message]) => (
-          <li key={id}>
+        {optMessages.map(([id, message], i) => (
+          <li key={i} className={id === "?" ? "text-colorTextSecondary" : ""}>
             [{id}] {message}
           </li>
         ))}
       </ul>
-      <form className="flex flex-col items-start gap-2" action={addMessage}>
+      <form
+        className="flex flex-col items-start gap-2"
+        action={
+          !useHydrated()
+            ? addMessage
+            : (formData) => {
+                addOptMessage(formData.get("message") as any);
+                formAction(formData);
+              }
+        }
+      >
         <div className="flex gap-2">
           <input
             name="message"
             className="antd-input px-2"
             placeholder="write something..."
             required
+            disabled={isPending}
           />
           <button className="antd-btn antd-btn-default px-2">Send</button>
         </div>
