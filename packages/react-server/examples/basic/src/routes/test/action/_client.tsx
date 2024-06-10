@@ -7,6 +7,7 @@ import {
   actionBindTest,
   actionCheckAnswer,
   addMessage,
+  clearMessages,
   type getMessages,
   nonFormAction,
   slowAction,
@@ -30,7 +31,14 @@ export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <h4 className="font-bold">Messages</h4>
+      <div className="flex items-center gap-2">
+        <h4 className="font-bold">Messages</h4>
+        <form action={clearMessages}>
+          <button className="antd-btn antd-btn-default px-2 text-sm">
+            Clear
+          </button>
+        </form>
+      </div>
       <ul>
         {optMessages.map(({ id, data }, i) => (
           <li key={i} className={id === 0 ? "text-colorTextSecondary" : ""}>

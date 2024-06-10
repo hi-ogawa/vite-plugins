@@ -26,6 +26,11 @@ export const addMessage = async (formData: FormData) => {
   messages.push({ id: messageId++, data: message });
 };
 
+export function clearMessages() {
+  messageId = 1;
+  messages = [];
+}
+
 export async function slowAction(formData: FormData) {
   await sleep(Number(formData.get("sleep")));
 }
