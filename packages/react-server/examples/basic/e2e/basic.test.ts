@@ -1079,7 +1079,10 @@ test("preload client @build", async ({ page }) => {
 
 test("trailing slash", async ({ request }) => {
   const res = await request.get("/test/?hello", { maxRedirects: 0 });
-  expect([res.status(), res.headers()["location"]]).toEqual([308, "/test?hello"]);
+  expect([res.status(), res.headers()["location"]]).toEqual([
+    308,
+    "/test?hello",
+  ]);
 });
 
 function getClientManifest(): Manifest {
