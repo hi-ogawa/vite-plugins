@@ -934,7 +934,6 @@ test("revalidate by path on action", async ({ page }) => {
 
   await page.goto("/test/revalidate/x");
   await waitForHydration(page);
-  await page.pause();
 
   const checkClientState = await setupCheckClientState(page);
 
@@ -955,7 +954,6 @@ test("revalidate by path on navigation", async ({ page }) => {
 
   await page.goto("/test/revalidate/x");
   await waitForHydration(page);
-  await page.pause();
 
   const checkClientState = await setupCheckClientState(page);
 
