@@ -37,6 +37,7 @@ export function createLayoutContentRequest(pathname: string) {
   return map;
 }
 
+// TODO: remove
 export function getNewLayoutContentKeys(prev: string, next: string): string[] {
   const prevMap = createLayoutContentRequest(prev);
   const nextMap = createLayoutContentRequest(next);
@@ -72,4 +73,15 @@ export function handleTrailingSlash(url: URL) {
     });
   }
   return;
+}
+
+/**
+ * @example
+ * isAncestorPath("/x", "/x") === true
+ * isAncestorPath("/x", "/x/y") === true
+ * isAncestorPath("/x", "/xx/y") === false
+ */
+export function isAncestorPath(p1: string, p2: string) {
+  // check prefix after trailing slash
+  return p2.replace(/\/*$/, "/").startsWith(p1.replace(/\/*$/, "/"));
 }

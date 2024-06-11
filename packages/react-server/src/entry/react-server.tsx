@@ -15,8 +15,8 @@ import {
   type LayoutRequest,
   type ServerRouterData,
   createLayoutContentRequest,
-  getNewLayoutContentKeys,
   handleTrailingSlash,
+  isAncestorPath,
 } from "../features/router/utils";
 import { runActionContext } from "../features/server-action/context";
 import {
@@ -80,17 +80,29 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
+  // TODO: make it unit-test-able
   let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (
-    streamParam?.lastPathname &&
-    !streamParam.revalidate &&
-    !actionResult?.context.revalidate
-  ) {
-    const newKeys = getNewLayoutContentKeys(
-      streamParam.lastPathname,
-      url.pathname,
-    );
-    layoutRequest = objectPickBy(layoutRequest, (_v, k) => newKeys.includes(k));
+  if (streamParam?.lastPathname) {
+    const lastRequest = createLayoutContentRequest(streamParam?.lastPathname);
+    const lastLayouts = Object.values(lastRequest)
+      .filter((v) => v.type === "layout")
+      .map((v) => v.name);
+    layoutRequest = objectPickBy(layoutRequest, (v, _k) => {
+      return (
+        // revalidate all
+        streamParam.revalidate === true ||
+        actionResult?.context.revalidate === true ||
+        // revalidate partial
+        (streamParam.revalidate &&
+          isAncestorPath(streamParam.revalidate, v.name)) ||
+        (actionResult?.context.revalidate &&
+          isAncestorPath(actionResult.context.revalidate, v.name)) ||
+        // page: refetch always
+        v.type === "page" ||
+        // layout: refetch only new ones
+        (v.type === "layout" && !lastLayouts.includes(v.name))
+      );
+    });
   }
   const stream = await render({ request, layoutRequest, actionResult });
 

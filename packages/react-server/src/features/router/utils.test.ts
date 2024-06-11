@@ -3,6 +3,7 @@ import {
   createLayoutContentRequest,
   getNewLayoutContentKeys,
   getPathPrefixes,
+  isAncestorPath,
 } from "./utils";
 
 describe(createLayoutContentRequest, () => {
@@ -129,5 +130,13 @@ describe(getPathPrefixes, () => {
         "/hello/world",
       ]
     `);
+  });
+});
+
+describe(isAncestorPath, () => {
+  it("basic", () => {
+    expect(isAncestorPath("/x", "/x")).toMatchInlineSnapshot(`true`);
+    expect(isAncestorPath("/x", "/x/y")).toMatchInlineSnapshot(`true`);
+    expect(isAncestorPath("/x", "/xx/y")).toMatchInlineSnapshot(`false`);
   });
 });
