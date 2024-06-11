@@ -10,7 +10,7 @@ import { useRouter } from "./router";
 // https://github.com/remix-run/remix/blob/6ad886145bd35298accf04d43bd6ef69833567e2/packages/remix-react/components.tsx#L121
 
 interface LinkProps {
-  revalidate?: boolean;
+  revalidate?: boolean | string;
   activeProps?: JSX.IntrinsicElements["a"];
   preload?: boolean;
 }

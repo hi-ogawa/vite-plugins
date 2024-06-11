@@ -929,6 +929,48 @@ test("revalidate on navigation", async ({ page }) => {
   await checkClientState();
 });
 
+test("revalidate by path on action", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/revalidate/x");
+  await waitForHydration(page);
+  await page.pause();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByText(`[effect-revalidate: ${count}]`).click();
+  await page
+    .getByRole("button", { name: 'action revalidate "/test/revalidate"' })
+    .click();
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByText(`[effect-revalidate: ${count + 1}]`).click();
+
+  await checkClientState();
+});
+
+test("revalidate by path on navigation", async ({ page }) => {
+  checkNoError(page);
+
+  await page.goto("/test/revalidate/x");
+  await waitForHydration(page);
+  await page.pause();
+
+  const checkClientState = await setupCheckClientState(page);
+
+  const count = process.env.E2E_PREVIEW ? 1 : 1;
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByText(`[effect-revalidate: ${count}]`).click();
+  await page
+    .getByRole("link", { name: 'link revalidate "/test/revalidate"' })
+    .click();
+  await page.getByText(`[effect: ${count}]`).click();
+  await page.getByText(`[effect-revalidate: ${count + 1}]`).click();
+
+  await checkClientState();
+});
+
 test("dynamic routes", async ({ page }) => {
   checkNoError(page);
 
