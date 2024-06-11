@@ -1,0 +1,64 @@
+diff --git a/dist/index.js b/dist/index.js
+index aad14841e0954a753d6b5a0fb7e4aa5a68f83041..05febf2377e5accfe71f4de8d4b87052b79b5569 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1,6 +1,6 @@
+ // Export every other component that's part of our default theme (the Twitter theme) as that
+ // can be useful for anyone that wans to do more deep edits in the default theme.
+-export * from './twitter-theme/components.js';
++// export * from './twitter-theme/components.js';
+ export * from './tweet.js';
+-export * from './utils.js';
+-export * from './hooks.js';
++// export * from './utils.js';
++// export * from './hooks.js';
+diff --git a/dist/twitter-theme/quoted-tweet/quoted-tweet.js b/dist/twitter-theme/quoted-tweet/quoted-tweet.js
+index 75c3f63fc0747dba24ffe8ea482c82472444dc3f..59c39a7237d0e5cc7f8acb51d71cef138c1e4002 100644
+--- a/dist/twitter-theme/quoted-tweet/quoted-tweet.js
++++ b/dist/twitter-theme/quoted-tweet/quoted-tweet.js
+@@ -1,5 +1,5 @@
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+-import { QuotedTweetContainer } from './quoted-tweet-container.js';
++import { QuotedTweetContainer } from 'react-tweet/dist/twitter-theme/quoted-tweet/quoted-tweet-container.js';
+ import { QuotedTweetHeader } from './quoted-tweet-header.js';
+ import { QuotedTweetBody } from './quoted-tweet-body.js';
+ import { TweetMedia } from '../tweet-media.js';
+diff --git a/dist/twitter-theme/tweet-actions.js b/dist/twitter-theme/tweet-actions.js
+index 5487cddd7cf05de0ed3cc59d222939b7cbc0eaba..1ec537c02a5c3ef49b5a09e58ffad950459dee4f 100644
+--- a/dist/twitter-theme/tweet-actions.js
++++ b/dist/twitter-theme/tweet-actions.js
+@@ -1,6 +1,6 @@
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { formatNumber } from '../utils.js';
+-import { TweetActionsCopy } from './tweet-actions-copy.js';
++import { TweetActionsCopy } from 'react-tweet/dist/twitter-theme/tweet-actions-copy.js';
+ import s from './tweet-actions.module.css';
+ export const TweetActions = ({ tweet })=>{
+     const favoriteCount = formatNumber(tweet.favorite_count);
+diff --git a/dist/twitter-theme/tweet-media.js b/dist/twitter-theme/tweet-media.js
+index 9ca911465c726c3c6c94268fc06b24581669e26f..0aafea7be31cc6d36ef29c0a37a2c9498be5fafd 100644
+--- a/dist/twitter-theme/tweet-media.js
++++ b/dist/twitter-theme/tweet-media.js
+@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { Fragment } from 'react';
+ import clsx from 'clsx';
+ import { getMediaUrl } from '../utils.js';
+-import { TweetMediaVideo } from './tweet-media-video.js';
++import { TweetMediaVideo } from 'react-tweet/dist/twitter-theme/tweet-media-video.js';
+ import { MediaImg } from './media-img.js';
+ import s from './tweet-media.module.css';
+ const getSkeletonStyle = (media, itemCount)=>{
+diff --git a/package.json b/package.json
+index 0d2260f6cf4e40164c0f41972ac469c5e9d23739..109ff1b629f329076777a40aa921d4f80a6326b8 100644
+--- a/package.json
++++ b/package.json
+@@ -17,7 +17,8 @@
+       "default": "./dist/index.client.js"
+     },
+     "./api": "./dist/api/index.js",
+-    "./theme.css": "./dist/twitter-theme/theme.css"
++    "./theme.css": "./dist/twitter-theme/theme.css",
++    "./dist/*": "./dist/*"
+   },
+   "files": [
+     "dist/**/*.{js,d.ts,css}"
