@@ -13,6 +13,11 @@ overrides:
   '@types/react': 18.3.3
   '@types/react-dom': 18.3.0
 
+patchedDependencies:
+  react-tweet@3.2.1:
+    hash: 3yraq4lqqsrlvsboz7fsshscie
+    path: patches/react-tweet@3.2.1.patch
+
 importers:
 
   .:
@@ -183,7 +188,7 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
       react-tweet:
         specifier: ^3.2.1
-        version: 3.2.1(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)
+        version: 3.2.1(patch_hash=3yraq4lqqsrlvsboz7fsshscie)(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)
       react-wrap-balancer:
         specifier: ^1.1.0
         version: 1.1.0(react@19.0.0-rc-df5f2736-20240712)
@@ -9142,7 +9147,7 @@ snapshots:
       react-dom: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       webpack: 5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)
 
-  react-tweet@3.2.1(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712):
+  react-tweet@3.2.1(patch_hash=3yraq4lqqsrlvsboz7fsshscie)(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712):
     dependencies:
       '@swc/helpers': 0.5.12
       clsx: 2.1.1
