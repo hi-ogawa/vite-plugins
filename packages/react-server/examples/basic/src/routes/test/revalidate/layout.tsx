@@ -9,7 +9,7 @@ export default function Layout(props: LayoutProps) {
       <NavMenu
         links={["/test/revalidate", "/test/revalidate/x", "/test/revalidate/y"]}
       />
-      <EffectCount />
+      <EffectCount label="effect-revalidate" />
       {props.children}
     </div>
   );
