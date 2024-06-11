@@ -16,6 +16,7 @@ import {
   type ServerRouterData,
   createLayoutContentRequest,
   getNewLayoutContentKeys,
+  handleTrailingSlash,
 } from "../features/router/utils";
 import { runActionContext } from "../features/server-action/context";
 import {
@@ -61,6 +62,9 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (import.meta.env.DEV) {
     serverReferenceImportPromiseCache.clear();
   }
+
+  const handled = handleTrailingSlash(new URL(ctx.request.url));
+  if (handled) return handled;
 
   // extract stream request details
   const { url, request, isStream, streamParam } = unwrapStreamRequest(
