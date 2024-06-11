@@ -1,5 +1,9 @@
 import type { ActionResult } from "../server-action/react-server";
 
+// TODO: rename
+// TODO
+// this indirection seems unnecessary?
+// can client directly make use of layouts and pages data?
 export type LayoutRequest = Record<
   string,
   {
@@ -10,12 +14,15 @@ export type LayoutRequest = Record<
 
 export type ServerRouterData = {
   action?: Pick<ActionResult, "error" | "data">;
-  layout: Record<string, React.ReactNode>;
+  entries: {
+    layouts: Record<string, React.ReactNode>;
+    pages: Record<string, React.ReactNode>;
+  };
 };
 
 export const LAYOUT_ROOT_NAME = "__root";
 
-export function createLayoutContentRequest(pathname: string) {
+export function createLayoutContentRequest(pathname: string): LayoutRequest {
   const prefixes = getPathPrefixes(pathname);
   const map: LayoutRequest = {
     [LAYOUT_ROOT_NAME]: { type: "layout", name: "/" },

@@ -10,6 +10,7 @@ import {
   routerRevalidate,
 } from "../features/router/client";
 import type { ServerRouterData } from "../features/router/utils";
+import { createLayoutContentRequest } from "../features/router/utils";
 import { createStreamRequest } from "../features/server-component/utils";
 import { initializeReactClientBrowser } from "../features/use-client/browser";
 import { RootErrorBoundary } from "../lib/client/error-boundary";
@@ -71,15 +72,21 @@ export async function start() {
       { callServer },
     );
   const initialLayoutPromise = Promise.resolve(initialLayout);
+  const initialLayoutContentMap = createLayoutContentRequest(location.pathname);
 
   //
   // browser root
   //
 
   function LayoutHandler(props: React.PropsWithChildren) {
+    // TODO: combine two states
     const [layoutPromise, setLayoutPromise] =
       React.useState<Promise<ServerRouterData>>(initialLayoutPromise);
+    const [layoutContentMap, setLayoutContentMap] = React.useState(
+      initialLayoutContentMap,
+    );
 
+    // TODO: probably this is something I need to cleanup
     // very shaky trick to merge with current layout
     $__setLayout = (nextPromise) => {
       setLayoutPromise(
@@ -88,9 +95,15 @@ export async function start() {
           const next = await nextPromise;
           return {
             action: next.action,
-            layout: {
-              ...current.layout,
-              ...next.layout,
+            entries: {
+              layouts: {
+                ...current.entries?.layouts,
+                ...next.entries?.layouts,
+              },
+              pages: {
+                ...current.entries?.pages,
+                ...next.entries?.pages,
+              },
             },
           } satisfies ServerRouterData;
         }),
@@ -131,17 +144,21 @@ export async function start() {
         lastPathname,
         revalidate: ROUTER_REVALIDATE_KEY in location.state,
       });
+      const layoutoMap = createLayoutContentRequest(location.pathname);
       startTransition(() => {
         $__setLayout(
           ReactClient.createFromFetch<ServerRouterData>(fetch(request), {
             callServer,
           }),
         );
+        setLayoutContentMap(layoutoMap);
       });
     }, [location]);
 
     return (
-      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
+      <LayoutStateContext.Provider
+        value={{ data: layoutPromise, map: layoutContentMap }}
+      >
         {props.children}
       </LayoutStateContext.Provider>
     );
