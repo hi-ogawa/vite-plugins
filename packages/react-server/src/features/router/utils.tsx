@@ -63,3 +63,18 @@ export function getPathPrefixes(pathname: string) {
 export function normalizePathname(pathname: string) {
   return pathname.replaceAll(/\/*$/g, "") || "/";
 }
+
+// enforce no trailing slash for simplicity
+export function handleTrailingSlash(url: URL) {
+  const normalized = normalizePathname(url.pathname);
+  if (normalized !== url.pathname) {
+    return new Response(null, {
+      status: 308,
+      headers: {
+        "x-handle-trailing-slash": "1",
+        location: normalized + url.search,
+      },
+    });
+  }
+  return;
+}
