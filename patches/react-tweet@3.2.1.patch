@@ -1,3 +1,17 @@
+diff --git a/dist/index.js b/dist/index.js
+index aad14841e0954a753d6b5a0fb7e4aa5a68f83041..05febf2377e5accfe71f4de8d4b87052b79b5569 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1,6 +1,6 @@
+ // Export every other component that's part of our default theme (the Twitter theme) as that
+ // can be useful for anyone that wans to do more deep edits in the default theme.
+-export * from './twitter-theme/components.js';
++// export * from './twitter-theme/components.js';
+ export * from './tweet.js';
+-export * from './utils.js';
+-export * from './hooks.js';
++// export * from './utils.js';
++// export * from './hooks.js';
 diff --git a/dist/twitter-theme/quoted-tweet/quoted-tweet.js b/dist/twitter-theme/quoted-tweet/quoted-tweet.js
 index 75c3f63fc0747dba24ffe8ea482c82472444dc3f..59c39a7237d0e5cc7f8acb51d71cef138c1e4002 100644
 --- a/dist/twitter-theme/quoted-tweet/quoted-tweet.js
@@ -35,7 +49,7 @@ index 9ca911465c726c3c6c94268fc06b24581669e26f..0aafea7be31cc6d36ef29c0a37a2c949
  import s from './tweet-media.module.css';
  const getSkeletonStyle = (media, itemCount)=>{
 diff --git a/package.json b/package.json
-index 0d2260f6cf4e40164c0f41972ac469c5e9d23739..eed76765ce057c9fd2b69ed202c8badc5bfaa30b 100644
+index 0d2260f6cf4e40164c0f41972ac469c5e9d23739..109ff1b629f329076777a40aa921d4f80a6326b8 100644
 --- a/package.json
 +++ b/package.json
 @@ -17,7 +17,8 @@
