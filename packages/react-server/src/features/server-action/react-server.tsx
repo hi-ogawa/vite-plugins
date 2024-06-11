@@ -28,7 +28,7 @@ export class ActionContext {
   responseHeaders: Record<string, string> = {};
 
   // TODO: refine revalidation by layout key
-  revalidate = false;
+  revalidate: boolean | string = false;
 
   constructor(public request: Request) {}
 }

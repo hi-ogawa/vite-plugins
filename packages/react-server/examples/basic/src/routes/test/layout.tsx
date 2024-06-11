@@ -30,6 +30,7 @@ export default async function Layout(props: LayoutProps) {
         <input className="antd-input px-2" placeholder="test-input" />
         <Hydrated />
         <EffectCount />
+        <div>[now: {Date.now()}]</div>
       </div>
       {props.children}
     </div>

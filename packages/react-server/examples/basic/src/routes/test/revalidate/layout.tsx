@@ -9,7 +9,10 @@ export default function Layout(props: LayoutProps) {
       <NavMenu
         links={["/test/revalidate", "/test/revalidate/x", "/test/revalidate/y"]}
       />
-      <EffectCount label="effect-revalidate" />
+      <div className="flex items-center gap-2 text-sm">
+        <EffectCount label="effect-revalidate" />
+        <div>[now: {Date.now()}]</div>
+      </div>
       {props.children}
     </div>
   );
