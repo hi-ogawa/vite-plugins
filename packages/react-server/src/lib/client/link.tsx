@@ -53,7 +53,10 @@ export function Link({
               (!target || target === "_self")
             ) {
               e.preventDefault();
-              history.push(href, revalidate ? routerRevalidate() : {});
+              history.push(
+                href,
+                revalidate ? routerRevalidate(revalidate) : {},
+              );
             }
           },
         } satisfies JSX.IntrinsicElements["a"],
@@ -87,7 +90,7 @@ export function LinkForm({
           });
           history.push(
             url.href.slice(url.origin.length),
-            revalidate ? routerRevalidate() : {},
+            revalidate ? routerRevalidate(revalidate) : {},
           );
         },
       } satisfies JSX.IntrinsicElements["form"])}
