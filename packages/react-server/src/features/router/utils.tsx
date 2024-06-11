@@ -1,4 +1,6 @@
+import type React from "react";
 import type { ActionResult } from "../server-action/react-server";
+import { type RouteType, toRouteId } from "./tree";
 
 // TODO: rename
 // TODO
@@ -8,19 +10,57 @@ export type LayoutRequest = Record<
   string,
   {
     type: "page" | "layout";
+    // TODO: rename to prefix
     name: string;
   }
 >;
 
+// pathname -> routeId
+export type RouteMapping = Record<string, string>;
+
+// routeId -> node
+export type RouteEntries = Record<string, React.ReactNode>;
+
+export type RouteDataKey = {
+  type: RouteType;
+  prefix: string;
+};
+
+export type RouteDataEntry = {
+  type: RouteType;
+  prefix: string;
+  node: React.ReactNode;
+};
+
 export type ServerRouterData = {
   action?: Pick<ActionResult, "error" | "data">;
-  entries: {
-    layouts: Record<string, React.ReactNode>;
-    pages: Record<string, React.ReactNode>;
-  };
+  entries: RouteDataEntry[];
+  // entries: {
+  //   layouts: Record<string, React.ReactNode>;
+  //   pages: Record<string, React.ReactNode>;
+  // };
+  // result2?: {
+  //   mapping: RouteMapping;
+  //   entries2: RouteDataEntry[];
+  // };
 };
 
 export const LAYOUT_ROOT_NAME = "__root";
+
+export function getRouteMapping(pathname: string): RouteMapping {
+  const map: RouteMapping = {};
+  map[LAYOUT_ROOT_NAME] = toRouteId("layout", "/");
+  const prefixes = getPathPrefixes(pathname);
+  for (let i = 0; i < prefixes.length; i++) {
+    const prefix = prefixes[i]!;
+    if (i < prefixes.length - 1) {
+      map[prefix] = toRouteId("layout", prefixes[i + 1]!);
+    } else {
+      map[prefix] = toRouteId("page", prefix);
+    }
+  }
+  return map;
+}
 
 export function createLayoutContentRequest(pathname: string): LayoutRequest {
   const prefixes = getPathPrefixes(pathname);
@@ -44,6 +84,7 @@ export function createLayoutContentRequest(pathname: string): LayoutRequest {
   return map;
 }
 
+// TODO: this is bad. should return array of LayoutContentTarget
 export function getNewLayoutContentKeys(prev: string, next: string): string[] {
   const prevMap = createLayoutContentRequest(prev);
   const nextMap = createLayoutContentRequest(next);

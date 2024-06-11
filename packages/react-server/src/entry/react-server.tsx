@@ -6,11 +6,14 @@ import {
   generateRouteModuleTree,
   renderRouteMap,
 } from "../features/router/server";
+import type { RouteType } from "../features/router/tree";
 import {
   type LayoutRequest,
+  type RouteDataKey,
   type ServerRouterData,
   createLayoutContentRequest,
   getNewLayoutContentKeys,
+  getRouteMapping,
 } from "../features/router/utils";
 import { runActionContext } from "../features/server-action/context";
 import {
@@ -71,6 +74,37 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
+  // render flight
+  {
+    const mapping = getRouteMapping(url.pathname);
+    // TODO: we should let browser tell server about this?
+    // well, we're using `lastPathname` as a minimal information to do that...
+    const skipKeys: RouteDataKey[] = [];
+    if (
+      streamParam?.lastPathname &&
+      !streamParam.revalidate &&
+      !actionResult?.context.revalidate
+    ) {
+      const lastMapping = getRouteMapping(streamParam.lastPathname);
+      // "page" always rerender
+      // "layout" don't return if it's alway in client
+    }
+    const { entries } = await renderRouteMap(router.tree, request);
+
+    const stream = ReactServer.renderToReadableStream<ServerRouterData>(
+      {
+        entries: {} as any,
+        action: actionResult
+          ? objectPick(actionResult, ["data", "error"])
+          : undefined,
+      },
+      createBundlerConfig(),
+      {
+        onError: reactServerOnError,
+      },
+    );
+  }
+
   let layoutRequest = createLayoutContentRequest(url.pathname);
   if (
     streamParam?.lastPathname &&
@@ -114,6 +148,8 @@ async function render({
   // we only need to filter out unnecessary map.
   // then client can map back to each prefix.
   const result = await renderRouteMap(router.tree, request);
+  result.entries;
+  // revalidated
   const entries = {
     layouts: objectPick(
       result.layouts,
@@ -132,6 +168,11 @@ async function render({
   return ReactServer.renderToReadableStream<ServerRouterData>(
     {
       entries,
+      result2: {
+        mapping: {},
+        // TODO: filter out based on
+        entries: result.entries,
+      },
       action: actionResult
         ? objectPick(actionResult, ["data", "error"])
         : undefined,

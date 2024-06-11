@@ -43,17 +43,29 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
 }
 
 type MatchNodeEntry<T> = {
+  type: RouteType;
   prefix: string;
-  type: "layout" | "page";
   node: TreeNode<T>;
   params: Record<string, string>;
 };
+
+export type RouteType = "layout" | "page";
+
+export function toRouteId(type: RouteType, pathname: string) {
+  return `${pathname}#${type}`;
+}
+
+export function parseRouteId(id: string) {
+  const [pathname, type] = id.split("#") as [string, RouteType];
+  return { pathname, type };
+}
 
 type MatchResult<T> = {
   matches: MatchNodeEntry<T>[];
 };
 
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
+  // TODO: force non-trailing slash at higher level
   // TODO: more uniform handling of trailing slash
   pathname = normalizePathname(pathname);
   const prefixes = getPathPrefixes(pathname);
