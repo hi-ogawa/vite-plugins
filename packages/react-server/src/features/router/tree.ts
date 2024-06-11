@@ -1,5 +1,5 @@
 import { sortBy, tinyassert } from "@hiogawa/utils";
-import { getPathPrefixes, normalizePathname } from "./utils";
+import { getPathPrefixes } from "./utils";
 
 export interface BaseRouteEntry<T> {
   page?: T;
@@ -54,8 +54,6 @@ type MatchResult<T> = {
 };
 
 export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
-  // TODO: more uniform handling of trailing slash
-  pathname = normalizePathname(pathname);
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;

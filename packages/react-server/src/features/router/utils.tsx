@@ -60,7 +60,7 @@ export function getPathPrefixes(pathname: string) {
 }
 
 // strip trailing slash
-export function normalizePathname(pathname: string) {
+function normalizePathname(pathname: string) {
   return pathname.replaceAll(/\/*$/g, "") || "/";
 }
 
