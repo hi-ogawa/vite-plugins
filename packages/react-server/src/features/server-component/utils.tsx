@@ -5,8 +5,7 @@ const RSC_PARAM = "x-flight-meta";
 type StreamRequestParam = {
   actionId?: string;
   lastPathname?: string;
-  // TODO: refine revalitating each layout layer
-  revalidate?: boolean;
+  revalidate?: boolean | string;
 };
 
 export function createStreamRequest(href: string, param: StreamRequestParam) {
