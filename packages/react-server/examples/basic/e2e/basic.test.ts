@@ -1077,6 +1077,11 @@ test("preload client @build", async ({ page }) => {
   await expect(page.locator(`link[href="/${file}"]`)).toBeAttached();
 });
 
+test("trailing slash", async ({ request }) => {
+  const res = await request.get("/test/?hello", { maxRedirects: 0 });
+  expect([res.status(), res.headers()["location"]]).toEqual([308, "/test?hello"]);
+});
+
 function getClientManifest(): Manifest {
   return JSON.parse(
     fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
