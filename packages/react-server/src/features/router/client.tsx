@@ -3,6 +3,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { useRouter } from "../../client";
 import { ActionRedirectHandler } from "../server-action/client";
+import type { RevalidationType } from "../server-component/utils";
 import {
   type AssetDeps,
   type RouteManifest,
@@ -37,7 +38,7 @@ export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
 
 declare module "@tanstack/history" {
   interface HistoryState {
-    [ROUTER_REVALIDATE_KEY]?: boolean | string;
+    [ROUTER_REVALIDATE_KEY]?: RevalidationType;
   }
 }
 
