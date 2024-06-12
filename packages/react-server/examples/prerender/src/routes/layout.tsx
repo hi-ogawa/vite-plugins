@@ -36,7 +36,10 @@ export default function Layout(props: React.PropsWithChildren) {
               </Link>
             </li>
             <li>
-              <Link href="/ppr">PPR</Link>
+              <Link href="/ppr?sleep">PPR (sleep)</Link>
+            </li>
+            <li>
+              <Link href="/ppr?postpone">PPR (postpone)</Link>
             </li>
           </ul>
         </nav>

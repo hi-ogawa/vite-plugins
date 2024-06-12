@@ -132,8 +132,10 @@ export async function renderHtml(
   );
 
   if (1) {
-    const prerendered = await ReactDOMStatic.prerender(reactRootEl);
-    console.log(prerendered);
+    (async () => {
+      const prerendered = await ReactDOMStatic.prerender(reactRootEl);
+      console.log("[prerender]", prerendered);
+    })();
   }
 
   //
