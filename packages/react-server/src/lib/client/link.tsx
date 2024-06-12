@@ -2,6 +2,7 @@ import { objectMapValues } from "@hiogawa/utils";
 import React from "react";
 import { routerRevalidate } from "../../client";
 import { usePreloadHandlers } from "../../features/router/client";
+import type { RevalidationType } from "../../features/server-component/utils";
 import { useRouter } from "./router";
 
 // TODO: study prior art
@@ -10,7 +11,7 @@ import { useRouter } from "./router";
 // https://github.com/remix-run/remix/blob/6ad886145bd35298accf04d43bd6ef69833567e2/packages/remix-react/components.tsx#L121
 
 interface LinkProps {
-  revalidate?: boolean | string;
+  revalidate?: RevalidationType;
   activeProps?: JSX.IntrinsicElements["a"];
   preload?: boolean;
 }
