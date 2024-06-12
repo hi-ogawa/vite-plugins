@@ -35,6 +35,9 @@ export default function Layout(props: React.PropsWithChildren) {
                 Posts
               </Link>
             </li>
+            <li>
+              <Link href="/ppr">PPR</Link>
+            </li>
           </ul>
         </nav>
         {props.children}

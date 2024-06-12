@@ -1,6 +1,7 @@
 import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
+import ReactDOMStatic from "react-dom/static.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
@@ -129,6 +130,11 @@ export async function renderHtml(
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
   );
+
+  if (1) {
+    const prerendered = await ReactDOMStatic.prerender(reactRootEl);
+    console.log(prerendered);
+  }
 
   //
   // render
