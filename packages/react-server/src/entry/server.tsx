@@ -145,9 +145,18 @@ export async function renderHtml(
     }
 
     (async () => {
-      const result = await ReactDOMStatic.prerender(reactRootEl);
-      console.log("[postponed]", result.postponed);
-      console.log("[prelude]", await streamToString(result.prelude));
+      process.env["__renderMode"] = "prerender";
+      const prerendered = await ReactDOMStatic.prerender(reactRootEl);
+      console.log("[postponed]", prerendered.postponed);
+      console.log("[prelude]", await streamToString(prerendered.prelude));
+      if (prerendered.postponed) {
+        process.env["__renderMode"] = "resume";
+        const resumed = await ReactDOMServer.resume(
+          reactRootEl,
+          prerendered.postponed,
+        );
+        console.log("[resumed]", await streamToString(resumed));
+      }
     })();
   }
 

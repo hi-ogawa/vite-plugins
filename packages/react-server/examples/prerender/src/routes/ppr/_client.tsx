@@ -2,8 +2,10 @@
 
 import React from "react";
 
-export function Postpone() {
-  // @ts-expect-error
-  React.unstable_postpone("testing postpone");
-  return null;
+export function Postpone(props: React.PropsWithChildren) {
+  if (globalThis.process?.env["__renderMode"] === "prerender") {
+    // @ts-expect-error
+    React.unstable_postpone();
+  }
+  return <>{props.children}</>;
 }

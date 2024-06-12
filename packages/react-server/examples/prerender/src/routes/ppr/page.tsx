@@ -6,7 +6,19 @@ export default async function Page(props: PageProps) {
     await new Promise((r) => setTimeout(r, 1000));
   }
   if (props.url.search.includes("postpone")) {
-    return <Postpone />;
+    return (
+      <Postpone>
+        <PageInner />
+      </Postpone>
+    );
   }
-  return <div>Page</div>;
+  return <PageInner />;
+}
+
+function PageInner() {
+  return (
+    <div>
+      Dynamic Page <pre>[now: {Date.now()}]</pre>
+    </div>
+  );
 }
