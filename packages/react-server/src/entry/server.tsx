@@ -132,9 +132,22 @@ export async function renderHtml(
   );
 
   if (1) {
+    async function streamToString(stream: ReadableStream<Uint8Array>) {
+      let result = "";
+      await stream.pipeThrough(new TextDecoderStream()).pipeTo(
+        new WritableStream({
+          write(chunk) {
+            result += chunk;
+          },
+        }),
+      );
+      return result;
+    }
+
     (async () => {
-      const prerendered = await ReactDOMStatic.prerender(reactRootEl);
-      console.log("[prerender]", prerendered);
+      const result = await ReactDOMStatic.prerender(reactRootEl);
+      console.log("[postponed]", result.postponed);
+      console.log("[prelude]", await streamToString(result.prelude));
     })();
   }
 
