@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   createLayoutContentRequest,
-  getNewLayoutContentKeys,
   getPathPrefixes,
   isAncestorPath,
   revalidateLayoutContentRequest,
@@ -93,57 +92,6 @@ describe(revalidateLayoutContentRequest, () => {
           "type": "page",
         },
       }
-    `);
-  });
-});
-
-describe(getNewLayoutContentKeys, () => {
-  it("basic", () => {
-    expect(getNewLayoutContentKeys("/", "/")).toMatchInlineSnapshot(`
-      [
-        "/",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/", "/a")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/a",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a", "/")).toMatchInlineSnapshot(`
-      [
-        "/",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a", "/b")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/b",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a/b", "/a/b")).toMatchInlineSnapshot(`
-      [
-        "/a/b",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a/b", "/a/c")).toMatchInlineSnapshot(`
-      [
-        "/a",
-        "/a/c",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a", "/a/b")).toMatchInlineSnapshot(`
-      [
-        "/a",
-        "/a/b",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/", "/a/b")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/a",
-        "/a/b",
-      ]
     `);
   });
 });

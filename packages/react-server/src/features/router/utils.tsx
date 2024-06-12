@@ -80,17 +80,6 @@ export function revalidateLayoutContentRequest(
   return layoutRequest;
 }
 
-// TODO: remove
-export function getNewLayoutContentKeys(prev: string, next: string): string[] {
-  const prevMap = createLayoutContentRequest(prev);
-  const nextMap = createLayoutContentRequest(next);
-  return Object.keys(nextMap).filter(
-    (k) =>
-      nextMap[k]?.type === "page" ||
-      JSON.stringify(nextMap[k]) !== JSON.stringify(prevMap[k]),
-  );
-}
-
 /**
  * @example
  * "/" => ["/"]
