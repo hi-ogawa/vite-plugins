@@ -3,7 +3,6 @@ import {
   objectMapKeys,
   objectMapValues,
   objectPick,
-  objectPickBy,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
@@ -14,9 +13,8 @@ import {
 import {
   type LayoutRequest,
   type ServerRouterData,
-  createLayoutContentRequest,
   handleTrailingSlash,
-  isAncestorPath,
+  revalidateLayoutContentRequest,
 } from "../features/router/utils";
 import { runActionContext } from "../features/server-action/context";
 import {
@@ -80,30 +78,11 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  // TODO: make it unit-test-able
-  let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (streamParam?.lastPathname) {
-    const lastRequest = createLayoutContentRequest(streamParam?.lastPathname);
-    const lastLayouts = Object.values(lastRequest)
-      .filter((v) => v.type === "layout")
-      .map((v) => v.name);
-    layoutRequest = objectPickBy(layoutRequest, (v, _k) => {
-      return (
-        // revalidate all
-        streamParam.revalidate === true ||
-        actionResult?.context.revalidate === true ||
-        // revalidate partial
-        (streamParam.revalidate &&
-          isAncestorPath(streamParam.revalidate, v.name)) ||
-        (actionResult?.context.revalidate &&
-          isAncestorPath(actionResult.context.revalidate, v.name)) ||
-        // page: refetch always
-        v.type === "page" ||
-        // layout: refetch only new ones
-        (v.type === "layout" && !lastLayouts.includes(v.name))
-      );
-    });
-  }
+  const layoutRequest = revalidateLayoutContentRequest(
+    url.pathname,
+    streamParam?.lastPathname,
+    [streamParam?.revalidate, actionResult?.context.revalidate],
+  );
   const stream = await render({ request, layoutRequest, actionResult });
 
   if (isStream) {

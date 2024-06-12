@@ -1,4 +1,6 @@
+import { objectPickBy, typedBoolean } from "@hiogawa/utils";
 import type { ActionResult } from "../server-action/react-server";
+import type { RevalidationType } from "../server-component/utils";
 
 export type LayoutRequest = Record<
   string,
@@ -35,6 +37,46 @@ export function createLayoutContentRequest(pathname: string) {
     }
   }
   return map;
+}
+
+type RouteDataKey = {
+  type: "page" | "layout";
+  name: string;
+};
+
+function getCachedRoutes(
+  pathname: string,
+  revalidations: RevalidationType[],
+): RouteDataKey[] {
+  if (revalidations.some((v) => v === true)) {
+    return [];
+  }
+  const routes = Object.values(createLayoutContentRequest(pathname));
+  return routes.filter(
+    (v) =>
+      v.type === "layout" &&
+      !revalidations.some(
+        (r) => typeof r === "string" && isAncestorPath(r, v.name),
+      ),
+  );
+}
+
+export function revalidateLayoutContentRequest(
+  pathname: string,
+  lastPathname?: string,
+  revalidations?: (RevalidationType | undefined)[],
+) {
+  let layoutRequest = createLayoutContentRequest(pathname);
+  if (lastPathname) {
+    const cached = getCachedRoutes(
+      lastPathname,
+      revalidations?.filter(typedBoolean) ?? [],
+    );
+    layoutRequest = objectPickBy(layoutRequest, (v) =>
+      cached.some((c) => c.name === v.name && c.type === v.type),
+    );
+  }
+  return layoutRequest;
 }
 
 // TODO: remove
