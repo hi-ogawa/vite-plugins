@@ -1,7 +1,9 @@
+import type { HistoryState } from "@tanstack/history";
 import React from "react";
 import ReactDom from "react-dom";
 import { useRouter } from "../../client";
 import { ActionRedirectHandler } from "../server-action/client";
+import type { RevalidationType } from "../server-component/utils";
 import {
   type AssetDeps,
   type RouteManifest,
@@ -34,8 +36,14 @@ export function LayoutRoot() {
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
 
-export function routerRevalidate() {
-  return { [ROUTER_REVALIDATE_KEY]: true };
+declare module "@tanstack/history" {
+  interface HistoryState {
+    [ROUTER_REVALIDATE_KEY]?: RevalidationType;
+  }
+}
+
+export function routerRevalidate(v: string | boolean = true): HistoryState {
+  return { [ROUTER_REVALIDATE_KEY]: v };
 }
 
 function preloadAssetDeps(deps: AssetDeps) {

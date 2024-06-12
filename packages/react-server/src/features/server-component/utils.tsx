@@ -2,11 +2,14 @@
 export const RSC_PATH = "__f.data";
 const RSC_PARAM = "x-flight-meta";
 
-type StreamRequestParam = {
+// TODO: (breaking) remove boolean `true` in favor of string "/"
+export type RevalidationType = boolean | string;
+
+export type StreamRequestParam = {
   actionId?: string;
+  // TODO: browser can send all cached route ids?
   lastPathname?: string;
-  // TODO: refine revalitating each layout layer
-  revalidate?: boolean;
+  revalidate?: RevalidationType;
 };
 
 export function createStreamRequest(href: string, param: StreamRequestParam) {

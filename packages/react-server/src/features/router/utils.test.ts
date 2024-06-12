@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   createLayoutContentRequest,
-  getNewLayoutContentKeys,
   getPathPrefixes,
+  isAncestorPath,
+  revalidateLayoutContentRequest,
 } from "./utils";
 
 describe(createLayoutContentRequest, () => {
@@ -58,53 +59,39 @@ describe(createLayoutContentRequest, () => {
   });
 });
 
-describe(getNewLayoutContentKeys, () => {
+describe(revalidateLayoutContentRequest, () => {
   it("basic", () => {
-    expect(getNewLayoutContentKeys("/", "/")).toMatchInlineSnapshot(`
-      [
-        "/",
-      ]
+    expect(
+      revalidateLayoutContentRequest("/dir/x", "/dir/y", []),
+    ).toMatchInlineSnapshot(`
+      {
+        "/dir": {
+          "name": "/dir/x",
+          "type": "layout",
+        },
+        "/dir/x": {
+          "name": "/dir/x",
+          "type": "page",
+        },
+      }
     `);
-    expect(getNewLayoutContentKeys("/", "/a")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/a",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a", "/")).toMatchInlineSnapshot(`
-      [
-        "/",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a", "/b")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/b",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a/b", "/a/b")).toMatchInlineSnapshot(`
-      [
-        "/a/b",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a/b", "/a/c")).toMatchInlineSnapshot(`
-      [
-        "/a",
-        "/a/c",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/a", "/a/b")).toMatchInlineSnapshot(`
-      [
-        "/a",
-        "/a/b",
-      ]
-    `);
-    expect(getNewLayoutContentKeys("/", "/a/b")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/a",
-        "/a/b",
-      ]
+    expect(
+      revalidateLayoutContentRequest("/dir/x", "/dir/y", ["/dir"]),
+    ).toMatchInlineSnapshot(`
+      {
+        "/": {
+          "name": "/dir",
+          "type": "layout",
+        },
+        "/dir": {
+          "name": "/dir/x",
+          "type": "layout",
+        },
+        "/dir/x": {
+          "name": "/dir/x",
+          "type": "page",
+        },
+      }
     `);
   });
 });
@@ -129,5 +116,13 @@ describe(getPathPrefixes, () => {
         "/hello/world",
       ]
     `);
+  });
+});
+
+describe(isAncestorPath, () => {
+  it("basic", () => {
+    expect(isAncestorPath("/x", "/x")).toMatchInlineSnapshot(`true`);
+    expect(isAncestorPath("/x", "/x/y")).toMatchInlineSnapshot(`true`);
+    expect(isAncestorPath("/x", "/xx/y")).toMatchInlineSnapshot(`false`);
   });
 });

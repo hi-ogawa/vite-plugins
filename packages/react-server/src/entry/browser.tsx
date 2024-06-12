@@ -129,7 +129,7 @@ export async function start() {
       });
       const request = createStreamRequest(location.href, {
         lastPathname,
-        revalidate: ROUTER_REVALIDATE_KEY in location.state,
+        revalidate: location.state[ROUTER_REVALIDATE_KEY],
       });
       startTransition(() => {
         $__setLayout(

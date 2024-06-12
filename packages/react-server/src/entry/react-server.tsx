@@ -3,7 +3,6 @@ import {
   objectMapKeys,
   objectMapValues,
   objectPick,
-  objectPickBy,
 } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
@@ -14,9 +13,8 @@ import {
 import {
   type LayoutRequest,
   type ServerRouterData,
-  createLayoutContentRequest,
-  getNewLayoutContentKeys,
   handleTrailingSlash,
+  revalidateLayoutContentRequest,
 } from "../features/router/utils";
 import { runActionContext } from "../features/server-action/context";
 import {
@@ -80,18 +78,11 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  let layoutRequest = createLayoutContentRequest(url.pathname);
-  if (
-    streamParam?.lastPathname &&
-    !streamParam.revalidate &&
-    !actionResult?.context.revalidate
-  ) {
-    const newKeys = getNewLayoutContentKeys(
-      streamParam.lastPathname,
-      url.pathname,
-    );
-    layoutRequest = objectPickBy(layoutRequest, (_v, k) => newKeys.includes(k));
-  }
+  const layoutRequest = revalidateLayoutContentRequest(
+    url.pathname,
+    streamParam?.lastPathname,
+    [streamParam?.revalidate, actionResult?.context.revalidate],
+  );
   const stream = await render({ request, layoutRequest, actionResult });
 
   if (isStream) {
