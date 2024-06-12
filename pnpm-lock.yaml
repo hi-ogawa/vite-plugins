@@ -9,6 +9,7 @@ overrides:
   react: 0.0.0-experimental-a26e3f403e-20240611
   react-dom: 0.0.0-experimental-a26e3f403e-20240611
   react-is: 0.0.0-experimental-a26e3f403e-20240611
+  react-server-dom-webpack: 0.0.0-experimental-a26e3f403e-20240611
   '@types/react': 18.3.1
   '@types/react-dom': 18.3.0
 
@@ -126,8 +127,8 @@ importers:
         specifier: 0.0.0-experimental-a26e3f403e-20240611
         version: 0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc.0
-        version: 19.0.0-rc.0(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
+        specifier: 0.0.0-experimental-a26e3f403e-20240611
+        version: 0.0.0-experimental-a26e3f403e-20240611(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
 
   packages/react-server/examples/basic:
     dependencies:
@@ -150,8 +151,8 @@ importers:
         specifier: 0.0.0-experimental-a26e3f403e-20240611
         version: 0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc.0
-        version: 19.0.0-rc.0(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
+        specifier: 0.0.0-experimental-a26e3f403e-20240611
+        version: 0.0.0-experimental-a26e3f403e-20240611(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
       react-wrap-balancer:
         specifier: ^1.1.0
         version: 1.1.0(react@0.0.0-experimental-a26e3f403e-20240611)
@@ -208,8 +209,8 @@ importers:
         specifier: 0.0.0-experimental-a26e3f403e-20240611
         version: 0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc.0
-        version: 19.0.0-rc.0(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
+        specifier: 0.0.0-experimental-a26e3f403e-20240611
+        version: 0.0.0-experimental-a26e3f403e-20240611(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: ^0.0.1
@@ -245,8 +246,8 @@ importers:
         specifier: 0.0.0-experimental-a26e3f403e-20240611
         version: 0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc.0
-        version: 19.0.0-rc.0(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
+        specifier: 0.0.0-experimental-a26e3f403e-20240611
+        version: 0.0.0-experimental-a26e3f403e-20240611(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest
@@ -3861,8 +3862,8 @@ packages:
     peerDependencies:
       react: 0.0.0-experimental-a26e3f403e-20240611
 
-  react-server-dom-webpack@19.0.0-rc.0:
-    resolution: {integrity: sha512-nnSBQnXKEgfgSx6veKJg3TdRmRyn+tyOuKwKdHCI1SuR+WL2JLDM+NfZrP5DFie7w5ZCNTjS/LdACV4YuRuxDg==}
+  react-server-dom-webpack@0.0.0-experimental-a26e3f403e-20240611:
+    resolution: {integrity: sha512-jt7vzKxj5S95YCGZWizI8s6ifa5c9XlC6t0iwbcSTL+8xZXpTLnK0ro3Aay3S87JZwShIM9hYmIuZzlQjOnQ5w==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       react: 0.0.0-experimental-a26e3f403e-20240611
@@ -7978,7 +7979,7 @@ snapshots:
       '@remix-run/router': 1.15.3
       react: 19.0.0-rc.0
 
-  react-server-dom-webpack@19.0.0-rc.0(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2)):
+  react-server-dom-webpack@0.0.0-experimental-a26e3f403e-20240611(react-dom@0.0.0-experimental-a26e3f403e-20240611(react@0.0.0-experimental-a26e3f403e-20240611))(react@0.0.0-experimental-a26e3f403e-20240611)(webpack@5.90.3(esbuild@0.20.2)):
     dependencies:
       acorn-loose: 8.4.0
       neo-async: 2.6.2
