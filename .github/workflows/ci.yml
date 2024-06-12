@@ -25,7 +25,7 @@ jobs:
       - run: pnpm tsc
       - run: pnpm test
 
-  test-react-server:
+  test-react-server-basic:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,9 +35,21 @@ jobs:
       - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
       - run: pnpm -C packages/react-server/examples/basic cf-build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-cf-preview
+
+  test-react-server-prerender:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
       - run: pnpm -C packages/react-server/examples/prerender test-e2e
       - run: pnpm -C packages/react-server/examples/prerender build
       - run: pnpm -C packages/react-server/examples/prerender test-e2e-preview
+
+  test-react-server-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
       - run: pnpm -C packages/react-server test-e2e
 
   test-vite-node-miniflare:
