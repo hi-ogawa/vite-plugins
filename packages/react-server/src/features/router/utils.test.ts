@@ -4,6 +4,7 @@ import {
   getNewLayoutContentKeys,
   getPathPrefixes,
   isAncestorPath,
+  revalidateLayoutContentRequest,
 } from "./utils";
 
 describe(createLayoutContentRequest, () => {
@@ -53,6 +54,43 @@ describe(createLayoutContentRequest, () => {
         "__root": {
           "name": "/",
           "type": "layout",
+        },
+      }
+    `);
+  });
+});
+
+describe(revalidateLayoutContentRequest, () => {
+  it("basic", () => {
+    expect(
+      revalidateLayoutContentRequest("/dir/x", "/dir/y", []),
+    ).toMatchInlineSnapshot(`
+      {
+        "/dir": {
+          "name": "/dir/x",
+          "type": "layout",
+        },
+        "/dir/x": {
+          "name": "/dir/x",
+          "type": "page",
+        },
+      }
+    `);
+    expect(
+      revalidateLayoutContentRequest("/dir/x", "/dir/y", ["/dir"]),
+    ).toMatchInlineSnapshot(`
+      {
+        "/": {
+          "name": "/dir",
+          "type": "layout",
+        },
+        "/dir": {
+          "name": "/dir/x",
+          "type": "layout",
+        },
+        "/dir/x": {
+          "name": "/dir/x",
+          "type": "page",
         },
       }
     `);

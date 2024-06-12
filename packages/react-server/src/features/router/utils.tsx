@@ -72,8 +72,9 @@ export function revalidateLayoutContentRequest(
       lastPathname,
       revalidations?.filter(typedBoolean) ?? [],
     );
-    layoutRequest = objectPickBy(layoutRequest, (v) =>
-      cached.some((c) => c.name === v.name && c.type === v.type),
+    layoutRequest = objectPickBy(
+      layoutRequest,
+      (v) => !cached.some((c) => c.name === v.name && c.type === v.type),
     );
   }
   return layoutRequest;
