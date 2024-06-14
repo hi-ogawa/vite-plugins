@@ -11,9 +11,6 @@ export default defineConfig({
     // force: true,
   },
   ssr: {
-    resolve: {
-      conditions: ["workerd"],
-    },
     optimizeDeps: {
       include: ["react", "react/jsx-dev-runtime", "react-dom/server"],
     },
