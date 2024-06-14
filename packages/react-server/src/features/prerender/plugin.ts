@@ -76,19 +76,25 @@ export function prerenderPlugin({
   ];
 }
 
-export function pprPlugin({
-  manager,
-  ppr,
-}: {
+export function pprPlugin(options: {
   manager: PluginStateManager;
   ppr?: () => Promise<string[]> | string[];
 }): Plugin[] {
   const buildPlugin: Plugin = {
     name: pprPlugin.name + ":build",
-    apply: () => !!(ppr && manager.buildType === "ssr"),
-    async closeBundle() {
-      console.log("▶▶▶ PARTIAL PRERENDER");
-      process.env["REACT_SERVER_RENDER_MODE"] = "ppr";
+    enforce: "post",
+    apply: () => !!(options.ppr && options.manager.buildType === "ssr"),
+    closeBundle: {
+      sequential: true,
+      handler: async () => {
+        console.log("▶▶▶ PARTIAL PRERENDER");
+        process.env["REACT_SERVER_RENDER_MODE"] = "ppr";
+        tinyassert(options.ppr);
+        const routes = await options.ppr();
+        for (const route of routes) {
+          console.log(`  • ${route}`);
+        }
+      },
     },
   };
 
