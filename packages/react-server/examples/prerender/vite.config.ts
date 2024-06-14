@@ -23,6 +23,9 @@ export default defineConfig({
           ...posts.slice(0, 3).map((p) => `/posts/${p.id}`),
         ];
       },
+      ppr: async () => {
+        return ["/ppr"];
+      },
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({

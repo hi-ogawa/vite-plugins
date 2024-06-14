@@ -70,6 +70,21 @@ export async function prerender(request: Request) {
   return { stream, response, html };
 }
 
+// TODO
+export async function partialPrerender(request: Request) {
+  request;
+  const reactRootEl = <div></div>;
+  const prerendered = await ReactDOMStatic.prerender(reactRootEl);
+  if (prerendered.postponed) {
+    process.env["__renderMode"] = "resume";
+    const resumed = await ReactDOMServer.resume(
+      reactRootEl,
+      prerendered.postponed,
+    );
+    resumed;
+  }
+}
+
 export async function importReactServer(): Promise<
   typeof import("./react-server")
 > {
@@ -130,35 +145,6 @@ export async function renderHtml(
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
   );
-
-  if (1) {
-    async function streamToString(stream: ReadableStream<Uint8Array>) {
-      let result = "";
-      await stream.pipeThrough(new TextDecoderStream()).pipeTo(
-        new WritableStream({
-          write(chunk) {
-            result += chunk;
-          },
-        }),
-      );
-      return result;
-    }
-
-    (async () => {
-      process.env["__renderMode"] = "prerender";
-      const prerendered = await ReactDOMStatic.prerender(reactRootEl);
-      console.log("[postponed]", prerendered.postponed);
-      console.log("[prelude]", await streamToString(prerendered.prelude));
-      if (prerendered.postponed) {
-        process.env["__renderMode"] = "resume";
-        const resumed = await ReactDOMServer.resume(
-          reactRootEl,
-          prerendered.postponed,
-        );
-        console.log("[resumed]", await streamToString(resumed));
-      }
-    })();
-  }
 
   //
   // render

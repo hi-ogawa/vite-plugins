@@ -14,7 +14,7 @@ import {
 import { CSS_LANGS_RE } from "../features/assets/css";
 import { vitePluginServerAssets } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
-import { prerenderPlugin } from "../features/prerender/plugin";
+import { pprPlugin, prerenderPlugin } from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
 import {
   routeManifestPluginClient,
@@ -98,6 +98,7 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: () => Promise<string[]> | string[];
+  ppr?: () => Promise<string[]> | string[];
 }): Plugin[] {
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
@@ -349,6 +350,7 @@ export function vitePluginReactServer(options?: {
     ...vitePluginServerAssets({ manager }),
     ...routeManifestPluginClient({ manager }),
     ...prerenderPlugin({ manager, prerender: options?.prerender }),
+    ...pprPlugin({ manager, ppr: options?.ppr }),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {

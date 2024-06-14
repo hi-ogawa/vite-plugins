@@ -1,11 +1,10 @@
-"use client";
-
 import React from "react";
 
 export function Postpone(props: React.PropsWithChildren) {
-  if (globalThis.process?.env["__renderMode"] === "prerender") {
+  // TODO: add to $__global
+  if (globalThis.process?.env?.["REACT_SERVER_RENDER_MODE"] === "ppr") {
     // @ts-expect-error
     React.unstable_postpone();
   }
-  return <>{props.children}</>;
+  return props.children;
 }
