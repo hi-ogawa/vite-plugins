@@ -7,6 +7,9 @@ import { defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   ssr: {
+    resolve: {
+      conditions: ["workerd"],
+    },
     optimizeDeps: {
       include: [
         "react",
