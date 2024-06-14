@@ -173,7 +173,7 @@ async function renderHtml(
       preludeString: await streamToString(prelude),
       postponed,
     };
-    // TODO: (refactor) don't go through Response to just satisfy types
+    // TODO: (refactor) don't go through Response to workaround types
     return new Response(JSON.stringify(pprData));
   }
 

@@ -230,6 +230,7 @@ export function vitePluginReactServer(options?: {
             ? {
                 input: options?.prerender
                   ? {
+                      // TODO: rename to __entry
                       __entry_prerender: "@hiogawa/react-server/entry-server",
                     }
                   : undefined,

@@ -94,13 +94,26 @@ export function pprPlugin(options: {
         const entry: typeof import("../../entry/server") = await import(
           path.resolve("dist/server/__entry_prerender.js")
         );
+        const manifest = {
+          entries: Array<{
+            route: string;
+            data: unknown;
+          }>(),
+        };
         for (const route of routes) {
           console.log(`  • ${route}`);
           const url = new URL(route, "https://prerender.local");
           const request = new Request(url);
           const data = await entry.partialPrerender(request);
-          console.log(data);
+          manifest.entries.push({
+            route,
+            data,
+          });
         }
+        await writeFile(
+          "dist/server/__ppr.js",
+          `export default ${JSON.stringify(manifest, null, 2)}`,
+        );
       },
     },
   };
