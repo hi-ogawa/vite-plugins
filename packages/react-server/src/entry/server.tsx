@@ -147,6 +147,17 @@ async function renderHtml(
     </RouterContext.Provider>
   );
 
+  // PPR during build
+  if (options?.ppr) {
+    const { prelude, postponed } = await ReactDOMStatic.prerender(reactRootEl);
+    const pprData: PPRData = {
+      preludeString: await streamToString(prelude),
+      postponed,
+    };
+    // TODO: (refactor) don't go through Response to workaround types
+    return new Response(JSON.stringify(pprData));
+  }
+
   //
   // render
   //
@@ -170,43 +181,11 @@ async function renderHtml(
     JSON.stringify(routeManifest),
   )}</script>\n`;
 
-  // PPR build
-  if (options?.ppr) {
-    const { prelude, postponed } = await ReactDOMStatic.prerender(reactRootEl);
-    const pprData: PPRData = {
-      preludeString: await streamToString(prelude),
-      postponed,
-    };
-    // TODO: (refactor) don't go through Response to workaround types
-    return new Response(JSON.stringify(pprData));
-  }
-
-  // PPR runtime
-  if (0) {
-    // TODO: how to read manifest during runtime?
-    //       probably we can inject some global variables to prebuilt index.js?
-    const pprManifest = {} as PPRManifest;
-    const data = pprManifest.entries[url.pathname];
-    if (data) {
-      const { preludeString, postponed } = data;
-      const resumed = await ReactDOMServer.resume(reactRootEl, postponed);
-      const ssrStream = resumed.pipeThrough(
-        new TransformStream({
-          start(controller) {
-            controller.enqueue(new TextEncoder().encode(preludeString));
-          },
-        }),
-      );
-      // TODO: swap with renderToReadableStream's ssrStream below
-      ssrStream;
-    }
-  }
-
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
   try {
-    ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
+    const options: ReactDOMServer.RenderToReadableStreamOptions = {
       formState: result.actionResult?.data,
       bootstrapModules: url.search.includes("__nojs")
         ? []
@@ -217,7 +196,36 @@ async function renderHtml(
           console.error("[react-dom:renderToReadableStream]", error);
         }
       },
-    });
+    };
+
+    // PPR
+    const pprManifest: PPRManifest = (globalThis as any)
+      .__REACT_SERVER_PPR_MANIFEST;
+    if (pprManifest) {
+      // TODO: reuse same prelude at layout boundary?
+      // TODO: send off prelude eariler?
+      const data = pprManifest.entries[url.pathname];
+      if (data) {
+        const { preludeString, postponed } = data;
+        const resumed = await ReactDOMServer.resume(
+          reactRootEl,
+          JSON.parse(JSON.stringify(postponed)), // deep clone since it's mutated
+          options,
+        );
+        ssrStream = resumed.pipeThrough(
+          new TransformStream({
+            start(controller) {
+              controller.enqueue(new TextEncoder().encode(preludeString));
+            },
+          }),
+        );
+      }
+    }
+    // SSR
+    ssrStream ??= await ReactDOMServer.renderToReadableStream(
+      reactRootEl,
+      options,
+    );
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
     if (isRedirectError(ctx)) {

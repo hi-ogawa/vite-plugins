@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { tinyassert } from "@hiogawa/utils";
@@ -103,13 +103,34 @@ export function pprPlugin(options: {
           const data = await entry.partialPrerender(request);
           manifest.entries[route] = data;
         }
-        await writeFile(
-          "dist/server/__ppr.js",
-          `export default ${JSON.stringify(manifest, null, 2)}`,
+        const serialized = JSON.stringify(manifest, null, 2);
+        await editFile(
+          "dist/server/__entry_prerender.js",
+          (data) =>
+            `globalThis.__REACT_SERVER_PPR_MANIFEST = ${serialized};\n${data}`,
         );
       },
     },
   };
 
-  return [buildPlugin];
+  return [
+    buildPlugin,
+    {
+      name: "disable-compression-preview",
+      enforce: "pre",
+      configurePreviewServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          // compressions seems to break html streaming
+          // https://github.com/hi-ogawa/vite/blob/9f5c59f07aefb1756a37bcb1c0aff24d54288950/packages/vite/src/node/preview.ts#L178
+          delete req.headers["accept-encoding"];
+          next();
+        });
+      },
+    },
+  ];
+}
+
+async function editFile(filepath: string, edit: (data: string) => string) {
+  const data = await readFile(filepath, "utf-8");
+  await writeFile(filepath, edit(data));
 }
