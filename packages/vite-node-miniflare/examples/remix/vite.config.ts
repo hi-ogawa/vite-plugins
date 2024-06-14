@@ -6,12 +6,15 @@ import { defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   ssr: {
+    resolve: {
+      conditions: ["workerd"],
+    },
     optimizeDeps: {
       include: [
         "react",
         "react/jsx-dev-runtime",
         "react-dom",
-        "react-dom/server.browser",
+        "react-dom/server",
         "@remix-run/server-runtime",
       ],
     },
