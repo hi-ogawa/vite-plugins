@@ -14,7 +14,7 @@ export default defineConfig({
         "react",
         "react/jsx-dev-runtime",
         "react-dom",
-        "react-dom/server.browser",
+        "react-dom/server",
         "@remix-run/server-runtime",
       ],
     },
