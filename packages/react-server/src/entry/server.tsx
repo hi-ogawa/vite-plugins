@@ -5,7 +5,11 @@ import ReactDOMStatic from "react-dom/static.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
-import { type PPRData, streamToString } from "../features/prerender/utils";
+import {
+  type PPRData,
+  type PPRManifest,
+  streamToString,
+} from "../features/prerender/utils";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -179,14 +183,23 @@ async function renderHtml(
 
   // PPR runtime
   if (0) {
-    // TODO: need to check which layout is PPR-ed
-    // TODO: how to read during runtime?
+    // TODO: how to read manifest during runtime?
     //       probably we can inject some global variables to prebuilt index.js?
-    const { prelude, postponed } = {} as any;
-    const resumed = await ReactDOMServer.resume(reactRootEl, postponed);
-    // TODO: ssrStream from prelude and resumed
-    prelude;
-    resumed;
+    const pprManifest = {} as PPRManifest;
+    const data = pprManifest.entries[url.pathname];
+    if (data) {
+      const { preludeString, postponed } = data;
+      const resumed = await ReactDOMServer.resume(reactRootEl, postponed);
+      const ssrStream = resumed.pipeThrough(
+        new TransformStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(preludeString));
+          },
+        }),
+      );
+      // TODO: swap with renderToReadableStream's ssrStream below
+      ssrStream;
+    }
   }
 
   // two pass SSR to re-render on error

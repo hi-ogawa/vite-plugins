@@ -5,7 +5,7 @@ declare module "react-dom/server.edge" {
   export function resume(
     children: React.ReactNode,
     postponed: null | object,
-    opitons?: {},
+    opitons?: import("react-dom/server").RenderToReadableStreamOptions,
   ): Promise<ReadableStream<Uint8Array>>;
 }
 
@@ -13,7 +13,7 @@ declare module "react-dom/server.edge" {
 declare module "react-dom/static.edge" {
   export function prerender(
     children: React.ReactNode,
-    opitons?: {},
+    opitons?: import("react-dom/server").RenderToReadableStreamOptions,
   ): Promise<{
     postponed: null | object;
     prelude: ReadableStream<Uint8Array>;

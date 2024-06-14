@@ -1,6 +1,10 @@
 export type PPRData = {
   preludeString: string;
-  postponed: unknown;
+  postponed: any;
+};
+
+export type PPRManifest = {
+  entries: Record<string, PPRData>;
 };
 
 export async function streamToString(stream: ReadableStream<Uint8Array>) {

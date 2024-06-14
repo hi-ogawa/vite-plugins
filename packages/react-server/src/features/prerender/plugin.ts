@@ -6,6 +6,7 @@ import { tinyassert } from "@hiogawa/utils";
 import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { RSC_PATH } from "../server-component/utils";
+import type { PPRManifest } from "./utils";
 
 export function prerenderPlugin({
   manager,
@@ -94,21 +95,13 @@ export function pprPlugin(options: {
         const entry: typeof import("../../entry/server") = await import(
           path.resolve("dist/server/__entry_prerender.js")
         );
-        const manifest = {
-          entries: Array<{
-            route: string;
-            data: unknown;
-          }>(),
-        };
+        const manifest: PPRManifest = { entries: {} };
         for (const route of routes) {
           console.log(`  • ${route}`);
           const url = new URL(route, "https://prerender.local");
           const request = new Request(url);
           const data = await entry.partialPrerender(request);
-          manifest.entries.push({
-            route,
-            data,
-          });
+          manifest.entries[route] = data;
         }
         await writeFile(
           "dist/server/__ppr.js",
