@@ -89,6 +89,7 @@ export function pprPlugin(options: {
       sequential: true,
       handler: async () => {
         console.log("▶▶▶ PARTIAL PRERENDER");
+        // TODO: expose global
         process.env["REACT_SERVER_RENDER_MODE"] = "ppr";
         tinyassert(options.ppr);
         const routes = await options.ppr();
