@@ -1,4 +1,3 @@
-import { Postpone } from "@hiogawa/react-server/server";
 import React from "react";
 
 export default async function Page() {
@@ -18,13 +17,10 @@ export default async function Page() {
         style={{
           background: "#f002",
           padding: "1rem",
-          height: "5rem",
         }}
       >
         <React.Suspense fallback={<div>Sleeping 1 sec ...</div>}>
-          <Postpone>
-            <Sleep />
-          </Postpone>
+          <Sleep />
         </React.Suspense>
       </div>
     </div>
@@ -32,6 +28,11 @@ export default async function Page() {
 }
 
 async function Sleep() {
+  if (globalThis.process?.env?.["REACT_SERVER_RENDER_MODE"] === "ppr") {
+    // @ts-expect-error
+    React.unstable_postpone();
+  }
+
   await new Promise((r) => setTimeout(r, 1000));
 
   return (
