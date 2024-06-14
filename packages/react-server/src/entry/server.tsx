@@ -5,6 +5,7 @@ import ReactDOMStatic from "react-dom/static.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
+import { type PPRData, streamToString } from "../features/prerender/utils";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -70,19 +71,14 @@ export async function prerender(request: Request) {
   return { stream, response, html };
 }
 
-// TODO
 export async function partialPrerender(request: Request) {
-  request;
-  const reactRootEl = <div></div>;
-  const prerendered = await ReactDOMStatic.prerender(reactRootEl);
-  if (prerendered.postponed) {
-    process.env["__renderMode"] = "resume";
-    const resumed = await ReactDOMServer.resume(
-      reactRootEl,
-      prerendered.postponed,
-    );
-    resumed;
-  }
+  const reactServer = await importReactServer();
+
+  const result = await reactServer.handler({ request });
+  tinyassert(!(result instanceof Response));
+
+  const response = await renderHtml(request, result, { ppr: true });
+  return (await response.json()) as PPRData;
 }
 
 export async function importReactServer(): Promise<
@@ -97,9 +93,10 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(
+async function renderHtml(
   request: Request,
   result: ReactServerHandlerStreamResult,
+  options?: { ppr?: boolean },
 ) {
   initializeReactClientSsr();
 
@@ -168,6 +165,29 @@ export async function renderHtml(
   head += `<script>globalThis.__routeManifest = ${escpaeScriptString(
     JSON.stringify(routeManifest),
   )}</script>\n`;
+
+  // PPR build
+  if (options?.ppr) {
+    const { prelude, postponed } = await ReactDOMStatic.prerender(reactRootEl);
+    const pprData: PPRData = {
+      preludeString: await streamToString(prelude),
+      postponed,
+    };
+    // TODO: (refactor) don't go through Response to just satisfy types
+    return new Response(JSON.stringify(pprData));
+  }
+
+  // PPR runtime
+  if (0) {
+    // TODO: need to check which layout is PPR-ed
+    // TODO: how to read during runtime?
+    //       probably we can inject some global variables to prebuilt index.js?
+    const { prelude, postponed } = {} as any;
+    const resumed = await ReactDOMServer.resume(reactRootEl, postponed);
+    // TODO: ssrStream from prelude and resumed
+    prelude;
+    resumed;
+  }
 
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;

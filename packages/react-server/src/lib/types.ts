@@ -32,5 +32,3 @@ export type WebpackRequire = (id: string) => Promise<unknown>;
 export type WebpackChunkLoad = (id: string) => Promise<unknown>;
 
 export type CallServerCallback = (id: any, args: any) => Promise<unknown>;
-
-export type PostponedState = { __brand: "PostponedState" };

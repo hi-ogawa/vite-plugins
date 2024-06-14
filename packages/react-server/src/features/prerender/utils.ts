@@ -1,0 +1,16 @@
+export type PPRData = {
+  preludeString: string;
+  postponed: unknown;
+};
+
+export async function streamToString(stream: ReadableStream<Uint8Array>) {
+  let s = "";
+  await stream.pipeThrough(new TextDecoderStream()).pipeTo(
+    new WritableStream({
+      write(c) {
+        s += c;
+      },
+    }),
+  );
+  return s;
+}

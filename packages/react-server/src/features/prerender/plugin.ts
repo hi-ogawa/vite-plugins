@@ -91,8 +91,15 @@ export function pprPlugin(options: {
         process.env["REACT_SERVER_RENDER_MODE"] = "ppr";
         tinyassert(options.ppr);
         const routes = await options.ppr();
+        const entry: typeof import("../../entry/server") = await import(
+          path.resolve("dist/server/__entry_prerender.js")
+        );
         for (const route of routes) {
           console.log(`  • ${route}`);
+          const url = new URL(route, "https://prerender.local");
+          const request = new Request(url);
+          const data = await entry.partialPrerender(request);
+          console.log(data);
         }
       },
     },
