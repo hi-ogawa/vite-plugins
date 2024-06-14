@@ -58,9 +58,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm -C packages/vite-node-miniflare/examples/basic test-e2e
-      # - run: pnpm -C packages/vite-node-miniflare/examples/react test-e2e
-      # - run: pnpm -C packages/vite-node-miniflare/examples/react-router test-e2e
-      # - run: pnpm -C packages/vite-node-miniflare/examples/remix test-e2e
+      - run: pnpm -C packages/vite-node-miniflare/examples/react test-e2e
+      - run: pnpm -C packages/vite-node-miniflare/examples/react-router test-e2e
+      - run: pnpm -C packages/vite-node-miniflare/examples/remix test-e2e
 
   test-vite-glob-routes:
     runs-on: ubuntu-latest
