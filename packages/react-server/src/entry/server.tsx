@@ -198,7 +198,7 @@ async function renderHtml(
       },
     };
 
-    // PPR
+    // PPR (injected during build)
     const pprManifest: PPRManifest = (globalThis as any)
       .__REACT_SERVER_PPR_MANIFEST;
     if (pprManifest) {

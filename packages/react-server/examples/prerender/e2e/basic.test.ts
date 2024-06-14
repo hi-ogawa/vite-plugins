@@ -1,4 +1,4 @@
-import { Page, test } from "@playwright/test";
+import { Page, expect, test } from "@playwright/test";
 import { createReloadChecker, testNoJs, waitForHydration } from "./helper";
 
 test("basic @js", async ({ page }) => {
@@ -58,3 +58,31 @@ async function testHybrid(page: Page) {
   await page.waitForURL("/posts/5");
   await page.getByText("[dynamically rendered at").click();
 }
+
+test("ppr @build", async ({ page }) => {
+  await page.goto("/ppr", { waitUntil: "commit" });
+  await page.getByText("Static").click();
+  await page.getByText("Sleeping 1 sec").click();
+  await page.getByText("Dynamic").click();
+  const static1 = await page
+    .getByTestId("static-time")
+    .evaluate((e) => e.textContent);
+  const dynamic1 = await page
+    .getByTestId("dynamic-time")
+    .evaluate((e) => e.textContent);
+
+  // reload and check render time
+  page.reload({ waitUntil: "commit" });
+  await page.getByText("Static").click();
+  await page.getByText("Sleeping 1 sec").click();
+  await page.getByText("Dynamic").click();
+  const static2 = await page
+    .getByTestId("static-time")
+    .evaluate((e) => e.textContent);
+  const dynamic2 = await page
+    .getByTestId("dynamic-time")
+    .evaluate((e) => e.textContent);
+
+  expect(static1).toBe(static2);
+  expect(dynamic1).not.toBe(dynamic2);
+});

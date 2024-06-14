@@ -20,6 +20,5 @@ npx esbuild ../../dist/server/index.js \
   --define:process.env.NODE_ENV='"production"' \
   --log-override:ignored-bare-import=silent \
   --bundle \
-  --minify \
   --format=esm \
   --platform=browser

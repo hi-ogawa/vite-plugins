@@ -31,7 +31,8 @@ export default defineConfig({
       name: "disable-compression-preview",
       configurePreviewServer(server) {
         server.middlewares.use((req, _res, next) => {
-          if (req.url === "/ppr") {
+          const url = new URL(req.url || "", "https://preview.local");
+          if (url.pathname === "/ppr") {
             // compressions seems to break html streaming
             // https://github.com/vitejs/vite/blob/9f5c59f07aefb1756a37bcb1c0aff24d54288950/packages/vite/src/node/preview.ts#L178
             delete req.headers["accept-encoding"];

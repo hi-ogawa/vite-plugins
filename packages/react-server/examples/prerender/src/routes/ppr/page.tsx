@@ -10,7 +10,7 @@ export default async function Page() {
       }}
     >
       <div>Static</div>
-      <pre style={{ whiteSpace: "wrap" }}>
+      <pre style={{ whiteSpace: "wrap" }} data-testid="static-time">
         [rendered at {new Date().toISOString()}]
       </pre>
       <div
@@ -38,7 +38,7 @@ async function Sleep() {
   return (
     <>
       <div>Dynamic</div>
-      <pre style={{ whiteSpace: "wrap" }}>
+      <pre style={{ whiteSpace: "wrap" }} data-testid="dynamic-time">
         [rendered at {new Date().toISOString()}]
       </pre>
     </>
