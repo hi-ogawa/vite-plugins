@@ -7,9 +7,9 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
-    "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
-    "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
+    "cf-build": "SSR_ENTRY=/src/adapters/cf pnpm build && node misc/cf/build.js",
+    "cf-preview": "cd misc/cf && wrangler dev",
+    "cf-release": "cd misc/cf && wrangler deploy"
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",

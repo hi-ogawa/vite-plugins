@@ -12,7 +12,7 @@ async function main() {
   await rm(outDir, { recursive: true, force: true });
   await mkdir(outDir, { recursive: true });
 
-  // static
+  // assets
   await cp(join(buildDir, "client"), outDir, {
     recursive: true,
   });
@@ -50,7 +50,7 @@ async function main() {
 `,
   );
 
-  // function
+  // worker
   // https://developers.cloudflare.com/pages/functions/advanced-mode/
   await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
