@@ -4,3 +4,6 @@ main = "dist/server/index.js"
 assets = "dist/client"
 workers_dev = true
 compatibility_date = "2024-01-01"
+# for now we need full `nodejs_compat` instead of `nodejs_als`
+# https://github.com/cloudflare/workers-sdk/issues/6011
+compatibility_flags = ["nodejs_compat"]
