@@ -1,8 +1,10 @@
+// @ts-check
+
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as esbuild from "esbuild";
 
-const distDir = join(import.meta.dirname, "../../dist");
+const buildDir = join(import.meta.dirname, "../../dist");
 const outDir = join(import.meta.dirname, ".vercel/output");
 
 const configJson = {
@@ -43,7 +45,7 @@ async function main() {
 
   // static
   await mkdir(join(outDir, "static"), { recursive: true });
-  await cp(join(distDir, "client"), join(outDir, "static"), {
+  await cp(join(buildDir, "client"), join(outDir, "static"), {
     recursive: true,
   });
 
@@ -56,9 +58,10 @@ async function main() {
 
   // bundle function
   await esbuild.build({
-    entryPoints: [join(distDir, "server/index.js")],
+    entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(outDir, "functions/index.func/index.js"),
     bundle: true,
+    minify: true,
     format: "esm",
     platform: "browser",
     define: {
