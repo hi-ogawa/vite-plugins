@@ -50,23 +50,28 @@ async function main() {
 `,
   );
 
-  // function
+  // worker
   // https://developers.cloudflare.com/pages/functions/advanced-mode/
-  await esbuild.build({
-    entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "_worker.js"),
-    metafile: true,
-    bundle: true,
-    minify: true,
-    format: "esm",
-    platform: "browser",
-    define: {
-      "process.env.NODE_ENV": `"production"`,
-    },
-    logOverride: {
-      "ignored-bare-import": "silent",
-    },
+  await mkdir(join(outDir, "_worker.js"), { recursive: true });
+  await cp(join(buildDir, "server"), join(outDir, "_worker.js"), {
+    recursive: true,
   });
+
+  // await esbuild.build({
+  //   entryPoints: [join(buildDir, "server/index.js")],
+  //   outfile: join(outDir, "_worker.js"),
+  //   metafile: true,
+  //   bundle: true,
+  //   minify: true,
+  //   format: "esm",
+  //   platform: "browser",
+  //   define: {
+  //     "process.env.NODE_ENV": `"production"`,
+  //   },
+  //   logOverride: {
+  //     "ignored-bare-import": "silent",
+  //   },
+  // });
 }
 
 main();
