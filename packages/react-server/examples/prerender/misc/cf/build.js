@@ -1,9 +1,8 @@
 // @ts-check
 
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as esbuild from "esbuild";
-import { spawnSync } from "node:child_process";
 
 const buildDir = join(import.meta.dirname, "../../dist");
 const outDir = join(import.meta.dirname, "dist");
@@ -18,11 +17,41 @@ async function main() {
     recursive: true,
   });
 
-  // TODO: move it to here
-  // node ./build.mjs
-  spawnSync("node", [join(import.meta.dirname, "index.mjs")]);
+  // prerender routes
+  // https://developers.cloudflare.com/pages/functions/routing/#create-a-_routesjson-file
+  /** @type {any[]} */
+  const entries = JSON.parse(
+    await readFile(join(buildDir, "client/__prerender.json"), "utf-8"),
+  );
+  const exclude = [
+    "/favicon.ico",
+    "/assets/*",
+    ...entries.flatMap((e) => [e.route, e.data]),
+  ];
+  const routesJson = {
+    version: 1,
+    include: ["/*"],
+    exclude,
+  };
+  await writeFile(
+    join(outDir, "client/_routes.json"),
+    JSON.stringify(routesJson, null, 2),
+  );
 
-  // server
+  // headers
+  // https://developers.cloudflare.com/pages/configuration/headers/
+  await writeFile(
+    join(outDir, "client/_headers"),
+    `\
+/favicon.ico
+  Cache-Control: public, max-age=3600, s-maxage=3600
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+`,
+  );
+
+  // function
+  // https://developers.cloudflare.com/pages/functions/advanced-mode/
   await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(outDir, "client/_worker.js"),
