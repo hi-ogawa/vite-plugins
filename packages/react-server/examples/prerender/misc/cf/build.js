@@ -10,10 +10,10 @@ const outDir = join(import.meta.dirname, "dist");
 async function main() {
   // clean
   await rm(outDir, { recursive: true, force: true });
-  await mkdir(join(outDir, "client"), { recursive: true });
+  await mkdir(outDir, { recursive: true });
 
   // static
-  await cp(join(buildDir, "client"), join(outDir, "client"), {
+  await cp(join(buildDir, "client"), outDir, {
     recursive: true,
   });
 
@@ -34,14 +34,14 @@ async function main() {
     exclude,
   };
   await writeFile(
-    join(outDir, "client/_routes.json"),
+    join(outDir, "_routes.json"),
     JSON.stringify(routesJson, null, 2),
   );
 
   // headers
   // https://developers.cloudflare.com/pages/configuration/headers/
   await writeFile(
-    join(outDir, "client/_headers"),
+    join(outDir, "_headers"),
     `\
 /favicon.ico
   Cache-Control: public, max-age=3600, s-maxage=3600
@@ -54,7 +54,7 @@ async function main() {
   // https://developers.cloudflare.com/pages/functions/advanced-mode/
   await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "client/_worker.js"),
+    outfile: join(outDir, "_worker.js"),
     metafile: true,
     bundle: true,
     minify: true,
