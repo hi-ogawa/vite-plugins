@@ -1,6 +1,6 @@
 // @ts-check
 
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as esbuild from "esbuild";
 
@@ -12,15 +12,16 @@ async function main() {
   await rm(outDir, { recursive: true, force: true });
 
   // assets
-  await mkdir(join(outDir, "assets"), { recursive: true });
-  await cp(join(buildDir, "client"), join(outDir, "assets"), {
+  await mkdir(join(outDir, "client"), { recursive: true });
+  await cp(join(buildDir, "client"), join(outDir, "client"), {
     recursive: true,
   });
 
   // worker
-  await esbuild.build({
+  const result = await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(outDir, "main.js"),
+    metafile: true,
     bundle: true,
     minify: true,
     format: "esm",
@@ -33,6 +34,10 @@ async function main() {
       "ignored-bare-import": "silent",
     },
   });
+  await writeFile(
+    join(outDir, "esbuild-metafile.json"),
+    JSON.stringify(result.metafile),
+  );
 }
 
 main();

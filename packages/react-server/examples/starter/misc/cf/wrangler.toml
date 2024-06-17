@@ -1,6 +1,6 @@
 name = "react-server-starter"
 
 main = "dist/main.js"
-assets = "dist/assets"
+assets = "dist/client"
 workers_dev = true
 compatibility_date = "2024-01-01"
