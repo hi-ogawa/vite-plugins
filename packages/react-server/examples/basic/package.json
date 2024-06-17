@@ -13,7 +13,7 @@
     "vc-build": "SSR_ENTRY=/src/adapters/vercel-edge pnpm build && bash misc/vercel/build.sh",
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel",
     "vc-release-staging": "vercel deploy --prebuilt misc/vercel",
-    "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && bash misc/cloudflare-workers/build.sh",
+    "cf-build": "SSR_ENTRY=/src/adapters/cloudflare-workers.ts pnpm build && node misc/cloudflare-workers/build.js",
     "cf-preview": "cd misc/cloudflare-workers && wrangler dev",
     "cf-release": "cd misc/cloudflare-workers && wrangler deploy"
   },
