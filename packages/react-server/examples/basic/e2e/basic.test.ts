@@ -1125,6 +1125,32 @@ test("trailing slash", async ({ request }) => {
   ]);
 });
 
+test("React.cache @js", async ({ page }) => {
+  await testReactCache(page, { js: true });
+});
+
+testNoJs("React.cache @nojs", async ({ page }) => {
+  await testReactCache(page, { js: false });
+});
+
+async function testReactCache(page: Page, options: { js: boolean }) {
+  await page.goto("/test/cache");
+  await page.getByText('Page: state = 1').click();
+  await page.getByText('Inner1: state = 1').click();
+  if (options.js) await page.getByText('Inner2: state = 1').click();
+
+  await page.reload();
+  await page.getByText('Page: state = 2').click();
+  await page.getByText('Inner1: state = 2').click();
+  if (options.js) await page.getByText('Inner2: state = 2').click();
+
+  if (options.js) await waitForHydration(page);
+  await page.getByRole('button', { name: 'Reset' }).click();
+  await page.getByText('Page: state = 0').click();
+  await page.getByText('Inner1: state = 0').click();
+  if (options.js) await page.getByText('Inner2: state = 0').click();
+}
+
 function getClientManifest(): Manifest {
   return JSON.parse(
     fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
