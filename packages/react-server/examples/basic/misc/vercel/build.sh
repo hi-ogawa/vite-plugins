@@ -39,6 +39,7 @@ npx esbuild ../../dist/server/index.js \
   --metafile=dist/esbuild-metafile.json \
   --log-override:ignored-bare-import=silent \
   --define:process.env.NODE_ENV='"production"' \
+  --external:node:async_hooks \
   --bundle \
   --minify \
   --format=esm \
