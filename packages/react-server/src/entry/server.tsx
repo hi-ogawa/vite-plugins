@@ -1,9 +1,15 @@
 import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
+import ReactDOMStatic from "react-dom/static.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
+import {
+  type PPRData,
+  type PPRManifest,
+  streamToString,
+} from "../features/prerender/utils";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -69,6 +75,16 @@ export async function prerender(request: Request) {
   return { stream, response, html };
 }
 
+export async function partialPrerender(request: Request) {
+  const reactServer = await importReactServer();
+
+  const result = await reactServer.handler({ request });
+  tinyassert(!(result instanceof Response));
+
+  const response = await renderHtml(request, result, { ppr: true });
+  return (await response.json()) as PPRData;
+}
+
 export async function importReactServer(): Promise<
   typeof import("./react-server")
 > {
@@ -81,9 +97,10 @@ export async function importReactServer(): Promise<
   }
 }
 
-export async function renderHtml(
+async function renderHtml(
   request: Request,
   result: ReactServerHandlerStreamResult,
+  options?: { ppr?: boolean },
 ) {
   initializeReactClientSsr();
 
@@ -130,6 +147,17 @@ export async function renderHtml(
     </RouterContext.Provider>
   );
 
+  // PPR during build
+  if (options?.ppr) {
+    const { prelude, postponed } = await ReactDOMStatic.prerender(reactRootEl);
+    const pprData: PPRData = {
+      preludeString: await streamToString(prelude),
+      postponed,
+    };
+    // TODO: (refactor) don't go through Response to workaround types
+    return new Response(JSON.stringify(pprData));
+  }
+
   //
   // render
   //
@@ -157,7 +185,7 @@ export async function renderHtml(
   let ssrStream: ReadableStream<Uint8Array>;
   let status = 200;
   try {
-    ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
+    const options: ReactDOMServer.RenderToReadableStreamOptions = {
       formState: result.actionResult?.data,
       bootstrapModules: url.search.includes("__nojs")
         ? []
@@ -168,7 +196,36 @@ export async function renderHtml(
           console.error("[react-dom:renderToReadableStream]", error);
         }
       },
-    });
+    };
+
+    // PPR (injected during build)
+    const pprManifest: PPRManifest = (globalThis as any)
+      .__REACT_SERVER_PPR_MANIFEST;
+    if (pprManifest) {
+      // TODO: reuse same prelude at layout boundary?
+      // TODO: send off prelude eariler?
+      const data = pprManifest.entries[url.pathname];
+      if (data) {
+        const { preludeString, postponed } = data;
+        const resumed = await ReactDOMServer.resume(
+          reactRootEl,
+          JSON.parse(JSON.stringify(postponed)), // deep clone since it's mutated
+          options,
+        );
+        ssrStream = resumed.pipeThrough(
+          new TransformStream({
+            start(controller) {
+              controller.enqueue(new TextEncoder().encode(preludeString));
+            },
+          }),
+        );
+      }
+    }
+    // SSR
+    ssrStream ??= await ReactDOMServer.renderToReadableStream(
+      reactRootEl,
+      options,
+    );
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
     if (isRedirectError(ctx)) {

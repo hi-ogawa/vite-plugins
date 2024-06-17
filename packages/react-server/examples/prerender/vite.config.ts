@@ -23,7 +23,24 @@ export default defineConfig({
           ...posts.slice(0, 3).map((p) => `/posts/${p.id}`),
         ];
       },
+      ppr: async () => {
+        return ["/ppr"];
+      },
     }),
+    {
+      name: "disable-compression-preview",
+      configurePreviewServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          const url = new URL(req.url || "", "https://preview.local");
+          if (url.pathname === "/ppr") {
+            // compressions seems to break html streaming
+            // https://github.com/vitejs/vite/blob/9f5c59f07aefb1756a37bcb1c0aff24d54288950/packages/vite/src/node/preview.ts#L178
+            delete req.headers["accept-encoding"];
+          }
+          next();
+        });
+      },
+    },
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",

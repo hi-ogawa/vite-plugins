@@ -1,11 +1,12 @@
 import fs from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { tinyassert } from "@hiogawa/utils";
 import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { RSC_PATH } from "../server-component/utils";
+import type { PPRManifest } from "./utils";
 
 export function prerenderPlugin({
   manager,
@@ -21,6 +22,7 @@ export function prerenderPlugin({
       apply: () => !!(prerender && manager.buildType === "ssr"),
       async closeBundle() {
         console.log("▶▶▶ PRERENDER");
+        process.env["REACT_SERVER_RENDER_MODE"] = "prerender";
         tinyassert(prerender);
         const routes = await prerender();
         const entry: typeof import("../../entry/server") = await import(
@@ -73,4 +75,49 @@ export function prerenderPlugin({
       },
     },
   ];
+}
+
+export function pprPlugin(options: {
+  manager: PluginStateManager;
+  ppr?: () => Promise<string[]> | string[];
+}): Plugin[] {
+  const buildPlugin: Plugin = {
+    name: pprPlugin.name + ":build",
+    enforce: "post",
+    apply: () => !!(options.ppr && options.manager.buildType === "ssr"),
+    closeBundle: {
+      sequential: true,
+      handler: async () => {
+        console.log("▶▶▶ PARTIAL PRERENDER");
+        // TODO: expose global
+        process.env["REACT_SERVER_RENDER_MODE"] = "ppr";
+        tinyassert(options.ppr);
+        const routes = await options.ppr();
+        const entry: typeof import("../../entry/server") = await import(
+          path.resolve("dist/server/__entry_prerender.js")
+        );
+        const manifest: PPRManifest = { entries: {} };
+        for (const route of routes) {
+          console.log(`  • ${route}`);
+          const url = new URL(route, "https://prerender.local");
+          const request = new Request(url);
+          const data = await entry.partialPrerender(request);
+          manifest.entries[route] = data;
+        }
+        const serialized = JSON.stringify(manifest, null, 2);
+        await editFile(
+          "dist/server/__entry_prerender.js",
+          (data) =>
+            `globalThis.__REACT_SERVER_PPR_MANIFEST = ${serialized};\n${data}`,
+        );
+      },
+    },
+  };
+
+  return [buildPlugin];
+}
+
+async function editFile(filepath: string, edit: (data: string) => string) {
+  const data = await readFile(filepath, "utf-8");
+  await writeFile(filepath, edit(data));
 }
