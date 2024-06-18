@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build --ssr",
     "preview": "vite preview",
     "cf-build": "SSR_ENTRY=/src/adapters/cf pnpm build && node misc/cf/build.js",
     "cf-preview": "cd misc/cf && wrangler dev",
