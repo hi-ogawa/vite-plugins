@@ -1,3 +1,4 @@
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
@@ -98,11 +99,11 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: () => Promise<string[]> | string[];
-  /**
-   * @default "src/routes"
-   */
+  /** @default "src/routes" */
   routeDir?: string;
 }): Plugin[] {
+  const routeDir = options?.routeDir ?? "src/routes";
+
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
       prefix: "[react-server]",
@@ -207,8 +208,9 @@ export function vitePluginReactServer(options?: {
         optimizeDeps: {
           // this can potentially include unnecessary server only deps for client,
           // but there should be no issues except making deps optimization slightly slower.
-          // TODO
-          entries: ["./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)"],
+          entries: [
+            path.posix.join(routeDir, `**/(page|layout|error).(js|jsx|ts|tsx)`),
+          ],
           exclude: ["@hiogawa/react-server"],
           include: [
             "react",
