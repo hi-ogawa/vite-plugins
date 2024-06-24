@@ -99,8 +99,6 @@ export function vitePluginReactServer(options?: {
   prerender?: () => Promise<string[]> | string[];
   entryBrowser?: string;
   entryServer?: string;
-  // entrySsr?: string,
-  /** @default "src/routes" */
   routeDir?: string;
 }): Plugin[] {
   const entryBrowser = options?.entryBrowser ?? "virtual:entry-browser-default";
