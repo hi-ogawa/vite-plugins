@@ -31,7 +31,6 @@ import {
 } from "../features/use-client/plugin";
 import { $__global } from "../lib/global";
 import {
-  ENTRY_CLIENT,
   ENTRY_CLIENT_WRAPPER,
   ENTRY_REACT_SERVER,
   ENTRY_REACT_SERVER_WRAPPER,
@@ -99,9 +98,13 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: () => Promise<string[]> | string[];
+  entryBrowser?: string;
+  // entryServer?: string,
+  // entrySsr?: string,
   /** @default "src/routes" */
   routeDir?: string;
 }): Plugin[] {
+  const entryBrowser = options?.entryBrowser ?? "virtual:entry-browser-default";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
@@ -367,9 +370,16 @@ export function vitePluginReactServer(options?: {
       ssrRuntimePath: RUNTIME_SERVER_PATH,
     }),
     ...vitePluginClientUseClient({ manager }),
-    ...vitePluginServerAssets({ manager }),
+    ...vitePluginServerAssets({ manager, entryBrowser }),
     ...routeManifestPluginClient({ manager }),
     ...prerenderPlugin({ manager, prerender: options?.prerender }),
+    createVirtualPlugin(
+      "entry-browser-default",
+      () => `
+        import { start } from "@hiogawa/react-server/entry-browser";
+        start();
+      `,
+    ),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
@@ -379,7 +389,7 @@ export function vitePluginReactServer(options?: {
           for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
             await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
           }
-          await import("${ENTRY_CLIENT}");
+          await import("${entryBrowser}");
         `;
       }
       // build
@@ -388,7 +398,7 @@ export function vitePluginReactServer(options?: {
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
           import("@hiogawa/react-server/runtime-client");
-          import "${ENTRY_CLIENT}";
+          import "${entryBrowser}";
         `;
       }
       tinyassert(false);

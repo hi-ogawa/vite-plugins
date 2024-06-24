@@ -5,7 +5,6 @@ import type { Manifest, Plugin, ViteDevServer } from "vite";
 import { $__global } from "../../lib/global";
 import type { PluginStateManager } from "../../plugin";
 import {
-  ENTRY_CLIENT,
   ENTRY_CLIENT_WRAPPER,
   ENTRY_REACT_SERVER,
   createVirtualPlugin,
@@ -20,7 +19,8 @@ export interface SsrAssetsType {
 
 export function vitePluginServerAssets({
   manager,
-}: { manager: PluginStateManager }): Plugin[] {
+  entryBrowser,
+}: { manager: PluginStateManager; entryBrowser: string }): Plugin[] {
   return [
     createVirtualPlugin("ssr-assets", async () => {
       // dev
@@ -96,7 +96,7 @@ export function vitePluginServerAssets({
         collectStyle($__global.dev.reactServer, [ENTRY_REACT_SERVER]),
         `/******* client **************/`,
         collectStyle($__global.dev.server, [
-          ENTRY_CLIENT,
+          entryBrowser,
           // TODO: dev should also use RouteManifest to manage client css
           ...manager.rscUseClientIds,
         ]),

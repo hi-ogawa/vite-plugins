@@ -19,6 +19,7 @@ export default defineConfig({
         patchConsoleError: true,
       }),
     vitePluginReactServer({
+      entryBrowser: "/src/entry-client",
       plugins: [
         testVitePluginVirtual(),
         {

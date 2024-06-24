@@ -13,6 +13,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginReactServer({
+      entryBrowser: "/src/entry-client",
       prerender: async () => {
         process.env["REACT_SERVER_PRERENDER"] = "1";
         const posts = await fetchPosts();
