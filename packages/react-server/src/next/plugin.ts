@@ -1,5 +1,5 @@
 // @ts-nocheck
-// type error on initial build as it depends on itself
+// type error on initial build since the package depends on itself
 
 import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
@@ -16,8 +16,8 @@ export function vitePluginReactServerNext(options?: {
     nextAliasPlugin,
     vitePluginReactServer({
       routeDir: "app",
-      entryBrowser: undefined,
-      entryServer: undefined,
+      entryBrowser: "@hiogawa/react-server/next/entry-browser",
+      entryServer: "@hiogawa/react-server/entry-react-server",
       plugins: [nextAliasPlugin, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),

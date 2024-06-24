@@ -17,6 +17,7 @@ export default defineConfig([
 
       // next compat
       "src/next/plugin.ts",
+      "src/next/entry-browser.ts",
       "src/next/entry-ssr.ts",
       "src/next/compat/index.tsx",
       "src/next/compat/image.tsx",
