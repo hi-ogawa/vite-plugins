@@ -102,9 +102,8 @@ export function vitePluginReactServer(options?: {
   entryServer?: string;
   routeDir?: string;
 }): Plugin[] {
-  const entryBrowser = options?.entryBrowser ?? "virtual:entry-browser-default";
-  const entryServer =
-    options?.entryServer ?? "@hiogawa/react-server/entry-react-server";
+  const entryBrowser = options?.entryBrowser ?? "/src/entry-client";
+  const entryServer = options?.entryServer ?? "/src/entry-react-server";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
@@ -373,13 +372,6 @@ export function vitePluginReactServer(options?: {
     ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
     ...routeManifestPluginClient({ manager }),
     ...prerenderPlugin({ manager, prerender: options?.prerender }),
-    createVirtualPlugin(
-      "entry-browser-default",
-      () => `
-        import { start } from "@hiogawa/react-server/entry-browser";
-        start();
-      `,
-    ),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {

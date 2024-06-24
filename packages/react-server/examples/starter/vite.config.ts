@@ -11,9 +11,7 @@ export default defineConfig({
   clearScreen: false,
   plugins: [
     react(),
-    vitePluginReactServer({
-      entryBrowser: "/src/entry-client",
-    }),
+    vitePluginReactServer(),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
