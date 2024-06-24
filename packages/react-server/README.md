@@ -34,6 +34,8 @@ pnpm preview
 
 ## Conventions
 
+- `src/entry-client.tsx`
+- `src/entry-react-server.tsx`
 - `src/routes/**/(page|layout|error).tsx`
 - `"use client"`
 - `"use server"`
