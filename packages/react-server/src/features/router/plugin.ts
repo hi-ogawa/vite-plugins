@@ -21,6 +21,7 @@ export function routeManifestPluginServer({
       apply: "build",
       async buildEnd() {
         if (manager.buildType === "rsc") {
+          // TODO
           const routeFiles = await FastGlob(
             "./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
           );

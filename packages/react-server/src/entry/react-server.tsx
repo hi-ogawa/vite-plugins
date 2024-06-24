@@ -155,6 +155,7 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 const router = createRouter();
 
 function createRouter() {
+  // TODO
   // for now hard code /src/routes as convention
   const glob = import.meta.glob(
     "/src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",

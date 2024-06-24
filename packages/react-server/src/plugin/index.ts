@@ -98,6 +98,10 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: () => Promise<string[]> | string[];
+  /**
+   * @default "src/routes"
+   */
+  routeDir?: string;
 }): Plugin[] {
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
@@ -203,6 +207,7 @@ export function vitePluginReactServer(options?: {
         optimizeDeps: {
           // this can potentially include unnecessary server only deps for client,
           // but there should be no issues except making deps optimization slightly slower.
+          // TODO
           entries: ["./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)"],
           exclude: ["@hiogawa/react-server"],
           include: [
