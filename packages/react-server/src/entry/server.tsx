@@ -213,7 +213,7 @@ export async function renderHtml(
     status,
     headers: {
       ...result.actionResult?.responseHeaders,
-      "content-type": "text/html",
+      "content-type": "text/html;charset=utf-8",
     },
   });
 }
