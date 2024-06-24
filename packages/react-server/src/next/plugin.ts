@@ -1,5 +1,7 @@
+// @ts-nocheck
+// type error on initial build as it depends on itself
+
 import path from "node:path";
-// @ts-ignore type error on initial build as it depends on itself
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
 import {
   vitePluginLogger,
