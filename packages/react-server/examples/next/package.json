@@ -17,8 +17,6 @@
     "react-server-dom-webpack": "19.0.0-rc.0"
   },
   "devDependencies": {
-    "@hiogawa/utils-node": "latest",
-    "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@playwright/test": "^1.42.1",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",

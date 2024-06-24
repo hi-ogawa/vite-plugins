@@ -217,12 +217,6 @@ importers:
         specifier: 19.0.0-rc.0
         version: 19.0.0-rc.0(react-dom@19.0.0-rc.0(react@19.0.0-rc.0))(react@19.0.0-rc.0)(webpack@5.90.3(esbuild@0.20.2))
     devDependencies:
-      '@hiogawa/utils-node':
-        specifier: latest
-        version: 0.0.1
-      '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: latest
-        version: link:../../../vite-plugin-ssr-middleware
       '@playwright/test':
         specifier: ^1.42.1
         version: 1.42.1
