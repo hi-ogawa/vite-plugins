@@ -4,10 +4,10 @@ import { argv } from "process";
 
 const packages = resolve(import.meta.dirname, "..", "..");
 
-const overrides = {
-  "@hiogawa/react-server": "file:" + resolve(packages, "react-server"),
-  "@hiogawa/transforms": "file:" + resolve(packages, "transforms"),
-};
+const deps = ["react-server", "transforms", "vite-plugin-ssr-middleware"];
+const overrides = Object.fromEntries(
+  deps.map((dep) => [`@hiogawa/${dep}`, `file:${resolve(packages, dep)}`]),
+);
 
 editJson(argv[2], (pkg) => {
   Object.assign(((pkg.pnpm ??= {}).overrides ??= {}), overrides);
