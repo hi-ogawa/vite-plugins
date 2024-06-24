@@ -55,12 +55,12 @@
       "default": "./dist/plugin/index.js"
     },
     "./next/plugin": {
-      "types": "./dist/next/plugin/index.d.ts",
-      "default": "./dist/next/plugin/index.js"
+      "types": "./dist/next/plugin.d.ts",
+      "default": "./dist/next/plugin.js"
     },
     "./next/entry-ssr": {
-      "types": "./dist/next/entry-ssr/index.d.ts",
-      "default": "./dist/next/entry-ssr/index.js"
+      "types": "./dist/next/entry-ssr.d.ts",
+      "default": "./dist/next/entry-ssr.js"
     },
     "./next/compat/*": {
       "types": "./dist/next/compat/*.d.ts",
