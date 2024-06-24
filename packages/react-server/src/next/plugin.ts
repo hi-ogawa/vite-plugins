@@ -16,6 +16,8 @@ export function vitePluginReactServerNext(options?: {
     nextAliasPlugin,
     vitePluginReactServer({
       routeDir: "app",
+      entryBrowser: undefined,
+      entryServer: undefined,
       plugins: [nextAliasPlugin, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),

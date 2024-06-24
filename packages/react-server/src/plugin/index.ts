@@ -97,10 +97,9 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: () => Promise<string[]> | string[];
+  // allow overrding default entires for next.js compatibility
   entryBrowser?: string;
   entryServer?: string;
-  // entrySsr?: string,
-  /** @default "src/routes" */
   routeDir?: string;
 }): Plugin[] {
   const entryBrowser = options?.entryBrowser ?? "virtual:entry-browser-default";
