@@ -19,15 +19,11 @@
       "default": "./dist/plugin/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
-    "prepack": "tsup --clean",
-    "test": "vitest",
-    "test-e2e": "bash misc/test.sh"
+    "prepack": "tsup --clean"
   },
   "dependencies": {
     "@hiogawa/utils-node": "^0.0.1",
