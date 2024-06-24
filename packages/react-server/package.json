@@ -62,6 +62,10 @@
       "types": "./dist/next/entry-ssr.d.ts",
       "default": "./dist/next/entry-ssr.js"
     },
+    "./next/compat": {
+      "types": "./dist/next/compat/index.d.ts",
+      "default": "./dist/next/compat/index.js"
+    },
     "./next/compat/*": {
       "types": "./dist/next/compat/*.d.ts",
       "default": "./dist/next/compat/*.js"
