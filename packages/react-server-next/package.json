@@ -15,8 +15,12 @@
       "default": "./dist/index.js"
     },
     "./plugin": {
-      "types": "./dist/plugin/index.d.ts",
-      "default": "./dist/plugin/index.js"
+      "types": "./dist/plugin.d.ts",
+      "default": "./dist/plugin.js"
+    },
+    "./entry-ssr": {
+      "types": "./dist/entry-ssr.d.ts",
+      "default": "./dist/entry-ssr.js"
     }
   },
   "files": ["dist"],
