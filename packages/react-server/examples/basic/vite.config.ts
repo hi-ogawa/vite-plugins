@@ -20,6 +20,7 @@ export default defineConfig({
       }),
     vitePluginReactServer({
       entryBrowser: "/src/entry-client",
+      entryServer: "/src/entry-react-server",
       plugins: [
         testVitePluginVirtual(),
         {

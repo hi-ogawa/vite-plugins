@@ -32,7 +32,6 @@ import {
 import { $__global } from "../lib/global";
 import {
   ENTRY_CLIENT_WRAPPER,
-  ENTRY_REACT_SERVER,
   ENTRY_REACT_SERVER_WRAPPER,
   createVirtualPlugin,
   vitePluginSilenceDirectiveBuildWarning,
@@ -99,12 +98,14 @@ export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: () => Promise<string[]> | string[];
   entryBrowser?: string;
-  // entryServer?: string,
+  entryServer?: string;
   // entrySsr?: string,
   /** @default "src/routes" */
   routeDir?: string;
 }): Plugin[] {
   const entryBrowser = options?.entryBrowser ?? "virtual:entry-browser-default";
+  const entryServer =
+    options?.entryServer ?? "@hiogawa/react-server/entry-react-server";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
@@ -173,7 +174,7 @@ export function vitePluginReactServer(options?: {
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
-        () => `export * from "${ENTRY_REACT_SERVER}";\n`,
+        () => `export * from "${entryServer}";\n`,
       ),
 
       {
@@ -370,7 +371,7 @@ export function vitePluginReactServer(options?: {
       ssrRuntimePath: RUNTIME_SERVER_PATH,
     }),
     ...vitePluginClientUseClient({ manager }),
-    ...vitePluginServerAssets({ manager, entryBrowser }),
+    ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
     ...routeManifestPluginClient({ manager }),
     ...prerenderPlugin({ manager, prerender: options?.prerender }),
     createVirtualPlugin(
