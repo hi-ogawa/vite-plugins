@@ -79,13 +79,13 @@
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
-    "@hiogawa/utils-node": "^0.0.1",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@tanstack/history": "^1.15.13",
     "fast-glob": "^3.3.2",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
+    "@hiogawa/utils-node": "^0.0.1",
     "@types/estree": "^1.0.5",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
