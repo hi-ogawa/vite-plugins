@@ -19,7 +19,9 @@
       "default": "./dist/plugin/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
@@ -27,15 +29,19 @@
     "test": "vitest",
     "test-e2e": "bash misc/test.sh"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@hiogawa/utils-node": "^0.0.1",
+    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
+    "@vitejs/plugin-react": "^4.2.1"
+  },
   "devDependencies": {
+    "@hiogawa/react-server": "workspace:*",
     "react": "$react",
-    "vite": "$vite",
-    "@hiogawa/react-server": "workspace:*"
+    "vite": "$vite"
   },
   "peerDependencies": {
-    "react": "*",
     "@hiogawa/react-server": "workspace:*",
+    "react": "*",
     "vite": "*"
   }
 }

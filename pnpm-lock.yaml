@@ -130,6 +130,16 @@ importers:
         version: 19.0.0-rc.0(react-dom@19.0.0-rc.0(react@19.0.0-rc.0))(react@19.0.0-rc.0)(webpack@5.90.3(esbuild@0.20.2))
 
   packages/react-server-next:
+    dependencies:
+      '@hiogawa/utils-node':
+        specifier: ^0.0.1
+        version: 0.0.1
+      '@hiogawa/vite-plugin-ssr-middleware':
+        specifier: workspace:*
+        version: link:../vite-plugin-ssr-middleware
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.2.3(@types/node@20.11.28)(terser@5.29.2))
     devDependencies:
       '@hiogawa/react-server':
         specifier: workspace:*
