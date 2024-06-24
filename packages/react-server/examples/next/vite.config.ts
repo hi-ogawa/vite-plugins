@@ -14,7 +14,7 @@ export default defineConfig({
     vitePluginReactServer({
       routeDir: "app",
     }),
-    // for now, ssr entry setup is not done by vitePluginReactServer
+    // for now, ssr entry setup is outside of vitePluginReactServer
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "virtual:entry-ssr-node",
