@@ -2,7 +2,6 @@
   "name": "@hiogawa/react-server-example-next",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
