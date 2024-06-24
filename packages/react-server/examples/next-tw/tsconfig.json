@@ -19,6 +19,8 @@
       }
     ],
     "paths": {
+      "next": ["./node_modules/@hiogawa/react-server/dist/next/compat"],
+      "next/*": ["./node_modules/@hiogawa/react-server/dist/next/compat/*"],
       "@/*": ["./*"]
     }
   },
