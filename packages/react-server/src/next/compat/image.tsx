@@ -1,6 +1,6 @@
 "use client";
 
-// TODO
+/** @todo */
 export default function Image({
   priority,
   ...props
