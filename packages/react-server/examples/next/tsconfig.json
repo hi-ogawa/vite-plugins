@@ -2,6 +2,10 @@
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "paths": {
+      "next": ["./node_modules/@hiogawa/react-server/dist/next/compat"],
+      "next/*": ["./node_modules/@hiogawa/react-server/dist/next/compat/*"]
+    },
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
