@@ -14,16 +14,16 @@ import { createFsRouteTree } from "./tree";
 
 export function routeManifestPluginServer({
   manager,
-}: { manager: PluginStateManager }): Plugin[] {
+  routeDir,
+}: { manager: PluginStateManager, routeDir: string }): Plugin[] {
   return [
     {
       name: "server-route-manifest",
       apply: "build",
       async buildEnd() {
         if (manager.buildType === "rsc") {
-          // TODO
           const routeFiles = await FastGlob(
-            "./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
+            path.posix.join(routeDir, "**/(page|layout|error).(js|jsx|ts|tsx)"),
           );
           for (const routeFile of routeFiles) {
             const absFile = path.join(manager.config.root, routeFile);
@@ -37,7 +37,7 @@ export function routeManifestPluginServer({
                 ids.push(id);
               }
             }
-            const routeKey = routeFile.slice("./src/routes".length);
+            const routeKey = routeFile.slice(routeDir.length);
             manager.routeToClientReferences[routeKey] = ids;
           }
         }

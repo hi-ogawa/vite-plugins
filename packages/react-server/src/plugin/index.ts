@@ -150,7 +150,7 @@ export function vitePluginReactServer(options?: {
         runtimePath: RUNTIME_REACT_SERVER_PATH,
       }),
 
-      routeManifestPluginServer({ manager }),
+      routeManifestPluginServer({ manager, routeDir }),
 
       // this virtual is not necessary anymore but has been used in the past
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
