@@ -15,7 +15,7 @@ import { createFsRouteTree } from "./tree";
 export function routeManifestPluginServer({
   manager,
   routeDir,
-}: { manager: PluginStateManager, routeDir: string }): Plugin[] {
+}: { manager: PluginStateManager; routeDir: string }): Plugin[] {
   return [
     {
       name: "server-route-manifest",

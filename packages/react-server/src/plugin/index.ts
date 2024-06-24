@@ -152,6 +152,20 @@ export function vitePluginReactServer(options?: {
 
       routeManifestPluginServer({ manager, routeDir }),
 
+      createVirtualPlugin("server-routes", () => {
+        return `
+          const glob = import.meta.glob(
+            "/${routeDir}/**/(page|layout|error).(js|jsx|ts|tsx)",
+            { eager: true },
+          );
+          export default Object.fromEntries(
+            Object.entries(glob).map(
+              ([k, v]) => [k.slice("/${routeDir}".length), v]
+            )
+          );
+        `;
+      }),
+
       // this virtual is not necessary anymore but has been used in the past
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
