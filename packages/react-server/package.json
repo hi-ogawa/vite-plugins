@@ -53,6 +53,18 @@
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
       "default": "./dist/plugin/index.js"
+    },
+    "./next/plugin": {
+      "types": "./dist/next/plugin/index.d.ts",
+      "default": "./dist/next/plugin/index.js"
+    },
+    "./next/entry-ssr": {
+      "types": "./dist/next/entry-ssr/index.d.ts",
+      "default": "./dist/next/entry-ssr/index.js"
+    },
+    "./next/compat/*": {
+      "types": "./dist/next/compat/*.d.ts",
+      "default": "./dist/next/compat/*.js"
     }
   },
   "files": ["dist"],
@@ -65,6 +77,8 @@
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
+    "@hiogawa/utils-node": "^0.0.1",
+    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@tanstack/history": "^1.15.13",
     "fast-glob": "^3.3.2",
     "use-sync-external-store": "^1.2.0"
