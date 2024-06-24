@@ -36,11 +36,14 @@ jobs:
       - run: pnpm -C packages/react-server/examples/basic cf-build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-cf-preview
 
-  test-react-server-prerender:
+  test-react-server-others:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+      - run: pnpm -C packages/react-server/examples/next test-e2e
+      - run: pnpm -C packages/react-server/examples/next build
+      - run: pnpm -C packages/react-server/examples/next test-e2e-preview
       - run: pnpm -C packages/react-server/examples/prerender test-e2e
       - run: pnpm -C packages/react-server/examples/prerender build
       - run: pnpm -C packages/react-server/examples/prerender test-e2e-preview
