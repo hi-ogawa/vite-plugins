@@ -48,6 +48,10 @@ pnpm -C packages/react-server dev
 
 # DEBUG=react-server:*
 pnpm -C packages/react-server/examples/basic dev
+
+# release
+pnpm changelog --dir packages/react-server
+pnpm publish packages/react-server
 ```
 
 ## Prior art
