@@ -13,8 +13,8 @@ const viteBin = path.join(
 const argv = process.argv.slice(2);
 
 // next start -> vite preview
-if (argv[2] === "start") {
-  argv[2] = "preview";
+if (argv[0] === "start") {
+  argv[0] = "preview";
 }
 
 spawn("node", [viteBin, ...argv], {

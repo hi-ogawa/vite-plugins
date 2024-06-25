@@ -40,17 +40,18 @@
   },
   "dependencies": {
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@hiogawa/react-server": "workspace:*",
     "@vitejs/plugin-react": "^4.2.1",
     "vite": "^5.2.3"
   },
   "devDependencies": {
+    "@hiogawa/react-server": "workspace:*",
     "@hiogawa/utils-node": "^0.0.1",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "react": "$react"
   },
   "peerDependencies": {
+    "@hiogawa/react-server": "workspace:*",
     "react": "*"
   }
 }

@@ -14,14 +14,14 @@ export function vitePluginReactServerNext(options?: {
     react(),
     vitePluginReactServer({
       routeDir: "app",
-      entryBrowser: `next/plugin/entry-browser`,
-      entryServer: "next/plugin/entry-server",
+      entryBrowser: `@hiogawa/react-server/next/entry-browser`,
+      entryServer: "@hiogawa/react-server/entry-react-server",
       buildScanMode: "server",
       plugins: [nextEsbuildJsx, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
-      entry: "next/plugin/entry-ssr",
+      entry: "@hiogawa/react-server/next/entry-ssr",
       preview: path.resolve("./dist/server/index.js"),
     }),
     {

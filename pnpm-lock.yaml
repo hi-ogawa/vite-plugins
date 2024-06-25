@@ -137,9 +137,6 @@ importers:
 
   packages/react-server-next:
     dependencies:
-      '@hiogawa/react-server':
-        specifier: workspace:*
-        version: link:../react-server
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../vite-plugin-ssr-middleware
@@ -150,6 +147,9 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
     devDependencies:
+      '@hiogawa/react-server':
+        specifier: workspace:*
+        version: link:../react-server
       '@hiogawa/utils-node':
         specifier: ^0.0.1
         version: 0.0.1
@@ -232,6 +232,9 @@ importers:
 
   packages/react-server/examples/next:
     dependencies:
+      '@hiogawa/react-server':
+        specifier: latest
+        version: link:../..
       next:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
