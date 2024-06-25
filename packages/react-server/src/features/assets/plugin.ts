@@ -96,7 +96,7 @@ export function vitePluginServerAssets({
         `/******* react-server ********/`,
         collectStyle($__global.dev.reactServer, [
           entryServer,
-          "@hiogawa/react-server/entry-react-server",
+          "virtual:server-routes",
         ]),
         `/******* client **************/`,
         collectStyle($__global.dev.server, [
@@ -114,7 +114,7 @@ export function vitePluginServerAssets({
       if (!manager.buildType) {
         const urls = await collectStyleUrls($__global.dev.reactServer, [
           entryServer,
-          "@hiogawa/react-server/entry-react-server",
+          "virtual:server-routes",
         ]);
         const code = urls.map((url) => `import "${url}";\n`).join("");
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
