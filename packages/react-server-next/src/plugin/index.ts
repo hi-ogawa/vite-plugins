@@ -4,12 +4,14 @@ import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
+import react from "@vitejs/plugin-react";
 import type { Plugin, PluginOption } from "vite";
 
-export default function next(options?: {
+export function vitePluginReactServerNext(options?: {
   plugins?: PluginOption[];
 }): PluginOption {
   return [
+    react(),
     vitePluginReactServer({
       routeDir: "app",
       entryBrowser: "@hiogawa/react-server-next/plugin/entry-browser",
