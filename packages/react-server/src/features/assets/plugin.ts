@@ -94,7 +94,10 @@ export function vitePluginServerAssets({
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, [entryServer]),
+        collectStyle($__global.dev.reactServer, [
+          entryServer,
+          "virtual:server-routes",
+        ]),
         `/******* client **************/`,
         collectStyle($__global.dev.server, [
           entryBrowser,
@@ -111,6 +114,7 @@ export function vitePluginServerAssets({
       if (!manager.buildType) {
         const urls = await collectStyleUrls($__global.dev.reactServer, [
           entryServer,
+          "virtual:server-routes",
         ]);
         const code = urls.map((url) => `import "${url}";\n`).join("");
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
