@@ -137,13 +137,28 @@ importers:
 
   packages/react-server-next:
     dependencies:
+      '@hiogawa/react-server':
+        specifier: workspace:*
+        version: link:../react-server
+      '@hiogawa/vite-plugin-ssr-middleware':
+        specifier: workspace:*
+        version: link:../vite-plugin-ssr-middleware
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.2.3(@types/node@20.11.28)(terser@5.29.2))
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
     devDependencies:
-      '@hiogawa/react-server':
-        specifier: workspace:*
-        version: link:../react-server
+      '@hiogawa/utils-node':
+        specifier: ^0.0.1
+        version: 0.0.1
+      '@types/react':
+        specifier: 18.3.1
+        version: 18.3.1
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
 
   packages/react-server/examples/basic:
     dependencies:
