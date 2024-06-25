@@ -9,5 +9,6 @@ test("basic", async ({ page }) => {
 test("navigation", async ({ page }) => {
   await page.goto("/navigation");
   await page.getByRole("link", { name: "set Query" }).click();
-  await page.getByTestId("a=b&c=d").click();
+  await page.getByText("a=b&c=d").click();
+  await page.waitForURL("/navigation?a=b&c=d");
 });
