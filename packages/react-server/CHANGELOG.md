@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.2.4
+
+- feat(next): add partial Next.js compatibility ([#413](https://github.com/hi-ogawa/vite-plugins/pull/413))
+- fix(next): force esbuild jsx transform ([#416](https://github.com/hi-ogawa/vite-plugins/pull/416))
+- feat: refine route data revalidation `revalidate = (path)` ([#393](https://github.com/hi-ogawa/vite-plugins/pull/393))
+- fix: set html response as charset=utf-8 ([#410](https://github.com/hi-ogawa/vite-plugins/pull/410))
+- fix: enforce no trailing slash ([#392](https://github.com/hi-ogawa/vite-plugins/pull/392))
+- fix: fix css virtual module invalidation ([#383](https://github.com/hi-ogawa/vite-plugins/pull/383))
+- fix: tweak prerender output ([#376](https://github.com/hi-ogawa/vite-plugins/pull/376))
+- chore: add `React.cache` example ([#400](https://github.com/hi-ogawa/vite-plugins/pull/400))
+- chore: add `useOptimistic` demo ([#380](https://github.com/hi-ogawa/vite-plugins/pull/380))
+- chore: cloudflare ssg hybrid deployment ([#375](https://github.com/hi-ogawa/vite-plugins/pull/375))
+- chore: deploy basic example on vercel edge ([#371](https://github.com/hi-ogawa/vite-plugins/pull/371))
+- chore(deps): update react 19.0.0-rc-c21bcd627b-20240624 ([#417](https://github.com/hi-ogawa/vite-plugins/pull/417))
+
 ## v0.2.3
 
 - fix: merge Link props handlers ([#368](https://github.com/hi-ogawa/vite-plugins/pull/368))
