@@ -34,6 +34,12 @@ test("navigation permanentRedirect", async ({ page }) => {
   await page.getByText("Result Page").click();
 });
 
+test("navigation notFound", async ({ page }) => {
+  const res = await page.goto("/navigation/not-found/servercomponent");
+  expect(res?.status()).toBe(404);
+  await page.getByText("Error: 404").click();
+});
+
 async function waitForHydration(page: Page) {
   await expect(page.locator("html")).toHaveAttribute(
     "data-test-state",
