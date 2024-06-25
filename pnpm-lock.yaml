@@ -135,6 +135,16 @@ importers:
         specifier: 19.0.0-rc-c21bcd627b-20240624
         version: 19.0.0-rc-c21bcd627b-20240624(react-dom@19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624))(react@19.0.0-rc-c21bcd627b-20240624)(webpack@5.90.3(esbuild@0.20.2))
 
+  packages/react-server-next:
+    dependencies:
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
+    devDependencies:
+      '@hiogawa/react-server':
+        specifier: workspace:*
+        version: link:../react-server
+
   packages/react-server/examples/basic:
     dependencies:
       '@hiogawa/react-server':
