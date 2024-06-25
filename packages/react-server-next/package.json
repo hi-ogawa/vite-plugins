@@ -51,7 +51,7 @@
     "react": "$react"
   },
   "peerDependencies": {
-    "@hiogawa/react-server": "workspace:*",
+    "@hiogawa/react-server": "*",
     "react": "*"
   }
 }
