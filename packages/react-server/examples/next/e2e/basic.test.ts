@@ -6,7 +6,7 @@ test("basic", async ({ page }) => {
   await page.getByRole("img", { name: "Next.js logo" }).click();
 });
 
-test("navigation link", async ({ page }) => {
+test("navigation Link", async ({ page }) => {
   await page.goto("/navigation");
   await waitForHydration(page);
   await page.getByRole("link", { name: "set Query" }).click();
@@ -14,12 +14,24 @@ test("navigation link", async ({ page }) => {
   await page.waitForURL("/navigation?a=b&c=d");
 });
 
-test("navigation router", async ({ page }) => {
+test("navigation useRouter", async ({ page }) => {
   await page.goto("/navigation/router");
   await waitForHydration(page);
   await page.getByRole("button", { name: "Test routing" }).click();
   await page.getByText("slug:1").click();
   await page.waitForURL("/navigation/router/dynamic-gsp/1");
+});
+
+test("navigation redirect", async ({ page }) => {
+  await page.goto("/navigation/redirect/servercomponent");
+  await page.waitForURL("/navigation/redirect/result");
+  await page.getByText("Result Page").click();
+});
+
+test("navigation permanentRedirect", async ({ page }) => {
+  await page.goto("/navigation/redirect/servercomponent-2");
+  await page.waitForURL("/navigation/redirect/result");
+  await page.getByText("Result Page").click();
 });
 
 async function waitForHydration(page: Page) {
