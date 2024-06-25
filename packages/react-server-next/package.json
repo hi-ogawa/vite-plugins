@@ -13,6 +13,26 @@
   "bin": {
     "next": "./bin/cli.js"
   },
+  "exports": {
+    "./plugin": {
+      "types": "./dist/plugin/index.d.ts",
+      "default": "./dist/plugin/index.js"
+    },
+    "./plugin/*": "./dist/plugin/*.js",
+    ".": {
+      "types": "./dist/compat/index.d.ts",
+      "default": "./dist/compat/index.js"
+    },
+    "./navigation": {
+      "types": "./dist/compat/navigation.d.ts",
+      "react-server": "./dist/compat/navigation.react-server.js",
+      "default": "./dist/compat/navigation.js"
+    },
+    "./*": {
+      "types": "./dist/compat/*.d.ts",
+      "default": "./dist/compat/*.js"
+    }
+  },
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",

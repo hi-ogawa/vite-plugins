@@ -6,7 +6,7 @@ import {
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import type { Plugin, PluginOption } from "vite";
 
-export function vitePluginReactServerNext(options?: {
+export default function next(options?: {
   plugins?: PluginOption[];
 }): PluginOption {
   return [
