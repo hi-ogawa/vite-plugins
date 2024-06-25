@@ -1,1 +1,2 @@
-export {};
+/** @todo */
+export type Metadata = any;
