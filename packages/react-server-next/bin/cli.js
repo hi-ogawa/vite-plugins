@@ -17,6 +17,11 @@ if (argv[0] === "start") {
   argv[0] = "preview";
 }
 
+if (!["dev", "build", "start"].includes(argv[0])) {
+  console.error(`[ERROR] unsupported command '${argv[0]}'`);
+  process.exit(1);
+}
+
 spawn("node", [viteBin, ...argv], {
   shell: false,
   stdio: "inherit",
