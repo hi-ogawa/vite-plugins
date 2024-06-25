@@ -12,7 +12,7 @@
 - fix: fix client css module hmr ([#346](https://github.com/hi-ogawa/vite-plugins/pull/346))
 - fix: fix client css FOUC ([#342](https://github.com/hi-ogawa/vite-plugins/pull/342))
 - feat: preload css ([#341](https://github.com/hi-ogawa/vite-plugins/pull/341))
-- chore(deps): update react v19.0.0-rc.0 ([#343](https://github.com/hi-ogawa/vite-plugins/pull/343))
+- chore(deps): update react v19.0.0-rc-c21bcd627b-20240624 ([#343](https://github.com/hi-ogawa/vite-plugins/pull/343))
 - feat: preload client assets ([#340](https://github.com/hi-ogawa/vite-plugins/pull/340)), ([#337](https://github.com/hi-ogawa/vite-plugins/pull/337)), ([#331](https://github.com/hi-ogawa/vite-plugins/pull/331))
 - fix: tree shake unused references by `__NO_SIDE_EFFECTS__` ([#336](https://github.com/hi-ogawa/vite-plugins/pull/336))
 

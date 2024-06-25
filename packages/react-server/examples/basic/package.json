@@ -22,9 +22,9 @@
     "@hiogawa/test-dep-server-component": "file:deps/server-component",
     "@hiogawa/test-dep-use-client": "file:deps/use-client",
     "cookie": "^0.6.0",
-    "react": "19.0.0-rc.0",
-    "react-dom": "19.0.0-rc.0",
-    "react-server-dom-webpack": "19.0.0-rc.0",
+    "react": "19.0.0-rc-c21bcd627b-20240624",
+    "react-dom": "19.0.0-rc-c21bcd627b-20240624",
+    "react-server-dom-webpack": "19.0.0-rc-c21bcd627b-20240624",
     "react-wrap-balancer": "^1.1.0"
   },
   "devDependencies": {
