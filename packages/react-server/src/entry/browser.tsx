@@ -102,6 +102,9 @@ export async function start() {
     $__startActionTransition = startActionTransition;
 
     React.useEffect(() => router.setup(), []);
+    React.useEffect(() => {
+      document.firstElementChild?.setAttribute("data-test-state", "hydrated");
+    }, []);
 
     React.useEffect(() => {
       debug("[isPending]", isPending);
