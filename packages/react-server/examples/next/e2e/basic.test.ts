@@ -1,4 +1,5 @@
-import { type Page, expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { waitForHydration } from "./helper";
 
 test("basic", async ({ page }) => {
   const res = await page.goto("/");
@@ -40,9 +41,34 @@ test("navigation notFound", async ({ page }) => {
   await page.getByText("Error: 404").click();
 });
 
-async function waitForHydration(page: Page) {
-  await expect(page.locator("html")).toHaveAttribute(
-    "data-test-state",
-    "hydrated",
-  );
-}
+test("action server", async ({ page }) => {
+  await page.goto("/actions/server");
+  await waitForHydration(page);
+  await expect(page.locator("#count")).toContainText("0");
+  await page.getByRole("button", { name: "+1", exact: true }).click();
+  await expect(page.locator("#count")).toContainText("1");
+  await page.getByRole("button", { name: "*2" }).click();
+  await expect(page.locator("#count")).toContainText("2");
+  await page.getByRole("button", { name: "*2" }).click();
+  await expect(page.locator("#count")).toContainText("4");
+  await page.getByRole("button", { name: "-1" }).click();
+  await expect(page.locator("#count")).toContainText("3");
+  await page.getByRole("button", { name: "redirect" }).click();
+  await page.waitForURL("/");
+});
+
+test("action client", async ({ page }) => {
+  await page.goto("/actions/client");
+  await waitForHydration(page);
+  await expect(page.locator("#count")).toContainText("0");
+  await page.getByRole("button", { name: "+1", exact: true }).click();
+  await expect(page.locator("#count")).toContainText("1");
+  await page.getByRole("button", { name: "*2" }).click();
+  await expect(page.locator("#count")).toContainText("2");
+  await page.getByRole("button", { name: "*2" }).click();
+  await expect(page.locator("#count")).toContainText("4");
+  await page.getByRole("button", { name: "-1" }).click();
+  await expect(page.locator("#count")).toContainText("3");
+  await page.getByRole("button", { name: "redirect" }).click();
+  await page.waitForURL("/");
+});
