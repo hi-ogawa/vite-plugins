@@ -10,6 +10,9 @@
     "directory": "packages/react-server-next"
   },
   "files": ["bin"],
+  "bin": {
+    "next": "./bin/cli.js"
+  },
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
