@@ -1,9 +1,4 @@
-import {
-  createDebug,
-  objectMapKeys,
-  objectMapValues,
-  objectPick,
-} from "@hiogawa/utils";
+import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
@@ -154,18 +149,11 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 const router = createRouter();
 
-function createRouter() {
-  // for now hard code /src/routes as convention
-  const glob = import.meta.glob(
-    "/src/routes/**/(page|layout|error).(js|jsx|ts|tsx)",
-    {
-      eager: true,
-    },
-  );
-  const tree = generateRouteModuleTree(
-    objectMapKeys(glob, (_v, k) => k.slice("/src/routes".length)),
-  );
+// @ts-ignore
+import serverRoutes from "virtual:server-routes";
 
+function createRouter() {
+  const tree = generateRouteModuleTree(serverRoutes);
   return { tree };
 }
 

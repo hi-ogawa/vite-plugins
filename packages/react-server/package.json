@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.2.3",
+  "version": "0.2.4-pre.0",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server",
@@ -53,6 +53,20 @@
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
       "default": "./dist/plugin/index.js"
+    },
+    "./next/plugin": {
+      "types": "./dist/next/plugin.d.ts",
+      "default": "./dist/next/plugin.js"
+    },
+    "./next/entry-browser": "./dist/next/entry-browser.js",
+    "./next/entry-ssr": "./dist/next/entry-ssr.js",
+    "./next/compat": {
+      "types": "./dist/next/compat/index.d.ts",
+      "default": "./dist/next/compat/index.js"
+    },
+    "./next/compat/*": {
+      "types": "./dist/next/compat/*.d.ts",
+      "default": "./dist/next/compat/*.js"
     }
   },
   "files": ["dist"],
@@ -65,11 +79,13 @@
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
+    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@tanstack/history": "^1.15.13",
     "fast-glob": "^3.3.2",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
+    "@hiogawa/utils-node": "^0.0.1",
     "@types/estree": "^1.0.5",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",

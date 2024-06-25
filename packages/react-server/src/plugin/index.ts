@@ -1,3 +1,4 @@
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
@@ -30,9 +31,7 @@ import {
 } from "../features/use-client/plugin";
 import { $__global } from "../lib/global";
 import {
-  ENTRY_CLIENT,
   ENTRY_CLIENT_WRAPPER,
-  ENTRY_REACT_SERVER,
   ENTRY_REACT_SERVER_WRAPPER,
   createVirtualPlugin,
   vitePluginSilenceDirectiveBuildWarning,
@@ -98,7 +97,15 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: () => Promise<string[]> | string[];
+  // allow overrding default entires for next.js compatibility
+  entryBrowser?: string;
+  entryServer?: string;
+  routeDir?: string;
 }): Plugin[] {
+  const entryBrowser = options?.entryBrowser ?? "/src/entry-client";
+  const entryServer = options?.entryServer ?? "/src/entry-react-server";
+  const routeDir = options?.routeDir ?? "src/routes";
+
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
       prefix: "[react-server]",
@@ -145,13 +152,27 @@ export function vitePluginReactServer(options?: {
         runtimePath: RUNTIME_REACT_SERVER_PATH,
       }),
 
-      routeManifestPluginServer({ manager }),
+      routeManifestPluginServer({ manager, routeDir }),
+
+      createVirtualPlugin("server-routes", () => {
+        return `
+          const glob = import.meta.glob(
+            "/${routeDir}/**/(page|layout|error).(js|jsx|ts|tsx)",
+            { eager: true },
+          );
+          export default Object.fromEntries(
+            Object.entries(glob).map(
+              ([k, v]) => [k.slice("/${routeDir}".length), v]
+            )
+          );
+        `;
+      }),
 
       // this virtual is not necessary anymore but has been used in the past
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
-        () => `export * from "${ENTRY_REACT_SERVER}";\n`,
+        () => `export * from "${entryServer}";\n`,
       ),
 
       {
@@ -203,7 +224,9 @@ export function vitePluginReactServer(options?: {
         optimizeDeps: {
           // this can potentially include unnecessary server only deps for client,
           // but there should be no issues except making deps optimization slightly slower.
-          entries: ["./src/routes/**/(page|layout|error).(js|jsx|ts|tsx)"],
+          entries: [
+            path.posix.join(routeDir, `**/(page|layout|error).(js|jsx|ts|tsx)`),
+          ],
           exclude: ["@hiogawa/react-server"],
           include: [
             "react",
@@ -346,7 +369,7 @@ export function vitePluginReactServer(options?: {
       ssrRuntimePath: RUNTIME_SERVER_PATH,
     }),
     ...vitePluginClientUseClient({ manager }),
-    ...vitePluginServerAssets({ manager }),
+    ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
     ...routeManifestPluginClient({ manager }),
     ...prerenderPlugin({ manager, prerender: options?.prerender }),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
@@ -358,7 +381,7 @@ export function vitePluginReactServer(options?: {
           for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
             await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
           }
-          await import("${ENTRY_CLIENT}");
+          await import("${entryBrowser}");
         `;
       }
       // build
@@ -367,7 +390,7 @@ export function vitePluginReactServer(options?: {
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
           import("@hiogawa/react-server/runtime-client");
-          import "${ENTRY_CLIENT}";
+          import "${entryBrowser}";
         `;
       }
       tinyassert(false);

@@ -94,6 +94,9 @@ importers:
       '@hiogawa/transforms':
         specifier: workspace:*
         version: link:../transforms
+      '@hiogawa/vite-plugin-ssr-middleware':
+        specifier: workspace:*
+        version: link:../vite-plugin-ssr-middleware
       '@tanstack/history':
         specifier: ^1.15.13
         version: 1.15.13
@@ -107,6 +110,9 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
     devDependencies:
+      '@hiogawa/utils-node':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
@@ -192,6 +198,37 @@ importers:
       unocss:
         specifier: ^0.58.6
         version: 0.58.6(postcss@8.4.38)(rollup@4.13.0)(vite@5.2.3(@types/node@20.11.28)(terser@5.29.2))
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
+
+  packages/react-server/examples/next:
+    dependencies:
+      '@hiogawa/react-server':
+        specifier: latest
+        version: link:../..
+      react:
+        specifier: 19.0.0-rc.0
+        version: 19.0.0-rc.0
+      react-dom:
+        specifier: 19.0.0-rc.0
+        version: 19.0.0-rc.0(react@19.0.0-rc.0)
+      react-server-dom-webpack:
+        specifier: 19.0.0-rc.0
+        version: 19.0.0-rc.0(react-dom@19.0.0-rc.0(react@19.0.0-rc.0))(react@19.0.0-rc.0)(webpack@5.90.3(esbuild@0.20.2))
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.42.1
+        version: 1.42.1
+      '@types/react':
+        specifier: 18.3.1
+        version: 18.3.1
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.2.3(@types/node@20.11.28)(terser@5.29.2))
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)

@@ -14,6 +14,15 @@ export default defineConfig([
       "src/entry/server.tsx",
       "src/entry/browser.tsx",
       "src/plugin/index.ts",
+
+      // next compat
+      "src/next/plugin.ts",
+      "src/next/entry-browser.ts",
+      "src/next/entry-ssr.ts",
+      "src/next/compat/index.tsx",
+      "src/next/compat/image.tsx",
+      "src/next/compat/font/local.tsx",
+      "src/next/compat/font/google.tsx",
     ],
     format: ["esm"],
     dts: !process.env["NO_DTS"],

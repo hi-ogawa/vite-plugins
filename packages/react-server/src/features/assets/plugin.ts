@@ -4,12 +4,7 @@ import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { Manifest, Plugin, ViteDevServer } from "vite";
 import { $__global } from "../../lib/global";
 import type { PluginStateManager } from "../../plugin";
-import {
-  ENTRY_CLIENT,
-  ENTRY_CLIENT_WRAPPER,
-  ENTRY_REACT_SERVER,
-  createVirtualPlugin,
-} from "../../plugin/utils";
+import { ENTRY_CLIENT_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "./shared";
 
@@ -20,7 +15,13 @@ export interface SsrAssetsType {
 
 export function vitePluginServerAssets({
   manager,
-}: { manager: PluginStateManager }): Plugin[] {
+  entryBrowser,
+  entryServer,
+}: {
+  manager: PluginStateManager;
+  entryBrowser: string;
+  entryServer: string;
+}): Plugin[] {
   return [
     createVirtualPlugin("ssr-assets", async () => {
       // dev
@@ -93,10 +94,10 @@ export function vitePluginServerAssets({
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, [ENTRY_REACT_SERVER]),
+        collectStyle($__global.dev.reactServer, [entryServer]),
         `/******* client **************/`,
         collectStyle($__global.dev.server, [
-          ENTRY_CLIENT,
+          entryBrowser,
           // TODO: dev should also use RouteManifest to manage client css
           ...manager.rscUseClientIds,
         ]),
@@ -109,7 +110,7 @@ export function vitePluginServerAssets({
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
         const urls = await collectStyleUrls($__global.dev.reactServer, [
-          ENTRY_REACT_SERVER,
+          entryServer,
         ]);
         const code = urls.map((url) => `import "${url}";\n`).join("");
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
