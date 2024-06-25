@@ -18,6 +18,7 @@ export function vitePluginReactServerNext(options?: {
       routeDir: "app",
       entryBrowser: "@hiogawa/react-server/next/entry-browser",
       entryServer: "@hiogawa/react-server/entry-react-server",
+      buildScanMode: "server",
       plugins: [nextAliasPlugin, nextEsbuildJsx, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),
