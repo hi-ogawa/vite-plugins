@@ -53,25 +53,6 @@
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
       "default": "./dist/plugin/index.js"
-    },
-    "./next/plugin": {
-      "types": "./dist/next/plugin.d.ts",
-      "default": "./dist/next/plugin.js"
-    },
-    "./next/entry-browser": "./dist/next/entry-browser.js",
-    "./next/entry-ssr": "./dist/next/entry-ssr.js",
-    "./next/compat": {
-      "types": "./dist/next/compat/index.d.ts",
-      "default": "./dist/next/compat/index.js"
-    },
-    "./next/compat/navigation": {
-      "types": "./dist/next/compat/navigation.d.ts",
-      "react-server": "./dist/next/compat/navigation.react-server.js",
-      "default": "./dist/next/compat/navigation.js"
-    },
-    "./next/compat/*": {
-      "types": "./dist/next/compat/*.d.ts",
-      "default": "./dist/next/compat/*.js"
     }
   },
   "files": ["dist"],

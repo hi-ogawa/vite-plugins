@@ -1,9 +1,8 @@
 "use client";
 
-import type { ErrorPageProps } from "@hiogawa/react-server/server";
 import styles from "./style.module.css";
 
-export default function ErrorPage(props: ErrorPageProps) {
+export default function ErrorPage(props: any) {
   return (
     <h1 id="not-found-component" className={styles.red}>
       Error: {props.serverError?.status}

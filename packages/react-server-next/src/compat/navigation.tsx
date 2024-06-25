@@ -1,5 +1,7 @@
+"use client";
+
+import { useRouter as useRouter_ } from "@hiogawa/react-server/client";
 import React from "react";
-import { useRouter as useRouter_ } from "../../client";
 
 export function useSearchParams() {
   const search = useRouter_((s) => s.location.search);
