@@ -10,35 +10,20 @@ export default function next(options?: {
   plugins?: PluginOption[];
 }): PluginOption {
   return [
-    nextAliasPlugin,
     vitePluginReactServer({
       routeDir: "app",
-      entryBrowser: "@hiogawa/react-server/next/entry-browser",
-      entryServer: "@hiogawa/react-server/entry-react-server",
+      entryBrowser: "@hiogawa/react-server-next/plugin/entry-browser",
+      entryServer: "@hiogawa/react-server-next/plugin/entry-server",
       buildScanMode: "server",
-      plugins: [nextAliasPlugin, nextEsbuildJsx, ...(options?.plugins ?? [])],
+      plugins: [nextEsbuildJsx, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
-      entry: "@hiogawa/react-server/next/entry-ssr",
+      entry: "@hiogawa/react-server-next/plugin/entry-ssr",
       preview: path.resolve("./dist/server/index.js"),
     }),
   ];
 }
-
-const nextAliasPlugin: Plugin = {
-  name: "next-compat-alias",
-  config: () => ({
-    resolve: {
-      alias: [
-        {
-          find: /^next(\/.*)?/,
-          replacement: "@hiogawa/react-server/next/compat$1",
-        },
-      ],
-    },
-  }),
-};
 
 // overrdied next.js's default `jsx: preserve`
 const nextEsbuildJsx: Plugin = {

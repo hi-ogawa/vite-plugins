@@ -6,6 +6,7 @@ export default defineConfig([
       "src/plugin/index.ts",
       "src/plugin/entry-browser.tsx",
       "src/plugin/entry-ssr.tsx",
+      "src/plugin/entry-server.tsx",
       "src/compat/index.tsx",
       "src/compat/link.tsx",
       "src/compat/navigation.tsx",
