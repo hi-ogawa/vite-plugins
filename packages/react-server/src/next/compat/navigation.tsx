@@ -16,8 +16,10 @@ export function useParams() {}
 /** @todo */
 export function useSelectedLayoutSegments() {}
 
-/** @todo */
-function useNextRouter() {}
+function useNextRouter() {
+  const history = useRouter((s) => s.history);
+  return history;
+}
 
 export { useNextRouter as useRouter };
 
