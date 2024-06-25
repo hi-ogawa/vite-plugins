@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.5
+
+- feat(next): create alias package ([#418](https://github.com/hi-ogawa/vite-plugins/pull/418))
+- feat(next): compat link and navigation ([#420](https://github.com/hi-ogawa/vite-plugins/pull/420)), ([#421](https://github.com/hi-ogawa/vite-plugins/pull/421))
+
 ## v0.2.4
 
 - feat(next): add partial Next.js compatibility ([#413](https://github.com/hi-ogawa/vite-plugins/pull/413))

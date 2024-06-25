@@ -4,6 +4,8 @@ Alias package for [`Next.js`](https://github.com/vercel/next.js)
 
 ## usage
 
+- Update `package.json`
+
 ```json
 {
   "type": "module",
@@ -15,4 +17,15 @@ Alias package for [`Next.js`](https://github.com/vercel/next.js)
     "react-server-dom-webpack": "rc"
   }
 }
+```
+
+- Add `vite.config.ts`
+
+
+```ts
+import next from "next/vite";
+
+export default {
+  plugins: [next()],
+};
 ```
