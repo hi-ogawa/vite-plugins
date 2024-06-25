@@ -12,7 +12,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
-    "types": ["react/experimental"],
+    "types": ["vite/client", "react/experimental"],
     "jsx": "preserve"
   }
 }
