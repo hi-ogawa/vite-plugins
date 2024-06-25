@@ -3,10 +3,10 @@ import { defineConfig } from "tsup";
 export default defineConfig([
   {
     entry: [
-      "src/plugin/index.ts",
-      "src/plugin/entry-browser.tsx",
-      "src/plugin/entry-ssr.tsx",
-      "src/plugin/entry-server.tsx",
+      "src/vite/index.ts",
+      "src/vite/entry-browser.tsx",
+      "src/vite/entry-ssr.tsx",
+      "src/vite/entry-server.tsx",
       "src/compat/index.tsx",
       "src/compat/link.tsx",
       "src/compat/navigation.tsx",

@@ -1,7 +1,5 @@
-import { vitePluginReactServerNext } from "next/plugin";
-import { defineConfig } from "vite";
+import next from "next/vite";
 
-export default defineConfig({
-  clearScreen: false,
-  plugins: [vitePluginReactServerNext()],
-});
+export default {
+  plugins: [next()],
+};

@@ -7,7 +7,7 @@ import {
 import react from "@vitejs/plugin-react";
 import type { Plugin, PluginOption } from "vite";
 
-export function vitePluginReactServerNext(options?: {
+export default function vitePluginReactServerNext(options?: {
   plugins?: PluginOption[];
 }): PluginOption {
   return [
