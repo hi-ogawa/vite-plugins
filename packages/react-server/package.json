@@ -64,6 +64,11 @@
       "types": "./dist/next/compat/index.d.ts",
       "default": "./dist/next/compat/index.js"
     },
+    "./next/compat/navigation": {
+      "types": "./dist/next/compat/navigation.d.ts",
+      "react-server": "./dist/next/compat/navigation.react-server.js",
+      "default": "./dist/next/compat/navigation.js"
+    },
     "./next/compat/*": {
       "types": "./dist/next/compat/*.d.ts",
       "default": "./dist/next/compat/*.js"

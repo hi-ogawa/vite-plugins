@@ -20,7 +20,7 @@ export default defineConfig([
       "src/next/entry-browser.ts",
       "src/next/entry-ssr.ts",
       "src/next/compat/index.tsx",
-      "src/next/compat/next.tsx",
+      "src/next/compat/link.tsx",
       "src/next/compat/navigation.tsx",
       "src/next/compat/navigation.react-server.tsx",
       "src/next/compat/image.tsx",
