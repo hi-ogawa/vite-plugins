@@ -12,14 +12,14 @@ const viteBin = path.join(
 
 const argv = process.argv.slice(2);
 
-// next start -> vite preview
-if (argv[0] === "start") {
-  argv[0] = "preview";
-}
-
 if (!["dev", "build", "start"].includes(argv[0])) {
   console.error(`[ERROR] unsupported command '${argv[0]}'`);
   process.exit(1);
+}
+
+// next start -> vite preview
+if (argv[0] === "start") {
+  argv[0] = "preview";
 }
 
 spawn("node", [viteBin, ...argv], {
