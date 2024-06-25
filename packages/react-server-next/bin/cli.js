@@ -1,18 +1,23 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
+import { createRequire } from "node:module";
+import path from "node:path";
 import process from "node:process";
+
+const require = createRequire(import.meta.url);
+const viteBin = path.join(
+  require.resolve("vite/package.json"),
+  "../bin/vite.js",
+);
 
 const argv = process.argv.slice(2);
 
-if (argv[2] === "init") {
-  // TODO: initial command to setup vite
-  // - update package.json
-  // - add vite.config.ts
-}
-
+// next start -> vite preview
 if (argv[2] === "start") {
   argv[2] = "preview";
 }
 
-// TODO
-spawn;
+spawn("node", [viteBin, ...argv], {
+  shell: false,
+  stdio: "inherit",
+});
