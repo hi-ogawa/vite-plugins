@@ -9,16 +9,6 @@
     "url": "https://github.com/hi-ogawa/vite-plugins",
     "directory": "packages/react-server-next"
   },
-  "exports": {
-    ".": {
-      "types": "./node_modules/@hiogawa/react-server/dist/next/compat/index.d.ts",
-      "default": "./node_modules/@hiogawa/react-server/dist/next/compat/index.js"
-    },
-    "./*": {
-      "types": "./node_modules/@hiogawa/react-server/dist/next/compat/*.d.ts",
-      "default": "./node_modules/@hiogawa/react-server/dist/next/compat/*.js"
-    }
-  },
   "files": ["bin"],
   "scripts": {},
   "dependencies": {},
