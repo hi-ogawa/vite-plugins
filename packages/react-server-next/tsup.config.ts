@@ -16,6 +16,7 @@ export default defineConfig([
       "src/compat/font/google.tsx",
     ],
     format: ["esm"],
+    dts: true,
     external: [],
   },
 ]);

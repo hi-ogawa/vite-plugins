@@ -1,8 +1,7 @@
-import { vitePluginReactServerNext } from "@hiogawa/react-server/next/plugin";
-import react from "@vitejs/plugin-react";
+import { vitePluginReactServerNext } from "next/plugin";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
-  plugins: [react(), vitePluginReactServerNext()],
+  plugins: [vitePluginReactServerNext()],
 });

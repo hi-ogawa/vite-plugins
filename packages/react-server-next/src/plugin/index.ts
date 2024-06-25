@@ -14,16 +14,24 @@ export function vitePluginReactServerNext(options?: {
     react(),
     vitePluginReactServer({
       routeDir: "app",
-      entryBrowser: "@hiogawa/react-server-next/plugin/entry-browser",
-      entryServer: "@hiogawa/react-server-next/plugin/entry-server",
+      entryBrowser: `next/plugin/entry-browser`,
+      entryServer: "next/plugin/entry-server",
       buildScanMode: "server",
       plugins: [nextEsbuildJsx, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
-      entry: "@hiogawa/react-server-next/plugin/entry-ssr",
+      entry: "next/plugin/entry-ssr",
       preview: path.resolve("./dist/server/index.js"),
     }),
+    {
+      name: "next-exclude-optimize",
+      config: () => ({
+        optimizeDeps: {
+          exclude: ["next"],
+        },
+      }),
+    },
   ];
 }
 

@@ -232,9 +232,9 @@ importers:
 
   packages/react-server/examples/next:
     dependencies:
-      '@hiogawa/react-server':
-        specifier: latest
-        version: link:../..
+      next:
+        specifier: link:../../../react-server-next
+        version: link:../../../react-server-next
       react:
         specifier: 19.0.0-rc-c21bcd627b-20240624
         version: 19.0.0-rc-c21bcd627b-20240624
