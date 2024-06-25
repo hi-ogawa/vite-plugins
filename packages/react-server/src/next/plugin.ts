@@ -18,7 +18,7 @@ export function vitePluginReactServerNext(options?: {
       routeDir: "app",
       entryBrowser: "@hiogawa/react-server/next/entry-browser",
       entryServer: "@hiogawa/react-server/entry-react-server",
-      plugins: [nextAliasPlugin, ...(options?.plugins ?? [])],
+      plugins: [nextAliasPlugin, nextEsbuildJsx, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
@@ -39,5 +39,16 @@ const nextAliasPlugin: Plugin = {
         },
       ],
     },
+  }),
+};
+
+// overrdied next.js's default `jsx: preserve`
+const nextEsbuildJsx: Plugin = {
+  name: "next-esbuild-jsx",
+  config: () => ({
+    esbuild: {
+      jsx: "automatic",
+    },
+    optimizeDeps: { esbuildOptions: { jsx: "automatic" } },
   }),
 };
