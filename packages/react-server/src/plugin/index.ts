@@ -357,6 +357,7 @@ export function vitePluginReactServer(options?: {
           console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
           manager.buildType = "ssr";
           await build({
+            configFile: manager.config.configFile,
             build: {
               ssr: true,
             },
