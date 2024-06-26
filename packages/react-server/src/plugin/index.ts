@@ -170,6 +170,27 @@ export function vitePluginReactServer(options?: {
         `;
       }),
 
+      // {
+      //   name: "server-scan-transform",
+      //   apply: "build",
+      //   transform(code, id, _options) {
+      //     // leave glob import as is
+      //     if (code.includes("import.meta.glob")) {
+      //       return;
+      //     }
+      //     // otherwise emptify all modules
+      //     // emptify modules to avoid invalid import error
+      //     if (manager.buildType === "scan") {
+      //       if (code.includes("import.meta.glob")) {
+      //         console.log("import.meta.glob", { id });
+      //       }
+      //     }
+      //     if (id.includes("virtual:server-routes")) {
+      //       console.log({ code });
+      //     }
+      //   },
+      // },
+
       // this virtual is not necessary anymore but has been used in the past
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
@@ -335,6 +356,11 @@ export function vitePluginReactServer(options?: {
     apply: "build",
     async buildStart(_options) {
       if (!manager.buildType) {
+        // TODO: during scan, we can strip every modules to all skelton?
+        //   import "x"
+        //   import "y"
+        //   export const f = undefined;
+        //   export const g = undefined;
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         manager.buildScanMode = options?.buildScanMode ?? "full";
