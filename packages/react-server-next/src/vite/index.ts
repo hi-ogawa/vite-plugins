@@ -16,7 +16,6 @@ export default function vitePluginReactServerNext(options?: {
       routeDir: "app",
       entryBrowser: `next/vite/entry-browser`,
       entryServer: "next/vite/entry-server",
-      buildScanMode: "server",
       plugins: [nextEsbuildJsx, ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),

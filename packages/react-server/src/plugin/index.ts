@@ -60,7 +60,6 @@ class PluginStateManager {
   configEnv!: ConfigEnv;
 
   buildType?: "scan" | "rsc" | "client" | "ssr";
-  buildScanMode?: "full" | "server";
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
@@ -102,7 +101,6 @@ export function vitePluginReactServer(options?: {
   entryBrowser?: string;
   entryServer?: string;
   routeDir?: string;
-  buildScanMode?: PluginStateManager["buildScanMode"];
 }): Plugin[] {
   const entryBrowser = options?.entryBrowser ?? "/src/entry-client";
   const entryServer = options?.entryServer ?? "/src/entry-react-server";
@@ -337,7 +335,6 @@ export function vitePluginReactServer(options?: {
       if (!manager.buildType) {
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
-        manager.buildScanMode = options?.buildScanMode ?? "full";
         await build(reactServerViteConfig);
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "rsc";

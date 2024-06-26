@@ -147,7 +147,7 @@ export function vitePluginServerUseClient({
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
       manager.rscUseClientIds.add(id);
-      if (manager.buildType === "scan" && manager.buildScanMode === "full") {
+      if (manager.buildType === "scan") {
         // to discover server references imported only by client
         // we keep code as is and continue crawling
         return;
@@ -163,7 +163,45 @@ export function vitePluginServerUseClient({
       };
     },
   };
-  return [useClientExternalPlugin, useClientPlugin];
+
+  let esModuleLexer: typeof import("es-module-lexer");
+  const scanStripPlugin: Plugin = {
+    name: vitePluginServerUseClient + ":strip-strip",
+    apply: "build",
+    enforce: "post",
+    async buildStart() {
+      if (manager.buildType !== "scan") return;
+
+      esModuleLexer = await import("es-module-lexer");
+      await esModuleLexer.init;
+    },
+    transform(code, _id, _options) {
+      if (manager.buildType !== "scan") return;
+
+      // During server scan, we strip every modules to only keep imports/exports
+      //   import "x"
+      //   import "y"
+      //   export const f = undefined;
+      //   export const g = undefined;
+
+      // emptify all exports while keeping import statements as side effects
+      const [imports, exports] = esModuleLexer.parse(code);
+      const output = [
+        imports.map((e) => e.n && `import ${JSON.stringify(e.n)};\n`),
+        exports.map((e) =>
+          e.n === "default"
+            ? `export default undefined;\n`
+            : `export const ${e.n} = undefined;\n`,
+        ),
+      ]
+        .flat()
+        .filter(Boolean)
+        .join("");
+      return { code: output, map: null };
+    },
+  };
+
+  return [useClientExternalPlugin, useClientPlugin, scanStripPlugin];
 }
 
 // Apply same noramlizaion as Vite's dev import analysis
