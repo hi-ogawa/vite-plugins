@@ -60,6 +60,7 @@ class PluginStateManager {
   configEnv!: ConfigEnv;
 
   buildType?: "scan" | "rsc" | "client" | "ssr";
+  // TODO: remove
   buildScanMode?: "full" | "server";
 
   routeToClientReferences: Record<string, string[]> = {};
@@ -155,8 +156,6 @@ export function vitePluginReactServer(options?: {
       }),
 
       routeManifestPluginServer({ manager, routeDir }),
-
-      buildReferenceScanPlugin(),
 
       createVirtualPlugin("server-routes", () => {
         return `
@@ -409,38 +408,4 @@ export function vitePluginReactServer(options?: {
       tinyassert(false);
     }),
   ];
-}
-
-function buildReferenceScanPlugin(): Plugin {
-  let esModuleLexer: typeof import("es-module-lexer");
-
-  return {
-    name: buildReferenceScanPlugin.name + ":transform",
-    apply: "build",
-    enforce: "post",
-    async buildStart() {
-      if (manager.buildType !== "scan") return;
-
-      esModuleLexer = await import("es-module-lexer");
-      await esModuleLexer.init;
-    },
-    transform(code, _id, _options) {
-      if (manager.buildType !== "scan") return;
-
-      // emptify all exports while keeping import statements as side effects
-      const [imports, exports] = esModuleLexer.parse(code);
-      const output = [
-        imports.map((e) => e.n && `import ${JSON.stringify(e.n)};\n`),
-        exports.map((e) =>
-          e.n === "default"
-            ? `export default undefined;\n`
-            : `export const ${e.n} = undefined;\n`,
-        ),
-      ]
-        .flat()
-        .filter(Boolean)
-        .join("");
-      return { code: output, map: null };
-    },
-  };
 }
