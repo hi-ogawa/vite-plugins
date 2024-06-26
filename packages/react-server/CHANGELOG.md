@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.6
+
+- feat: validate server-only and client-only ([#433](https://github.com/hi-ogawa/vite-plugins/pull/433))
+- fix: fix initial server css crawling ([#425](https://github.com/hi-ogawa/vite-plugins/pull/425))
+- fix: robust server reference build scan ([#431](https://github.com/hi-ogawa/vite-plugins/pull/431))
+- fix: assert discovered server reference during build ([#430](https://github.com/hi-ogawa/vite-plugins/pull/430))
+- fix: avoid ssr build on browser build failure ([#429](https://github.com/hi-ogawa/vite-plugins/pull/429))
+
 ## v0.2.5
 
 - feat(next): create alias package ([#418](https://github.com/hi-ogawa/vite-plugins/pull/418))
