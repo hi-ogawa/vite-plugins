@@ -9,7 +9,7 @@
     "url": "https://github.com/hi-ogawa/vite-plugins",
     "directory": "packages/react-server-next"
   },
-  "files": ["bin", "dist"],
+  "files": ["bin", "dist", "index.d.ts"],
   "bin": {
     "next": "./bin/cli.js"
   },

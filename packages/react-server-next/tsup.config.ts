@@ -11,6 +11,7 @@ export default defineConfig([
       "src/compat/link.tsx",
       "src/compat/navigation.tsx",
       "src/compat/navigation.react-server.tsx",
+      "src/compat/headers.tsx",
       "src/compat/image.tsx",
       "src/compat/font/local.tsx",
       "src/compat/font/google.tsx",
