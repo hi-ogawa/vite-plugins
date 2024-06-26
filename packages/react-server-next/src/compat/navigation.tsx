@@ -13,10 +13,24 @@ export function usePathname() {
 }
 
 /** @todo */
-export function useParams() {}
+export function useParams(): Record<string, string | string[]> {
+  return {};
+}
 
 /** @todo */
-export function useSelectedLayoutSegments() {}
+export function getSelectedLayoutSegmentPath(..._args: unknown[]): string[] {
+  return [];
+}
+
+/** @todo */
+export function useSelectedLayoutSegments(..._args: unknown[]): string[] {
+  return [];
+}
+
+/** @todo */
+export function useSelectedLayoutSegment(..._args: unknown[]): string | null {
+  return null;
+}
 
 export function useRouter() {
   const history = useRouter_((s) => s.history);
