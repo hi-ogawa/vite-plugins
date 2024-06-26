@@ -1,5 +1,6 @@
 import next from "next/vite";
+import { defineConfig } from "vite";
 
-export default {
+export default defineConfig({
   plugins: [next()],
-};
+});
