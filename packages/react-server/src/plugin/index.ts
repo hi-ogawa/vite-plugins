@@ -347,17 +347,20 @@ export function vitePluginReactServer(options?: {
         manager.buildType = "client";
       }
     },
-    async closeBundle() {
-      // TODO: build ssr only when client build succeeds
-      if (manager.buildType === "client") {
-        console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
-        manager.buildType = "ssr";
-        await build({
-          build: {
-            ssr: true,
-          },
-        });
-      }
+    writeBundle: {
+      order: "post",
+      sequential: true,
+      async handler(_options, _bundle) {
+        if (manager.buildType === "client") {
+          console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
+          manager.buildType = "ssr";
+          await build({
+            build: {
+              ssr: true,
+            },
+          });
+        }
+      },
     },
   };
 
