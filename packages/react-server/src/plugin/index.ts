@@ -422,7 +422,11 @@ function validateImportPlugin(entries: Record<string, string | true>): Plugin {
       if (entry) {
         // skip validation during optimizeDeps scan since for now
         // we want to allow going through server/client boundary loosely
-        if (entry || ("scan" in options && options.scan)) {
+        if (
+          entry ||
+          manager.buildType === "scan" ||
+          ("scan" in options && options.scan)
+        ) {
           return "\0virtual:validate-import";
         }
         throw new Error(entry + ` (importer: ${importer ?? "unknown"})`);
