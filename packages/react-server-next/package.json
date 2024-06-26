@@ -20,8 +20,7 @@
     },
     "./vite/*": "./dist/vite/*.js",
     ".": {
-      "types": "./dist/compat/index.d.ts",
-      "default": "./dist/compat/index.js"
+      "types": "./index.d.ts"
     },
     "./navigation": {
       "types": "./dist/compat/navigation.d.ts",
