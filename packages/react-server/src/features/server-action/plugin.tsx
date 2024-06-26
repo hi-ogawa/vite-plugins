@@ -47,7 +47,7 @@ export function vitePluginClientUseServer({
       if (!output) {
         return;
       }
-      if (!manager.rscUseServerIds.has(id)) {
+      if (manager.buildType && !manager.rscUseServerIds.has(id)) {
         throw new Error(
           `client imported undiscovered server reference '${id}'`,
         );
