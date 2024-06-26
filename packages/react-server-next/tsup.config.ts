@@ -7,6 +7,7 @@ export default defineConfig([
       "src/vite/entry-browser.tsx",
       "src/vite/entry-ssr.tsx",
       "src/vite/entry-server.tsx",
+      "src/vite/config.ts",
       "src/compat/index.tsx",
       "src/compat/link.tsx",
       "src/compat/navigation.tsx",
@@ -17,6 +18,6 @@ export default defineConfig([
     ],
     format: ["esm"],
     dts: true,
-    external: [],
+    external: ["next"],
   },
 ]);
