@@ -1,5 +1,6 @@
 "use client";
 
+import "client-only";
 import { useState } from "react";
 
 import double, {
