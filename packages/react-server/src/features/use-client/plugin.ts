@@ -147,12 +147,7 @@ export function vitePluginServerUseClient({
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
       manager.rscUseClientIds.add(id);
-      // if (manager.buildType === "scan") {
-      //   // to discover server references imported only by client
-      //   // we keep code as is and continue crawling
-      //   return;
-      // }
-      if (manager.buildType === "scan" && manager.buildScanMode === "full") {
+      if (manager.buildType === "scan") {
         // to discover server references imported only by client
         // we keep code as is and continue crawling
         return;

@@ -156,6 +156,8 @@ export function vitePluginReactServer(options?: {
 
       routeManifestPluginServer({ manager, routeDir }),
 
+      buildReferenceScanPlugin(),
+
       createVirtualPlugin("server-routes", () => {
         return `
           const glob = import.meta.glob(
@@ -169,27 +171,6 @@ export function vitePluginReactServer(options?: {
           );
         `;
       }),
-
-      // {
-      //   name: "server-scan-transform",
-      //   apply: "build",
-      //   transform(code, id, _options) {
-      //     // leave glob import as is
-      //     if (code.includes("import.meta.glob")) {
-      //       return;
-      //     }
-      //     // otherwise emptify all modules
-      //     // emptify modules to avoid invalid import error
-      //     if (manager.buildType === "scan") {
-      //       if (code.includes("import.meta.glob")) {
-      //         console.log("import.meta.glob", { id });
-      //       }
-      //     }
-      //     if (id.includes("virtual:server-routes")) {
-      //       console.log({ code });
-      //     }
-      //   },
-      // },
 
       // this virtual is not necessary anymore but has been used in the past
       // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
@@ -428,4 +409,38 @@ export function vitePluginReactServer(options?: {
       tinyassert(false);
     }),
   ];
+}
+
+function buildReferenceScanPlugin(): Plugin {
+  let esModuleLexer: typeof import("es-module-lexer");
+
+  return {
+    name: buildReferenceScanPlugin.name + ":transform",
+    apply: "build",
+    enforce: "post",
+    async buildStart() {
+      if (manager.buildType !== "scan") return;
+
+      esModuleLexer = await import("es-module-lexer");
+      await esModuleLexer.init;
+    },
+    transform(code, _id, _options) {
+      if (manager.buildType !== "scan") return;
+
+      // emptify all exports while keeping import statements as side effects
+      const [imports, exports] = esModuleLexer.parse(code);
+      const output = [
+        imports.map((e) => e.n && `import ${JSON.stringify(e.n)};\n`),
+        exports.map((e) =>
+          e.n === "default"
+            ? `export default undefined;\n`
+            : `export const ${e.n} = undefined;\n`,
+        ),
+      ]
+        .flat()
+        .filter(Boolean)
+        .join("");
+      return { code: output, map: null };
+    },
+  };
 }

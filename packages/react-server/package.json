@@ -67,6 +67,7 @@
     "@hiogawa/transforms": "workspace:*",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@tanstack/history": "^1.15.13",
+    "es-module-lexer": "^1.4.1",
     "fast-glob": "^3.3.2",
     "use-sync-external-store": "^1.2.0"
   },
