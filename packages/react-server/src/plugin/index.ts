@@ -336,11 +336,6 @@ export function vitePluginReactServer(options?: {
     apply: "build",
     async buildStart(_options) {
       if (!manager.buildType) {
-        // TODO: during scan, we can strip every modules to all skelton?
-        //   import "x"
-        //   import "y"
-        //   export const f = undefined;
-        //   export const g = undefined;
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         manager.buildScanMode = options?.buildScanMode ?? "full";
