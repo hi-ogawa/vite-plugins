@@ -6,17 +6,20 @@ import {
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import type { PluginOption } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default function vitePluginReactServerNext(options?: {
   plugins?: PluginOption[];
 }): PluginOption {
   return [
     react(),
+    tsconfigPaths(),
     vitePluginReactServer({
       routeDir: "app",
       entryBrowser: `next/vite/entry-browser`,
       entryServer: "next/vite/entry-server",
       plugins: [
+        tsconfigPaths(),
         {
           // override next.js's default tsconfig `jsx: preserve`
           name: "next-esbuild-jsx",

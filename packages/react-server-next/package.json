@@ -39,7 +39,8 @@
   },
   "dependencies": {
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@vitejs/plugin-react": "^4.2.1"
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "devDependencies": {
     "@hiogawa/react-server": "workspace:*",
