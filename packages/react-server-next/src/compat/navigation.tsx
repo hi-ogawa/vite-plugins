@@ -2,6 +2,7 @@
 
 import {
   routerRevalidate,
+  useParams as useParams_,
   useRouter as useRouter_,
 } from "@hiogawa/react-server/client";
 import React from "react";
@@ -16,12 +17,12 @@ export function usePathname() {
 }
 
 interface Params {
+  /** @todo no array */
   [key: string]: string | string[];
 }
 
-/** @todo */
 export function useParams<T extends Params = Params>(): T {
-  return {} as any;
+  return useParams_() as any;
 }
 
 /** @todo */
