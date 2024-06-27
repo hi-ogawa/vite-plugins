@@ -30,8 +30,15 @@ export function LayoutRoot() {
     <>
       <LayoutContent name={LAYOUT_ROOT_NAME} />
       <ActionRedirectHandler />
+      <MetadataRenderer />
     </>
   );
+}
+
+function MetadataRenderer() {
+  const ctx = React.useContext(LayoutStateContext);
+  const data = React.use(ctx.data);
+  return data.metadata;
 }
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";

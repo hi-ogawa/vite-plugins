@@ -12,6 +12,7 @@ export type LayoutRequest = Record<
 
 export type ServerRouterData = {
   action?: Pick<ActionResult, "error" | "data">;
+  metadata?: React.ReactNode;
   layout: Record<string, React.ReactNode>;
 };
 

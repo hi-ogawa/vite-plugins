@@ -1,5 +1,6 @@
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
+import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
 import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
 
@@ -77,18 +78,21 @@ export async function renderRouteMap(
   };
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
+  const metadata: Metadata = {};
   const result = matchRouteTree(tree, url.pathname);
   for (const m of result.matches) {
     const props: BaseProps = { ...baseProps, params: m.params };
     if (m.type === "layout") {
       layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
+      Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
       pages[m.prefix] = renderPage(m.node, props);
+      Object.assign(metadata, m.node.value?.page?.metadata);
     } else {
       m.type satisfies never;
     }
   }
-  return { pages, layouts };
+  return { pages, layouts, metadata: renderMetadata(metadata) };
 }
 
 const ThrowNotFound: React.FC = () => {
