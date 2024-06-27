@@ -1163,9 +1163,6 @@ testNoJs("meta @nojs", async ({ page }) => {
 
 async function testMetadata(page: Page) {
   await expect(page).toHaveTitle("rsc-experiment");
-  if (1) {
-    return;
-  }
 
   await page.getByRole("link", { name: "/test/other" }).click();
   await expect(page).toHaveTitle("rsc-experiment");

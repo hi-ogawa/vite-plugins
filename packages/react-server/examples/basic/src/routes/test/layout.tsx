@@ -25,6 +25,7 @@ export default async function Layout(props: LayoutProps) {
           "/test/revalidate",
           "/test/loading",
           "/test/cache",
+          "/test/metadata",
         ]}
       />
       <div className="flex items-center gap-2 text-sm">
