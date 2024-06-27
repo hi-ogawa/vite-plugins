@@ -87,6 +87,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
       </ErrorBoundary>
     </React.Fragment>,
   },
+  "metadata": <React.Fragment />,
   "pages": {
     "/x": </X/PAGE.TSX
       params={{}}
@@ -192,6 +193,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
       </RedirectBoundary>
     <//X/Y/LAYOUT.TSX>,
   },
+  "metadata": <React.Fragment />,
   "pages": {
     "/x/y": </X/Y/PAGE.TSX
       params={{}}
@@ -263,6 +265,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
       </RedirectBoundary>
     </React.Fragment>,
   },
+  "metadata": <React.Fragment />,
   "pages": {
     "/z": <ThrowNotFound
       params={{}}

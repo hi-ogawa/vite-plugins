@@ -88,6 +88,7 @@ export async function start() {
           const next = await nextPromise;
           return {
             action: next.action,
+            metadata: next.metadata,
             layout: {
               ...current.layout,
               ...next.layout,

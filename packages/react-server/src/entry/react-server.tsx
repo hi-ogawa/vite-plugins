@@ -114,6 +114,7 @@ async function render({
   return ReactServer.renderToReadableStream<ServerRouterData>(
     {
       layout: nodeMap,
+      metadata: result.metadata,
       action: actionResult
         ? objectPick(actionResult, ["data", "error"])
         : undefined,
