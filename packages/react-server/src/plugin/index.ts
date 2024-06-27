@@ -16,6 +16,10 @@ import {
 import { CSS_LANGS_RE } from "../features/assets/css";
 import { vitePluginServerAssets } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
+import {
+  OUTPUT_SERVER_JS_EXT,
+  createServerPackageJson,
+} from "../features/next/plugin";
 import { prerenderPlugin } from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
 import {
@@ -218,6 +222,7 @@ export function vitePluginReactServer(options?: {
         input: {
           index: ENTRY_REACT_SERVER_WRAPPER,
         },
+        output: OUTPUT_SERVER_JS_EXT,
       },
     },
   };
@@ -261,6 +266,7 @@ export function vitePluginReactServer(options?: {
                       __entry_prerender: "@hiogawa/react-server/entry-server",
                     }
                   : undefined,
+                output: OUTPUT_SERVER_JS_EXT,
               }
             : {
                 input: ENTRY_CLIENT_WRAPPER,
@@ -339,6 +345,7 @@ export function vitePluginReactServer(options?: {
     apply: "build",
     async buildStart(_options) {
       if (!manager.buildType) {
+        await createServerPackageJson();
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         await build(

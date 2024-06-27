@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const viteBin = path.join(
@@ -34,9 +33,13 @@ if (argv[0] === "start") {
 }
 
 // auto setup vite.config.ts
-if (!existsSync("vite.config.ts")) {
+if (!existsSync("vite.config.ts") && !existsSync("vite.config.mts")) {
+  const pkg = JSON.parse(readFileSync("package.json", "utf-8"));
+  const configFile =
+    pkg.type === "module" ? "vite.config.ts" : "vite.config.mts";
+  console.log(`:: Created ${configFile}`);
   writeFileSync(
-    "vite.config.ts",
+    configFile,
     `\
 import next from "next/vite";
 import { defineConfig } from "vite";
