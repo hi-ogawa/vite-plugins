@@ -3,6 +3,7 @@ import { defineConfig } from "tsup";
 export default defineConfig([
   {
     entry: [
+      "src/cli.ts",
       "src/vite/index.ts",
       "src/vite/entry-browser.tsx",
       "src/vite/entry-ssr.tsx",
