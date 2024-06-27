@@ -1,13 +1,16 @@
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
+import type { Metadata } from "../meta/utils";
 import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
   page?: {
+    metadata?: Metadata;
     default: React.FC<PageProps>;
   };
   layout?: {
+    metadata?: Metadata;
     default: React.FC<LayoutProps>;
   };
   error?: {
