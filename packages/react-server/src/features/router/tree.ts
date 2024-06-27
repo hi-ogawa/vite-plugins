@@ -55,7 +55,7 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
   return result;
 }
 
-type MatchNodeEntry<T> = {
+export type MatchNodeEntry<T> = {
   prefix: string;
   type: "layout" | "page";
   node: TreeNode<T>;

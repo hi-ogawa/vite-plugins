@@ -9,7 +9,7 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import { type MatchParams, toMatchParamsObject } from "./tree";
+import { type MatchParamEntry, toMatchParamsObject } from "./tree";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -49,7 +49,7 @@ export function useParams() {
 }
 
 type LayoutMatchType = {
-  params: MatchParams;
+  params: MatchParamEntry[];
 };
 
 const LayoutMatchContext = React.createContext<LayoutMatchType>(undefined!);

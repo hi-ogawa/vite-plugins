@@ -3,6 +3,7 @@ import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
 import {
+  type MatchNodeEntry,
   type TreeNode,
   createFsRouteTree,
   matchRouteTree,
@@ -44,7 +45,7 @@ function renderPage(node: RouteModuleNode, props: PageProps) {
 async function renderLayout(
   node: RouteModuleNode,
   props: PageProps,
-  prefix: string,
+  { prefix, params }: MatchNodeEntry<RouteEntry>,
 ) {
   const {
     ErrorBoundary,
@@ -70,11 +71,7 @@ async function renderLayout(
   } else {
     acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
   }
-  acc = (
-    <LayoutMatchProvider value={{ params: props.params }}>
-      {acc}
-    </LayoutMatchProvider>
-  );
+  acc = <LayoutMatchProvider value={{ params }}>{acc}</LayoutMatchProvider>;
   return acc;
 }
 
@@ -100,7 +97,7 @@ export async function renderRouteMap(
       params: toMatchParamsObject(m.params),
     };
     if (m.type === "layout") {
-      layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
+      layouts[m.prefix] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
       pages[m.prefix] = renderPage(m.node, props);

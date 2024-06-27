@@ -48,7 +48,12 @@ exports[`generateRouteModuleTree > basic 2`] = `
     "/": <LayoutMatchProvider
       value={
         {
-          "params": {},
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
         }
       }
     >
@@ -86,7 +91,16 @@ exports[`generateRouteModuleTree > basic 2`] = `
     "/x": <LayoutMatchProvider
       value={
         {
-          "params": {},
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+          ],
         }
       }
     >
@@ -130,7 +144,16 @@ exports[`generateRouteModuleTree > basic 2`] = `
       }
     />,
   },
-  "params": {},
+  "params": [
+    [
+      null,
+      "",
+    ],
+    [
+      null,
+      "x",
+    ],
+  ],
 }
 `;
 
@@ -141,7 +164,12 @@ exports[`generateRouteModuleTree > basic 3`] = `
     "/": <LayoutMatchProvider
       value={
         {
-          "params": {},
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
         }
       }
     >
@@ -179,7 +207,16 @@ exports[`generateRouteModuleTree > basic 3`] = `
     "/x": <LayoutMatchProvider
       value={
         {
-          "params": {},
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+          ],
         }
       }
     >
@@ -198,7 +235,20 @@ exports[`generateRouteModuleTree > basic 3`] = `
     "/x/y": <LayoutMatchProvider
       value={
         {
-          "params": {},
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+            [
+              null,
+              "y",
+            ],
+          ],
         }
       }
     >
@@ -261,7 +311,20 @@ exports[`generateRouteModuleTree > basic 3`] = `
       }
     />,
   },
-  "params": {},
+  "params": [
+    [
+      null,
+      "",
+    ],
+    [
+      null,
+      "x",
+    ],
+    [
+      null,
+      "y",
+    ],
+  ],
 }
 `;
 
@@ -272,7 +335,12 @@ exports[`generateRouteModuleTree > basic 4`] = `
     "/": <LayoutMatchProvider
       value={
         {
-          "params": {},
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
         }
       }
     >
@@ -310,7 +378,12 @@ exports[`generateRouteModuleTree > basic 4`] = `
     "/z": <LayoutMatchProvider
       value={
         {
-          "params": {},
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
         }
       }
     >
@@ -350,6 +423,11 @@ exports[`generateRouteModuleTree > basic 4`] = `
       }
     />,
   },
-  "params": {},
+  "params": [
+    [
+      null,
+      "",
+    ],
+  ],
 }
 `;
