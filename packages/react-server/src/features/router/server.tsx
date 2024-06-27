@@ -41,6 +41,8 @@ async function renderLayout(
   props: PageProps,
   prefix: string,
 ) {
+  // TODO: provide it via client context?
+  props.params;
   const { ErrorBoundary, RedirectBoundary, LayoutContent } =
     await importRuntimeClient();
 

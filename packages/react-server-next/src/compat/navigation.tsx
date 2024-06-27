@@ -15,23 +15,22 @@ export function usePathname() {
   return useRouter_((s) => s.location.pathname);
 }
 
-/** @todo */
-export function useParams(): Record<string, string | string[]> {
-  return {};
+interface Params {
+  [key: string]: string | string[];
 }
 
 /** @todo */
-export function getSelectedLayoutSegmentPath(..._args: unknown[]): string[] {
+export function useParams<T extends Params = Params>(): T {
+  return {} as any;
+}
+
+/** @todo */
+export function useSelectedLayoutSegments(_todo?: string): string[] {
   return [];
 }
 
 /** @todo */
-export function useSelectedLayoutSegments(..._args: unknown[]): string[] {
-  return [];
-}
-
-/** @todo */
-export function useSelectedLayoutSegment(..._args: unknown[]): string | null {
+export function useSelectedLayoutSegment(_todo?: string): string | null {
   return null;
 }
 

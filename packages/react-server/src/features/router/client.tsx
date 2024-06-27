@@ -106,3 +106,7 @@ export function usePreloadHandlers({
     onFocus: callback,
   } satisfies JSX.IntrinsicElements["a"];
 }
+
+// useServerParams
+
+// useServerRouter
