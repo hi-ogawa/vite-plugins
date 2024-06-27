@@ -106,6 +106,7 @@ async function render({
   actionResult?: ActionResult;
 }) {
   const result = await renderRouteMap(router.tree, request);
+  console.log(result);
   const nodeMap = objectMapValues(
     layoutRequest,
     (v) => result[`${v.type}s`][v.name],
@@ -115,6 +116,7 @@ async function render({
     {
       layout: nodeMap,
       metadata: result.metadata,
+      params: result.params,
       action: actionResult
         ? objectPick(actionResult, ["data", "error"])
         : undefined,

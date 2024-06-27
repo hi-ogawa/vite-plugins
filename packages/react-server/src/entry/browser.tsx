@@ -89,6 +89,7 @@ export async function start() {
           return {
             action: next.action,
             metadata: next.metadata,
+            params: next.params,
             layout: {
               ...current.layout,
               ...next.layout,

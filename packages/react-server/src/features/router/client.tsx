@@ -41,13 +41,23 @@ function MetadataRenderer() {
   return data.metadata;
 }
 
+export function useParams() {
+  const ctx = React.useContext(LayoutStateContext);
+  const data = React.use(ctx.data);
+  return data.params;
+}
+
 type LayoutMatchType = {
   params: Record<string, string>;
 };
 
-export const LayoutMatchContext = React.createContext<LayoutMatchType>(
-  undefined!,
-);
+const LayoutMatchContext = React.createContext<LayoutMatchType>(undefined!);
+
+export function LayoutMatchProvider(
+  props: React.ComponentProps<typeof LayoutMatchContext.Provider>,
+) {
+  return <LayoutMatchContext.Provider {...props} />;
+}
 
 export function useLayoutMatch() {
   return React.useContext(LayoutMatchContext);

@@ -41,8 +41,12 @@ async function renderLayout(
   props: PageProps,
   prefix: string,
 ) {
-  const { ErrorBoundary, RedirectBoundary, LayoutContent, LayoutMatchContext } =
-    await importRuntimeClient();
+  const {
+    ErrorBoundary,
+    RedirectBoundary,
+    LayoutContent,
+    LayoutMatchProvider,
+  } = await importRuntimeClient();
 
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
@@ -61,11 +65,10 @@ async function renderLayout(
   } else {
     acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
   }
-  // TODO: provide full params from root
   acc = (
-    <LayoutMatchContext.Provider value={{ params: props.params }}>
+    <LayoutMatchProvider value={{ params: props.params }}>
       {acc}
-    </LayoutMatchContext.Provider>
+    </LayoutMatchProvider>
   );
   return acc;
 }
@@ -98,7 +101,12 @@ export async function renderRouteMap(
       m.type satisfies never;
     }
   }
-  return { pages, layouts, metadata: renderMetadata(metadata) };
+  return {
+    pages,
+    layouts,
+    metadata: renderMetadata(metadata),
+    params: result.matches.at(-1)?.params ?? {},
+  };
 }
 
 const ThrowNotFound: React.FC = () => {

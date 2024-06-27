@@ -14,6 +14,7 @@ export type ServerRouterData = {
   action?: Pick<ActionResult, "error" | "data">;
   metadata?: React.ReactNode;
   layout: Record<string, React.ReactNode>;
+  params: Record<string, string>;
 };
 
 export const LAYOUT_ROOT_NAME = "__root";
