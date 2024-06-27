@@ -1,7 +1,10 @@
 import type { Metadata } from "@hiogawa/react-server/server";
 
 export const metadata: Metadata = {
-  title: "test-metadata",
+  title: {
+    default: "test-metadata",
+    template: "%s | todo",
+  },
 };
 
 export default function Layout() {
