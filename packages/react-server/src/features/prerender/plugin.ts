@@ -23,6 +23,7 @@ export function prerenderPlugin({
         console.log("▶▶▶ PRERENDER");
         tinyassert(prerender);
         const routes = await prerender();
+        // TODO: mjs
         const entry: typeof import("../../entry/server") = await import(
           path.resolve("dist/server/__entry_prerender.js")
         );

@@ -34,6 +34,7 @@ export default function vitePluginReactServerNext(options?: {
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
+      // TODO: mjs
       preview: path.resolve("./dist/server/index.js"),
     }),
     {
