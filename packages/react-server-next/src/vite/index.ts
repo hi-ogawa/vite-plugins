@@ -70,7 +70,7 @@ function appFaviconPlugin(): Plugin {
         });
       }
     },
-    async writeBundle() {
+    generateBundle() {
       if (existsSync("app/favicon.ico")) {
         this.emitFile({
           type: "asset",

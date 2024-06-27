@@ -72,3 +72,9 @@ test("action client", async ({ page }) => {
   await page.getByRole("button", { name: "redirect" }).click();
   await page.waitForURL("/");
 });
+
+test("favicon.ico", async ({ request }) => {
+  const res = await request.get("/favicon.ico");
+  expect(res.status()).toBe(200);
+  expect(res.headers()["content-type"]).toBe("image/x-icon");
+});
