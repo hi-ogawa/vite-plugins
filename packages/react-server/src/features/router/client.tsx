@@ -41,6 +41,18 @@ function MetadataRenderer() {
   return data.metadata;
 }
 
+type LayoutMatchType = {
+  params: Record<string, string>;
+};
+
+export const LayoutMatchContext = React.createContext<LayoutMatchType>(
+  undefined!,
+);
+
+export function useLayoutMatch() {
+  return React.useContext(LayoutMatchContext);
+}
+
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
 
 declare module "@tanstack/history" {
@@ -106,7 +118,3 @@ export function usePreloadHandlers({
     onFocus: callback,
   } satisfies JSX.IntrinsicElements["a"];
 }
-
-// useServerParams
-
-// useServerRouter

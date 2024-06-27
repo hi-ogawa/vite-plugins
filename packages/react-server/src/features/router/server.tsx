@@ -41,9 +41,7 @@ async function renderLayout(
   props: PageProps,
   prefix: string,
 ) {
-  // TODO: provide it via client context?
-  props.params;
-  const { ErrorBoundary, RedirectBoundary, LayoutContent } =
+  const { ErrorBoundary, RedirectBoundary, LayoutContent, LayoutMatchContext } =
     await importRuntimeClient();
 
   let acc = <LayoutContent name={prefix} />;
@@ -63,6 +61,12 @@ async function renderLayout(
   } else {
     acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
   }
+  // TODO: provide full params from root
+  acc = (
+    <LayoutMatchContext.Provider value={{ params: props.params }}>
+      {acc}
+    </LayoutMatchContext.Provider>
+  );
   return acc;
 }
 
