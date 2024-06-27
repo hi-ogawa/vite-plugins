@@ -2,7 +2,12 @@ import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
-import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
+import {
+  type TreeNode,
+  createFsRouteTree,
+  matchRouteTree,
+  toMatchParamsObject,
+} from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -90,7 +95,10 @@ export async function renderRouteMap(
   const metadata: Metadata = {};
   const result = matchRouteTree(tree, url.pathname);
   for (const m of result.matches) {
-    const props: BaseProps = { ...baseProps, params: m.params };
+    const props: BaseProps = {
+      ...baseProps,
+      params: toMatchParamsObject(m.params),
+    };
     if (m.type === "layout") {
       layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
       Object.assign(metadata, m.node.value?.layout?.metadata);
@@ -105,7 +113,7 @@ export async function renderRouteMap(
     pages,
     layouts,
     metadata: renderMetadata(metadata),
-    params: result.matches.at(-1)?.params ?? {},
+    params: result.params,
   };
 }
 

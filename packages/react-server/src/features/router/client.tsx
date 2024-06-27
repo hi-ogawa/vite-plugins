@@ -9,7 +9,7 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import type { MatchParams } from "./tree";
+import { type MatchParams, toMatchParamsObject } from "./tree";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -45,7 +45,7 @@ function MetadataRenderer() {
 export function useParams() {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);
-  return data.params;
+  return toMatchParamsObject(data.params);
 }
 
 type LayoutMatchType = {

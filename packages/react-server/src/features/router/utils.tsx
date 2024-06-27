@@ -1,6 +1,7 @@
 import { objectPickBy, typedBoolean } from "@hiogawa/utils";
 import type { ActionResult } from "../server-action/react-server";
 import type { RevalidationType } from "../server-component/utils";
+import type { MatchParamEntry } from "./tree";
 
 export type LayoutRequest = Record<
   string,
@@ -14,7 +15,7 @@ export type ServerRouterData = {
   action?: Pick<ActionResult, "error" | "data">;
   metadata?: React.ReactNode;
   layout: Record<string, React.ReactNode>;
-  params: Record<string, string>;
+  params: MatchParamEntry[];
 };
 
 export const LAYOUT_ROOT_NAME = "__root";
