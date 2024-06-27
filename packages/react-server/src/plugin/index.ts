@@ -11,6 +11,7 @@ import {
   build,
   createLogger,
   createServer,
+  mergeConfig,
 } from "vite";
 import { CSS_LANGS_RE } from "../features/assets/css";
 import { vitePluginServerAssets } from "../features/assets/plugin";
@@ -340,7 +341,11 @@ export function vitePluginReactServer(options?: {
       if (!manager.buildType) {
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
-        await build(reactServerViteConfig);
+        await build(
+          mergeConfig(reactServerViteConfig, {
+            build: { write: false },
+          } satisfies InlineConfig),
+        );
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "rsc";
         manager.rscUseClientIds.clear();
