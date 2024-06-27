@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.8
+
+- feat: support `metadata` export ([#449](https://github.com/hi-ogawa/vite-plugins/pull/449))
+
 ## v0.2.7
 
 - feat: support non esm project ([#414](https://github.com/hi-ogawa/vite-plugins/pull/414))

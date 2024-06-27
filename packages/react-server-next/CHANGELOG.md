@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.0.4
+
+- fix: support `app/favicon.ico` ([#448](https://github.com/hi-ogawa/vite-plugins/pull/448))
+- fix: shim `cookies` using `@edge-runtime/cookies` ([#447](https://github.com/hi-ogawa/vite-plugins/pull/447))
+
 ## v0.0.3
 
 - feat: support non esm project ([#414](https://github.com/hi-ogawa/vite-plugins/pull/414))
