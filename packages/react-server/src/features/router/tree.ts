@@ -55,6 +55,13 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
   return result;
 }
 
+export function toSelectedParams(
+  prefix: MatchParamEntry[],
+  all: MatchParamEntry[],
+) {
+  return all.slice(prefix.length - 1);
+}
+
 export type MatchNodeEntry<T> = {
   prefix: string;
   type: "layout" | "page";

@@ -9,7 +9,11 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import { type MatchParamEntry, toMatchParamsObject } from "./tree";
+import {
+  type MatchParamEntry,
+  toMatchParamsObject,
+  toSelectedParams,
+} from "./tree";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -42,10 +46,15 @@ function MetadataRenderer() {
   return data.metadata;
 }
 
-export function useParams() {
+function useParamEntries() {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);
-  return toMatchParamsObject(data.params);
+  return data.params;
+}
+
+export function useParams() {
+  const entries = useParamEntries();
+  return React.useMemo(() => toMatchParamsObject(entries), [entries]);
 }
 
 type LayoutMatchType = {
@@ -60,16 +69,13 @@ export function LayoutMatchProvider(
   return <LayoutMatchContext.Provider {...props} />;
 }
 
-// TODO
 export function useSelectedParams() {
-  const all = useParams();
+  const all = useParamEntries();
   const prefix = React.useContext(LayoutMatchContext).params;
-  return React.useMemo(() => {
-    Object.entries;
-    all;
-    all;
-    prefix;
-  }, [all, prefix]);
+  return React.useMemo(
+    () => toMatchParamsObject(toSelectedParams(prefix, all)),
+    [all, prefix],
+  );
 }
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
