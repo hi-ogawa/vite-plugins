@@ -10,3 +10,4 @@ export {
 } from "./lib/error";
 export type { ActionContext } from "./features/server-action/react-server";
 export { useActionContext } from "./features/server-action/context";
+export type { Metadata } from "./features/meta/utils";

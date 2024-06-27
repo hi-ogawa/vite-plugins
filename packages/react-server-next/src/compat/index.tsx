@@ -1,2 +1,1 @@
-/** @todo */
-export type Metadata = any;
+export type { Metadata } from "@hiogawa/react-server/server";
