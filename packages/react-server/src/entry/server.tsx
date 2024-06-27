@@ -77,7 +77,6 @@ export async function importReactServer(): Promise<
       ENTRY_REACT_SERVER_WRAPPER,
     ) as any;
   } else {
-    // TODO: .mjs
     return import("/dist/rsc/index.js" as string);
   }
 }
