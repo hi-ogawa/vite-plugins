@@ -1,9 +1,8 @@
-import fs from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
-import type { Manifest } from "vite";
 import {
   checkNoError,
   editFile,
+  getClientManifest,
   inspectDevModules,
   setupCheckClientState,
   testNoJs,
@@ -1151,8 +1150,26 @@ async function testReactCache(page: Page, options: { js: boolean }) {
   if (options.js) await page.getByText("Inner2: state = 0").click();
 }
 
-function getClientManifest(): Manifest {
-  return JSON.parse(
-    fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
-  );
+test("meta @js", async ({ page }) => {
+  await page.goto("/test");
+  await waitForHydration(page);
+  await testMetadata(page);
+});
+
+testNoJs("meta @nojs", async ({ page }) => {
+  await page.goto("/test");
+  await testMetadata(page);
+});
+
+async function testMetadata(page: Page) {
+  await expect(page).toHaveTitle("rsc-experiment");
+  if (1) {
+    return;
+  }
+
+  await page.getByRole("link", { name: "/test/other" }).click();
+  await expect(page).toHaveTitle("rsc-experiment");
+
+  await page.getByRole("link", { name: "/test/metadata" }).click();
+  await expect(page).toHaveTitle("test-metadata");
 }
