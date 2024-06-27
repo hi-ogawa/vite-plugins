@@ -9,6 +9,7 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
+import type { MatchParams } from "./tree";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -48,7 +49,7 @@ export function useParams() {
 }
 
 type LayoutMatchType = {
-  params: Record<string, string>;
+  params: MatchParams;
 };
 
 const LayoutMatchContext = React.createContext<LayoutMatchType>(undefined!);
@@ -59,8 +60,16 @@ export function LayoutMatchProvider(
   return <LayoutMatchContext.Provider {...props} />;
 }
 
-export function useLayoutMatch() {
-  return React.useContext(LayoutMatchContext);
+// TODO
+export function useSelectedParams() {
+  const all = useParams();
+  const prefix = React.useContext(LayoutMatchContext).params;
+  return React.useMemo(() => {
+    Object.entries;
+    all;
+    all;
+    prefix;
+  }, [all, prefix]);
 }
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";

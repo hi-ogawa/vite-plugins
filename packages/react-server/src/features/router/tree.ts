@@ -42,11 +42,13 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
   }
 }
 
+export type MatchParams = Record<string, string>;
+
 type MatchNodeEntry<T> = {
   prefix: string;
   type: "layout" | "page";
   node: TreeNode<T>;
-  params: Record<string, string>;
+  params: MatchParams;
 };
 
 type MatchResult<T> = {
