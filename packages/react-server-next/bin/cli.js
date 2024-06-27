@@ -37,6 +37,7 @@ if (!existsSync("vite.config.ts") && !existsSync("vite.config.mts")) {
   const pkg = JSON.parse(readFileSync("package.json", "utf-8"));
   const configFile =
     pkg.type === "module" ? "vite.config.ts" : "vite.config.mts";
+  console.log(`:: Created ${configFile}`);
   writeFileSync(
     configFile,
     `\
