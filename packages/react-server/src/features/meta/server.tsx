@@ -3,8 +3,10 @@ import type { Metadata } from "./utils";
 export function renderMetadata(m: Metadata) {
   return (
     <>
-      {m.title && <title>{m.title}</title>}
-      {m.description && <meta name="description" content={m.description} />}
+      {typeof m.title === "string" && <title>{m.title}</title>}
+      {typeof m.description === "string" && (
+        <meta name="description" content={m.description} />
+      )}
     </>
   );
 }
