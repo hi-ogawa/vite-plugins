@@ -140,6 +140,9 @@ importers:
 
   packages/react-server-next:
     dependencies:
+      '@edge-runtime/cookies':
+        specifier: ^4.1.1
+        version: 4.1.1
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../vite-plugin-ssr-middleware
@@ -1063,6 +1066,10 @@ packages:
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
+
+  '@edge-runtime/cookies@4.1.1':
+    resolution: {integrity: sha512-ATZLTOpnCUD9ZLNBIXhxOmP/UVx6BfhCjDy9P1YACpD8vrHb5Uw7YlG9RYUl1AMF7Y10TIIN3jhFbUSMiH2J7g==}
+    engines: {node: '>=16'}
 
   '@emotion/hash@0.9.1':
     resolution: {integrity: sha512-gJB6HLm5rYwSLI6PQa+X1t5CFGrv1J1TWG+sOyMCeKz2ojaj6Fnl/rZEspogG+cvqbt4AE/2eIyD2QfLKTBNlQ==}
@@ -5008,6 +5015,8 @@ snapshots:
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+
+  '@edge-runtime/cookies@4.1.1': {}
 
   '@emotion/hash@0.9.1': {}
 
