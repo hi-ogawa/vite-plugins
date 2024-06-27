@@ -976,30 +976,30 @@ test("dynamic routes", async ({ page }) => {
 
   await page.getByText("file: /test/dynamic/page.tsx").click();
   await page.getByText("pathname: /test/dynamic").click();
-  await page.getByText("params: {}").click();
+  await page.getByText("props.params: {}").click();
 
   await page.getByRole("link", { name: "• /test/dynamic/static" }).click();
   await page.getByText("file: /test/dynamic/static/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/static").click();
-  await page.getByText("params: {}").click();
+  await page.getByText("props.params: {}").click();
 
   await page
     .getByRole("link", { name: "• /test/dynamic/abc", exact: true })
     .click();
   await page.getByText("file: /test/dynamic/[id]/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/abc").click();
-  await page.getByText('params: {"id":"abc"}').click();
+  await page.getByText('props.params: {"id":"abc"}').click();
 
   await page.getByRole("link", { name: "• /test/dynamic/abc/def" }).click();
   await page.getByText("file: /test/dynamic/[id]/[nested]/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/abc/def").click();
-  await page.getByText('params: {"id":"abc","nested":"def"}').click();
+  await page.getByText('props.params: {"id":"abc","nested":"def"}').click();
 
   // regardless of Link.href prop
   // - pathname is always encoded
   // - param is always decoded
   await page.getByRole("link", { name: "/test/dynamic/✅" }).click();
-  await page.getByText('params: {"id":"✅"}').click();
+  await page.getByText('props.params: {"id":"✅"}').click();
   await page.waitForURL("/test/dynamic/✅");
   await expect(
     page.getByRole("link", { name: "/test/dynamic/✅" }),
@@ -1009,7 +1009,7 @@ test("dynamic routes", async ({ page }) => {
   ).toHaveAttribute("aria-current", "page");
 
   await page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }).click();
-  await page.getByText('params: {"id":"✅"}').click();
+  await page.getByText('props.params: {"id":"✅"}').click();
   await page.waitForURL("/test/dynamic/✅");
   await expect(
     page.getByRole("link", { name: "/test/dynamic/✅" }),
@@ -1053,13 +1053,13 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
   await page
     .getByRole("link", { name: "• /test/dynamic/catchall/static" })
     .click();
-  await page.getByText("params: {}").click();
+  await page.getByText("props.params: {}").click();
   await page.getByText("file: /test/dynamic/catchall/").click();
 
   await page
     .getByRole("link", { name: "• /test/dynamic/catchall/x", exact: true })
     .click();
-  await page.getByText('params: {"any":"x"}').click();
+  await page.getByText('props.params: {"any":"x"}').click();
   await page.getByText("file: /test/dynamic/catchall").click();
   await page.getByLabel("test state").check();
 
@@ -1067,7 +1067,7 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
     .getByRole("link", { name: "• /test/dynamic/catchall/x/y", exact: true })
     .click();
   await page.getByText("file: /test/dynamic/catchall").click();
-  await page.getByText('params: {"any":"x/y"}').click();
+  await page.getByText('props.params: {"any":"x/y"}').click();
   // state is not preserved
   await expect(page.getByLabel("test state")).not.toBeChecked();
 
@@ -1075,14 +1075,14 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
     .getByRole("link", { name: "• /test/dynamic/catchall/x/y/z" })
     .click();
   await page.getByText("file: /test/dynamic/catchall").click();
-  await page.getByText('params: {"any":"x/y/z"}').click();
+  await page.getByText('props.params: {"any":"x/y/z"}').click();
   await page.getByLabel("test state").check();
 
   await page
     .getByRole("link", { name: "• /test/dynamic/catchall/x/y/w" })
     .click();
   await page.getByText("file: /test/dynamic/catchall").click();
-  await page.getByText('params: {"any":"x/y/w"}').click();
+  await page.getByText('props.params: {"any":"x/y/w"}').click();
   // state is not preserved
   await expect(page.getByLabel("test state")).not.toBeChecked();
 }

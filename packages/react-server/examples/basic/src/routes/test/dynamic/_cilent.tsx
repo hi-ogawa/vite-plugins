@@ -16,8 +16,8 @@ export function ClientParams() {
   const selectedParams = useSelectedParams();
   return (
     <>
-      <pre>useParams: {JSON.stringify(params)}</pre>
-      <pre>useSelectedParams: {JSON.stringify(selectedParams)}</pre>
+      <div>useParams: {JSON.stringify(params)}</div>
+      <div>useSelectedParams: {JSON.stringify(selectedParams)}</div>
     </>
   );
 }

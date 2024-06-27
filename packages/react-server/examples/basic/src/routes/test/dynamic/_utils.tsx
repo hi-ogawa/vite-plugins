@@ -18,7 +18,7 @@ export function TestDynamic({
       <div>
         pathname (client): <ClientLocation />
       </div>
-      <div>params: {JSON.stringify(props.params)}</div>
+      <div>props.params: {JSON.stringify(props.params)}</div>
       <ClientParams />
     </div>
   );
