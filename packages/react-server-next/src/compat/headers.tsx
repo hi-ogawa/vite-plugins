@@ -1,3 +1,5 @@
+import { ResponseCookies } from "@edge-runtime/cookies";
+
 /** @todo */
 export function headers() {
   return new Headers();
@@ -5,7 +7,7 @@ export function headers() {
 
 /** @todo */
 export function cookies() {
-  return {} as any;
+  return new ResponseCookies(new Headers());
 }
 
 /** @todo */
