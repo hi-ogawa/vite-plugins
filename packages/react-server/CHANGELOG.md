@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.7
+
+- feat: support non esm project ([#414](https://github.com/hi-ogawa/vite-plugins/pull/414))
+- perf: set `build.write: false` during scan ([#445](https://github.com/hi-ogawa/vite-plugins/pull/445))
+
 ## v0.2.6
 
 - feat: validate server-only and client-only ([#433](https://github.com/hi-ogawa/vite-plugins/pull/433))
