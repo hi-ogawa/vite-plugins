@@ -4,4 +4,11 @@
 /// <reference types="react-dom" />
 /// <reference types="react-dom/experimental" />
 
-export * from "./dist/compat";
+declare global {
+  interface RequestInit {
+    /** @todo */
+    next?: unknown;
+  }
+}
+
+export * from "../dist/compat";
