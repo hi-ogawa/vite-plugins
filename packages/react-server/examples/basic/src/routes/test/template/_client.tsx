@@ -8,5 +8,5 @@ export function ClientTime() {
     () => Date.now(),
     () => null,
   );
-  return <>{now}</>;
+  return <>[now: {now}]</>;
 }
