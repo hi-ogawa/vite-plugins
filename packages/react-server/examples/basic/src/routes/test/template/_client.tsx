@@ -1,12 +1,24 @@
 "use client";
 
+import { defaultDict, once, tinyassert } from "@hiogawa/utils";
 import React from "react";
 
-export function ClientTime() {
-  const now = React.useSyncExternalStore(
-    React.useCallback(() => () => {}, []),
-    () => Date.now(),
-    () => null,
+const countMap = defaultDict(() => 0);
+
+export function MountCount(props: { name: string }) {
+  const elRef = React.useRef<HTMLElement>(null);
+
+  React.useEffect(
+    once(() => {
+      tinyassert(elRef.current);
+      elRef.current.textContent = String(++countMap[props.name]);
+    }),
+    [],
   );
-  return <>[now: {now}]</>;
+
+  return (
+    <div>
+      {props.name} [mount: <span ref={elRef} />]
+    </div>
+  );
 }

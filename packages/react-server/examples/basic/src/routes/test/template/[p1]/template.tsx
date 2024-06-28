@@ -1,11 +1,9 @@
-import { ClientTime } from "../_client";
+import { MountCount } from "../_client";
 
 export default function Template(props: React.PropsWithChildren) {
   return (
     <div className="border p-2">
-      <div>
-        [p1]/template.tsx <ClientTime />
-      </div>
+      <MountCount name="[p1]/template.tsx" />
       {props.children}
     </div>
   );
