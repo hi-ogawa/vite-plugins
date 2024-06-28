@@ -31,7 +31,7 @@ interface RouteEntry {
     default: React.FC;
   };
   template?: {
-    default: React.FC;
+    default: React.FC<{ children?: React.ReactNode }>;
   };
 }
 
@@ -66,6 +66,18 @@ async function renderLayout(
 
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
+
+  const LoadingPage = node.value?.loading?.default;
+  if (LoadingPage) {
+    // TODO: key
+    acc = <React.Suspense fallback={<LoadingPage />}>{acc}</React.Suspense>;
+  }
+
+  const TemplatePage = node.value?.template?.default;
+  if (TemplatePage) {
+    // TODO: key
+    acc = <TemplatePage>{acc}</TemplatePage>;
+  }
 
   const NotFoundPage = node.value?.["not-found"]?.default;
   if (NotFoundPage) {
