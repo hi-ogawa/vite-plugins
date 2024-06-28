@@ -8,5 +8,5 @@ export {
 export {
   LayoutContent,
   LayoutMatchProvider,
-  RemountByUrl,
+  RemountRoute,
 } from "./features/router/client";
