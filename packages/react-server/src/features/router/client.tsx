@@ -76,6 +76,7 @@ export function useSelectedParams() {
   return React.useMemo(() => toMatchParamsObject(entries), [entries]);
 }
 
+// TODO: rename
 export function RemountByUrl(props: React.PropsWithChildren) {
   const [next] = useSelectedParamEntries();
   return <React.Fragment key={next?.[1]}>{props.children}</React.Fragment>;

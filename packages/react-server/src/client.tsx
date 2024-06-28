@@ -6,4 +6,5 @@ export {
   routerRevalidate,
   useParams,
   useSelectedParams,
+  useSelectedParamEntries,
 } from "./features/router/client";
