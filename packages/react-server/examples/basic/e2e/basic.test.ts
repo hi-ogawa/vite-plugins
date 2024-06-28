@@ -1215,4 +1215,9 @@ test("loading @js", async ({ page }) => {
   await page.getByRole("link", { name: "• /test/loading/2" }).click();
   await expect(page.getByTestId("/test/loading")).toBeVisible();
   await page.getByText('params {"id":"2"}').click();
+
+  // ssr
+  await page.goto("/test/loading/1", { waitUntil: "commit" });
+  await expect(page.getByTestId("/test/loading")).toBeVisible();
+  await page.getByText('params {"id":"1"}').click();
 });
