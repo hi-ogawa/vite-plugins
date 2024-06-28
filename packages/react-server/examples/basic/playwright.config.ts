@@ -26,6 +26,7 @@ export default defineConfig({
   webServer: {
     command,
     port,
+    env: { ...process.env, E2E: "true" },
   },
   grepInvert: isPreview ? /@dev/ : /@build/,
   forbidOnly: !!process.env["CI"],
