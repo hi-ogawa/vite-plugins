@@ -65,14 +65,12 @@ export function LayoutMatchProvider(
   return <LayoutMatchContext.Provider {...props} />;
 }
 
-// TODO: remove options
-export function useSelectedParams(options?: { below?: boolean }) {
+export function useSelectedParams() {
   const all = useParamEntries();
   const prefix = React.useContext(LayoutMatchContext).params;
-  const offset = options?.below ? 0 : 1;
   return React.useMemo(
-    () => toMatchParamsObject(all.slice(prefix.length - offset)),
-    [all, prefix, offset],
+    () => toMatchParamsObject(all.slice(prefix.length)),
+    [all, prefix],
   );
 }
 

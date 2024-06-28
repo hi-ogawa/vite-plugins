@@ -27,7 +27,7 @@ export function useParams<T extends Params = Params>(): T {
 }
 
 export function useSelectedLayoutSegments(_todo?: string): string[] {
-  const selected = useSelectedParams({ below: true });
+  const selected = useSelectedParams();
   return Object.values(selected);
 }
 
