@@ -977,11 +977,15 @@ test("dynamic routes", async ({ page }) => {
   await page.getByText("file: /test/dynamic/page.tsx").click();
   await page.getByText("pathname: /test/dynamic").click();
   await page.getByText("props.params: {}").click();
+  await page.getByText("useParams: {}").click();
+  await page.getByText("useSelectedParams: {}").click();
 
   await page.getByRole("link", { name: "• /test/dynamic/static" }).click();
   await page.getByText("file: /test/dynamic/static/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/static").click();
   await page.getByText("props.params: {}").click();
+  await page.getByText("useParams: {}").click();
+  await page.getByText("useSelectedParams: {}").click();
 
   await page
     .getByRole("link", { name: "• /test/dynamic/abc", exact: true })
@@ -989,11 +993,15 @@ test("dynamic routes", async ({ page }) => {
   await page.getByText("file: /test/dynamic/[id]/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/abc").click();
   await page.getByText('props.params: {"id":"abc"}').click();
+  await page.getByText('useParams: {"id":"abc"}').click();
+  await page.getByText('useSelectedParams: {"id":"abc"}').click();
 
   await page.getByRole("link", { name: "• /test/dynamic/abc/def" }).click();
   await page.getByText("file: /test/dynamic/[id]/[nested]/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/abc/def").click();
   await page.getByText('props.params: {"id":"abc","nested":"def"}').click();
+  await page.getByText('useParams: {"id":"abc","nested":"def"}').click();
+  await page.getByText('useSelectedParams: {"nested":"def"}').click();
 
   // regardless of Link.href prop
   // - pathname is always encoded
@@ -1054,6 +1062,8 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
     .getByRole("link", { name: "• /test/dynamic/catchall/static" })
     .click();
   await page.getByText("props.params: {}").click();
+  await page.getByText("useParams: {}").click();
+  await page.getByText("useSelectedParams: {}").click();
   await page.getByText("file: /test/dynamic/catchall/").click();
 
   await page
@@ -1068,6 +1078,8 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
     .click();
   await page.getByText("file: /test/dynamic/catchall").click();
   await page.getByText('props.params: {"any":"x/y"}').click();
+  await page.getByText('useParams: {"any":"x/y"}').click();
+  await page.getByText('useSelectedParams: {"any":"x/y"}').click();
   // state is not preserved
   await expect(page.getByLabel("test state")).not.toBeChecked();
 
