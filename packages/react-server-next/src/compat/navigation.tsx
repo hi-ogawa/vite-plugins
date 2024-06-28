@@ -32,6 +32,7 @@ export function useSelectedLayoutSegments(_todo?: string): string[] {
 }
 
 export function useSelectedLayoutSegment(_todo?: string): string | null {
+  // TODO: probably useSelectedParamEntries()[0]
   return useSelectedLayoutSegments()[0] ?? null;
 }
 

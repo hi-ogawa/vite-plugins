@@ -80,7 +80,6 @@ async function renderLayout(
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
 
-  // TODO: remount only on nearest segment change?
   const LoadingPage = node.value?.loading?.default;
   if (LoadingPage) {
     acc = (

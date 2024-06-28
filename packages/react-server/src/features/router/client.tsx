@@ -65,19 +65,20 @@ export function LayoutMatchProvider(
   return <LayoutMatchContext.Provider {...props} />;
 }
 
-export function useSelectedParams() {
+export function useSelectedParamEntries() {
   const all = useParamEntries();
   const prefix = React.useContext(LayoutMatchContext).params;
-  return React.useMemo(
-    () => toMatchParamsObject(all.slice(prefix.length)),
-    [all, prefix],
-  );
+  return React.useMemo(() => all.slice(prefix.length), [all, prefix]);
+}
+
+export function useSelectedParams() {
+  const entries = useSelectedParamEntries();
+  return React.useMemo(() => toMatchParamsObject(entries), [entries]);
 }
 
 export function RemountByUrl(props: React.PropsWithChildren) {
-  const entries = useParamEntries();
-  const key = entries.map(([_k, v]) => v).join("/");
-  return <React.Fragment key={key}>{props.children}</React.Fragment>;
+  const [next] = useSelectedParamEntries();
+  return <React.Fragment key={next?.[1]}>{props.children}</React.Fragment>;
 }
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
