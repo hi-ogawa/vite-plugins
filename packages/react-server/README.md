@@ -32,18 +32,10 @@ pnpm build
 pnpm preview
 ```
 
-## Conventions
-
-- `src/entry-client.tsx`
-- `src/entry-react-server.tsx`
-- `src/routes/**/(page|layout|error|not-found).tsx`
-- `"use client"`
-- `"use server"`
-
 ## Development
 
 ```sh
-# NO_DTS=1
+# NO_DTS=1 to skip type error
 pnpm -C packages/react-server dev
 
 # DEBUG=react-server:*
