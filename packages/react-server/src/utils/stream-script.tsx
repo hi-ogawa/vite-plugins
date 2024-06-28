@@ -65,7 +65,7 @@ export function readStreamScript<T>() {
 // it seems buffering is necessary to ensure tag marker (e.g. `</body>`) is not split into multiple chunks.
 // Without this, above `injectStreamScript` breaks when receiving two chunks for "...<" and "/body>...".
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
-export function bufferedTransformStream() {
+export function createBufferedTransformStream() {
   let timeout: ReturnType<typeof setTimeout> | undefined;
   let buffer = "";
   return new TransformStream<string, string>({
