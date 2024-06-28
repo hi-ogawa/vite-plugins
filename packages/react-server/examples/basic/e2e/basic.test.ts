@@ -137,7 +137,7 @@ test("error", async ({ page }) => {
   expect(res?.status()).toBe(404);
 
   await waitForHydration(page);
-  await page.getByText(`server error: {"status":404}`).click();
+  await page.getByText(`NotFoundPage`).click();
 
   const checkClientState = await setupCheckClientState(page);
 
