@@ -65,6 +65,7 @@ export function LayoutMatchProvider(
   return <LayoutMatchContext.Provider {...props} />;
 }
 
+// TODO: remove options
 export function useSelectedParams(options?: { below?: boolean }) {
   const all = useParamEntries();
   const prefix = React.useContext(LayoutMatchContext).params;
