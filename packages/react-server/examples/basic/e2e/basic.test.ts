@@ -1205,3 +1205,14 @@ async function testMetadata(page: Page) {
   await page.getByRole("link", { name: "/test/metadata" }).click();
   await expect(page).toHaveTitle("test-metadata");
 }
+
+test("loading @js", async ({ page }) => {
+  await page.goto("/test/loading");
+  await waitForHydration(page);
+  await page.getByRole("link", { name: "• /test/loading/1" }).click();
+  await expect(page.getByTestId("/test/loading")).toBeVisible();
+  await page.getByText('params {"id":"1"}').click();
+  await page.getByRole("link", { name: "• /test/loading/2" }).click();
+  await expect(page.getByTestId("/test/loading")).toBeVisible();
+  await page.getByText('params {"id":"2"}').click();
+});
