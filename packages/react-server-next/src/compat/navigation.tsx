@@ -32,7 +32,7 @@ export function useSelectedLayoutSegments(_todo?: string): string[] {
 }
 
 export function useSelectedLayoutSegment(_todo?: string): string | null {
-  return useSelectedLayoutSegments().slice(-1)[0] ?? null;
+  return useSelectedLayoutSegments()[0] ?? null;
 }
 
 export function useRouter() {
