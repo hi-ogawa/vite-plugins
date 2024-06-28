@@ -1,5 +1,5 @@
 import type { PageProps } from "@hiogawa/react-server/server";
-import { ClientLocation, ClientParams } from "./_cilent";
+import { ClientLocation } from "./_cilent";
 
 export function TestDynamic({
   file: file,
@@ -18,8 +18,7 @@ export function TestDynamic({
       <div>
         pathname (client): <ClientLocation />
       </div>
-      <div>props.params: {JSON.stringify(props.params)}</div>
-      <ClientParams />
+      <div>params: {JSON.stringify(props.params)}</div>
     </div>
   );
 }
