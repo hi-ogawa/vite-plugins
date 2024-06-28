@@ -17,13 +17,12 @@ export function injectFlightStream(stream: ReadableStream<Uint8Array>) {
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
       if (chunk.includes("</head>")) {
-        controller.enqueue(
-          chunk.replace(
-            "</head>",
-            () => `<script>${INIT_SCRIPT}</script></head>`,
-          ),
+        chunk = chunk.replace(
+          "</head>",
+          () => `<script>${INIT_SCRIPT}</script></head>`,
         );
-      } else if (chunk.includes("</body>")) {
+      }
+      if (chunk.includes("</body>")) {
         const i = chunk.indexOf("</body>");
         controller.enqueue(chunk.slice(0, i));
         await stream.pipeThrough(new TextDecoderStream()).pipeTo(
