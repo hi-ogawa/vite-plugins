@@ -9,6 +9,7 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
+import { type MatchParamEntry, toMatchParamsObject } from "./tree";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -39,6 +40,38 @@ function MetadataRenderer() {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);
   return data.metadata;
+}
+
+function useParamEntries() {
+  const ctx = React.useContext(LayoutStateContext);
+  const data = React.use(ctx.data);
+  return data.params;
+}
+
+export function useParams() {
+  const entries = useParamEntries();
+  return React.useMemo(() => toMatchParamsObject(entries), [entries]);
+}
+
+type LayoutMatchType = {
+  params: MatchParamEntry[];
+};
+
+const LayoutMatchContext = React.createContext<LayoutMatchType>(undefined!);
+
+export function LayoutMatchProvider(
+  props: React.ComponentProps<typeof LayoutMatchContext.Provider>,
+) {
+  return <LayoutMatchContext.Provider {...props} />;
+}
+
+export function useSelectedParams() {
+  const all = useParamEntries();
+  const prefix = React.useContext(LayoutMatchContext).params;
+  return React.useMemo(
+    () => toMatchParamsObject(all.slice(prefix.length)),
+    [all, prefix],
+  );
 }
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";

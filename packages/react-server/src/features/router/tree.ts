@@ -42,23 +42,40 @@ function sortDynamicRoutes<T>(tree: TreeNode<T>) {
   }
 }
 
-type MatchNodeEntry<T> = {
+export type MatchParamEntry = [key: string | null, value: string];
+export type MatchParams = Record<string, string>;
+
+export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
+  let result: MatchParams = {};
+  for (const [k, v] of params) {
+    if (k) {
+      result[k] = v;
+    }
+  }
+  return result;
+}
+
+export type MatchNodeEntry<T> = {
   prefix: string;
   type: "layout" | "page";
   node: TreeNode<T>;
-  params: Record<string, string>;
+  params: MatchParamEntry[];
 };
 
-type MatchResult<T> = {
+export type MatchResult<T> = {
   matches: MatchNodeEntry<T>[];
+  params: MatchParamEntry[];
 };
 
-export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
+export function matchRouteTree<T>(
+  tree: TreeNode<T>,
+  pathname: string,
+): MatchResult<T> {
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;
-  let params: Record<string, string> = {};
-  const result: MatchResult<T> = { matches: [] };
+  let params: MatchParamEntry[] = [];
+  const matches: MatchNodeEntry<T>[] = [];
   for (let i = 0; i < prefixes.length; i++) {
     const prefix = prefixes[i]!;
     const segment = prefix.split("/").at(-1)!;
@@ -67,31 +84,33 @@ export function matchRouteTree<T>(tree: TreeNode<T>, pathname: string) {
       node = next.child;
       if (next.catchAll) {
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
-        params = { ...params, [next.param]: decodeURI(rest) };
-        result.matches.push({ prefix, type: "layout", node, params });
+        params = [...params, [next.param, decodeURI(rest)]];
+        matches.push({ prefix, type: "layout", node, params });
         for (const prefix of prefixes.slice(i + 1)) {
-          result.matches.push({
+          matches.push({
             prefix,
             type: "layout",
             node: initTreeNode(),
             params,
           });
         }
-        result.matches.push({ prefix: pathname, type: "page", node, params });
+        matches.push({ prefix: pathname, type: "page", node, params });
         break;
       }
       if (next.param) {
-        params = { ...params, [next.param]: decodeURI(segment) };
+        params = [...params, [next.param, decodeURI(segment)]];
+      } else {
+        params = [...params, [null, decodeURI(segment)]];
       }
     } else {
       node = initTreeNode();
     }
-    result.matches.push({ prefix, type: "layout", node, params });
+    matches.push({ prefix, type: "layout", node, params });
     if (prefix === pathname) {
-      result.matches.push({ prefix, type: "page", node, params });
+      matches.push({ prefix, type: "page", node, params });
     }
   }
-  return result;
+  return { matches, params };
 }
 
 const DYNAMIC_RE = /^\[(\w*)\]$/;

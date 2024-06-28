@@ -2,7 +2,9 @@
 
 import {
   routerRevalidate,
+  useParams as useParams_,
   useRouter as useRouter_,
+  useSelectedParams,
 } from "@hiogawa/react-server/client";
 import React from "react";
 
@@ -15,24 +17,22 @@ export function usePathname() {
   return useRouter_((s) => s.location.pathname);
 }
 
-/** @todo */
-export function useParams(): Record<string, string | string[]> {
-  return {};
+interface Params {
+  /** @todo no array */
+  [key: string]: string | string[];
 }
 
-/** @todo */
-export function getSelectedLayoutSegmentPath(..._args: unknown[]): string[] {
-  return [];
+export function useParams<T extends Params = Params>(): T {
+  return useParams_() as any;
 }
 
-/** @todo */
-export function useSelectedLayoutSegments(..._args: unknown[]): string[] {
-  return [];
+export function useSelectedLayoutSegments(_todo?: string): string[] {
+  const selected = useSelectedParams();
+  return Object.values(selected);
 }
 
-/** @todo */
-export function useSelectedLayoutSegment(..._args: unknown[]): string | null {
-  return null;
+export function useSelectedLayoutSegment(_todo?: string): string | null {
+  return useSelectedLayoutSegments()[0] ?? null;
 }
 
 export function useRouter() {

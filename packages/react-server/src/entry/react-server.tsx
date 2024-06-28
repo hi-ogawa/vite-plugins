@@ -115,6 +115,7 @@ async function render({
     {
       layout: nodeMap,
       metadata: result.metadata,
+      params: result.params,
       action: actionResult
         ? objectPick(actionResult, ["data", "error"])
         : undefined,

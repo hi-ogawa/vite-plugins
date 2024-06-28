@@ -2,7 +2,13 @@ import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
-import { type TreeNode, createFsRouteTree, matchRouteTree } from "./tree";
+import {
+  type MatchNodeEntry,
+  type TreeNode,
+  createFsRouteTree,
+  matchRouteTree,
+  toMatchParamsObject,
+} from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
@@ -39,10 +45,14 @@ function renderPage(node: RouteModuleNode, props: PageProps) {
 async function renderLayout(
   node: RouteModuleNode,
   props: PageProps,
-  prefix: string,
+  { prefix, params }: MatchNodeEntry<RouteEntry>,
 ) {
-  const { ErrorBoundary, RedirectBoundary, LayoutContent } =
-    await importRuntimeClient();
+  const {
+    ErrorBoundary,
+    RedirectBoundary,
+    LayoutContent,
+    LayoutMatchProvider,
+  } = await importRuntimeClient();
 
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
@@ -61,6 +71,7 @@ async function renderLayout(
   } else {
     acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
   }
+  acc = <LayoutMatchProvider value={{ params }}>{acc}</LayoutMatchProvider>;
   return acc;
 }
 
@@ -81,9 +92,12 @@ export async function renderRouteMap(
   const metadata: Metadata = {};
   const result = matchRouteTree(tree, url.pathname);
   for (const m of result.matches) {
-    const props: BaseProps = { ...baseProps, params: m.params };
+    const props: BaseProps = {
+      ...baseProps,
+      params: toMatchParamsObject(m.params),
+    };
     if (m.type === "layout") {
-      layouts[m.prefix] = await renderLayout(m.node, props, m.prefix);
+      layouts[m.prefix] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
       pages[m.prefix] = renderPage(m.node, props);
@@ -92,7 +106,12 @@ export async function renderRouteMap(
       m.type satisfies never;
     }
   }
-  return { pages, layouts, metadata: renderMetadata(metadata) };
+  return {
+    pages,
+    layouts,
+    metadata: renderMetadata(metadata),
+    params: result.params,
+  };
 }
 
 const ThrowNotFound: React.FC = () => {

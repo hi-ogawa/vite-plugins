@@ -1087,6 +1087,41 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
   await expect(page.getByLabel("test state")).not.toBeChecked();
 }
 
+test("useSelectedParams", async ({ page }) => {
+  await page.goto("/test/dynamic/selected");
+  await page.getByText("/layout.tsx: {}").click();
+  await page.getByText("/page.tsx: {}").click();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/selected/x", exact: true })
+    .click();
+  await page.getByText('/layout.tsx: {"p1":"x"}').click();
+  await page.getByText("/[p1]/layout.tsx: {}").click();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/selected/x/y" })
+    .click();
+  await page.getByText('/layout.tsx: {"p1":"x","p2":"y"}').click();
+  await page.getByText('/[p1]/layout.tsx: {"p2":"y"}').click();
+  await page.getByText("/[p1]/[p2]/layout.tsx: {}").click();
+
+  await page
+    .getByRole("link", {
+      name: "• /test/dynamic/selected/x/static",
+      exact: true,
+    })
+    .click();
+  await page.getByText('/layout.tsx: {"p1":"x"}').click();
+  await page.getByText("/[p1]/layout.tsx: {}").click();
+
+  await page
+    .getByRole("link", { name: "• /test/dynamic/selected/x/static/y" })
+    .click();
+  await page.getByText('/layout.tsx: {"p1":"x","q1":"y"}').click();
+  await page.getByText('/[p1]/layout.tsx: {"q1":"y"}').click();
+  await page.getByText('/[p1]/static/layout.tsx: {"q1":"y"}').click();
+});
+
 test("full client route", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/client/full");

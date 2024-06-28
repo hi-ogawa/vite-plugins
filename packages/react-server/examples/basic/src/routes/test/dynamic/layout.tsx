@@ -6,7 +6,7 @@ export default function Layout(props: LayoutProps) {
     <div className="flex flex-col gap-2 p-2">
       <h3 className="font-bold">Dynamic Route Test</h3>
       <NavMenu
-        className="flex flex-col items-start gap-1"
+        className="grid grid-cols-2 gap-1"
         links={[
           "/test/dynamic",
           "/test/dynamic/static",
@@ -20,6 +20,7 @@ export default function Layout(props: LayoutProps) {
           "/test/dynamic/catchall/x/y",
           "/test/dynamic/catchall/x/y/z",
           "/test/dynamic/catchall/x/y/w",
+          "/test/dynamic/selected",
         ]}
         activeProps={{
           "aria-current": "page",

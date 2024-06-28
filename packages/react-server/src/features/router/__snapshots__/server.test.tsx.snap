@@ -45,47 +45,77 @@ exports[`generateRouteModuleTree > basic 2`] = `
 {
   "__pathname": "/x",
   "layouts": {
-    "/": </LAYOUT.TSX
-      params={{}}
-      request={
+    "/": <LayoutMatchProvider
+      value={
         {
-          "headers": {},
-          "url": "https://test.local/x",
-        }
-      }
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/x",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/x",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
         }
       }
     >
-      <RedirectBoundary>
-        <LayoutContent
-          name="/"
-        />
-      </RedirectBoundary>
-    <//LAYOUT.TSX>,
-    "/x": <React.Fragment>
-      <ErrorBoundary
-        errorComponent="/X/ERROR.TSX"
+      </LAYOUT.TSX
+        params={{}}
+        request={
+          {
+            "headers": {},
+            "url": "https://test.local/x",
+          }
+        }
+        url={
+          {
+            "hash": "",
+            "host": "test.local",
+            "hostname": "test.local",
+            "href": "https://test.local/x",
+            "origin": "https://test.local",
+            "password": "",
+            "pathname": "/x",
+            "port": "",
+            "protocol": "https:",
+            "search": "",
+            "username": "",
+          }
+        }
       >
         <RedirectBoundary>
           <LayoutContent
-            name="/x"
+            name="/"
           />
         </RedirectBoundary>
-      </ErrorBoundary>
-    </React.Fragment>,
+      <//LAYOUT.TSX>
+    </LayoutMatchProvider>,
+    "/x": <LayoutMatchProvider
+      value={
+        {
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+          ],
+        }
+      }
+    >
+      <React.Fragment>
+        <ErrorBoundary
+          errorComponent="/X/ERROR.TSX"
+        >
+          <RedirectBoundary>
+            <LayoutContent
+              name="/x"
+            />
+          </RedirectBoundary>
+        </ErrorBoundary>
+      </React.Fragment>
+    </LayoutMatchProvider>,
   },
   "metadata": <React.Fragment />,
   "pages": {
@@ -114,6 +144,16 @@ exports[`generateRouteModuleTree > basic 2`] = `
       }
     />,
   },
+  "params": [
+    [
+      null,
+      "",
+    ],
+    [
+      null,
+      "x",
+    ],
+  ],
 }
 `;
 
@@ -121,77 +161,128 @@ exports[`generateRouteModuleTree > basic 3`] = `
 {
   "__pathname": "/x/y",
   "layouts": {
-    "/": </LAYOUT.TSX
-      params={{}}
-      request={
+    "/": <LayoutMatchProvider
+      value={
         {
-          "headers": {},
-          "url": "https://test.local/x/y",
-        }
-      }
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/x/y",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/x/y",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
         }
       }
     >
-      <RedirectBoundary>
-        <LayoutContent
-          name="/"
-        />
-      </RedirectBoundary>
-    <//LAYOUT.TSX>,
-    "/x": <React.Fragment>
-      <ErrorBoundary
-        errorComponent="/X/ERROR.TSX"
+      </LAYOUT.TSX
+        params={{}}
+        request={
+          {
+            "headers": {},
+            "url": "https://test.local/x/y",
+          }
+        }
+        url={
+          {
+            "hash": "",
+            "host": "test.local",
+            "hostname": "test.local",
+            "href": "https://test.local/x/y",
+            "origin": "https://test.local",
+            "password": "",
+            "pathname": "/x/y",
+            "port": "",
+            "protocol": "https:",
+            "search": "",
+            "username": "",
+          }
+        }
       >
         <RedirectBoundary>
           <LayoutContent
-            name="/x"
+            name="/"
           />
         </RedirectBoundary>
-      </ErrorBoundary>
-    </React.Fragment>,
-    "/x/y": </X/Y/LAYOUT.TSX
-      params={{}}
-      request={
+      <//LAYOUT.TSX>
+    </LayoutMatchProvider>,
+    "/x": <LayoutMatchProvider
+      value={
         {
-          "headers": {},
-          "url": "https://test.local/x/y",
-        }
-      }
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/x/y",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/x/y",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+          ],
         }
       }
     >
-      <RedirectBoundary>
-        <LayoutContent
-          name="/x/y"
-        />
-      </RedirectBoundary>
-    <//X/Y/LAYOUT.TSX>,
+      <React.Fragment>
+        <ErrorBoundary
+          errorComponent="/X/ERROR.TSX"
+        >
+          <RedirectBoundary>
+            <LayoutContent
+              name="/x"
+            />
+          </RedirectBoundary>
+        </ErrorBoundary>
+      </React.Fragment>
+    </LayoutMatchProvider>,
+    "/x/y": <LayoutMatchProvider
+      value={
+        {
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+            [
+              null,
+              "y",
+            ],
+          ],
+        }
+      }
+    >
+      </X/Y/LAYOUT.TSX
+        params={{}}
+        request={
+          {
+            "headers": {},
+            "url": "https://test.local/x/y",
+          }
+        }
+        url={
+          {
+            "hash": "",
+            "host": "test.local",
+            "hostname": "test.local",
+            "href": "https://test.local/x/y",
+            "origin": "https://test.local",
+            "password": "",
+            "pathname": "/x/y",
+            "port": "",
+            "protocol": "https:",
+            "search": "",
+            "username": "",
+          }
+        }
+      >
+        <RedirectBoundary>
+          <LayoutContent
+            name="/x/y"
+          />
+        </RedirectBoundary>
+      <//X/Y/LAYOUT.TSX>
+    </LayoutMatchProvider>,
   },
   "metadata": <React.Fragment />,
   "pages": {
@@ -220,6 +311,20 @@ exports[`generateRouteModuleTree > basic 3`] = `
       }
     />,
   },
+  "params": [
+    [
+      null,
+      "",
+    ],
+    [
+      null,
+      "x",
+    ],
+    [
+      null,
+      "y",
+    ],
+  ],
 }
 `;
 
@@ -227,43 +332,69 @@ exports[`generateRouteModuleTree > basic 4`] = `
 {
   "__pathname": "/z",
   "layouts": {
-    "/": </LAYOUT.TSX
-      params={{}}
-      request={
+    "/": <LayoutMatchProvider
+      value={
         {
-          "headers": {},
-          "url": "https://test.local/z",
-        }
-      }
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/z",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/z",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
         }
       }
     >
-      <RedirectBoundary>
-        <LayoutContent
-          name="/"
-        />
-      </RedirectBoundary>
-    <//LAYOUT.TSX>,
-    "/z": <React.Fragment>
-      <RedirectBoundary>
-        <LayoutContent
-          name="/z"
-        />
-      </RedirectBoundary>
-    </React.Fragment>,
+      </LAYOUT.TSX
+        params={{}}
+        request={
+          {
+            "headers": {},
+            "url": "https://test.local/z",
+          }
+        }
+        url={
+          {
+            "hash": "",
+            "host": "test.local",
+            "hostname": "test.local",
+            "href": "https://test.local/z",
+            "origin": "https://test.local",
+            "password": "",
+            "pathname": "/z",
+            "port": "",
+            "protocol": "https:",
+            "search": "",
+            "username": "",
+          }
+        }
+      >
+        <RedirectBoundary>
+          <LayoutContent
+            name="/"
+          />
+        </RedirectBoundary>
+      <//LAYOUT.TSX>
+    </LayoutMatchProvider>,
+    "/z": <LayoutMatchProvider
+      value={
+        {
+          "params": [
+            [
+              null,
+              "",
+            ],
+          ],
+        }
+      }
+    >
+      <React.Fragment>
+        <RedirectBoundary>
+          <LayoutContent
+            name="/z"
+          />
+        </RedirectBoundary>
+      </React.Fragment>
+    </LayoutMatchProvider>,
   },
   "metadata": <React.Fragment />,
   "pages": {
@@ -292,5 +423,11 @@ exports[`generateRouteModuleTree > basic 4`] = `
       }
     />,
   },
+  "params": [
+    [
+      null,
+      "",
+    ],
+  ],
 }
 `;
