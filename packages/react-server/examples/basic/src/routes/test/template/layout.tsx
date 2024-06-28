@@ -6,7 +6,7 @@ export default function Layout(props: React.PropsWithChildren) {
     <div className="flex flex-col gap-2 p-2">
       <h3 className="font-bold">Test Template</h3>
       <NavMenu
-        className="grid grid-cols-3 gap-1"
+        className="grid grid-cols-1 gap-1"
         links={[
           "/test/template",
           "/test/template/x",
