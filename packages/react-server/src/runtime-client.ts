@@ -5,4 +5,8 @@ export {
   RedirectBoundary,
   NotFoundBoundary,
 } from "./lib/client/error-boundary";
-export { LayoutContent, LayoutMatchProvider } from "./features/router/client";
+export {
+  LayoutContent,
+  LayoutMatchProvider,
+  RemountByUrl,
+} from "./features/router/client";

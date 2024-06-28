@@ -74,6 +74,12 @@ export function useSelectedParams() {
   );
 }
 
+export function RemountByUrl(props: React.PropsWithChildren) {
+  const entries = useParamEntries();
+  const key = entries.map(([_k, v]) => v).join("/");
+  return <React.Fragment key={key}>{props.children}</React.Fragment>;
+}
+
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
 
 declare module "@tanstack/history" {
