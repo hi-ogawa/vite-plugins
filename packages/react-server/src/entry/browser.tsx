@@ -21,7 +21,6 @@ import {
 } from "../lib/client/router";
 import { $__global } from "../lib/global";
 import type { CallServerCallback } from "../lib/types";
-import { getBrowserFlightStream } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
 
@@ -67,7 +66,7 @@ export async function start() {
   // TODO: needs to await for hydration formState. does it affect startup perf?
   const initialLayout =
     await ReactClient.createFromReadableStream<ServerRouterData>(
-      getBrowserFlightStream(),
+      (self as any).__flightStream, // injected by StreamTransfer
       { callServer },
     );
   const initialLayoutPromise = Promise.resolve(initialLayout);

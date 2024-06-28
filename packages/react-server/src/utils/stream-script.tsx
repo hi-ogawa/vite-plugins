@@ -45,7 +45,3 @@ self.__flightStream = new ReadableStream({
 function renderScript(code: string) {
   return <script dangerouslySetInnerHTML={{ __html: code }} />;
 }
-
-export function getBrowserFlightStream(): ReadableStream<Uint8Array> {
-  return (self as any).__flightStream;
-}
