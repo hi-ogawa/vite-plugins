@@ -129,3 +129,33 @@ export function RedirectHandler(props: {
   }
   return React.use(suspension);
 }
+
+export class NotFoundBoundary extends React.Component<{
+  fallback: React.ReactNode;
+  children?: React.ReactNode;
+}> {
+  override state: { error?: Error } = {};
+
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+
+  override render() {
+    const error = this.state.error;
+    if (error && getErrorContext(error)?.status === 404) {
+      return (
+        <>
+          {this.props.fallback}
+          <ErrorAutoReset
+            reset={() => {
+              React.startTransition(() => {
+                this.setState({ error: null });
+              });
+            }}
+          />
+        </>
+      );
+    }
+    return this.props.children;
+  }
+}

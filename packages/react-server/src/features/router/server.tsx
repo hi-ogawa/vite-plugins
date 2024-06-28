@@ -53,6 +53,7 @@ async function renderLayout(
   const {
     ErrorBoundary,
     RedirectBoundary,
+    NotFoundBoundary,
     LayoutContent,
     LayoutMatchProvider,
   } = await importRuntimeClient();
@@ -60,6 +61,12 @@ async function renderLayout(
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
+  const NotFoundPage = node.value?.["not-found"]?.default;
+  if (NotFoundPage) {
+    acc = (
+      <NotFoundBoundary fallback={<NotFoundPage />}>{acc}</NotFoundBoundary>
+    );
+  }
   const ErrorPage = node.value?.error?.default;
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;

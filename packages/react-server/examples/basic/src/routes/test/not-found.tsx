@@ -1,7 +1,7 @@
 export default function NotFoundPage() {
   return (
-    <div>
-      <h4 className="font-bold">NotFoundPage (/test/not-found.tsx)</h4>
+    <div className="p-2">
+      <h4 className="font-bold">NotFoundPage</h4>
     </div>
   );
 }
