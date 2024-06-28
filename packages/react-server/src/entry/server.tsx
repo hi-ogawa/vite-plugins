@@ -28,7 +28,10 @@ import { $__global } from "../lib/global";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 import { escpaeScriptString } from "../utils/escape";
 import { jsonStringifyTransform } from "../utils/stream";
-import { injectStreamScript } from "../utils/stream-script";
+import {
+  bufferedTransformStream,
+  injectStreamScript,
+} from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./react-server";
 
 const debug = createDebug("react-server:ssr");
@@ -199,6 +202,7 @@ export async function renderHtml(
 
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
+    .pipeThrough(bufferedTransformStream())
     .pipeThrough(injectToHead(head))
     .pipeThrough(
       injectStreamScript(
