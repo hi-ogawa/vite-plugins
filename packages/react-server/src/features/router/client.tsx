@@ -9,11 +9,7 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import {
-  type MatchParamEntry,
-  toMatchParamsObject,
-  toSelectedParams,
-} from "./tree";
+import { type MatchParamEntry, toMatchParamsObject } from "./tree";
 import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
 
 type LayoutStateContextType = {
@@ -69,12 +65,13 @@ export function LayoutMatchProvider(
   return <LayoutMatchContext.Provider {...props} />;
 }
 
-export function useSelectedParams() {
+export function useSelectedParams(options?: { below?: boolean }) {
   const all = useParamEntries();
   const prefix = React.useContext(LayoutMatchContext).params;
+  const offset = options?.below ? 0 : 1;
   return React.useMemo(
-    () => toMatchParamsObject(toSelectedParams(prefix, all)),
-    [all, prefix],
+    () => toMatchParamsObject(all.slice(prefix.length - offset)),
+    [all, prefix, offset],
   );
 }
 
