@@ -27,8 +27,7 @@ import {
 import { $__global } from "../lib/global";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 import { escpaeScriptString } from "../utils/escape";
-import { jsonStringifyTransform } from "../utils/stream";
-import { injectStreamScript } from "../utils/stream-script";
+import { StreamTransfer } from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./react-server";
 
 const debug = createDebug("react-server:ssr");
@@ -125,6 +124,7 @@ export async function renderHtml(
         <RouteManifestContext.Provider value={routeManifest}>
           <RouteAssetLinks />
           <LayoutRoot />
+          <StreamTransfer stream={stream2} />
         </RouteManifestContext.Provider>
       </LayoutStateContext.Provider>
     </RouterContext.Provider>
@@ -200,13 +200,6 @@ export async function renderHtml(
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(head))
-    .pipeThrough(
-      injectStreamScript(
-        stream2
-          .pipeThrough(new TextDecoderStream())
-          .pipeThrough(jsonStringifyTransform()),
-      ),
-    )
     .pipeThrough(new TextEncoderStream());
 
   return new Response(htmlStream, {

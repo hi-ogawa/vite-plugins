@@ -1,64 +1,47 @@
-// cf.
-// https://github.com/vercel/next.js/blob/1c5aa7fa09cc5503c621c534fc40065cbd2aefcb/packages/next/src/server/app-render/use-flight-response.tsx#L19-L26
-// https://github.com/vercel/next.js/blob/1c5aa7fa09cc5503c621c534fc40065cbd2aefcb/packages/next/src/client/app-index.tsx#L110-L113
-// https://github.com/devongovett/rsc-html-stream/
+import React from "react";
 
-export function injectStreamScript(stream: ReadableStream<string>) {
-  const search = "</body>";
-  let i = 0;
-  return new TransformStream<string, string>({
-    async transform(chunk, controller) {
-      console.log("[injectStreamScript]", { i: i++, chunk });
-      if (!chunk.includes(search)) {
-        controller.enqueue(chunk);
-        return;
-      }
+// based on
+// https://github.com/remix-run/react-router/blob/09b52e491e3927e30e707abe67abdd8e9b9de946/packages/react-router/lib/dom/ssr/single-fetch.tsx#L49
 
-      const [pre, post] = chunk.split(search);
-      controller.enqueue(pre);
+export function StreamTransfer(props: { stream: ReadableStream<Uint8Array> }) {
+  const textStream = props.stream.pipeThrough(new TextDecoderStream());
+  const reader = textStream.getReader();
 
-      // TODO: handle cancel?
-      await stream.pipeTo(
-        new WritableStream({
-          start() {
-            controller.enqueue(`<script>self.__stream_chunks||=[]</script>`);
-          },
-          write(chunk) {
-            // assume chunk is already encoded as javascript code e.g. by
-            //   stream.pipeThrough(jsonStringifyTransform())
-            controller.enqueue(
-              `<script>__stream_chunks.push(${chunk})</script>`,
-            );
-          },
-        }),
-      );
+  const results = new Array<Promise<ReadableStreamReadResult<string>>>();
 
-      controller.enqueue(search + post);
-    },
-  });
+  function Recurse(props: { depth: number }) {
+    const result = React.use((results[props.depth] ??= reader.read()));
+    if (result.done) {
+      return renderScript(`self.__f_close()`);
+    }
+    // TODO: escape?
+    return (
+      <>
+        {renderScript(`self.__f_push(${JSON.stringify(result.value)})`)}
+        <React.Suspense>
+          <Recurse depth={props.depth + 1} />
+        </React.Suspense>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {renderScript(`
+self.__flightStream = new ReadableStream({
+	start(ctrl) {
+		self.__f_push = (c) => ctrl.enqueue(c);
+		self.__f_close = () => ctrl.close();
+	}
+}).pipeThrough(new TextEncoderStream())
+`)}
+      <React.Suspense>
+        <Recurse depth={0} />
+      </React.Suspense>
+    </>
+  );
 }
 
-export function readStreamScript<T>() {
-  return new ReadableStream<T>({
-    start(controller) {
-      const chunks: T[] = ((globalThis as any).__stream_chunks ||= []);
-
-      for (const chunk of chunks) {
-        controller.enqueue(chunk);
-      }
-
-      chunks.push = function (chunk) {
-        controller.enqueue(chunk);
-        return 0;
-      };
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => {
-          controller.close();
-        });
-      } else {
-        controller.close();
-      }
-    },
-  });
+function renderScript(code: string) {
+  return <script dangerouslySetInnerHTML={{ __html: code }} />;
 }
