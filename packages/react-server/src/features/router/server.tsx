@@ -24,6 +24,9 @@ interface RouteEntry {
     // TODO: warn if no "use client"
     default: React.FC<ErrorPageProps>;
   };
+  "not-found"?: {
+    default: React.FC;
+  };
 }
 
 type RouteModuleNode = TreeNode<RouteEntry>;
@@ -114,6 +117,9 @@ export async function renderRouteMap(
   };
 }
 
+// TODO: for now, we can forget about ssr?
+// TODO: need to pass status (for ssr) without actually throwing
+// TODO: default not found page
 const ThrowNotFound: React.FC = () => {
   throw createError({ status: 404 });
 };

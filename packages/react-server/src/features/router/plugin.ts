@@ -23,7 +23,10 @@ export function routeManifestPluginServer({
       async buildEnd() {
         if (manager.buildType === "rsc") {
           const routeFiles = await FastGlob(
-            path.posix.join(routeDir, "**/(page|layout|error).(js|jsx|ts|tsx)"),
+            path.posix.join(
+              routeDir,
+              "**/(page|layout|error|not-found).(js|jsx|ts|tsx)",
+            ),
           );
           for (const routeFile of routeFiles) {
             const absFile = path.join(manager.config.root, routeFile);
