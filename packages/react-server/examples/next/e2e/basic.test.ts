@@ -38,7 +38,7 @@ test("navigation permanentRedirect", async ({ page }) => {
 test("navigation notFound", async ({ page }) => {
   const res = await page.goto("/navigation/not-found/servercomponent");
   expect(res?.status()).toBe(404);
-  await page.getByText("Error: 404").click();
+  await page.getByText("Not Found!").click();
 });
 
 test("action server", async ({ page }) => {
