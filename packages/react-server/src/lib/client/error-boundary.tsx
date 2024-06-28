@@ -137,12 +137,14 @@ export class NotFoundBoundary extends React.Component<{
   override state: { error?: Error } = {};
 
   static getDerivedStateFromError(error: Error) {
-    return { error };
+    if (getErrorContext(error)?.status === 404) {
+      return { error };
+    }
+    throw error;
   }
 
   override render() {
-    const error = this.state.error;
-    if (error && getErrorContext(error)?.status === 404) {
+    if (this.state.error) {
       return (
         <>
           {this.props.fallback}
