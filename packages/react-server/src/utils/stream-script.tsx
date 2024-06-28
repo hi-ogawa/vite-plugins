@@ -9,7 +9,6 @@ export function injectStreamScript(stream: ReadableStream<string>) {
   let i = 0;
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
-      console.log("[injectStreamScript]", { i: i++, chunk });
       if (!chunk.includes(search)) {
         controller.enqueue(chunk);
         return;
