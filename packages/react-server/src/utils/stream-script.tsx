@@ -6,7 +6,6 @@
 
 export function injectStreamScript(stream: ReadableStream<string>) {
   const search = "</body>";
-  let i = 0;
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
       if (!chunk.includes(search)) {
