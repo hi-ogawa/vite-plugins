@@ -4,66 +4,54 @@
 // https://github.com/vercel/next.js/blob/1c5aa7fa09cc5503c621c534fc40065cbd2aefcb/packages/next/src/client/app-index.tsx#L110-L113
 // https://github.com/devongovett/rsc-html-stream/
 
-export function injectStreamScript(stream: ReadableStream<string>) {
-  const search = "</body>";
+const INIT_SCRIPT = `
+self.__flightStream = new ReadableStream({
+	start(controller) {
+		self.__f_push = (c) => controller.enqueue(c);
+		self.__f_close = () => controller.close();
+	}
+}).pipeThrough(new TextEncoderStream());
+`;
+
+export function injectFlightStream(stream: ReadableStream<Uint8Array>) {
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
-      if (!chunk.includes(search)) {
+      if (chunk.includes("</head>")) {
+        controller.enqueue(
+          chunk.replace(
+            "</head>",
+            () => `<script>${INIT_SCRIPT}</script></head>`,
+          ),
+        );
+      } else if (chunk.includes("</body>")) {
+        const i = chunk.indexOf("</body>");
+        controller.enqueue(chunk.slice(0, i));
+        await stream.pipeThrough(new TextDecoderStream()).pipeTo(
+          new WritableStream({
+            write(chunk) {
+              controller.enqueue(
+                `<script>__f_push(${JSON.stringify(chunk)})</script>`,
+              );
+            },
+            close() {
+              controller.enqueue(`<script>__f_close()</script>`);
+            },
+          }),
+        );
+        controller.enqueue(chunk.slice(i));
+      } else {
         controller.enqueue(chunk);
-        return;
       }
-
-      const [pre, post] = chunk.split(search);
-      controller.enqueue(pre);
-
-      // TODO: handle cancel?
-      await stream.pipeTo(
-        new WritableStream({
-          start() {
-            controller.enqueue(`<script>self.__stream_chunks||=[]</script>`);
-          },
-          write(chunk) {
-            // assume chunk is already encoded as javascript code e.g. by
-            //   stream.pipeThrough(jsonStringifyTransform())
-            controller.enqueue(
-              `<script>__stream_chunks.push(${chunk})</script>`,
-            );
-          },
-        }),
-      );
-
-      controller.enqueue(search + post);
     },
   });
 }
 
-export function readStreamScript<T>() {
-  return new ReadableStream<T>({
-    start(controller) {
-      const chunks: T[] = ((globalThis as any).__stream_chunks ||= []);
-
-      for (const chunk of chunks) {
-        controller.enqueue(chunk);
-      }
-
-      chunks.push = function (chunk) {
-        controller.enqueue(chunk);
-        return 0;
-      };
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => {
-          controller.close();
-        });
-      } else {
-        controller.close();
-      }
-    },
-  });
+export function getFlightStreamBrowser(): ReadableStream<Uint8Array> {
+  return (self as any).__flightStream;
 }
 
 // it seems buffering is necessary to ensure tag marker (e.g. `</body>`) is not split into multiple chunks.
-// Without this, above `injectStreamScript` breaks when receiving two chunks for "...<" and "/body>...".
+// Without this, above `injectFlightStream` breaks when receiving two chunks separately for "...<" and "/body>...".
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
 export function createBufferedTransformStream() {
   let timeout: ReturnType<typeof setTimeout> | undefined;

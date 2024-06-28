@@ -27,10 +27,9 @@ import {
 import { $__global } from "../lib/global";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 import { escpaeScriptString } from "../utils/escape";
-import { jsonStringifyTransform } from "../utils/stream";
 import {
   createBufferedTransformStream,
-  injectStreamScript,
+  injectFlightStream,
 } from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./react-server";
 
@@ -204,13 +203,7 @@ export async function renderHtml(
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(createBufferedTransformStream())
     .pipeThrough(injectToHead(head))
-    .pipeThrough(
-      injectStreamScript(
-        stream2
-          .pipeThrough(new TextDecoderStream())
-          .pipeThrough(jsonStringifyTransform()),
-      ),
-    )
+    .pipeThrough(injectFlightStream(stream2))
     .pipeThrough(new TextEncoderStream());
 
   return new Response(htmlStream, {
