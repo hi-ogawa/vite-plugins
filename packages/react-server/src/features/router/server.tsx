@@ -60,7 +60,7 @@ async function renderLayout(
     ErrorBoundary,
     RedirectBoundary,
     NotFoundBoundary,
-    RemountByUrl,
+    RemountRoute,
     LayoutContent,
     LayoutMatchProvider,
   } = await importRuntimeClient();
@@ -83,18 +83,18 @@ async function renderLayout(
   const LoadingPage = node.value?.loading?.default;
   if (LoadingPage) {
     acc = (
-      <RemountByUrl>
+      <RemountRoute>
         <React.Suspense fallback={<LoadingPage />}>{acc}</React.Suspense>
-      </RemountByUrl>
+      </RemountRoute>
     );
   }
 
   const TemplatePage = node.value?.template?.default;
   if (TemplatePage) {
     acc = (
-      <RemountByUrl>
+      <RemountRoute>
         <TemplatePage>{acc}</TemplatePage>
-      </RemountByUrl>
+      </RemountRoute>
     );
   }
 
