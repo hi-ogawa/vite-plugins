@@ -180,8 +180,6 @@ export async function renderHtml(
     // render empty as error fallback and
     // let browser render full CSR instead of hydration
     // which will replay client error boudnary from RSC error
-    // TODO: proper two-pass SSR with error route tracking?
-    // TODO: meta tag system
     const errorRoot = (
       <html data-no-hydrate>
         <head>
