@@ -25,7 +25,7 @@ export function routeManifestPluginServer({
           const routeFiles = await FastGlob(
             path.posix.join(
               routeDir,
-              "**/(page|layout|error|not-found).(js|jsx|ts|tsx)",
+              "**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)",
             ),
           );
           for (const routeFile of routeFiles) {

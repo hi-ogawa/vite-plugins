@@ -27,6 +27,12 @@ interface RouteEntry {
   "not-found"?: {
     default: React.FC;
   };
+  loading?: {
+    default: React.FC;
+  };
+  template?: {
+    default: React.FC;
+  };
 }
 
 type RouteModuleNode = TreeNode<RouteEntry>;

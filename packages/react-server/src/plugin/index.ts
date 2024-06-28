@@ -162,7 +162,7 @@ export function vitePluginReactServer(options?: {
       createVirtualPlugin("server-routes", () => {
         return `
           const glob = import.meta.glob(
-            "/${routeDir}/**/(page|layout|error|not-found).(js|jsx|ts|tsx)",
+            "/${routeDir}/**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)",
             { eager: true },
           );
           export default Object.fromEntries(
@@ -238,7 +238,7 @@ export function vitePluginReactServer(options?: {
           entries: [
             path.posix.join(
               routeDir,
-              `**/(page|layout|error|not-found).(js|jsx|ts|tsx)`,
+              `**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)`,
             ),
           ],
           exclude: ["@hiogawa/react-server"],
