@@ -124,9 +124,9 @@ export async function renderRouteMap(
   };
 }
 
-// TODO: for now, we can forget about ssr?
-// TODO: need to pass status (for ssr) without actually throwing
-// TODO: default not found page
+// TODO
+// support SSR-ing not-found
+// requires passing status without throwing
 const ThrowNotFound: React.FC = () => {
   throw createError({ status: 404 });
 };
