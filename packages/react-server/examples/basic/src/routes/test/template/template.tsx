@@ -4,7 +4,7 @@ export default function Template(props: React.PropsWithChildren) {
   return (
     <div className="border p-2">
       <div>
-        /template.tsx <ClientTime />
+        template.tsx <ClientTime />
       </div>
       {props.children}
     </div>
