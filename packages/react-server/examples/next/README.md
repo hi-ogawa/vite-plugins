@@ -1,2 +1,17 @@
-Based on Next.js template
-- https://github.com/vercel/next.js/tree/6604c187ece3021e9b429ecf1207f34d41efbe0a/packages/create-next-app/templates/app/ts
+# next test
+
+- https://test-next-vite.pages.dev
+
+```sh
+# deploy cloudflare
+wrangler pages project create test-next-vite --production-branch main --compatibility-date=2024-01-01
+pnpm cf-build
+pnpm cf-preview
+pnpm cf-deploy
+
+# deploy vercel
+vercel projects add test-next-vite
+vercel link -p test-next-vite
+pnpm vc-build
+pnpm vc-deploy
+```
