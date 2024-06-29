@@ -10,7 +10,7 @@ export async function build() {
   await mkdir(outDir, { recursive: true });
 
   // assets
-  await cp(join(buildDir, "browser"), outDir, {
+  await cp(join(buildDir, "client"), outDir, {
     recursive: true,
   });
 

@@ -1,6 +1,6 @@
 import type { Plugin } from "vite";
 
-export type AdapterType = "node" | "vercel" | "cloudlare";
+export type AdapterType = "node" | "vercel" | "cloudflare";
 
 export function adapterPlugin(options: {
   adapter?: AdapterType;
@@ -27,7 +27,7 @@ export function adapterPlugin(options: {
     },
     async writeBundle() {
       console.log(`▶▶▶ Using adapter: ${adapter}`);
-      if (adapter === "cloudlare") {
+      if (adapter === "cloudflare") {
         const { build } = await import("./cloudflare/build");
         await build();
       }
@@ -47,7 +47,7 @@ function autoSelectAdapter(): AdapterType {
     return "vercel";
   }
   if (process.env["CF_PAGES"]) {
-    return "cloudlare";
+    return "cloudflare";
   }
   return "node";
 }
