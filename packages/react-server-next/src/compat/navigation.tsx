@@ -5,7 +5,6 @@ import {
   useParams as useParams_,
   useRouter as useRouter_,
   useSelectedParamEntries,
-  useSelectedParams,
 } from "@hiogawa/react-server/client";
 import React from "react";
 
@@ -28,8 +27,8 @@ export function useParams<T extends Params = Params>(): T {
 }
 
 export function useSelectedLayoutSegments(_todo?: string): string[] {
-  const selected = useSelectedParams();
-  return Object.values(selected);
+  const entries = useSelectedParamEntries();
+  return React.useMemo(() => entries.map(([_k, v]) => v), [entries]);
 }
 
 export function useSelectedLayoutSegment(_todo?: string): string | null {
