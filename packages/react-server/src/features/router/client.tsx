@@ -42,6 +42,13 @@ function MetadataRenderer() {
   return data.metadata;
 }
 
+// TODO: should we remove confusing `useRouter(s => s.location)`?
+export function useLocation() {
+  const ctx = React.useContext(LayoutStateContext);
+  const data = React.use(ctx.data);
+  return React.useMemo(() => new URL(data.url), [data.url]);
+}
+
 function useParamEntries() {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);

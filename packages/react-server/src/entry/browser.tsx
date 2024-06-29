@@ -94,6 +94,7 @@ export async function start() {
             action: next.action,
             metadata: next.metadata,
             params: next.params,
+            url: next.url,
             layout: {
               ...current.layout,
               ...next.layout,

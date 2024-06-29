@@ -16,6 +16,7 @@ export type ServerRouterData = {
   metadata?: React.ReactNode;
   layout: Record<string, React.ReactNode>;
   params: MatchParamEntry[];
+  url: string;
 };
 
 export const LAYOUT_ROOT_NAME = "__root";
