@@ -13,12 +13,13 @@ import {
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 interface RouteEntry {
   page?: {
-    metadata?: Metadata;
     default: React.FC<PageProps>;
+    metadata?: Metadata;
+    generateStaticParams?: () => Promise<object[]>;
   };
   layout?: {
-    metadata?: Metadata;
     default: React.FC<LayoutProps>;
+    metadata?: Metadata;
   };
   error?: {
     // TODO: warn if no "use client"
