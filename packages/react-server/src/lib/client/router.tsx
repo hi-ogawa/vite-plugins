@@ -37,7 +37,6 @@ export class Router {
 
 export const RouterContext = React.createContext<Router>(undefined!);
 
-// TODO: rename it to useClientRouter and provide a separate useRouteState for server state?
 export function useRouter<U = RouterState>(select?: (v: RouterState) => U) {
   const router = React.useContext(RouterContext);
   return useStore(router.store, select);

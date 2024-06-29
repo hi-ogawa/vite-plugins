@@ -2,6 +2,7 @@
 
 import {
   routerRevalidate,
+  useLocation,
   useParams as useParams_,
   useRouter as useRouter_,
   useSelectedLayoutSegments,
@@ -9,12 +10,11 @@ import {
 import React from "react";
 
 export function useSearchParams() {
-  const search = useRouter_((s) => s.location.search);
-  return React.useMemo(() => new URLSearchParams(search), [search]);
+  return useLocation().searchParams;
 }
 
 export function usePathname() {
-  return useRouter_((s) => s.location.pathname);
+  return useLocation().pathname;
 }
 
 interface Params {
