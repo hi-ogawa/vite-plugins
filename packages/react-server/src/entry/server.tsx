@@ -10,7 +10,10 @@ import {
   RouteAssetLinks,
   RouteManifestContext,
 } from "../features/router/client";
-import type { RouteManifest } from "../features/router/manifest";
+import {
+  type RouteManifest,
+  emptyRouteManifest,
+} from "../features/router/manifest";
 import type { ServerRouterData } from "../features/router/utils";
 import {
   createModuleMap,
@@ -118,7 +121,7 @@ export async function renderHtml(
   });
   const router = new Router(history);
 
-  const routeManifest = await importRouteManifest();
+  const { routeManifestUrl, routeManifest } = await importRouteManifest();
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
@@ -149,9 +152,9 @@ export async function renderHtml(
     head += `<script>self.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
 
-  if (routeManifest.url) {
-    head += `<script>self.__routeManifestUrl = "${routeManifest.url}"</script>\n`;
-    head += `<link rel="modulepreload" href="${routeManifest.url}" />\n`;
+  if (routeManifestUrl) {
+    head += `<script>self.__routeManifestUrl = "${routeManifestUrl}"</script>\n`;
+    head += `<link rel="modulepreload" href="${routeManifestUrl}" />\n`;
   }
 
   // two pass SSR to re-render on error
@@ -228,9 +231,12 @@ function injectToHead(data: string) {
   });
 }
 
-async function importRouteManifest(): Promise<RouteManifest> {
+async function importRouteManifest(): Promise<{
+  routeManifestUrl?: string;
+  routeManifest: RouteManifest;
+}> {
   if (import.meta.env.DEV) {
-    return { routeTree: {} };
+    return { routeManifest: emptyRouteManifest() };
   } else {
     const mod = await import("virtual:route-manifest" as string);
     return mod.default;

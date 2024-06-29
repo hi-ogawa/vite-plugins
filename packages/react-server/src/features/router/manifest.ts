@@ -2,7 +2,6 @@ import { objectMapValues, typedBoolean, uniq } from "@hiogawa/utils";
 import { type BaseRouteEntry, type TreeNode, matchRouteTree } from "./tree";
 
 export type RouteManifest = {
-  url?: string;
   routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
 };
 

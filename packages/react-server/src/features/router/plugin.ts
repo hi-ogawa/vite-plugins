@@ -1,3 +1,4 @@
+import { writeFileSync } from "node:fs";
 import path from "node:path";
 import {
   objectMapValues,
@@ -79,27 +80,26 @@ export function routeManifestPluginClient({
           manager.routeManifest = {
             routeTree: createFsRouteTree(routeToAssetDeps),
           };
-
-          const source = `export default ${JSON.stringify(
-            manager.routeManifest,
-            null,
-            2,
-          )}`;
-          const sourceHash = hashString(source).slice(0, 8);
-          const fileName = `assets/route-manifest-${sourceHash}.js`;
-          this.emitFile({
-            type: "asset",
-            fileName,
-            source,
-          });
-          manager.routeManifest.url = `/${fileName}`;
         }
       },
     },
     createVirtualPlugin("route-manifest", async () => {
       tinyassert(manager.buildType === "ssr");
       tinyassert(manager.routeManifest);
-      return `export default ${JSON.stringify(manager.routeManifest, null, 2)}`;
+
+      // create asset for browser
+      const data = manager.routeManifest;
+      const source = `${JSON.stringify(data, null, 2)}`;
+      const sourceHash = hashString(source).slice(0, 8);
+      const url = `/assets/route-manifest-${sourceHash}.js`;
+      writeFileSync(`dist/client${url}`, `export default ${source}`);
+
+      // give asset url and manifest to ssr
+      return `export default ${JSON.stringify(
+        { routeManifestUrl: url, routeManifest: data },
+        null,
+        2,
+      )}`;
     }),
   ];
 }
