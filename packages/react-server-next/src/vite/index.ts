@@ -14,7 +14,6 @@ export default function vitePluginReactServerNext(options?: {
   plugins?: PluginOption[];
   adapter?: AdapterType;
 }): PluginOption {
-  options?.adapter;
   return [
     react(),
     tsconfigPaths(),
