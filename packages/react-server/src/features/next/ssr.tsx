@@ -14,7 +14,10 @@ export function injectDefaultMetaViewport() {
       if (chunk.includes(META_VIEWPORT_PATTERN)) {
         done = true;
       } else if (chunk.includes(HEAD_END)) {
-        chunk.replace(HEAD_END, () => `${META_VIEWPORT_DEFAULT}${HEAD_END}`);
+        chunk = chunk.replace(
+          HEAD_END,
+          () => `${META_VIEWPORT_DEFAULT}${HEAD_END}`,
+        );
         done = true;
       }
       controller.enqueue(chunk);
