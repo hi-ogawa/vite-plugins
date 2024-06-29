@@ -13,8 +13,8 @@ export function adapterPlugin(options: {
   const buildPlugin: Plugin = {
     name: adapterPlugin.name + ":build",
     enforce: "post",
-    apply: (_config, env) => env.command === "build" && !env.isSsrBuild,
-    config(_config, _env) {
+    apply: (_config, env) => !!env.isSsrBuild,
+    config() {
       return {
         build: {
           rollupOptions: {
@@ -26,6 +26,7 @@ export function adapterPlugin(options: {
       };
     },
     async writeBundle() {
+      console.log(`▶▶▶ Using adapter: ${adapter}`);
       if (adapter === "cloudlare") {
         const { build } = await import("./cloudflare/build");
         await build();
