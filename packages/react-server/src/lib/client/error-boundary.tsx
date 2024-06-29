@@ -66,18 +66,20 @@ export function RootErrorBoundary(props: React.PropsWithChildren) {
   return <ErrorBoundary errorComponent={DefaultRootErrorPage} {...props} />;
 }
 
+// TODO: customizable
 function DefaultRootErrorPage(props: ErrorPageProps) {
   const status = props.serverError?.status;
+  const message = status
+    ? `${status} ${getStatusText(status)}`
+    : "Unknown Error";
   return (
     <html>
+      <title>{message}</title>
       <body>
-        {status ? (
-          <div>
-            {status} {getStatusText(status)}
-          </div>
-        ) : (
-          <div>Unexpected Error</div>
-        )}
+        <h1>{message}</h1>
+        <div>
+          Back to <a href="/">Home</a>
+        </div>
       </body>
     </html>
   );
