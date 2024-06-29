@@ -12,6 +12,7 @@ export default function Layout(props: LayoutProps) {
       <head>
         <meta charSet="UTF-8" />
         <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
         <div className="p-4 flex flex-col gap-2">
