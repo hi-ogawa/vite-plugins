@@ -19,15 +19,21 @@ export function adapterPlugin(options: {
         build: {
           rollupOptions: {
             input: {
-              // overwrite vitePluginSsrMiddleware's entry
-              index: "@hiogawa/react-server/entry-server",
+              index: `next/vite/adapters/${adapter}/entry`,
             },
           },
         },
       };
     },
     async writeBundle() {
-      adapter;
+      if (adapter === "cloudlare") {
+        const { build } = await import("./cloudflare/build");
+        await build();
+      }
+      if (adapter === "vercel") {
+        const { build } = await import("./vercel/build");
+        await build();
+      }
     },
   };
 

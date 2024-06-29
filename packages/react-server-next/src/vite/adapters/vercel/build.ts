@@ -21,10 +21,10 @@ const configJson = {
   ],
 };
 
-// TODO: vercel edge
+// edge only for now
 const vcConfigJson = {
-  runtime: "nodejs20.x",
-  handler: "index.mjs",
+  runtime: "edge",
+  entrypoint: "index.js",
 };
 
 export async function build() {
@@ -58,7 +58,7 @@ export async function build() {
   const esbuild = await import("esbuild");
   const result = await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "functions/index.func/index.mjs"),
+    outfile: join(outDir, "functions/index.func/index.js"),
     metafile: true,
     bundle: true,
     minify: true,
@@ -72,7 +72,7 @@ export async function build() {
     },
   });
   await writeFile(
-    join(outDir, "esbuild-metafile.json"),
+    join(buildDir, "esbuild-metafile.json"),
     JSON.stringify(result.metafile),
   );
 }
