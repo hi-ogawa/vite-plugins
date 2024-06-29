@@ -2,17 +2,34 @@ import type { Plugin } from "vite";
 
 export type AdapterType = "node" | "vercel" | "cloudlare";
 
-export function buildAdapterPlugin(options: {
+export function adapterPlugin(options: {
   adapter?: AdapterType;
-}): Plugin {
+}): Plugin[] {
   const adapter = options.adapter ?? autoSelectAdapter();
-  adapter;
-  return {
-    name: buildAdapterPlugin.name,
+
+  const buildPlugin: Plugin = {
+    name: adapterPlugin.name + ":build",
     enforce: "post",
-    apply: (_config, env) => env.command === "build" && !env.isSsrBuild,
-    async writeBundle() {},
+    apply: (_config, env) =>
+      env.command === "build" && !env.isSsrBuild && adapter !== "node",
+    config(_config, _env) {
+      return {
+        build: {
+          rollupOptions: {
+            input: {
+              // overwrite vitePluginSsrMiddleware's entry
+              index: "@hiogawa/react-server/entry-server",
+            },
+          },
+        },
+      };
+    },
+    async writeBundle() {
+      adapter;
+    },
   };
+
+  return [buildPlugin];
 }
 
 // cf. https://github.com/sveltejs/kit/blob/52e5461b055a104694f276859a7104f58452fab0/packages/adapter-auto/adapters.js
