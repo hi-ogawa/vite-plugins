@@ -8,10 +8,13 @@ import {
 import react from "@vitejs/plugin-react";
 import type { Plugin, PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { type AdapterType, buildAdapterPlugin } from "./adapters";
 
 export default function vitePluginReactServerNext(options?: {
   plugins?: PluginOption[];
+  adapter?: AdapterType;
 }): PluginOption {
+  options?.adapter;
   return [
     react(),
     tsconfigPaths(),
@@ -32,6 +35,7 @@ export default function vitePluginReactServerNext(options?: {
         ...(options?.plugins ?? []),
       ],
     }),
+    buildAdapterPlugin({ adapter: options?.adapter }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
