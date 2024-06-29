@@ -6,12 +6,14 @@ export function adapterPlugin(options: {
   adapter?: AdapterType;
 }): Plugin[] {
   const adapter = options.adapter ?? autoSelectAdapter();
+  if (adapter === "node") {
+    return [];
+  }
 
   const buildPlugin: Plugin = {
     name: adapterPlugin.name + ":build",
     enforce: "post",
-    apply: (_config, env) =>
-      env.command === "build" && !env.isSsrBuild && adapter !== "node",
+    apply: (_config, env) => env.command === "build" && !env.isSsrBuild,
     config(_config, _env) {
       return {
         build: {
