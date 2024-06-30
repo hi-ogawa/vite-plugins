@@ -7,9 +7,9 @@ export default function Page() {
       <div className="flex items-center gap-2">
         <img src={viteLogo} /> js import
       </div>
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         <img src={viteLogo} /> css url()
-      </div>
+      </div> */}
     </div>
   );
 }

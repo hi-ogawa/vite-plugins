@@ -30,6 +30,13 @@ export default defineConfig({
                   include: ["cookie"],
                 },
               },
+              build: {
+                assetsInlineLimit(filePath) {
+                  // test non-inlined server asset
+                  // - src/routes/test/assets/vite.svg
+                  return !filePath.includes("vite.svg");
+                },
+              },
             };
           },
         },

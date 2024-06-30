@@ -14,7 +14,10 @@ import {
   mergeConfig,
 } from "vite";
 import { CSS_LANGS_RE } from "../features/assets/css";
-import { vitePluginServerAssets } from "../features/assets/plugin";
+import {
+  serverAssertsPluginServer,
+  vitePluginServerAssets,
+} from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
 import {
   OUTPUT_SERVER_JS_EXT,
@@ -68,6 +71,7 @@ class PluginStateManager {
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
+  serverAssets: string[] = [];
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -184,6 +188,8 @@ export function vitePluginReactServer(options?: {
         "client-only": `'client-only' is included in client build`,
         "server-only": true,
       }),
+
+      serverAssertsPluginServer({ manager }),
 
       {
         name: "patch-react-server-dom-webpack",
