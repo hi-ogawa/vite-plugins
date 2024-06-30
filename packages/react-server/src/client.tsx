@@ -5,6 +5,5 @@ export { useRouter } from "./lib/client/router";
 export {
   routerRevalidate,
   useParams,
-  useSelectedParams,
-  useSelectedParamEntries,
+  useSelectedLayoutSegments,
 } from "./features/router/client";

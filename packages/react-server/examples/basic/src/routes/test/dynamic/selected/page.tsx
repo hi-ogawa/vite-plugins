@@ -1,9 +1,9 @@
-import { SelectedParams } from "./_client";
+import { Selected } from "./_client";
 
 export default function Page() {
   return (
     <pre>
-      /page.tsx: <SelectedParams />
+      /page.tsx: <Selected />
     </pre>
   );
 }

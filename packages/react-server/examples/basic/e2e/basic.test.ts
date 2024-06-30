@@ -1087,23 +1087,23 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
   await expect(page.getByLabel("test state")).not.toBeChecked();
 }
 
-test("useSelectedParams", async ({ page }) => {
+test("useSelectedLayoutSegments", async ({ page }) => {
   await page.goto("/test/dynamic/selected");
-  await page.getByText("/layout.tsx: {}").click();
-  await page.getByText("/page.tsx: {}").click();
+  await page.getByText("/layout.tsx: []").click();
+  await page.getByText("/page.tsx: []").click();
 
   await page
     .getByRole("link", { name: "• /test/dynamic/selected/x", exact: true })
     .click();
-  await page.getByText('/layout.tsx: {"p1":"x"}').click();
-  await page.getByText("/[p1]/layout.tsx: {}").click();
+  await page.getByText('/layout.tsx: ["x"]').click();
+  await page.getByText("/[p1]/layout.tsx: []").click();
 
   await page
     .getByRole("link", { name: "• /test/dynamic/selected/x/y" })
     .click();
-  await page.getByText('/layout.tsx: {"p1":"x","p2":"y"}').click();
-  await page.getByText('/[p1]/layout.tsx: {"p2":"y"}').click();
-  await page.getByText("/[p1]/[p2]/layout.tsx: {}").click();
+  await page.getByText('/layout.tsx: ["x","y"]').click();
+  await page.getByText('/[p1]/layout.tsx: ["y"]').click();
+  await page.getByText("/[p1]/[p2]/layout.tsx: []").click();
 
   await page
     .getByRole("link", {
@@ -1111,15 +1111,15 @@ test("useSelectedParams", async ({ page }) => {
       exact: true,
     })
     .click();
-  await page.getByText('/layout.tsx: {"p1":"x"}').click();
-  await page.getByText("/[p1]/layout.tsx: {}").click();
+  await page.getByText('/layout.tsx: ["x","static"]').click();
+  await page.getByText('/[p1]/layout.tsx: ["static"]').click();
 
   await page
     .getByRole("link", { name: "• /test/dynamic/selected/x/static/y" })
     .click();
-  await page.getByText('/layout.tsx: {"p1":"x","q1":"y"}').click();
-  await page.getByText('/[p1]/layout.tsx: {"q1":"y"}').click();
-  await page.getByText('/[p1]/static/layout.tsx: {"q1":"y"}').click();
+  await page.getByText('/layout.tsx: ["x","static","y"]').click();
+  await page.getByText('/[p1]/layout.tsx: ["static","y"]').click();
+  await page.getByText('/[p1]/static/layout.tsx: ["y"]').click();
 });
 
 test("full client route", async ({ page }) => {

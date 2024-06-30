@@ -1,6 +1,6 @@
 import type { LayoutProps } from "@hiogawa/react-server/server";
 import { NavMenu } from "../../../../components/nav-menu";
-import { SelectedParams } from "./_client";
+import { Selected } from "./_client";
 
 export default function Page(props: LayoutProps) {
   return (
@@ -17,7 +17,7 @@ export default function Page(props: LayoutProps) {
         ]}
       />
       <pre>
-        /layout.tsx: <SelectedParams />
+        /layout.tsx: <Selected />
       </pre>
       {props.children}
     </div>
