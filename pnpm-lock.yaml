@@ -297,6 +297,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
+      magic-string:
+        specifier: ^0.30.8
+        version: 0.30.8
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)

@@ -26,6 +26,7 @@
     "@playwright/test": "^1.42.1",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
+    "magic-string": "^0.30.8",
     "vite": "latest"
   }
 }
