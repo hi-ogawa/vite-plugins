@@ -24,6 +24,9 @@ interface RouteEntry {
     // TODO: warn if no "use client"
     default: React.FC<ErrorPageProps>;
   };
+  "not-found"?: {
+    default: React.FC;
+  };
 }
 
 type RouteModuleNode = TreeNode<RouteEntry>;
@@ -50,6 +53,7 @@ async function renderLayout(
   const {
     ErrorBoundary,
     RedirectBoundary,
+    NotFoundBoundary,
     LayoutContent,
     LayoutMatchProvider,
   } = await importRuntimeClient();
@@ -57,6 +61,12 @@ async function renderLayout(
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
+  const NotFoundPage = node.value?.["not-found"]?.default;
+  if (NotFoundPage) {
+    acc = (
+      <NotFoundBoundary fallback={<NotFoundPage />}>{acc}</NotFoundBoundary>
+    );
+  }
   const ErrorPage = node.value?.error?.default;
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
@@ -114,6 +124,9 @@ export async function renderRouteMap(
   };
 }
 
+// TODO
+// support SSR-ing not-found
+// requires passing status without throwing
 const ThrowNotFound: React.FC = () => {
   throw createError({ status: 404 });
 };

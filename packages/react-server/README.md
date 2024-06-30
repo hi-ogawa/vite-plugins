@@ -36,7 +36,7 @@ pnpm preview
 
 - `src/entry-client.tsx`
 - `src/entry-react-server.tsx`
-- `src/routes/**/(page|layout|error).tsx`
+- `src/routes/**/(page|layout|error|not-found).tsx`
 - `"use client"`
 - `"use server"`
 
