@@ -8,6 +8,8 @@ export default defineConfig([
       "src/vite/entry-browser.tsx",
       "src/vite/entry-ssr.tsx",
       "src/vite/entry-server.tsx",
+      "src/vite/adapters/cloudflare/entry.ts",
+      "src/vite/adapters/vercel/entry.ts",
       "src/compat/index.tsx",
       "src/compat/link.tsx",
       "src/compat/navigation.tsx",
