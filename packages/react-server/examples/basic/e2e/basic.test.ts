@@ -993,6 +993,8 @@ test("dynamic routes", async ({ page }) => {
   await page.getByRole("link", { name: "• /test/dynamic/abc/def" }).click();
   await page.getByText("file: /test/dynamic/[id]/[nested]/page.tsx").click();
   await page.getByText("pathname: /test/dynamic/abc/def").click();
+  await page.getByText("pathname (client): /test/dynamic/abc/def").click();
+  await page.getByText("pathname (server): /test/dynamic/abc/def").click();
   await page.getByText('params: {"id":"abc","nested":"def"}').click();
 
   // regardless of Link.href prop
