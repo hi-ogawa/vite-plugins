@@ -1249,3 +1249,10 @@ test("template @js", async ({ page }) => {
   await page.getByText("template.tsx [mount: 3]").click();
   await page.getByText("[p1]/template.tsx [mount: 4]").click();
 });
+
+test("server assses", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/assets");
+  await expect(page.getByTestId("js-import")).toHaveScreenshot();
+  await expect(page.getByTestId("css-url")).toHaveScreenshot();
+});
