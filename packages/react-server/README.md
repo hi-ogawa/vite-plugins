@@ -2,8 +2,8 @@
 
 ## Examples
 
-- [`rsc-on-vite/vercel-app-playground`](https://github.com/hi-ogawa/rsc-on-vite/tree/main/vercel-app-playground)
-  - https://rsc-on-vite-vercel-app-playground.vercel.app
+- [`next-app-router-playground`](https://github.com/hi-ogawa/next-app-router-playground/pull/1)
+  - https://app-router-vite.vercel.app
 - [`rsc-on-vite/remix-tutorial`](https://github.com/hi-ogawa/rsc-on-vite/tree/main/remix-tutorial)
   - https://react-server-demo-remix-tutorial.hiro18181.workers.dev
 - [`./examples/basic`](./examples/basic)
@@ -45,13 +45,3 @@ pnpm -C packages/react-server/examples/basic dev
 pnpm changelog --dir packages/react-server
 pnpm publish packages/react-server
 ```
-
-## Prior art
-
-- https://github.com/dai-shi/waku
-- https://github.com/lazarv/react-server
-- https://nextjs.org/docs/app
-- https://github.com/nksaraf/vinxi
-- https://github.com/cyco130/vite-rsc
-- https://github.com/facebook/react/pull/26926
-- https://github.com/devongovett/rsc-html-stream
