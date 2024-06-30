@@ -30,6 +30,12 @@ export default defineConfig({
                   include: ["cookie"],
                 },
               },
+              build: {
+                assetsInlineLimit(filePath) {
+                  // test non-inlined server asset
+                  return !filePath.includes("/test/assets/");
+                },
+              },
             };
           },
         },

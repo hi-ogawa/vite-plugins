@@ -71,7 +71,10 @@ export function vitePluginServerAssets({
         );
         const entry = manifest[ENTRY_CLIENT_WRAPPER];
         tinyassert(entry);
-        const css = entry.css ?? [];
+        const css = [
+          ...(entry.css ?? []),
+          ...manager.serverAssets.filter((file) => file.endsWith(".css")),
+        ];
         const js =
           entry.dynamicImports
             ?.map((k) => manifest[k]?.file)
@@ -121,19 +124,55 @@ export function vitePluginServerAssets({
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
       if (manager.buildType === "client") {
-        // TODO: probe manifest to collect css?
-        const files = await fs.promises.readdir("./dist/rsc/assets", {
-          withFileTypes: true,
-        });
-        const code = files
-          .filter((f) => f.isFile() && f.name.endsWith(".css"))
-          .map((f) => path.join(f.path, f.name))
-          .map((f) => `import "/${f}";\n`)
-          .join("");
-        return code;
+        return "export {}";
       }
       tinyassert(false);
     }),
+
+    {
+      name: vitePluginServerAssets.name + ":copy-build",
+      async writeBundle() {
+        if (manager.buildType === "client") {
+          for (const file of manager.serverAssets) {
+            await fs.promises.cp(
+              path.join("dist/rsc", file),
+              path.join("dist/client", file),
+            );
+          }
+        }
+      },
+    },
+  ];
+}
+
+export function serverAssertsPluginServer({
+  manager,
+}: { manager: PluginStateManager }): Plugin[] {
+  // 0. track server assets during server build (this plugin)
+  // 1. copy all server assets to browser build (copy-build plugin)
+  // 2. out of those, inject links automatically (ssr-assets virtual plugin)
+  //    - .css => stylesheet
+  //    - .woff => font preload
+
+  // TODO
+  // - css ordering?
+  // - css code split by route?
+
+  return [
+    {
+      name: serverAssertsPluginServer.name + ":build",
+      apply: "build",
+      generateBundle(_options, bundle) {
+        if (manager.buildType !== "rsc") {
+          return;
+        }
+        for (const [_k, v] of Object.entries(bundle)) {
+          if (v.type === "asset") {
+            manager.serverAssets.push(v.fileName);
+          }
+        }
+      },
+    },
   ];
 }
 
