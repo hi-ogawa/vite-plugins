@@ -65,6 +65,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
             "url": "https://test.local/x",
           }
         }
+        searchParams={{}}
         url={
           {
             "hash": "",
@@ -127,6 +128,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
           "url": "https://test.local/x",
         }
       }
+      searchParams={{}}
       url={
         {
           "hash": "",
@@ -181,6 +183,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
             "url": "https://test.local/x/y",
           }
         }
+        searchParams={{}}
         url={
           {
             "hash": "",
@@ -260,6 +263,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
             "url": "https://test.local/x/y",
           }
         }
+        searchParams={{}}
         url={
           {
             "hash": "",
@@ -294,6 +298,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
           "url": "https://test.local/x/y",
         }
       }
+      searchParams={{}}
       url={
         {
           "hash": "",
@@ -352,6 +357,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
             "url": "https://test.local/z",
           }
         }
+        searchParams={{}}
         url={
           {
             "hash": "",
@@ -406,6 +412,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
           "url": "https://test.local/z",
         }
       }
+      searchParams={{}}
       url={
         {
           "hash": "",

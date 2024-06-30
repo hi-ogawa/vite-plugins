@@ -117,9 +117,9 @@ export async function renderRouteMap(
   tree: RouteModuleNode,
   request: Pick<Request, "url" | "headers">,
 ) {
-  const url = serializeUrl(new URL(request.url));
+  const url = new URL(request.url);
   const baseProps: Omit<BaseProps, "params"> = {
-    url,
+    url: serializeUrl(url),
     request: {
       url: request.url,
       headers: serializeHeaders(request.headers),
