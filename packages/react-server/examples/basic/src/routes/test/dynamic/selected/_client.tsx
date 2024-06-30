@@ -1,8 +1,8 @@
 "use client";
 
-import { useSelectedParams } from "@hiogawa/react-server/client";
+import { useSelectedLayoutSegments } from "@hiogawa/react-server/client";
 
 export function SelectedParams() {
-  const params = useSelectedParams();
+  const params = useSelectedLayoutSegments();
   return <>{JSON.stringify(params)}</>;
 }

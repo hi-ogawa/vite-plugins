@@ -4,7 +4,7 @@ import {
   routerRevalidate,
   useParams as useParams_,
   useRouter as useRouter_,
-  useSelectedParamEntries,
+  useSelectedLayoutSegments,
 } from "@hiogawa/react-server/client";
 import React from "react";
 
@@ -26,14 +26,10 @@ export function useParams<T extends Params = Params>(): T {
   return useParams_() as any;
 }
 
-export function useSelectedLayoutSegments(_todo?: string): string[] {
-  const entries = useSelectedParamEntries();
-  return React.useMemo(() => entries.map(([_k, v]) => v), [entries]);
-}
+export { useSelectedLayoutSegments };
 
-export function useSelectedLayoutSegment(_todo?: string): string | null {
-  const [next] = useSelectedParamEntries();
-  return next?.[1] ?? null;
+export function useSelectedLayoutSegment(): string | null {
+  return useSelectedLayoutSegments()[0] ?? null;
 }
 
 export function useRouter() {
