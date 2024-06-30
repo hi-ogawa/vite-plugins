@@ -134,6 +134,18 @@ export function vitePluginServerAssets({
       }
       tinyassert(false);
     }),
+
+    // 1. copy all server assets to browser build (use vite manifest?)
+    // 2. out of those, inject links automatically e.g.
+    //    - .css => stylesheet
+    //    - .woff => font preload
+    {
+      name: vitePluginServerAssets.name + ":build-copy-server",
+      buildStart() {
+        if (manager.buildType === "client") {
+        }
+      },
+    },
   ];
 }
 
