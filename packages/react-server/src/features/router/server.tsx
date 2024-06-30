@@ -117,13 +117,14 @@ export async function renderRouteMap(
   tree: RouteModuleNode,
   request: Pick<Request, "url" | "headers">,
 ) {
-  const url = serializeUrl(new URL(request.url));
+  const url = new URL(request.url);
   const baseProps: Omit<BaseProps, "params"> = {
-    url,
+    url: serializeUrl(url),
     request: {
       url: request.url,
       headers: serializeHeaders(request.headers),
     },
+    searchParams: Object.fromEntries(url.searchParams),
   };
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
@@ -187,6 +188,7 @@ interface BaseProps {
     headers: Record<string, string>;
   };
   params: Record<string, string>;
+  searchParams: Record<string, string>;
 }
 
 export interface PageProps extends BaseProps {}

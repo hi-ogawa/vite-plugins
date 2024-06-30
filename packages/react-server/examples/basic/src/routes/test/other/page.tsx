@@ -15,12 +15,7 @@ export default function Page(props: PageProps) {
       <h5 className="font-bold">props.request</h5>
       <div className="flex flex-col gap-2">
         <pre className="text-sm">
-          searchParams ={" "}
-          {JSON.stringify(
-            Object.fromEntries(
-              new URL(props.request.url).searchParams.entries(),
-            ),
-          )}
+          searchParams = {JSON.stringify(props.searchParams)}
         </pre>
         <div className="flex gap-2">
           <Link
