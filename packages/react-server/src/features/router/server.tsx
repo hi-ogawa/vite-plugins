@@ -27,6 +27,12 @@ interface RouteEntry {
   "not-found"?: {
     default: React.FC;
   };
+  loading?: {
+    default: React.FC;
+  };
+  template?: {
+    default: React.FC<{ children?: React.ReactNode }>;
+  };
 }
 
 type RouteModuleNode = TreeNode<RouteEntry>;
@@ -54,6 +60,7 @@ async function renderLayout(
     ErrorBoundary,
     RedirectBoundary,
     NotFoundBoundary,
+    RemountRoute,
     LayoutContent,
     LayoutMatchProvider,
   } = await importRuntimeClient();
@@ -67,10 +74,30 @@ async function renderLayout(
       <NotFoundBoundary fallback={<NotFoundPage />}>{acc}</NotFoundBoundary>
     );
   }
+
   const ErrorPage = node.value?.error?.default;
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
+
+  const LoadingPage = node.value?.loading?.default;
+  if (LoadingPage) {
+    acc = (
+      <RemountRoute>
+        <React.Suspense fallback={<LoadingPage />}>{acc}</React.Suspense>
+      </RemountRoute>
+    );
+  }
+
+  const TemplatePage = node.value?.template?.default;
+  if (TemplatePage) {
+    acc = (
+      <RemountRoute>
+        <TemplatePage>{acc}</TemplatePage>
+      </RemountRoute>
+    );
+  }
+
   const Layout = node.value?.layout?.default;
   if (Layout) {
     acc = (
@@ -81,6 +108,7 @@ async function renderLayout(
   } else {
     acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
   }
+
   acc = <LayoutMatchProvider value={{ params }}>{acc}</LayoutMatchProvider>;
   return acc;
 }

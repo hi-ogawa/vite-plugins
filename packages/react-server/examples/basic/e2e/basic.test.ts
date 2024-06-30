@@ -1205,3 +1205,45 @@ async function testMetadata(page: Page) {
   await page.getByRole("link", { name: "/test/metadata" }).click();
   await expect(page).toHaveTitle("test-metadata");
 }
+
+test("loading @js", async ({ page }) => {
+  await page.goto("/test/loading");
+  await waitForHydration(page);
+  await page.getByRole("link", { name: "• /test/loading/1" }).click();
+  await expect(page.getByTestId("/test/loading")).toBeVisible();
+  await page.getByText('params {"id":"1"}').click();
+  await page.getByRole("link", { name: "• /test/loading/2" }).click();
+  await expect(page.getByTestId("/test/loading")).toBeVisible();
+  await page.getByText('params {"id":"2"}').click();
+
+  // ssr
+  await page.goto("/test/loading/1", { waitUntil: "commit" });
+  await expect(page.getByTestId("/test/loading")).toBeVisible();
+  await page.getByText('params {"id":"1"}').click();
+});
+
+test("template @js", async ({ page }) => {
+  await page.goto("/test/template");
+  await page.getByText("template.tsx [mount: 1]").click();
+  await waitForHydration(page);
+
+  await page
+    .getByRole("link", { name: "• /test/template/x", exact: true })
+    .click();
+  await page.getByText("template.tsx [mount: 2]").click();
+  await page.getByText("[p1]/template.tsx [mount: 1]").click();
+
+  await page.getByRole("link", { name: "• /test/template/x/a" }).click();
+  await page.getByText("template.tsx [mount: 2]", { exact: true }).click();
+  await page.getByText("[p1]/template.tsx [mount: 2]").click();
+
+  await page.getByRole("link", { name: "• /test/template/x/b" }).click();
+  await page.getByText("template.tsx [mount: 2]", { exact: true }).click();
+  await page.getByText("[p1]/template.tsx [mount: 3]").click();
+
+  await page
+    .getByRole("link", { name: "• /test/template/y", exact: true })
+    .click();
+  await page.getByText("template.tsx [mount: 3]").click();
+  await page.getByText("[p1]/template.tsx [mount: 4]").click();
+});
