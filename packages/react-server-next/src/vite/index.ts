@@ -8,9 +8,11 @@ import {
 import react from "@vitejs/plugin-react";
 import type { Plugin, PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { type AdapterType, adapterPlugin } from "./adapters";
 
 export default function vitePluginReactServerNext(options?: {
   plugins?: PluginOption[];
+  adapter?: AdapterType;
 }): PluginOption {
   return [
     react(),
@@ -37,6 +39,7 @@ export default function vitePluginReactServerNext(options?: {
       entry: "next/vite/entry-ssr",
       preview: path.resolve("./dist/server/index.js"),
     }),
+    adapterPlugin({ adapter: options?.adapter }),
     appFaviconPlugin(),
     {
       name: "next-exclude-optimize",
