@@ -5,6 +5,10 @@ export type RouteManifest = {
   routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
 };
 
+export function emptyRouteManifest(): RouteManifest {
+  return { routeTree: {} };
+}
+
 export type AssetDeps = {
   js: string[];
   css: string[];

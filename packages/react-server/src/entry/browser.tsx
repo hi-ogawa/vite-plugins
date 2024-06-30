@@ -1,4 +1,4 @@
-import { createDebug, memoize } from "@hiogawa/utils";
+import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import {
@@ -9,6 +9,10 @@ import {
   RouteManifestContext,
   routerRevalidate,
 } from "../features/router/client";
+import {
+  type RouteManifest,
+  emptyRouteManifest,
+} from "../features/router/manifest";
 import type { ServerRouterData } from "../features/router/utils";
 import { createStreamRequest } from "../features/server-component/utils";
 import { initializeReactClientBrowser } from "../features/use-client/browser";
@@ -152,13 +156,12 @@ export async function start() {
     );
   }
 
+  const routeManifest = await importRouteManifest();
   let reactRootEl = (
     <RouterContext.Provider value={router}>
       <RootErrorBoundary>
         <LayoutHandler>
-          <RouteManifestContext.Provider
-            value={(globalThis as any).__routeManifest}
-          >
+          <RouteManifestContext.Provider value={routeManifest}>
             <RouteAssetLinks />
             <LayoutRoot />
           </RouteManifestContext.Provider>
@@ -189,6 +192,18 @@ export async function start() {
       console.log("[react-server] hot update", e.file);
       history.replace(history.location.href, routerRevalidate());
     });
+  }
+}
+
+async function importRouteManifest(): Promise<RouteManifest> {
+  if (import.meta.env.DEV) {
+    return emptyRouteManifest();
+  } else {
+    tinyassert((self as any).__routeManifestUrl);
+    const mod = await import(
+      /* @vite-ignore */ (self as any).__routeManifestUrl
+    );
+    return mod.default;
   }
 }
 
