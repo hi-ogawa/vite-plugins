@@ -124,24 +124,11 @@ export function vitePluginServerAssets({
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
       if (manager.buildType === "client") {
-        // TODO: probe manifest to collect css?
-        // const files = await fs.promises.readdir("./dist/rsc/assets", {
-        //   withFileTypes: true,
-        // });
-        // const code = files
-        //   .filter((f) => f.isFile() && f.name.endsWith(".css"))
-        //   .map((f) => path.join(f.path, f.name))
-        //   .map((f) => `import "/${f}";\n`)
-        //   .join("");
         return "export {}";
       }
       tinyassert(false);
     }),
 
-    // 1. copy all server assets to browser build (use vite manifest?)
-    // 2. out of those, inject links automatically e.g.
-    //    - .css => stylesheet
-    //    - .woff => font preload
     {
       name: vitePluginServerAssets.name + ":copy-build",
       async writeBundle() {
@@ -161,6 +148,12 @@ export function vitePluginServerAssets({
 export function serverAssertsPluginServer({
   manager,
 }: { manager: PluginStateManager }): Plugin[] {
+  // 0. track server assets during server build (this plugin)
+  // 1. copy all server assets to browser build (copy-build plugin)
+  // 2. out of those, inject links automatically (ssr-assets virtual plugin)
+  //    - .css => stylesheet
+  //    - .woff => font preload
+
   // TODO
   // - css ordering?
   // - css code split by route?
