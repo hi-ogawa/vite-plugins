@@ -1,11 +1,11 @@
 import type { LayoutProps } from "@hiogawa/react-server/server";
-import { SelectedParams } from "../_client";
+import { Selected } from "../_client";
 
 export default function Page(props: LayoutProps) {
   return (
     <>
       <pre>
-        /[p1]/layout.tsx: <SelectedParams />
+        /[p1]/layout.tsx: <Selected />
       </pre>
       {props.children}
     </>
