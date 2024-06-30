@@ -8,7 +8,11 @@ import {
 import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
-import { type CustomModuleMeta, createVirtualPlugin } from "../../plugin/utils";
+import {
+  type CustomModuleMeta,
+  createVirtualPlugin,
+  hashString,
+} from "../../plugin/utils";
 import { type AssetDeps, mergeAssetDeps } from "./manifest";
 import { createFsRouteTree } from "./tree";
 
@@ -75,6 +79,20 @@ export function routeManifestPluginClient({
           manager.routeManifest = {
             routeTree: createFsRouteTree(routeToAssetDeps),
           };
+
+          const source = `export default ${JSON.stringify(
+            manager.routeManifest,
+            null,
+            2,
+          )}`;
+          const sourceHash = hashString(source).slice(0, 8);
+          const fileName = `assets/route-manifest-${sourceHash}.js`;
+          this.emitFile({
+            type: "asset",
+            fileName,
+            source,
+          });
+          manager.routeManifest.url = `/${fileName}`;
         }
       },
     },

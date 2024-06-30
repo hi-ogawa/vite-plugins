@@ -26,7 +26,6 @@ import {
 } from "../lib/error";
 import { $__global } from "../lib/global";
 import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
-import { escpaeScriptString } from "../utils/escape";
 import {
   createBufferedTransformStream,
   injectFlightStream,
@@ -147,13 +146,13 @@ export async function renderHtml(
 
   // inject DEBUG variable
   if (globalThis?.process?.env?.["DEBUG"]) {
-    head += `<script>globalThis.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
+    head += `<script>self.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
   }
 
-  // TODO: too huge?
-  head += `<script>globalThis.__routeManifest = ${escpaeScriptString(
-    JSON.stringify(routeManifest),
-  )}</script>\n`;
+  if (routeManifest.url) {
+    head += `<script>self.__routeManifestUrl = "${routeManifest.url}"</script>\n`;
+    head += `<link rel="modulepreload" href="${routeManifest.url}" />\n`;
+  }
 
   // two pass SSR to re-render on error
   let ssrStream: ReadableStream<Uint8Array>;
