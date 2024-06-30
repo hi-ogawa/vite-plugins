@@ -78,3 +78,11 @@ test("favicon.ico", async ({ request }) => {
   expect(res.status()).toBe(200);
   expect(res.headers()["content-type"]).toBe("image/x-icon");
 });
+
+test("viewport", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(`meta[name="viewport"]`)).toHaveAttribute(
+    "content",
+    "width=device-width, initial-scale=1",
+  );
+});

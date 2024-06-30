@@ -4,6 +4,7 @@ import ReactDOMServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
+import { injectDefaultMetaViewport } from "../features/next/ssr";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -203,6 +204,7 @@ export async function renderHtml(
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(createBufferedTransformStream())
     .pipeThrough(injectToHead(head))
+    .pipeThrough(injectDefaultMetaViewport())
     .pipeThrough(injectFlightStream(stream2))
     .pipeThrough(new TextEncoderStream());
 
