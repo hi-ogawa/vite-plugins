@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.0.5
+
+- fix: fix `useSelectedLayoutSegment` ([#464](https://github.com/hi-ogawa/vite-plugins/pull/464))
+- feat: adapters for deployment (vercel edge and cloudflare) ([#459](https://github.com/hi-ogawa/vite-plugins/pull/459))
+- feat: loading and template file convention ([#456](https://github.com/hi-ogawa/vite-plugins/pull/456))
+- feat: add hooks to provide current route params ([#453](https://github.com/hi-ogawa/vite-plugins/pull/453))
+
 ## v0.0.4
 
 - fix: support `app/favicon.ico` ([#448](https://github.com/hi-ogawa/vite-plugins/pull/448))

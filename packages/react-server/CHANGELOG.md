@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.2.9
+
+- feat: add `useLocation` to provide server url ([#463](https://github.com/hi-ogawa/vite-plugins/pull/463))
+- feat: add default meta viewport ([#462](https://github.com/hi-ogawa/vite-plugins/pull/462))
+- feat: loading and template file convention ([#456](https://github.com/hi-ogawa/vite-plugins/pull/456))
+- feat: not-found file convention ([#454](https://github.com/hi-ogawa/vite-plugins/pull/454))
+- feat: add hooks to provide current route params ([#453](https://github.com/hi-ogawa/vite-plugins/pull/453))
+- perf: emit route manifest as a separate asset ([#460](https://github.com/hi-ogawa/vite-plugins/pull/460))
+- refactor: simplify ssr flight stream ([#458](https://github.com/hi-ogawa/vite-plugins/pull/458))
+- chore: tweak default error page ([#461](https://github.com/hi-ogawa/vite-plugins/pull/461))
+
 ## v0.2.8
 
 - feat: support `metadata` export ([#449](https://github.com/hi-ogawa/vite-plugins/pull/449))
