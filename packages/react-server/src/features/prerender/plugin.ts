@@ -24,7 +24,7 @@ export function prerenderPlugin({
         tinyassert(prerender);
         const routes = await prerender();
         const entry: typeof import("../../entry/server") = await import(
-          path.resolve("dist/server/__entry_prerender.js")
+          path.resolve("dist/server/__entry_ssr.js")
         );
         const entries = Array<{
           route: string;
