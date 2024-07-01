@@ -12,6 +12,9 @@ type MaybePromise<T> = Promise<T> | T;
 
 export type PrerenderFn = (
   manifest: RouteModuleManifest,
+  presets: {
+    default: () => Promise<string[]>;
+  },
 ) => MaybePromise<string[]>;
 
 export function prerenderPlugin({
@@ -34,7 +37,9 @@ export function prerenderPlugin({
           path.resolve("dist/server/__entry_ssr.js")
         );
         const { router } = await entry.importReactServer();
-        const routes = await prerender(router.manifest);
+        const routes = await prerender(router.manifest, {
+          default: () => prerenderPresetDefault(router.manifest),
+        });
         const entries = Array<{
           route: string;
           html: string;
@@ -82,4 +87,24 @@ export function prerenderPlugin({
       },
     },
   ];
+}
+
+async function prerenderPresetDefault(manifest: RouteModuleManifest) {
+  const result: string[] = [];
+  for (const entry of manifest.entries) {
+    const page = entry.module?.page;
+    if (page) {
+      if (entry.dynamic) {
+        if (page.generateStaticParams) {
+          const generated = await page.generateStaticParams();
+          for (const params of generated) {
+            result.push(entry.format(params));
+          }
+        }
+      } else {
+        result.push(entry.pathname);
+      }
+    }
+  }
+  return result;
 }
