@@ -1,6 +1,6 @@
 // @ts-check
 
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as esbuild from "esbuild";
 
@@ -25,6 +25,7 @@ const configJson = {
       dest: "/",
     },
   ],
+  overrides: {},
 };
 
 const isNodeRuntime = process.env["VERCE_RUNTIME"];
@@ -45,6 +46,16 @@ async function main() {
   // clean
   await rm(outDir, { recursive: true, force: true });
   await mkdir(outDir, { recursive: true });
+
+  // overrides for ssg html
+  // https://vercel.com/docs/build-output-api/v3/configuration#overrides
+  /** @type {import("@hiogawa/react-server/server").PrerenderEntry[]} */
+  const entries = JSON.parse(
+    await readFile(join(buildDir, "client/__prerender.json"), "utf-8"),
+  );
+  configJson.overrides = Object.fromEntries(
+    entries.map((e) => [e.html.slice(1), { path: e.route }]),
+  );
 
   // config
   await writeFile(
