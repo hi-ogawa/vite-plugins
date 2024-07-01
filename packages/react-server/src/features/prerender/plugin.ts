@@ -48,7 +48,11 @@ export function prerenderPlugin({
         for (const route of routes) {
           console.log(`  • ${route}`);
           const url = new URL(route, "https://prerender.local");
-          const request = new Request(url);
+          const request = new Request(url, {
+            headers: {
+              "x-react-server-render-mode": "prerender",
+            },
+          });
           const { stream, html } = await entry.prerender(request);
           const data = Readable.from(stream as any);
           const htmlFile =

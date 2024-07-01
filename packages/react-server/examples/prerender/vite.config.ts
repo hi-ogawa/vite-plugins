@@ -12,10 +12,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginReactServer({
-      prerender: async (_manifest, presets) => {
-        process.env["REACT_SERVER_PRERENDER"] = "1";
-        return presets.default();
-      },
+      prerender: (_manifest, presets) => presets.default(),
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
