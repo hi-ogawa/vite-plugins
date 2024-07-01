@@ -12,25 +12,11 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginReactServer({
-      prerender: async (manifest) => {
-        process.env["REACT_SERVER_PRERENDER"] = "1";
-        const result: string[] = [];
-        for (const entry of manifest.entries) {
-          const page = entry.module?.page;
-          if (page) {
-            if (entry.dynamic) {
-              if (page.generateStaticParams) {
-                const generated = await page.generateStaticParams();
-                for (const params of generated) {
-                  result.push(entry.format(params));
-                }
-              }
-            } else {
-              result.push(entry.pathname);
-            }
-          }
-        }
-        return result;
+      prerender: async (_manifest, presets) => {
+        return [
+          ...(await presets.static()),
+          ...(await presets.generateStaticParams()),
+        ];
       },
     }),
     vitePluginLogger(),

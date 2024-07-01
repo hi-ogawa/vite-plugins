@@ -12,6 +12,7 @@ type MaybePromise<T> = Promise<T> | T;
 
 export type PrerenderFn = (
   manifest: RouteModuleManifest,
+  presets: ReturnType<typeof createPrerenderPresets>,
 ) => MaybePromise<string[]>;
 
 export function prerenderPlugin({
@@ -34,7 +35,8 @@ export function prerenderPlugin({
           path.resolve("dist/server/__entry_ssr.js")
         );
         const { router } = await entry.importReactServer();
-        const routes = await prerender(router.manifest);
+        const presets = createPrerenderPresets(router.manifest);
+        const routes = await prerender(router.manifest, presets);
         const entries = Array<{
           route: string;
           html: string;
@@ -43,7 +45,11 @@ export function prerenderPlugin({
         for (const route of routes) {
           console.log(`  • ${route}`);
           const url = new URL(route, "https://prerender.local");
-          const request = new Request(url);
+          const request = new Request(url, {
+            headers: {
+              "x-react-server-render-mode": "prerender",
+            },
+          });
           const { stream, html } = await entry.prerender(request);
           const data = Readable.from(stream as any);
           const htmlFile =
@@ -82,4 +88,35 @@ export function prerenderPlugin({
       },
     },
   ];
+}
+
+function createPrerenderPresets(manifest: RouteModuleManifest) {
+  const entries = manifest.entries;
+
+  return {
+    static: async () => {
+      const result: string[] = [];
+      for (const entry of entries) {
+        const page = entry.module?.page;
+        if (page && !entry.dynamic) {
+          result.push(entry.pathname);
+        }
+      }
+      return result;
+    },
+
+    generateStaticParams: async () => {
+      const result: string[] = [];
+      for (const entry of entries) {
+        const page = entry.module?.page;
+        if (page && entry.dynamic && page.generateStaticParams) {
+          const generated = await page.generateStaticParams();
+          for (const params of generated) {
+            result.push(entry.format(params));
+          }
+        }
+      }
+      return result;
+    },
+  };
 }
