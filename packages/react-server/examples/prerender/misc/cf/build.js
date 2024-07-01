@@ -19,8 +19,8 @@ async function main() {
 
   // prerender routes
   // https://developers.cloudflare.com/pages/functions/routing/#create-a-_routesjson-file
-  /** @type {any[]} */
-  const entries = JSON.parse(
+  /** @type {import("@hiogawa/react-server/plugin").PrerenderManifest} */
+  const { entries } = JSON.parse(
     await readFile(join(buildDir, "client/__prerender.json"), "utf-8"),
   );
   const exclude = [

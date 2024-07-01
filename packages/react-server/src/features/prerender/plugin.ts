@@ -95,7 +95,7 @@ async function processPrerender(getPrerenderRoutes: PrerenderFn) {
   }
   await writeFile(
     "dist/client/__prerender.json",
-    JSON.stringify(manifest.entries, null, 2),
+    JSON.stringify(manifest, null, 2),
   );
 }
 
