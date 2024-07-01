@@ -21,7 +21,7 @@ describe(createFsRouteTree, () => {
       "/dynamic/catchall/[...any]/page.tsx",
     ];
     const input = Object.fromEntries(files.map((k) => [k, k]));
-    const tree = createFsRouteTree(input);
+    const { tree } = createFsRouteTree(input);
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {

@@ -150,15 +150,10 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 // glob import routes
 //
 
-const router = createRouter();
-
-// @ts-ignore
+// @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
 
-function createRouter() {
-  const tree = generateRouteModuleTree(serverRoutes);
-  return { tree };
-}
+export const router = generateRouteModuleTree(serverRoutes);
 
 //
 // server action

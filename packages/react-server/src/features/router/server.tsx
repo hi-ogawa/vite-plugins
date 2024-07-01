@@ -1,3 +1,4 @@
+import { sortBy } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { renderMetadata } from "../meta/server";
@@ -7,18 +8,20 @@ import {
   type TreeNode,
   createFsRouteTree,
   matchRouteTree,
+  parseRoutePath,
   toMatchParamsObject,
 } from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
-interface RouteEntry {
+export interface RouteModule {
   page?: {
-    metadata?: Metadata;
     default: React.FC<PageProps>;
+    metadata?: Metadata;
+    generateStaticParams?: () => Promise<Record<string, string>[]>;
   };
   layout?: {
-    metadata?: Metadata;
     default: React.FC<LayoutProps>;
+    metadata?: Metadata;
   };
   error?: {
     // TODO: warn if no "use client"
@@ -35,10 +38,14 @@ interface RouteEntry {
   };
 }
 
-type RouteModuleNode = TreeNode<RouteEntry>;
+export type RouteModuleKey = keyof RouteModule;
 
-export function generateRouteModuleTree(globEntries: Record<string, unknown>) {
-  return createFsRouteTree(globEntries) as RouteModuleNode;
+type RouteModuleTree = TreeNode<RouteModule>;
+
+export function generateRouteModuleTree(globEntries: Record<string, any>) {
+  const { tree, entries } = createFsRouteTree<RouteModule>(globEntries);
+  const manifest = getRouteModuleManifest(entries);
+  return { tree, manifest };
 }
 
 // use own "use client" components as external
@@ -46,15 +53,15 @@ function importRuntimeClient(): Promise<typeof import("../../runtime-client")> {
   return import("@hiogawa/react-server/runtime-client" as string);
 }
 
-function renderPage(node: RouteModuleNode, props: PageProps) {
+function renderPage(node: RouteModuleTree, props: PageProps) {
   const Page = node.value?.page?.default ?? ThrowNotFound;
   return <Page {...props} />;
 }
 
 async function renderLayout(
-  node: RouteModuleNode,
+  node: RouteModuleTree,
   props: PageProps,
-  { prefix, params }: MatchNodeEntry<RouteEntry>,
+  { prefix, params }: MatchNodeEntry<RouteModule>,
 ) {
   const {
     ErrorBoundary,
@@ -114,7 +121,7 @@ async function renderLayout(
 }
 
 export async function renderRouteMap(
-  tree: RouteModuleNode,
+  tree: RouteModuleTree,
   request: Pick<Request, "url" | "headers">,
 ) {
   const url = new URL(request.url);
@@ -199,4 +206,32 @@ export interface ErrorPageProps {
   error: Error;
   serverError?: ReactServerErrorContext;
   reset: () => void;
+}
+
+type RouteModuleEntry = {
+  pathname: string;
+  module?: RouteModule;
+  dynamic: boolean;
+  format: (params: Record<string, string>) => string;
+};
+
+export type RouteModuleManifest = {
+  entries: RouteModuleEntry[];
+};
+
+export function getRouteModuleManifest(
+  entries: Record<string, RouteModule>,
+): RouteModuleManifest {
+  const result: RouteModuleManifest = { entries: [] };
+  for (const [pathname, module] of Object.entries(entries)) {
+    const { dynamic, format } = parseRoutePath(pathname);
+    result.entries.push({
+      pathname,
+      module,
+      dynamic,
+      format,
+    });
+  }
+  result.entries = sortBy(result.entries, (e) => e.pathname);
+  return result;
 }

@@ -5,27 +5,36 @@ import { Readable } from "node:stream";
 import { tinyassert } from "@hiogawa/utils";
 import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
+import type { RouteModuleManifest } from "../router/server";
 import { RSC_PATH } from "../server-component/utils";
+
+type MaybePromise<T> = Promise<T> | T;
+
+export type PrerenderFn = (
+  manifest: RouteModuleManifest,
+) => MaybePromise<string[]>;
 
 export function prerenderPlugin({
   manager,
   prerender,
 }: {
   manager: PluginStateManager;
-  prerender?: () => Promise<string[]> | string[];
+  prerender: PrerenderFn;
 }): Plugin[] {
   return [
     {
       name: prerenderPlugin + ":build",
       enforce: "post",
-      apply: () => !!(prerender && manager.buildType === "ssr"),
+      apply: () => manager.buildType === "ssr",
+      // TODO: use writeBundle sequential
       async closeBundle() {
         console.log("▶▶▶ PRERENDER");
         tinyassert(prerender);
-        const routes = await prerender();
         const entry: typeof import("../../entry/server") = await import(
-          path.resolve("dist/server/__entry_prerender.js")
+          path.resolve("dist/server/__entry_ssr.js")
         );
+        const { router } = await entry.importReactServer();
+        const routes = await prerender(router.manifest);
         const entries = Array<{
           route: string;
           html: string;
@@ -59,7 +68,7 @@ export function prerenderPlugin({
     },
     {
       name: prerenderPlugin + ":preview",
-      apply: (_config, env) => !!(prerender && env.isPreview),
+      apply: (_config, env) => !!env.isPreview,
       configurePreviewServer(server) {
         const outDir = server.config.build.outDir;
         server.middlewares.use((req, _res, next) => {

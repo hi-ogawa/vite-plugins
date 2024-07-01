@@ -23,7 +23,10 @@ import {
   OUTPUT_SERVER_JS_EXT,
   createServerPackageJson,
 } from "../features/next/plugin";
-import { prerenderPlugin } from "../features/prerender/plugin";
+import {
+  type PrerenderFn,
+  prerenderPlugin,
+} from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
 import {
   routeManifestPluginClient,
@@ -105,7 +108,7 @@ const manager: PluginStateManager = ((
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
-  prerender?: () => Promise<string[]> | string[];
+  prerender?: PrerenderFn;
   // allow overrding default entires for next.js compatibility
   entryBrowser?: string;
   entryServer?: string;
@@ -177,11 +180,12 @@ export function vitePluginReactServer(options?: {
         `;
       }),
 
-      // this virtual is not necessary anymore but has been used in the past
-      // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
-        () => `export * from "${entryServer}";\n`,
+        () => `
+          export { handler } from "${entryServer}";
+          export { router } from "@hiogawa/react-server/entry-react-server";
+        `,
       ),
 
       validateImportPlugin({
@@ -272,7 +276,7 @@ export function vitePluginReactServer(options?: {
             ? {
                 input: options?.prerender
                   ? {
-                      __entry_prerender: "@hiogawa/react-server/entry-server",
+                      __entry_ssr: "@hiogawa/react-server/entry-server",
                     }
                   : undefined,
                 output: OUTPUT_SERVER_JS_EXT,
@@ -400,7 +404,9 @@ export function vitePluginReactServer(options?: {
     ...vitePluginClientUseClient({ manager }),
     ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
     ...routeManifestPluginClient({ manager }),
-    ...prerenderPlugin({ manager, prerender: options?.prerender }),
+    ...(options?.prerender
+      ? prerenderPlugin({ manager, prerender: options.prerender })
+      : []),
     validateImportPlugin({
       "client-only": true,
       "server-only": `'server-only' is included in client build`,

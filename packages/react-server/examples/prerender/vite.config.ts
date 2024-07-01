@@ -6,22 +6,31 @@ import {
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { fetchPosts } from "./src/routes/posts/layout";
 
 export default defineConfig({
   clearScreen: false,
   plugins: [
     react(),
     vitePluginReactServer({
-      prerender: async () => {
+      prerender: async (manifest) => {
         process.env["REACT_SERVER_PRERENDER"] = "1";
-        const posts = await fetchPosts();
-        return [
-          "/",
-          "/counter",
-          "/posts",
-          ...posts.slice(0, 3).map((p) => `/posts/${p.id}`),
-        ];
+        const result: string[] = [];
+        for (const entry of manifest.entries) {
+          const page = entry.module?.page;
+          if (page) {
+            if (entry.dynamic) {
+              if (page.generateStaticParams) {
+                const generated = await page.generateStaticParams();
+                for (const params of generated) {
+                  result.push(entry.format(params));
+                }
+              }
+            } else {
+              result.push(entry.pathname);
+            }
+          }
+        }
+        return result;
       },
     }),
     vitePluginLogger(),
