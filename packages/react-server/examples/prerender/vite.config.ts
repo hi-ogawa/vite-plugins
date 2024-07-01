@@ -16,10 +16,11 @@ export default defineConfig({
         process.env["REACT_SERVER_PRERENDER"] = "1";
         const result: string[] = [];
         for (const entry of manifest.entries) {
-          if (entry.value?.page) {
+          const page = entry.module?.page;
+          if (page) {
             if (entry.dynamic) {
-              if (entry.value.page.generateStaticParams) {
-                const generated = await entry.value.page.generateStaticParams();
+              if (page.generateStaticParams) {
+                const generated = await page.generateStaticParams();
                 for (const params of generated) {
                   result.push(entry.format(params));
                 }

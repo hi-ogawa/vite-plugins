@@ -14,7 +14,7 @@ describe(generateRouteModuleTree, () => {
     const input = Object.fromEntries(
       files.map((k) => [k, { default: k.toUpperCase() }]),
     );
-    const tree = generateRouteModuleTree(input);
+    const { tree } = generateRouteModuleTree(input);
     expect(tree).toMatchSnapshot();
 
     async function testMatch(pathname: string) {

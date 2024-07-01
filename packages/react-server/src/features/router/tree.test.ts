@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createFsRouteTree, matchRouteTree, traverseRouteTree } from "./tree";
+import { createFsRouteTree, matchRouteTree } from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
@@ -21,7 +21,7 @@ describe(createFsRouteTree, () => {
       "/dynamic/catchall/[...any]/page.tsx",
     ];
     const input = Object.fromEntries(files.map((k) => [k, k]));
-    const tree = createFsRouteTree(input);
+    const { tree } = createFsRouteTree(input);
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
@@ -56,9 +56,5 @@ describe(createFsRouteTree, () => {
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
     }
-
-    const entries: unknown[] = [];
-    traverseRouteTree(tree, (entry) => entries.push(entry));
-    expect(entries).matchSnapshot();
   });
 });

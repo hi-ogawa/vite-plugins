@@ -11,7 +11,7 @@ import {
 } from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
-export interface RouteEntry {
+export interface RouteModule {
   page?: {
     default: React.FC<PageProps>;
     metadata?: Metadata;
@@ -36,10 +36,10 @@ export interface RouteEntry {
   };
 }
 
-type RouteModuleNode = TreeNode<RouteEntry>;
+type RouteModuleTree = TreeNode<RouteModule>;
 
 export function generateRouteModuleTree(globEntries: Record<string, unknown>) {
-  return createFsRouteTree(globEntries) as RouteModuleNode;
+  return createFsRouteTree(globEntries as Record<string, RouteModule>);
 }
 
 // use own "use client" components as external
@@ -47,15 +47,15 @@ function importRuntimeClient(): Promise<typeof import("../../runtime-client")> {
   return import("@hiogawa/react-server/runtime-client" as string);
 }
 
-function renderPage(node: RouteModuleNode, props: PageProps) {
+function renderPage(node: RouteModuleTree, props: PageProps) {
   const Page = node.value?.page?.default ?? ThrowNotFound;
   return <Page {...props} />;
 }
 
 async function renderLayout(
-  node: RouteModuleNode,
+  node: RouteModuleTree,
   props: PageProps,
-  { prefix, params }: MatchNodeEntry<RouteEntry>,
+  { prefix, params }: MatchNodeEntry<RouteModule>,
 ) {
   const {
     ErrorBoundary,
@@ -115,7 +115,7 @@ async function renderLayout(
 }
 
 export async function renderRouteMap(
-  tree: RouteModuleNode,
+  tree: RouteModuleTree,
   request: Pick<Request, "url" | "headers">,
 ) {
   const url = new URL(request.url);

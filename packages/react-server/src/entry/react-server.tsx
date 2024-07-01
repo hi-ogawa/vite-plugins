@@ -1,8 +1,13 @@
-import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
+import {
+  createDebug,
+  objectMapValues,
+  objectPick,
+  sortBy,
+} from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
-  type RouteEntry,
+  type RouteModule,
   generateRouteModuleTree,
   renderRouteMap,
 } from "../features/router/server";
@@ -106,6 +111,7 @@ async function render({
   layoutRequest: LayoutRequest;
   actionResult?: ActionResult;
 }) {
+  // @ts-expect-error todo
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
     layoutRequest,
@@ -151,21 +157,18 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 // glob import routes
 //
 
-const router = createRouter();
-
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
-import {
-  type TraversedNodeEntry,
-  traverseRouteTree,
-} from "../features/router/tree";
+import { parseRoutePath } from "../features/router/tree";
 
-function createRouter() {
-  const tree = generateRouteModuleTree(serverRoutes);
-  return { tree };
-}
+const router = generateRouteModuleTree(serverRoutes);
 
-type RouteModuleEntry = TraversedNodeEntry<RouteEntry>;
+type RouteModuleEntry = {
+  pathname: string;
+  module?: RouteModule;
+  dynamic: boolean;
+  format: (params: Record<string, string>) => string;
+};
 
 export type RouteModuleManifest = {
   entries: RouteModuleEntry[];
@@ -173,10 +176,18 @@ export type RouteModuleManifest = {
 
 export function getRouteModuleManifest(): RouteModuleManifest {
   const result: RouteModuleManifest = { entries: [] };
-  const tree = generateRouteModuleTree(serverRoutes);
-  traverseRouteTree(tree, (entry) => {
-    result.entries.push(entry);
-  });
+  for (let [pathname, module] of Object.entries(router.entries)) {
+    pathname ||= "/";
+    const { dynamic, format } = parseRoutePath(pathname);
+    result.entries.push({
+      pathname,
+      // @ts-expect-error todo
+      module: module,
+      dynamic,
+      format,
+    });
+  }
+  result.entries = sortBy(result.entries, (e) => e.pathname);
   return result;
 }
 
