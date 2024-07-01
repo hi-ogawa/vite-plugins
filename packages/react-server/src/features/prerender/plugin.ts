@@ -26,6 +26,7 @@ export function prerenderPlugin({
       name: prerenderPlugin + ":build",
       enforce: "post",
       apply: () => manager.buildType === "ssr",
+      // TODO: use writeBundle sequential
       async closeBundle() {
         console.log("▶▶▶ PRERENDER");
         tinyassert(prerender);
