@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.6
+
+- feat: enable prerender for `generateStaticParams` ([#472](https://github.com/hi-ogawa/vite-plugins/pull/472))
+
 ## v0.0.5
 
 - fix: fix `useSelectedLayoutSegment` ([#464](https://github.com/hi-ogawa/vite-plugins/pull/464))

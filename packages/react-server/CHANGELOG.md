@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.10
+
+- feat: add prerender presets ([#471](https://github.com/hi-ogawa/vite-plugins/pull/471))
+- feat: expose route modules for prerender ([#465](https://github.com/hi-ogawa/vite-plugins/pull/465))
+- fix: copy all server assets to browser build ([#469](https://github.com/hi-ogawa/vite-plugins/pull/469))
+- feat: add `PageProps.searchParams` ([#468](https://github.com/hi-ogawa/vite-plugins/pull/468))
+
 ## v0.2.9
 
 - feat: add `useLocation` to provide server url ([#463](https://github.com/hi-ogawa/vite-plugins/pull/463))
