@@ -2,7 +2,6 @@ import fs from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
-import { tinyassert } from "@hiogawa/utils";
 import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import type { RouteModuleManifest } from "../router/server";
@@ -33,45 +32,11 @@ export function prerenderPlugin({
       name: prerenderPlugin + ":build",
       enforce: "post",
       apply: () => manager.buildType === "ssr",
-      // TODO: use writeBundle sequential
-      async closeBundle() {
-        console.log("▶▶▶ PRERENDER");
-        tinyassert(prerender);
-        const entry: typeof import("../../entry/server") = await import(
-          path.resolve("dist/server/__entry_ssr.js")
-        );
-        const { router } = await entry.importReactServer();
-        const presets = createPrerenderPresets(router.manifest);
-        const routes = await prerender(router.manifest, presets);
-        const entries: PrerenderEntry[] = [];
-        for (const route of routes) {
-          console.log(`  • ${route}`);
-          const url = new URL(route, "https://prerender.local");
-          const request = new Request(url, {
-            headers: {
-              "x-react-server-render-mode": "prerender",
-            },
-          });
-          const { stream, html } = await entry.prerender(request);
-          const data = Readable.from(stream as any);
-          const htmlFile =
-            route + (route.endsWith("/") ? "index.html" : ".html");
-          const dataFile = route + RSC_PATH;
-          await mkdir(path.dirname(path.join("dist/client", htmlFile)), {
-            recursive: true,
-          });
-          await writeFile(path.join("dist/client", htmlFile), html);
-          await writeFile(path.join("dist/client", dataFile), data);
-          entries.push({
-            route,
-            html: htmlFile,
-            data: dataFile,
-          });
-        }
-        await writeFile(
-          "dist/client/__prerender.json",
-          JSON.stringify(entries, null, 2),
-        );
+      writeBundle: {
+        sequential: true,
+        handler() {
+          return processPrerender(prerender);
+        },
       },
     },
     {
@@ -90,6 +55,44 @@ export function prerenderPlugin({
       },
     },
   ];
+}
+
+async function processPrerender(getPrerenderRoutes: PrerenderFn) {
+  console.log("▶▶▶ PRERENDER");
+  const entry: typeof import("../../entry/server") = await import(
+    path.resolve("dist/server/__entry_ssr.js")
+  );
+  const { router } = await entry.importReactServer();
+  const presets = createPrerenderPresets(router.manifest);
+  const routes = await getPrerenderRoutes(router.manifest, presets);
+  const entries: PrerenderEntry[] = [];
+  for (const route of routes) {
+    console.log(`  • ${route}`);
+    const url = new URL(route, "https://prerender.local");
+    const request = new Request(url, {
+      headers: {
+        "x-react-server-render-mode": "prerender",
+      },
+    });
+    const { stream, html } = await entry.prerender(request);
+    const data = Readable.from(stream as any);
+    const htmlFile = route + (route.endsWith("/") ? "index.html" : ".html");
+    const dataFile = route + RSC_PATH;
+    await mkdir(path.dirname(path.join("dist/client", htmlFile)), {
+      recursive: true,
+    });
+    await writeFile(path.join("dist/client", htmlFile), html);
+    await writeFile(path.join("dist/client", dataFile), data);
+    entries.push({
+      route,
+      html: htmlFile,
+      data: dataFile,
+    });
+  }
+  await writeFile(
+    "dist/client/__prerender.json",
+    JSON.stringify(entries, null, 2),
+  );
 }
 
 function createPrerenderPresets(manifest: RouteModuleManifest) {
