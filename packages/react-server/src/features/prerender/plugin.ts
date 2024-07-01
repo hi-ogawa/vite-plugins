@@ -25,10 +25,8 @@ export function prerenderPlugin({
     {
       name: prerenderPlugin + ":build",
       enforce: "post",
+      apply: () => manager.buildType === "ssr",
       async closeBundle() {
-        if (manager.buildType !== "ssr") {
-          return;
-        }
         console.log("▶▶▶ PRERENDER");
         tinyassert(prerender);
         const entry: typeof import("../../entry/server") = await import(
