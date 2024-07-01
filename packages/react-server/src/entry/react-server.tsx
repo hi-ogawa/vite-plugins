@@ -2,6 +2,7 @@ import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
+  type RouteEntry,
   generateRouteModuleTree,
   renderRouteMap,
 } from "../features/router/server";
@@ -160,9 +161,22 @@ function createRouter() {
   return { tree };
 }
 
-// TODO: expose server routes to enumerate prerendering paths
-export function getRoutes() {
-  return [];
+// TODO: catchall
+type RouteModuleEntry = {
+  path: string;
+  params: string[];
+  module: RouteEntry;
+};
+
+export type RouteModuleManifest = {
+  entries: RouteModuleEntry[];
+};
+
+export function getRouteModuleManifest(): RouteModuleManifest {
+  // TODO
+  return {
+    entries: [],
+  };
 }
 
 //

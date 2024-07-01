@@ -11,7 +11,7 @@ import {
 } from "./tree";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
-interface RouteEntry {
+export interface RouteEntry {
   page?: {
     default: React.FC<PageProps>;
     metadata?: Metadata;

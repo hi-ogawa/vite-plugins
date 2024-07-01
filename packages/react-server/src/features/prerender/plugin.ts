@@ -4,13 +4,15 @@ import path from "node:path";
 import { Readable } from "node:stream";
 import { tinyassert } from "@hiogawa/utils";
 import type { Plugin } from "vite";
+import type { RouteModuleManifest } from "../../entry/react-server";
 import type { PluginStateManager } from "../../plugin";
 import { RSC_PATH } from "../server-component/utils";
 
 type MaybePromise<T> = Promise<T> | T;
 
-// TODO: expose route tree
-export type PrerenderFn = () => MaybePromise<string[]>;
+export type PrerenderFn = (
+  manifest: RouteModuleManifest,
+) => MaybePromise<string[]>;
 
 export function prerenderPlugin({
   manager,
@@ -29,10 +31,11 @@ export function prerenderPlugin({
         }
         console.log("▶▶▶ PRERENDER");
         tinyassert(prerender);
-        const routes = await prerender();
         const entry: typeof import("../../entry/server") = await import(
           path.resolve("dist/server/__entry_ssr.js")
         );
+        const { getRouteModuleManifest } = await entry.importReactServer();
+        const routes = await prerender(getRouteModuleManifest());
         const entries = Array<{
           route: string;
           html: string;
