@@ -12,7 +12,12 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginReactServer({
-      prerender: (_manifest, presets) => presets.default(),
+      prerender: async (_manifest, presets) => {
+        return [
+          ...(await presets.static()),
+          ...(await presets.generateStaticParams()),
+        ];
+      },
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
