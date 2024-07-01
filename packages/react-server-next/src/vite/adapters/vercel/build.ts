@@ -1,5 +1,7 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import type { PrerenderEntry } from "@hiogawa/react-server/server";
 
 const configJson = {
   version: 3,
@@ -19,6 +21,7 @@ const configJson = {
       dest: "/",
     },
   ],
+  overrides: {},
 };
 
 // edge only for now
@@ -34,6 +37,13 @@ export async function build() {
   // clean
   await rm(outDir, { recursive: true, force: true });
   await mkdir(outDir, { recursive: true });
+
+  // overrides for ssg html
+  // https://vercel.com/docs/build-output-api/v3/configuration#overrides
+  const prerenderManifest = await getPrerenderManifest(buildDir);
+  configJson.overrides = Object.fromEntries(
+    prerenderManifest.map((e) => [e.html.slice(1), { path: e.route }]),
+  );
 
   // config
   await writeFile(
@@ -75,4 +85,13 @@ export async function build() {
     join(buildDir, "esbuild-metafile.json"),
     JSON.stringify(result.metafile),
   );
+}
+
+async function getPrerenderManifest(buildDir: string) {
+  const file = join(buildDir, "client/__prerender.json");
+  if (!existsSync(file)) {
+    return [];
+  }
+  const data = JSON.parse(await readFile(file, "utf-8"));
+  return data as PrerenderEntry[];
 }
