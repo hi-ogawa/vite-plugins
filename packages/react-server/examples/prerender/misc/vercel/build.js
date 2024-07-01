@@ -27,10 +27,19 @@ const configJson = {
   ],
 };
 
-const vcConfigJson = {
-  runtime: "edge",
-  entrypoint: "index.js",
-};
+const isNodeRuntime = process.env["VERCE_RUNTIME"];
+
+const vcConfigJson = isNodeRuntime
+  ? {
+      runtime: "nodejs20.x",
+      handler: "index.mjs",
+      launcherType: "Nodejs",
+      regions: ["hnd1"],
+    }
+  : {
+      runtime: "edge",
+      entrypoint: "index.mjs",
+    };
 
 async function main() {
   // clean
@@ -58,12 +67,16 @@ async function main() {
 
   // bundle function
   await esbuild.build({
-    entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "functions/index.func/index.js"),
+    entryPoints: [
+      isNodeRuntime
+        ? join(import.meta.dirname, "entry-node.js")
+        : join(buildDir, "server/index.js"),
+    ],
+    outfile: join(outDir, "functions/index.func/index.mjs"),
     bundle: true,
     minify: true,
     format: "esm",
-    platform: "browser",
+    platform: isNodeRuntime ? "node" : "browser",
     define: {
       "process.env.NODE_ENV": `"production"`,
     },
