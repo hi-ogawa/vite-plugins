@@ -177,11 +177,12 @@ export function vitePluginReactServer(options?: {
         `;
       }),
 
-      // this virtual is not necessary anymore but has been used in the past
-      // to extend user's react-server entry like ENTRY_CLIENT_WRAPPER
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
-        () => `export * from "${entryServer}";\n`,
+        () => `
+          export { handler } from "${entryServer}";
+          export { getRoutes } from "@hiogawa/react-server/entry-react-server";
+        `,
       ),
 
       validateImportPlugin({

@@ -160,6 +160,11 @@ function createRouter() {
   return { tree };
 }
 
+// TODO: expose server routes to enumerate prerendering paths
+export function getRoutes() {
+  return [];
+}
+
 //
 // server action
 //
