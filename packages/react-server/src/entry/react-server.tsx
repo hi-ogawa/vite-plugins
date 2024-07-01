@@ -1,13 +1,7 @@
-import {
-  createDebug,
-  objectMapValues,
-  objectPick,
-  sortBy,
-} from "@hiogawa/utils";
+import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
-  type RouteModule,
   generateRouteModuleTree,
   renderRouteMap,
 } from "../features/router/server";
@@ -158,36 +152,8 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
-import { parseRoutePath } from "../features/router/tree";
 
-const router = generateRouteModuleTree(serverRoutes);
-
-// TODO: move to createFsRouteTree
-type RouteModuleEntry = {
-  pathname: string;
-  module?: RouteModule;
-  dynamic: boolean;
-  format: (params: Record<string, string>) => string;
-};
-
-export type RouteModuleManifest = {
-  entries: RouteModuleEntry[];
-};
-
-export function getRouteModuleManifest(): RouteModuleManifest {
-  const result: RouteModuleManifest = { entries: [] };
-  for (const [pathname, module] of Object.entries(router.entries)) {
-    const { dynamic, format } = parseRoutePath(pathname);
-    result.entries.push({
-      pathname,
-      module,
-      dynamic,
-      format,
-    });
-  }
-  result.entries = sortBy(result.entries, (e) => e.pathname);
-  return result;
-}
+export const router = generateRouteModuleTree(serverRoutes);
 
 //
 // server action

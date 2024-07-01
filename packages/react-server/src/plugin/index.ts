@@ -184,7 +184,7 @@ export function vitePluginReactServer(options?: {
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
         () => `
           export { handler } from "${entryServer}";
-          export { getRouteModuleManifest } from "@hiogawa/react-server/entry-react-server";
+          export { router } from "@hiogawa/react-server/entry-react-server";
         `,
       ),
 

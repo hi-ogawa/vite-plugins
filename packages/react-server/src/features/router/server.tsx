@@ -1,3 +1,4 @@
+import { sortBy } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { renderMetadata } from "../meta/server";
@@ -7,6 +8,7 @@ import {
   type TreeNode,
   createFsRouteTree,
   matchRouteTree,
+  parseRoutePath,
   toMatchParamsObject,
 } from "./tree";
 
@@ -41,7 +43,9 @@ export type RouteModuleKey = keyof RouteModule;
 type RouteModuleTree = TreeNode<RouteModule>;
 
 export function generateRouteModuleTree(globEntries: Record<string, any>) {
-  return createFsRouteTree<RouteModule>(globEntries);
+  const { tree, entries } = createFsRouteTree<RouteModule>(globEntries);
+  const manifest = getRouteModuleManifest(entries);
+  return { tree, manifest };
 }
 
 // use own "use client" components as external
@@ -202,4 +206,32 @@ export interface ErrorPageProps {
   error: Error;
   serverError?: ReactServerErrorContext;
   reset: () => void;
+}
+
+type RouteModuleEntry = {
+  pathname: string;
+  module?: RouteModule;
+  dynamic: boolean;
+  format: (params: Record<string, string>) => string;
+};
+
+export type RouteModuleManifest = {
+  entries: RouteModuleEntry[];
+};
+
+export function getRouteModuleManifest(
+  entries: Record<string, RouteModule>,
+): RouteModuleManifest {
+  const result: RouteModuleManifest = { entries: [] };
+  for (const [pathname, module] of Object.entries(entries)) {
+    const { dynamic, format } = parseRoutePath(pathname);
+    result.entries.push({
+      pathname,
+      module,
+      dynamic,
+      format,
+    });
+  }
+  result.entries = sortBy(result.entries, (e) => e.pathname);
+  return result;
 }

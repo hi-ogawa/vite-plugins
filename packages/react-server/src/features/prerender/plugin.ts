@@ -4,8 +4,8 @@ import path from "node:path";
 import { Readable } from "node:stream";
 import { tinyassert } from "@hiogawa/utils";
 import type { Plugin } from "vite";
-import type { RouteModuleManifest } from "../../entry/react-server";
 import type { PluginStateManager } from "../../plugin";
+import type { RouteModuleManifest } from "../router/server";
 import { RSC_PATH } from "../server-component/utils";
 
 type MaybePromise<T> = Promise<T> | T;
@@ -33,8 +33,8 @@ export function prerenderPlugin({
         const entry: typeof import("../../entry/server") = await import(
           path.resolve("dist/server/__entry_ssr.js")
         );
-        const { getRouteModuleManifest } = await entry.importReactServer();
-        const routes = await prerender(getRouteModuleManifest());
+        const { router } = await entry.importReactServer();
+        const routes = await prerender(router.manifest);
         const entries = Array<{
           route: string;
           html: string;
