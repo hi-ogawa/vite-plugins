@@ -50,6 +50,7 @@ jobs:
       - run: pnpm -C packages/react-server/examples/prerender build
       - run: pnpm -C packages/react-server/examples/prerender test-e2e-preview
       - run: pnpm -C packages/react-server/examples/prerender cf-build
+      - run: pnpm -C packages/react-server/examples/prerender vc-build
 
   test-react-server-package:
     runs-on: ubuntu-latest
