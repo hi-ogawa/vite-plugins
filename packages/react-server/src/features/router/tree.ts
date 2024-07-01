@@ -30,6 +30,7 @@ export function createFsRouteTree<T>(
   // sort to match static route first before dynamic route
   sortDynamicRoutes(tree);
 
+  // TODO: return { entries, tree }
   return tree;
 }
 
@@ -138,6 +139,79 @@ export function matchRouteChild<T>(input: string, node: TreeNode<T>) {
     }
   }
   return;
+}
+
+// TODO: refactor
+export type TraversedNodeEntry<T> = {
+  pathname: string;
+  dynamic: boolean;
+  format: (params: Record<string, string>) => string;
+  value?: T;
+};
+
+export function traverseRouteTree<T>(
+  tree: TreeNode<T>,
+  callback: (entry: TraversedNodeEntry<T>) => void,
+): void {
+  function recurse(node: TreeNode<T>, parent: string) {
+    if (!node.children) {
+      return;
+    }
+    for (const [segment, child] of Object.entries(node.children)) {
+      const pathname = (parent + "/" + segment).replace(/^\/\//, "/");
+      callback({
+        pathname,
+        value: child.value,
+        ...parseRoutePath(pathname),
+      });
+      recurse(child, pathname);
+    }
+  }
+
+  recurse(tree, "");
+}
+
+export function parseRoutePath(pathname: string) {
+  const dynamicMap: Record<string, string> = {};
+
+  for (const segment of pathname.split("/")) {
+    const mAll = segment.match(CATCH_ALL_RE);
+    if (mAll) {
+      tinyassert(1 in mAll);
+      mAll[1];
+      dynamicMap[mAll[1]] = segment;
+    }
+    const m = segment.match(DYNAMIC_RE);
+    if (m) {
+      tinyassert(1 in m);
+      dynamicMap[m[1]] = segment;
+    }
+  }
+
+  function format(params: Record<string, string>): string {
+    let result = pathname;
+    tinyassert(
+      isEqualArrayShallow(
+        Object.keys(dynamicMap).sort(),
+        Object.keys(params).sort(),
+      ),
+    );
+    for (const [k, v] of Object.entries(params)) {
+      const segment = dynamicMap[k];
+      tinyassert(segment);
+      result = result.replace(segment, v);
+    }
+    return result;
+  }
+
+  return {
+    dynamic: Object.keys(dynamicMap).length > 0,
+    format,
+  };
+}
+
+function isEqualArrayShallow(xs: unknown[], ys: unknown[]) {
+  return xs.length === ys.length && xs.every((x, i) => x === ys[i]);
 }
 
 //

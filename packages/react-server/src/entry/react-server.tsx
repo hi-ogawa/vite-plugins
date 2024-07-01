@@ -153,30 +153,31 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 const router = createRouter();
 
-// @ts-ignore
+// @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
+import {
+  type TraversedNodeEntry,
+  traverseRouteTree,
+} from "../features/router/tree";
 
 function createRouter() {
   const tree = generateRouteModuleTree(serverRoutes);
   return { tree };
 }
 
-// TODO: catchall
-type RouteModuleEntry = {
-  path: string;
-  params: string[];
-  module: RouteEntry;
-};
+type RouteModuleEntry = TraversedNodeEntry<RouteEntry>;
 
 export type RouteModuleManifest = {
   entries: RouteModuleEntry[];
 };
 
 export function getRouteModuleManifest(): RouteModuleManifest {
-  // TODO
-  return {
-    entries: [],
-  };
+  const result: RouteModuleManifest = { entries: [] };
+  const tree = generateRouteModuleTree(serverRoutes);
+  traverseRouteTree(tree, (entry) => {
+    result.entries.push(entry);
+  });
+  return result;
 }
 
 //

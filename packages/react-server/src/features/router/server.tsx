@@ -15,7 +15,7 @@ export interface RouteEntry {
   page?: {
     default: React.FC<PageProps>;
     metadata?: Metadata;
-    generateStaticParams?: () => Promise<object[]>;
+    generateStaticParams?: () => Promise<Record<string, string>[]>;
   };
   layout?: {
     default: React.FC<LayoutProps>;

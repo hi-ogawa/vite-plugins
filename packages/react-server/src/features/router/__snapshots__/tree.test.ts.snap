@@ -1436,3 +1436,100 @@ exports[`createFsRouteTree > basic 17`] = `
   ],
 }
 `;
+
+exports[`createFsRouteTree > basic 18`] = `
+[
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/",
+    "value": {
+      "layout": "/layout.tsx",
+      "page": "/page.tsx",
+    },
+  },
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/other",
+    "value": {
+      "page": "/other/page.tsx",
+    },
+  },
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/test",
+    "value": {
+      "layout": "/test/layout.tsx",
+      "page": "/test/page.tsx",
+    },
+  },
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/test/other",
+    "value": {
+      "page": "/test/other/page.tsx",
+    },
+  },
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/dynamic",
+    "value": {
+      "layout": "/dynamic/layout.tsx",
+      "page": "/dynamic/page.tsx",
+    },
+  },
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/dynamic/static",
+    "value": {
+      "page": "/dynamic/static/page.tsx",
+    },
+  },
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/dynamic/catchall",
+    "value": {
+      "page": "/dynamic/catchall/page.tsx",
+    },
+  },
+  {
+    "dynamic": false,
+    "format": [Function],
+    "pathname": "/dynamic/catchall/static",
+    "value": {
+      "page": "/dynamic/catchall/static/page.tsx",
+    },
+  },
+  {
+    "dynamic": true,
+    "format": [Function],
+    "pathname": "/dynamic/catchall/[...any]",
+    "value": {
+      "page": "/dynamic/catchall/[...any]/page.tsx",
+    },
+  },
+  {
+    "dynamic": true,
+    "format": [Function],
+    "pathname": "/dynamic/[id]",
+    "value": {
+      "layout": "/dynamic/[id]/layout.tsx",
+      "page": "/dynamic/[id]/page.tsx",
+    },
+  },
+  {
+    "dynamic": true,
+    "format": [Function],
+    "pathname": "/dynamic/[id]/[nested]",
+    "value": {
+      "page": "/dynamic/[id]/[nested]/page.tsx",
+    },
+  },
+]
+`;

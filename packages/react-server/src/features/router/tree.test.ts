@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createFsRouteTree, matchRouteTree } from "./tree";
+import { createFsRouteTree, matchRouteTree, traverseRouteTree } from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
@@ -56,5 +56,9 @@ describe(createFsRouteTree, () => {
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
     }
+
+    const entries: unknown[] = [];
+    traverseRouteTree(tree, (entry) => entries.push(entry));
+    expect(entries).matchSnapshot();
   });
 });
