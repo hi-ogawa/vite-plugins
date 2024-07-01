@@ -7,19 +7,26 @@ import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { RSC_PATH } from "../server-component/utils";
 
+type MaybePromise<T> = Promise<T> | T;
+
+// TODO: expose route tree
+export type PrerenderFn = () => MaybePromise<string[]>;
+
 export function prerenderPlugin({
   manager,
   prerender,
 }: {
   manager: PluginStateManager;
-  prerender?: () => Promise<string[]> | string[];
+  prerender: PrerenderFn;
 }): Plugin[] {
   return [
     {
       name: prerenderPlugin + ":build",
       enforce: "post",
-      apply: () => !!(prerender && manager.buildType === "ssr"),
       async closeBundle() {
+        if (manager.buildType !== "ssr") {
+          return;
+        }
         console.log("▶▶▶ PRERENDER");
         tinyassert(prerender);
         const routes = await prerender();
@@ -59,7 +66,7 @@ export function prerenderPlugin({
     },
     {
       name: prerenderPlugin + ":preview",
-      apply: (_config, env) => !!(prerender && env.isPreview),
+      apply: (_config, env) => !!env.isPreview,
       configurePreviewServer(server) {
         const outDir = server.config.build.outDir;
         server.middlewares.use((req, _res, next) => {

@@ -23,7 +23,10 @@ import {
   OUTPUT_SERVER_JS_EXT,
   createServerPackageJson,
 } from "../features/next/plugin";
-import { prerenderPlugin } from "../features/prerender/plugin";
+import {
+  type PrerenderFn,
+  prerenderPlugin,
+} from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
 import {
   routeManifestPluginClient,
@@ -105,7 +108,7 @@ const manager: PluginStateManager = ((
 
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
-  prerender?: () => Promise<string[]> | string[];
+  prerender?: PrerenderFn;
   // allow overrding default entires for next.js compatibility
   entryBrowser?: string;
   entryServer?: string;
@@ -401,7 +404,9 @@ export function vitePluginReactServer(options?: {
     ...vitePluginClientUseClient({ manager }),
     ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
     ...routeManifestPluginClient({ manager }),
-    ...prerenderPlugin({ manager, prerender: options?.prerender }),
+    ...(options?.prerender
+      ? prerenderPlugin({ manager, prerender: options.prerender })
+      : []),
     validateImportPlugin({
       "client-only": true,
       "server-only": `'server-only' is included in client build`,
