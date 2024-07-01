@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { PrerenderEntry } from "@hiogawa/react-server/server";
+import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
 
 export async function build() {
   const buildDir = join(process.cwd(), "dist");
@@ -74,6 +74,6 @@ async function getPrerenderPaths(buildDir: string) {
   if (!existsSync(file)) {
     return [];
   }
-  const entries: PrerenderEntry[] = JSON.parse(await readFile(file, "utf-8"));
-  return entries.flatMap((e) => [e.route, e.data]);
+  const manifest: PrerenderManifest = JSON.parse(await readFile(file, "utf-8"));
+  return manifest.entries.flatMap((e) => [e.route, e.data]);
 }

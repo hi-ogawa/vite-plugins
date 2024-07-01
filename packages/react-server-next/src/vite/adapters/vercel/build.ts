@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { PrerenderEntry } from "@hiogawa/react-server/server";
+import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
 
 const configJson = {
   version: 3,
@@ -41,9 +41,14 @@ export async function build() {
   // overrides for ssg html
   // https://vercel.com/docs/build-output-api/v3/configuration#overrides
   const prerenderManifest = await getPrerenderManifest(buildDir);
-  configJson.overrides = Object.fromEntries(
-    prerenderManifest.map((e) => [e.html.slice(1), { path: e.route }]),
-  );
+  if (prerenderManifest) {
+    configJson.overrides = Object.fromEntries(
+      prerenderManifest.entries.map((e) => [
+        e.html.slice(1),
+        { path: e.route },
+      ]),
+    );
+  }
 
   // config
   await writeFile(
@@ -90,8 +95,7 @@ export async function build() {
 async function getPrerenderManifest(buildDir: string) {
   const file = join(buildDir, "client/__prerender.json");
   if (!existsSync(file)) {
-    return [];
+    return;
   }
-  const data = JSON.parse(await readFile(file, "utf-8"));
-  return data as PrerenderEntry[];
+  return JSON.parse(await readFile(file, "utf-8")) as PrerenderManifest;
 }
