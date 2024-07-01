@@ -111,7 +111,6 @@ async function render({
   layoutRequest: LayoutRequest;
   actionResult?: ActionResult;
 }) {
-  // @ts-expect-error todo
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
     layoutRequest,
@@ -181,8 +180,7 @@ export function getRouteModuleManifest(): RouteModuleManifest {
     const { dynamic, format } = parseRoutePath(pathname);
     result.entries.push({
       pathname,
-      // @ts-expect-error todo
-      module: module,
+      module,
       dynamic,
       format,
     });

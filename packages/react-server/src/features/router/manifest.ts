@@ -1,9 +1,12 @@
 import { objectMapValues, typedBoolean, uniq } from "@hiogawa/utils";
-import { type BaseRouteEntry, type TreeNode, matchRouteTree } from "./tree";
+import type { RouteModuleKey } from "./server";
+import { type TreeNode, matchRouteTree } from "./tree";
 
 export type RouteManifest = {
-  routeTree: TreeNode<BaseRouteEntry<AssetDeps>>;
+  routeTree: TreeNode<RouteAssetDeps>;
 };
+
+export type RouteAssetDeps = Record<RouteModuleKey, AssetDeps>;
 
 export function emptyRouteManifest(): RouteManifest {
   return { routeTree: {} };

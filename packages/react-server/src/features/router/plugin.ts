@@ -14,7 +14,11 @@ import {
   createVirtualPlugin,
   hashString,
 } from "../../plugin/utils";
-import { type AssetDeps, mergeAssetDeps } from "./manifest";
+import {
+  type AssetDeps,
+  type RouteAssetDeps,
+  mergeAssetDeps,
+} from "./manifest";
 import { createFsRouteTree } from "./tree";
 
 export function routeManifestPluginServer({
@@ -78,7 +82,7 @@ export function routeManifestPluginClient({
               ),
           );
           manager.routeManifest = {
-            routeTree: createFsRouteTree(routeToAssetDeps).tree,
+            routeTree: createFsRouteTree<RouteAssetDeps>(routeToAssetDeps).tree,
           };
         }
       },

@@ -36,10 +36,12 @@ export interface RouteModule {
   };
 }
 
+export type RouteModuleKey = keyof RouteModule;
+
 type RouteModuleTree = TreeNode<RouteModule>;
 
-export function generateRouteModuleTree(globEntries: Record<string, unknown>) {
-  return createFsRouteTree(globEntries as Record<string, RouteModule>);
+export function generateRouteModuleTree(globEntries: Record<string, any>) {
+  return createFsRouteTree<RouteModule>(globEntries);
 }
 
 // use own "use client" components as external
