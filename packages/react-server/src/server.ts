@@ -11,3 +11,4 @@ export {
 export type { ActionContext } from "./features/server-action/react-server";
 export { useActionContext } from "./features/server-action/context";
 export type { Metadata } from "./features/meta/utils";
+export type { PrerenderEntry } from "./features/prerender/plugin";

@@ -15,6 +15,12 @@ export type PrerenderFn = (
   presets: ReturnType<typeof createPrerenderPresets>,
 ) => MaybePromise<string[]>;
 
+export type PrerenderEntry = {
+  route: string;
+  html: string;
+  data: string;
+};
+
 export function prerenderPlugin({
   manager,
   prerender,
@@ -37,11 +43,7 @@ export function prerenderPlugin({
         const { router } = await entry.importReactServer();
         const presets = createPrerenderPresets(router.manifest);
         const routes = await prerender(router.manifest, presets);
-        const entries = Array<{
-          route: string;
-          html: string;
-          data: string;
-        }>();
+        const entries: PrerenderEntry[] = [];
         for (const route of routes) {
           console.log(`  • ${route}`);
           const url = new URL(route, "https://prerender.local");
