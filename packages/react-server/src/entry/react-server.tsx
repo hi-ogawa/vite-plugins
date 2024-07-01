@@ -163,6 +163,7 @@ import { parseRoutePath } from "../features/router/tree";
 
 const router = generateRouteModuleTree(serverRoutes);
 
+// TODO: move to createFsRouteTree
 type RouteModuleEntry = {
   pathname: string;
   module?: RouteModule;
@@ -176,8 +177,7 @@ export type RouteModuleManifest = {
 
 export function getRouteModuleManifest(): RouteModuleManifest {
   const result: RouteModuleManifest = { entries: [] };
-  for (let [pathname, module] of Object.entries(router.entries)) {
-    pathname ||= "/";
+  for (const [pathname, module] of Object.entries(router.entries)) {
     const { dynamic, format } = parseRoutePath(pathname);
     result.entries.push({
       pathname,

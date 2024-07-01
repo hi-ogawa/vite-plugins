@@ -78,7 +78,7 @@ export function routeManifestPluginClient({
               ),
           );
           manager.routeManifest = {
-            routeTree: createFsRouteTree(routeToAssetDeps),
+            routeTree: createFsRouteTree(routeToAssetDeps).tree,
           };
         }
       },

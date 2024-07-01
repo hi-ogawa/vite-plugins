@@ -20,11 +20,11 @@ export function createFsRouteTree<T>(globEntries: Record<string, T>): {
       /^(.*)\/(page|layout|error|not-found|loading|template)\.\w*$/,
     );
     tinyassert(m && 1 in m && 2 in m);
-    ((entries[m[1]] ??= {}) as any)[m[2]] = v;
+    ((entries[m[1] || "/"] ??= {}) as any)[m[2]] = v;
   }
 
   const flatTree = Object.entries(entries).map(([k, v]) => ({
-    keys: k.split("/"),
+    keys: k.replace(/\/+$/, "").split("/"),
     value: v,
   }));
   const tree = createTree(flatTree);
@@ -140,36 +140,6 @@ export function matchRouteChild<T>(input: string, node: TreeNode<T>) {
     }
   }
   return;
-}
-
-// TODO: refactor
-export type TraversedNodeEntry<T> = {
-  pathname: string;
-  dynamic: boolean;
-  format: (params: Record<string, string>) => string;
-  value?: T;
-};
-
-export function traverseRouteTree<T>(
-  tree: TreeNode<T>,
-  callback: (entry: TraversedNodeEntry<T>) => void,
-): void {
-  function recurse(node: TreeNode<T>, parent: string) {
-    if (!node.children) {
-      return;
-    }
-    for (const [segment, child] of Object.entries(node.children)) {
-      const pathname = (parent + "/" + segment).replace(/^\/\//, "/");
-      callback({
-        pathname,
-        value: child.value,
-        ...parseRoutePath(pathname),
-      });
-      recurse(child, pathname);
-    }
-  }
-
-  recurse(tree, "");
 }
 
 export function parseRoutePath(pathname: string) {
