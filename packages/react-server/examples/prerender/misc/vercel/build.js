@@ -49,8 +49,8 @@ async function main() {
 
   // overrides for ssg html
   // https://vercel.com/docs/build-output-api/v3/configuration#overrides
-  /** @type {import("@hiogawa/react-server/server").PrerenderEntry[]} */
-  const entries = JSON.parse(
+  /** @type {import("@hiogawa/react-server/plugin").PrerenderManifest} */
+  const { entries } = JSON.parse(
     await readFile(join(buildDir, "client/__prerender.json"), "utf-8"),
   );
   configJson.overrides = Object.fromEntries(

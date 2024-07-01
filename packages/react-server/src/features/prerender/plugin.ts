@@ -14,7 +14,11 @@ export type PrerenderFn = (
   presets: ReturnType<typeof createPrerenderPresets>,
 ) => MaybePromise<string[]>;
 
-export type PrerenderEntry = {
+export type PrerenderManifest = {
+  entries: PrerenderEntry[];
+};
+
+type PrerenderEntry = {
   route: string;
   html: string;
   data: string;
@@ -65,7 +69,7 @@ async function processPrerender(getPrerenderRoutes: PrerenderFn) {
   const { router } = await entry.importReactServer();
   const presets = createPrerenderPresets(router.manifest);
   const routes = await getPrerenderRoutes(router.manifest, presets);
-  const entries: PrerenderEntry[] = [];
+  const manifest: PrerenderManifest = { entries: [] };
   for (const route of routes) {
     console.log(`  • ${route}`);
     const url = new URL(route, "https://prerender.local");
@@ -83,7 +87,7 @@ async function processPrerender(getPrerenderRoutes: PrerenderFn) {
     });
     await writeFile(path.join("dist/client", htmlFile), html);
     await writeFile(path.join("dist/client", dataFile), data);
-    entries.push({
+    manifest.entries.push({
       route,
       html: htmlFile,
       data: dataFile,
@@ -91,7 +95,7 @@ async function processPrerender(getPrerenderRoutes: PrerenderFn) {
   }
   await writeFile(
     "dist/client/__prerender.json",
-    JSON.stringify(entries, null, 2),
+    JSON.stringify(manifest, null, 2),
   );
 }
 

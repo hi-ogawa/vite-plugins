@@ -25,6 +25,7 @@ import {
 } from "../features/next/plugin";
 import {
   type PrerenderFn,
+  type PrerenderManifest,
   prerenderPlugin,
 } from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
@@ -61,6 +62,8 @@ const RUNTIME_SERVER_PATH = fileURLToPath(
 const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
   new URL("../runtime-react-server.js", import.meta.url),
 );
+
+export type { PrerenderManifest };
 
 // convenient singleton to share states
 export type { PluginStateManager };
