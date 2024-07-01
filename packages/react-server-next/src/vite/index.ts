@@ -33,6 +33,9 @@ export default function vitePluginReactServerNext(options?: {
         },
         ...(options?.plugins ?? []),
       ],
+      // for now, we only enable generateStaticParams for the app route demo
+      // https://github.com/hi-ogawa/next-app-router-playground/pull/1
+      prerender: (_manifest, presets) => presets.generateStaticParams(),
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({

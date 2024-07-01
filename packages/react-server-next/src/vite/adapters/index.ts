@@ -25,16 +25,19 @@ export function adapterPlugin(options: {
         },
       };
     },
-    async writeBundle() {
-      console.log(`▶▶▶ Using adapter: ${adapter}`);
-      if (adapter === "cloudflare") {
-        const { build } = await import("./cloudflare/build");
-        await build();
-      }
-      if (adapter === "vercel") {
-        const { build } = await import("./vercel/build");
-        await build();
-      }
+    writeBundle: {
+      sequential: true,
+      async handler() {
+        console.log(`▶▶▶ ADAPTER: ${adapter}`);
+        if (adapter === "cloudflare") {
+          const { build } = await import("./cloudflare/build");
+          await build();
+        }
+        if (adapter === "vercel") {
+          const { build } = await import("./vercel/build");
+          await build();
+        }
+      },
     },
   };
 

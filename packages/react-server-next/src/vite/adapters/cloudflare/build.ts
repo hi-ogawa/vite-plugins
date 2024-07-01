@@ -1,5 +1,7 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import type { PrerenderEntry } from "@hiogawa/react-server/server";
 
 export async function build() {
   const buildDir = join(process.cwd(), "dist");
@@ -22,7 +24,12 @@ export async function build() {
       {
         version: 1,
         include: ["/*"],
-        exclude: ["/favicon.ico", "/assets/*"],
+        // TODO: limit rules
+        exclude: [
+          "/favicon.ico",
+          "/assets/*",
+          ...(await getPrerenderPaths(buildDir)),
+        ],
       },
       null,
       2,
@@ -60,4 +67,13 @@ export async function build() {
     join(buildDir, "esbuild-metafile.json"),
     JSON.stringify(result.metafile),
   );
+}
+
+async function getPrerenderPaths(buildDir: string) {
+  const file = join(buildDir, "client/__prerender.json");
+  if (!existsSync(file)) {
+    return [];
+  }
+  const entries: PrerenderEntry[] = JSON.parse(await readFile(file, "utf-8"));
+  return entries.flatMap((e) => [e.route, e.data]);
 }
