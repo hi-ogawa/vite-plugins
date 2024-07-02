@@ -1,5 +1,9 @@
 "use client";
 
+import React from "react";
+
 export function TestClient() {
-  return <div>[Client]</div>;
+  const [count, setCount] = React.useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>Client: {count}</button>;
 }

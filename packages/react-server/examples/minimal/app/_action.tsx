@@ -1,5 +1,11 @@
 "use server";
 
-export async function TestAction() {
-  console.log("[TestAction]");
+let count = 0;
+
+export async function changeCount() {
+  count++;
+}
+
+export function getCount() {
+  return count;
 }

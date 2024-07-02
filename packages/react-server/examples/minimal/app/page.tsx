@@ -1,4 +1,4 @@
-import { TestAction } from "./_action";
+import { changeCount, getCount } from "./_action";
 import { TestClient } from "./_client";
 
 export default function Page() {
@@ -6,8 +6,8 @@ export default function Page() {
     <>
       <div>[Page]</div>
       <TestClient />
-      <form action={TestAction}>
-        <button>TestAction</button>
+      <form action={changeCount}>
+        <button>Action: {getCount()}</button>
       </form>
     </>
   );
