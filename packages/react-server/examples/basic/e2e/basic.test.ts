@@ -1257,7 +1257,7 @@ test("server assses", async ({ page }) => {
   await expect(page.getByTestId("css-url")).toHaveScreenshot();
 });
 
-test.only("api routes", async ({ request }) => {
+test("api routes", async ({ request }) => {
   {
     const res = await request.get("/test/api/static");
     expect(res.status()).toBe(200);
