@@ -1,6 +1,7 @@
 import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
+import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
   generateRouteModuleTree,
@@ -127,17 +128,18 @@ async function render({
     layoutRequest,
     (v) => result[`${v.type}s`][v.name],
   );
+  const flightData: ServerRouterData = {
+    layout: nodeMap,
+    metadata: result.metadata,
+    params: result.params,
+    url: request.url,
+    action: actionResult
+      ? objectPick(actionResult, ["data", "error"])
+      : undefined,
+  };
   return requestContext.run(() =>
     ReactServer.renderToReadableStream<ServerRouterData>(
-      {
-        layout: nodeMap,
-        metadata: result.metadata,
-        params: result.params,
-        url: request.url,
-        action: actionResult
-          ? objectPick(actionResult, ["data", "error"])
-          : undefined,
-      },
+      flightData,
       createBundlerConfig(),
       {
         onError: reactServerOnError,
@@ -170,7 +172,6 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
-import { RequestContext } from "../features/request-context/server";
 
 export const router = generateRouteModuleTree(serverRoutes);
 
