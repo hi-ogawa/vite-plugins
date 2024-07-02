@@ -453,7 +453,7 @@ function validateImportPlugin(entries: Record<string, string | true>): Plugin {
         // skip validation during optimizeDeps scan since for now
         // we want to allow going through server/client boundary loosely
         if (
-          entry ||
+          entry === true ||
           manager.buildType === "scan" ||
           ("scan" in options && options.scan)
         ) {
