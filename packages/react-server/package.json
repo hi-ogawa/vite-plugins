@@ -61,7 +61,7 @@
     "build": "tsup",
     "prepack": "tsup --clean",
     "test": "vitest",
-    "test-e2e": "playwright test",
+    "test-e2e": "vitest -c vitest.config.e2e.ts",
     "test-package": "bash misc/test.sh"
   },
   "dependencies": {

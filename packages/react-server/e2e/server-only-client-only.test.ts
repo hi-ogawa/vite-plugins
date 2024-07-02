@@ -1,22 +1,29 @@
-import { test } from "@playwright/test";
+import { exec } from "child_process";
+import { promisify } from "util";
+import { beforeAll, describe, it } from "vitest";
 
-// TODO
-// - how to setup fixture project?
-//   - create minimal starter and copy it?
-// - how to add dependency?
-//   - using next is easier?
-//   - testing only with local link package?
-
-test.describe("server only", () => {
-  test("success", () => {
-    "vite build";
-  });
-
-  test("error", () => {});
+beforeAll(() => {
+  process.chdir("examples/minimal");
 });
 
-test.describe("client only", () => {
-  test("success", () => {});
+const $ = promisify(exec);
 
-  test("error", () => {});
+describe("server only", () => {
+  it("success", async () => {
+    await $("pnpm build");
+  });
+
+  it("error", async () => {
+    await $("pnpm build");
+  });
+});
+
+describe("client only", () => {
+  it("success", async () => {
+    await $("pnpm build");
+  });
+
+  it("error", async () => {
+    await $("pnpm build");
+  });
 });
