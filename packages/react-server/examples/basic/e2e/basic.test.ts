@@ -1,4 +1,4 @@
-import { type APIResponse, type Page, expect, test } from "@playwright/test";
+import { type Page, expect, test } from "@playwright/test";
 import {
   checkNoError,
   editFile,
