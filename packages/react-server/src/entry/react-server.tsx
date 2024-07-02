@@ -214,6 +214,7 @@ async function actionHandler({
   try {
     result.data = await requestContext.run(() => boundAction());
   } catch (e) {
+    // TODO: we can respond redirection directly when nojs action
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
     result.responseHeaders = {
