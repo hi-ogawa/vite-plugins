@@ -1,14 +1,4 @@
-import { ResponseCookies } from "@edge-runtime/cookies";
-
-/** @todo */
-export function headers() {
-  return new Headers();
-}
-
-/** @todo */
-export function cookies() {
-  return new ResponseCookies(new Headers());
-}
+export { headers, cookies } from "@hiogawa/react-server/server";
 
 /** @todo */
 export function draftMode() {

@@ -38,7 +38,6 @@
     "prepack": "tsup --clean"
   },
   "dependencies": {
-    "@edge-runtime/cookies": "^4.1.1",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@vitejs/plugin-react": "^4.2.1",
     "esbuild": "^0.20.2",

@@ -1,6 +1,7 @@
 import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
+import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
   generateRouteModuleTree,
@@ -12,9 +13,7 @@ import {
   handleTrailingSlash,
   revalidateLayoutContentRequest,
 } from "../features/router/utils";
-import { runActionContext } from "../features/server-action/context";
 import {
-  ActionContext,
   type ActionResult,
   createActionBundlerConfig,
   importServerAction,
@@ -60,7 +59,14 @@ export const handler: ReactServerHandler = async (ctx) => {
   const handled = handleTrailingSlash(new URL(ctx.request.url));
   if (handled) return handled;
 
-  const handledApi = await handleApiRoutes(router.tree, ctx.request);
+  const requestContext = new RequestContext(ctx.request.headers);
+
+  // TODO: support cookies mutation in api routes
+  const handledApi = await handleApiRoutes(
+    router.tree,
+    ctx.request,
+    requestContext,
+  );
   if (handledApi) return handledApi;
 
   // extract stream request details
@@ -74,15 +80,21 @@ export const handler: ReactServerHandler = async (ctx) => {
     actionResult = await actionHandler({
       request,
       streamActionId: streamParam?.actionId,
+      requestContext,
     });
   }
 
   const layoutRequest = revalidateLayoutContentRequest(
     url.pathname,
     streamParam?.lastPathname,
-    [streamParam?.revalidate, actionResult?.context.revalidate],
+    [streamParam?.revalidate, requestContext.revalidate],
   );
-  const stream = await render({ request, layoutRequest, actionResult });
+  const stream = await render({
+    request,
+    layoutRequest,
+    actionResult,
+    requestContext,
+  });
 
   if (isStream) {
     return new Response(stream, {
@@ -104,31 +116,35 @@ async function render({
   request,
   layoutRequest,
   actionResult,
+  requestContext,
 }: {
   request: Request;
   layoutRequest: LayoutRequest;
   actionResult?: ActionResult;
+  requestContext: RequestContext;
 }) {
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
     layoutRequest,
     (v) => result[`${v.type}s`][v.name],
   );
-  const bundlerConfig = createBundlerConfig();
-  return ReactServer.renderToReadableStream<ServerRouterData>(
-    {
-      layout: nodeMap,
-      metadata: result.metadata,
-      params: result.params,
-      url: request.url,
-      action: actionResult
-        ? objectPick(actionResult, ["data", "error"])
-        : undefined,
-    },
-    bundlerConfig,
-    {
-      onError: reactServerOnError,
-    },
+  const flightData: ServerRouterData = {
+    layout: nodeMap,
+    metadata: result.metadata,
+    params: result.params,
+    url: request.url,
+    action: actionResult
+      ? objectPick(actionResult, ["data", "error"])
+      : undefined,
+  };
+  return requestContext.run(() =>
+    ReactServer.renderToReadableStream<ServerRouterData>(
+      flightData,
+      createBundlerConfig(),
+      {
+        onError: reactServerOnError,
+      },
+    ),
   );
 }
 
@@ -167,8 +183,12 @@ export const router = generateRouteModuleTree(serverRoutes);
 async function actionHandler({
   request,
   streamActionId,
-}: { request: Request; streamActionId?: string }) {
-  const context = new ActionContext(request);
+  requestContext,
+}: {
+  request: Request;
+  streamActionId?: string;
+  requestContext: RequestContext;
+}) {
   let boundAction: Function;
   if (streamActionId) {
     const contentType = request.headers.get("content-type");
@@ -191,15 +211,16 @@ async function actionHandler({
     };
   }
 
-  const result: ActionResult = { context };
+  const result: ActionResult = {};
   try {
-    result.data = await runActionContext(context, () => boundAction());
+    result.data = await requestContext.run(() => boundAction());
   } catch (e) {
+    // TODO: we can respond redirection directly when nojs action
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
     result.responseHeaders = {
-      ...context.responseHeaders,
       ...result.error?.headers,
+      "set-cookie": requestContext.getSetCookie(),
     };
   }
   return result;

@@ -25,11 +25,6 @@ export default defineConfig({
           name: "cusotm-react-server-config",
           config() {
             return {
-              ssr: {
-                optimizeDeps: {
-                  include: ["cookie"],
-                },
-              },
               build: {
                 assetsInlineLimit(filePath) {
                   // test non-inlined server asset

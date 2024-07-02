@@ -1,27 +1,21 @@
 "use server";
 
-import { redirect, useActionContext } from "@hiogawa/react-server/server";
+import { cookies, redirect } from "@hiogawa/react-server/server";
 import { tinyassert } from "@hiogawa/utils";
-import { getSession, setSession } from "./utils";
+import { SESSION_KEY } from "./utils";
 
 export async function signin(formData: FormData) {
   // TODO: return error on invalid input
   const name = formData.get("name");
   tinyassert(typeof name === "string");
 
-  throw redirect("/test/session", {
-    headers: {
-      "set-cookie": setSession({ name }),
-    },
-  });
+  cookies().set(SESSION_KEY, name);
+  throw redirect("/test/session");
 }
 
 export async function signout() {
-  throw redirect("/test/session", {
-    headers: {
-      "set-cookie": setSession({}),
-    },
-  });
+  cookies().delete(SESSION_KEY);
+  throw redirect("/test/session");
 }
 
 let counter = 0;
@@ -31,8 +25,8 @@ export function getCounter() {
 }
 
 export async function incrementCounter(formData: FormData) {
-  const session = getSession(useActionContext().request.headers);
-  if (!session?.name) {
+  const name = cookies().get(SESSION_KEY)?.value;
+  if (!name) {
     throw redirect("/test/session/signin");
   }
   counter += Number(formData.get("delta"));

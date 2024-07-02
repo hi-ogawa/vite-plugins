@@ -1,10 +1,14 @@
-import { type PageProps, redirect } from "@hiogawa/react-server/server";
+import {
+  type PageProps,
+  cookies,
+  redirect,
+} from "@hiogawa/react-server/server";
 import { signin } from "../_action";
-import { getSession } from "../utils";
+import { SESSION_KEY } from "../utils";
 
-export default function Page(props: PageProps) {
-  const session = getSession(new Headers(props.request.headers));
-  if (session?.name) {
+export default function Page(_props: PageProps) {
+  const name = cookies().get(SESSION_KEY)?.value;
+  if (name) {
     throw redirect("/test/session");
   }
 

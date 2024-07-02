@@ -1,5 +1,5 @@
 import { Link } from "@hiogawa/react-server/client";
-import { type PageProps, useActionContext } from "@hiogawa/react-server/server";
+import { type PageProps, revalidatePath } from "@hiogawa/react-server/server";
 
 export default function Page(props: PageProps) {
   props.params.id === "x" ? "y" : "x";
@@ -9,7 +9,7 @@ export default function Page(props: PageProps) {
       <form
         action={() => {
           "use server";
-          useActionContext().revalidate = "/test/revalidate";
+          revalidatePath("/test/revalidate");
         }}
         className="flex flex-col gap-2"
       >

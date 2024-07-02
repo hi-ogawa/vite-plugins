@@ -11,7 +11,7 @@ pnpm vc-build
 pnpm vc-release
 
 # deploy cloudflare
-wrangler pages project create test-next-vite --production-branch main --compatibility-date=2024-01-01
+wrangler pages project create test-next-vite --production-branch main --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat
 pnpm cf-build
 pnpm cf-preview
 pnpm cf-release

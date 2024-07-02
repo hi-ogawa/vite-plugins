@@ -78,7 +78,8 @@ export async function build() {
     bundle: true,
     minify: true,
     format: "esm",
-    platform: "node",
+    platform: "browser",
+    external: ["node:async_hooks"],
     define: {
       "process.env.NODE_ENV": `"production"`,
     },

@@ -65,6 +65,7 @@
     "test-package": "bash misc/test.sh"
   },
   "dependencies": {
+    "@edge-runtime/cookies": "^4.1.1",
     "@hiogawa/transforms": "workspace:*",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@tanstack/history": "^1.15.13",
