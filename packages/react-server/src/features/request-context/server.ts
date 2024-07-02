@@ -42,7 +42,7 @@ export class RequestContext {
   static get() {
     const context = requestContextStorage.getStore();
     if (!context) {
-      // we should tolerate non-existing context
+      // we tolerate non-existing context
       // since async storage is not well supported on stackblitz
       console.error("[WARNING] RequestContext not available");
       return new RequestContext(new Headers());

@@ -202,11 +202,11 @@ async function actionHandler({
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
-    // TODO: merge set-cookie?
     result.responseHeaders = {
-      "set-cookie": requestContext.getSetCookie(),
       ...result.error?.headers,
+      "set-cookie": requestContext.getSetCookie(),
     };
+    result.context.revalidate = requestContext.revalidate;
   }
   return result;
 }

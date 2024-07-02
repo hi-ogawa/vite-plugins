@@ -7,7 +7,7 @@ type SessionData = {
   name?: string;
 };
 
-const SESSION_KEY = "__session";
+export const SESSION_KEY = "__session";
 
 export function getSession(headers: Headers): SessionData | undefined {
   const raw = headers.get("cookie");
