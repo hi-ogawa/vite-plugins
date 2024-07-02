@@ -69,7 +69,7 @@ export async function prerender(request: Request) {
   const [stream, stream2] = result.stream.tee();
   result.stream = stream2;
 
-  const response = await renderHtml(request, result);
+  const response = await renderHtml(request, result, { prerender: true });
   const html = await response.text();
   return { stream, response, html };
 }
@@ -89,6 +89,7 @@ export async function importReactServer(): Promise<
 export async function renderHtml(
   request: Request,
   result: ReactServerHandlerStreamResult,
+  opitons?: { prerender?: boolean },
 ) {
   initializeReactClientSsr();
 
@@ -159,7 +160,7 @@ export async function renderHtml(
   }
 
   // two pass SSR to re-render on error
-  let ssrStream: ReadableStream<Uint8Array>;
+  let ssrStream: ReactDOMServer.ReactDOMServerReadableStream;
   let status = 200;
   try {
     ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
@@ -174,6 +175,9 @@ export async function renderHtml(
         }
       },
     });
+    if (opitons?.prerender) {
+      await ssrStream.allReady;
+    }
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
     if (isRedirectError(ctx)) {
