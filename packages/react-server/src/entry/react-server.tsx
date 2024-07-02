@@ -157,6 +157,7 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
+import { RequestContext } from "../features/request-context/server";
 
 export const router = generateRouteModuleTree(serverRoutes);
 
@@ -193,13 +194,17 @@ async function actionHandler({
   }
 
   const result: ActionResult = { context };
+  const requestContext = new RequestContext(request.headers);
   try {
-    result.data = await runActionContext(context, () => boundAction());
+    result.data = await runActionContext(context, () =>
+      requestContext.run(() => boundAction()),
+    );
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
+    // TODO: merge set-cookie?
     result.responseHeaders = {
-      ...context.responseHeaders,
+      "set-cookie": requestContext.getSetCookie(),
       ...result.error?.headers,
     };
   }
