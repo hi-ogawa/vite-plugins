@@ -9,10 +9,15 @@ export async function generateStaticParams() {
 }
 
 export default async function Page(props: PageProps) {
+  // wait extra to test suspense
+  const sleep = new Promise((r) => setTimeout(r, 500));
+
   const res = await fetch(
     "https://jsonplaceholder.typicode.com/posts/" + props.params.id,
   );
   const post: PostType = await res.json();
+
+  await sleep;
 
   return (
     <div>
