@@ -1,5 +1,5 @@
 import type { RouteModuleTree } from "./server";
-import type { MatchParams } from "./tree";
+import { type MatchParams, matchRouteTree, toMatchParamsObject } from "./tree";
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/route
 
@@ -25,7 +25,15 @@ export async function handleApiRoutes(
   tree: RouteModuleTree,
   request: Request,
 ): Promise<Response | undefined> {
-  tree;
-  request;
+  const method = request.method as ApiMethod;
+  const url = new URL(request.url);
+  const { matches } = matchRouteTree(tree, url.pathname);
+  for (const m of matches) {
+    const handler = m.type === "page" && m.node.value?.route?.[method];
+    if (handler) {
+      const params = toMatchParamsObject(m.params);
+      return handler(request, { params });
+    }
+  }
   return;
 }
