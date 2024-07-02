@@ -1,9 +1,11 @@
-/** @todo https://nextjs.org/docs/app/api-reference/functions/revalidatePath */
+import { revalidatePath as revalidatePath_ } from "@hiogawa/react-server/server";
+
 export function revalidatePath(
-  _originalPath: string,
+  path: string,
+  /** @todo */
   _type?: "layout" | "page",
 ) {
-  // TODO: action context from next async storage
+  return revalidatePath_(path);
 }
 
 /** @todo */

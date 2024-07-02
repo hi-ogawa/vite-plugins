@@ -143,9 +143,6 @@ importers:
 
   packages/react-server-next:
     dependencies:
-      '@edge-runtime/cookies':
-        specifier: ^4.1.1
-        version: 4.1.1
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../vite-plugin-ssr-middleware
