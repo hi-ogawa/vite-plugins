@@ -41,20 +41,23 @@ test("hybrid @js @build", async ({ page }) => {
   await page.goto("/posts");
   await waitForHydration(page);
   await using _ = await createReloadChecker(page);
-  await testHybrid(page);
+  await testHybrid(page, { js: true });
 });
 
 testNoJs("hybrid @nojs @build", async ({ page }) => {
   await page.goto("/posts");
-  await testHybrid(page);
+  await testHybrid(page, { js: false });
 });
 
-async function testHybrid(page: Page) {
+async function testHybrid(page: Page, options: { js: boolean }) {
   await page.getByRole("link", { name: "qui est esse" }).click();
   await page.waitForURL("/posts/2");
   await page.getByText("[prerendered at").click();
 
   await page.getByRole("link", { name: "nesciunt quas odio" }).click();
   await page.waitForURL("/posts/5");
-  await page.getByText("[dynamically rendered at").click();
+  await page.getByText("Loading...").click();
+  if (options.js) {
+    await page.getByText("[dynamically rendered at").click();
+  }
 }
