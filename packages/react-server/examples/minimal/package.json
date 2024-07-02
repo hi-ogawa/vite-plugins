@@ -1,0 +1,23 @@
+{
+  "name": "@hiogawa/react-server-example-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "workspace:*",
+    "next": "link:../../../react-server-next",
+    "react": "19.0.0-rc-c21bcd627b-20240624",
+    "react-dom": "19.0.0-rc-c21bcd627b-20240624",
+    "react-server-dom-webpack": "19.0.0-rc-c21bcd627b-20240624"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
+    "vite": "latest"
+  }
+}
