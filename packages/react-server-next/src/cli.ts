@@ -28,9 +28,12 @@ function main() {
     createRequire(import.meta.url).resolve("vite/package.json"),
     "../bin/vite.js",
   );
-  spawn("node", [viteBin, ...argv], {
+  const proc = spawn("node", [viteBin, ...argv], {
     shell: false,
     stdio: "inherit",
+  });
+  proc.on("close", (code) => {
+    process.exitCode = code ?? 1;
   });
 }
 
