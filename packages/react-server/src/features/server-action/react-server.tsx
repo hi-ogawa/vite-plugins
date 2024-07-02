@@ -2,7 +2,6 @@ import { memoize, tinyassert } from "@hiogawa/utils";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
-import type { RevalidationType } from "../server-component/utils";
 
 // https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
 
@@ -22,16 +21,7 @@ export type ActionResult = {
   error?: ReactServerErrorContext;
   data?: unknown;
   responseHeaders?: Record<string, string>;
-  context: ActionContext;
 };
-
-export class ActionContext {
-  responseHeaders: Record<string, string> = {};
-
-  revalidate?: RevalidationType;
-
-  constructor(public request: Request) {}
-}
 
 const REFERENCE_SEP = "#";
 

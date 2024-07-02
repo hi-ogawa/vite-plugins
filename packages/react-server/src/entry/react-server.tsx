@@ -13,7 +13,6 @@ import {
   revalidateLayoutContentRequest,
 } from "../features/router/utils";
 import {
-  ActionContext,
   type ActionResult,
   createActionBundlerConfig,
   importServerAction,
@@ -189,7 +188,6 @@ async function actionHandler({
   streamActionId?: string;
   requestContext: RequestContext;
 }) {
-  const context = new ActionContext(request);
   let boundAction: Function;
   if (streamActionId) {
     const contentType = request.headers.get("content-type");
@@ -212,7 +210,7 @@ async function actionHandler({
     };
   }
 
-  const result: ActionResult = { context };
+  const result: ActionResult = {};
   try {
     result.data = await requestContext.run(() => boundAction());
   } catch (e) {
@@ -222,7 +220,6 @@ async function actionHandler({
       ...result.error?.headers,
       "set-cookie": requestContext.getSetCookie(),
     };
-    result.context.revalidate = requestContext.revalidate;
   }
   return result;
 }
