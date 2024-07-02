@@ -1,32 +1,36 @@
-// for now, we don't require async hooks and fallbacks to sync context
-// if it's not availalbe globally like React.cache.
+import { ResponseCookies } from "@edge-runtime/cookies";
+import type { RevalidationType } from "../server-component/utils";
+import { createContextStorage } from "./utils";
 
-import { tinyassert } from "@hiogawa/utils";
+const requestContextStorage = createContextStorage<RequestContext>();
 
-export type ContextStorage<T> = {
-  run<R>(store: T, callback: () => R): R;
-  getStore(): T | undefined;
-};
+export class RequestContext {
+  public cookies: ResponseCookies;
+  public revalidate?: RevalidationType;
 
-export function createStorage<T>(): ContextStorage<T> {
-  if ((globalThis as any).AsyncLocalStorage) {
-    return new (globalThis as any).AsyncLocalStorage();
+  constructor(public headers: Headers) {
+    this.cookies = new ResponseCookies(headers);
   }
-  return createSyncStorage();
+
+  run<T>(f: () => T): T {
+    return requestContextStorage.run(this, f);
+  }
+
+  static get() {
+    const context = requestContextStorage.getStore();
+    if (!context) {
+      // tolerate mis usage for now
+      console.error("[WARNING] RequestContext not available");
+      return new RequestContext(new Headers());
+    }
+    return context;
+  }
 }
 
-function createSyncStorage<T>(): ContextStorage<T> {
-  let current: T | undefined;
-  return {
-    run(store, callback) {
-      tinyassert(!current);
-      current = store;
-      const result = callback();
-      current = undefined;
-      return result;
-    },
-    getStore() {
-      return current;
-    },
-  };
+export function headers() {
+  return RequestContext.get().headers;
+}
+
+export function cookies() {
+  return RequestContext.get().cookies;
 }

@@ -91,6 +91,9 @@ importers:
 
   packages/react-server:
     dependencies:
+      '@edge-runtime/cookies':
+        specifier: ^4.1.1
+        version: 4.1.1
       '@hiogawa/transforms':
         specifier: workspace:*
         version: link:../transforms
