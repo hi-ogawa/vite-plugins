@@ -1,10 +1,12 @@
+import { $ } from "@hiogawa/utils-node";
 import { beforeAll, describe, it } from "vitest";
 import { createEditor } from "./helper";
-import { $ } from "@hiogawa/utils-node";
 
 beforeAll(() => {
   process.chdir("examples/minimal");
 });
+
+$._.verbose = true;
 
 describe("server only", () => {
   it("success", async () => {
@@ -13,7 +15,7 @@ describe("server only", () => {
     await $`pnpm build`;
   });
 
-  it.only("error", async () => {
+  it("error", async () => {
     using file = createEditor("app/_client.tsx");
     file.edit((s) => s + `\n\n;import "server-only"`);
     const output = await $`pnpm build`;
