@@ -12,7 +12,6 @@ import {
   handleTrailingSlash,
   revalidateLayoutContentRequest,
 } from "../features/router/utils";
-import { runActionContext } from "../features/server-action/context";
 import {
   ActionContext,
   type ActionResult,
@@ -60,8 +59,14 @@ export const handler: ReactServerHandler = async (ctx) => {
   const handled = handleTrailingSlash(new URL(ctx.request.url));
   if (handled) return handled;
 
+  const requestContext = new RequestContext(ctx.request.headers);
+
   // TODO: support cookies mutation in api routes
-  const handledApi = await handleApiRoutes(router.tree, ctx.request);
+  const handledApi = await handleApiRoutes(
+    router.tree,
+    ctx.request,
+    requestContext,
+  );
   if (handledApi) return handledApi;
 
   // extract stream request details
@@ -75,15 +80,21 @@ export const handler: ReactServerHandler = async (ctx) => {
     actionResult = await actionHandler({
       request,
       streamActionId: streamParam?.actionId,
+      requestContext,
     });
   }
 
   const layoutRequest = revalidateLayoutContentRequest(
     url.pathname,
     streamParam?.lastPathname,
-    [streamParam?.revalidate, actionResult?.context.revalidate],
+    [streamParam?.revalidate, requestContext.revalidate],
   );
-  const stream = await render({ request, layoutRequest, actionResult });
+  const stream = await render({
+    request,
+    layoutRequest,
+    actionResult,
+    requestContext,
+  });
 
   if (isStream) {
     return new Response(stream, {
@@ -105,31 +116,34 @@ async function render({
   request,
   layoutRequest,
   actionResult,
+  requestContext,
 }: {
   request: Request;
   layoutRequest: LayoutRequest;
   actionResult?: ActionResult;
+  requestContext: RequestContext;
 }) {
   const result = await renderRouteMap(router.tree, request);
   const nodeMap = objectMapValues(
     layoutRequest,
     (v) => result[`${v.type}s`][v.name],
   );
-  const bundlerConfig = createBundlerConfig();
-  return ReactServer.renderToReadableStream<ServerRouterData>(
-    {
-      layout: nodeMap,
-      metadata: result.metadata,
-      params: result.params,
-      url: request.url,
-      action: actionResult
-        ? objectPick(actionResult, ["data", "error"])
-        : undefined,
-    },
-    bundlerConfig,
-    {
-      onError: reactServerOnError,
-    },
+  return requestContext.run(() =>
+    ReactServer.renderToReadableStream<ServerRouterData>(
+      {
+        layout: nodeMap,
+        metadata: result.metadata,
+        params: result.params,
+        url: request.url,
+        action: actionResult
+          ? objectPick(actionResult, ["data", "error"])
+          : undefined,
+      },
+      createBundlerConfig(),
+      {
+        onError: reactServerOnError,
+      },
+    ),
   );
 }
 
@@ -169,7 +183,12 @@ export const router = generateRouteModuleTree(serverRoutes);
 async function actionHandler({
   request,
   streamActionId,
-}: { request: Request; streamActionId?: string }) {
+  requestContext,
+}: {
+  request: Request;
+  streamActionId?: string;
+  requestContext: RequestContext;
+}) {
   const context = new ActionContext(request);
   let boundAction: Function;
   if (streamActionId) {
@@ -194,11 +213,8 @@ async function actionHandler({
   }
 
   const result: ActionResult = { context };
-  const requestContext = new RequestContext(request.headers);
   try {
-    result.data = await runActionContext(context, () =>
-      requestContext.run(() => boundAction()),
-    );
+    result.data = await requestContext.run(() => boundAction());
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {

@@ -254,7 +254,7 @@ export function vitePluginReactServer(options?: {
               `**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)`,
             ),
           ],
-          exclude: ["@hiogawa/react-server"],
+          exclude: ["@hiogawa/react-server", "@edge-runtime/cookies"],
           include: [
             "react",
             "react/jsx-runtime",
