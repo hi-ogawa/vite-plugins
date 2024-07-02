@@ -1,6 +1,7 @@
 import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
+import { handleApiRoutes } from "../features/router/api-route";
 import {
   generateRouteModuleTree,
   renderRouteMap,
@@ -155,7 +156,6 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
-import { handleApiRoutes } from "../features/router/api-route";
 
 export const router = generateRouteModuleTree(serverRoutes);
 
