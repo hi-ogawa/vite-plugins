@@ -3,6 +3,7 @@ import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
+import type { ApiRouteMoudle } from "./api-route";
 import {
   type MatchNodeEntry,
   type TreeNode,
@@ -36,11 +37,12 @@ export interface RouteModule {
   template?: {
     default: React.FC<{ children?: React.ReactNode }>;
   };
+  route?: ApiRouteMoudle;
 }
 
 export type RouteModuleKey = keyof RouteModule;
 
-type RouteModuleTree = TreeNode<RouteModule>;
+export type RouteModuleTree = TreeNode<RouteModule>;
 
 export function generateRouteModuleTree(globEntries: Record<string, any>) {
   const { tree, entries } = createFsRouteTree<RouteModule>(globEntries);

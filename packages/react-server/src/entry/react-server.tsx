@@ -59,6 +59,9 @@ export const handler: ReactServerHandler = async (ctx) => {
   const handled = handleTrailingSlash(new URL(ctx.request.url));
   if (handled) return handled;
 
+  const handledApi = await handleApiRoutes(router.tree, ctx.request);
+  if (handledApi) return handledApi;
+
   // extract stream request details
   const { url, request, isStream, streamParam } = unwrapStreamRequest(
     ctx.request,
@@ -152,6 +155,7 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
+import { handleApiRoutes } from "../features/router/api-route";
 
 export const router = generateRouteModuleTree(serverRoutes);
 
