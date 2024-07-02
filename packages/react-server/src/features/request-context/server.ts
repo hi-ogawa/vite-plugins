@@ -21,7 +21,7 @@ export class RequestContext {
   }
 }
 
-export function useRequestContext() {
+function getRequestContext() {
   const context = requestContextStorage.getStore();
   if (!context) {
     // we tolerate non-existing context
@@ -33,15 +33,15 @@ export function useRequestContext() {
 }
 
 export function headers() {
-  return useRequestContext().requestHeaders;
+  return getRequestContext().requestHeaders;
 }
 
 export function cookies() {
-  return useRequestContext().cookiesWrapper.cookies;
+  return getRequestContext().cookiesWrapper.cookies;
 }
 
 export function revalidatePath(path: string) {
-  useRequestContext().revalidate = path;
+  getRequestContext().revalidate = path;
 }
 
 // it seems Next.js's cookies API has to track modified response cookies

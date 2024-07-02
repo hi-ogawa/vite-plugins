@@ -10,7 +10,6 @@ export {
 } from "./lib/error";
 export type { Metadata } from "./features/meta/utils";
 export {
-  useRequestContext,
   headers,
   cookies,
   revalidatePath,
