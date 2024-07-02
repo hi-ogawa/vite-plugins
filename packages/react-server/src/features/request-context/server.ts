@@ -19,7 +19,7 @@ export class RequestContext {
   static get() {
     const context = requestContextStorage.getStore();
     if (!context) {
-      // tolerate mis usage for now
+      // we should tolerate non-existing context for stackblitz
       console.error("[WARNING] RequestContext not available");
       return new RequestContext(new Headers());
     }
