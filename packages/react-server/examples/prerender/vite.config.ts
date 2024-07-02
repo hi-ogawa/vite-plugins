@@ -12,6 +12,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginReactServer({
+      noAsyncLocalStorage: true,
       prerender: async (_manifest, presets) => {
         return [
           ...(await presets.static()),
