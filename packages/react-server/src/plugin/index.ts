@@ -172,7 +172,7 @@ export function vitePluginReactServer(options?: {
       createVirtualPlugin("server-routes", () => {
         return `
           const glob = import.meta.glob(
-            "/${routeDir}/**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)",
+            "/${routeDir}/**/(page|layout|error|not-found|loading|template|route).(js|jsx|ts|tsx)",
             { eager: true },
           );
           export default Object.fromEntries(

@@ -1,6 +1,7 @@
 import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
+import { handleApiRoutes } from "../features/router/api-route";
 import {
   generateRouteModuleTree,
   renderRouteMap,
@@ -58,6 +59,9 @@ export const handler: ReactServerHandler = async (ctx) => {
 
   const handled = handleTrailingSlash(new URL(ctx.request.url));
   if (handled) return handled;
+
+  const handledApi = await handleApiRoutes(router.tree, ctx.request);
+  if (handledApi) return handledApi;
 
   // extract stream request details
   const { url, request, isStream, streamParam } = unwrapStreamRequest(

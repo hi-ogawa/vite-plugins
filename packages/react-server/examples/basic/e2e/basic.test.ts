@@ -1256,3 +1256,55 @@ test("server assses", async ({ page }) => {
   await expect(page.getByTestId("js-import")).toHaveScreenshot();
   await expect(page.getByTestId("css-url")).toHaveScreenshot();
 });
+
+test("api routes", async ({ request }) => {
+  {
+    const res = await request.get("/test/api/static");
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      route: "/test/api/static",
+      method: "GET",
+      pathname: "/test/api/static",
+      context: { params: {} },
+    });
+  }
+
+  {
+    const res = await request.post("/test/api/static", {
+      data: "hey",
+    });
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      route: "/test/api/static",
+      method: "POST",
+      pathname: "/test/api/static",
+      text: "hey",
+      context: { params: {} },
+    });
+  }
+
+  {
+    const res = await request.get("/test/api/dynamic/hello");
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      route: "/test/api/dynamic/[id]",
+      method: "GET",
+      pathname: "/test/api/dynamic/hello",
+      context: { params: { id: "hello" } },
+    });
+  }
+
+  {
+    const res = await request.post("/test/api/dynamic/hello", {
+      data: "hey",
+    });
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      route: "/test/api/dynamic/[id]",
+      method: "POST",
+      pathname: "/test/api/dynamic/hello",
+      text: "hey",
+      context: { params: { id: "hello" } },
+    });
+  }
+});

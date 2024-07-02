@@ -10,7 +10,7 @@ export function createFsRouteTree<T>(globEntries: Record<string, unknown>): {
   const entries: Record<string, T> = {};
   for (const [k, v] of Object.entries(globEntries)) {
     const m = k.match(
-      /^(.*)\/(page|layout|error|not-found|loading|template)\.\w*$/,
+      /^(.*)\/(page|layout|error|not-found|loading|template|route)\.\w*$/,
     );
     tinyassert(m && 1 in m && 2 in m);
     const pathname = m[1] || "/";
