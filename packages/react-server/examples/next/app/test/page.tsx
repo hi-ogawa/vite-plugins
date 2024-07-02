@@ -18,8 +18,6 @@ export default function Page() {
 const links = [
   "/actions/client",
   "/actions/server",
-  "/actions/header",
-  "/actions/mutate-cookie",
   "/navigation",
   "/navigation/router",
   "/navigation/redirect/servercomponent",
