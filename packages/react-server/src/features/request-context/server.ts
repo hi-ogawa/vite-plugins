@@ -19,29 +19,29 @@ export class RequestContext {
   run<T>(f: () => T): T {
     return requestContextStorage.run(this, f);
   }
+}
 
-  static get() {
-    const context = requestContextStorage.getStore();
-    if (!context) {
-      // we tolerate non-existing context
-      // since async storage is not well supported on stackblitz
-      console.error("[WARNING] RequestContext not available");
-      return new RequestContext(new Headers());
-    }
-    return context;
+function getRequestContext() {
+  const context = requestContextStorage.getStore();
+  if (!context) {
+    // we tolerate non-existing context
+    // since async storage is not well supported on stackblitz
+    console.error("[WARNING] RequestContext not available");
+    return new RequestContext(new Headers());
   }
+  return context;
 }
 
 export function headers() {
-  return RequestContext.get().requestHeaders;
+  return getRequestContext().requestHeaders;
 }
 
 export function cookies() {
-  return RequestContext.get().cookiesWrapper.cookies;
+  return getRequestContext().cookiesWrapper.cookies;
 }
 
 export function revalidatePath(path: string) {
-  RequestContext.get().revalidate = path;
+  getRequestContext().revalidate = path;
 }
 
 // it seems Next.js's cookies API has to track modified response cookies

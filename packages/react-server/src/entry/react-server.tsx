@@ -27,6 +27,7 @@ import {
   ReactServerDigestError,
   createError,
   getErrorContext,
+  isRedirectError,
 } from "../lib/error";
 
 const debug = createDebug("react-server:rsc");
@@ -82,6 +83,17 @@ export const handler: ReactServerHandler = async (ctx) => {
       streamActionId: streamParam?.actionId,
       requestContext,
     });
+    // return action redirect directly when nojs
+    const error = actionResult.error;
+    if (!isStream && error && isRedirectError(error)) {
+      return new Response(null, {
+        status: error.status,
+        headers: {
+          ...actionResult.responseHeaders,
+          ...error.headers,
+        },
+      });
+    }
   }
 
   const layoutRequest = revalidateLayoutContentRequest(
