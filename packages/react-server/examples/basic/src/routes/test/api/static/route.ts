@@ -12,6 +12,7 @@ export async function POST(request: Request, context: unknown) {
     route: "/test/api/static",
     method: "POST",
     pathname: new URL(request.url).pathname,
+    text: await request.text(),
     context,
   });
 }
