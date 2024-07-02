@@ -192,7 +192,7 @@ export function vitePluginReactServer(options?: {
       ),
 
       validateImportPlugin({
-        "client-only": `'client-only' is included in client build`,
+        "client-only": `'client-only' is included in server build`,
         "server-only": true,
       }),
 
