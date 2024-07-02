@@ -60,6 +60,7 @@ export const handler: ReactServerHandler = async (ctx) => {
   const handled = handleTrailingSlash(new URL(ctx.request.url));
   if (handled) return handled;
 
+  // TODO: support cookies mutation in api routes
   const handledApi = await handleApiRoutes(router.tree, ctx.request);
   if (handledApi) return handledApi;
 
