@@ -1,11 +1,11 @@
 import { ResponseCookies } from "@edge-runtime/cookies";
 
-/** @todo */
+/** @todo https://nextjs.org/docs/app/api-reference/functions/headers */
 export function headers() {
   return new Headers();
 }
 
-/** @todo */
+/** @todo https://nextjs.org/docs/app/api-reference/functions/cookies */
 export function cookies() {
   return new ResponseCookies(new Headers());
 }
