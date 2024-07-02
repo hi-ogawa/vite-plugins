@@ -116,6 +116,7 @@ export function vitePluginReactServer(options?: {
   entryBrowser?: string;
   entryServer?: string;
   routeDir?: string;
+  noAsyncLocalStorage?: boolean;
 }): Plugin[] {
   const entryBrowser = options?.entryBrowser ?? "/src/entry-client";
   const entryServer = options?.entryServer ?? "/src/entry-react-server";
@@ -186,10 +187,23 @@ export function vitePluginReactServer(options?: {
       createVirtualPlugin(
         ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
         () => `
+          import "virtual:inject-async-local-storage";
           export { handler } from "${entryServer}";
           export { router } from "@hiogawa/react-server/entry-react-server";
         `,
       ),
+
+      // make `AsyncLocalStorage` available globally for React.cache from edge build
+      // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
+      createVirtualPlugin("inject-async-local-storage", () => {
+        if (options?.noAsyncLocalStorage) {
+          return "export {}";
+        }
+        return `
+          import { AsyncLocalStorage } from "node:async_hooks";
+          Object.assign(globalThis, { AsyncLocalStorage });
+        `;
+      }),
 
       validateImportPlugin({
         "client-only": `'client-only' is included in server build`,
