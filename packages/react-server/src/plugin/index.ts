@@ -119,7 +119,8 @@ export function vitePluginReactServer(options?: {
   noAsyncLocalStorage?: boolean;
 }): Plugin[] {
   const entryBrowser = options?.entryBrowser ?? "/src/entry-client";
-  const entryServer = options?.entryServer ?? "/src/entry-react-server";
+  const entryServer =
+    options?.entryServer ?? "@hiogawa/react-server/entry-react-server";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
