@@ -61,7 +61,8 @@
     "build": "tsup",
     "prepack": "tsup --clean",
     "test": "vitest",
-    "test-e2e": "bash misc/test.sh"
+    "test-e2e": "playwright test",
+    "test-package": "bash misc/test.sh"
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
