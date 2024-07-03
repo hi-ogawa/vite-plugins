@@ -55,6 +55,7 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
 
 export type MatchNodeEntry<T> = {
   prefix: string;
+  // TODO: it would help to have type: "not-found"?
   type: "layout" | "page";
   node: TreeNode<T>;
   params: MatchParamEntry[];
@@ -115,14 +116,116 @@ export function matchRouteTree<T>(
   return { matches, params };
 }
 
+export function matchRouteTree2<T>(
+  tree: TreeNode<T>,
+  pathname: string,
+): MatchResult<T> {
+  // TODO
+  // concept of "prefix" (and also routeId) needs to be chagned
+  // to take group route segment into account
+  const prefixes = getPathPrefixes(pathname);
+
+  function scoreBranch({ params }: MatchResult<T>) {
+    let score = 0;
+    for (const param of params) {
+      score <<= 1;
+      score += param[0] === null ? 1 : 0;
+    }
+    return score;
+  }
+
+  function recurse(
+    node: TreeNode<T>,
+    cursor: number,
+    { params, matches }: MatchResult<T>,
+  ): MatchResult<T> {
+    // try all branches to decide which group route to pick
+    const branches: MatchResult<T>[] = [];
+
+    if (cursor === prefixes.length) {
+      const lastMatch = matches.at(-1);
+      tinyassert(lastMatch);
+      branches.push({
+        params,
+        matches: [...matches, { ...lastMatch, type: "page" }],
+      });
+    }
+
+    for (const [key, child] of Object.entries(node.children ?? {})) {
+      // TODO: group routes
+      const mGroup = key.match(GROUP_RE);
+      if (mGroup) {
+        recurse(child, cursor, { params, matches });
+      }
+
+      if (cursor >= prefixes.length) continue;
+      const prefix = prefixes[cursor]!;
+      const segment = prefix?.split("/").at(-1)!;
+
+      // TODO: catch all
+      const mAll = key.match(CATCH_ALL_RE);
+      if (mAll) {
+        tinyassert(1 in mAll);
+        mAll[1];
+        segment;
+      }
+
+      const m = key.match(DYNAMIC_RE);
+      if (m) {
+        tinyassert(1 in m);
+        const newParams: MatchParamEntry[] = [...params, [m[1], segment]];
+        branches.push(
+          recurse(child, cursor + 1, {
+            params: newParams,
+            matches: [
+              ...matches,
+              { prefix, type: "layout", node: child, params: newParams },
+            ],
+          }),
+        );
+      }
+
+      if (key === segment) {
+        const newParams: MatchParamEntry[] = [...params, [null, segment]];
+        branches.push(
+          recurse(child, cursor + 1, {
+            params: newParams,
+            matches: [
+              ...matches,
+              { prefix, type: "layout", node: child, params: newParams },
+            ],
+          }),
+        );
+      }
+    }
+
+    if (branches.length === 0) {
+      // TODO
+      branches.push(recurse(initTreeNode(), cursor + 1, { params, matches }));
+    }
+
+    // tie break branches
+    const sortedBranches = sortBy(branches, (b) => -scoreBranch(b));
+    return sortedBranches[0]!;
+  }
+
+  return recurse(tree, 0, { params: [], matches: [] });
+}
+
 const DYNAMIC_RE = /^\[(\w*)\]$/;
 const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
+const GROUP_RE = /^\(\w+\)$/;
 
-export function matchRouteChild<T>(input: string, node: TreeNode<T>) {
+function matchRouteChild<T>(input: string, node: TreeNode<T>) {
   if (!node.children) {
     return;
   }
   for (const [segment, child] of Object.entries(node.children)) {
+    const mGroup = segment.match(GROUP_RE);
+    if (mGroup) {
+      tinyassert(1 in mGroup);
+      return { child, group: mGroup[1] };
+    }
     const mAll = segment.match(CATCH_ALL_RE);
     if (mAll) {
       tinyassert(1 in mAll);
