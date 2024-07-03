@@ -1,5 +1,7 @@
+// @ts-ignore
 import metadataFiles from "virtual:metadata-files";
 import { objectHas } from "@hiogawa/utils";
+import type { MetadataFilesExports } from "./plugin";
 import type { Metadata } from "./utils";
 
 export function renderMetadata(m: Metadata) {
@@ -11,7 +13,7 @@ export function renderMetadata(m: Metadata) {
         : null;
   return (
     <>
-      {metadataFiles.favicon && (
+      {(metadataFiles as MetadataFilesExports).favicon && (
         <link rel="icon" href="/favicon.ico" sizes="any" />
       )}
       {typeof title === "string" && <title>{title}</title>}
