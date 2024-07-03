@@ -1,3 +1,4 @@
+import "../style.css";
 import { Link } from "@hiogawa/react-server/client";
 import { Hydrated } from "./_client";
 

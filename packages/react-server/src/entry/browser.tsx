@@ -29,7 +29,7 @@ import { getFlightStreamBrowser } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
 
-export async function start() {
+async function start() {
   initializeReactClientBrowser();
 
   const { default: ReactClient } = await import(
@@ -217,3 +217,5 @@ declare module "react-dom/client" {
     Document: Document;
   }
 }
+
+start();

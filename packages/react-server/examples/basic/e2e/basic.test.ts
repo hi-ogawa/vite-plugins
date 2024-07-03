@@ -305,7 +305,7 @@ test("module invalidation @dev", async ({ page }) => {
   await waitForHydration(page);
 
   const moduleUrls = [
-    "/src/entry-server",
+    "/src/adapters/node.ts",
     "/src/entry-react-server",
     "/src/routes/test/page",
     "/src/components/counter",
@@ -315,7 +315,7 @@ test("module invalidation @dev", async ({ page }) => {
 
   const result = await inspectDevModules(page, moduleUrls);
   expect(result).toMatchObject({
-    "/src/entry-server": {
+    "/src/adapters/node.ts": {
       ssr: expect.any(Object),
       "react-server": false,
     },
@@ -347,10 +347,10 @@ test("module invalidation @dev", async ({ page }) => {
 
   const result2 = await inspectDevModules(page, moduleUrls);
   expect([
-    result["/src/entry-server"].ssr.lastInvalidationTimestamp,
+    result["/src/adapters/node.ts"].ssr.lastInvalidationTimestamp,
     result["/src/entry-react-server"]["react-server"].lastInvalidationTimestamp,
   ]).toEqual([
-    result2["/src/entry-server"].ssr.lastInvalidationTimestamp,
+    result2["/src/adapters/node.ts"].ssr.lastInvalidationTimestamp,
     result2["/src/entry-react-server"]["react-server"]
       .lastInvalidationTimestamp,
   ]);
@@ -364,9 +364,9 @@ test("module invalidation @dev", async ({ page }) => {
   await page.getByText("test-hmr-edit-div").click();
 
   const result3 = await inspectDevModules(page, moduleUrls);
-  expect([result["/src/entry-server"].ssr.lastInvalidationTimestamp]).toEqual([
-    result3["/src/entry-server"].ssr.lastInvalidationTimestamp,
-  ]);
+  expect([
+    result["/src/adapters/node.ts"].ssr.lastInvalidationTimestamp,
+  ]).toEqual([result3["/src/adapters/node.ts"].ssr.lastInvalidationTimestamp]);
 
   const changed = [
     ["/src/entry-react-server", "react-server"],

@@ -19,8 +19,6 @@ export default function vitePluginReactServerNext(options?: {
     tsconfigPaths(),
     vitePluginReactServer({
       routeDir: "app",
-      entryBrowser: `next/vite/entry-browser`,
-      entryServer: "next/vite/entry-server",
       plugins: [
         tsconfigPaths(),
         {
