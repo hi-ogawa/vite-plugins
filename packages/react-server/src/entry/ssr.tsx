@@ -34,7 +34,7 @@ import {
   createBufferedTransformStream,
   injectFlightStream,
 } from "../utils/stream-script";
-import type { ReactServerHandlerStreamResult } from "./react-server";
+import type { ReactServerHandlerStreamResult } from "./server";
 
 const debug = createDebug("react-server:ssr");
 
@@ -74,9 +74,7 @@ export async function prerender(request: Request) {
   return { stream, response, html };
 }
 
-export async function importReactServer(): Promise<
-  typeof import("./react-server")
-> {
+export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(
       ENTRY_REACT_SERVER_WRAPPER,

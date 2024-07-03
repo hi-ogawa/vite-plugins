@@ -46,9 +46,9 @@
       "types": "./dist/entry/ssr.d.ts",
       "default": "./dist/entry/ssr.js"
     },
-    "./entry-react-server": {
-      "types": "./dist/entry/react-server.d.ts",
-      "default": "./dist/entry/react-server.js"
+    "./entry-server": {
+      "types": "./dist/entry/server.d.ts",
+      "default": "./dist/entry/server.js"
     },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
