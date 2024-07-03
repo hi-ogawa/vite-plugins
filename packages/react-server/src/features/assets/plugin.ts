@@ -123,7 +123,7 @@ export function vitePluginServerAssets({
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
-      if (manager.buildType === "client") {
+      if (manager.buildType === "browser") {
         return "export {}";
       }
       tinyassert(false);
@@ -132,7 +132,7 @@ export function vitePluginServerAssets({
     {
       name: vitePluginServerAssets.name + ":copy-build",
       async writeBundle() {
-        if (manager.buildType === "client") {
+        if (manager.buildType === "browser") {
           for (const file of manager.serverAssets) {
             await fs.promises.cp(
               path.join("dist/rsc", file),
@@ -163,7 +163,7 @@ export function serverAssertsPluginServer({
       name: serverAssertsPluginServer.name + ":build",
       apply: "build",
       generateBundle(_options, bundle) {
-        if (manager.buildType !== "rsc") {
+        if (manager.buildType !== "server") {
           return;
         }
         for (const [_k, v] of Object.entries(bundle)) {

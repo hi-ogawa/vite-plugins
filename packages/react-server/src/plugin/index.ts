@@ -73,7 +73,7 @@ class PluginStateManager {
   config!: ResolvedConfig;
   configEnv!: ConfigEnv;
 
-  buildType?: "scan" | "rsc" | "client" | "ssr";
+  buildType?: "scan" | "server" | "browser" | "ssr";
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
@@ -385,18 +385,18 @@ export function vitePluginReactServer(options?: {
           } satisfies InlineConfig),
         );
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
-        manager.buildType = "rsc";
+        manager.buildType = "server";
         manager.rscUseClientIds.clear();
         await build(reactServerViteConfig);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
-        manager.buildType = "client";
+        manager.buildType = "browser";
       }
     },
     writeBundle: {
       order: "post",
       sequential: true,
       async handler(_options, _bundle) {
-        if (manager.buildType === "client") {
+        if (manager.buildType === "browser") {
           console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
           manager.buildType = "ssr";
           await build({
@@ -442,7 +442,7 @@ export function vitePluginReactServer(options?: {
         `;
       }
       // build
-      if (manager.buildType === "client") {
+      if (manager.buildType === "browser") {
         // import "runtime-client" for preload
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
