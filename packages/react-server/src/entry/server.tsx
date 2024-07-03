@@ -1,292 +1,238 @@
-import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
-import { createMemoryHistory } from "@tanstack/history";
-import ReactDOMServer from "react-dom/server.edge";
-import type { ModuleNode, ViteDevServer } from "vite";
-import type { SsrAssetsType } from "../features/assets/plugin";
-import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
-import { injectDefaultMetaViewport } from "../features/next/ssr";
-import {
-  LayoutRoot,
-  LayoutStateContext,
-  RouteAssetLinks,
-  RouteManifestContext,
-} from "../features/router/client";
-import {
-  type RouteManifest,
-  emptyRouteManifest,
-} from "../features/router/manifest";
-import type { ServerRouterData } from "../features/router/utils";
-import {
-  createModuleMap,
-  initializeReactClientSsr,
-  ssrImportPromiseCache,
-} from "../features/use-client/server";
-import { Router, RouterContext } from "../lib/client/router";
+import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
+import type { RenderToReadableStreamOptions } from "react-dom/server";
+import ReactServer from "react-server-dom-webpack/server.edge";
+import { createBundlerConfig } from "../features/client-component/server";
 import {
   DEFAULT_ERROR_CONTEXT,
+  ReactServerDigestError,
+  createError,
   getErrorContext,
-  getStatusText,
   isRedirectError,
-} from "../lib/error";
-import { $__global } from "../lib/global";
-import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+} from "../features/error/shared";
+import { RequestContext } from "../features/request-context/server";
+import { handleApiRoutes } from "../features/router/api-route";
 import {
-  createBufferedTransformStream,
-  injectFlightStream,
-} from "../utils/stream-script";
-import type { ReactServerHandlerStreamResult } from "./react-server";
+  generateRouteModuleTree,
+  renderRouteMap,
+} from "../features/router/server";
+import {
+  type LayoutRequest,
+  type ServerRouterData,
+  handleTrailingSlash,
+  revalidateLayoutContentRequest,
+} from "../features/router/utils";
+import {
+  type ActionResult,
+  createActionBundlerConfig,
+  importServerAction,
+  initializeReactServer,
+  serverReferenceImportPromiseCache,
+} from "../features/server-action/server";
+import { unwrapStreamRequest } from "../features/server-component/utils";
 
-const debug = createDebug("react-server:ssr");
+const debug = createDebug("react-server:rsc");
 
-export async function handler(request: Request): Promise<Response> {
-  // dev only api endpoint to test internal
-  if (
-    import.meta.env.DEV &&
-    new URL(request.url).pathname === "/__react_server_dev"
-  ) {
-    return devInspectHandler(request);
-  }
+export type ReactServerHandler = (
+  ctx: ReactServerHandlerContext,
+) => Promise<ReactServerHandlerResult>;
 
-  const reactServer = await importReactServer();
-
-  // server action and render rsc stream
-  const result = await reactServer.handler({ request });
-  if (result instanceof Response) {
-    return result;
-  }
-
-  // render rsc stream into html (or redirect)
-  return renderHtml(request, result);
+// users can extend interface
+export interface ReactServerHandlerContext {
+  request: Request;
 }
 
-// return stream and ssr at once for prerender
-export async function prerender(request: Request) {
-  const reactServer = await importReactServer();
-
-  const result = await reactServer.handler({ request });
-  tinyassert(!(result instanceof Response));
-
-  const [stream, stream2] = result.stream.tee();
-  result.stream = stream2;
-
-  const response = await renderHtml(request, result, { prerender: true });
-  const html = await response.text();
-  return { stream, response, html };
+export interface ReactServerHandlerStreamResult {
+  stream: ReadableStream<Uint8Array>;
+  actionResult?: ActionResult;
 }
 
-export async function importReactServer(): Promise<
-  typeof import("./react-server")
-> {
-  if (import.meta.env.DEV) {
-    return $__global.dev.reactServer.ssrLoadModule(
-      ENTRY_REACT_SERVER_WRAPPER,
-    ) as any;
-  } else {
-    return import("/dist/rsc/index.js" as string);
-  }
-}
+export type ReactServerHandlerResult =
+  | Response
+  | ReactServerHandlerStreamResult;
 
-export async function renderHtml(
-  request: Request,
-  result: ReactServerHandlerStreamResult,
-  opitons?: { prerender?: boolean },
-) {
-  initializeReactClientSsr();
-
-  const { default: ReactClient } = await import(
-    "react-server-dom-webpack/client.edge"
-  );
-
-  //
-  // ssr root
-  //
+export const handler: ReactServerHandler = async (ctx) => {
+  initializeReactServer();
 
   if (import.meta.env.DEV) {
-    ssrImportPromiseCache.clear();
+    serverReferenceImportPromiseCache.clear();
   }
 
-  const [stream1, stream2] = result.stream.tee();
+  const handled = handleTrailingSlash(new URL(ctx.request.url));
+  if (handled) return handled;
 
-  const layoutPromise = ReactClient.createFromReadableStream<ServerRouterData>(
-    stream1,
-    {
-      ssrManifest: {
-        moduleMap: createModuleMap(),
-        moduleLoading: null,
-      },
-    },
+  const requestContext = new RequestContext(ctx.request.headers);
+
+  const handledApi = await handleApiRoutes(
+    router.tree,
+    ctx.request,
+    requestContext,
+  );
+  if (handledApi) return handledApi;
+
+  // extract stream request details
+  const { url, request, isStream, streamParam } = unwrapStreamRequest(
+    ctx.request,
   );
 
-  const url = new URL(request.url);
-  const history = createMemoryHistory({
-    initialEntries: [url.href.slice(url.origin.length)],
+  // action
+  let actionResult: ActionResult | undefined;
+  if (ctx.request.method === "POST") {
+    actionResult = await actionHandler({
+      request,
+      streamActionId: streamParam?.actionId,
+      requestContext,
+    });
+    // return action redirect directly when nojs
+    const error = actionResult.error;
+    if (!isStream && error && isRedirectError(error)) {
+      return new Response(null, {
+        status: error.status,
+        headers: {
+          ...actionResult.responseHeaders,
+          ...error.headers,
+        },
+      });
+    }
+  }
+
+  const layoutRequest = revalidateLayoutContentRequest(
+    url.pathname,
+    streamParam?.lastPathname,
+    [streamParam?.revalidate, requestContext.revalidate],
+  );
+  const stream = await render({
+    request,
+    layoutRequest,
+    actionResult,
+    requestContext,
   });
-  const router = new Router(history);
 
-  const { routeManifestUrl, routeManifest } = await importRouteManifest();
-
-  const reactRootEl = (
-    <RouterContext.Provider value={router}>
-      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
-        <RouteManifestContext.Provider value={routeManifest}>
-          <RouteAssetLinks />
-          <LayoutRoot />
-        </RouteManifestContext.Provider>
-      </LayoutStateContext.Provider>
-    </RouterContext.Provider>
-  );
-
-  //
-  // render
-  //
-
-  if (import.meta.env.DEV) {
-    // ensure latest css
-    invalidateModule($__global.dev.server, `\0${SERVER_CSS_PROXY}`);
-    invalidateModule($__global.dev.server, `\0${DEV_SSR_CSS}?direct`);
-  }
-  const assets: SsrAssetsType = (await import("virtual:ssr-assets" as string))
-    .default;
-  let head = assets.head;
-
-  // inject DEBUG variable
-  if (globalThis?.process?.env?.["DEBUG"]) {
-    head += `<script>self.__DEBUG = "${process.env["DEBUG"]}"</script>\n`;
-  }
-
-  if (routeManifestUrl) {
-    head += `<script>self.__routeManifestUrl = "${routeManifestUrl}"</script>\n`;
-    head += `<link rel="modulepreload" href="${routeManifestUrl}" />\n`;
-  }
-
-  // two pass SSR to re-render on error
-  let ssrStream: ReactDOMServer.ReactDOMServerReadableStream;
-  let status = 200;
-  try {
-    ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
-      formState: result.actionResult?.data,
-      bootstrapModules: url.search.includes("__nojs")
-        ? []
-        : assets.bootstrapModules,
-      onError(error, errorInfo) {
-        debug("renderToReadableStream", { error, errorInfo });
-        if (!getErrorContext(error)) {
-          console.error("[react-dom:renderToReadableStream]", error);
-        }
+  if (isStream) {
+    return new Response(stream, {
+      headers: {
+        ...actionResult?.responseHeaders,
+        "content-type": "text/x-component; charset=utf-8",
       },
     });
-    if (opitons?.prerender) {
-      await ssrStream.allReady;
-    }
-  } catch (e) {
-    const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
-    if (isRedirectError(ctx)) {
-      return new Response(null, { status: ctx.status, headers: ctx.headers });
-    }
-    status = ctx.status;
-    // render empty as error fallback and
-    // let browser render full CSR instead of hydration
-    // which will replay client error boudnary from RSC error
-    const errorRoot = (
-      <html data-no-hydrate>
-        <head>
-          <meta charSet="utf-8" />
-        </head>
-        <body>
-          <noscript>
-            {status} {getStatusText(status)}
-          </noscript>
-        </body>
-      </html>
+  }
+
+  return { stream, actionResult };
+};
+
+//
+// render RSC
+//
+
+async function render({
+  request,
+  layoutRequest,
+  actionResult,
+  requestContext,
+}: {
+  request: Request;
+  layoutRequest: LayoutRequest;
+  actionResult?: ActionResult;
+  requestContext: RequestContext;
+}) {
+  const result = await renderRouteMap(router.tree, request);
+  const nodeMap = objectMapValues(
+    layoutRequest,
+    (v) => result[`${v.type}s`][v.name],
+  );
+  const flightData: ServerRouterData = {
+    layout: nodeMap,
+    metadata: result.metadata,
+    params: result.params,
+    url: request.url,
+    action: actionResult
+      ? objectPick(actionResult, ["data", "error"])
+      : undefined,
+  };
+  return requestContext.run(() =>
+    ReactServer.renderToReadableStream<ServerRouterData>(
+      flightData,
+      createBundlerConfig(),
+      {
+        onError: reactServerOnError,
+      },
+    ),
+  );
+}
+
+const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
+  error,
+  errorInfo,
+) => {
+  debug("[reactServerDomServer.renderToReadableStream]", {
+    error,
+    errorInfo,
+  });
+  if (!(error instanceof ReactServerDigestError)) {
+    console.error("[react-server:renderToReadableStream]", error);
+  }
+  const serverError =
+    error instanceof ReactServerDigestError
+      ? error
+      : createError({ status: 500 });
+  return serverError.digest;
+};
+
+//
+// glob import routes
+//
+
+// @ts-ignore untyped virtual
+import serverRoutes from "virtual:server-routes";
+
+export const router = generateRouteModuleTree(serverRoutes);
+
+//
+// server action
+//
+
+// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
+async function actionHandler({
+  request,
+  streamActionId,
+  requestContext,
+}: {
+  request: Request;
+  streamActionId?: string;
+  requestContext: RequestContext;
+}) {
+  let boundAction: Function;
+  if (streamActionId) {
+    const contentType = request.headers.get("content-type");
+    const body = contentType?.startsWith("multipart/form-data")
+      ? await request.formData()
+      : await request.text();
+    const args = await ReactServer.decodeReply(body);
+    const action = await importServerAction(streamActionId);
+    boundAction = () => action.apply(null, args);
+  } else {
+    const formData = await request.formData();
+    const decodedAction = await ReactServer.decodeAction(
+      formData,
+      createActionBundlerConfig(),
     );
-    ssrStream = await ReactDOMServer.renderToReadableStream(errorRoot, {
-      bootstrapModules: assets.bootstrapModules,
-    });
-  }
-
-  const htmlStream = ssrStream
-    .pipeThrough(new TextDecoderStream())
-    .pipeThrough(createBufferedTransformStream())
-    .pipeThrough(injectToHead(head))
-    .pipeThrough(injectDefaultMetaViewport())
-    .pipeThrough(injectFlightStream(stream2))
-    .pipeThrough(new TextEncoderStream());
-
-  return new Response(htmlStream, {
-    status,
-    headers: {
-      ...result.actionResult?.responseHeaders,
-      "content-type": "text/html;charset=utf-8",
-    },
-  });
-}
-
-function injectToHead(data: string) {
-  const marker = "<head>";
-  let done = false;
-  return new TransformStream<string, string>({
-    transform(chunk, controller) {
-      if (!done && chunk.includes(marker)) {
-        const [pre, post] = splitFirst(chunk, marker);
-        controller.enqueue(pre + marker + data + post);
-        done = true;
-        return;
-      }
-      controller.enqueue(chunk);
-    },
-  });
-}
-
-async function importRouteManifest(): Promise<{
-  routeManifestUrl?: string;
-  routeManifest: RouteManifest;
-}> {
-  if (import.meta.env.DEV) {
-    return { routeManifest: emptyRouteManifest() };
-  } else {
-    const mod = await import("virtual:route-manifest" as string);
-    return mod.default;
-  }
-}
-
-//#region debug dev module graph
-
-async function devInspectHandler(request: Request) {
-  tinyassert(request.method === "POST");
-  const data = await request.json();
-  if (data.type === "module") {
-    let mod: ModuleNode | undefined;
-    if (data.environment === "ssr") {
-      mod = await getModuleNode($__global.dev.server, data.url, true);
-    }
-    if (data.environment === "react-server") {
-      mod = await getModuleNode($__global.dev.reactServer, data.url, true);
-    }
-    const result = mod && {
-      id: mod.id,
-      lastInvalidationTimestamp: mod.lastInvalidationTimestamp,
-      importers: [...(mod.importers ?? [])].map((m) => m.id),
-      ssrImportedModules: [...(mod.ssrImportedModules ?? [])].map((m) => m.id),
-      clientImportedModules: [...(mod.clientImportedModules ?? [])].map(
-        (m) => m.id,
-      ),
+    boundAction = async () => {
+      const result = await decodedAction();
+      const formState = await ReactServer.decodeFormState(result, formData);
+      return formState;
     };
-    return new Response(JSON.stringify(result || false, null, 2), {
-      headers: { "content-type": "application/json" },
-    });
   }
-  tinyassert(false);
-}
 
-async function getModuleNode(server: ViteDevServer, url: string, ssr: boolean) {
-  const resolved = await server.moduleGraph.resolveUrl(url, ssr);
-  return server.moduleGraph.getModuleById(resolved[1]);
-}
-
-//#endregion
-
-declare module "react-dom/server" {
-  interface RenderToReadableStreamOptions {
-    formState?: unknown;
+  const result: ActionResult = {};
+  try {
+    result.data = await requestContext.run(() => boundAction());
+  } catch (e) {
+    // TODO: we can respond redirection directly when nojs action
+    result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+  } finally {
+    result.responseHeaders = {
+      ...result.error?.headers,
+      "set-cookie": requestContext.getSetCookie(),
+    };
   }
+  return result;
 }

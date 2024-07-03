@@ -129,8 +129,8 @@ export function vitePluginServerUseClient({
   const useClientPlugin: Plugin = {
     name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
-      manager.rscIds.add(id);
-      manager.rscUseClientIds.delete(id);
+      manager.serverIds.add(id);
+      manager.clientReferenceIds.delete(id);
       if (!code.includes(USE_CLIENT)) {
         return;
       }
@@ -146,7 +146,7 @@ export function vitePluginServerUseClient({
       output.prepend(
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
-      manager.rscUseClientIds.add(id);
+      manager.clientReferenceIds.add(id);
       if (manager.buildType === "scan") {
         // to discover server references imported only by client
         // we keep code as is and continue crawling
@@ -272,9 +272,11 @@ export function vitePluginClientUseClient({
      * }
      */
     createVirtualPlugin("client-references", () => {
-      tinyassert(manager.buildType === "client" || manager.buildType === "ssr");
+      tinyassert(
+        manager.buildType === "browser" || manager.buildType === "ssr",
+      );
       let result = `export default {\n`;
-      for (let id of manager.rscUseClientIds) {
+      for (let id of manager.clientReferenceIds) {
         // virtual module needs to be mapped back to the original form
         const to = id.startsWith("\0") ? id.slice(1) : id;
         result += `"${hashString(id)}": () => import("${to}"),\n`;

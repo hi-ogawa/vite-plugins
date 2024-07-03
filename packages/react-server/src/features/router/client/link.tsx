@@ -1,8 +1,8 @@
 import { objectMapValues } from "@hiogawa/utils";
 import React from "react";
-import { routerRevalidate } from "../../client";
-import { usePreloadHandlers } from "../../features/router/client";
-import type { RevalidationType } from "../../features/server-component/utils";
+import { routerRevalidate } from "../../../client";
+import type { RevalidationType } from "../../server-component/utils";
+import { usePreloadHandlers } from "../client";
 import { useRouter } from "./router";
 
 // TODO: study prior art

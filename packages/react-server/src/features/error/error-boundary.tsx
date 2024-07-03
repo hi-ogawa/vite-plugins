@@ -1,8 +1,8 @@
 import { tinyassert } from "@hiogawa/utils";
 import React from "react";
-import type { ErrorPageProps } from "../../features/router/server";
-import { getErrorContext, getStatusText, isRedirectError } from "../error";
-import { useRouter } from "./router";
+import { useRouter } from "../router/client/router";
+import type { ErrorPageProps } from "../router/server";
+import { getErrorContext, getStatusText, isRedirectError } from "./shared";
 
 // cf.
 // https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx

@@ -7,7 +7,7 @@ declare module "react-server-dom-webpack/server.edge" {
   // TODO: branded stream type?
   export function renderToReadableStream<T>(
     node: T,
-    bundlerConfig: import("./types").BundlerConfig,
+    bundlerConfig: import("./react").BundlerConfig,
     opitons?: {
       onError: import("react-dom/server").RenderToReadableStreamOptions["onError"];
     },
@@ -29,7 +29,7 @@ declare module "react-server-dom-webpack/server.edge" {
 
   export function decodeAction(
     body: FormData,
-    bundlerConfig: import("./types").BundlerConfig,
+    bundlerConfig: import("./react").BundlerConfig,
   ): Promise<() => Promise<unknown>>;
 
   export function decodeFormState(
@@ -43,14 +43,14 @@ declare module "react-server-dom-webpack/server.edge" {
 declare module "react-server-dom-webpack/client.edge" {
   export function createServerReference(
     id: string,
-    callServer: import("./types").CallServerCallback,
+    callServer: import("./react").CallServerCallback,
     encodeFormAction?: unknown,
   ): Function;
 
   export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
     options: {
-      ssrManifest: import("./types").SsrManifest;
+      ssrManifest: import("./react").SsrManifest;
       // TODO
       // encodeFormAction
     },
@@ -61,21 +61,21 @@ declare module "react-server-dom-webpack/client.edge" {
 declare module "react-server-dom-webpack/client.browser" {
   export function createServerReference(
     id: string,
-    callServer: import("./types").CallServerCallback,
+    callServer: import("./react").CallServerCallback,
     encodeFormAction?: unknown,
   ): Function;
 
   export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
     options?: {
-      callServer?: import("./types").CallServerCallback;
+      callServer?: import("./react").CallServerCallback;
     },
   ): Promise<T>;
 
   export function createFromFetch<T>(
     promiseForResponse: Promise<Response>,
     options?: {
-      callServer?: import("./types").CallServerCallback;
+      callServer?: import("./react").CallServerCallback;
     },
   ): Promise<T>;
 

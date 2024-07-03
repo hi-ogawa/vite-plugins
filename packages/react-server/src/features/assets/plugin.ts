@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { Manifest, Plugin, ViteDevServer } from "vite";
-import { $__global } from "../../lib/global";
+import { $__global } from "../../global";
 import type { PluginStateManager } from "../../plugin";
-import { ENTRY_CLIENT_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
+import { ENTRY_BROWSER_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "./shared";
 
@@ -54,7 +54,7 @@ export function vitePluginServerAssets({
           </script>
         `;
         const result: SsrAssetsType = {
-          bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
+          bootstrapModules: [`/@id/__x00__${ENTRY_BROWSER_WRAPPER}`],
           head,
         };
         return `export default ${JSON.stringify(result)}`;
@@ -69,7 +69,7 @@ export function vitePluginServerAssets({
             "utf-8",
           ),
         );
-        const entry = manifest[ENTRY_CLIENT_WRAPPER];
+        const entry = manifest[ENTRY_BROWSER_WRAPPER];
         tinyassert(entry);
         const css = [
           ...(entry.css ?? []),
@@ -105,7 +105,7 @@ export function vitePluginServerAssets({
         collectStyle($__global.dev.server, [
           entryBrowser,
           // TODO: dev should also use RouteManifest to manage client css
-          ...manager.rscUseClientIds,
+          ...manager.clientReferenceIds,
         ]),
       ]);
       return styles.join("\n\n");
@@ -123,7 +123,7 @@ export function vitePluginServerAssets({
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
-      if (manager.buildType === "client") {
+      if (manager.buildType === "browser") {
         return "export {}";
       }
       tinyassert(false);
@@ -132,7 +132,7 @@ export function vitePluginServerAssets({
     {
       name: vitePluginServerAssets.name + ":copy-build",
       async writeBundle() {
-        if (manager.buildType === "client") {
+        if (manager.buildType === "browser") {
           for (const file of manager.serverAssets) {
             await fs.promises.cp(
               path.join("dist/rsc", file),
@@ -163,7 +163,7 @@ export function serverAssertsPluginServer({
       name: serverAssertsPluginServer.name + ":build",
       apply: "build",
       generateBundle(_options, bundle) {
-        if (manager.buildType !== "rsc") {
+        if (manager.buildType !== "server") {
           return;
         }
         for (const [_k, v] of Object.entries(bundle)) {

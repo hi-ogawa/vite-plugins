@@ -3,7 +3,7 @@ import type {
   ImportManifestEntry,
   ModuleMap,
   WebpackRequire,
-} from "../../lib/types";
+} from "../../types/react";
 
 const debug = createDebug("react-server:ssr-import");
 

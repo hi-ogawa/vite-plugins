@@ -20,6 +20,10 @@ import {
 } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
 import {
+  vitePluginClientUseClient,
+  vitePluginServerUseClient,
+} from "../features/client-component/plugin";
+import {
   OUTPUT_SERVER_JS_EXT,
   createServerPackageJson,
 } from "../features/next/plugin";
@@ -37,14 +41,10 @@ import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
 } from "../features/server-action/plugin";
+import { $__global } from "../global";
 import {
-  vitePluginClientUseClient,
-  vitePluginServerUseClient,
-} from "../features/use-client/plugin";
-import { $__global } from "../lib/global";
-import {
-  ENTRY_CLIENT_WRAPPER,
-  ENTRY_REACT_SERVER_WRAPPER,
+  ENTRY_BROWSER_WRAPPER,
+  ENTRY_SERVER_WRAPPER,
   createVirtualPlugin,
   vitePluginSilenceDirectiveBuildWarning,
 } from "./utils";
@@ -54,13 +54,13 @@ const debug = createDebug("react-server:plugin");
 // resolve import paths for `createClientReference`, `createServerReference`, etc...
 // since `import "@hiogawa/react-server"` is not always visible for exernal library.
 const RUNTIME_BROWSER_PATH = fileURLToPath(
-  new URL("../runtime-browser.js", import.meta.url),
+  new URL("../runtime/browser.js", import.meta.url),
+);
+const RUNTIME_SSR_PATH = fileURLToPath(
+  new URL("../runtime/ssr.js", import.meta.url),
 );
 const RUNTIME_SERVER_PATH = fileURLToPath(
-  new URL("../runtime-server.js", import.meta.url),
-);
-const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
-  new URL("../runtime-react-server.js", import.meta.url),
+  new URL("../runtime/server.js", import.meta.url),
 );
 
 export type { PrerenderManifest };
@@ -73,7 +73,7 @@ class PluginStateManager {
   config!: ResolvedConfig;
   configEnv!: ConfigEnv;
 
-  buildType?: "scan" | "rsc" | "client" | "ssr";
+  buildType?: "scan" | "server" | "browser" | "ssr";
 
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
@@ -88,14 +88,14 @@ class PluginStateManager {
   // all files in parent server
   parentIds = new Set<string>();
   // all files in rsc server
-  rscIds = new Set<string>();
-  // "use client" files in rsc server
-  rscUseClientIds = new Set<string>();
-  // "use server" files in rsc server
-  rscUseServerIds = new Set<string>();
+  serverIds = new Set<string>();
+  // "use client" files
+  clientReferenceIds = new Set<string>();
+  // "use server" files
+  serverReferenceIds = new Set<string>();
 
   shouldReloadRsc(id: string) {
-    const ok = this.rscIds.has(id) && !this.rscUseClientIds.has(id);
+    const ok = this.serverIds.has(id) && !this.clientReferenceIds.has(id);
     debug("[RscManager.shouldReloadRsc]", { ok, id });
     return ok;
   }
@@ -118,9 +118,9 @@ export function vitePluginReactServer(options?: {
   noAsyncLocalStorage?: boolean;
 }): Plugin[] {
   const entryBrowser =
-    options?.entryBrowser ?? "@hiogawa/react-server/entry-browser";
+    options?.entryBrowser ?? "@hiogawa/react-server/entry/browser";
   const entryServer =
-    options?.entryServer ?? "@hiogawa/react-server/entry-react-server";
+    options?.entryServer ?? "@hiogawa/react-server/entry/server";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
@@ -160,13 +160,13 @@ export function vitePluginReactServer(options?: {
       // expose server reference to react-server itself
       vitePluginServerUseServer({
         manager,
-        runtimePath: RUNTIME_REACT_SERVER_PATH,
+        runtimePath: RUNTIME_SERVER_PATH,
       }),
 
       // transform "use client" into client referecnes
       vitePluginServerUseClient({
         manager,
-        runtimePath: RUNTIME_REACT_SERVER_PATH,
+        runtimePath: RUNTIME_SERVER_PATH,
       }),
 
       routeManifestPluginServer({ manager, routeDir }),
@@ -186,11 +186,11 @@ export function vitePluginReactServer(options?: {
       }),
 
       createVirtualPlugin(
-        ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
+        ENTRY_SERVER_WRAPPER.slice("virtual:".length),
         () => `
           import "virtual:inject-async-local-storage";
           export { handler } from "${entryServer}";
-          export { router } from "@hiogawa/react-server/entry-react-server";
+          export { router } from "@hiogawa/react-server/entry/server";
         `,
       ),
 
@@ -248,7 +248,7 @@ export function vitePluginReactServer(options?: {
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: ENTRY_REACT_SERVER_WRAPPER,
+          index: ENTRY_SERVER_WRAPPER,
         },
         output: OUTPUT_SERVER_JS_EXT,
       },
@@ -294,13 +294,13 @@ export function vitePluginReactServer(options?: {
             ? {
                 input: options?.prerender
                   ? {
-                      __entry_ssr: "@hiogawa/react-server/entry-server",
+                      __entry_ssr: "@hiogawa/react-server/entry/ssr",
                     }
                   : undefined,
                 output: OUTPUT_SERVER_JS_EXT,
               }
             : {
-                input: ENTRY_CLIENT_WRAPPER,
+                input: ENTRY_BROWSER_WRAPPER,
               },
         },
       };
@@ -385,18 +385,18 @@ export function vitePluginReactServer(options?: {
           } satisfies InlineConfig),
         );
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
-        manager.buildType = "rsc";
-        manager.rscUseClientIds.clear();
+        manager.buildType = "server";
+        manager.clientReferenceIds.clear();
         await build(reactServerViteConfig);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
-        manager.buildType = "client";
+        manager.buildType = "browser";
       }
     },
     writeBundle: {
       order: "post",
       sequential: true,
       async handler(_options, _bundle) {
-        if (manager.buildType === "client") {
+        if (manager.buildType === "browser") {
           console.log("▶▶▶ REACT SERVER BUILD (ssr) [4/4]");
           manager.buildType = "ssr";
           await build({
@@ -417,7 +417,7 @@ export function vitePluginReactServer(options?: {
     vitePluginClientUseServer({
       manager,
       runtimePath: RUNTIME_BROWSER_PATH,
-      ssrRuntimePath: RUNTIME_SERVER_PATH,
+      ssrRuntimePath: RUNTIME_SSR_PATH,
     }),
     ...vitePluginClientUseClient({ manager }),
     ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
@@ -429,7 +429,7 @@ export function vitePluginReactServer(options?: {
       "client-only": true,
       "server-only": `'server-only' is included in client build`,
     }),
-    createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
+    createVirtualPlugin(ENTRY_BROWSER_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
         // wrapper entry to ensure client entry runs after vite/react inititialization
@@ -442,11 +442,11 @@ export function vitePluginReactServer(options?: {
         `;
       }
       // build
-      if (manager.buildType === "client") {
-        // import "runtime-client" for preload
+      if (manager.buildType === "browser") {
+        // import "runtime/client" for preload
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
-          import("@hiogawa/react-server/runtime-client");
+          import("@hiogawa/react-server/runtime/client");
           import "${entryBrowser}";
         `;
       }

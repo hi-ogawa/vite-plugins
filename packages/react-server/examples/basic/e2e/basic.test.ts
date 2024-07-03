@@ -306,11 +306,11 @@ test("module invalidation @dev", async ({ page }) => {
 
   const moduleUrls = [
     "/src/adapters/node.ts",
-    "/src/entry-react-server",
+    "/src/entry-server",
     "/src/routes/test/page",
     "/src/components/counter",
-    "@hiogawa/react-server/entry-server",
-    "@hiogawa/react-server/entry-react-server",
+    "@hiogawa/react-server/entry/ssr",
+    "@hiogawa/react-server/entry/server",
   ] as const;
 
   const result = await inspectDevModules(page, moduleUrls);
@@ -319,7 +319,7 @@ test("module invalidation @dev", async ({ page }) => {
       ssr: expect.any(Object),
       "react-server": false,
     },
-    "/src/entry-react-server": {
+    "/src/entry-server": {
       ssr: false,
       "react-server": expect.any(Object),
     },
@@ -331,11 +331,11 @@ test("module invalidation @dev", async ({ page }) => {
       ssr: expect.any(Object),
       "react-server": expect.any(Object),
     },
-    "@hiogawa/react-server/entry-server": {
+    "@hiogawa/react-server/entry/ssr": {
       ssr: expect.any(Object),
       "react-server": false,
     },
-    "@hiogawa/react-server/entry-react-server": {
+    "@hiogawa/react-server/entry/server": {
       ssr: false,
       "react-server": expect.any(Object),
     },
@@ -348,11 +348,10 @@ test("module invalidation @dev", async ({ page }) => {
   const result2 = await inspectDevModules(page, moduleUrls);
   expect([
     result["/src/adapters/node.ts"].ssr.lastInvalidationTimestamp,
-    result["/src/entry-react-server"]["react-server"].lastInvalidationTimestamp,
+    result["/src/entry-server"]["react-server"].lastInvalidationTimestamp,
   ]).toEqual([
     result2["/src/adapters/node.ts"].ssr.lastInvalidationTimestamp,
-    result2["/src/entry-react-server"]["react-server"]
-      .lastInvalidationTimestamp,
+    result2["/src/entry-server"]["react-server"].lastInvalidationTimestamp,
   ]);
 
   // updating client component invalidates react-server entry
@@ -369,7 +368,7 @@ test("module invalidation @dev", async ({ page }) => {
   ]).toEqual([result3["/src/adapters/node.ts"].ssr.lastInvalidationTimestamp]);
 
   const changed = [
-    ["/src/entry-react-server", "react-server"],
+    ["/src/entry-server", "react-server"],
     ["/src/routes/test/page", "react-server"],
     ["/src/components/counter", "react-server"],
     ["/src/components/counter", "ssr"],
@@ -726,7 +725,7 @@ test("RouteProps.request", async ({ page }) => {
   await page.getByText('searchParams = {"hello":""}').click();
 });
 
-test("custom entry-react-server", async ({ request }) => {
+test("custom entry-server", async ({ request }) => {
   const res = await request.get("/test/__rpc");
   expect(await res.json()).toEqual({ hello: "world" });
 });
