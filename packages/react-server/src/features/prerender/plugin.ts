@@ -117,7 +117,7 @@ function createPrerenderPresets(manifest: RouteModuleManifest) {
     generateStaticParams: async () => {
       const result: string[] = [];
       for (const entry of entries) {
-        const page = entry.module?.page;
+        const page = await entry.module?.page?.();
         if (page && entry.dynamic && page.generateStaticParams) {
           const generated = await page.generateStaticParams();
           for (const params of generated) {

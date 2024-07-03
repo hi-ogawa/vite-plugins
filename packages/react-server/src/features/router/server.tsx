@@ -15,29 +15,29 @@ import {
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 export interface RouteModule {
-  page?: {
+  page?: () => Promise<{
     default: React.FC<PageProps>;
     metadata?: Metadata;
     generateStaticParams?: () => Promise<Record<string, string>[]>;
-  };
-  layout?: {
+  }>;
+  layout?: () => Promise<{
     default: React.FC<LayoutProps>;
     metadata?: Metadata;
-  };
-  error?: {
+  }>;
+  error?: () => Promise<{
     // TODO: warn if no "use client"
     default: React.FC<ErrorPageProps>;
-  };
-  "not-found"?: {
+  }>;
+  "not-found"?: () => Promise<{
     default: React.FC;
-  };
-  loading?: {
+  }>;
+  loading?: () => Promise<{
     default: React.FC;
-  };
-  template?: {
+  }>;
+  template?: () => Promise<{
     default: React.FC<{ children?: React.ReactNode }>;
-  };
-  route?: ApiRouteMoudle;
+  }>;
+  route?: () => Promise<ApiRouteMoudle>;
 }
 
 export type RouteModuleKey = keyof RouteModule;
@@ -55,9 +55,9 @@ function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
   return import("@hiogawa/react-server/runtime/client" as string);
 }
 
-function renderPage(node: RouteModuleTree, props: PageProps) {
-  const Page = node.value?.page?.default ?? ThrowNotFound;
-  return <Page {...props} />;
+async function renderPage(node: RouteModuleTree, props: PageProps) {
+  const Page = await node.value?.page?.().then((v) => v.default);
+  return Page ? <Page {...props} /> : <ThrowNotFound />;
 }
 
 async function renderLayout(
@@ -77,19 +77,21 @@ async function renderLayout(
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
-  const NotFoundPage = node.value?.["not-found"]?.default;
+  const NotFoundPage = await node.value?.["not-found"]?.().then(
+    (v) => v.default,
+  );
   if (NotFoundPage) {
     acc = (
       <NotFoundBoundary fallback={<NotFoundPage />}>{acc}</NotFoundBoundary>
     );
   }
 
-  const ErrorPage = node.value?.error?.default;
+  const ErrorPage = await node.value?.error?.().then((v) => v.default);
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
 
-  const LoadingPage = node.value?.loading?.default;
+  const LoadingPage = await node.value?.loading?.().then((v) => v.default);
   if (LoadingPage) {
     acc = (
       <RemountRoute>
@@ -98,7 +100,7 @@ async function renderLayout(
     );
   }
 
-  const TemplatePage = node.value?.template?.default;
+  const TemplatePage = await node.value?.template?.().then((v) => v.default);
   if (TemplatePage) {
     acc = (
       <RemountRoute>
@@ -107,7 +109,7 @@ async function renderLayout(
     );
   }
 
-  const Layout = node.value?.layout?.default;
+  const Layout = await node.value?.layout?.().then((v) => v.default);
   if (Layout) {
     acc = (
       <Layout key={prefix} {...props}>
@@ -146,10 +148,16 @@ export async function renderRouteMap(
     };
     if (m.type === "layout") {
       layouts[m.prefix] = await renderLayout(m.node, props, m);
-      Object.assign(metadata, m.node.value?.layout?.metadata);
+      Object.assign(
+        metadata,
+        await m.node.value?.layout?.().then((v) => v.metadata),
+      );
     } else if (m.type === "page") {
-      pages[m.prefix] = renderPage(m.node, props);
-      Object.assign(metadata, m.node.value?.page?.metadata);
+      pages[m.prefix] = await renderPage(m.node, props);
+      Object.assign(
+        metadata,
+        await m.node.value?.page?.().then((v) => v.metadata),
+      );
     } else {
       m.type satisfies never;
     }

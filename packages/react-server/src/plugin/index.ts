@@ -15,7 +15,7 @@ import {
 } from "vite";
 import { CSS_LANGS_RE } from "../features/assets/css";
 import {
-  serverAssertsPluginServer,
+  serverAssetsPluginServer,
   vitePluginServerAssets,
 } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
@@ -175,7 +175,6 @@ export function vitePluginReactServer(options?: {
         return `
           const glob = import.meta.glob(
             "/${routeDir}/**/(page|layout|error|not-found|loading|template|route).(js|jsx|ts|tsx)",
-            { eager: true },
           );
           export default Object.fromEntries(
             Object.entries(glob).map(
@@ -211,7 +210,7 @@ export function vitePluginReactServer(options?: {
         "server-only": true,
       }),
 
-      serverAssertsPluginServer({ manager }),
+      serverAssetsPluginServer({ manager }),
 
       {
         name: "patch-react-server-dom-webpack",
