@@ -16,11 +16,9 @@ export interface SsrAssetsType {
 export function vitePluginServerAssets({
   manager,
   entryBrowser,
-  entryServer,
 }: {
   manager: PluginStateManager;
   entryBrowser: string;
-  entryServer: string;
 }): Plugin[] {
   return [
     createVirtualPlugin("ssr-assets", async () => {
@@ -97,10 +95,7 @@ export function vitePluginServerAssets({
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, [
-          entryServer,
-          "virtual:server-routes",
-        ]),
+        collectStyle($__global.dev.reactServer, ["virtual:server-routes"]),
         `/******* client **************/`,
         collectStyle($__global.dev.server, [
           entryBrowser,
@@ -116,7 +111,6 @@ export function vitePluginServerAssets({
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
         const urls = await collectStyleUrls($__global.dev.reactServer, [
-          entryServer,
           "virtual:server-routes",
         ]);
         const code = urls.map((url) => `import "${url}";\n`).join("");
