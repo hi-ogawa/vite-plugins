@@ -20,6 +20,10 @@ import {
 } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
 import {
+  vitePluginClientUseClient,
+  vitePluginServerUseClient,
+} from "../features/client-component/plugin";
+import {
   OUTPUT_SERVER_JS_EXT,
   createServerPackageJson,
 } from "../features/next/plugin";
@@ -37,10 +41,6 @@ import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
 } from "../features/server-action/plugin";
-import {
-  vitePluginClientUseClient,
-  vitePluginServerUseClient,
-} from "../features/use-client/plugin";
 import { $__global } from "../lib/global";
 import {
   ENTRY_BROWSER_WRAPPER,
