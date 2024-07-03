@@ -43,8 +43,8 @@ import {
 } from "../features/use-client/plugin";
 import { $__global } from "../lib/global";
 import {
-  ENTRY_CLIENT_WRAPPER,
-  ENTRY_REACT_SERVER_WRAPPER,
+  ENTRY_BROWSER_WRAPPER,
+  ENTRY_SERVER_WRAPPER,
   createVirtualPlugin,
   vitePluginSilenceDirectiveBuildWarning,
 } from "./utils";
@@ -186,7 +186,7 @@ export function vitePluginReactServer(options?: {
       }),
 
       createVirtualPlugin(
-        ENTRY_REACT_SERVER_WRAPPER.slice("virtual:".length),
+        ENTRY_SERVER_WRAPPER.slice("virtual:".length),
         () => `
           import "virtual:inject-async-local-storage";
           export { handler } from "${entryServer}";
@@ -248,7 +248,7 @@ export function vitePluginReactServer(options?: {
       outDir: "dist/rsc",
       rollupOptions: {
         input: {
-          index: ENTRY_REACT_SERVER_WRAPPER,
+          index: ENTRY_SERVER_WRAPPER,
         },
         output: OUTPUT_SERVER_JS_EXT,
       },
@@ -300,7 +300,7 @@ export function vitePluginReactServer(options?: {
                 output: OUTPUT_SERVER_JS_EXT,
               }
             : {
-                input: ENTRY_CLIENT_WRAPPER,
+                input: ENTRY_BROWSER_WRAPPER,
               },
         },
       };
@@ -429,7 +429,7 @@ export function vitePluginReactServer(options?: {
       "client-only": true,
       "server-only": `'server-only' is included in client build`,
     }),
-    createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
+    createVirtualPlugin(ENTRY_BROWSER_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
         // wrapper entry to ensure client entry runs after vite/react inititialization
