@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from "fs";
-import path from "path";
 import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import { createVirtualPlugin } from "../../plugin/utils";
@@ -14,12 +13,12 @@ export type MetadataFilesExports = {
 export function metadataFilePluginServer({
   routeDir,
 }: { routeDir: string }): Plugin[] {
-  const faviconPath = path.resolve(routeDir, "favicon.ico");
+  const faviconPath = `${routeDir}/favicon.ico`;
 
   return [
     createVirtualPlugin("metadata-files", function () {
-      this.addWatchFile(faviconPath);
       const data: MetadataFilesExports = {
+        // TODO: watch file to invalidae virtual
         favicon: existsSync(faviconPath),
       };
       return `export default ${JSON.stringify(data)}`;
