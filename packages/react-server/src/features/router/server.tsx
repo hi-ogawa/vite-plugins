@@ -1,7 +1,6 @@
 import { sortBy } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
-import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
@@ -157,7 +156,7 @@ export async function renderRouteMap(
   return {
     pages,
     layouts,
-    metadata: renderMetadata(metadata),
+    metadata,
     params: result.params,
   };
 }

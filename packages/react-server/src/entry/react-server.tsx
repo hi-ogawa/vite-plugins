@@ -118,7 +118,7 @@ async function render({
   return ReactServer.renderToReadableStream<ServerRouterData>(
     {
       layout: nodeMap,
-      metadata: result.metadata,
+      metadata: renderMetadata(result.metadata),
       params: result.params,
       url: request.url,
       action: actionResult
@@ -156,6 +156,7 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
+import { renderMetadata } from "../features/meta/server";
 
 export const router = generateRouteModuleTree(serverRoutes);
 
