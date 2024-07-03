@@ -15,7 +15,7 @@ import {
 } from "vite";
 import { CSS_LANGS_RE } from "../features/assets/css";
 import {
-  serverAssertsPluginServer,
+  serverAssetsPluginServer,
   vitePluginServerAssets,
 } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
@@ -210,7 +210,7 @@ export function vitePluginReactServer(options?: {
         "server-only": true,
       }),
 
-      serverAssertsPluginServer({ manager }),
+      serverAssetsPluginServer({ manager }),
 
       {
         name: "patch-react-server-dom-webpack",
