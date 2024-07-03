@@ -24,3 +24,23 @@ export function createNextCookies(requestHeaders: Headers) {
 
   return { cookies, toResponseCookies };
 }
+
+export function injectResponseCookies(
+  response: Response,
+  cookies: ResponseCookies,
+): Response {
+  const entries = cookies.getAll();
+  if (entries.length === 0) {
+    return response;
+  }
+  const responseCookies = new ResponseCookies(response.headers);
+  for (const entry of entries) {
+    responseCookies.set(entry);
+  }
+  const headers = new Headers(response.headers);
+  headers.set("set-cookie", responseCookies.toString());
+  return new Response(response.body, {
+    ...response,
+    headers,
+  });
+}
