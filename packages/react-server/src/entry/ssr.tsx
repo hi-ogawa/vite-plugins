@@ -29,7 +29,7 @@ import {
   isRedirectError,
 } from "../lib/error";
 import { $__global } from "../lib/global";
-import { ENTRY_REACT_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+import { ENTRY_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 import {
   createBufferedTransformStream,
   injectFlightStream,
@@ -76,9 +76,7 @@ export async function prerender(request: Request) {
 
 export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
-    return $__global.dev.reactServer.ssrLoadModule(
-      ENTRY_REACT_SERVER_WRAPPER,
-    ) as any;
+    return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
   } else {
     return import("/dist/rsc/index.js" as string);
   }

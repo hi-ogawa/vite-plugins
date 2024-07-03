@@ -15,9 +15,8 @@ export type CustomModuleMeta = {
   };
 };
 
-// TODO: rename
-export const ENTRY_CLIENT_WRAPPER = "virtual:entry-client-wrapper";
-export const ENTRY_REACT_SERVER_WRAPPER = "virtual:entry-server-wrapper";
+export const ENTRY_BROWSER_WRAPPER = "virtual:entry-client-wrapper";
+export const ENTRY_SERVER_WRAPPER = "virtual:entry-server-wrapper";
 
 export const USE_CLIENT_RE = /^("use client"|'use client')/;
 export const USE_CLIENT = "use client";

@@ -4,7 +4,7 @@ import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { Manifest, Plugin, ViteDevServer } from "vite";
 import { $__global } from "../../lib/global";
 import type { PluginStateManager } from "../../plugin";
-import { ENTRY_CLIENT_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
+import { ENTRY_BROWSER_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
 import { collectStyle, collectStyleUrls } from "./css";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "./shared";
 
@@ -54,7 +54,7 @@ export function vitePluginServerAssets({
           </script>
         `;
         const result: SsrAssetsType = {
-          bootstrapModules: [`/@id/__x00__${ENTRY_CLIENT_WRAPPER}`],
+          bootstrapModules: [`/@id/__x00__${ENTRY_BROWSER_WRAPPER}`],
           head,
         };
         return `export default ${JSON.stringify(result)}`;
@@ -69,7 +69,7 @@ export function vitePluginServerAssets({
             "utf-8",
           ),
         );
-        const entry = manifest[ENTRY_CLIENT_WRAPPER];
+        const entry = manifest[ENTRY_BROWSER_WRAPPER];
         tinyassert(entry);
         const css = [
           ...(entry.css ?? []),
