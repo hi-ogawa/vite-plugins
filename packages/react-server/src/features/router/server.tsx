@@ -56,8 +56,11 @@ function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
 }
 
 async function renderPage(node: RouteModuleTree, props: PageProps) {
-  const Page = (await importLazy(node, "page")) ?? ThrowNotFound;
-  return <Page {...props} />;
+  const Page = await node.value?.page?.().then((v) => v.default);
+  if (Page) {
+    return <Page {...props} />;
+  }
+  return <ThrowNotFound />;
 }
 
 async function renderLayout(
@@ -77,19 +80,21 @@ async function renderLayout(
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
-  const NotFoundPage = await importLazy(node, "not-found");
+  const NotFoundPage = await node.value?.["not-found"]?.().then(
+    (v) => v.default,
+  );
   if (NotFoundPage) {
     acc = (
       <NotFoundBoundary fallback={<NotFoundPage />}>{acc}</NotFoundBoundary>
     );
   }
 
-  const ErrorPage = await importLazy(node, "error");
+  const ErrorPage = await node.value?.error?.().then((v) => v.default);
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
 
-  const LoadingPage = await importLazy(node, "loading");
+  const LoadingPage = await node.value?.loading?.().then((v) => v.default);
   if (LoadingPage) {
     acc = (
       <RemountRoute>
@@ -98,7 +103,7 @@ async function renderLayout(
     );
   }
 
-  const TemplatePage = await importLazy(node, "template");
+  const TemplatePage = await node.value?.template?.().then((v) => v.default);
   if (TemplatePage) {
     acc = (
       <RemountRoute>
@@ -107,7 +112,7 @@ async function renderLayout(
     );
   }
 
-  const Layout = await importLazy(node, "layout");
+  const Layout = await node.value?.layout?.().then((v) => v.default);
   if (Layout) {
     acc = (
       <Layout key={prefix} {...props}>
@@ -146,10 +151,16 @@ export async function renderRouteMap(
     };
     if (m.type === "layout") {
       layouts[m.prefix] = await renderLayout(m.node, props, m);
-      Object.assign(metadata, await importLazy(m.node, "layout", "metadata"));
+      Object.assign(
+        metadata,
+        await m.node.value?.layout?.().then((v) => v.metadata),
+      );
     } else if (m.type === "page") {
       pages[m.prefix] = await renderPage(m.node, props);
-      Object.assign(metadata, await importLazy(m.node, "page", "metadata"));
+      Object.assign(
+        metadata,
+        await m.node.value?.page?.().then((v) => v.metadata),
+      );
     } else {
       m.type satisfies never;
     }
@@ -236,17 +247,4 @@ export function getRouteModuleManifest(
   }
   result.entries = sortBy(result.entries, (e) => e.pathname);
   return result;
-}
-
-async function importLazy(
-  node: RouteModuleTree,
-  file: RouteModuleKey,
-  exportName = "default",
-): Promise<any> {
-  const lazy = node.value?.[file];
-  if (lazy) {
-    const mod = (await lazy()) as any;
-    return mod[exportName];
-  }
-  return;
 }
