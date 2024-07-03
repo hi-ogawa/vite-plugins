@@ -72,7 +72,7 @@ export default function UI({
             await setCookieAndRedirect(
               "redirect",
               Math.random().toString(36).substring(7),
-              "/redirect-target",
+              "/actions/redirect-target",
             );
           }}
         >
