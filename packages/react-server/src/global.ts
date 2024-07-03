@@ -1,5 +1,5 @@
 import type { ViteDevServer } from "vite";
-import type { CallServerCallback } from "../types/react";
+import type { CallServerCallback } from "./types/react";
 
 // centeralize quick global hacks...
 

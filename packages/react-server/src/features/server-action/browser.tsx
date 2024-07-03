@@ -1,5 +1,5 @@
 import ReactClient from "react-server-dom-webpack/client.browser";
-import { $__global } from "../../lib/global";
+import { $__global } from "../../global";
 
 // https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-client/src/ReactFlightReplyClient.js#L758
 

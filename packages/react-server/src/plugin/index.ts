@@ -41,7 +41,7 @@ import {
   vitePluginClientUseServer,
   vitePluginServerUseServer,
 } from "../features/server-action/plugin";
-import { $__global } from "../lib/global";
+import { $__global } from "../global";
 import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,

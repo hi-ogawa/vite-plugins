@@ -23,7 +23,7 @@ import {
 } from "./features/router/manifest";
 import type { ServerRouterData } from "./features/router/utils";
 import { createStreamRequest } from "./features/server-component/utils";
-import { $__global } from "./lib/global";
+import { $__global } from "./global";
 import type { CallServerCallback } from "./types/react";
 import { getFlightStreamBrowser } from "./utils/stream-script";
 

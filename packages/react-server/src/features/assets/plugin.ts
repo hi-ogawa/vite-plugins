@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { Manifest, Plugin, ViteDevServer } from "vite";
-import { $__global } from "../../lib/global";
+import { $__global } from "../../global";
 import type { PluginStateManager } from "../../plugin";
 import { ENTRY_BROWSER_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
 import { collectStyle, collectStyleUrls } from "./css";

@@ -29,7 +29,7 @@ import {
   emptyRouteManifest,
 } from "./features/router/manifest";
 import type { ServerRouterData } from "./features/router/utils";
-import { $__global } from "./lib/global";
+import { $__global } from "./global";
 import { ENTRY_SERVER_WRAPPER, invalidateModule } from "./plugin/utils";
 import {
   createBufferedTransformStream,
