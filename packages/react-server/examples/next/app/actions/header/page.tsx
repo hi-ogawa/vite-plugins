@@ -16,6 +16,7 @@ export default function Page() {
       getHeader={getHeader}
       setCookie={setCookie}
       setCookieAndRedirect={setCookieAndRedirect}
+      // TODO: probably nested server action closure not working
       getAuthedUppercase={validator(async (str: string) => {
         "use server";
         return prefix + " " + str.toUpperCase();
