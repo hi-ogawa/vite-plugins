@@ -105,7 +105,7 @@ export function vitePluginServerAssets({
         collectStyle($__global.dev.server, [
           entryBrowser,
           // TODO: dev should also use RouteManifest to manage client css
-          ...manager.rscUseClientIds,
+          ...manager.useClientIds,
         ]),
       ]);
       return styles.join("\n\n");

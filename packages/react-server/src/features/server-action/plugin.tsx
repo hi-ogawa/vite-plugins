@@ -47,7 +47,7 @@ export function vitePluginClientUseServer({
       if (!output) {
         return;
       }
-      if (manager.buildType && !manager.rscUseServerIds.has(id)) {
+      if (manager.buildType && !manager.useServerIds.has(id)) {
         throw new Error(
           `client imported undiscovered server reference '${id}'`,
         );
@@ -87,7 +87,7 @@ export function vitePluginServerUseServer({
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
-      manager.rscUseServerIds.delete(id);
+      manager.useServerIds.delete(id);
       if (!code.includes(USE_SERVER)) {
         return;
       }
@@ -97,7 +97,7 @@ export function vitePluginServerUseServer({
         runtime: "$$register",
       });
       if (output.hasChanged()) {
-        manager.rscUseServerIds.add(id);
+        manager.useServerIds.add(id);
         output.prepend(
           `import { registerServerReference as $$register } from "${runtimePath}";\n`,
         );
@@ -118,7 +118,7 @@ export function vitePluginServerUseServer({
     }
     tinyassert(manager.buildType === "server");
     let result = `export default {\n`;
-    for (const id of manager.rscUseServerIds) {
+    for (const id of manager.useServerIds) {
       result += `"${hashString(id)}": () => import("${id}"),\n`;
     }
     result += "};\n";
