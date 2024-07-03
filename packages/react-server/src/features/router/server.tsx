@@ -52,7 +52,7 @@ export function generateRouteModuleTree(globEntries: Record<string, any>) {
 
 // use own "use client" components as external
 function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
-  return import("@hiogawa/react-server/runtime-client" as string);
+  return import("@hiogawa/react-server/runtime/client" as string);
 }
 
 function renderPage(node: RouteModuleTree, props: PageProps) {

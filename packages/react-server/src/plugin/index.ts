@@ -443,10 +443,10 @@ export function vitePluginReactServer(options?: {
       }
       // build
       if (manager.buildType === "browser") {
-        // import "runtime-client" for preload
+        // import "runtime/client" for preload
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
-          import("@hiogawa/react-server/runtime-client");
+          import("@hiogawa/react-server/runtime/client");
           import "${entryBrowser}";
         `;
       }
