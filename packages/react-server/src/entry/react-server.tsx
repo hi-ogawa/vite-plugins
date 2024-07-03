@@ -1,6 +1,7 @@
 import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
+import { MetadataLinks } from "../features/meta/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
   generateRouteModuleTree,
@@ -118,7 +119,9 @@ async function render({
   return ReactServer.renderToReadableStream<ServerRouterData>(
     {
       layout: nodeMap,
-      metadata: renderMetadata(result.metadata),
+      metadata: (
+        <MetadataLinks metadata={result.metadata} viewport={result.viewport} />
+      ),
       params: result.params,
       url: request.url,
       action: actionResult
@@ -156,7 +159,6 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
-import { renderMetadata } from "../features/meta/server";
 
 export const router = generateRouteModuleTree(serverRoutes);
 

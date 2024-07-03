@@ -1,7 +1,11 @@
 import { sortBy } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../../lib/error";
-import type { Metadata } from "../meta/utils";
+import {
+  type Metadata,
+  type Viewport,
+  getDefaultViewport,
+} from "../meta/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
   type MatchNodeEntry,
@@ -17,11 +21,13 @@ export interface RouteModule {
   page?: {
     default: React.FC<PageProps>;
     metadata?: Metadata;
+    viewport?: Viewport;
     generateStaticParams?: () => Promise<Record<string, string>[]>;
   };
   layout?: {
     default: React.FC<LayoutProps>;
     metadata?: Metadata;
+    viewport?: Viewport;
   };
   error?: {
     // TODO: warn if no "use client"
@@ -137,6 +143,7 @@ export async function renderRouteMap(
   const pages: Record<string, React.ReactNode> = {};
   const layouts: Record<string, React.ReactNode> = {};
   const metadata: Metadata = {};
+  const viewport = getDefaultViewport();
   const result = matchRouteTree(tree, url.pathname);
   for (const m of result.matches) {
     const props: BaseProps = {
@@ -146,9 +153,11 @@ export async function renderRouteMap(
     if (m.type === "layout") {
       layouts[m.prefix] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
+      Object.assign(viewport, m.node.value?.layout?.viewport);
     } else if (m.type === "page") {
       pages[m.prefix] = renderPage(m.node, props);
       Object.assign(metadata, m.node.value?.page?.metadata);
+      Object.assign(viewport, m.node.value?.page?.viewport);
     } else {
       m.type satisfies never;
     }
@@ -157,6 +166,7 @@ export async function renderRouteMap(
     pages,
     layouts,
     metadata,
+    viewport,
     params: result.params,
   };
 }
