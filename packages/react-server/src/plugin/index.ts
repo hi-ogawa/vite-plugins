@@ -20,6 +20,10 @@ import {
 } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
 import {
+  metadataFilePluginClient,
+  metadataFilePluginServer,
+} from "../features/meta/plugin";
+import {
   OUTPUT_SERVER_JS_EXT,
   createServerPackageJson,
 } from "../features/next/plugin";
@@ -197,6 +201,7 @@ export function vitePluginReactServer(options?: {
       }),
 
       serverAssertsPluginServer({ manager }),
+      metadataFilePluginServer({ routeDir }),
 
       {
         name: "patch-react-server-dom-webpack",
@@ -414,6 +419,7 @@ export function vitePluginReactServer(options?: {
       "client-only": true,
       "server-only": `'server-only' is included in client build`,
     }),
+    metadataFilePluginClient({ routeDir, manager }),
     createVirtualPlugin(ENTRY_CLIENT_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
