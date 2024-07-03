@@ -23,12 +23,12 @@ import {
   RouteAssetLinks,
   RouteManifestContext,
 } from "./features/router/client";
+import { Router, RouterContext } from "./features/router/client/router";
 import {
   type RouteManifest,
   emptyRouteManifest,
 } from "./features/router/manifest";
 import type { ServerRouterData } from "./features/router/utils";
-import { Router, RouterContext } from "./lib/client/router";
 import { $__global } from "./lib/global";
 import { ENTRY_SERVER_WRAPPER, invalidateModule } from "./plugin/utils";
 import {
