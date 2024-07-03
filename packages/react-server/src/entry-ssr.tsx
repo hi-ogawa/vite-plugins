@@ -2,39 +2,39 @@ import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
-import type { SsrAssetsType } from "../features/assets/plugin";
-import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
+import type { ReactServerHandlerStreamResult } from "./entry-server";
+import type { SsrAssetsType } from "./features/assets/plugin";
+import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "./features/assets/shared";
 import {
   createModuleMap,
   initializeReactClientSsr,
   ssrImportPromiseCache,
-} from "../features/client-component/ssr";
-import { injectDefaultMetaViewport } from "../features/next/ssr";
+} from "./features/client-component/ssr";
+import { injectDefaultMetaViewport } from "./features/next/ssr";
 import {
   LayoutRoot,
   LayoutStateContext,
   RouteAssetLinks,
   RouteManifestContext,
-} from "../features/router/client";
+} from "./features/router/client";
 import {
   type RouteManifest,
   emptyRouteManifest,
-} from "../features/router/manifest";
-import type { ServerRouterData } from "../features/router/utils";
-import { Router, RouterContext } from "../lib/client/router";
+} from "./features/router/manifest";
+import type { ServerRouterData } from "./features/router/utils";
+import { Router, RouterContext } from "./lib/client/router";
 import {
   DEFAULT_ERROR_CONTEXT,
   getErrorContext,
   getStatusText,
   isRedirectError,
-} from "../lib/error";
-import { $__global } from "../lib/global";
-import { ENTRY_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
+} from "./lib/error";
+import { $__global } from "./lib/global";
+import { ENTRY_SERVER_WRAPPER, invalidateModule } from "./plugin/utils";
 import {
   createBufferedTransformStream,
   injectFlightStream,
-} from "../utils/stream-script";
-import type { ReactServerHandlerStreamResult } from "./server";
+} from "./utils/stream-script";
 
 const debug = createDebug("react-server:ssr");
 
@@ -74,7 +74,9 @@ export async function prerender(request: Request) {
   return { stream, response, html };
 }
 
-export async function importReactServer(): Promise<typeof import("./server")> {
+export async function importReactServer(): Promise<
+  typeof import("./entry-server")
+> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
   } else {
