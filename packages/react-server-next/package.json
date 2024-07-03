@@ -49,11 +49,13 @@
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "react": "$react",
+    "react-dom": "$react-dom",
     "vite": "$vite"
   },
   "peerDependencies": {
     "@hiogawa/react-server": "*",
     "react": "*",
+    "react-dom": "*",
     "vite": "*"
   }
 }

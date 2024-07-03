@@ -171,6 +171,9 @@ importers:
       react:
         specifier: 19.0.0-rc-c21bcd627b-20240624
         version: 19.0.0-rc-c21bcd627b-20240624
+      react-dom:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624)
       vite:
         specifier: ^5.2.3
         version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
