@@ -1308,3 +1308,38 @@ test("api routes", async ({ request }) => {
     });
   }
 });
+
+test("cookies api route", async ({ request }) => {
+  {
+    const res = await request.get("/test/api/context");
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      route: "/test/api/context",
+      method: "GET",
+    });
+  }
+
+  {
+    const res = await request.post("/test/api/context", {
+      form: {
+        value: "hey",
+      },
+    });
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      cookie: "hey",
+      route: "/test/api/context",
+      method: "POST",
+    });
+  }
+
+  {
+    const res = await request.get("/test/api/context");
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      cookie: "hey",
+      route: "/test/api/context",
+      method: "GET",
+    });
+  }
+});

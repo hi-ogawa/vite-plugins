@@ -1,4 +1,3 @@
-import "./_enable-react-cache";
 import {
   type ReactServerHandler,
   handler as baseHandler,

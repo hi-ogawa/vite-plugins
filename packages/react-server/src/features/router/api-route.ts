@@ -1,3 +1,5 @@
+import { injectResponseCookies } from "../next/cookie";
+import type { RequestContext } from "../request-context/server";
 import type { RouteModuleTree } from "./server";
 import { type MatchParams, matchRouteTree, toMatchParamsObject } from "./tree";
 
@@ -24,6 +26,7 @@ export type ApiRouteMoudle = Record<ApiMethod, ApiHandler>;
 export async function handleApiRoutes(
   tree: RouteModuleTree,
   request: Request,
+  requestContext: RequestContext,
 ): Promise<Response | undefined> {
   const method = request.method as ApiMethod;
   const url = new URL(request.url);
@@ -32,7 +35,13 @@ export async function handleApiRoutes(
     const handler = m.type === "page" && m.node.value?.route?.[method];
     if (handler) {
       const params = toMatchParamsObject(m.params);
-      return handler(request, { params });
+      const response = await requestContext.run(() =>
+        handler(request, { params }),
+      );
+      return injectResponseCookies(
+        response,
+        requestContext.nextCookies.toResponseCookies(),
+      );
     }
   }
   return;

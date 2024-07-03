@@ -1,10 +1,10 @@
 import { Link } from "@hiogawa/react-server/client";
-import type { PageProps } from "@hiogawa/react-server/server";
+import { type PageProps, cookies } from "@hiogawa/react-server/server";
 import { getCounter, incrementCounter, signout } from "./_action";
-import { getSession } from "./utils";
+import { SESSION_KEY } from "./utils";
 
-export default function Page(props: PageProps) {
-  const session = getSession(new Headers(props.request.headers));
+export default function Page(_props: PageProps) {
+  const name = cookies().get(SESSION_KEY)?.value;
   return (
     <div className="flex flex-col gap-4 p-3 max-w-sm">
       <form className="flex items-center gap-2" action={incrementCounter}>
@@ -25,15 +25,15 @@ export default function Page(props: PageProps) {
         </button>
         <span className="text-colorTextLabel text-sm">(signin required)</span>
       </form>
-      {session?.name && (
+      {name && (
         <div className="flex items-center gap-3">
-          <p>Hello, {session.name}!</p>
+          <p>Hello, {name}!</p>
           <form action={signout}>
             <button className="antd-btn antd-btn-default px-2">Signout</button>
           </form>
         </div>
       )}
-      {!session?.name && (
+      {!name && (
         <div className="flex items-center gap-3 ">
           <p>Hi, anonymous user!</p>
           <Link

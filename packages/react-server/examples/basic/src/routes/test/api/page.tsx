@@ -7,6 +7,13 @@ export default function Page() {
           {href}
         </a>
       ))}
+      <form method="POST" action="/test/api/context">
+        <input
+          className="antd-input px-2"
+          placeholder="POST /test/api/context"
+          name="value"
+        />
+      </form>
     </div>
   );
 }
@@ -15,4 +22,5 @@ const links = [
   "/test/api/static",
   "/test/api/dynamic/hello",
   "/test/api/not-found",
+  "/test/api/context",
 ];
