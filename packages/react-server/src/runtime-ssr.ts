@@ -1,1 +1,1 @@
-export { createServerReference } from "./features/server-action/server";
+export { createServerReference } from "./features/server-action/ssr";

@@ -20,7 +20,7 @@ import {
   createModuleMap,
   initializeReactClientSsr,
   ssrImportPromiseCache,
-} from "../features/use-client/server";
+} from "../features/use-client/ssr";
 import { Router, RouterContext } from "../lib/client/router";
 import {
   DEFAULT_ERROR_CONTEXT,
