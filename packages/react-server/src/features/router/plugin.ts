@@ -30,7 +30,7 @@ export function routeManifestPluginServer({
       name: "server-route-manifest",
       apply: "build",
       async buildEnd() {
-        if (manager.buildType === "rsc") {
+        if (manager.buildType === "server") {
           const routeFiles = await FastGlob(
             path.posix.join(
               routeDir,
@@ -66,7 +66,7 @@ export function routeManifestPluginClient({
       name: routeManifestPluginClient.name + ":bundle",
       apply: "build",
       generateBundle(_options, bundle) {
-        if (manager.buildType === "client") {
+        if (manager.buildType === "browser") {
           const facadeModuleDeps: Record<string, AssetDeps> = {};
           for (const [k, v] of Object.entries(bundle)) {
             if (v.type === "chunk" && v.facadeModuleId) {

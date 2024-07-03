@@ -116,7 +116,7 @@ export function vitePluginServerUseServer({
     if (manager.buildType === "scan") {
       return `export default {}`;
     }
-    tinyassert(manager.buildType === "rsc");
+    tinyassert(manager.buildType === "server");
     let result = `export default {\n`;
     for (const id of manager.rscUseServerIds) {
       result += `"${hashString(id)}": () => import("${id}"),\n`;
