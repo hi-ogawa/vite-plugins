@@ -19,9 +19,9 @@ import {
   importServerAction,
   initializeReactServer,
   serverReferenceImportPromiseCache,
-} from "../features/server-action/react-server";
+} from "../features/server-action/server";
 import { unwrapStreamRequest } from "../features/server-component/utils";
-import { createBundlerConfig } from "../features/use-client/react-server";
+import { createBundlerConfig } from "../features/use-client/server";
 import {
   DEFAULT_ERROR_CONTEXT,
   ReactServerDigestError,

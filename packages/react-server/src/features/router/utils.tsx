@@ -1,5 +1,5 @@
 import { objectPickBy, typedBoolean } from "@hiogawa/utils";
-import type { ActionResult } from "../server-action/react-server";
+import type { ActionResult } from "../server-action/server";
 import type { RevalidationType } from "../server-component/utils";
 import type { MatchParamEntry } from "./tree";
 
