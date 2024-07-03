@@ -15,29 +15,29 @@ import {
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 export interface RouteModule {
-  page?: {
+  page?: () => Promise<{
     default: React.FC<PageProps>;
     metadata?: Metadata;
     generateStaticParams?: () => Promise<Record<string, string>[]>;
-  };
-  layout?: {
+  }>;
+  layout?: () => Promise<{
     default: React.FC<LayoutProps>;
     metadata?: Metadata;
-  };
-  error?: {
+  }>;
+  error?: () => Promise<{
     // TODO: warn if no "use client"
     default: React.FC<ErrorPageProps>;
-  };
-  "not-found"?: {
+  }>;
+  "not-found"?: () => Promise<{
     default: React.FC;
-  };
-  loading?: {
+  }>;
+  loading?: () => Promise<{
     default: React.FC;
-  };
-  template?: {
+  }>;
+  template?: () => Promise<{
     default: React.FC<{ children?: React.ReactNode }>;
-  };
-  route?: ApiRouteMoudle;
+  }>;
+  route?: () => Promise<ApiRouteMoudle>;
 }
 
 export type RouteModuleKey = keyof RouteModule;
@@ -55,8 +55,8 @@ function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
   return import("@hiogawa/react-server/runtime/client" as string);
 }
 
-function renderPage(node: RouteModuleTree, props: PageProps) {
-  const Page = node.value?.page?.default ?? ThrowNotFound;
+async function renderPage(node: RouteModuleTree, props: PageProps) {
+  const Page = (await importLazy(node, "page")) ?? ThrowNotFound;
   return <Page {...props} />;
 }
 
@@ -77,19 +77,19 @@ async function renderLayout(
   let acc = <LayoutContent name={prefix} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
-  const NotFoundPage = node.value?.["not-found"]?.default;
+  const NotFoundPage = await importLazy(node, "not-found");
   if (NotFoundPage) {
     acc = (
       <NotFoundBoundary fallback={<NotFoundPage />}>{acc}</NotFoundBoundary>
     );
   }
 
-  const ErrorPage = node.value?.error?.default;
+  const ErrorPage = await importLazy(node, "error");
   if (ErrorPage) {
     acc = <ErrorBoundary errorComponent={ErrorPage}>{acc}</ErrorBoundary>;
   }
 
-  const LoadingPage = node.value?.loading?.default;
+  const LoadingPage = await importLazy(node, "loading");
   if (LoadingPage) {
     acc = (
       <RemountRoute>
@@ -98,7 +98,7 @@ async function renderLayout(
     );
   }
 
-  const TemplatePage = node.value?.template?.default;
+  const TemplatePage = await importLazy(node, "template");
   if (TemplatePage) {
     acc = (
       <RemountRoute>
@@ -107,7 +107,7 @@ async function renderLayout(
     );
   }
 
-  const Layout = node.value?.layout?.default;
+  const Layout = await importLazy(node, "layout");
   if (Layout) {
     acc = (
       <Layout key={prefix} {...props}>
@@ -146,10 +146,10 @@ export async function renderRouteMap(
     };
     if (m.type === "layout") {
       layouts[m.prefix] = await renderLayout(m.node, props, m);
-      Object.assign(metadata, m.node.value?.layout?.metadata);
+      Object.assign(metadata, await importLazy(m.node, "layout", "metadata"));
     } else if (m.type === "page") {
-      pages[m.prefix] = renderPage(m.node, props);
-      Object.assign(metadata, m.node.value?.page?.metadata);
+      pages[m.prefix] = await renderPage(m.node, props);
+      Object.assign(metadata, await importLazy(m.node, "page", "metadata"));
     } else {
       m.type satisfies never;
     }
@@ -236,4 +236,17 @@ export function getRouteModuleManifest(
   }
   result.entries = sortBy(result.entries, (e) => e.pathname);
   return result;
+}
+
+export async function importLazy(
+  node: RouteModuleTree,
+  file: RouteModuleKey,
+  exportName = "default",
+): Promise<any> {
+  const lazy = node.value?.[file];
+  if (lazy) {
+    const mod = (await lazy()) as any;
+    return mod[exportName];
+  }
+  return;
 }

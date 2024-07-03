@@ -1,6 +1,6 @@
 import { injectResponseCookies } from "../next/cookie";
 import type { RequestContext } from "../request-context/server";
-import type { RouteModuleTree } from "./server";
+import { type RouteModuleTree, importLazy } from "./server";
 import { type MatchParams, matchRouteTree, toMatchParamsObject } from "./tree";
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/route
@@ -32,7 +32,9 @@ export async function handleApiRoutes(
   const url = new URL(request.url);
   const { matches } = matchRouteTree(tree, url.pathname);
   for (const m of matches) {
-    const handler = m.type === "page" && m.node.value?.route?.[method];
+    const handler =
+      m.type === "page" &&
+      ((await importLazy(m.node, "route", method)) as ApiHandler);
     if (handler) {
       const params = toMatchParamsObject(m.params);
       const response = await requestContext.run(() =>
