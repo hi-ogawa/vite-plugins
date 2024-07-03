@@ -120,7 +120,7 @@ export function vitePluginReactServer(options?: {
   const entryBrowser =
     options?.entryBrowser ?? "@hiogawa/react-server/entry-browser";
   const entryServer =
-    options?.entryServer ?? "@hiogawa/react-server/entry-react-server";
+    options?.entryServer ?? "@hiogawa/react-server/entry-server";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
@@ -190,7 +190,7 @@ export function vitePluginReactServer(options?: {
         () => `
           import "virtual:inject-async-local-storage";
           export { handler } from "${entryServer}";
-          export { router } from "@hiogawa/react-server/entry-react-server";
+          export { router } from "@hiogawa/react-server/entry-server";
         `,
       ),
 

@@ -310,7 +310,7 @@ test("module invalidation @dev", async ({ page }) => {
     "/src/routes/test/page",
     "/src/components/counter",
     "@hiogawa/react-server/entry-ssr",
-    "@hiogawa/react-server/entry-react-server",
+    "@hiogawa/react-server/entry-server",
   ] as const;
 
   const result = await inspectDevModules(page, moduleUrls);
@@ -335,7 +335,7 @@ test("module invalidation @dev", async ({ page }) => {
       ssr: expect.any(Object),
       "react-server": false,
     },
-    "@hiogawa/react-server/entry-react-server": {
+    "@hiogawa/react-server/entry-server": {
       ssr: false,
       "react-server": expect.any(Object),
     },
@@ -725,7 +725,7 @@ test("RouteProps.request", async ({ page }) => {
   await page.getByText('searchParams = {"hello":""}').click();
 });
 
-test("custom entry-react-server", async ({ request }) => {
+test("custom entry-server", async ({ request }) => {
   const res = await request.get("/test/__rpc");
   expect(await res.json()).toEqual({ hello: "world" });
 });

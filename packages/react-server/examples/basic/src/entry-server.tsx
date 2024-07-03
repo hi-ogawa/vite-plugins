@@ -1,7 +1,7 @@
 import {
   type ReactServerHandler,
   handler as baseHandler,
-} from "@hiogawa/react-server/entry-react-server";
+} from "@hiogawa/react-server/entry-server";
 
 export const handler: ReactServerHandler = async (ctx) => {
   // custom handler example
