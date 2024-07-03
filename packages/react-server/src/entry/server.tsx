@@ -1,6 +1,7 @@
 import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
+import { createBundlerConfig } from "../features/client-component/server";
 import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
@@ -21,7 +22,6 @@ import {
   serverReferenceImportPromiseCache,
 } from "../features/server-action/server";
 import { unwrapStreamRequest } from "../features/server-component/utils";
-import { createBundlerConfig } from "../features/use-client/server";
 import {
   DEFAULT_ERROR_CONTEXT,
   ReactServerDigestError,

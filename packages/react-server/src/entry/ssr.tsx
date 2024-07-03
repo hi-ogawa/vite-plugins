@@ -4,6 +4,11 @@ import ReactDOMServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
+import {
+  createModuleMap,
+  initializeReactClientSsr,
+  ssrImportPromiseCache,
+} from "../features/client-component/ssr";
 import { injectDefaultMetaViewport } from "../features/next/ssr";
 import {
   LayoutRoot,
@@ -16,11 +21,6 @@ import {
   emptyRouteManifest,
 } from "../features/router/manifest";
 import type { ServerRouterData } from "../features/router/utils";
-import {
-  createModuleMap,
-  initializeReactClientSsr,
-  ssrImportPromiseCache,
-} from "../features/use-client/ssr";
 import { Router, RouterContext } from "../lib/client/router";
 import {
   DEFAULT_ERROR_CONTEXT,
