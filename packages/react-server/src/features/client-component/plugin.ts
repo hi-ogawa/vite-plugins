@@ -130,7 +130,7 @@ export function vitePluginServerUseClient({
     name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
       manager.serverIds.add(id);
-      manager.useClientIds.delete(id);
+      manager.clientReferenceIds.delete(id);
       if (!code.includes(USE_CLIENT)) {
         return;
       }
@@ -146,7 +146,7 @@ export function vitePluginServerUseClient({
       output.prepend(
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
-      manager.useClientIds.add(id);
+      manager.clientReferenceIds.add(id);
       if (manager.buildType === "scan") {
         // to discover server references imported only by client
         // we keep code as is and continue crawling
@@ -276,7 +276,7 @@ export function vitePluginClientUseClient({
         manager.buildType === "browser" || manager.buildType === "ssr",
       );
       let result = `export default {\n`;
-      for (let id of manager.useClientIds) {
+      for (let id of manager.clientReferenceIds) {
         // virtual module needs to be mapped back to the original form
         const to = id.startsWith("\0") ? id.slice(1) : id;
         result += `"${hashString(id)}": () => import("${to}"),\n`;
