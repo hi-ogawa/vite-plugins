@@ -1,34 +1,34 @@
 import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
-import { createBundlerConfig } from "./features/client-component/server";
+import { createBundlerConfig } from "../features/client-component/server";
 import {
   DEFAULT_ERROR_CONTEXT,
   ReactServerDigestError,
   createError,
   getErrorContext,
   isRedirectError,
-} from "./features/error/shared";
-import { RequestContext } from "./features/request-context/server";
-import { handleApiRoutes } from "./features/router/api-route";
+} from "../features/error/shared";
+import { RequestContext } from "../features/request-context/server";
+import { handleApiRoutes } from "../features/router/api-route";
 import {
   generateRouteModuleTree,
   renderRouteMap,
-} from "./features/router/server";
+} from "../features/router/server";
 import {
   type LayoutRequest,
   type ServerRouterData,
   handleTrailingSlash,
   revalidateLayoutContentRequest,
-} from "./features/router/utils";
+} from "../features/router/utils";
 import {
   type ActionResult,
   createActionBundlerConfig,
   importServerAction,
   initializeReactServer,
   serverReferenceImportPromiseCache,
-} from "./features/server-action/server";
-import { unwrapStreamRequest } from "./features/server-component/utils";
+} from "../features/server-action/server";
+import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
 

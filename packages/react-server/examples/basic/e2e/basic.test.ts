@@ -309,8 +309,8 @@ test("module invalidation @dev", async ({ page }) => {
     "/src/entry-server",
     "/src/routes/test/page",
     "/src/components/counter",
-    "@hiogawa/react-server/entry-ssr",
-    "@hiogawa/react-server/entry-server",
+    "@hiogawa/react-server/entry/ssr",
+    "@hiogawa/react-server/entry/server",
   ] as const;
 
   const result = await inspectDevModules(page, moduleUrls);
@@ -331,11 +331,11 @@ test("module invalidation @dev", async ({ page }) => {
       ssr: expect.any(Object),
       "react-server": expect.any(Object),
     },
-    "@hiogawa/react-server/entry-ssr": {
+    "@hiogawa/react-server/entry/ssr": {
       ssr: expect.any(Object),
       "react-server": false,
     },
-    "@hiogawa/react-server/entry-server": {
+    "@hiogawa/react-server/entry/server": {
       ssr: false,
       "react-server": expect.any(Object),
     },

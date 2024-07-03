@@ -1,5 +1,5 @@
 import React from "react";
-import { RedirectBoundary } from "../../runtime-client";
+import { RedirectBoundary } from "../../runtime/client";
 import { createError } from "../../server";
 import { LayoutStateContext } from "../router/client";
 

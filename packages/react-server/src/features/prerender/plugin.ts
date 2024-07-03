@@ -63,7 +63,7 @@ export function prerenderPlugin({
 
 async function processPrerender(getPrerenderRoutes: PrerenderFn) {
   console.log("▶▶▶ PRERENDER");
-  const entry: typeof import("../../entry-ssr") = await import(
+  const entry: typeof import("../../entry/ssr") = await import(
     path.resolve("dist/server/__entry_ssr.js")
   );
   const { router } = await entry.importReactServer();

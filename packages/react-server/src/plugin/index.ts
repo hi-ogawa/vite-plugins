@@ -54,13 +54,13 @@ const debug = createDebug("react-server:plugin");
 // resolve import paths for `createClientReference`, `createServerReference`, etc...
 // since `import "@hiogawa/react-server"` is not always visible for exernal library.
 const RUNTIME_BROWSER_PATH = fileURLToPath(
-  new URL("../runtime-browser.js", import.meta.url),
+  new URL("../runtime/browser.js", import.meta.url),
 );
 const RUNTIME_SSR_PATH = fileURLToPath(
-  new URL("../runtime-ssr.js", import.meta.url),
+  new URL("../runtime/ssr.js", import.meta.url),
 );
 const RUNTIME_SERVER_PATH = fileURLToPath(
-  new URL("../runtime-server.js", import.meta.url),
+  new URL("../runtime/server.js", import.meta.url),
 );
 
 export type { PrerenderManifest };
@@ -118,9 +118,9 @@ export function vitePluginReactServer(options?: {
   noAsyncLocalStorage?: boolean;
 }): Plugin[] {
   const entryBrowser =
-    options?.entryBrowser ?? "@hiogawa/react-server/entry-browser";
+    options?.entryBrowser ?? "@hiogawa/react-server/entry/browser";
   const entryServer =
-    options?.entryServer ?? "@hiogawa/react-server/entry-server";
+    options?.entryServer ?? "@hiogawa/react-server/entry/server";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
@@ -190,7 +190,7 @@ export function vitePluginReactServer(options?: {
         () => `
           import "virtual:inject-async-local-storage";
           export { handler } from "${entryServer}";
-          export { router } from "@hiogawa/react-server/entry-server";
+          export { router } from "@hiogawa/react-server/entry/server";
         `,
       ),
 
