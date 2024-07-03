@@ -24,7 +24,7 @@ import {
 import type { ServerRouterData } from "./features/router/utils";
 import { createStreamRequest } from "./features/server-component/utils";
 import { $__global } from "./lib/global";
-import type { CallServerCallback } from "./lib/types";
+import type { CallServerCallback } from "./types/react";
 import { getFlightStreamBrowser } from "./utils/stream-script";
 
 const debug = createDebug("react-server:browser");
