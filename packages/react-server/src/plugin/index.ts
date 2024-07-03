@@ -112,13 +112,13 @@ const manager: PluginStateManager = ((
 export function vitePluginReactServer(options?: {
   plugins?: PluginOption[];
   prerender?: PrerenderFn;
-  // allow overrding default entires for next.js compatibility
   entryBrowser?: string;
   entryServer?: string;
   routeDir?: string;
   noAsyncLocalStorage?: boolean;
 }): Plugin[] {
-  const entryBrowser = options?.entryBrowser ?? "/src/entry-client";
+  const entryBrowser =
+    options?.entryBrowser ?? "@hiogawa/react-server/entry-browser";
   const entryServer =
     options?.entryServer ?? "@hiogawa/react-server/entry-react-server";
   const routeDir = options?.routeDir ?? "src/routes";

@@ -1,3 +1,4 @@
+import "../style.css";
 import { Link } from "@hiogawa/react-server/client";
 
 export default function Layout(props: React.PropsWithChildren) {
