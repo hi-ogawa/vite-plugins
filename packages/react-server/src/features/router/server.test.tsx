@@ -12,7 +12,7 @@ describe(generateRouteModuleTree, () => {
       "/x/y/page.tsx",
     ];
     const input = Object.fromEntries(
-      files.map((k) => [k, { default: k.toUpperCase() }]),
+      files.map((k) => [k, async () => ({ default: k.toUpperCase() })]),
     );
     const { tree } = generateRouteModuleTree(input);
     expect(tree).toMatchSnapshot();

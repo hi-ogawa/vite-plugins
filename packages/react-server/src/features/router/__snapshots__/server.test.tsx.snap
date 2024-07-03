@@ -9,32 +9,20 @@ exports[`generateRouteModuleTree > basic 1`] = `
           "children": {
             "y": {
               "value": {
-                "layout": {
-                  "default": "/X/Y/LAYOUT.TSX",
-                },
-                "page": {
-                  "default": "/X/Y/PAGE.TSX",
-                },
+                "layout": [Function],
+                "page": [Function],
               },
             },
           },
           "value": {
-            "error": {
-              "default": "/X/ERROR.TSX",
-            },
-            "page": {
-              "default": "/X/PAGE.TSX",
-            },
+            "error": [Function],
+            "page": [Function],
           },
         },
       },
       "value": {
-        "layout": {
-          "default": "/LAYOUT.TSX",
-        },
-        "page": {
-          "default": "/PAGE.TSX",
-        },
+        "layout": [Function],
+        "page": [Function],
       },
     },
   },
