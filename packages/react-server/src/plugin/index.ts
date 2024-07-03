@@ -294,7 +294,7 @@ export function vitePluginReactServer(options?: {
             ? {
                 input: options?.prerender
                   ? {
-                      __entry_ssr: "@hiogawa/react-server/entry-server",
+                      __entry_ssr: "@hiogawa/react-server/entry-ssr",
                     }
                   : undefined,
                 output: OUTPUT_SERVER_JS_EXT,
