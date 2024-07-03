@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { waitForHydration } from "./helper";
+import { testNoJs, waitForHydration } from "./helper";
 
 test("basic", async ({ page }) => {
   const res = await page.goto("/");
@@ -85,4 +85,14 @@ test("viewport", async ({ page }) => {
     "content",
     "width=device-width, initial-scale=1",
   );
+});
+
+testNoJs("image preload", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.locator('link[href="https://nextjs.org/icons/next.svg"]'),
+  ).toHaveAttribute("fetchPriority", "high");
+  await expect(
+    page.locator('link[href="https://nextjs.org/icons/vercel.svg"]'),
+  ).not.toHaveAttribute("fetchPriority", "high");
 });
