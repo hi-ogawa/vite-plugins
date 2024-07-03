@@ -1,7 +1,8 @@
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
-import { initializeReactClientBrowser } from "./features/client-component/browser";
+import { initializeReactClientBrowser } from "../features/client-component/browser";
+import { RootErrorBoundary } from "../features/error/error-boundary";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -9,23 +10,22 @@ import {
   RouteAssetLinks,
   RouteManifestContext,
   routerRevalidate,
-} from "./features/router/client";
-import {
-  type RouteManifest,
-  emptyRouteManifest,
-} from "./features/router/manifest";
-import type { ServerRouterData } from "./features/router/utils";
-import { createStreamRequest } from "./features/server-component/utils";
-import { RootErrorBoundary } from "./lib/client/error-boundary";
+} from "../features/router/client";
 import {
   Router,
   RouterContext,
   createEncodedBrowserHistory,
   useRouter,
-} from "./lib/client/router";
-import { $__global } from "./lib/global";
-import type { CallServerCallback } from "./lib/types";
-import { getFlightStreamBrowser } from "./utils/stream-script";
+} from "../features/router/client/router";
+import {
+  type RouteManifest,
+  emptyRouteManifest,
+} from "../features/router/manifest";
+import type { ServerRouterData } from "../features/router/utils";
+import { createStreamRequest } from "../features/server-component/utils";
+import { $__global } from "../global";
+import type { CallServerCallback } from "../types/react";
+import { getFlightStreamBrowser } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
 

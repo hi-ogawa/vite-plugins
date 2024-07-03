@@ -1,7 +1,7 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
 import ReactServer from "react-server-dom-webpack/server.edge";
-import type { BundlerConfig, ImportManifestEntry } from "../../lib/types";
 import type { ReactServerErrorContext } from "../../server";
+import type { BundlerConfig, ImportManifestEntry } from "../../types/react";
 
 // https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
 

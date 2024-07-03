@@ -1,6 +1,6 @@
 import { sortBy } from "@hiogawa/utils";
 import React from "react";
-import { type ReactServerErrorContext, createError } from "../../lib/error";
+import { type ReactServerErrorContext, createError } from "../error/shared";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
 import type { ApiRouteMoudle } from "./api-route";
@@ -51,8 +51,8 @@ export function generateRouteModuleTree(globEntries: Record<string, any>) {
 }
 
 // use own "use client" components as external
-function importRuntimeClient(): Promise<typeof import("../../runtime-client")> {
-  return import("@hiogawa/react-server/runtime-client" as string);
+function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
+  return import("@hiogawa/react-server/runtime/client" as string);
 }
 
 function renderPage(node: RouteModuleTree, props: PageProps) {
