@@ -62,7 +62,6 @@ export const handler: ReactServerHandler = async (ctx) => {
 
   const requestContext = new RequestContext(ctx.request.headers);
 
-  // TODO: support cookies mutation in api routes
   const handledApi = await handleApiRoutes(
     router.tree,
     ctx.request,
