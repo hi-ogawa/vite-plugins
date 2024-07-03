@@ -54,13 +54,13 @@ const debug = createDebug("react-server:plugin");
 // resolve import paths for `createClientReference`, `createServerReference`, etc...
 // since `import "@hiogawa/react-server"` is not always visible for exernal library.
 const RUNTIME_BROWSER_PATH = fileURLToPath(
-  new URL("../runtime-browser.js", import.meta.url),
+  new URL("../runtime/browser.js", import.meta.url),
 );
 const RUNTIME_SSR_PATH = fileURLToPath(
-  new URL("../runtime-ssr.js", import.meta.url),
+  new URL("../runtime/ssr.js", import.meta.url),
 );
 const RUNTIME_SERVER_PATH = fileURLToPath(
-  new URL("../runtime-server.js", import.meta.url),
+  new URL("../runtime/server.js", import.meta.url),
 );
 
 export type { PrerenderManifest };
@@ -118,9 +118,9 @@ export function vitePluginReactServer(options?: {
   noAsyncLocalStorage?: boolean;
 }): Plugin[] {
   const entryBrowser =
-    options?.entryBrowser ?? "@hiogawa/react-server/entry-browser";
+    options?.entryBrowser ?? "@hiogawa/react-server/entry/browser";
   const entryServer =
-    options?.entryServer ?? "@hiogawa/react-server/entry-server";
+    options?.entryServer ?? "@hiogawa/react-server/entry/server";
   const routeDir = options?.routeDir ?? "src/routes";
 
   const reactServerViteConfig: InlineConfig = {
@@ -190,7 +190,7 @@ export function vitePluginReactServer(options?: {
         () => `
           import "virtual:inject-async-local-storage";
           export { handler } from "${entryServer}";
-          export { router } from "@hiogawa/react-server/entry-server";
+          export { router } from "@hiogawa/react-server/entry/server";
         `,
       ),
 
@@ -294,7 +294,7 @@ export function vitePluginReactServer(options?: {
             ? {
                 input: options?.prerender
                   ? {
-                      __entry_ssr: "@hiogawa/react-server/entry-ssr",
+                      __entry_ssr: "@hiogawa/react-server/entry/ssr",
                     }
                   : undefined,
                 output: OUTPUT_SERVER_JS_EXT,
@@ -443,10 +443,10 @@ export function vitePluginReactServer(options?: {
       }
       // build
       if (manager.buildType === "browser") {
-        // import "runtime-client" for preload
+        // import "runtime/client" for preload
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
-          import("@hiogawa/react-server/runtime-client");
+          import("@hiogawa/react-server/runtime/client");
           import "${entryBrowser}";
         `;
       }
