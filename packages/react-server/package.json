@@ -42,9 +42,9 @@
       "types": "./dist/entry/browser.d.ts",
       "default": "./dist/entry/browser.js"
     },
-    "./entry-server": {
-      "types": "./dist/entry/server.d.ts",
-      "default": "./dist/entry/server.js"
+    "./entry-ssr": {
+      "types": "./dist/entry/ssr.d.ts",
+      "default": "./dist/entry/ssr.js"
     },
     "./entry-react-server": {
       "types": "./dist/entry/react-server.d.ts",

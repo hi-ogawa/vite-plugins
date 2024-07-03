@@ -11,7 +11,7 @@ export default defineConfig([
       "src/runtime-server.ts",
       "src/runtime-react-server.ts",
       "src/entry/react-server.tsx",
-      "src/entry/server.tsx",
+      "src/entry/ssr.tsx",
       "src/entry/browser.tsx",
       "src/plugin/index.ts",
     ],
