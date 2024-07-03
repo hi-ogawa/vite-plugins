@@ -7,7 +7,7 @@ export {
   createError,
   redirect,
   type ReactServerErrorContext,
-} from "./lib/error";
+} from "./features/error/shared";
 export type { Metadata } from "./features/meta/utils";
 export {
   headers,

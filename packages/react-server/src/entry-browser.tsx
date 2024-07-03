@@ -16,7 +16,7 @@ import {
 } from "./features/router/manifest";
 import type { ServerRouterData } from "./features/router/utils";
 import { createStreamRequest } from "./features/server-component/utils";
-import { RootErrorBoundary } from "./lib/client/error-boundary";
+import { RootErrorBoundary } from "./features/error/error-boundary";
 import {
   Router,
   RouterContext,

@@ -28,7 +28,7 @@ import {
   getErrorContext,
   getStatusText,
   isRedirectError,
-} from "./lib/error";
+} from "./features/error/shared";
 import { $__global } from "./lib/global";
 import { ENTRY_SERVER_WRAPPER, invalidateModule } from "./plugin/utils";
 import {

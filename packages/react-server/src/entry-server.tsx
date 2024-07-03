@@ -28,7 +28,7 @@ import {
   createError,
   getErrorContext,
   isRedirectError,
-} from "./lib/error";
+} from "./features/error/shared";
 
 const debug = createDebug("react-server:rsc");
 
