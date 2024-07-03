@@ -56,11 +56,11 @@ const debug = createDebug("react-server:plugin");
 const RUNTIME_BROWSER_PATH = fileURLToPath(
   new URL("../runtime-browser.js", import.meta.url),
 );
+const RUNTIME_SSR_PATH = fileURLToPath(
+  new URL("../runtime-ssr.js", import.meta.url),
+);
 const RUNTIME_SERVER_PATH = fileURLToPath(
   new URL("../runtime-server.js", import.meta.url),
-);
-const RUNTIME_REACT_SERVER_PATH = fileURLToPath(
-  new URL("../runtime-react-server.js", import.meta.url),
 );
 
 export type { PrerenderManifest };
@@ -160,13 +160,13 @@ export function vitePluginReactServer(options?: {
       // expose server reference to react-server itself
       vitePluginServerUseServer({
         manager,
-        runtimePath: RUNTIME_REACT_SERVER_PATH,
+        runtimePath: RUNTIME_SERVER_PATH,
       }),
 
       // transform "use client" into client referecnes
       vitePluginServerUseClient({
         manager,
-        runtimePath: RUNTIME_REACT_SERVER_PATH,
+        runtimePath: RUNTIME_SERVER_PATH,
       }),
 
       routeManifestPluginServer({ manager, routeDir }),
@@ -417,7 +417,7 @@ export function vitePluginReactServer(options?: {
     vitePluginClientUseServer({
       manager,
       runtimePath: RUNTIME_BROWSER_PATH,
-      ssrRuntimePath: RUNTIME_SERVER_PATH,
+      ssrRuntimePath: RUNTIME_SSR_PATH,
     }),
     ...vitePluginClientUseClient({ manager }),
     ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),

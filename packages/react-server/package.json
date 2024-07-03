@@ -30,13 +30,13 @@
       "types": "./dist/runtime-browser.d.ts",
       "default": "./dist/runtime-browser.js"
     },
+    "./runtime-ssr": {
+      "types": "./dist/runtime-ssr.d.ts",
+      "default": "./dist/runtime-ssr.js"
+    },
     "./runtime-server": {
       "types": "./dist/runtime-server.d.ts",
       "default": "./dist/runtime-server.js"
-    },
-    "./runtime-react-server": {
-      "types": "./dist/runtime-react-server.d.ts",
-      "default": "./dist/runtime-react-server.js"
     },
     "./entry-browser": {
       "types": "./dist/entry/browser.d.ts",
