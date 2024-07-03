@@ -392,31 +392,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
   },
   "metadata": <React.Fragment />,
   "pages": {
-    "/z": <ThrowNotFound
-      params={{}}
-      request={
-        {
-          "headers": {},
-          "url": "https://test.local/z",
-        }
-      }
-      searchParams={{}}
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/z",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/z",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
-        }
-      }
-    />,
+    "/z": <ThrowNotFound />,
   },
   "params": [
     [

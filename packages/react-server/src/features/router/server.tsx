@@ -57,10 +57,7 @@ function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
 
 async function renderPage(node: RouteModuleTree, props: PageProps) {
   const Page = await node.value?.page?.().then((v) => v.default);
-  if (Page) {
-    return <Page {...props} />;
-  }
-  return <ThrowNotFound />;
+  return Page ? <Page {...props} /> : <ThrowNotFound />;
 }
 
 async function renderLayout(
