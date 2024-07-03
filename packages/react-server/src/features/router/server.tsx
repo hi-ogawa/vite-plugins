@@ -238,7 +238,7 @@ export function getRouteModuleManifest(
   return result;
 }
 
-export async function importLazy(
+async function importLazy(
   node: RouteModuleTree,
   file: RouteModuleKey,
   exportName = "default",
