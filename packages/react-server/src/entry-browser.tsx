@@ -2,6 +2,7 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import { initializeReactClientBrowser } from "./features/client-component/browser";
+import { RootErrorBoundary } from "./features/error/error-boundary";
 import {
   LayoutRoot,
   LayoutStateContext,
@@ -16,7 +17,6 @@ import {
 } from "./features/router/manifest";
 import type { ServerRouterData } from "./features/router/utils";
 import { createStreamRequest } from "./features/server-component/utils";
-import { RootErrorBoundary } from "./features/error/error-boundary";
 import {
   Router,
   RouterContext,

@@ -10,6 +10,12 @@ import {
   initializeReactClientSsr,
   ssrImportPromiseCache,
 } from "./features/client-component/ssr";
+import {
+  DEFAULT_ERROR_CONTEXT,
+  getErrorContext,
+  getStatusText,
+  isRedirectError,
+} from "./features/error/shared";
 import { injectDefaultMetaViewport } from "./features/next/ssr";
 import {
   LayoutRoot,
@@ -23,12 +29,6 @@ import {
 } from "./features/router/manifest";
 import type { ServerRouterData } from "./features/router/utils";
 import { Router, RouterContext } from "./lib/client/router";
-import {
-  DEFAULT_ERROR_CONTEXT,
-  getErrorContext,
-  getStatusText,
-  isRedirectError,
-} from "./features/error/shared";
 import { $__global } from "./lib/global";
 import { ENTRY_SERVER_WRAPPER, invalidateModule } from "./plugin/utils";
 import {
