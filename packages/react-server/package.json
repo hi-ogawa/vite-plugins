@@ -39,16 +39,16 @@
       "default": "./dist/runtime-server.js"
     },
     "./entry-browser": {
-      "types": "./dist/entry/browser.d.ts",
-      "default": "./dist/entry/browser.js"
+      "types": "./dist/entry-browser.d.ts",
+      "default": "./dist/entry-browser.js"
     },
     "./entry-ssr": {
-      "types": "./dist/entry/ssr.d.ts",
-      "default": "./dist/entry/ssr.js"
+      "types": "./dist/entry-ssr.d.ts",
+      "default": "./dist/entry-ssr.js"
     },
     "./entry-server": {
-      "types": "./dist/entry/server.d.ts",
-      "default": "./dist/entry/server.js"
+      "types": "./dist/entry-server.d.ts",
+      "default": "./dist/entry-server.js"
     },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
