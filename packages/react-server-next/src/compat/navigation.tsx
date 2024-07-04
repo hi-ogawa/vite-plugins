@@ -35,7 +35,7 @@ export function useSelectedLayoutSegment(): string | null {
 export function useRouter() {
   const history = useRouter_((s) => s.history);
   const refresh = () => {
-    history.replace(window.location.href, routerRevalidate());
+    history.replace(window.location.href, routerRevalidate("/"));
   };
   return React.useMemo(() => ({ ...history, refresh }), [history]);
 }
