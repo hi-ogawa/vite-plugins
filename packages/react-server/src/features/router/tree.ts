@@ -64,12 +64,6 @@ export function toRouteId(pathname: string, type: "layout" | "page") {
   return pathname + ":" + type;
 }
 
-export function fromRoutId(
-  id: string,
-): [pathname: string, type: "layout" | "page"] {
-  return id.split(":") as any;
-}
-
 export type MatchResult<T> = {
   matches: MatchNodeEntry<T>[];
   params: MatchParamEntry[];
