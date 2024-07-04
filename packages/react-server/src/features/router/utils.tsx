@@ -1,15 +1,5 @@
-import { objectPickBy, typedBoolean } from "@hiogawa/utils";
 import type { ActionResult } from "../server-action/server";
-import type { RevalidationType } from "../server-component/utils";
 import type { MatchParamEntry } from "./tree";
-
-export type LayoutRequest = Record<
-  string,
-  {
-    type: "page" | "layout";
-    name: string;
-  }
->;
 
 // aka. FlightData
 export type ServerRouterData = {
@@ -22,70 +12,6 @@ export type ServerRouterData = {
 };
 
 export const LAYOUT_ROOT_NAME = "__root";
-
-// TODO: remove
-export function createLayoutContentRequest(pathname: string) {
-  const prefixes = getPathPrefixes(pathname);
-  const map: LayoutRequest = {
-    [LAYOUT_ROOT_NAME]: { type: "layout", name: "/" },
-  };
-  for (let i = 0; i < prefixes.length; i++) {
-    const prefix = prefixes[i]!;
-    if (i < prefixes.length - 1) {
-      map[prefix] = {
-        type: "layout",
-        name: prefixes[i + 1]!,
-      };
-    } else {
-      map[prefix] = {
-        type: "page",
-        name: prefix,
-      };
-    }
-  }
-  return map;
-}
-
-type RouteDataKey = {
-  type: "page" | "layout";
-  name: string;
-};
-
-function getCachedRoutes(
-  pathname: string,
-  revalidations: RevalidationType[],
-): RouteDataKey[] {
-  if (revalidations.some((v) => v === true)) {
-    return [];
-  }
-  const routes = Object.values(createLayoutContentRequest(pathname));
-  return routes.filter(
-    (v) =>
-      v.type === "layout" &&
-      !revalidations.some(
-        (r) => typeof r === "string" && isAncestorPath(r, v.name),
-      ),
-  );
-}
-
-export function revalidateLayoutContentRequest(
-  pathname: string,
-  lastPathname?: string,
-  revalidations?: (RevalidationType | undefined)[],
-) {
-  let layoutRequest = createLayoutContentRequest(pathname);
-  if (lastPathname) {
-    const cached = getCachedRoutes(
-      lastPathname,
-      revalidations?.filter(typedBoolean) ?? [],
-    );
-    layoutRequest = objectPickBy(
-      layoutRequest,
-      (v) => !cached.some((c) => c.name === v.name && c.type === v.type),
-    );
-  }
-  return layoutRequest;
-}
 
 /**
  * @example
