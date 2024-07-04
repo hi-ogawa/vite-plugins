@@ -4,8 +4,8 @@ import ReactDOMClient from "react-dom/client";
 import { initializeReactClientBrowser } from "../features/client-component/browser";
 import { RootErrorBoundary } from "../features/error/error-boundary";
 import {
+  FlightDataContext,
   LayoutRoot,
-  LayoutStateContext,
   ROUTER_REVALIDATE_KEY,
   RouteAssetLinks,
   RouteManifestContext,
@@ -21,7 +21,7 @@ import {
   type RouteManifest,
   emptyRouteManifest,
 } from "../features/router/manifest";
-import type { ServerRouterData } from "../features/router/utils";
+import type { FlightData } from "../features/router/utils";
 import { createStreamRequest } from "../features/server-component/utils";
 import { $__global } from "../global";
 import type { CallServerCallback } from "../types/react";
@@ -39,7 +39,7 @@ async function start() {
   const history = createEncodedBrowserHistory();
   const router = new Router(history);
 
-  let $__setLayout: (v: Promise<ServerRouterData>) => void;
+  let $__setFlight: (v: Promise<FlightData>) => void;
   let $__startActionTransition: React.TransitionStartFunction;
 
   //
@@ -56,11 +56,10 @@ async function start() {
       body: await ReactClient.encodeReply(args),
       headers,
     });
-    const result = ReactClient.createFromFetch<ServerRouterData>(
-      fetch(request),
-      { callServer },
-    );
-    $__startActionTransition(() => $__setLayout(result));
+    const result = ReactClient.createFromFetch<FlightData>(fetch(request), {
+      callServer,
+    });
+    $__startActionTransition(() => $__setFlight(result));
     return (await result).action?.data;
   };
 
@@ -69,25 +68,23 @@ async function start() {
 
   // prepare initial layout data from inline <script>
   // TODO: needs to await for hydration formState. does it affect startup perf?
-  const initialLayout =
-    await ReactClient.createFromReadableStream<ServerRouterData>(
-      getFlightStreamBrowser(),
-      { callServer },
-    );
-  const initialLayoutPromise = Promise.resolve(initialLayout);
+  const initialFlight = ReactClient.createFromReadableStream<FlightData>(
+    getFlightStreamBrowser(),
+    { callServer },
+  );
 
   //
   // browser root
   //
 
-  function LayoutHandler(props: React.PropsWithChildren) {
-    const [layoutPromise, setLayoutPromise] =
-      React.useState<Promise<ServerRouterData>>(initialLayoutPromise);
+  function FlightDataHandler(props: React.PropsWithChildren) {
+    const [flight, setFlight] =
+      React.useState<Promise<FlightData>>(initialFlight);
 
     // very shaky trick to merge with current layout
-    $__setLayout = (nextPromise) => {
-      setLayoutPromise(
-        memoize(async (currentPromise: Promise<ServerRouterData>) => {
+    $__setFlight = (nextPromise) => {
+      setFlight(
+        memoize(async (currentPromise: Promise<FlightData>) => {
           const current = await currentPromise;
           const next = await nextPromise;
           return {
@@ -100,7 +97,7 @@ async function start() {
               ...next.nodeMap,
             },
             layoutContentMap: next.layoutContentMap,
-          } satisfies ServerRouterData;
+          } satisfies FlightData;
         }),
       );
     };
@@ -143,8 +140,8 @@ async function start() {
         revalidate: location.state[ROUTER_REVALIDATE_KEY],
       });
       startTransition(() => {
-        $__setLayout(
-          ReactClient.createFromFetch<ServerRouterData>(fetch(request), {
+        $__setFlight(
+          ReactClient.createFromFetch<FlightData>(fetch(request), {
             callServer,
           }),
         );
@@ -152,9 +149,9 @@ async function start() {
     }, [location]);
 
     return (
-      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
+      <FlightDataContext.Provider value={flight}>
         {props.children}
-      </LayoutStateContext.Provider>
+      </FlightDataContext.Provider>
     );
   }
 
@@ -162,12 +159,12 @@ async function start() {
   let reactRootEl = (
     <RouterContext.Provider value={router}>
       <RootErrorBoundary>
-        <LayoutHandler>
+        <FlightDataHandler>
           <RouteManifestContext.Provider value={routeManifest}>
             <RouteAssetLinks />
             <LayoutRoot />
           </RouteManifestContext.Provider>
-        </LayoutHandler>
+        </FlightDataHandler>
       </RootErrorBoundary>
     </RouterContext.Provider>
   );
@@ -183,8 +180,9 @@ async function start() {
   if (document.documentElement.dataset["noHydrate"]) {
     ReactDOMClient.createRoot(document).render(reactRootEl);
   } else {
+    const formState = (await initialFlight).action?.data;
     ReactDOMClient.hydrateRoot(document, reactRootEl, {
-      formState: initialLayout.action?.data,
+      formState,
     });
   }
 

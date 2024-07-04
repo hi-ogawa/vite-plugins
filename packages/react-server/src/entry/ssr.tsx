@@ -17,8 +17,8 @@ import {
 } from "../features/error/shared";
 import { injectDefaultMetaViewport } from "../features/next/ssr";
 import {
+  FlightDataContext,
   LayoutRoot,
-  LayoutStateContext,
   RouteAssetLinks,
   RouteManifestContext,
 } from "../features/router/client";
@@ -27,7 +27,7 @@ import {
   type RouteManifest,
   emptyRouteManifest,
 } from "../features/router/manifest";
-import type { ServerRouterData } from "../features/router/utils";
+import type { FlightData } from "../features/router/utils";
 import { $__global } from "../global";
 import { ENTRY_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
 import {
@@ -103,7 +103,7 @@ export async function renderHtml(
 
   const [stream1, stream2] = result.stream.tee();
 
-  const layoutPromise = ReactClient.createFromReadableStream<ServerRouterData>(
+  const flightDataPromise = ReactClient.createFromReadableStream<FlightData>(
     stream1,
     {
       ssrManifest: {
@@ -123,12 +123,12 @@ export async function renderHtml(
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
-      <LayoutStateContext.Provider value={{ data: layoutPromise }}>
+      <FlightDataContext.Provider value={flightDataPromise}>
         <RouteManifestContext.Provider value={routeManifest}>
           <RouteAssetLinks />
           <LayoutRoot />
         </RouteManifestContext.Provider>
-      </LayoutStateContext.Provider>
+      </FlightDataContext.Provider>
     </RouterContext.Provider>
   );
 

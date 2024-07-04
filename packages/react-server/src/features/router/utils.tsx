@@ -1,8 +1,7 @@
 import type { ActionResult } from "../server-action/server";
 import type { MatchParamEntry } from "./tree";
 
-// aka. FlightData
-export type ServerRouterData = {
+export type FlightData = {
   action?: Pick<ActionResult, "error" | "data">;
   metadata?: React.ReactNode;
   nodeMap: Record<string, React.ReactNode>;
