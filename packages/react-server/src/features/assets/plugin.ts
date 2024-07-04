@@ -16,11 +16,9 @@ export interface SsrAssetsType {
 export function vitePluginServerAssets({
   manager,
   entryBrowser,
-  entryServer,
 }: {
   manager: PluginStateManager;
   entryBrowser: string;
-  entryServer: string;
 }): Plugin[] {
   return [
     createVirtualPlugin("ssr-assets", async () => {
@@ -34,6 +32,25 @@ export function vitePluginServerAssets({
         // client code is both imported at the boundary (as `<id>?import`)
         // and not at the boundary (as `<id>`).
         head += `<script>globalThis.__raw_import = (id) => import(id)</script>\n`;
+
+        // eagerly load route modules so we can crawl css
+        {
+          const server = $__global.dev.reactServer;
+          await server.ssrLoadModule("virtual:server-routes");
+          const mod = server.moduleGraph.getModuleById(
+            "\0virtual:server-routes",
+          );
+          for (const route of mod?.importedModules ?? []) {
+            if (route.id) {
+              try {
+                await server.transformRequest(route.id, { ssr: true });
+                // await server.ssrLoadModule(route.id);
+              } catch (e) {
+                console.error(`[ERROR] failed to transform '${route.id}'`);
+              }
+            }
+          }
+        }
 
         // serve dev css as ?direct so that ssr html won't get too huge.
         // then remove this injected style on first hot update.
@@ -97,16 +114,21 @@ export function vitePluginServerAssets({
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, [
-          entryServer,
-          "virtual:server-routes",
-        ]),
+        collectStyle(
+          $__global.dev.reactServer,
+          ["virtual:server-routes"],
+          true,
+        ),
         `/******* client **************/`,
-        collectStyle($__global.dev.server, [
-          entryBrowser,
-          // TODO: dev should also use RouteManifest to manage client css
-          ...manager.clientReferenceIds,
-        ]),
+        collectStyle(
+          $__global.dev.server,
+          [
+            entryBrowser,
+            // TODO: dev should also use RouteManifest to manage client css
+            ...manager.clientReferenceIds,
+          ],
+          false,
+        ),
       ]);
       return styles.join("\n\n");
     }),
@@ -115,10 +137,11 @@ export function vitePluginServerAssets({
       // virtual module to proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        const urls = await collectStyleUrls($__global.dev.reactServer, [
-          entryServer,
-          "virtual:server-routes",
-        ]);
+        const urls = await collectStyleUrls(
+          $__global.dev.reactServer,
+          ["virtual:server-routes"],
+          true,
+        );
         const code = urls.map((url) => `import "${url}";\n`).join("");
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;

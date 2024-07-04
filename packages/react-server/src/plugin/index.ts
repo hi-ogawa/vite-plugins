@@ -420,7 +420,7 @@ export function vitePluginReactServer(options?: {
       ssrRuntimePath: RUNTIME_SSR_PATH,
     }),
     ...vitePluginClientUseClient({ manager }),
-    ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
+    ...vitePluginServerAssets({ manager, entryBrowser }),
     ...routeManifestPluginClient({ manager }),
     ...(options?.prerender
       ? prerenderPlugin({ manager, prerender: options.prerender })
