@@ -1,4 +1,4 @@
-import { sortBy, typedBoolean } from "@hiogawa/utils";
+import { sortBy } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../error/shared";
 import { renderMetadata } from "../meta/server";
@@ -174,15 +174,12 @@ export function getCachedRoutes(
   lastPathname: string,
   revalidations: (RevalidationType | undefined)[],
 ) {
-  const revalidatedPaths: string[] = revalidations
-    .map((r) => (r === true ? "/" : r))
-    .filter(typedBoolean);
   const routeIds: string[] = [];
   const { matches } = matchRouteTree(tree, lastPathname);
   for (const m of matches) {
     if (
       m.type === "layout" &&
-      !revalidatedPaths.some((r) => isAncestorPath(r, m.prefix))
+      !revalidations.some((r) => r && isAncestorPath(r, m.prefix))
     ) {
       routeIds.push(toRouteId(m.prefix, m.type));
     }
