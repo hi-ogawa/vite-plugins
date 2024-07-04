@@ -17,6 +17,10 @@ export const FlightDataContext = React.createContext<Promise<FlightData>>(
   undefined!,
 );
 
+export function useFlightData() {
+  return React.use(React.useContext(FlightDataContext));
+}
+
 export function LayoutContent(props: { name: string }) {
   const ctx = React.useContext(FlightDataContext);
   const data = React.use(ctx);

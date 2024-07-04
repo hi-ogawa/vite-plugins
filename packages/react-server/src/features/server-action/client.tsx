@@ -14,7 +14,7 @@ export function ActionRedirectHandler() {
 // TODO: how to trigger nearest error page on action error?
 function ThrowActionError() {
   const ctx = React.useContext(FlightDataContext);
-  const data = React.use(ctx.data);
+  const data = React.use(ctx);
   if (data.action?.error) {
     throw createError(data.action?.error);
   }
