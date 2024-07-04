@@ -16,10 +16,7 @@ import {
   getCachedRoutes,
   renderRouteMap,
 } from "../features/router/server";
-import {
-  type ServerRouterData,
-  handleTrailingSlash,
-} from "../features/router/utils";
+import { type FlightData, handleTrailingSlash } from "../features/router/utils";
 import {
   type ActionResult,
   createActionBundlerConfig,
@@ -106,7 +103,7 @@ export const handler: ReactServerHandler = async (ctx) => {
       (_v, k) => !cachedRoutes.includes(k),
     );
   }
-  const flightData: ServerRouterData = {
+  const flightData: FlightData = {
     nodeMap: result.nodeMap,
     layoutContentMap: result.layoutContentMap,
     metadata: result.metadata,
@@ -117,7 +114,7 @@ export const handler: ReactServerHandler = async (ctx) => {
       : undefined,
   };
   const stream = requestContext.run(() =>
-    ReactServer.renderToReadableStream<ServerRouterData>(
+    ReactServer.renderToReadableStream<FlightData>(
       flightData,
       createBundlerConfig(),
       {

@@ -11,19 +11,15 @@ import {
   getRouteAssetDeps,
 } from "./manifest";
 import { type MatchParamEntry, toMatchParamsObject } from "./tree";
-import { LAYOUT_ROOT_NAME, type ServerRouterData } from "./utils";
+import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
-type LayoutStateContextType = {
-  data: Promise<ServerRouterData>;
-};
-
-export const LayoutStateContext = React.createContext<LayoutStateContextType>(
+export const FlightDataContext = React.createContext<Promise<FlightData>>(
   undefined!,
 );
 
 export function LayoutContent(props: { name: string }) {
-  const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
+  const ctx = React.useContext(FlightDataContext);
+  const data = React.use(ctx);
   const routeId = data.layoutContentMap[props.name];
   tinyassert(routeId, `Unexpected layout content map`);
   return data.nodeMap[routeId];
@@ -40,21 +36,21 @@ export function LayoutRoot() {
 }
 
 function MetadataRenderer() {
-  const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
+  const ctx = React.useContext(FlightDataContext);
+  const data = React.use(ctx);
   return data.metadata;
 }
 
 // TODO: should we remove confusing `useRouter(s => s.location)`?
 export function useLocation() {
-  const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
+  const ctx = React.useContext(FlightDataContext);
+  const data = React.use(ctx);
   return React.useMemo(() => new URL(data.url), [data.url]);
 }
 
 function useParamEntries() {
-  const ctx = React.useContext(LayoutStateContext);
-  const data = React.use(ctx.data);
+  const ctx = React.useContext(FlightDataContext);
+  const data = React.use(ctx);
   return data.params;
 }
 
