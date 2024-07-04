@@ -136,30 +136,23 @@ export async function renderRouteMap(
     },
     searchParams: Object.fromEntries(url.searchParams),
   };
-  const pages: Record<string, React.ReactNode> = {};
-  const layouts: Record<string, React.ReactNode> = {};
   const metadata: Metadata = {};
-  const result = matchRouteTree(tree, url.pathname);
-
   const layoutContentMap: Record<string, string> = {};
   const nodeMap: Record<string, React.ReactNode> = {};
   let parentLayout = LAYOUT_ROOT_NAME;
-
+  const result = matchRouteTree(tree, url.pathname);
   for (const m of result.matches) {
     const routeId = m.prefix + ":" + m.type;
     layoutContentMap[parentLayout] = routeId;
     parentLayout = m.prefix;
-
     const props: BaseProps = {
       ...baseProps,
       params: toMatchParamsObject(m.params),
     };
     if (m.type === "layout") {
-      // layouts[m.prefix] = await renderLayout(m.node, props, m);
       nodeMap[routeId] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
-      // pages[m.prefix] = renderPage(m.node, props);
       nodeMap[routeId] = renderPage(m.node, props);
       Object.assign(metadata, m.node.value?.page?.metadata);
     } else {
@@ -169,8 +162,6 @@ export async function renderRouteMap(
   return {
     layoutContentMap,
     nodeMap,
-    pages,
-    layouts,
     metadata: renderMetadata(metadata),
     params: result.params,
   };
