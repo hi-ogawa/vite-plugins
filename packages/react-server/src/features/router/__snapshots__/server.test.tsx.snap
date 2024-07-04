@@ -44,8 +44,14 @@ exports[`generateRouteModuleTree > basic 1`] = `
 exports[`generateRouteModuleTree > basic 2`] = `
 {
   "__pathname": "/x",
-  "layouts": {
-    "/": <LayoutMatchProvider
+  "layoutContentMap": {
+    "/": "/x:layout",
+    "/x": "/x:page",
+    "__root": "/:layout",
+  },
+  "metadata": <React.Fragment />,
+  "nodeMap": {
+    "/:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -89,7 +95,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
         </RedirectBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
-    "/x": <LayoutMatchProvider
+    "/x:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -117,10 +123,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
         </ErrorBoundary>
       </React.Fragment>
     </LayoutMatchProvider>,
-  },
-  "metadata": <React.Fragment />,
-  "pages": {
-    "/x": </X/PAGE.TSX
+    "/x:page": </X/PAGE.TSX
       params={{}}
       request={
         {
@@ -162,8 +165,15 @@ exports[`generateRouteModuleTree > basic 2`] = `
 exports[`generateRouteModuleTree > basic 3`] = `
 {
   "__pathname": "/x/y",
-  "layouts": {
-    "/": <LayoutMatchProvider
+  "layoutContentMap": {
+    "/": "/x:layout",
+    "/x": "/x/y:layout",
+    "/x/y": "/x/y:page",
+    "__root": "/:layout",
+  },
+  "metadata": <React.Fragment />,
+  "nodeMap": {
+    "/:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -207,35 +217,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
         </RedirectBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
-    "/x": <LayoutMatchProvider
-      value={
-        {
-          "params": [
-            [
-              null,
-              "",
-            ],
-            [
-              null,
-              "x",
-            ],
-          ],
-        }
-      }
-    >
-      <React.Fragment>
-        <ErrorBoundary
-          errorComponent="/X/ERROR.TSX"
-        >
-          <RedirectBoundary>
-            <LayoutContent
-              name="/x"
-            />
-          </RedirectBoundary>
-        </ErrorBoundary>
-      </React.Fragment>
-    </LayoutMatchProvider>,
-    "/x/y": <LayoutMatchProvider
+    "/x/y:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -287,10 +269,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
         </RedirectBoundary>
       <//X/Y/LAYOUT.TSX>
     </LayoutMatchProvider>,
-  },
-  "metadata": <React.Fragment />,
-  "pages": {
-    "/x/y": </X/Y/PAGE.TSX
+    "/x/y:page": </X/Y/PAGE.TSX
       params={{}}
       request={
         {
@@ -315,6 +294,34 @@ exports[`generateRouteModuleTree > basic 3`] = `
         }
       }
     />,
+    "/x:layout": <LayoutMatchProvider
+      value={
+        {
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+          ],
+        }
+      }
+    >
+      <React.Fragment>
+        <ErrorBoundary
+          errorComponent="/X/ERROR.TSX"
+        >
+          <RedirectBoundary>
+            <LayoutContent
+              name="/x"
+            />
+          </RedirectBoundary>
+        </ErrorBoundary>
+      </React.Fragment>
+    </LayoutMatchProvider>,
   },
   "params": [
     [
@@ -336,8 +343,14 @@ exports[`generateRouteModuleTree > basic 3`] = `
 exports[`generateRouteModuleTree > basic 4`] = `
 {
   "__pathname": "/z",
-  "layouts": {
-    "/": <LayoutMatchProvider
+  "layoutContentMap": {
+    "/": "/z:layout",
+    "/z": "/z:page",
+    "__root": "/:layout",
+  },
+  "metadata": <React.Fragment />,
+  "nodeMap": {
+    "/:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -381,7 +394,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
         </RedirectBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
-    "/z": <LayoutMatchProvider
+    "/z:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -401,10 +414,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
         </RedirectBoundary>
       </React.Fragment>
     </LayoutMatchProvider>,
-  },
-  "metadata": <React.Fragment />,
-  "pages": {
-    "/z": <ThrowNotFound
+    "/z:page": <ThrowNotFound
       params={{}}
       request={
         {

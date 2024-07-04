@@ -34,7 +34,6 @@ export function unwrapStreamRequest(request: Request) {
   headers.delete(RSC_PARAM);
 
   return {
-    url,
     request: new Request(url, {
       method: request.method,
       headers,

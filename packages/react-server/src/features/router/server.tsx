@@ -1,8 +1,9 @@
-import { sortBy } from "@hiogawa/utils";
+import { sortBy, typedBoolean } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../error/shared";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
+import type { RevalidationType } from "../server-component/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
   type MatchNodeEntry,
@@ -11,7 +12,9 @@ import {
   matchRouteTree,
   parseRoutePath,
   toMatchParamsObject,
+  toRouteId,
 } from "./tree";
+import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 export interface RouteModule {
@@ -135,31 +138,56 @@ export async function renderRouteMap(
     },
     searchParams: Object.fromEntries(url.searchParams),
   };
-  const pages: Record<string, React.ReactNode> = {};
-  const layouts: Record<string, React.ReactNode> = {};
   const metadata: Metadata = {};
+  const layoutContentMap: Record<string, string> = {};
+  const nodeMap: Record<string, React.ReactNode> = {};
+  let parentLayout = LAYOUT_ROOT_NAME;
   const result = matchRouteTree(tree, url.pathname);
   for (const m of result.matches) {
+    const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
+    layoutContentMap[parentLayout] = routeId;
+    parentLayout = m.prefix;
     const props: BaseProps = {
       ...baseProps,
       params: toMatchParamsObject(m.params),
     };
     if (m.type === "layout") {
-      layouts[m.prefix] = await renderLayout(m.node, props, m);
+      nodeMap[routeId] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
-      pages[m.prefix] = renderPage(m.node, props);
+      nodeMap[routeId] = renderPage(m.node, props);
       Object.assign(metadata, m.node.value?.page?.metadata);
     } else {
       m.type satisfies never;
     }
   }
   return {
-    pages,
-    layouts,
+    layoutContentMap,
+    nodeMap,
     metadata: renderMetadata(metadata),
     params: result.params,
   };
+}
+
+export function getCachedRoutes(
+  tree: RouteModuleTree,
+  lastPathname: string,
+  revalidations: (RevalidationType | undefined)[],
+) {
+  const revalidatedPaths: string[] = revalidations
+    .map((r) => (r === true ? "/" : r))
+    .filter(typedBoolean);
+  const routeIds: string[] = [];
+  const { matches } = matchRouteTree(tree, lastPathname);
+  for (const m of matches) {
+    if (
+      m.type === "layout" &&
+      !revalidatedPaths.some((r) => isAncestorPath(r, m.prefix))
+    ) {
+      routeIds.push(toRouteId(m.prefix, m.type));
+    }
+  }
+  return routeIds;
 }
 
 // TODO
