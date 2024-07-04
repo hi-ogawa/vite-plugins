@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import type { HistoryState } from "@tanstack/history";
 import React from "react";
 import ReactDom from "react-dom";
@@ -23,7 +24,9 @@ export const LayoutStateContext = React.createContext<LayoutStateContextType>(
 export function LayoutContent(props: { name: string }) {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);
-  return data.layout[props.name];
+  const routeId = data.layoutContentMap[props.name];
+  tinyassert(routeId);
+  return data.nodeMap[routeId];
 }
 
 export function LayoutRoot() {

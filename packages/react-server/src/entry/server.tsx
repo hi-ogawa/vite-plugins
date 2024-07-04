@@ -1,4 +1,4 @@
-import { createDebug, objectMapValues, objectPick } from "@hiogawa/utils";
+import { createDebug, objectPick } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "../features/client-component/server";
@@ -95,6 +95,8 @@ export const handler: ReactServerHandler = async (ctx) => {
     }
   }
 
+  // TODO
+  // - think about revalidation later
   const layoutRequest = revalidateLayoutContentRequest(
     url.pathname,
     streamParam?.lastPathname,
@@ -125,7 +127,7 @@ export const handler: ReactServerHandler = async (ctx) => {
 
 async function render({
   request,
-  layoutRequest,
+  // layoutRequest,
   actionResult,
   requestContext,
 }: {
@@ -135,12 +137,15 @@ async function render({
   requestContext: RequestContext;
 }) {
   const result = await renderRouteMap(router.tree, request);
-  const nodeMap = objectMapValues(
-    layoutRequest,
-    (v) => result[`${v.type}s`][v.name],
-  );
+  // TODO: shared layout optimization + revalidation
+  const nodeMap = result.nodeMap;
+  // const nodeMap = objectMapValues(
+  //   layoutRequest,
+  //   (v) => result[`${v.type}s`][v.name],
+  // );
   const flightData: ServerRouterData = {
-    layout: nodeMap,
+    nodeMap,
+    layoutContentMap: result.layoutContentMap,
     metadata: result.metadata,
     params: result.params,
     url: request.url,

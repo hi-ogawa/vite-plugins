@@ -95,10 +95,11 @@ async function start() {
             metadata: next.metadata,
             params: next.params,
             url: next.url,
-            layout: {
-              ...current.layout,
-              ...next.layout,
+            nodeMap: {
+              ...current.nodeMap,
+              ...next.nodeMap,
             },
+            layoutContentMap: next.layoutContentMap,
           } satisfies ServerRouterData;
         }),
       );

@@ -11,10 +11,12 @@ export type LayoutRequest = Record<
   }
 >;
 
+// aka. FlightData
 export type ServerRouterData = {
   action?: Pick<ActionResult, "error" | "data">;
   metadata?: React.ReactNode;
-  layout: Record<string, React.ReactNode>;
+  nodeMap: Record<string, React.ReactNode>;
+  layoutContentMap: Record<string, string>;
   params: MatchParamEntry[];
   url: string;
 };

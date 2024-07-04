@@ -12,6 +12,7 @@ import {
   parseRoutePath,
   toMatchParamsObject,
 } from "./tree";
+import { LAYOUT_ROOT_NAME } from "./utils";
 
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 export interface RouteModule {
@@ -139,22 +140,35 @@ export async function renderRouteMap(
   const layouts: Record<string, React.ReactNode> = {};
   const metadata: Metadata = {};
   const result = matchRouteTree(tree, url.pathname);
+
+  const layoutContentMap: Record<string, string> = {};
+  const nodeMap: Record<string, React.ReactNode> = {};
+  let parentLayout = LAYOUT_ROOT_NAME;
+
   for (const m of result.matches) {
+    const routeId = m.prefix + ":" + m.type;
+    layoutContentMap[parentLayout] = routeId;
+    parentLayout = m.prefix;
+
     const props: BaseProps = {
       ...baseProps,
       params: toMatchParamsObject(m.params),
     };
     if (m.type === "layout") {
-      layouts[m.prefix] = await renderLayout(m.node, props, m);
+      // layouts[m.prefix] = await renderLayout(m.node, props, m);
+      nodeMap[routeId] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
-      pages[m.prefix] = renderPage(m.node, props);
+      // pages[m.prefix] = renderPage(m.node, props);
+      nodeMap[routeId] = renderPage(m.node, props);
       Object.assign(metadata, m.node.value?.page?.metadata);
     } else {
       m.type satisfies never;
     }
   }
   return {
+    layoutContentMap,
+    nodeMap,
     pages,
     layouts,
     metadata: renderMetadata(metadata),
