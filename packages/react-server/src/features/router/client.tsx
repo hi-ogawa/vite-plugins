@@ -22,8 +22,7 @@ export function useFlightData() {
 }
 
 export function LayoutContent(props: { name: string }) {
-  const ctx = React.useContext(FlightDataContext);
-  const data = React.use(ctx);
+  const data = useFlightData();
   const routeId = data.layoutContentMap[props.name];
   tinyassert(routeId, `Unexpected layout content map`);
   return data.nodeMap[routeId];
@@ -40,21 +39,18 @@ export function LayoutRoot() {
 }
 
 function MetadataRenderer() {
-  const ctx = React.useContext(FlightDataContext);
-  const data = React.use(ctx);
+  const data = useFlightData();
   return data.metadata;
 }
 
 // TODO: should we remove confusing `useRouter(s => s.location)`?
 export function useLocation() {
-  const ctx = React.useContext(FlightDataContext);
-  const data = React.use(ctx);
+  const data = useFlightData();
   return React.useMemo(() => new URL(data.url), [data.url]);
 }
 
 function useParamEntries() {
-  const ctx = React.useContext(FlightDataContext);
-  const data = React.use(ctx);
+  const data = useFlightData();
   return data.params;
 }
 

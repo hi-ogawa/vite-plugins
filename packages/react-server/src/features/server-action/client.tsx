@@ -1,7 +1,6 @@
-import React from "react";
 import { RedirectBoundary } from "../../runtime/client";
 import { createError } from "../../server";
-import { FlightDataContext } from "../router/client";
+import { useFlightData } from "../router/client";
 
 export function ActionRedirectHandler() {
   return (
@@ -13,8 +12,7 @@ export function ActionRedirectHandler() {
 
 // TODO: how to trigger nearest error page on action error?
 function ThrowActionError() {
-  const ctx = React.useContext(FlightDataContext);
-  const data = React.use(ctx);
+  const data = useFlightData();
   if (data.action?.error) {
     throw createError(data.action?.error);
   }
