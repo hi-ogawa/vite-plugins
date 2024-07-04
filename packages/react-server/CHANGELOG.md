@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.3.0
+
+- feat!: support `headers`, `cookies` and `revalidatePath` (and remove `useActionContext`) ([#484](https://github.com/hi-ogawa/vite-plugins/pull/484))
+- feat!: default entries for browser and server build ([#483](https://github.com/hi-ogawa/vite-plugins/pull/483))
+- feat: api routes ([#482](https://github.com/hi-ogawa/vite-plugins/pull/482))
+- fix: fix server-only and client-only ([#480](https://github.com/hi-ogawa/vite-plugins/pull/480))
+- fix: prerender html without suspsense fallback ([#479](https://github.com/hi-ogawa/vite-plugins/pull/479))
+- fix: fix late deps optimization on local dev ([#493](https://github.com/hi-ogawa/vite-plugins/pull/493))
+- refactor: simplify `PrerenderManifest` typings ([#476](https://github.com/hi-ogawa/vite-plugins/pull/476))
+- refactor!: rename `server -> ssr`, `react-server -> server`, `client -> browser` ([#486](https://github.com/hi-ogawa/vite-plugins/pull/486))
+
 ## v0.2.10
 
 - feat: add prerender presets ([#471](https://github.com/hi-ogawa/vite-plugins/pull/471))

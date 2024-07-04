@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.0.7
+
+- feat: support `Image.priority` ([#487](https://github.com/hi-ogawa/vite-plugins/pull/487))
+- feat: support `headers`, `cookies` and `revalidatePath` ([#484](https://github.com/hi-ogawa/vite-plugins/pull/484))
+- fix: fix server-only and client-only ([#480](https://github.com/hi-ogawa/vite-plugins/pull/480))
+- fix: preserve cli exit code ([#480](https://github.com/hi-ogawa/vite-plugins/pull/480))
+- fix: correctly setup ssg html on vercel adapter ([#475](https://github.com/hi-ogawa/vite-plugins/pull/475))
+
 ## v0.0.6
 
 - feat: enable prerender for `generateStaticParams` ([#472](https://github.com/hi-ogawa/vite-plugins/pull/472))
