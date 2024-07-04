@@ -1,4 +1,4 @@
-import { createDebug, objectPick } from "@hiogawa/utils";
+import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "../features/client-component/server";
@@ -13,13 +13,12 @@ import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
   generateRouteModuleTree,
+  getCachedRoutes,
   renderRouteMap,
 } from "../features/router/server";
 import {
-  type LayoutRequest,
   type ServerRouterData,
   handleTrailingSlash,
-  revalidateLayoutContentRequest,
 } from "../features/router/utils";
 import {
   type ActionResult,
@@ -70,9 +69,7 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (handledApi) return handledApi;
 
   // extract stream request details
-  const { url, request, isStream, streamParam } = unwrapStreamRequest(
-    ctx.request,
-  );
+  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
 
   // action
   let actionResult: ActionResult | undefined;
@@ -95,19 +92,39 @@ export const handler: ReactServerHandler = async (ctx) => {
     }
   }
 
-  // TODO
-  // - think about revalidation later
-  const layoutRequest = revalidateLayoutContentRequest(
-    url.pathname,
-    streamParam?.lastPathname,
-    [streamParam?.revalidate, requestContext.revalidate],
+  // render flight
+  const result = await renderRouteMap(router.tree, request);
+  if (streamParam?.lastPathname) {
+    // skip rendering shared layout which are not revalidated
+    const cachedRoutes = getCachedRoutes(
+      router.tree,
+      streamParam.lastPathname,
+      [streamParam?.revalidate, requestContext.revalidate],
+    );
+    result.nodeMap = objectPickBy(
+      result.nodeMap,
+      (_v, k) => !cachedRoutes.includes(k),
+    );
+  }
+  const flightData: ServerRouterData = {
+    nodeMap: result.nodeMap,
+    layoutContentMap: result.layoutContentMap,
+    metadata: result.metadata,
+    params: result.params,
+    url: request.url,
+    action: actionResult
+      ? objectPick(actionResult, ["data", "error"])
+      : undefined,
+  };
+  const stream = requestContext.run(() =>
+    ReactServer.renderToReadableStream<ServerRouterData>(
+      flightData,
+      createBundlerConfig(),
+      {
+        onError: reactServerOnError,
+      },
+    ),
   );
-  const stream = await render({
-    request,
-    layoutRequest,
-    actionResult,
-    requestContext,
-  });
 
   if (isStream) {
     return new Response(stream, {
@@ -120,49 +137,6 @@ export const handler: ReactServerHandler = async (ctx) => {
 
   return { stream, actionResult };
 };
-
-//
-// render RSC
-//
-
-async function render({
-  request,
-  // layoutRequest,
-  actionResult,
-  requestContext,
-}: {
-  request: Request;
-  layoutRequest: LayoutRequest;
-  actionResult?: ActionResult;
-  requestContext: RequestContext;
-}) {
-  const result = await renderRouteMap(router.tree, request);
-  // TODO: shared layout optimization + revalidation
-  const nodeMap = result.nodeMap;
-  // const nodeMap = objectMapValues(
-  //   layoutRequest,
-  //   (v) => result[`${v.type}s`][v.name],
-  // );
-  const flightData: ServerRouterData = {
-    nodeMap,
-    layoutContentMap: result.layoutContentMap,
-    metadata: result.metadata,
-    params: result.params,
-    url: request.url,
-    action: actionResult
-      ? objectPick(actionResult, ["data", "error"])
-      : undefined,
-  };
-  return requestContext.run(() =>
-    ReactServer.renderToReadableStream<ServerRouterData>(
-      flightData,
-      createBundlerConfig(),
-      {
-        onError: reactServerOnError,
-      },
-    ),
-  );
-}
 
 const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
   error,

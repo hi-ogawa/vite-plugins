@@ -23,6 +23,7 @@ export type ServerRouterData = {
 
 export const LAYOUT_ROOT_NAME = "__root";
 
+// TODO: remove
 export function createLayoutContentRequest(pathname: string) {
   const prefixes = getPathPrefixes(pathname);
   const map: LayoutRequest = {

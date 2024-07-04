@@ -25,7 +25,7 @@ export function LayoutContent(props: { name: string }) {
   const ctx = React.useContext(LayoutStateContext);
   const data = React.use(ctx.data);
   const routeId = data.layoutContentMap[props.name];
-  tinyassert(routeId);
+  tinyassert(routeId, `Unexpected layout content map`);
   return data.nodeMap[routeId];
 }
 
