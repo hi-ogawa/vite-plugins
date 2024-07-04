@@ -92,7 +92,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     }
   }
 
-  // render flight
+  // render flight stream
   const result = await renderRouteMap(router.tree, request);
   if (streamParam?.lastPathname) {
     // skip rendering shared layout which are not revalidated
