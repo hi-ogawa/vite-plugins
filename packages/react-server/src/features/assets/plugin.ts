@@ -33,6 +33,25 @@ export function vitePluginServerAssets({
         // and not at the boundary (as `<id>`).
         head += `<script>globalThis.__raw_import = (id) => import(id)</script>\n`;
 
+        // eagerly load route modules so we can crawl css
+        {
+          const server = $__global.dev.reactServer;
+          await server.ssrLoadModule("virtual:server-routes");
+          const mod = server.moduleGraph.getModuleById(
+            "\0virtual:server-routes",
+          );
+          for (const route of mod?.importedModules ?? []) {
+            if (route.id) {
+              try {
+                await server.transformRequest(route.id, { ssr: true });
+                // await server.ssrLoadModule(route.id);
+              } catch (e) {
+                console.error(`[ERROR] failed to transform '${route.id}'`);
+              }
+            }
+          }
+        }
+
         // serve dev css as ?direct so that ssr html won't get too huge.
         // then remove this injected style on first hot update.
         head += `\

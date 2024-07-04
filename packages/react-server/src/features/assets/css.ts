@@ -35,15 +35,15 @@ export async function collectStyleUrls(
     visited.add(id);
     const mod = server.moduleGraph.getModuleById(id);
     // "node_modules"
-    try {
-      await server.transformRequest(id, { ssr });
-    } catch (e) {
-      console.error("[transformRequest]", e);
-    }
-    console.log("[collectStyleUrls]", {
-      id,
-      imported: [...(mod?.importedModules ?? [])].map((m) => m.id),
-    });
+    // try {
+    //   await server.transformRequest(id, { ssr });
+    // } catch (e) {
+    //   console.error("[transformRequest]", e);
+    // }
+    // console.log("[collectStyleUrls]", {
+    //   id,
+    //   imported: [...(mod?.importedModules ?? [])].map((m) => m.id),
+    // });
     if (!mod) {
       return;
     }
