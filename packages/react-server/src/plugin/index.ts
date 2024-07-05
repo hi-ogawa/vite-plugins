@@ -28,8 +28,10 @@ import {
   createServerPackageJson,
 } from "../features/next/plugin";
 import {
+  type PPRFn,
   type PrerenderFn,
   type PrerenderManifest,
+  pprPlugin,
   prerenderPlugin,
 } from "../features/prerender/plugin";
 import type { RouteManifest } from "../features/router/manifest";
@@ -119,6 +121,7 @@ const manager: PluginStateManager = ((
 export type ReactServerPluginOptions = {
   plugins?: PluginOption[];
   prerender?: PrerenderFn;
+  ppr?: PPRFn;
   entryBrowser?: string;
   entryServer?: string;
   routeDir?: string;
@@ -304,11 +307,6 @@ export function vitePluginReactServer(
           outDir: env.isSsrBuild ? "dist/server" : "dist/client",
           rollupOptions: env.isSsrBuild
             ? {
-                input: options?.prerender
-                  ? {
-                      __entry_ssr: "@hiogawa/react-server/entry/ssr",
-                    }
-                  : undefined,
                 output: OUTPUT_SERVER_JS_EXT,
               }
             : {
@@ -435,9 +433,8 @@ export function vitePluginReactServer(
     ...vitePluginClientUseClient({ manager }),
     ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
     ...routeManifestPluginClient({ manager }),
-    ...(options?.prerender
-      ? prerenderPlugin({ manager, prerender: options.prerender })
-      : []),
+    ...prerenderPlugin({ manager, prerender: options?.prerender }),
+    ...pprPlugin({ manager, ppr: options?.ppr }),
     validateImportPlugin({
       "client-only": true,
       "server-only": `'server-only' is included in client build`,

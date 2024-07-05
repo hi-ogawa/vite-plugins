@@ -2,10 +2,13 @@ import fs from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
+import { tinyassert } from "@hiogawa/utils";
 import type { Plugin } from "vite";
 import type { PluginStateManager } from "../../plugin";
+import { createVirtualPlugin } from "../../plugin/utils";
 import type { RouteModuleManifest } from "../router/server";
 import { RSC_PATH } from "../server-component/utils";
+import type { PPRManifest } from "./utils";
 
 type MaybePromise<T> = Promise<T> | T;
 
@@ -24,28 +27,37 @@ type PrerenderEntry = {
   data: string;
 };
 
-export function prerenderPlugin({
-  manager,
-  prerender,
-}: {
+export function prerenderPlugin(options: {
   manager: PluginStateManager;
-  prerender: PrerenderFn;
+  prerender?: PrerenderFn;
 }): Plugin[] {
   return [
     {
       name: prerenderPlugin + ":build",
       enforce: "post",
-      apply: () => manager.buildType === "ssr",
+      apply: () => !!options.prerender && options.manager.buildType === "ssr",
+      config: () => {
+        return {
+          build: {
+            rollupOptions: {
+              input: {
+                __entry_ssr: "@hiogawa/react-server/entry/ssr",
+              },
+            },
+          },
+        };
+      },
       writeBundle: {
         sequential: true,
         handler() {
-          return processPrerender(prerender);
+          tinyassert(options.prerender);
+          return processPrerender(options.prerender);
         },
       },
     },
     {
       name: prerenderPlugin + ":preview",
-      apply: (_config, env) => !!env.isPreview,
+      apply: (_config, env) => !!options.prerender && !!env.isPreview,
       configurePreviewServer(server) {
         const outDir = server.config.build.outDir;
         server.middlewares.use((req, _res, next) => {
@@ -128,4 +140,65 @@ function createPrerenderPresets(manifest: RouteModuleManifest) {
       return result;
     },
   };
+}
+
+export type PPRFn = () => MaybePromise<string[]>;
+
+export function pprPlugin(options: {
+  manager: PluginStateManager;
+  ppr?: PPRFn;
+}): Plugin[] {
+  return [
+    {
+      name: pprPlugin.name + ":build",
+      enforce: "post",
+      apply: () => !!options.ppr && options.manager.buildType === "ssr",
+      config: () => {
+        return {
+          build: {
+            rollupOptions: {
+              input: {
+                __entry_ssr: "@hiogawa/react-server/entry/ssr",
+                __ppr_manifest: "virtual:ppr-manifest",
+              },
+            },
+          },
+        };
+      },
+      writeBundle: {
+        sequential: true,
+        handler: async () => {
+          tinyassert(options.ppr);
+          await processPPR(options.ppr);
+        },
+      },
+    },
+    createVirtualPlugin("ppr-manifest", () => {
+      return `export default undefined`;
+    }),
+  ];
+}
+
+async function processPPR(getPPRRoutes: PPRFn) {
+  console.log("▶▶▶ PARTIAL PRERENDER");
+  const routes = await getPPRRoutes();
+  const entry: typeof import("../../entry/ssr") = await import(
+    path.resolve("dist/server/__entry_ssr.js")
+  );
+  const manifest: PPRManifest = { entries: {} };
+  for (const route of routes) {
+    console.log(`  • ${route}`);
+    const url = new URL(route, "https://prerender.local");
+    const request = new Request(url, {
+      headers: {
+        "x-react-server-render-mode": "ppr",
+      },
+    });
+    const data = await entry.partialPrerender(request);
+    manifest.entries[route] = data;
+  }
+  writeFile(
+    "dist/server/__ppr_manifest.js",
+    `export default ${JSON.stringify(manifest, null, 2)}\n`,
+  );
 }
