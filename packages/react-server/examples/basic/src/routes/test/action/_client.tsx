@@ -208,7 +208,10 @@ function formDataToJson(data: FormData) {
 export function TestActionReturnComponent() {
   const [node, setNode] = React.useState<React.ReactNode>(null);
   return (
-    <div className="flex flex-col gap-2 items-start">
+    <div
+      className="flex flex-col gap-2 items-start"
+      data-testid="action-return-component"
+    >
       <h3 className="font-bold">TestActionReturnComponent</h3>
       <div className="flex items-center gap-2">
         <form

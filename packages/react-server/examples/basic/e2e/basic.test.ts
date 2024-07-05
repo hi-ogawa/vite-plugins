@@ -671,6 +671,19 @@ test("ReactDom.useFormStatus", async ({ page }) => {
   await page.getByText("pending: false").click();
 });
 
+test("action returning component", async ({ page }) => {
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await page
+    .getByTestId("action-return-component")
+    .getByRole("button", { name: "Action" })
+    .click();
+  await page.getByText("[server] Loading...").click();
+  await page.getByRole("button", { name: "[client] counter: 0" }).click();
+  await page.getByRole("button", { name: "[client] counter: 1" }).click();
+  await page.getByText("[server] OK!").click();
+});
+
 test("use client > virtual module", async ({ page }) => {
   await page.goto("/test/deps");
   await page.getByText("TestVirtualUseClient").click();
