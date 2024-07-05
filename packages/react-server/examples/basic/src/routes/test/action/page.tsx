@@ -11,6 +11,7 @@ import {
   ClientActionBindTest,
   FormStateTest,
   NonFormActionTest,
+  TestActionReturnComponent,
 } from "./_client";
 
 export default async function Page() {
@@ -29,6 +30,7 @@ export default async function Page() {
         <div data-testid="action-bind">{getActionBindResult()}</div>
       </div>
       <FormStateTest />
+      <TestActionReturnComponent />
     </div>
   );
 }

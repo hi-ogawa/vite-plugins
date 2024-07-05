@@ -12,6 +12,7 @@ import {
   nonFormAction,
   slowAction,
 } from "./_action";
+import { actionReturnComponent } from "./_action2";
 
 export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
   // cf. https://react.dev/reference/react/useOptimistic#optimistically-updating-with-forms
@@ -202,4 +203,23 @@ function formDataToJson(data: FormData) {
     result[k] = v;
   });
   return result;
+}
+
+export function TestActionReturnComponent() {
+  const [node, setNode] = React.useState<React.ReactNode>(null);
+  return (
+    <div className="flex flex-col gap-2 items-start">
+      <h3 className="font-bold">TestActionReturnComponent</h3>
+      <div className="flex items-center gap-2">
+        <form
+          action={async () => {
+            setNode(await actionReturnComponent());
+          }}
+        >
+          <button className="antd-btn antd-btn-default px-2">Action</button>
+        </form>
+        Result: {node ?? "(none)"}
+      </div>
+    </div>
+  );
 }
