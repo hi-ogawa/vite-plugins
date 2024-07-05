@@ -55,13 +55,14 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
 
 export type MatchNodeEntry<T> = {
   prefix: string;
-  // TODO: it would help to have type: "not-found"?
-  type: "layout" | "page";
+  type: MatchNodeType;
   node: TreeNode<T>;
   params: MatchParamEntry[];
 };
 
-export function toRouteId(pathname: string, type: "layout" | "page") {
+type MatchNodeType = "layout" | "page" | "not-found";
+
+export function toRouteId(pathname: string, type: MatchNodeType) {
   return pathname + ":" + type;
 }
 

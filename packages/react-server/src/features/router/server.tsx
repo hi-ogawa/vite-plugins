@@ -125,6 +125,11 @@ async function renderLayout(
   return acc;
 }
 
+function renderNotFound(node: RouteModuleTree) {
+  const NotFoundPage = node.value?.["not-found"]?.default ?? ThrowNotFound;
+  return <NotFoundPage />;
+}
+
 export async function renderRouteMap(
   tree: RouteModuleTree,
   request: Pick<Request, "url" | "headers">,
@@ -154,6 +159,9 @@ export async function renderRouteMap(
     if (m.type === "layout") {
       nodeMap[routeId] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
+    } else if (m.type === "not-found") {
+      // TODO: check ancestors' not-found exports
+      nodeMap[routeId] = renderNotFound(m.node);
     } else if (m.type === "page") {
       nodeMap[routeId] = renderPage(m.node, props);
       Object.assign(metadata, m.node.value?.page?.metadata);
