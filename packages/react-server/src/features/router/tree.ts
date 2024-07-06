@@ -80,7 +80,7 @@ export function matchRouteTree<T>(
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;
-  const params: MatchParamEntry[] = []; // TODO: remove
+  const params: MatchParamEntry[] = [];
   const matches: MatchNodeEntry<T>[] = [];
   let notFound = false;
   for (let i = 0; i < prefixes.length; i++) {
