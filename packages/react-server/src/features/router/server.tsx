@@ -7,6 +7,7 @@ import type { RevalidationType } from "../server-component/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
   type MatchNodeEntry,
+  type MatchResult,
   type TreeNode,
   createFsRouteTree,
   matchRouteTree,
@@ -157,15 +158,37 @@ export async function renderRouteMap(
     } else if (m.type === "page") {
       nodeMap[routeId] = renderPage(m.node, props);
       Object.assign(metadata, m.node.value?.page?.metadata);
+    } else if (m.type === "not-found") {
+      // nodeMap[routeId] = renderPage(m.node, props);
+      // Object.assign(metadata, m.node.value?.page?.metadata);
     } else {
       m.type satisfies never;
     }
+  }
+  // render page
+  if (!result.notFound) {
+    const lastMatch = result.matches.at(-1);
+    const page = lastMatch?.node.value?.page;
+    if (page) {
+      lastMatch.prefix;
+      result.params;
+    } else {
+      result.notFound = true;
+    }
+  }
+  // render not-found
+  if (result.notFound) {
+    const routeId = `${url.pathname}:not-found`;
+    layoutContentMap[parentLayout] = routeId;
+    nodeMap[routeId];
+    // result.matches.filter(node)
   }
   return {
     layoutContentMap,
     nodeMap,
     metadata: renderMetadata(metadata),
     params: result.params,
+    notFound: result.notFound,
   };
 }
 
