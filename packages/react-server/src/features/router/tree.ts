@@ -78,7 +78,7 @@ export function matchRouteTree<T>(
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;
-  const params: MatchParamEntry[] = [];
+  let params: MatchParamEntry[] = [];
   const matches: MatchNodeEntry<T>[] = [];
   let notFound = false;
   for (let i = 0; i < prefixes.length; i++) {
@@ -89,14 +89,15 @@ export function matchRouteTree<T>(
       node = next.child;
       if (next.catchAll) {
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
-        params.push([next.param, decodeURI(rest)]);
+        params = [...params, [next.param, decodeURI(rest)]];
         matches.push({ prefix: pathname, type: "layout", node, params });
         break;
       }
       if (next.param) {
+        params = [...params, [next.param, decodeURI(segment)]];
         params.push([next.param, decodeURI(segment)]);
       } else {
-        params.push([null, decodeURI(segment)]);
+        params = [...params, [null, decodeURI(segment)]];
       }
     } else {
       notFound = true;

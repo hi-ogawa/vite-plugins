@@ -59,10 +59,6 @@ exports[`generateRouteModuleTree > basic 2`] = `
               null,
               "",
             ],
-            [
-              null,
-              "x",
-            ],
           ],
         }
       }
@@ -185,14 +181,6 @@ exports[`generateRouteModuleTree > basic 3`] = `
             [
               null,
               "",
-            ],
-            [
-              null,
-              "x",
-            ],
-            [
-              null,
-              "y",
             ],
           ],
         }
@@ -318,10 +306,6 @@ exports[`generateRouteModuleTree > basic 3`] = `
             [
               null,
               "x",
-            ],
-            [
-              null,
-              "y",
             ],
           ],
         }
