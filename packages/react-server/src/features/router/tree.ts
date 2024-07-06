@@ -54,8 +54,6 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
 }
 
 export type MatchNodeEntry<T> = {
-  // TODO: route id?
-  id?: string;
   prefix: string;
   type: MatchNodeType;
   node: TreeNode<T>;
