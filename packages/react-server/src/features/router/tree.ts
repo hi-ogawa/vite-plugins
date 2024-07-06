@@ -83,13 +83,111 @@ function toRawSegments(pathname: string) {
   return ["", ...pathname.slice(1).split("/")];
 }
 
+function fromRawSegments(segments: string[]) {
+  return segments.join("/") || "/";
+}
+
+export type MatchedSegment =
+  | {
+      type: "static";
+      value: string;
+    }
+  | {
+      type: "dynamic";
+      key: string;
+      value: string;
+    }
+  | {
+      type: "catchall";
+      key: string;
+      value: string;
+    };
+
 export function matchRouteTree<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
   leafType: "page" | "route" = "page",
 ): MatchResult<T> {
-  const rawSegments = toRawSegments(pathname);
-  rawSegments;
+  const segments = toRawSegments(pathname).map((s) => decodeURI(s));
+
+  // TODO(refactor): feels many things are redundant
+  type RecurseResult = {
+    params: MatchParamEntry[];
+    matches: MatchNodeEntry<T>[];
+  };
+
+  function recurse(
+    node: TreeNode<T>,
+    cursor: number,
+    // TODO: we only need last match? and caller can just accumlate?
+    { params, matches }: RecurseResult,
+    lastMatch?: MatchNodeEntry<T>, // TODO: doesn't feel right
+  ): MatchNodeEntry<T>[] | undefined {
+    if (cursor === segments.length) {
+      if (node.value?.page) {
+        tinyassert(lastMatch);
+        return [{ ...lastMatch, type: "page" }];
+      }
+      return;
+    }
+
+    const segment = segments[cursor]!;
+    const prefix = fromRawSegments(segments.slice(0, cursor));
+    const branches: MatchNodeEntry<T>[][] = [];
+
+    function recurseWithNewEntry(node: TreeNode<T>, newEntry: MatchParamEntry) {
+      const newParams: typeof params = [...params, newEntry];
+      const newMatches: typeof matches = [
+        ...matches,
+        { prefix, type: "layout", node, params: newParams },
+      ];
+      const newResult = recurse(
+        node,
+        cursor + 1,
+        {
+          params: newParams,
+          matches: newMatches,
+        },
+        { prefix, type: "layout", node, params: newParams },
+      );
+      if (newResult) {
+        branches.push(newResult);
+      }
+    }
+
+    for (const [key, child] of Object.entries(node.children ?? {})) {
+      const mAll = key.match(CATCH_ALL_RE);
+      if (mAll) {
+        tinyassert(1 in mAll);
+        recurseWithNewEntry(child, [mAll[1], segment]);
+      }
+      const m = key.match(DYNAMIC_RE);
+      if (m) {
+        tinyassert(1 in m);
+        recurseWithNewEntry(child, [m[1], segment]);
+      }
+      if (key === segment) {
+        recurseWithNewEntry(child, [null, segment]);
+      }
+    }
+
+    // not-found
+    if (branches.length === 0) {
+      if (node.value?.["not-found"]) {
+        tinyassert(lastMatch);
+        return [{ ...lastMatch, type: "not-found" }];
+      }
+      return;
+    }
+
+    // tie break branches
+    sortBy(branches, (b) => (b[0]?.params.at(-1)?.[0] === null ? 1 : 0));
+    branches;
+
+    return;
+  }
+
+  recurse;
 
   const prefixes = getPathPrefixes(pathname);
 
