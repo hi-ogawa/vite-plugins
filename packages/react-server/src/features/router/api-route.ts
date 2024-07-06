@@ -31,6 +31,8 @@ export async function handleApiRoutes(
   const method = request.method as ApiMethod;
   const url = new URL(request.url);
   const { matches } = matchRouteTree(tree, url.pathname);
+  // TODO
+  matches.at(-1)?.node.value?.route;
   for (const m of matches) {
     const handler = m.type === "page" && m.node.value?.route?.[method];
     if (handler) {
