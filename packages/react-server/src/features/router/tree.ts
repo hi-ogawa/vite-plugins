@@ -70,7 +70,6 @@ export function toRouteId(pathname: string, type: MatchNodeType) {
 
 export type MatchResult<T> = {
   matches: MatchNodeEntry<T>[];
-  params: MatchParamEntry[];
   notFound: boolean;
 };
 
@@ -94,7 +93,6 @@ export function matchRouteTree<T>(
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
         params.push([next.param, decodeURI(rest)]);
         matches.push({ prefix: pathname, type: "layout", node, params });
-        // matches.push({ prefix: pathname, type: "page", node, params });
         break;
       }
       if (next.param) {
@@ -103,16 +101,12 @@ export function matchRouteTree<T>(
         params.push([null, decodeURI(segment)]);
       }
     } else {
-      // matches.push({ prefix, type: "not-found", node, params });
       notFound = true;
       break;
     }
     matches.push({ prefix, type: "layout", node, params });
-    // if (prefix === pathname) {
-    //   matches.push({ prefix, type: "page", node, params });
-    // }
   }
-  return { matches, params, notFound };
+  return { matches, notFound };
 }
 
 const DYNAMIC_RE = /^\[(\w*)\]$/;
