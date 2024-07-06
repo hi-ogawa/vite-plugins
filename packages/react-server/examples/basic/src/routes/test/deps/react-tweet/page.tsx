@@ -10,7 +10,7 @@ export default function Page() {
       >
         vercel/react-tweet
       </a>
-      <Tweet id="1768090382670463440" />
+      <Tweet id="1725168756454785119" />
     </div>
   );
 }
