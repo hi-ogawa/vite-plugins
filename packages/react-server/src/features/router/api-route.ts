@@ -31,12 +31,11 @@ export async function handleApiRoutes(
   const method = request.method as ApiMethod;
   const url = new URL(request.url);
   const { matches } = matchRouteTree(tree, url.pathname);
-  // TODO
-  matches.at(-1)?.node.value?.route;
-  for (const m of matches) {
-    const handler = m.type === "page" && m.node.value?.route?.[method];
+  const lastMatch = matches.at(-1);
+  if (lastMatch) {
+    const handler = lastMatch.node.value?.route?.[method];
     if (handler) {
-      const params = toMatchParamsObject(m.params);
+      const params = toMatchParamsObject(lastMatch.params);
       const response = await requestContext.run(() =>
         handler(request, { params }),
       );
