@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { AnyRouteModule } from "./server";
 import { createFsRouteTree, matchRouteTree } from "./tree";
 
 describe(createFsRouteTree, () => {
@@ -21,7 +22,7 @@ describe(createFsRouteTree, () => {
       "/dynamic/catchall/[...any]/page.tsx",
     ];
     const input = Object.fromEntries(files.map((k) => [k, k]));
-    const { tree } = createFsRouteTree(input);
+    const { tree } = createFsRouteTree<AnyRouteModule>(input);
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {

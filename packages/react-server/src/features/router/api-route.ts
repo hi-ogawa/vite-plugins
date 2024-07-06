@@ -30,7 +30,7 @@ export async function handleApiRoutes(
 ): Promise<Response | undefined> {
   const method = request.method as ApiMethod;
   const url = new URL(request.url);
-  const { matches } = matchRouteTree(tree, url.pathname);
+  const { matches } = matchRouteTree(tree, url.pathname, "route");
   const lastMatch = matches.at(-1);
   if (lastMatch) {
     const handler = lastMatch.node.value?.route?.[method];
