@@ -59,6 +59,10 @@ exports[`generateRouteModuleTree > basic 2`] = `
               null,
               "",
             ],
+            [
+              null,
+              "x",
+            ],
           ],
         }
       }
@@ -149,6 +153,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
       }
     />,
   },
+  "notFound": false,
   "params": [
     [
       null,
@@ -180,6 +185,14 @@ exports[`generateRouteModuleTree > basic 3`] = `
             [
               null,
               "",
+            ],
+            [
+              null,
+              "x",
+            ],
+            [
+              null,
+              "y",
             ],
           ],
         }
@@ -306,6 +319,10 @@ exports[`generateRouteModuleTree > basic 3`] = `
               null,
               "x",
             ],
+            [
+              null,
+              "y",
+            ],
           ],
         }
       }
@@ -323,6 +340,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
       </React.Fragment>
     </LayoutMatchProvider>,
   },
+  "notFound": false,
   "params": [
     [
       null,
@@ -344,8 +362,6 @@ exports[`generateRouteModuleTree > basic 4`] = `
 {
   "__pathname": "/z",
   "layoutContentMap": {
-    "/": "/z:layout",
-    "/z": "/z:page",
     "__root": "/:layout",
   },
   "metadata": <React.Fragment />,
@@ -394,52 +410,8 @@ exports[`generateRouteModuleTree > basic 4`] = `
         </RedirectBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
-    "/z:layout": <LayoutMatchProvider
-      value={
-        {
-          "params": [
-            [
-              null,
-              "",
-            ],
-          ],
-        }
-      }
-    >
-      <React.Fragment>
-        <RedirectBoundary>
-          <LayoutContent
-            name="/z"
-          />
-        </RedirectBoundary>
-      </React.Fragment>
-    </LayoutMatchProvider>,
-    "/z:page": <ThrowNotFound
-      params={{}}
-      request={
-        {
-          "headers": {},
-          "url": "https://test.local/z",
-        }
-      }
-      searchParams={{}}
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/z",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/z",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
-        }
-      }
-    />,
   },
+  "notFound": true,
   "params": [
     [
       null,
