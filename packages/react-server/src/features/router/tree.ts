@@ -116,19 +116,19 @@ function matchRouteChild<T>(input: string, node: TreeNode<T>) {
   if (!node.children) {
     return;
   }
-  for (const [key, child] of Object.entries(node.children)) {
-    const mAll = key.match(CATCH_ALL_RE);
+  for (const [segment, child] of Object.entries(node.children)) {
+    const mAll = segment.match(CATCH_ALL_RE);
     if (mAll) {
       tinyassert(1 in mAll);
-      return { key, child, param: mAll[1], catchAll: true };
+      return { param: mAll[1], child, catchAll: true };
     }
-    const m = key.match(DYNAMIC_RE);
+    const m = segment.match(DYNAMIC_RE);
     if (m) {
       tinyassert(1 in m);
-      return { key, child, param: m[1] };
+      return { param: m[1], child };
     }
-    if (key === input) {
-      return { key, child };
+    if (segment === input) {
+      return { child };
     }
   }
   return;
