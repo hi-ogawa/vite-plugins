@@ -54,6 +54,7 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
 }
 
 export type MatchNodeEntry<T> = {
+  // TODO: route id?
   prefix: string;
   type: "layout" | "page";
   node: TreeNode<T>;
@@ -87,15 +88,7 @@ export function matchRouteTree<T>(
       if (next.catchAll) {
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
         params = [...params, [next.param, decodeURI(rest)]];
-        matches.push({ prefix, type: "layout", node, params });
-        for (const prefix of prefixes.slice(i + 1)) {
-          matches.push({
-            prefix,
-            type: "layout",
-            node: initTreeNode(),
-            params,
-          });
-        }
+        matches.push({ prefix: pathname, type: "layout", node, params });
         matches.push({ prefix: pathname, type: "page", node, params });
         break;
       }
