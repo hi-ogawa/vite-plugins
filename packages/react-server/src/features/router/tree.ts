@@ -88,14 +88,6 @@ export function matchRouteTree<T>(
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
         params = [...params, [next.param, decodeURI(rest)]];
         matches.push({ prefix, type: "layout", node, params });
-        // for (const prefix of prefixes.slice(i + 1)) {
-        //   matches.push({
-        //     prefix,
-        //     type: "layout",
-        //     node: initTreeNode(),
-        //     params,
-        //   });
-        // }
         matches.push({ prefix, type: "page", node, params });
         break;
       }
