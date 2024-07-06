@@ -46,6 +46,7 @@ import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
   createVirtualPlugin,
+  validateImportPlugin,
   vitePluginSilenceDirectiveBuildWarning,
 } from "./utils";
 
@@ -207,7 +208,9 @@ export function vitePluginReactServer(options?: {
       }),
 
       validateImportPlugin({
-        "client-only": `'client-only' is included in server build`,
+        "client-only":
+          manager.buildType === "scan" ||
+          `'client-only' is included in server build`,
         "server-only": true,
       }),
 
@@ -428,7 +431,9 @@ export function vitePluginReactServer(options?: {
       : []),
     validateImportPlugin({
       "client-only": true,
-      "server-only": `'server-only' is included in client build`,
+      "server-only":
+        manager.buildType === "scan" ||
+        `'server-only' is included in client build`,
     }),
     createVirtualPlugin(ENTRY_BROWSER_WRAPPER.slice("virtual:".length), () => {
       // dev
@@ -454,36 +459,4 @@ export function vitePluginReactServer(options?: {
       tinyassert(false);
     }),
   ];
-}
-
-// https://github.com/vercel/next.js/blob/90f564d376153fe0b5808eab7b83665ee5e08aaf/packages/next/src/build/webpack-config.ts#L1249-L1280
-// https://github.com/pcattori/vite-env-only/blob/68a0cc8546b9a37c181c0b0a025eb9b62dbedd09/src/deny-imports.ts
-// https://github.com/sveltejs/kit/blob/84298477a014ec471839adf7a4448d91bc7949e4/packages/kit/src/exports/vite/index.js#L513
-function validateImportPlugin(entries: Record<string, string | true>): Plugin {
-  return {
-    name: validateImportPlugin.name,
-    enforce: "pre",
-    resolveId(source, importer, options) {
-      const entry = entries[source];
-      if (entry) {
-        // skip validation during optimizeDeps scan since for now
-        // we want to allow going through server/client boundary loosely
-        if (
-          entry === true ||
-          manager.buildType === "scan" ||
-          ("scan" in options && options.scan)
-        ) {
-          return "\0virtual:validate-import";
-        }
-        throw new Error(entry + ` (importer: ${importer ?? "unknown"})`);
-      }
-      return;
-    },
-    load(id, _options) {
-      if (id === "\0virtual:validate-import") {
-        return "export {}";
-      }
-      return;
-    },
-  };
 }
