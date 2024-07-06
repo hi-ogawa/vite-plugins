@@ -95,7 +95,6 @@ export function matchRouteTree<T>(
       }
       if (next.param) {
         params = [...params, [next.param, decodeURI(segment)]];
-        params.push([next.param, decodeURI(segment)]);
       } else {
         params = [...params, [null, decodeURI(segment)]];
       }

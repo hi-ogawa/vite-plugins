@@ -455,10 +455,6 @@ exports[`createFsRouteTree > basic 10`] = `
           "id",
           "abc",
         ],
-        [
-          "id",
-          "abc",
-        ],
       ],
       "prefix": "/dynamic/abc",
       "type": "layout",
@@ -521,10 +517,6 @@ exports[`createFsRouteTree > basic 11`] = `
           "id",
           "abc",
         ],
-        [
-          "id",
-          "abc",
-        ],
       ],
       "prefix": "/dynamic/abc",
       "type": "layout",
@@ -545,14 +537,6 @@ exports[`createFsRouteTree > basic 11`] = `
         [
           "id",
           "abc",
-        ],
-        [
-          "id",
-          "abc",
-        ],
-        [
-          "nested",
-          "def",
         ],
         [
           "nested",
@@ -615,10 +599,6 @@ exports[`createFsRouteTree > basic 12`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          "id",
-          "✅",
         ],
         [
           "id",
