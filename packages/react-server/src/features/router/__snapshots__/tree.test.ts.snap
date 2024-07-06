@@ -112,10 +112,6 @@ exports[`createFsRouteTree > basic 3`] = `
           null,
           "",
         ],
-        [
-          null,
-          "other",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -177,10 +173,6 @@ exports[`createFsRouteTree > basic 5`] = `
           null,
           "",
         ],
-        [
-          null,
-          "test",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -221,14 +213,6 @@ exports[`createFsRouteTree > basic 6`] = `
           null,
           "",
         ],
-        [
-          null,
-          "test",
-        ],
-        [
-          null,
-          "other",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -246,10 +230,6 @@ exports[`createFsRouteTree > basic 6`] = `
         [
           null,
           "test",
-        ],
-        [
-          null,
-          "other",
         ],
       ],
       "prefix": "/test",
@@ -294,10 +274,6 @@ exports[`createFsRouteTree > basic 7`] = `
           null,
           "",
         ],
-        [
-          null,
-          "test",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -337,10 +313,6 @@ exports[`createFsRouteTree > basic 8`] = `
         [
           null,
           "",
-        ],
-        [
-          null,
-          "dynamic",
         ],
       ],
       "prefix": "/",
@@ -382,14 +354,6 @@ exports[`createFsRouteTree > basic 9`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "static",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -407,10 +371,6 @@ exports[`createFsRouteTree > basic 9`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          null,
-          "static",
         ],
       ],
       "prefix": "/dynamic",
@@ -455,14 +415,6 @@ exports[`createFsRouteTree > basic 10`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -481,10 +433,6 @@ exports[`createFsRouteTree > basic 10`] = `
           null,
           "dynamic",
         ],
-        [
-          "id",
-          "abc",
-        ],
       ],
       "prefix": "/dynamic",
       "type": "layout",
@@ -502,6 +450,10 @@ exports[`createFsRouteTree > basic 10`] = `
         [
           null,
           "dynamic",
+        ],
+        [
+          "id",
+          "abc",
         ],
         [
           "id",
@@ -529,18 +481,6 @@ exports[`createFsRouteTree > basic 11`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
-        [
-          "nested",
-          "def",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -558,14 +498,6 @@ exports[`createFsRouteTree > basic 11`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
-        [
-          "nested",
-          "def",
         ],
       ],
       "prefix": "/dynamic",
@@ -590,8 +522,8 @@ exports[`createFsRouteTree > basic 11`] = `
           "abc",
         ],
         [
-          "nested",
-          "def",
+          "id",
+          "abc",
         ],
       ],
       "prefix": "/dynamic/abc",
@@ -613,6 +545,14 @@ exports[`createFsRouteTree > basic 11`] = `
         [
           "id",
           "abc",
+        ],
+        [
+          "id",
+          "abc",
+        ],
+        [
+          "nested",
+          "def",
         ],
         [
           "nested",
@@ -640,14 +580,6 @@ exports[`createFsRouteTree > basic 12`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "✅",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -666,10 +598,6 @@ exports[`createFsRouteTree > basic 12`] = `
           null,
           "dynamic",
         ],
-        [
-          "id",
-          "✅",
-        ],
       ],
       "prefix": "/dynamic",
       "type": "layout",
@@ -687,6 +615,10 @@ exports[`createFsRouteTree > basic 12`] = `
         [
           null,
           "dynamic",
+        ],
+        [
+          "id",
+          "✅",
         ],
         [
           "id",
@@ -714,14 +646,6 @@ exports[`createFsRouteTree > basic 13`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -739,10 +663,6 @@ exports[`createFsRouteTree > basic 13`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          null,
-          "catchall",
         ],
       ],
       "prefix": "/dynamic",
@@ -787,18 +707,6 @@ exports[`createFsRouteTree > basic 14`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          null,
-          "static",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -816,14 +724,6 @@ exports[`createFsRouteTree > basic 14`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          null,
-          "static",
         ],
       ],
       "prefix": "/dynamic",
@@ -845,10 +745,6 @@ exports[`createFsRouteTree > basic 14`] = `
         [
           null,
           "catchall",
-        ],
-        [
-          null,
-          "static",
         ],
       ],
       "prefix": "/dynamic/catchall",
@@ -897,18 +793,6 @@ exports[`createFsRouteTree > basic 15`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -926,14 +810,6 @@ exports[`createFsRouteTree > basic 15`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x",
         ],
       ],
       "prefix": "/dynamic",
@@ -955,10 +831,6 @@ exports[`createFsRouteTree > basic 15`] = `
         [
           null,
           "catchall",
-        ],
-        [
-          "any",
-          "x",
         ],
       ],
       "prefix": "/dynamic/catchall",
@@ -1007,18 +879,6 @@ exports[`createFsRouteTree > basic 16`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -1036,14 +896,6 @@ exports[`createFsRouteTree > basic 16`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y",
         ],
       ],
       "prefix": "/dynamic",
@@ -1065,10 +917,6 @@ exports[`createFsRouteTree > basic 16`] = `
         [
           null,
           "catchall",
-        ],
-        [
-          "any",
-          "x/y",
         ],
       ],
       "prefix": "/dynamic/catchall",
@@ -1117,18 +965,6 @@ exports[`createFsRouteTree > basic 17`] = `
           null,
           "",
         ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y/z",
-        ],
       ],
       "prefix": "/",
       "type": "layout",
@@ -1146,14 +982,6 @@ exports[`createFsRouteTree > basic 17`] = `
         [
           null,
           "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y/z",
         ],
       ],
       "prefix": "/dynamic",
@@ -1175,10 +1003,6 @@ exports[`createFsRouteTree > basic 17`] = `
         [
           null,
           "catchall",
-        ],
-        [
-          "any",
-          "x/y/z",
         ],
       ],
       "prefix": "/dynamic/catchall",
