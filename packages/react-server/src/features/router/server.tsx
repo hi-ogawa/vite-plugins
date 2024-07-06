@@ -1,6 +1,6 @@
 import { sortBy, tinyassert, typedBoolean } from "@hiogawa/utils";
 import React from "react";
-import { type ReactServerErrorContext, createError } from "../error/shared";
+import { type ReactServerErrorContext } from "../error/shared";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
 import type { RevalidationType } from "../server-component/utils";
@@ -58,11 +58,6 @@ export function generateRouteModuleTree(globEntries: Record<string, any>) {
 // use own "use client" components as external
 function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
   return import("@hiogawa/react-server/runtime/client" as string);
-}
-
-function renderPage(node: RouteModuleTree, props: PageProps) {
-  const Page = node.value?.page?.default ?? ThrowNotFound;
-  return <Page {...props} />;
 }
 
 async function renderLayout(
@@ -157,7 +152,9 @@ export async function renderRouteMap(
       nodeMap[routeId] = await renderLayout(m.node, props, m);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
-      nodeMap[routeId] = renderPage(m.node, props);
+      const Page = m.node.value?.page?.default;
+      tinyassert(Page, "No default export in 'page'");
+      nodeMap[routeId] = <Page {...props} />;
       Object.assign(metadata, m.node.value?.page?.metadata);
     } else if (m.type === "not-found") {
       const NotFound = m.node.value?.["not-found"]?.default;
@@ -196,13 +193,6 @@ export function getCachedRoutes(
   }
   return routeIds;
 }
-
-// TODO
-// support SSR-ing not-found
-// requires passing status without throwing
-const ThrowNotFound: React.FC = () => {
-  throw createError({ status: 404 });
-};
 
 type SerializedURL = {
   [k in keyof URL]: URL[k] extends string ? URL[k] : never;
