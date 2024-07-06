@@ -45,6 +45,8 @@ export interface RouteModule {
 
 export type RouteModuleKey = keyof RouteModule;
 
+export type AnyRouteModule = { [k in RouteModuleKey]?: unknown };
+
 export type RouteModuleTree = TreeNode<RouteModule>;
 
 export function generateRouteModuleTree(globEntries: Record<string, any>) {
@@ -143,31 +145,6 @@ export async function renderRouteMap(
   const nodeMap: Record<string, React.ReactNode> = {};
   let parentLayout = LAYOUT_ROOT_NAME;
   const result = matchRouteTree(tree, url.pathname);
-
-  // fix up "page" and "not-found"
-  if (!result.notFound) {
-    if (result.matches.at(-1)?.node.value?.page) {
-      result.matches.push({
-        ...result.matches.at(-1)!,
-        type: "page",
-      });
-    } else {
-      result.notFound = true;
-    }
-  }
-  if (result.notFound) {
-    const i = result.matches.findIndex((m) => m.node.value?.["not-found"]);
-    if (i !== -1) {
-      result.matches = result.matches.slice(0, i + 1);
-      result.matches.push({
-        ...result.matches.at(-1)!,
-        type: "not-found",
-      });
-    } else {
-      // TODO: default root not-found page?
-    }
-  }
-
   for (const m of result.matches) {
     const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
     layoutContentMap[parentLayout] = routeId;
@@ -205,7 +182,7 @@ export function getCachedRoutes(
   revalidations: (RevalidationType | undefined)[],
 ) {
   const routeIds: string[] = [];
-  const { matches } = matchRouteTree(tree, lastPathname);
+  const { matches } = matchRouteTree(tree, lastPathname, "page");
   for (const m of matches) {
     if (
       m.type === "layout" &&
