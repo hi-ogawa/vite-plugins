@@ -172,7 +172,7 @@ test("error", async ({ page }) => {
   await checkClientState();
 });
 
-test("DefaultRootErrorPage", async ({ page }) => {
+test("default not-found page", async ({ page }) => {
   const res = await page.goto("/not-found");
   expect(res?.status()).toBe(404);
   await page.getByText("404 Not Found").click();

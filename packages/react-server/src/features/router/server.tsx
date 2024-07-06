@@ -62,7 +62,7 @@ export function generateRouteModuleTree(globEntries: Record<string, any>) {
 function DefaultNotFoundPage() {
   return (
     <>
-      <h1>404: Not found</h1>
+      <h1>404 Not Found</h1>
       <div>
         Back to <a href="/">Home</a>
       </div>
