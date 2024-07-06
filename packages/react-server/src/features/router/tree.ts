@@ -82,7 +82,7 @@ export function matchRouteTree<T>(
     const prefix = prefixes[i]!;
     const segment = prefix.split("/").at(-1)!;
     const next = matchRouteChild(segment, node);
-    if (next?.child) {
+    if (next) {
       node = next.child;
       if (next.catchAll) {
         const rest = pathname.slice(prefixes[i - 1]!.length + 1);
@@ -110,23 +110,23 @@ export function matchRouteTree<T>(
 const DYNAMIC_RE = /^\[(\w*)\]$/;
 const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
 
-export function matchRouteChild<T>(input: string, node: TreeNode<T>) {
+function matchRouteChild<T>(input: string, node: TreeNode<T>) {
   if (!node.children) {
     return;
   }
-  for (const [segment, child] of Object.entries(node.children)) {
-    const mAll = segment.match(CATCH_ALL_RE);
+  for (const [key, child] of Object.entries(node.children)) {
+    const mAll = key.match(CATCH_ALL_RE);
     if (mAll) {
       tinyassert(1 in mAll);
-      return { param: mAll[1], child, catchAll: true };
+      return { key, child, param: mAll[1], catchAll: true };
     }
-    const m = segment.match(DYNAMIC_RE);
+    const m = key.match(DYNAMIC_RE);
     if (m) {
       tinyassert(1 in m);
-      return { param: m[1], child };
+      return { key, child, param: m[1] };
     }
-    if (segment === input) {
-      return { child };
+    if (key === input) {
+      return { key, child };
     }
   }
   return;
@@ -176,8 +176,7 @@ function isEqualArrayShallow(xs: unknown[], ys: unknown[]) {
 }
 
 //
-// general tree utils copied from vite-glob-routes
-// https://github.com/hi-ogawa/vite-plugins/blob/c2d22f9436ef868fc413f05f243323686a7aa143/packages/vite-glob-routes/src/react-router/route-utils.ts#L15-L22
+// minimal basic tree structure
 //
 
 export type TreeNode<T> = {
@@ -185,7 +184,7 @@ export type TreeNode<T> = {
   children?: Record<string, TreeNode<T>>;
 };
 
-export function initTreeNode<T>(): TreeNode<T> {
+function initTreeNode<T>(): TreeNode<T> {
   return {};
 }
 
