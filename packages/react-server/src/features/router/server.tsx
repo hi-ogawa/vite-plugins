@@ -1,4 +1,4 @@
-import { sortBy } from "@hiogawa/utils";
+import { sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { type ReactServerErrorContext, createError } from "../error/shared";
 import { renderMetadata } from "../meta/server";
@@ -7,7 +7,6 @@ import type { RevalidationType } from "../server-component/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
   type MatchNodeEntry,
-  type MatchResult,
   type TreeNode,
   createFsRouteTree,
   matchRouteTree,
@@ -144,6 +143,32 @@ export async function renderRouteMap(
   const nodeMap: Record<string, React.ReactNode> = {};
   let parentLayout = LAYOUT_ROOT_NAME;
   const result = matchRouteTree(tree, url.pathname);
+
+  // fix up "page" and "not-found"
+  if (!result.notFound) {
+    if (result.matches.at(-1)?.node.value?.page) {
+      result.matches.push({
+        ...result.matches.at(-1)!,
+        type: "page",
+      });
+    } else {
+      result.notFound = true;
+    }
+  }
+  if (result.notFound) {
+    const i = result.matches.findIndex((m) => m.node.value?.["not-found"]);
+    if (i !== -1) {
+      result.matches = result.matches.slice(0, i + 1);
+      result.matches.push({
+        ...result.matches.at(-1)!,
+        type: "not-found",
+      });
+    } else {
+      // TODO: default root not-found page?
+    }
+  }
+  result.params = result.matches.at(-1)?.params ?? [];
+
   for (const m of result.matches) {
     const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
     layoutContentMap[parentLayout] = routeId;
@@ -159,29 +184,12 @@ export async function renderRouteMap(
       nodeMap[routeId] = renderPage(m.node, props);
       Object.assign(metadata, m.node.value?.page?.metadata);
     } else if (m.type === "not-found") {
-      // nodeMap[routeId] = renderPage(m.node, props);
-      // Object.assign(metadata, m.node.value?.page?.metadata);
+      const NotFound = m.node.value?.["not-found"]?.default;
+      tinyassert(NotFound);
+      nodeMap[routeId] = <NotFound />;
     } else {
       m.type satisfies never;
     }
-  }
-  // render page
-  if (!result.notFound) {
-    const lastMatch = result.matches.at(-1);
-    const page = lastMatch?.node.value?.page;
-    if (page) {
-      lastMatch.prefix;
-      result.params;
-    } else {
-      result.notFound = true;
-    }
-  }
-  // render not-found
-  if (result.notFound) {
-    const routeId = `${url.pathname}:not-found`;
-    layoutContentMap[parentLayout] = routeId;
-    nodeMap[routeId];
-    // result.matches.filter(node)
   }
   return {
     layoutContentMap,
