@@ -172,6 +172,11 @@ test("error", async ({ page }) => {
   await checkClientState();
 });
 
+testNoJs("ssr not-found @nojs", async ({ page }) => {
+  await page.goto("/test/error/not-found");
+  await page.getByText(`NotFoundPage`).click();
+});
+
 test("default not-found page", async ({ page }) => {
   const res = await page.goto("/not-found");
   expect(res?.status()).toBe(404);
