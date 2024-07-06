@@ -115,13 +115,11 @@ export function matchRouteTree<T extends AnyRouteModule>(
       notFound = true;
     }
   }
-  if (notFound) {
-    const i = matches.findIndex((m) => m.node.value?.["not-found"]);
-    if (i !== -1) {
+  if (leafType === "page" && notFound) {
+    const i = matches.findLastIndex((m) => m.node.value?.["not-found"]);
+    if (i >= 0) {
       matches = matches.slice(0, i + 1);
       matches.push({ ...matches.at(-1)!, type: "not-found" });
-    } else {
-      // TODO: default root not-found page?
     }
   }
 

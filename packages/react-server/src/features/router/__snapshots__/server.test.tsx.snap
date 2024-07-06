@@ -32,6 +32,9 @@ exports[`generateRouteModuleTree > basic 1`] = `
         "layout": {
           "default": "/LAYOUT.TSX",
         },
+        "not-found": {
+          "default": [Function],
+        },
         "page": {
           "default": "/PAGE.TSX",
         },
@@ -88,11 +91,15 @@ exports[`generateRouteModuleTree > basic 2`] = `
           }
         }
       >
-        <RedirectBoundary>
-          <LayoutContent
-            name="/"
-          />
-        </RedirectBoundary>
+        <NotFoundBoundary
+          fallback={<DefaultNotFoundPage />}
+        >
+          <RedirectBoundary>
+            <LayoutContent
+              name="/"
+            />
+          </RedirectBoundary>
+        </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
     "/x:layout": <LayoutMatchProvider
@@ -211,11 +218,15 @@ exports[`generateRouteModuleTree > basic 3`] = `
           }
         }
       >
-        <RedirectBoundary>
-          <LayoutContent
-            name="/"
-          />
-        </RedirectBoundary>
+        <NotFoundBoundary
+          fallback={<DefaultNotFoundPage />}
+        >
+          <RedirectBoundary>
+            <LayoutContent
+              name="/"
+            />
+          </RedirectBoundary>
+        </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
     "/x/y:layout": <LayoutMatchProvider
@@ -346,6 +357,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
 {
   "__pathname": "/z",
   "layoutContentMap": {
+    "/": "/:not-found",
     "__root": "/:layout",
   },
   "metadata": <React.Fragment />,
@@ -387,13 +399,18 @@ exports[`generateRouteModuleTree > basic 4`] = `
           }
         }
       >
-        <RedirectBoundary>
-          <LayoutContent
-            name="/"
-          />
-        </RedirectBoundary>
+        <NotFoundBoundary
+          fallback={<DefaultNotFoundPage />}
+        >
+          <RedirectBoundary>
+            <LayoutContent
+              name="/"
+            />
+          </RedirectBoundary>
+        </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
+    "/:not-found": <DefaultNotFoundPage />,
   },
   "notFound": true,
   "params": [
