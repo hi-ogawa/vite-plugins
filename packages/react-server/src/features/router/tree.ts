@@ -55,6 +55,7 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
 }
 
 export type MatchNodeEntry<T> = {
+  id?: string;
   prefix: string;
   type: MatchNodeType;
   node: TreeNode<T>;
@@ -72,11 +73,24 @@ export type MatchResult<T> = {
   notFound: boolean;
 };
 
+/**
+ * @example
+ * "/" => [""]
+ * "/a" => ["", "a"]
+ * "/a/b" => ["", "a", "b"]
+ */
+function toRawSegments(pathname: string) {
+  return ["", ...pathname.slice(1).split("/")];
+}
+
 export function matchRouteTree<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
   leafType: "page" | "route" = "page",
 ): MatchResult<T> {
+  const rawSegments = toRawSegments(pathname);
+  rawSegments;
+
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;
