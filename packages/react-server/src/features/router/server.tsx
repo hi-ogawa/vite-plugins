@@ -167,7 +167,6 @@ export async function renderRouteMap(
       // TODO: default root not-found page?
     }
   }
-  result.params = result.matches.at(-1)?.params ?? [];
 
   for (const m of result.matches) {
     const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
@@ -195,7 +194,7 @@ export async function renderRouteMap(
     layoutContentMap,
     nodeMap,
     metadata: renderMetadata(metadata),
-    params: result.params,
+    params: result.matches.at(-1)?.params ?? [],
     notFound: result.notFound,
   };
 }
