@@ -39,6 +39,7 @@ export interface ReactServerHandlerContext {
 
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
+  status: number;
   actionResult?: ActionResult;
 }
 
@@ -132,7 +133,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  return { stream, actionResult };
+  return { stream, actionResult, status: result.notFound ? 404 : 200 };
 };
 
 const reactServerOnError: RenderToReadableStreamOptions["onError"] = (

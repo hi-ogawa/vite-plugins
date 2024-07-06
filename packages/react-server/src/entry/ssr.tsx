@@ -157,7 +157,7 @@ export async function renderHtml(
 
   // two pass SSR to re-render on error
   let ssrStream: ReactDOMServer.ReactDOMServerReadableStream;
-  let status = 200;
+  let status = result.status;
   try {
     ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
       formState: result.actionResult?.data,
