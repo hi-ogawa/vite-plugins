@@ -95,7 +95,7 @@ declare module "@tanstack/history" {
   }
 }
 
-export function routerRevalidate(v: string | boolean = true): HistoryState {
+export function routerRevalidate(v: string): HistoryState {
   return { [ROUTER_REVALIDATE_KEY]: v };
 }
 

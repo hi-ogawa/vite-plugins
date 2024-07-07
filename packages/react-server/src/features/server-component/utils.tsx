@@ -2,8 +2,7 @@
 export const RSC_PATH = "__f.data";
 const RSC_PARAM = "x-flight-meta";
 
-// TODO: (breaking) remove boolean `true` in favor of string "/"
-export type RevalidationType = boolean | string;
+export type RevalidationType = string;
 
 export type StreamRequestParam = {
   actionId?: string;

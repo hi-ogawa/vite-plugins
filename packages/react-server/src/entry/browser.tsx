@@ -190,7 +190,7 @@ async function start() {
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", (e) => {
       console.log("[react-server] hot update", e.file);
-      history.replace(history.location.href, routerRevalidate());
+      history.replace(history.location.href, routerRevalidate("/"));
     });
   }
 }
