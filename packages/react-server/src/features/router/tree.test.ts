@@ -88,4 +88,32 @@ describe(matchRouteTree2, () => {
       expect(testMatch(e)).matchSnapshot();
     }
   });
+
+  it.only("group routes", async () => {
+    const files = [
+      "/a/page.js",
+      "/(x)/b/page.js",
+      "/c/(x)/page.js",
+      "/(x)/d/(y)/page.js",
+    ];
+    const input = Object.fromEntries(files.map((k) => [k, k]));
+    const { tree } = createFsRouteTree<AnyRouteModule>(input);
+    expect(tree).toMatchSnapshot();
+
+    function testMatch(pathname: string) {
+      const matches = matchRouteTree2(tree, pathname, "page");
+      return {
+        _pathname: pathname,
+        matches: matches?.map((m) => ({
+          ...m,
+          node: m.node.value,
+        })),
+      };
+    }
+
+    const testCases = ["/a", "/b", "/c", "/d"];
+    for (const e of testCases) {
+      expect(testMatch(e)).matchSnapshot();
+    }
+  });
 });

@@ -163,6 +163,9 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     matches: MatchResult2<T>,
     segments: string[],
   ): MatchResult2<T> {
+    console.log(matches);
+    if (1) return matches;
+
     if (matches) {
       const last = matches?.at(-1);
       if (last?.segment.type === "not-found") {
@@ -189,9 +192,12 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     node: TreeNode<T>,
     segments: string[],
   ): MatchEntry2<T>[] | undefined {
+    // try all branches for group routes
+    const branches: MatchEntry2<T>[][] = [];
+
     // check page or route
     if (segments.length === 0) {
-      return [
+      branches.push([
         {
           node: node,
           segment: node.value?.[leafType]
@@ -203,13 +209,15 @@ export function matchRouteTree2<T extends AnyRouteModule>(
                 value: segments.join("/"),
               },
         },
-      ];
+      ]);
     }
 
     // recurse children
-    const branches: MatchEntry2<T>[][] = [];
     for (const match of matchChildren(node, segments)) {
-      const branch = recurse(match.node, segments.slice(1));
+      const branch = recurse(
+        match.node,
+        match.segment.type === "group" ? segments : segments.slice(1),
+      );
       if (branch) {
         branches.push([match, ...branch]);
       }
@@ -217,7 +225,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
 
     // not-found
     if (branches.length === 0) {
-      return [
+      branches.push([
         {
           node,
           segment: {
@@ -225,7 +233,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
             value: segments.join("/"),
           },
         },
-      ];
+      ]);
     }
 
     // tie break branches
@@ -239,15 +247,30 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     // static = group < dynamic < catchall
     if (first === "dynamic") return 2;
     if (first === "catchall") return 3;
+    // TODO
     // static < group if not-found
-    if (first === "group" && last === "not-found") return 1;
+    // if (first === "group" && last === "not-found") return 1;
+    if (last === "not-found") return 1;
     return 0;
   }
 }
 
+// TODO: should also return un-consumed segments
 function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
   const candidates: { node: TreeNode<T>; segment: MatchSegment }[] = [];
+  const segment = segments[0]!;
   for (const [key, child] of Object.entries(node.children ?? {})) {
+    const mGroup = key.match(GROUP_RE);
+    if (mGroup) {
+      tinyassert(1 in mGroup);
+      candidates.push({
+        node: child,
+        segment: {
+          type: "group",
+          key: mGroup[1]!,
+        },
+      });
+    }
     const matchCatchAll = key.match(CATCH_ALL_RE);
     if (matchCatchAll) {
       candidates.push({
@@ -266,7 +289,7 @@ function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
         segment: {
           type: "dynamic",
           key: matchDynamic[1]!,
-          value: segments[0]!,
+          value: segment,
         },
       });
     }
@@ -275,7 +298,7 @@ function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
         node: child,
         segment: {
           type: "static",
-          value: segments[0]!,
+          value: segment,
         },
       });
     }
@@ -339,6 +362,7 @@ export function matchRouteTree<T extends AnyRouteModule>(
 
 const DYNAMIC_RE = /^\[(\w*)\]$/;
 const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
+const GROUP_RE = /^\((\w+)\)$/;
 
 function matchRouteChild<T>(input: string, node: TreeNode<T>) {
   if (!node.children) {
