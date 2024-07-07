@@ -83,11 +83,11 @@ function toRawSegments(pathname: string) {
   return ["", ...pathname.slice(1).split("/")];
 }
 
-function fromRawSegments(segments: string[]) {
+export function fromRawSegments(segments: string[]) {
   return segments.join("/") || "/";
 }
 
-export type MatchedSegment =
+export type MatchSegment =
   | {
       type: "static";
       value: string;
@@ -101,94 +101,136 @@ export type MatchedSegment =
       type: "catchall";
       key: string;
       value: string;
+    }
+  | {
+      type: "group";
+      key: string;
+    }
+  // the last match is guranteed to be one of the below
+  | {
+      type: "not-found";
+      value: string;
+    }
+  | {
+      type: "page";
+    }
+  | {
+      type: "route";
     };
+
+type MatchEntry2<T> = {
+  node: TreeNode<T>;
+  segment: MatchSegment;
+};
+
+export function matchRouteTree2<T extends AnyRouteModule>(
+  tree: TreeNode<T>,
+  pathname: string,
+  leafType: "page" | "route" = "page",
+): MatchEntry2<T>[] | undefined {
+  return recurse(
+    tree,
+    toRawSegments(pathname).map((s) => decodeURI(s)),
+    null,
+  );
+
+  function recurse(
+    node: TreeNode<T>,
+    segments: string[],
+    parent: TreeNode<T> | null,
+  ): MatchEntry2<T>[] | undefined {
+    // check page or route
+    if (segments.length === 0) {
+      if (parent?.value?.[leafType]) {
+        return [{ node: parent, segment: { type: leafType } }];
+      }
+      return;
+    }
+
+    // recurse children
+    const branches: MatchEntry2<T>[][] = [];
+    for (const match of matchChildren(node, segments)) {
+      const branch = recurse(match.node, segments.slice(1), node);
+      if (branch) {
+        branches.push([match, ...branch]);
+      }
+    }
+
+    // check not-found
+    if (branches.length === 0) {
+      if (node.value?.["not-found"]) {
+        return [
+          {
+            node,
+            segment: {
+              type: "not-found",
+              value: segments.join("/"),
+            },
+          },
+        ];
+      }
+      return;
+    }
+
+    // tie break branches
+    return sortBy(branches, (b) => scoreBranch(b))[0];
+  }
+
+  // TODO
+  // need to score not-found
+  // or maybe we shouldn't handle not-found in this way...
+  function scoreBranch(branch: MatchEntry2<T>[]) {
+    const type = branch[0]?.segment.type;
+    tinyassert(type);
+    if (type === "dynamic") return 1;
+    if (type === "catchall") return 2;
+    return 0;
+  }
+}
+
+function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
+  const candidates: { node: TreeNode<T>; segment: MatchSegment }[] = [];
+  for (const [key, child] of Object.entries(node.children ?? {})) {
+    const matchCatchAll = key.match(CATCH_ALL_RE);
+    if (matchCatchAll) {
+      candidates.push({
+        node: child,
+        segment: {
+          type: "catchall",
+          key: matchCatchAll[1]!,
+          value: segments.join("/"),
+        },
+      });
+    }
+    const matchDynamic = key.match(DYNAMIC_RE);
+    if (matchDynamic) {
+      candidates.push({
+        node: child,
+        segment: {
+          type: "dynamic",
+          key: matchDynamic[1]!,
+          value: segments[0]!,
+        },
+      });
+    }
+    if (key === segments[0]) {
+      candidates.push({
+        node: child,
+        segment: {
+          type: "static",
+          value: segments[0]!,
+        },
+      });
+    }
+  }
+  return candidates;
+}
 
 export function matchRouteTree<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
   leafType: "page" | "route" = "page",
 ): MatchResult<T> {
-  const segments = toRawSegments(pathname).map((s) => decodeURI(s));
-
-  // TODO(refactor): feels many things are redundant
-  type RecurseResult = {
-    params: MatchParamEntry[];
-    matches: MatchNodeEntry<T>[];
-  };
-
-  function recurse(
-    node: TreeNode<T>,
-    cursor: number,
-    // TODO: we only need last match? and caller can just accumlate?
-    { params, matches }: RecurseResult,
-    lastMatch?: MatchNodeEntry<T>, // TODO: doesn't feel right
-  ): MatchNodeEntry<T>[] | undefined {
-    if (cursor === segments.length) {
-      if (node.value?.page) {
-        tinyassert(lastMatch);
-        return [{ ...lastMatch, type: "page" }];
-      }
-      return;
-    }
-
-    const segment = segments[cursor]!;
-    const prefix = fromRawSegments(segments.slice(0, cursor));
-    const branches: MatchNodeEntry<T>[][] = [];
-
-    function recurseWithNewEntry(node: TreeNode<T>, newEntry: MatchParamEntry) {
-      const newParams: typeof params = [...params, newEntry];
-      const newMatches: typeof matches = [
-        ...matches,
-        { prefix, type: "layout", node, params: newParams },
-      ];
-      const newResult = recurse(
-        node,
-        cursor + 1,
-        {
-          params: newParams,
-          matches: newMatches,
-        },
-        { prefix, type: "layout", node, params: newParams },
-      );
-      if (newResult) {
-        branches.push(newResult);
-      }
-    }
-
-    for (const [key, child] of Object.entries(node.children ?? {})) {
-      const mAll = key.match(CATCH_ALL_RE);
-      if (mAll) {
-        tinyassert(1 in mAll);
-        recurseWithNewEntry(child, [mAll[1], segment]);
-      }
-      const m = key.match(DYNAMIC_RE);
-      if (m) {
-        tinyassert(1 in m);
-        recurseWithNewEntry(child, [m[1], segment]);
-      }
-      if (key === segment) {
-        recurseWithNewEntry(child, [null, segment]);
-      }
-    }
-
-    // not-found
-    if (branches.length === 0) {
-      if (node.value?.["not-found"]) {
-        tinyassert(lastMatch);
-        return [{ ...lastMatch, type: "not-found" }];
-      }
-      return;
-    }
-
-    // tie break branches
-    sortBy(branches, (b) => (b[0]?.params.at(-1)?.[0] === null ? 1 : 0));
-    branches;
-
-    return;
-  }
-
-  recurse;
-
   const prefixes = getPathPrefixes(pathname);
 
   let node = tree;
