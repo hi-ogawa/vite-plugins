@@ -174,6 +174,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
             ...matches[i]!,
             segment: {
               type: "not-found",
+              // TODO: `i` needs to be offeseted for group routes
               value: segments.slice(i + 1).join("/"),
             },
           });

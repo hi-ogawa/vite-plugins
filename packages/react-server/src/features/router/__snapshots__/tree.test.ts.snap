@@ -1316,7 +1316,7 @@ exports[`createFsRouteTree > basic 17`] = `
 }
 `;
 
-exports[`matchRouteTree2 > basic 1`] = `
+exports[`matchRouteTree2 > dynamic not-found 1`] = `
 {
   "children": {
     "": {
@@ -1359,7 +1359,7 @@ exports[`matchRouteTree2 > basic 1`] = `
 }
 `;
 
-exports[`matchRouteTree2 > basic 2`] = `
+exports[`matchRouteTree2 > dynamic not-found 2`] = `
 {
   "_pathname": "/a/b/c",
   "matches": [
@@ -1407,7 +1407,7 @@ exports[`matchRouteTree2 > basic 2`] = `
 }
 `;
 
-exports[`matchRouteTree2 > basic 3`] = `
+exports[`matchRouteTree2 > dynamic not-found 3`] = `
 {
   "_pathname": "/a/b/d",
   "matches": [
@@ -1440,7 +1440,7 @@ exports[`matchRouteTree2 > basic 3`] = `
 }
 `;
 
-exports[`matchRouteTree2 > basic 4`] = `
+exports[`matchRouteTree2 > dynamic not-found 4`] = `
 {
   "_pathname": "/x/b/e",
   "matches": [
@@ -1474,7 +1474,7 @@ exports[`matchRouteTree2 > basic 4`] = `
 }
 `;
 
-exports[`matchRouteTree2 > group routes 1`] = `
+exports[`matchRouteTree2 > group routes basic 1`] = `
 {
   "children": {
     "": {
@@ -1517,7 +1517,7 @@ exports[`matchRouteTree2 > group routes 1`] = `
 }
 `;
 
-exports[`matchRouteTree2 > group routes 2`] = `
+exports[`matchRouteTree2 > group routes basic 2`] = `
 {
   "_pathname": "/a",
   "matches": [
@@ -1549,7 +1549,7 @@ exports[`matchRouteTree2 > group routes 2`] = `
 }
 `;
 
-exports[`matchRouteTree2 > group routes 3`] = `
+exports[`matchRouteTree2 > group routes basic 3`] = `
 {
   "_pathname": "/b",
   "matches": [
@@ -1588,7 +1588,7 @@ exports[`matchRouteTree2 > group routes 3`] = `
 }
 `;
 
-exports[`matchRouteTree2 > group routes 4`] = `
+exports[`matchRouteTree2 > group routes basic 4`] = `
 {
   "_pathname": "/c",
   "matches": [
@@ -1627,7 +1627,7 @@ exports[`matchRouteTree2 > group routes 4`] = `
 }
 `;
 
-exports[`matchRouteTree2 > group routes 5`] = `
+exports[`matchRouteTree2 > group routes basic 5`] = `
 {
   "_pathname": "/d",
   "matches": [
@@ -1667,6 +1667,164 @@ exports[`matchRouteTree2 > group routes 5`] = `
       },
       "segment": {
         "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > group routes not-found 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "(x)": {
+          "children": {
+            "a": {
+              "children": {
+                "c": {
+                  "value": {
+                    "not-found": "/(x)/a/c/not-found.js",
+                    "page": "/(x)/a/c/page.js",
+                  },
+                },
+              },
+              "value": {
+                "not-found": "/(x)/a/not-found.js",
+              },
+            },
+            "p": {
+              "children": {
+                "q": {
+                  "value": {
+                    "page": "/(x)/p/q/page.js",
+                  },
+                },
+              },
+              "value": {
+                "not-found": "/(x)/p/not-found.js",
+              },
+            },
+          },
+        },
+        "a": {
+          "children": {
+            "b": {
+              "value": {
+                "page": "/a/b/page.js",
+              },
+            },
+          },
+          "value": {
+            "not-found": "/a/not-found.js",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree2 > group routes not-found 2`] = `
+{
+  "_pathname": "/a/u",
+  "matches": [
+    {
+      "node": undefined,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/a/not-found.js",
+      },
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/a/not-found.js",
+      },
+      "segment": {
+        "type": "not-found",
+        "value": "u",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > group routes not-found 3`] = `
+{
+  "_pathname": "/a/c/u",
+  "matches": [
+    {
+      "node": undefined,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/a/not-found.js",
+      },
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/a/not-found.js",
+      },
+      "segment": {
+        "type": "not-found",
+        "value": "c/u",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > group routes not-found 4`] = `
+{
+  "_pathname": "/p/u",
+  "matches": [
+    {
+      "node": undefined,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": undefined,
+      "segment": {
+        "key": "x",
+        "type": "group",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/(x)/p/not-found.js",
+      },
+      "segment": {
+        "type": "static",
+        "value": "p",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/(x)/p/not-found.js",
+      },
+      "segment": {
+        "type": "not-found",
+        "value": "",
       },
     },
   ],

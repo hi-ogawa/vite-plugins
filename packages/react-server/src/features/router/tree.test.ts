@@ -61,7 +61,7 @@ describe(createFsRouteTree, () => {
 });
 
 describe(matchRouteTree2, () => {
-  it("basic", async () => {
+  it("dynamic not-found", async () => {
     const files = [
       "/a/b/c/page.js",
       "/a/not-found.js",
@@ -89,7 +89,7 @@ describe(matchRouteTree2, () => {
     }
   });
 
-  it("group routes", async () => {
+  it("group routes basic", async () => {
     const files = [
       "/a/page.js",
       "/(x)/b/page.js",
@@ -112,6 +112,41 @@ describe(matchRouteTree2, () => {
     }
 
     const testCases = ["/a", "/b", "/c", "/d"];
+    for (const e of testCases) {
+      expect(testMatch(e)).matchSnapshot();
+    }
+  });
+
+  it("group routes not-found", async () => {
+    const files = [
+      "/a/b/page.js",
+      "/a/not-found.js",
+      "/(x)/a/c/page.js",
+      "/(x)/a/c/not-found.js",
+      "/(x)/a/not-found.js",
+      "/(x)/p/q/page.js",
+      "/(x)/p/not-found.js",
+    ];
+    const input = Object.fromEntries(files.map((k) => [k, k]));
+    const { tree } = createFsRouteTree<AnyRouteModule>(input);
+    expect(tree).toMatchSnapshot();
+
+    function testMatch(pathname: string) {
+      const matches = matchRouteTree2(tree, pathname, "page");
+      return {
+        _pathname: pathname,
+        matches: matches?.map((m) => ({
+          ...m,
+          node: m.node.value,
+        })),
+      };
+    }
+
+    const testCases = [
+      "/a/u",
+      "/a/c/u", // TODO: probably this should trigger /(x)/a/c/not-found.js
+      "/p/u", // TODO: see processNotFound
+    ];
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
     }
