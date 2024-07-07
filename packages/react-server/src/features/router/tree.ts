@@ -123,10 +123,30 @@ type MatchEntry2<T> = {
   segment: MatchSegment;
 };
 
+export function toMatchParam(s: MatchSegment) {
+  if (s.type === "static") return [null, s.value];
+  if (s.type === "dynamic") return [s.key, s.value];
+  if (s.type === "catchall") return [s.key, s.value];
+  if (s.type === "group") return [null, s.key];
+  if (s.type === "not-found") return [null, s.value];
+  return [null, null];
+}
+
+export function toMatchParams(segments: MatchSegment[]) {
+  let result: MatchParams = {};
+  for (const s of segments) {
+    const [k, v] = toMatchParam(s);
+    if (typeof k === "string" && typeof v === "string") {
+      result[k] = v;
+    }
+  }
+  return result;
+}
+
 export function matchRouteTree2<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
-  leafType: "page" | "route" = "page",
+  leafType: "page" | "route",
 ): MatchEntry2<T>[] | undefined {
   // TODO: fix up not-found
   return recurse(
