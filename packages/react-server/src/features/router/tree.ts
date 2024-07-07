@@ -150,10 +150,11 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   pathname: string,
   leafType: "page" | "route",
 ): MatchResult2<T> {
-  const allSegments = toRawSegments(pathname).map((s) => decodeURI(s));
-  return recurse(tree, allSegments);
+  return recurse(
+    tree,
+    toRawSegments(pathname).map((s) => decodeURI(s)),
+  );
 
-  // TODO: move outside?
   function recurse(
     node: TreeNode<T>,
     segments: string[],
