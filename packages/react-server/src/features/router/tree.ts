@@ -151,8 +151,9 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   leafType: "page" | "route",
 ): MatchResult2<T> {
   const allSegments = toRawSegments(pathname).map((s) => decodeURI(s));
-  const matches = recurse(tree, allSegments, null);
+  const matches = recurse(tree, allSegments);
   // need to fix up not-found after branches tie-break
+  // TODO: feels off
   return processNotFound(matches, allSegments);
 
   //
@@ -165,16 +166,20 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     if (matches) {
       const last = matches?.at(-1);
       if (last?.segment.type === "not-found") {
+        matches.pop();
         const i = matches.findLastIndex((m) => m.node.value?.["not-found"]);
         if (i >= 0) {
           matches = matches.slice(0, i + 1);
-          matches[i]!.segment = {
-            type: "not-found",
-            value: segments.slice(i).join("/"),
-          };
-          return matches;
+          matches.push({
+            ...matches[i]!,
+            segment: {
+              type: "not-found",
+              value: segments.slice(i + 1).join("/"),
+            },
+          });
+        } else {
+          return;
         }
-        return;
       }
     }
     return matches;
@@ -183,15 +188,13 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   function recurse(
     node: TreeNode<T>,
     segments: string[],
-    parent: TreeNode<T> | null, // feels off but works
   ): MatchEntry2<T>[] | undefined {
     // check page or route
     if (segments.length === 0) {
-      if (!parent) return;
       return [
         {
-          node: parent,
-          segment: parent.value?.[leafType]
+          node: node,
+          segment: node.value?.[leafType]
             ? {
                 type: leafType,
               }
@@ -206,7 +209,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     // recurse children
     const branches: MatchEntry2<T>[][] = [];
     for (const match of matchChildren(node, segments)) {
-      const branch = recurse(match.node, segments.slice(1), node);
+      const branch = recurse(match.node, segments.slice(1));
       if (branch) {
         branches.push([match, ...branch]);
       }
@@ -214,10 +217,9 @@ export function matchRouteTree2<T extends AnyRouteModule>(
 
     // not-found
     if (branches.length === 0) {
-      if (!parent) return;
       return [
         {
-          node: parent,
+          node,
           segment: {
             type: "not-found",
             value: segments.join("/"),
@@ -229,15 +231,6 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     // tie break branches
     return sortBy(branches, (b) => scoreBranch(b))[0];
   }
-
-  // TODO: test case
-  // routes:
-  //   /a/b/c
-  //   /[x]/b/d
-  // cases:
-  // /a/b/c => page /a/b/c
-  // /a/b/d => not-found /a/b
-  // /x/b/e => not-found /x/b
 
   function scoreBranch(branch: MatchEntry2<T>[]) {
     const first = branch[0]?.segment.type;

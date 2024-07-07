@@ -1315,3 +1315,161 @@ exports[`createFsRouteTree > basic 17`] = `
   ],
 }
 `;
+
+exports[`matchRouteTree2 > basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "[x]": {
+          "children": {
+            "b": {
+              "children": {
+                "d": {
+                  "value": {
+                    "page": "/[x]/b/d/page.js",
+                  },
+                },
+              },
+            },
+          },
+          "value": {
+            "not-found": "/[x]/not-found.js",
+          },
+        },
+        "a": {
+          "children": {
+            "b": {
+              "children": {
+                "c": {
+                  "value": {
+                    "page": "/a/b/c/page.js",
+                  },
+                },
+              },
+            },
+          },
+          "value": {
+            "not-found": "/a/not-found.js",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree2 > basic 2`] = `
+{
+  "_pathname": "/a/b/c",
+  "matches": [
+    {
+      "node": undefined,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/a/not-found.js",
+      },
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": undefined,
+      "segment": {
+        "type": "static",
+        "value": "b",
+      },
+    },
+    {
+      "node": {
+        "page": "/a/b/c/page.js",
+      },
+      "segment": {
+        "type": "static",
+        "value": "c",
+      },
+    },
+    {
+      "node": {
+        "page": "/a/b/c/page.js",
+      },
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > basic 3`] = `
+{
+  "_pathname": "/a/b/d",
+  "matches": [
+    {
+      "node": undefined,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/a/not-found.js",
+      },
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/a/not-found.js",
+      },
+      "segment": {
+        "type": "not-found",
+        "value": "b/d",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > basic 4`] = `
+{
+  "_pathname": "/x/b/e",
+  "matches": [
+    {
+      "node": undefined,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/[x]/not-found.js",
+      },
+      "segment": {
+        "key": "x",
+        "type": "dynamic",
+        "value": "x",
+      },
+    },
+    {
+      "node": {
+        "not-found": "/[x]/not-found.js",
+      },
+      "segment": {
+        "type": "not-found",
+        "value": "b/e",
+      },
+    },
+  ],
+}
+`;

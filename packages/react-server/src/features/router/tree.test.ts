@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AnyRouteModule } from "./server";
-import { createFsRouteTree, matchRouteTree } from "./tree";
+import { createFsRouteTree, matchRouteTree, matchRouteTree2 } from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
@@ -54,6 +54,36 @@ describe(createFsRouteTree, () => {
       "/dynamic/catchall/x/y",
       "/dynamic/catchall/x/y/z",
     ];
+    for (const e of testCases) {
+      expect(testMatch(e)).matchSnapshot();
+    }
+  });
+});
+
+describe(matchRouteTree2, () => {
+  it.only("basic", async () => {
+    const files = [
+      "/a/b/c/page.js",
+      "/a/not-found.js",
+      "/[x]/b/d/page.js",
+      "/[x]/not-found.js",
+    ];
+    const input = Object.fromEntries(files.map((k) => [k, k]));
+    const { tree } = createFsRouteTree<AnyRouteModule>(input);
+    expect(tree).toMatchSnapshot();
+
+    function testMatch(pathname: string) {
+      const matches = matchRouteTree2(tree, pathname, "page");
+      return {
+        _pathname: pathname,
+        matches: matches?.map((m) => ({
+          ...m,
+          node: m.node.value,
+        })),
+      };
+    }
+
+    const testCases = ["/a/b/c", "/a/b/d", "/x/b/e"];
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
     }
