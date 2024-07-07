@@ -151,41 +151,9 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   leafType: "page" | "route",
 ): MatchResult2<T> {
   const allSegments = toRawSegments(pathname).map((s) => decodeURI(s));
-  const matches = recurse(tree, allSegments);
-  // need to fix up not-found after branches tie-break
-  // TODO: feels off
-  return processNotFound(matches, allSegments);
+  return recurse(tree, allSegments);
 
-  //
-  // TODO: move outside
-  //
-  function processNotFound(
-    matches: MatchResult2<T>,
-    segments: string[],
-  ): MatchResult2<T> {
-    if (matches) {
-      const last = matches?.at(-1);
-      if (last?.segment.type === "not-found") {
-        matches.pop();
-        const i = matches.findLastIndex((m) => m.node.value?.["not-found"]);
-        if (i >= 0) {
-          matches = matches.slice(0, i + 1);
-          matches.push({
-            ...matches[i]!,
-            segment: {
-              type: "not-found",
-              // TODO: `i` needs to be offeseted for group routes
-              value: segments.slice(i + 1).join("/"),
-            },
-          });
-        } else {
-          return;
-        }
-      }
-    }
-    return matches;
-  }
-
+  // TODO: move outside?
   function recurse(
     node: TreeNode<T>,
     segments: string[],
@@ -194,18 +162,13 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     const branches: MatchEntry2<T>[][] = [];
 
     // check page or route
-    if (segments.length === 0) {
+    if (segments.length === 0 && node.value?.[leafType]) {
       branches.push([
         {
           node: node,
-          segment: node.value?.[leafType]
-            ? {
-                type: leafType,
-              }
-            : {
-                type: "not-found",
-                value: segments.join("/"),
-              },
+          segment: {
+            type: leafType,
+          },
         },
       ]);
     }
@@ -218,9 +181,9 @@ export function matchRouteTree2<T extends AnyRouteModule>(
       }
     }
 
-    // not-found
-    if (branches.length === 0) {
-      return [
+    // check not-found
+    if (node.value?.["not-found"]) {
+      branches.push([
         {
           node,
           segment: {
@@ -228,7 +191,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
             value: segments.join("/"),
           },
         },
-      ];
+      ]);
     }
 
     // tie break branches

@@ -1824,7 +1824,7 @@ exports[`matchRouteTree2 > group routes not-found 4`] = `
       },
       "segment": {
         "type": "not-found",
-        "value": "",
+        "value": "u",
       },
     },
   ],
