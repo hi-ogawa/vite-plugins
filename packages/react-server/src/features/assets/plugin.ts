@@ -79,10 +79,15 @@ export function vitePluginServerAssets({
           entry.dynamicImports
             ?.map((k) => manifest[k]?.file)
             .filter(typedBoolean) ?? [];
-        const head = [
+        let head = [
           ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
           ...js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
         ].join("\n");
+        for (const file of [...(entry.assets ?? []), ...manager.serverAssets]) {
+          if (file.endsWith(".woff")) {
+            head += `<link rel="preload" href="/${file}" as="font" crossorigin type="font/woff">`;
+          }
+        }
         const result: SsrAssetsType = {
           bootstrapModules: [`/${entry.file}`],
           head,
@@ -115,10 +120,12 @@ export function vitePluginServerAssets({
       // virtual module to proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        const urls = await collectStyleUrls($__global.dev.reactServer, [
+        let urls = await collectStyleUrls($__global.dev.reactServer, [
           entryServer,
           "virtual:server-routes",
         ]);
+        // TODO: for now, skip virtual css since it doesn't allow hmr anyways
+        urls = urls.filter((url) => !url.startsWith("virtual:"));
         const code = urls.map((url) => `import "${url}";\n`).join("");
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;

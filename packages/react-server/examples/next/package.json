@@ -23,9 +23,13 @@
     "react-server-dom-webpack": "19.0.0-rc-c21bcd627b-20240624"
   },
   "devDependencies": {
+    "@capsizecss/core": "^4.1.2",
+    "@capsizecss/metrics": "^3.2.0",
+    "@capsizecss/unpack": "^2.2.0",
     "@playwright/test": "^1.42.1",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
+    "magic-string": "^0.30.8",
     "vite": "latest"
   }
 }
