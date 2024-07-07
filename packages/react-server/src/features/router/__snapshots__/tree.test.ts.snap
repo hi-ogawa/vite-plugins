@@ -1830,3 +1830,238 @@ exports[`matchRouteTree2 > group routes not-found 4`] = `
   ],
 }
 `;
+
+exports[`matchRouteTree2 > withMatchRouteId > basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "a": {
+          "children": {
+            "b": {
+              "value": {
+                "page": "/a/b/page.js",
+              },
+            },
+          },
+          "value": {
+            "not-found": "/a/not-found.js",
+            "page": "/a/page.js",
+          },
+        },
+      },
+      "value": {
+        "page": "/page.js",
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
+{
+  "_pathname": "/a",
+  "matches": [
+    {
+      "id": ":static",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/a:static",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+      ],
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "id": "/a/:page",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+        {
+          "type": "page",
+        },
+      ],
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
+{
+  "_pathname": "/a/b",
+  "matches": [
+    {
+      "id": ":static",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/a:static",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+      ],
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "id": "/a/b:static",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+        {
+          "type": "static",
+          "value": "b",
+        },
+      ],
+      "segment": {
+        "type": "static",
+        "value": "b",
+      },
+    },
+    {
+      "id": "/a/b/:page",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+        {
+          "type": "static",
+          "value": "b",
+        },
+        {
+          "type": "page",
+        },
+      ],
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
+{
+  "_pathname": "/a/b/c",
+  "matches": [
+    {
+      "id": ":static",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/a:static",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+      ],
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "id": "/a/b/c:not-found",
+      "node": "_",
+      "params": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+        {
+          "type": "not-found",
+          "value": "b/c",
+        },
+      ],
+      "segment": {
+        "type": "not-found",
+        "value": "b/c",
+      },
+    },
+  ],
+}
+`;

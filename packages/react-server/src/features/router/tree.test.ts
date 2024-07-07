@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { AnyRouteModule } from "./server";
-import { createFsRouteTree, matchRouteTree, matchRouteTree2 } from "./tree";
+import {
+  createFsRouteTree,
+  matchRouteTree,
+  matchRouteTree2,
+  withMatchRouteId,
+} from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
@@ -157,5 +162,36 @@ describe(matchRouteTree2, () => {
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
     }
+  });
+
+  describe(withMatchRouteId, () => {
+    it("basic", () => {
+      const files = [
+        "/page.js",
+        "/a/page.js",
+        "/a/b/page.js",
+        "/a/not-found.js",
+      ];
+      const input = Object.fromEntries(files.map((k) => [k, k]));
+      const { tree } = createFsRouteTree<AnyRouteModule>(input);
+      expect(tree).toMatchSnapshot();
+
+      function testMatch(pathname: string) {
+        const matches = matchRouteTree2(tree, pathname, "page");
+        const matches3 = withMatchRouteId(matches ?? []);
+        return {
+          _pathname: pathname,
+          matches: matches3.map((m) => ({
+            ...m,
+            node: "_",
+          })),
+        };
+      }
+
+      const testCases = ["/a", "/a/b", "/a/b/c"];
+      for (const e of testCases) {
+        expect(testMatch(e)).matchSnapshot();
+      }
+    });
   });
 });

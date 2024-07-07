@@ -10,6 +10,7 @@ import {
   type TreeNode,
   createFsRouteTree,
   matchRouteTree,
+  matchRouteTree2,
   parseRoutePath,
   toMatchParamsObject,
   toRouteId,
@@ -201,6 +202,11 @@ export function getCachedRoutes(
 ) {
   const routeIds: string[] = [];
   const { matches } = matchRouteTree(tree, lastPathname, "page");
+  {
+    const matches = matchRouteTree2(tree, lastPathname, "page");
+    tinyassert(matches);
+    // with rute
+  }
   for (const m of matches) {
     if (
       m.type === "layout" &&

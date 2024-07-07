@@ -123,6 +123,29 @@ type MatchEntry2<T> = {
   segment: MatchSegment;
 };
 
+export type MatchEntry3<T> = MatchEntry2<T> & {
+  id: string;
+  params: MatchSegment[];
+};
+
+export function withMatchRouteId<T>(
+  matches: MatchEntry2<T>[],
+): MatchEntry3<T>[] {
+  const segments = matches.map((m) => m.segment);
+  return matches.map((match, i) => {
+    const params = segments.slice(0, i + 1);
+    const id =
+      params.map((e) => toMatchParamEntry(e)[1] ?? "").join("/") +
+      ":" +
+      match.segment.type;
+    return {
+      id,
+      params,
+      ...match,
+    } satisfies MatchEntry3<T>;
+  });
+}
+
 type MatchResult2<T> = MatchEntry2<T>[] | undefined;
 
 export function toMatchParamEntry(s: MatchSegment) {
