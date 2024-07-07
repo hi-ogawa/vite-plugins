@@ -61,7 +61,7 @@ describe(createFsRouteTree, () => {
 });
 
 describe(matchRouteTree2, () => {
-  it.only("basic", async () => {
+  it("basic", async () => {
     const files = [
       "/a/b/c/page.js",
       "/a/not-found.js",
