@@ -142,10 +142,20 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   ): MatchEntry2<T>[] | undefined {
     // check page or route
     if (segments.length === 0) {
-      if (parent?.value?.[leafType]) {
-        return [{ node: parent, segment: { type: leafType } }];
-      }
-      return;
+      tinyassert(parent);
+      return [
+        {
+          node: parent,
+          segment: parent.value?.[leafType]
+            ? {
+                type: leafType,
+              }
+            : {
+                type: "not-found",
+                value: segments.join("/"),
+              },
+        },
+      ];
     }
 
     // recurse children
@@ -157,20 +167,17 @@ export function matchRouteTree2<T extends AnyRouteModule>(
       }
     }
 
-    // check not-found
+    // not-found
     if (branches.length === 0) {
-      if (node.value?.["not-found"]) {
-        return [
-          {
-            node,
-            segment: {
-              type: "not-found",
-              value: segments.join("/"),
-            },
+      return [
+        {
+          node,
+          segment: {
+            type: "not-found",
+            value: segments.join("/"),
           },
-        ];
-      }
-      return;
+        },
+      ];
     }
 
     // tie break branches
