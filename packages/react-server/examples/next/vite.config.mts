@@ -67,6 +67,9 @@ const geistSans = {
 
 import assert from "node:assert";
 import path from "node:path";
+import { createFontStack } from "@capsizecss/core";
+import { entireMetricsCollection } from "@capsizecss/metrics/entireMetricsCollection";
+import { fromFile } from "@capsizecss/unpack";
 import MagicString from "magic-string";
 
 // rollup ast has node position
@@ -172,7 +175,7 @@ function vitePluginFontExtract({
           return "\0" + source;
         }
       },
-      load(id, _options) {
+      async load(id, _options) {
         if (id.startsWith("\0virtual:font-extract/")) {
           id = id.split("?")[0];
           const font: FontConfig = JSON.parse(
@@ -186,7 +189,15 @@ function vitePluginFontExtract({
             console.error(`[WARNING] unsupported font format '${font.src}'`);
             return `/* font extract failed : ${font.src} */`;
           }
-          // TODO: fallback
+
+          // generate fallback font
+          const metrics = await fromFile(font.src);
+          metrics.familyName = font.id;
+          const stack = createFontStack([
+            metrics,
+            entireMetricsCollection.arial,
+          ]);
+
           const output = `
             @font-face {
               font-family: '${font.id}';
@@ -195,11 +206,12 @@ function vitePluginFontExtract({
               font-display: swap;
             }
             .__font_class_${font.id} {
-              font-family: '${font.id}';
+              font-family: ${stack.fontFamily};
             }
             .__font_variable_${font.id} {
-              ${font.variable}: '${font.id}';
+              ${font.variable}: ${stack.fontFamily};
             }
+            ${stack.fontFaces}
           `;
           return output;
         }
