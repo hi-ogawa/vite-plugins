@@ -213,11 +213,8 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     }
 
     // recurse children
-    for (const match of matchChildren(node, segments)) {
-      const branch = recurse(
-        match.node,
-        match.segment.type === "group" ? segments : segments.slice(1),
-      );
+    for (const { match, nextSegments } of matchChildren(node, segments)) {
+      const branch = recurse(match.node, nextSegments);
       if (branch) {
         branches.push([match, ...branch]);
       }
@@ -255,51 +252,64 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   }
 }
 
-// TODO: should also return un-consumed segments
 function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
-  const candidates: { node: TreeNode<T>; segment: MatchSegment }[] = [];
-  const segment = segments[0]!;
+  const candidates: {
+    match: { node: TreeNode<T>; segment: MatchSegment };
+    nextSegments: string[];
+  }[] = [];
   for (const [key, child] of Object.entries(node.children ?? {})) {
     const mGroup = key.match(GROUP_RE);
     if (mGroup) {
       tinyassert(1 in mGroup);
       candidates.push({
-        node: child,
-        segment: {
-          type: "group",
-          key: mGroup[1]!,
+        match: {
+          node: child,
+          segment: {
+            type: "group",
+            key: mGroup[1]!,
+          },
         },
+        nextSegments: segments,
       });
     }
     const matchCatchAll = key.match(CATCH_ALL_RE);
     if (matchCatchAll) {
       candidates.push({
-        node: child,
-        segment: {
-          type: "catchall",
-          key: matchCatchAll[1]!,
-          value: segments.join("/"),
+        match: {
+          node: child,
+          segment: {
+            type: "catchall",
+            key: matchCatchAll[1]!,
+            value: segments.join("/"),
+          },
         },
+        nextSegments: [],
       });
     }
     const matchDynamic = key.match(DYNAMIC_RE);
     if (matchDynamic) {
       candidates.push({
-        node: child,
-        segment: {
-          type: "dynamic",
-          key: matchDynamic[1]!,
-          value: segment,
+        match: {
+          node: child,
+          segment: {
+            type: "dynamic",
+            key: matchDynamic[1]!,
+            value: segments[0]!,
+          },
         },
+        nextSegments: segments.slice(1),
       });
     }
     if (key === segments[0]) {
       candidates.push({
-        node: child,
-        segment: {
-          type: "static",
-          value: segment,
+        match: {
+          node: child,
+          segment: {
+            type: "static",
+            value: segments[0]!,
+          },
         },
+        nextSegments: segments.slice(1),
       });
     }
   }
