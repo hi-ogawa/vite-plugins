@@ -148,7 +148,7 @@ describe(matchRouteTree2, () => {
 
     const testCases = [
       "/a/u",
-      "/a/c/u", // TODO: probably this should trigger /(x)/a/c/not-found.js
+      "/a/c/u", // TODO: probably this should trigger /(x)/a/c/not-found.js (but it appears Next.js doesn't do it either?)
       "/p/u", // TODO: see processNotFound
     ];
     for (const e of testCases) {
