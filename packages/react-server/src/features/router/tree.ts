@@ -128,6 +128,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   pathname: string,
   leafType: "page" | "route" = "page",
 ): MatchEntry2<T>[] | undefined {
+  // TODO: fix up not-found
   return recurse(
     tree,
     toRawSegments(pathname).map((s) => decodeURI(s)),
@@ -173,17 +174,30 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     }
 
     // tie break branches
-    return sortBy(branches, (b) => scoreBranch(b))[0];
+    return sortBy(branches, (b) => -scoreBranch(b))[0];
   }
+
+  // TODO: test case
+  // routes:
+  //   /a/b/c
+  //   /[x]/b/d
+  // cases:
+  // /a/b/c => page /a/b/c
+  // /a/b/d => not-found /a/b
+  // /x/b/e => not-found /x/b
 
   // TODO
   // need to score not-found
   // or maybe we shouldn't handle not-found in this way...
   function scoreBranch(branch: MatchEntry2<T>[]) {
-    const type = branch[0]?.segment.type;
-    tinyassert(type);
-    if (type === "dynamic") return 1;
-    if (type === "catchall") return 2;
+    const first = branch[0]?.segment.type;
+    const last = branch.at(-1)!.segment.type;
+    tinyassert(first && last);
+    // static = group > dynamic > catchall
+    if (first === "dynamic") return -2;
+    if (first === "catchall") return -3;
+    // page > not-found
+    if (last === "not-found") return -1;
     return 0;
   }
 }
