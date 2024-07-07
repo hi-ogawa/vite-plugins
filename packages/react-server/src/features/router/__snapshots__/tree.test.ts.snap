@@ -1563,8 +1563,8 @@ exports[`matchRouteTree2 > group routes basic 3`] = `
     {
       "node": undefined,
       "segment": {
-        "key": "x",
         "type": "group",
+        "value": "(x)",
       },
     },
     {
@@ -1611,8 +1611,8 @@ exports[`matchRouteTree2 > group routes basic 4`] = `
         "page": "/c/(x)/page.js",
       },
       "segment": {
-        "key": "x",
         "type": "group",
+        "value": "(x)",
       },
     },
     {
@@ -1641,8 +1641,8 @@ exports[`matchRouteTree2 > group routes basic 5`] = `
     {
       "node": undefined,
       "segment": {
-        "key": "x",
         "type": "group",
+        "value": "(x)",
       },
     },
     {
@@ -1657,8 +1657,8 @@ exports[`matchRouteTree2 > group routes basic 5`] = `
         "page": "/(x)/d/(y)/page.js",
       },
       "segment": {
-        "key": "y",
         "type": "group",
+        "value": "(y)",
       },
     },
     {
@@ -1805,8 +1805,8 @@ exports[`matchRouteTree2 > group routes not-found 4`] = `
     {
       "node": undefined,
       "segment": {
-        "key": "x",
         "type": "group",
+        "value": "(x)",
       },
     },
     {
@@ -1863,7 +1863,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
   "_pathname": "/a",
   "matches": [
     {
-      "id": ":static",
+      "id": "/:static",
       "node": "_",
       "params": [
         {
@@ -1871,6 +1871,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
           "value": "",
         },
       ],
+      "path": "/",
       "segment": {
         "type": "static",
         "value": "",
@@ -1889,13 +1890,14 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
           "value": "a",
         },
       ],
+      "path": "/a",
       "segment": {
         "type": "static",
         "value": "a",
       },
     },
     {
-      "id": "/a/:page",
+      "id": "/a:page",
       "node": "_",
       "params": [
         {
@@ -1910,6 +1912,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
           "type": "page",
         },
       ],
+      "path": "/a",
       "segment": {
         "type": "page",
       },
@@ -1923,7 +1926,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
   "_pathname": "/a/b",
   "matches": [
     {
-      "id": ":static",
+      "id": "/:static",
       "node": "_",
       "params": [
         {
@@ -1931,6 +1934,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
           "value": "",
         },
       ],
+      "path": "/",
       "segment": {
         "type": "static",
         "value": "",
@@ -1949,6 +1953,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
           "value": "a",
         },
       ],
+      "path": "/a",
       "segment": {
         "type": "static",
         "value": "a",
@@ -1971,13 +1976,14 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
           "value": "b",
         },
       ],
+      "path": "/a/b",
       "segment": {
         "type": "static",
         "value": "b",
       },
     },
     {
-      "id": "/a/b/:page",
+      "id": "/a/b:page",
       "node": "_",
       "params": [
         {
@@ -1996,6 +2002,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
           "type": "page",
         },
       ],
+      "path": "/a/b",
       "segment": {
         "type": "page",
       },
@@ -2009,7 +2016,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
   "_pathname": "/a/b/c",
   "matches": [
     {
-      "id": ":static",
+      "id": "/:static",
       "node": "_",
       "params": [
         {
@@ -2017,6 +2024,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
           "value": "",
         },
       ],
+      "path": "/",
       "segment": {
         "type": "static",
         "value": "",
@@ -2035,6 +2043,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
           "value": "a",
         },
       ],
+      "path": "/a",
       "segment": {
         "type": "static",
         "value": "a",
@@ -2057,6 +2066,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
           "value": "b/c",
         },
       ],
+      "path": "/a/b/c",
       "segment": {
         "type": "not-found",
         "value": "b/c",

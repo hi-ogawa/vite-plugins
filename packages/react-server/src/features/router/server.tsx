@@ -14,6 +14,7 @@ import {
   parseRoutePath,
   toMatchParamsObject,
   toRouteId,
+  withMatchRouteId,
 } from "./tree";
 import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
 
@@ -205,7 +206,16 @@ export function getCachedRoutes(
   {
     const matches = matchRouteTree2(tree, lastPathname, "page");
     tinyassert(matches);
-    // with rute
+    for (const m of withMatchRouteId(matches)) {
+      // find non-revalidated layouts
+      if (
+        0 &&
+        m.segment.type !== "page" &&
+        !revalidations.some((r) => r && isAncestorPath(r, m.path))
+      ) {
+        routeIds.push(m.id);
+      }
+    }
   }
   for (const m of matches) {
     if (

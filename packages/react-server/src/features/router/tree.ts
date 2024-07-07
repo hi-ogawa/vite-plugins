@@ -87,6 +87,7 @@ export function fromRawSegments(segments: string[]) {
   return segments.join("/") || "/";
 }
 
+// TODO: "segment" is confusing?
 export type MatchSegment =
   | {
       type: "static";
@@ -104,7 +105,7 @@ export type MatchSegment =
     }
   | {
       type: "group";
-      key: string;
+      value: string;
     }
   // the last match is guranteed to be one of the below
   | {
@@ -123,8 +124,10 @@ type MatchEntry2<T> = {
   segment: MatchSegment;
 };
 
+// TODO: refactor
 export type MatchEntry3<T> = MatchEntry2<T> & {
   id: string;
+  path: string;
   params: MatchSegment[];
 };
 
@@ -134,12 +137,15 @@ export function withMatchRouteId<T>(
   const segments = matches.map((m) => m.segment);
   return matches.map((match, i) => {
     const params = segments.slice(0, i + 1);
-    const id =
-      params.map((e) => toMatchParamEntry(e)[1] ?? "").join("/") +
-      ":" +
-      match.segment.type;
+    const path = fromRawSegments(
+      params
+        .map((e) => "value" in e && e.value)
+        .filter((e): e is string => typeof e === "string"),
+    );
+    const id = `${path}:${match.segment.type}`;
     return {
       id,
+      path,
       params,
       ...match,
     } satisfies MatchEntry3<T>;
@@ -152,7 +158,7 @@ export function toMatchParamEntry(s: MatchSegment) {
   if (s.type === "static") return [null, s.value];
   if (s.type === "dynamic") return [s.key, s.value];
   if (s.type === "catchall") return [s.key, s.value];
-  if (s.type === "group") return [null, s.key];
+  if (s.type === "group") return [null, s.value];
   if (s.type === "not-found") return [null, s.value];
   return [null, null];
 }
@@ -246,13 +252,12 @@ function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
   for (const [key, child] of Object.entries(node.children ?? {})) {
     const mGroup = key.match(GROUP_RE);
     if (mGroup) {
-      tinyassert(1 in mGroup);
       candidates.push({
         match: {
           node: child,
           segment: {
             type: "group",
-            key: mGroup[1]!,
+            value: key,
           },
         },
         nextSegments: segments,
