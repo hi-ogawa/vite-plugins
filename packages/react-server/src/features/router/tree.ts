@@ -123,7 +123,9 @@ type MatchEntry2<T> = {
   segment: MatchSegment;
 };
 
-export function toMatchParam(s: MatchSegment) {
+type MatchResult2<T> = MatchEntry2<T>[] | undefined;
+
+export function toMatchParamEntry(s: MatchSegment) {
   if (s.type === "static") return [null, s.value];
   if (s.type === "dynamic") return [s.key, s.value];
   if (s.type === "catchall") return [s.key, s.value];
@@ -135,7 +137,7 @@ export function toMatchParam(s: MatchSegment) {
 export function toMatchParams(segments: MatchSegment[]) {
   let result: MatchParams = {};
   for (const s of segments) {
-    const [k, v] = toMatchParam(s);
+    const [k, v] = toMatchParamEntry(s);
     if (typeof k === "string" && typeof v === "string") {
       result[k] = v;
     }
@@ -147,22 +149,45 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
   leafType: "page" | "route",
-): MatchEntry2<T>[] | undefined {
-  // TODO: fix up not-found
-  return recurse(
-    tree,
-    toRawSegments(pathname).map((s) => decodeURI(s)),
-    null,
-  );
+): MatchResult2<T> {
+  const allSegments = toRawSegments(pathname).map((s) => decodeURI(s));
+  const matches = recurse(tree, allSegments, null);
+  // need to fix up not-found after branches tie-break
+  return processNotFound(matches, allSegments);
+
+  //
+  // TODO: move outside
+  //
+  function processNotFound(
+    matches: MatchResult2<T>,
+    segments: string[],
+  ): MatchResult2<T> {
+    if (matches) {
+      const last = matches?.at(-1);
+      if (last?.segment.type === "not-found") {
+        const i = matches.findLastIndex((m) => m.node.value?.["not-found"]);
+        if (i >= 0) {
+          matches = matches.slice(0, i + 1);
+          matches[i]!.segment = {
+            type: "not-found",
+            value: segments.slice(i).join("/"),
+          };
+          return matches;
+        }
+        return;
+      }
+    }
+    return matches;
+  }
 
   function recurse(
     node: TreeNode<T>,
     segments: string[],
-    parent: TreeNode<T> | null,
+    parent: TreeNode<T> | null, // feels off but works
   ): MatchEntry2<T>[] | undefined {
     // check page or route
     if (segments.length === 0) {
-      tinyassert(parent);
+      if (!parent) return;
       return [
         {
           node: parent,
@@ -189,9 +214,10 @@ export function matchRouteTree2<T extends AnyRouteModule>(
 
     // not-found
     if (branches.length === 0) {
+      if (!parent) return;
       return [
         {
-          node,
+          node: parent,
           segment: {
             type: "not-found",
             value: segments.join("/"),
@@ -201,7 +227,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     }
 
     // tie break branches
-    return sortBy(branches, (b) => -scoreBranch(b))[0];
+    return sortBy(branches, (b) => scoreBranch(b))[0];
   }
 
   // TODO: test case
@@ -213,18 +239,15 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   // /a/b/d => not-found /a/b
   // /x/b/e => not-found /x/b
 
-  // TODO
-  // need to score not-found
-  // or maybe we shouldn't handle not-found in this way...
   function scoreBranch(branch: MatchEntry2<T>[]) {
     const first = branch[0]?.segment.type;
     const last = branch.at(-1)!.segment.type;
     tinyassert(first && last);
-    // static = group > dynamic > catchall
-    if (first === "dynamic") return -2;
-    if (first === "catchall") return -3;
-    // page > not-found
-    if (last === "not-found") return -1;
+    // static = group < dynamic < catchall
+    if (first === "dynamic") return 2;
+    if (first === "catchall") return 3;
+    // static < group if not-found
+    if (first === "group" && last === "not-found") return 1;
     return 0;
   }
 }
