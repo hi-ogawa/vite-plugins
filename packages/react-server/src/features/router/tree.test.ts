@@ -83,7 +83,11 @@ describe(matchRouteTree2, () => {
       };
     }
 
-    const testCases = ["/a/b/c", "/a/b/d", "/x/b/e"];
+    const testCases = [
+      "/a/b/c",
+      "/a/b/d", // -> /a/not-found.js
+      "/x/b/e", // -> /[x]/not-found.js
+    ];
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
     }
