@@ -89,7 +89,7 @@ describe(matchRouteTree2, () => {
     }
   });
 
-  it.only("group routes", async () => {
+  it("group routes", async () => {
     const files = [
       "/a/page.js",
       "/(x)/b/page.js",
