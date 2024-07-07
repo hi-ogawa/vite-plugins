@@ -163,9 +163,6 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     matches: MatchResult2<T>,
     segments: string[],
   ): MatchResult2<T> {
-    console.log(matches);
-    if (1) return matches;
-
     if (matches) {
       const last = matches?.at(-1);
       if (last?.segment.type === "not-found") {
@@ -222,7 +219,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
 
     // not-found
     if (branches.length === 0) {
-      branches.push([
+      return [
         {
           node,
           segment: {
@@ -230,7 +227,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
             value: segments.join("/"),
           },
         },
-      ]);
+      ];
     }
 
     // tie break branches
@@ -244,10 +241,11 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     // static = group < dynamic < catchall
     if (first === "dynamic") return 2;
     if (first === "catchall") return 3;
-    // TODO
     // static < group if not-found
-    // if (first === "group" && last === "not-found") return 1;
-    if (last === "not-found") return 1;
+    if (last === "not-found") {
+      if (first === "group") return 1.5;
+      return 1;
+    }
     return 0;
   }
 }
