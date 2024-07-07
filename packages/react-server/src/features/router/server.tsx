@@ -16,6 +16,7 @@ import {
 } from "./tree";
 import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
 
+// TODO(refactor): move to tree.ts with ROUTE_MODULE_KEYS constants
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 export interface RouteModule {
   page?: {
