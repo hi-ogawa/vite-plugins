@@ -148,8 +148,11 @@ describe(matchRouteTree2, () => {
 
     const testCases = [
       "/a/u",
-      "/a/c/u", // TODO: probably this should trigger /(x)/a/c/not-found.js (but it appears Next.js doesn't do it either?)
-      "/p/u", // TODO: see processNotFound
+      // TODO
+      // maybe this should trigger /(x)/a/c/not-found.js
+      // but Next.js doesn't seem to do it
+      "/a/c/u",
+      "/p/u",
     ];
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
