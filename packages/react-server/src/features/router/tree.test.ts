@@ -184,6 +184,22 @@ describe(matchRouteTree, () => {
       expect(tester.match(e)).matchSnapshot();
     }
   });
+
+  it("catch-all strict", async () => {
+    const tester = createMatchTester(["/a/[...any]/page.js"]);
+    const testCases = ["/a", "/a/b", "/a/b/c"];
+    for (const e of testCases) {
+      expect(tester.match(e)).matchSnapshot();
+    }
+  });
+
+  it("catch-all opitonal", async () => {
+    const tester = createMatchTester(["/a/[[...any]]/page.js"]);
+    const testCases = ["/a", "/a/b", "/a/b/c"];
+    for (const e of testCases) {
+      expect(tester.match(e)).matchSnapshot();
+    }
+  });
 });
 
 describe(parseRoutePath, () => {
