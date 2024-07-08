@@ -91,10 +91,10 @@ type MatchEntry2<T> = {
 };
 
 export type MatchEntry3<T> = {
+  node: TreeNode<T>;
   id: string;
   path: string; // TODO: rename to "key"? note that this `path` contains group segment e.g. /x/(g)/z
   type: "layout" | "page" | "not-found";
-  node: TreeNode<T>;
   params: MatchParamEntry[];
 };
 
