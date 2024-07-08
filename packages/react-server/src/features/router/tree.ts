@@ -87,7 +87,7 @@ export function fromRawSegments(segments: string[]): string {
   return segments.join("/") || "/";
 }
 
-// TODO: "segment" is confusing?
+// TODO: "segment" is confusing? matchType? matchEntry?
 export type MatchSegment =
   | {
       type: "static";
@@ -135,6 +135,8 @@ export function withMatchRouteId<T>(
   matches: MatchEntry2<T>[],
 ): MatchEntry3<T>[] {
   const segments = matches.map((m) => m.segment);
+  const params = segments.map((s) => toMatchParamEntry(s));
+  params;
   return matches.map((match, i) => {
     const prefix = segments.slice(0, i + 1);
     const params = prefix
@@ -150,6 +152,31 @@ export function withMatchRouteId<T>(
     } satisfies MatchEntry3<T>;
   });
 }
+
+// export function matchRouteTree3<T extends AnyRouteModule>(
+//   tree: TreeNode<T>,
+//   pathname: string,
+// ) {
+//   const matches = matchRouteTree2(tree, pathname, "page");
+//   tinyassert(matches);
+//   const segments = matches.map((m) => m.segment);
+//   const params = segments.map((s) => toMatchParamEntry(s));
+
+//   matches.map((match, i) => {
+//     const prefix = segments.slice(0, i + 1);
+//     const params = prefix
+//       .map((param) => toMatchParamEntry(param))
+//       .filter(typedBoolean);
+//     const path = fromRawSegments(params.map(([_k, v]) => v));
+//     const id = `${path}:${match.segment.type}`;
+//     return {
+//       id,
+//       path,
+//       params,
+//       ...match,
+//     } satisfies MatchEntry3<T>;
+//   });
+// }
 
 type MatchResult2<T> = MatchEntry2<T>[] | undefined;
 
@@ -388,6 +415,7 @@ function matchRouteChild<T>(input: string, node: TreeNode<T>) {
   return;
 }
 
+// TODO: support ssg with route groups
 export function parseRoutePath(pathname: string) {
   const dynamicMap: Record<string, string> = {};
 

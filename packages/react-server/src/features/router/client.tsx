@@ -60,6 +60,7 @@ export function useParams() {
 }
 
 type LayoutMatchType = {
+  // TODO: (refactor) keeps MatchSegment[] instead?
   params: MatchParamEntry[];
 };
 
