@@ -2428,6 +2428,28 @@ exports[`matchRouteTree > dynamic not-found 4`] = `
 }
 `;
 
+exports[`matchRouteTree > dynamic vs not-found 1`] = `
+{
+  "__pathname": "/a",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "a",
+      },
+    },
+  ],
+}
+`;
+
 exports[`matchRouteTree > group routes basic 1`] = `
 {
   "children": {

@@ -120,6 +120,14 @@ describe(matchRouteTree, () => {
     }
   });
 
+  it("dynamic vs not-found", async () => {
+    const tester = createMatchTester(["/not-found.js", "/[x]/page.js"]);
+    const testCases = ["/a"];
+    for (const e of testCases) {
+      expect(tester.match(e)).matchSnapshot();
+    }
+  });
+
   it("group routes basic", async () => {
     const tester = createMatchTester([
       "/a/page.js",
