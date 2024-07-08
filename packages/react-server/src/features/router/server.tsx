@@ -9,7 +9,6 @@ import {
   type MatchParamEntry,
   type TreeNode,
   createFsRouteTree,
-  matchRouteTree2,
   matchRouteTree3,
   parseRoutePath,
   toMatchParamsObject,
