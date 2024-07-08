@@ -79,11 +79,11 @@ export type MatchResult<T> = {
  * "/a" => ["", "a"]
  * "/a/b" => ["", "a", "b"]
  */
-function toRawSegments(pathname: string) {
-  return ["", ...pathname.slice(1).split("/")];
+function toRawSegments(pathname: string): string[] {
+  return pathname === "/" ? [""] : pathname.split("/");
 }
 
-export function fromRawSegments(segments: string[]) {
+export function fromRawSegments(segments: string[]): string {
   return segments.join("/") || "/";
 }
 

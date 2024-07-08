@@ -1316,6 +1316,81 @@ exports[`createFsRouteTree > basic 17`] = `
 }
 `;
 
+exports[`matchRouteTree2 > basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "a": {
+          "value": {
+            "page": "/a/page.js",
+          },
+        },
+      },
+      "value": {
+        "page": "/page.js",
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree2 > basic 2`] = `
+{
+  "_pathname": "/",
+  "matches": [
+    {
+      "node": true,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": true,
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > basic 3`] = `
+{
+  "_pathname": "/a",
+  "matches": [
+    {
+      "node": true,
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": true,
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": true,
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > basic 4`] = `
+{
+  "_pathname": "/b",
+  "matches": undefined,
+}
+`;
+
 exports[`matchRouteTree2 > dynamic not-found 1`] = `
 {
   "children": {
@@ -1860,6 +1935,43 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 1`] = `
 
 exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
 {
+  "_pathname": "/",
+  "matches": [
+    {
+      "id": "/:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+      ],
+      "path": "/",
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/:page",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+      ],
+      "path": "/",
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
+{
   "_pathname": "/a",
   "matches": [
     {
@@ -1918,7 +2030,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
 }
 `;
 
-exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
+exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
 {
   "_pathname": "/a/b",
   "matches": [
@@ -2005,7 +2117,7 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
 }
 `;
 
-exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
+exports[`matchRouteTree2 > withMatchRouteId > basic 5`] = `
 {
   "_pathname": "/a/b/c",
   "matches": [
