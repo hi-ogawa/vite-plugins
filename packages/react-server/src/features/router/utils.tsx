@@ -12,18 +12,6 @@ export type FlightData = {
 
 export const LAYOUT_ROOT_NAME = "__root";
 
-/**
- * @example
- * "/" => ["/"]
- * "/a" => ["/", "/a"]
- * "/a/b" => ["/", "/a", "/a/b"]
- */
-export function getPathPrefixes(pathname: string) {
-  pathname = pathname.replaceAll(/\/*$/g, "");
-  const keys = pathname.split("/");
-  return keys.map((_key, i) => keys.slice(0, i + 1).join("/") || "/");
-}
-
 // enforce no trailing slash for simplicity
 export function handleTrailingSlash(url: URL) {
   const normalized = url.pathname.replaceAll(/\/*$/g, "") || "/";
