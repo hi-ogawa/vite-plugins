@@ -1,4 +1,4 @@
-import { isNotNil, sortBy, tinyassert, typedBoolean } from "@hiogawa/utils";
+import { isNotNil, sortBy, tinyassert } from "@hiogawa/utils";
 import type { AnyRouteModule } from "./server";
 import { joinSegments, splitToSegments } from "./utils";
 
