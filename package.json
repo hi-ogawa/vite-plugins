@@ -17,8 +17,14 @@
     "@playwright/test": "^1.42.1",
     "@tsconfig/strictest": "^2.0.3",
     "@types/node": "^20.11.28",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "esbuild": "^0.20.2",
+    "react": "19.0.0-rc-c21bcd627b-20240624",
+    "react-dom": "19.0.0-rc-c21bcd627b-20240624",
+    "react-is": "19.0.0-rc-c21bcd627b-20240624",
+    "react-server-dom-webpack": "19.0.0-rc-c21bcd627b-20240624",
     "tsup": "^8.0.2",
     "tsx": "^4.7.1",
     "typescript": "^5.4.2",
@@ -33,11 +39,12 @@
   "pnpm": {
     "overrides": {
       "vite": "$vite",
-      "react": "19.0.0-rc-c21bcd627b-20240624",
-      "react-dom": "19.0.0-rc-c21bcd627b-20240624",
-      "react-is": "19.0.0-rc-c21bcd627b-20240624",
-      "@types/react": "18.3.1",
-      "@types/react-dom": "18.3.0"
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "react-is": "$react-is",
+      "react-server-dom-webpack": "$react-server-dom-webpack",
+      "@types/react": "$@types/react",
+      "@types/react-dom": "$@types/react-dom"
     }
   }
 }

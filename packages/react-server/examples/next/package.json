@@ -18,14 +18,14 @@
   "dependencies": {
     "@hiogawa/react-server": "latest",
     "next": "link:../../../react-server-next",
-    "react": "19.0.0-rc-c21bcd627b-20240624",
-    "react-dom": "19.0.0-rc-c21bcd627b-20240624",
-    "react-server-dom-webpack": "19.0.0-rc-c21bcd627b-20240624"
+    "react": "rc",
+    "react-dom": "rc",
+    "react-server-dom-webpack": "rc"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.1",
-    "@types/react": "18.3.1",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
     "vite": "latest"
   }
 }

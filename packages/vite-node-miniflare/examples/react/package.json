@@ -8,12 +8,12 @@
   },
   "dependencies": {
     "@hiogawa/vite-node-miniflare": "latest",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
     "@vitejs/plugin-react": "^4.2.1",
     "miniflare": "^3.20240304.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "latest",
+    "react-dom": "latest",
     "vite": "latest"
   }
 }

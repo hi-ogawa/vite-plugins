@@ -7,13 +7,13 @@
     "dev": "vite dev"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "latest",
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-simple-hmr": "workspace:*",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@types/react": "18.2.66",
-    "@types/react-dom": "18.2.22"
+    "@types/react": "latest",
+    "@types/react-dom": "latest"
   }
 }
