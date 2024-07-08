@@ -112,7 +112,8 @@ describe(matchRouteTree, () => {
 
     const testCases = [
       "/a/b/c",
-      "/a/b/d", // -> /a/not-found.js
+      // TODO: shoud trigger /a/not-found?
+      "/a/b/d", // -> /[x]/not-found.js
       "/x/b/e", // -> /[x]/not-found.js
     ];
     for (const e of testCases) {
@@ -157,11 +158,9 @@ describe(matchRouteTree, () => {
 
     const testCases = [
       "/a/u",
-      // TODO
-      // maybe this should trigger /(x)/a/c/not-found.js
-      // but Next.js doesn't seem to do it
-      "/a/c/u",
-      "/p/u",
+      // TODO: should trigger /(x)/a/c/not-found?
+      "/a/c/u", // -> /a/not-found
+      "/p/u", // -> /(x)/p/not-found
     ];
     for (const e of testCases) {
       expect(tester.match(e)).matchSnapshot();

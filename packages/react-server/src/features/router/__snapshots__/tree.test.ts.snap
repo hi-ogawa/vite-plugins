@@ -2383,15 +2383,29 @@ exports[`matchRouteTree > dynamic not-found 3`] = `
     {
       "node": {},
       "segment": {
-        "type": "static",
+        "key": "x",
+        "type": "dynamic",
         "value": "a",
       },
     },
     {
       "node": {},
       "segment": {
-        "type": "not-found",
-        "value": "b/d",
+        "type": "static",
+        "value": "b",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "d",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
       },
     },
   ],
@@ -2442,8 +2456,15 @@ exports[`matchRouteTree > dynamic vs not-found 1`] = `
     {
       "node": {},
       "segment": {
-        "type": "not-found",
+        "key": "x",
+        "type": "dynamic",
         "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
       },
     },
   ],

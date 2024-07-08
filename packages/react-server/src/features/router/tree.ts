@@ -212,15 +212,13 @@ function scoreBranch<T>(branch: MatchEntry<T>[]) {
   const first = branch[0]?.segment.type;
   const last = branch.at(-1)!.segment.type;
   tinyassert(first && last);
-  // static = group < dynamic < catchall
-  if (first === "dynamic") return 2;
-  if (first === "catchall") return 3;
-  // static < group if not-found
-  if (last === "not-found") {
-    if (first === "group") return 1.5;
-    return 1;
-  }
-  return 0;
+  let score = 0;
+  // static = group < dynamic < catchall < not-found
+  if (first === "dynamic") score += 2;
+  if (first === "catchall") score += 3;
+  // de-prioritize not-found
+  if (last === "not-found") score += 10;
+  return score;
 }
 
 function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
