@@ -11,7 +11,7 @@ import {
   createFsRouteTree,
   matchRouteTree3,
   parseRoutePath,
-  toMatchParamsObject2,
+  toMatchParamsObject,
 } from "./tree";
 import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
 
@@ -160,7 +160,7 @@ export async function renderRouteMap(
     parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
       ...baseProps,
-      params: toMatchParamsObject2(m.params),
+      params: toMatchParamsObject(m.params),
     };
     if (m.type === "layout") {
       nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.params);

@@ -13,7 +13,7 @@ import {
 import {
   type MatchSegment,
   toMatchParamEntries,
-  toMatchParamsObject2,
+  toMatchParamsObject,
 } from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
@@ -60,7 +60,7 @@ function useParamEntries() {
 
 export function useParams() {
   const entries = useParamEntries();
-  return React.useMemo(() => toMatchParamsObject2(entries), [entries]);
+  return React.useMemo(() => toMatchParamsObject(entries), [entries]);
 }
 
 type LayoutMatchType = {

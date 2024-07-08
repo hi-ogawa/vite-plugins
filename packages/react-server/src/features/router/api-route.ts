@@ -1,7 +1,7 @@
 import { injectResponseCookies } from "../next/cookie";
 import type { RequestContext } from "../request-context/server";
 import type { RouteModuleTree } from "./server";
-import { type MatchParams, matchRouteTree2, toMatchParams } from "./tree";
+import { type MatchParams, matchRouteTree2, toMatchParamsObject } from "./tree";
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/route
 
@@ -35,7 +35,7 @@ export async function handleApiRoutes(
   if (matches && match && match.segment.type === "route") {
     const handler = match?.node.value?.route?.[method];
     if (handler) {
-      const params = toMatchParams(matches.map((m) => m.segment));
+      const params = toMatchParamsObject(matches.map((m) => m.segment));
       const response = await requestContext.run(() =>
         handler(request, { params }),
       );

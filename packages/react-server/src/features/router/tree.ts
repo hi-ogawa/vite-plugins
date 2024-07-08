@@ -29,18 +29,8 @@ export function createFsRouteTree<T>(globEntries: Record<string, unknown>): {
 export type MatchParamEntry = [key: string | null, value: string];
 export type MatchParams = Record<string, string>;
 
-export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
-  let result: MatchParams = {};
-  for (const [k, v] of params) {
-    if (k) {
-      result[k] = v;
-    }
-  }
-  return result;
-}
-
-export function toMatchParamsObject2(segments: MatchSegment[]): MatchParams {
-  return toMatchParamsObject(toMatchParamEntries(segments));
+export function toMatchParamsObject(segments: MatchSegment[]): MatchParams {
+  return Object.assign({}, ...segments.map((s) => matchSegmentToParams(s)));
 }
 
 /**
@@ -88,6 +78,12 @@ export type MatchSegment =
   | {
       type: "route";
     };
+
+function matchSegmentToParams(s: MatchSegment): MatchParams {
+  return s.type === "dynamic" || s.type === "catchall"
+    ? { [s.key]: s.value }
+    : {};
+}
 
 type MatchEntry2<T> = {
   node: TreeNode<T>;
@@ -158,17 +154,6 @@ export function toMatchParamEntries(
   segments: MatchSegment[],
 ): MatchParamEntry[] {
   return segments.map((param) => toMatchParamEntry(param)).filter(typedBoolean);
-}
-
-export function toMatchParams(segments: MatchSegment[]) {
-  let result: MatchParams = {};
-  for (const s of segments) {
-    const [k, v] = toMatchParamEntry(s) ?? [];
-    if (typeof k === "string" && typeof v === "string") {
-      result[k] = v;
-    }
-  }
-  return result;
 }
 
 export function matchRouteTree2<T extends AnyRouteModule>(
