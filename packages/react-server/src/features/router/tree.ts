@@ -246,7 +246,7 @@ function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
       });
     }
     const matchCatchAll = key.match(CATCH_ALL_RE);
-    if (matchCatchAll) {
+    if (matchCatchAll && segments.length > 0) {
       candidates.push({
         match: {
           node: child,

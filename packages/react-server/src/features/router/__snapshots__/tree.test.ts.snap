@@ -2395,36 +2395,7 @@ exports[`matchRouteTree > catch-all opitonal 3`] = `
 exports[`matchRouteTree > catch-all strict 1`] = `
 {
   "__pathname": "/a",
-  "matches": [
-    {
-      "node": {},
-      "segment": {
-        "type": "static",
-        "value": "",
-      },
-    },
-    {
-      "node": {},
-      "segment": {
-        "type": "static",
-        "value": "a",
-      },
-    },
-    {
-      "node": {},
-      "segment": {
-        "key": "any",
-        "type": "catchall",
-        "value": "",
-      },
-    },
-    {
-      "node": {},
-      "segment": {
-        "type": "page",
-      },
-    },
-  ],
+  "matches": undefined,
 }
 `;
 
