@@ -11,7 +11,7 @@ export default async function Layout(props: LayoutProps) {
 
   return (
     <div className="flex flex-col gap-2 p-2 border">
-      <h1>/(shop)/[categorySlug]/layout.tsx</h1>
+      <h1>(shop)/[categorySlug]/layout.tsx</h1>
       <NavMenu
         links={subCategories.map((sub) => `/test/group/${category}/${sub}`)}
       />

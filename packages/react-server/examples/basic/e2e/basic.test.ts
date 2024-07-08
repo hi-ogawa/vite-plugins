@@ -1379,15 +1379,23 @@ async function testRouteGroups(page: Page) {
   await page.getByRole("link", { name: "• /test/group/electronics" }).click();
   await page.getByRole("heading", { name: "(shop)/layout.tsx" }).click();
   await page
-    .getByRole("heading", { name: "/(shop)/[categorySlug]/layout.tsx" })
+    .getByRole("heading", { name: "(shop)/[categorySlug]/layout.tsx" })
     .click();
   await page
-    .getByRole("heading", { name: "/(shop)/[categorySlug]/page.tsx" })
+    .getByRole("heading", { name: "(shop)/[categorySlug]/page.tsx" })
     .click();
   await page.getByText('{"categorySlug":"electronics"}').click();
 
   await page
     .getByRole("link", { name: "• /test/group/electronics/phones" })
+    .click();
+  await page
+    .getByRole("heading", { name: "(shop)/[categorySlug]/layout.tsx" })
+    .click();
+  await page
+    .getByRole("heading", {
+      name: "(shop)/[categorySlug]/[subCategorySlug]/page.tsx",
+    })
     .click();
   await page
     .getByText('{"categorySlug":"electronics","subCategorySlug":"phones"}')
