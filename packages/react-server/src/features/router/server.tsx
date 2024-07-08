@@ -163,7 +163,6 @@ export async function renderRouteMap(
   // it's guaranteed to have default not-found page at least
   tinyassert(matches && matches.length > 0);
   const matches2 = withMatchRouteId(matches);
-  console.log({ matches, matches2 });
   for (const m of matches2) {
     parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
