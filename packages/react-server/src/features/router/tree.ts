@@ -23,22 +23,7 @@ export function createFsRouteTree<T>(globEntries: Record<string, unknown>): {
   }));
   const tree = createTree(flatTree);
 
-  // TODO: this is not necessary anymore?
-  // sort to match static route first before dynamic route
-  sortDynamicRoutes(tree);
-
   return { entries, tree };
-}
-
-function sortDynamicRoutes<T>(tree: TreeNode<T>) {
-  if (tree.children) {
-    tree.children = Object.fromEntries(
-      sortBy(Object.entries(tree.children), ([k]) => k.includes("[")),
-    );
-    for (const v of Object.values(tree.children)) {
-      sortDynamicRoutes(v);
-    }
-  }
 }
 
 export type MatchParamEntry = [key: string | null, value: string];
