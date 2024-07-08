@@ -70,9 +70,9 @@ export function toMatchParams(segments: MatchSegment[]): MatchParams {
   for (const s of segments) {
     switch (s.type) {
       case "dynamic":
-      case "catchall": {
+      case "catchall":
+      case "catchall-optional":
         params[s.key] = s.value;
-      }
     }
   }
   return params;
@@ -85,6 +85,7 @@ export function toMatchValues(segments: MatchSegment[]): string[] {
       case "static":
       case "dynamic":
       case "catchall":
+      case "catchall-optional":
       case "group":
       case "not-found":
         values.push(s.value);
@@ -223,6 +224,7 @@ function scoreBranch<T>(branch: MatchEntry<T>[]) {
   // static = group < dynamic < catchall
   if (first === "dynamic") score += 2;
   if (first === "catchall") score += 3;
+  if (first === "catchall-optional") score += 4;
   return score;
 }
 
