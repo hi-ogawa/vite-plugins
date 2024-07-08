@@ -1,4 +1,4 @@
-import { sortBy, tinyassert } from "@hiogawa/utils";
+import { sortBy, tinyassert, typedBoolean } from "@hiogawa/utils";
 import type { AnyRouteModule } from "./server";
 import { getPathPrefixes } from "./utils";
 
@@ -128,7 +128,7 @@ type MatchEntry2<T> = {
 export type MatchEntry3<T> = MatchEntry2<T> & {
   id: string;
   path: string;
-  params: MatchSegment[];
+  params: MatchParamEntry[];
 };
 
 export function withMatchRouteId<T>(
@@ -136,12 +136,11 @@ export function withMatchRouteId<T>(
 ): MatchEntry3<T>[] {
   const segments = matches.map((m) => m.segment);
   return matches.map((match, i) => {
-    const params = segments.slice(0, i + 1);
-    const path = fromRawSegments(
-      params
-        .map((e) => "value" in e && e.value)
-        .filter((e): e is string => typeof e === "string"),
-    );
+    const prefix = segments.slice(0, i + 1);
+    const params = prefix
+      .map((param) => toMatchParamEntry(param))
+      .filter(typedBoolean);
+    const path = fromRawSegments(params.map(([_k, v]) => v));
     const id = `${path}:${match.segment.type}`;
     return {
       id,
@@ -154,19 +153,21 @@ export function withMatchRouteId<T>(
 
 type MatchResult2<T> = MatchEntry2<T>[] | undefined;
 
-export function toMatchParamEntry(s: MatchSegment) {
+export function toMatchParamEntry(
+  s: MatchSegment,
+): MatchParamEntry | undefined {
   if (s.type === "static") return [null, s.value];
   if (s.type === "dynamic") return [s.key, s.value];
   if (s.type === "catchall") return [s.key, s.value];
   if (s.type === "group") return [null, s.value];
   if (s.type === "not-found") return [null, s.value];
-  return [null, null];
+  return;
 }
 
 export function toMatchParams(segments: MatchSegment[]) {
   let result: MatchParams = {};
   for (const s of segments) {
-    const [k, v] = toMatchParamEntry(s);
+    const [k, v] = toMatchParamEntry(s) ?? [];
     if (typeof k === "string" && typeof v === "string") {
       result[k] = v;
     }

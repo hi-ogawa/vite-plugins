@@ -1866,10 +1866,10 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
       "id": "/:static",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
+        [
+          null,
+          "",
+        ],
       ],
       "path": "/",
       "segment": {
@@ -1881,14 +1881,14 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
       "id": "/a:static",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
-        {
-          "type": "static",
-          "value": "a",
-        },
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
       ],
       "path": "/a",
       "segment": {
@@ -1900,17 +1900,14 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 2`] = `
       "id": "/a:page",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
-        {
-          "type": "static",
-          "value": "a",
-        },
-        {
-          "type": "page",
-        },
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
       ],
       "path": "/a",
       "segment": {
@@ -1929,10 +1926,10 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
       "id": "/:static",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
+        [
+          null,
+          "",
+        ],
       ],
       "path": "/",
       "segment": {
@@ -1944,14 +1941,14 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
       "id": "/a:static",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
-        {
-          "type": "static",
-          "value": "a",
-        },
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
       ],
       "path": "/a",
       "segment": {
@@ -1963,18 +1960,18 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
       "id": "/a/b:static",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
-        {
-          "type": "static",
-          "value": "a",
-        },
-        {
-          "type": "static",
-          "value": "b",
-        },
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
+        [
+          null,
+          "b",
+        ],
       ],
       "path": "/a/b",
       "segment": {
@@ -1986,21 +1983,18 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 3`] = `
       "id": "/a/b:page",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
-        {
-          "type": "static",
-          "value": "a",
-        },
-        {
-          "type": "static",
-          "value": "b",
-        },
-        {
-          "type": "page",
-        },
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
+        [
+          null,
+          "b",
+        ],
       ],
       "path": "/a/b",
       "segment": {
@@ -2019,10 +2013,10 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
       "id": "/:static",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
+        [
+          null,
+          "",
+        ],
       ],
       "path": "/",
       "segment": {
@@ -2034,14 +2028,14 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
       "id": "/a:static",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
-        {
-          "type": "static",
-          "value": "a",
-        },
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
       ],
       "path": "/a",
       "segment": {
@@ -2053,18 +2047,18 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
       "id": "/a/b/c:not-found",
       "node": "_",
       "params": [
-        {
-          "type": "static",
-          "value": "",
-        },
-        {
-          "type": "static",
-          "value": "a",
-        },
-        {
-          "type": "not-found",
-          "value": "b/c",
-        },
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
+        [
+          null,
+          "b/c",
+        ],
       ],
       "path": "/a/b/c",
       "segment": {
