@@ -1,12 +1,12 @@
 import type { ActionResult } from "../server-action/server";
-import type { MatchParamEntry } from "./tree";
+import type { MatchSegment } from "./tree";
 
 export type FlightData = {
   action?: Pick<ActionResult, "error" | "data">;
   metadata?: React.ReactNode;
   nodeMap: Record<string, React.ReactNode>;
   layoutContentMap: Record<string, string>;
-  params: MatchParamEntry[];
+  params: MatchSegment[];
   url: string;
 };
 

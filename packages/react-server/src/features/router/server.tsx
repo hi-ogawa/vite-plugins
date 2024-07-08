@@ -6,12 +6,12 @@ import type { Metadata } from "../meta/utils";
 import type { RevalidationType } from "../server-component/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
-  type MatchParamEntry,
+  type MatchSegment,
   type TreeNode,
   createFsRouteTree,
   matchRouteTree3,
   parseRoutePath,
-  toMatchParamsObject,
+  toMatchParamsObject2,
 } from "./tree";
 import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
 
@@ -79,7 +79,7 @@ async function renderLayout(
   node: RouteModuleTree,
   props: PageProps,
   id: string,
-  params: MatchParamEntry[],
+  params: MatchSegment[],
 ) {
   const {
     ErrorBoundary,
@@ -160,7 +160,7 @@ export async function renderRouteMap(
     parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
       ...baseProps,
-      params: toMatchParamsObject(m.params),
+      params: toMatchParamsObject2(m.params),
     };
     if (m.type === "layout") {
       nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.params);

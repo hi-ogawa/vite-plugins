@@ -39,6 +39,10 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
   return result;
 }
 
+export function toMatchParamsObject2(segments: MatchSegment[]): MatchParams {
+  return toMatchParamsObject(toMatchParamEntries(segments));
+}
+
 /**
  * @example
  * "/" => [""]
@@ -95,12 +99,12 @@ export type MatchEntry3<T> = {
   id: string;
   path: string; // TODO: rename to "key"? note that this `path` contains group segment e.g. /x/(g)/z
   type: "layout" | "page" | "not-found";
-  params: MatchParamEntry[];
+  params: MatchSegment[];
 };
 
 export type MatchRouteResult3<T> = {
   matches: MatchEntry3<T>[];
-  params: MatchParamEntry[];
+  params: MatchSegment[];
   notFound: boolean;
 };
 
@@ -126,13 +130,13 @@ export function matchRouteTree3<T extends AnyRouteModule>(
       id,
       path,
       type,
-      params,
+      params: segments.slice(0, i + 1),
       node: m.node,
     } satisfies MatchEntry3<T>;
   });
   return {
     matches: matches3,
-    params: allParams,
+    params: segments,
     notFound: segments.at(-1)?.type === "not-found",
   };
 }

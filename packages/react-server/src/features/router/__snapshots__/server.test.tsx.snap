@@ -58,10 +58,10 @@ exports[`generateRouteModuleTree > basic 2`] = `
       value={
         {
           "params": [
-            [
-              null,
-              "",
-            ],
+            {
+              "type": "static",
+              "value": "",
+            },
           ],
         }
       }
@@ -106,14 +106,14 @@ exports[`generateRouteModuleTree > basic 2`] = `
       value={
         {
           "params": [
-            [
-              null,
-              "",
-            ],
-            [
-              null,
-              "x",
-            ],
+            {
+              "type": "static",
+              "value": "",
+            },
+            {
+              "type": "static",
+              "value": "x",
+            },
           ],
         }
       }
@@ -158,14 +158,17 @@ exports[`generateRouteModuleTree > basic 2`] = `
   },
   "notFound": false,
   "params": [
-    [
-      null,
-      "",
-    ],
-    [
-      null,
-      "x",
-    ],
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "x",
+    },
+    {
+      "type": "page",
+    },
   ],
 }
 `;
@@ -185,10 +188,10 @@ exports[`generateRouteModuleTree > basic 3`] = `
       value={
         {
           "params": [
-            [
-              null,
-              "",
-            ],
+            {
+              "type": "static",
+              "value": "",
+            },
           ],
         }
       }
@@ -233,18 +236,18 @@ exports[`generateRouteModuleTree > basic 3`] = `
       value={
         {
           "params": [
-            [
-              null,
-              "",
-            ],
-            [
-              null,
-              "x",
-            ],
-            [
-              null,
-              "y",
-            ],
+            {
+              "type": "static",
+              "value": "",
+            },
+            {
+              "type": "static",
+              "value": "x",
+            },
+            {
+              "type": "static",
+              "value": "y",
+            },
           ],
         }
       }
@@ -310,14 +313,14 @@ exports[`generateRouteModuleTree > basic 3`] = `
       value={
         {
           "params": [
-            [
-              null,
-              "",
-            ],
-            [
-              null,
-              "x",
-            ],
+            {
+              "type": "static",
+              "value": "",
+            },
+            {
+              "type": "static",
+              "value": "x",
+            },
           ],
         }
       }
@@ -337,18 +340,21 @@ exports[`generateRouteModuleTree > basic 3`] = `
   },
   "notFound": false,
   "params": [
-    [
-      null,
-      "",
-    ],
-    [
-      null,
-      "x",
-    ],
-    [
-      null,
-      "y",
-    ],
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "x",
+    },
+    {
+      "type": "static",
+      "value": "y",
+    },
+    {
+      "type": "page",
+    },
   ],
 }
 `;
@@ -366,10 +372,10 @@ exports[`generateRouteModuleTree > basic 4`] = `
       value={
         {
           "params": [
-            [
-              null,
-              "",
-            ],
+            {
+              "type": "static",
+              "value": "",
+            },
           ],
         }
       }
@@ -414,14 +420,14 @@ exports[`generateRouteModuleTree > basic 4`] = `
   },
   "notFound": true,
   "params": [
-    [
-      null,
-      "",
-    ],
-    [
-      null,
-      "z",
-    ],
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "not-found",
+      "value": "z",
+    },
   ],
 }
 `;

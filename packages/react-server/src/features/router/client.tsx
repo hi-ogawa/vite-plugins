@@ -10,7 +10,11 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import { type MatchParamEntry, toMatchParamsObject } from "./tree";
+import {
+  type MatchSegment,
+  toMatchParamEntries,
+  toMatchParamsObject2,
+} from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
 export const FlightDataContext = React.createContext<Promise<FlightData>>(
@@ -56,12 +60,12 @@ function useParamEntries() {
 
 export function useParams() {
   const entries = useParamEntries();
-  return React.useMemo(() => toMatchParamsObject(entries), [entries]);
+  return React.useMemo(() => toMatchParamsObject2(entries), [entries]);
 }
 
 type LayoutMatchType = {
   // TODO: (refactor) keeps MatchSegment[] instead?
-  params: MatchParamEntry[];
+  params: MatchSegment[];
 };
 
 const LayoutMatchContext = React.createContext<LayoutMatchType>(undefined!);
@@ -80,7 +84,10 @@ function useSelectedParamEntries() {
 
 export function useSelectedLayoutSegments(): string[] {
   const entries = useSelectedParamEntries();
-  return React.useMemo(() => entries.map(([_k, v]) => v), [entries]);
+  return React.useMemo(
+    () => toMatchParamEntries(entries).map(([_k, v]) => v),
+    [entries],
+  );
 }
 
 export function RemountRoute(props: React.PropsWithChildren) {
