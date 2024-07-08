@@ -127,11 +127,11 @@ export type MatchRouteResult<T> = {
   notFound: boolean;
 };
 
-export function matchRouteTree3<T extends AnyRouteModule>(
+export function matchPageRoute<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
 ): MatchRouteResult<T> {
-  const matches = matchRouteTree2(tree, pathname, "page");
+  const matches = matchRouteTree(tree, pathname, "page");
   tinyassert(matches && matches.length > 0);
   const segments = matches.map((m) => m.segment);
   const pageMatches = matches.map((m, i) => {
@@ -156,7 +156,7 @@ export function matchRouteTree3<T extends AnyRouteModule>(
 
 type MatchResult2<T> = MatchEntry<T>[] | undefined;
 
-export function matchRouteTree2<T extends AnyRouteModule>(
+export function matchRouteTree<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
   leafType: "page" | "route",

@@ -9,7 +9,7 @@ import {
   type MatchSegment,
   type TreeNode,
   createFsRouteTree,
-  matchRouteTree3,
+  matchPageRoute,
   parseRoutePath,
   toMatchParams,
 } from "./tree";
@@ -155,7 +155,7 @@ export async function renderRouteMap(
   const layoutContentMap: Record<string, string> = {};
   const nodeMap: Record<string, React.ReactNode> = {};
   let parentLayout = LAYOUT_ROOT_NAME;
-  const result = matchRouteTree3(tree, url.pathname);
+  const result = matchPageRoute(tree, url.pathname);
   for (const m of result.matches) {
     parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
@@ -193,7 +193,7 @@ export function getCachedRoutes(
   revalidations: (RevalidationType | undefined)[],
 ) {
   const routeIds: string[] = [];
-  const result = matchRouteTree3(tree, lastPathname);
+  const result = matchPageRoute(tree, lastPathname);
   for (const m of result.matches) {
     // find non-revalidated layouts
     if (

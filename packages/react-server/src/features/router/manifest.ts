@@ -1,6 +1,6 @@
 import { objectMapValues, typedBoolean, uniq } from "@hiogawa/utils";
 import type { RouteModuleKey } from "./server";
-import { type TreeNode, matchRouteTree2 } from "./tree";
+import { type TreeNode, matchRouteTree } from "./tree";
 
 export type RouteManifest = {
   routeTree: TreeNode<RouteAssetDeps>;
@@ -21,7 +21,7 @@ export function getRouteAssetDeps(
   manifest: RouteManifest,
   pathname: string,
 ): AssetDeps {
-  const matches = matchRouteTree2(manifest.routeTree, pathname, "page");
+  const matches = matchRouteTree(manifest.routeTree, pathname, "page");
   const deps = matches?.flatMap((m) => {
     const v = m.node.value;
     return [v?.page, v?.layout, v?.error].filter(typedBoolean);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AnyRouteModule } from "./server";
-import { createFsRouteTree, matchRouteTree2, matchRouteTree3 } from "./tree";
+import { createFsRouteTree, matchPageRoute, matchRouteTree } from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
@@ -27,7 +27,7 @@ describe(createFsRouteTree, () => {
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
-      const result = matchRouteTree3(tree, pathname);
+      const result = matchPageRoute(tree, pathname);
       return {
         __pathname: pathname,
         matches: result.matches.map((m) => ({
@@ -61,7 +61,7 @@ describe(createFsRouteTree, () => {
   });
 });
 
-describe(matchRouteTree2, () => {
+describe(matchRouteTree, () => {
   it("basic", async () => {
     const files = ["/page.js", "/a/page.js"];
     const input = Object.fromEntries(files.map((k) => [k, k]));
@@ -69,7 +69,7 @@ describe(matchRouteTree2, () => {
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
-      const matches = matchRouteTree2(tree, pathname, "page");
+      const matches = matchRouteTree(tree, pathname, "page");
       return {
         _pathname: pathname,
         matches: matches?.map((m) => ({
@@ -97,7 +97,7 @@ describe(matchRouteTree2, () => {
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
-      const matches = matchRouteTree2(tree, pathname, "page");
+      const matches = matchRouteTree(tree, pathname, "page");
       return {
         _pathname: pathname,
         matches: matches?.map((m) => ({
@@ -129,7 +129,7 @@ describe(matchRouteTree2, () => {
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
-      const matches = matchRouteTree2(tree, pathname, "page");
+      const matches = matchRouteTree(tree, pathname, "page");
       return {
         _pathname: pathname,
         matches: matches?.map((m) => ({
@@ -160,7 +160,7 @@ describe(matchRouteTree2, () => {
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
-      const matches = matchRouteTree2(tree, pathname, "page");
+      const matches = matchRouteTree(tree, pathname, "page");
       return {
         _pathname: pathname,
         matches: matches?.map((m) => ({
@@ -184,7 +184,7 @@ describe(matchRouteTree2, () => {
   });
 
   // TODO: include this above
-  describe(matchRouteTree3, () => {
+  describe(matchPageRoute, () => {
     it("basic", () => {
       const files = [
         "/page.js",
@@ -197,7 +197,7 @@ describe(matchRouteTree2, () => {
       expect(tree).toMatchSnapshot();
 
       function testMatch(pathname: string) {
-        const result = matchRouteTree3(tree, pathname);
+        const result = matchPageRoute(tree, pathname);
         return {
           _pathname: pathname,
           matches: result.matches.map((m) => ({
@@ -225,7 +225,7 @@ describe(matchRouteTree2, () => {
       expect(tree).toMatchSnapshot();
 
       function testMatch(pathname: string) {
-        const result = matchRouteTree3(tree, pathname);
+        const result = matchPageRoute(tree, pathname);
         return {
           _pathname: pathname,
           matches: result.matches.map((m) => ({
