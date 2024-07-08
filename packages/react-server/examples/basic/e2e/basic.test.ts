@@ -1360,3 +1360,45 @@ test("cookies api route", async ({ request }) => {
     });
   }
 });
+
+test("route groups @js", async ({ page }) => {
+  await page.goto("/test/group");
+  await waitForHydration(page);
+  await testRouteGroups(page);
+});
+
+testNoJs("route groups @nojs", async ({ page }) => {
+  await page.goto("/test/group");
+  await testRouteGroups(page);
+});
+
+async function testRouteGroups(page: Page) {
+  await page.getByRole("heading", { name: "(main)/layout.tsx" }).click();
+  await page.getByText("(main)/page.tsx").click();
+
+  await page.getByRole("link", { name: "• /test/group/electronics" }).click();
+  await page.getByRole("heading", { name: "(shop)/layout.tsx" }).click();
+  await page
+    .getByRole("heading", { name: "/(shop)/[categorySlug]/layout.tsx" })
+    .click();
+  await page
+    .getByRole("heading", { name: "/(shop)/[categorySlug]/page.tsx" })
+    .click();
+  await page.getByText('{"categorySlug":"electronics"}').click();
+
+  await page
+    .getByRole("link", { name: "• /test/group/electronics/phones" })
+    .click();
+  await page
+    .getByText('{"categorySlug":"electronics","subCategorySlug":"phones"}')
+    .click();
+
+  await page.getByRole("link", { name: "• /test/group/checkout" }).click();
+  await page.getByRole("heading", { name: "(checkout)/layout.tsx" }).click();
+  await page.getByText("(checkout)/checkout/page.tsx").click();
+  await page.getByRole("link", { name: "Back" }).click();
+
+  await page.getByRole("link", { name: "• /test/group/blog" }).click();
+  await page.getByRole("heading", { name: "(marketing)/layout.tsx" }).click();
+  await page.getByText("(marketing)/blog/page.tsx").click();
+}
