@@ -2069,3 +2069,402 @@ exports[`matchRouteTree2 > withMatchRouteId > basic 4`] = `
   ],
 }
 `;
+
+exports[`matchRouteTree2 > withMatchRouteId > group routes 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "(x)": {
+          "children": {
+            "b": {
+              "value": {
+                "page": "/(x)/b/page.js",
+              },
+            },
+          },
+        },
+        "(y)": {
+          "children": {
+            "d": {
+              "children": {
+                "(z)": {
+                  "value": {
+                    "page": "/(y)/d/(z)/page.js",
+                  },
+                },
+              },
+            },
+          },
+        },
+        "a": {
+          "value": {
+            "page": "/a/page.js",
+          },
+        },
+        "c": {
+          "children": {
+            "(x)": {
+              "value": {
+                "page": "/c/(x)/page.js",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > group routes 2`] = `
+{
+  "_pathname": "/a",
+  "matches": [
+    {
+      "id": "/:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+      ],
+      "path": "/",
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/a:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
+      ],
+      "path": "/a",
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "id": "/a:page",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "a",
+        ],
+      ],
+      "path": "/a",
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > group routes 3`] = `
+{
+  "_pathname": "/b",
+  "matches": [
+    {
+      "id": "/:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+      ],
+      "path": "/",
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/(x):group",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "(x)",
+        ],
+      ],
+      "path": "/(x)",
+      "segment": {
+        "type": "group",
+        "value": "(x)",
+      },
+    },
+    {
+      "id": "/(x)/b:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "(x)",
+        ],
+        [
+          null,
+          "b",
+        ],
+      ],
+      "path": "/(x)/b",
+      "segment": {
+        "type": "static",
+        "value": "b",
+      },
+    },
+    {
+      "id": "/(x)/b:page",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "(x)",
+        ],
+        [
+          null,
+          "b",
+        ],
+      ],
+      "path": "/(x)/b",
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > group routes 4`] = `
+{
+  "_pathname": "/c",
+  "matches": [
+    {
+      "id": "/:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+      ],
+      "path": "/",
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/c:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "c",
+        ],
+      ],
+      "path": "/c",
+      "segment": {
+        "type": "static",
+        "value": "c",
+      },
+    },
+    {
+      "id": "/c/(x):group",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "c",
+        ],
+        [
+          null,
+          "(x)",
+        ],
+      ],
+      "path": "/c/(x)",
+      "segment": {
+        "type": "group",
+        "value": "(x)",
+      },
+    },
+    {
+      "id": "/c/(x):page",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "c",
+        ],
+        [
+          null,
+          "(x)",
+        ],
+      ],
+      "path": "/c/(x)",
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree2 > withMatchRouteId > group routes 5`] = `
+{
+  "_pathname": "/d",
+  "matches": [
+    {
+      "id": "/:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+      ],
+      "path": "/",
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "id": "/(y):group",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "(y)",
+        ],
+      ],
+      "path": "/(y)",
+      "segment": {
+        "type": "group",
+        "value": "(y)",
+      },
+    },
+    {
+      "id": "/(y)/d:static",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "(y)",
+        ],
+        [
+          null,
+          "d",
+        ],
+      ],
+      "path": "/(y)/d",
+      "segment": {
+        "type": "static",
+        "value": "d",
+      },
+    },
+    {
+      "id": "/(y)/d/(z):group",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "(y)",
+        ],
+        [
+          null,
+          "d",
+        ],
+        [
+          null,
+          "(z)",
+        ],
+      ],
+      "path": "/(y)/d/(z)",
+      "segment": {
+        "type": "group",
+        "value": "(z)",
+      },
+    },
+    {
+      "id": "/(y)/d/(z):page",
+      "node": "_",
+      "params": [
+        [
+          null,
+          "",
+        ],
+        [
+          null,
+          "(y)",
+        ],
+        [
+          null,
+          "d",
+        ],
+        [
+          null,
+          "(z)",
+        ],
+      ],
+      "path": "/(y)/d/(z)",
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;

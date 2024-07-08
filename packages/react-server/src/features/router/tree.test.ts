@@ -164,6 +164,7 @@ describe(matchRouteTree2, () => {
     }
   });
 
+  // TODO: include this above
   describe(withMatchRouteId, () => {
     it("basic", () => {
       const files = [
@@ -189,6 +190,35 @@ describe(matchRouteTree2, () => {
       }
 
       const testCases = ["/a", "/a/b", "/a/b/c"];
+      for (const e of testCases) {
+        expect(testMatch(e)).matchSnapshot();
+      }
+    });
+
+    it("group routes", () => {
+      const files = [
+        "/a/page.js",
+        "/(x)/b/page.js",
+        "/c/(x)/page.js",
+        "/(y)/d/(z)/page.js",
+      ];
+      const input = Object.fromEntries(files.map((k) => [k, k]));
+      const { tree } = createFsRouteTree<AnyRouteModule>(input);
+      expect(tree).toMatchSnapshot();
+
+      function testMatch(pathname: string) {
+        const matches = matchRouteTree2(tree, pathname, "page");
+        const matches3 = withMatchRouteId(matches ?? []);
+        return {
+          _pathname: pathname,
+          matches: matches3.map((m) => ({
+            ...m,
+            node: "_",
+          })),
+        };
+      }
+
+      const testCases = ["/a", "/b", "/c", "/d"];
       for (const e of testCases) {
         expect(testMatch(e)).matchSnapshot();
       }
