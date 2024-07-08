@@ -53,25 +53,6 @@ export function toMatchParamsObject(params: MatchParamEntry[]): MatchParams {
   return result;
 }
 
-export type MatchNodeEntry<T> = {
-  id?: string;
-  prefix: string;
-  type: MatchNodeType;
-  node: TreeNode<T>;
-  params: MatchParamEntry[];
-};
-
-type MatchNodeType = "layout" | "page" | "not-found";
-
-export function toRouteId(pathname: string, type: MatchNodeType) {
-  return pathname + ":" + type;
-}
-
-export type MatchResult<T> = {
-  matches: MatchNodeEntry<T>[];
-  notFound: boolean;
-};
-
 /**
  * @example
  * "/" => [""]
@@ -86,7 +67,7 @@ export function fromRawSegments(segments: string[]): string {
   return segments.join("/") || "/";
 }
 
-// TODO: "segment" is confusing? matchType? matchEntry?
+// TODO: "segment" is confusing? matchType? matchEntry? VirtualSegment?
 export type MatchSegment =
   | {
       type: "static";
@@ -253,21 +234,21 @@ export function matchRouteTree2<T extends AnyRouteModule>(
     // tie break branches
     return sortBy(branches, (b) => scoreBranch(b))[0];
   }
+}
 
-  function scoreBranch(branch: MatchEntry2<T>[]) {
-    const first = branch[0]?.segment.type;
-    const last = branch.at(-1)!.segment.type;
-    tinyassert(first && last);
-    // static = group < dynamic < catchall
-    if (first === "dynamic") return 2;
-    if (first === "catchall") return 3;
-    // static < group if not-found
-    if (last === "not-found") {
-      if (first === "group") return 1.5;
-      return 1;
-    }
-    return 0;
+function scoreBranch<T>(branch: MatchEntry2<T>[]) {
+  const first = branch[0]?.segment.type;
+  const last = branch.at(-1)!.segment.type;
+  tinyassert(first && last);
+  // static = group < dynamic < catchall
+  if (first === "dynamic") return 2;
+  if (first === "catchall") return 3;
+  // static < group if not-found
+  if (last === "not-found") {
+    if (first === "group") return 1.5;
+    return 1;
   }
+  return 0;
 }
 
 function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
