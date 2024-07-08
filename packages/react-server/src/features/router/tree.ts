@@ -217,6 +217,7 @@ function scoreBranch<T>(branch: MatchEntry<T>[]) {
   if (first === "dynamic") score += 2;
   if (first === "catchall") score += 3;
   // de-prioritize not-found
+  // TODO: use branch length to tie-break?
   if (last === "not-found") score += 10;
   return score;
 }

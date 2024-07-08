@@ -121,6 +121,27 @@ describe(matchRouteTree, () => {
     }
   });
 
+  it("tie-break not-found static", async () => {
+    const tester = createMatchTester(["/not-found.js", "/a/not-found.js"]);
+
+    const testCases = ["/a/b"];
+    for (const e of testCases) {
+      expect(tester.match(e)).matchSnapshot();
+    }
+  });
+
+  it("tie-break not-found dynamic", async () => {
+    const tester = createMatchTester(["/not-found.js", "/[a]/not-found.js"]);
+
+    const testCases = [
+      // TODO: should trigger /[a]/not-found
+      "/a/b", // -> /not-found
+    ];
+    for (const e of testCases) {
+      expect(tester.match(e)).matchSnapshot();
+    }
+  });
+
   it("dynamic vs not-found", async () => {
     const tester = createMatchTester(["/not-found.js", "/[x]/page.js"]);
     const testCases = ["/a"];

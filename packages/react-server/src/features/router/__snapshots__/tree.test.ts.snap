@@ -2799,3 +2799,54 @@ exports[`matchRouteTree > group routes not-found 4`] = `
   ],
 }
 `;
+
+exports[`matchRouteTree > tie-break not-found dynamic 1`] = `
+{
+  "__pathname": "/a/b",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "a/b",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > tie-break not-found static 1`] = `
+{
+  "__pathname": "/a/b",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "b",
+      },
+    },
+  ],
+}
+`;
