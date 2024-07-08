@@ -210,15 +210,14 @@ export function matchRouteTree<T extends AnyRouteModule>(
 
 function scoreBranch<T>(branch: MatchEntry<T>[]) {
   const first = branch[0]?.segment.type;
-  const last = branch.at(-1)!.segment.type;
+  const last = branch.at(-1)?.segment.type;
   tinyassert(first && last);
   let score = 0;
-  // static = group < dynamic < catchall < not-found
+  // TODO: research and rework not-found tie-break
+  if (last === "not-found") score += 10;
+  // static = group < dynamic < catchall
   if (first === "dynamic") score += 2;
   if (first === "catchall") score += 3;
-  // de-prioritize not-found
-  // TODO: use branch length to tie-break?
-  if (last === "not-found") score += 10;
   return score;
 }
 
