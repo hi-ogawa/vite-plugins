@@ -37,3 +37,18 @@ export function isAncestorPath(p1: string, p2: string) {
   // check prefix after trailing slash
   return p2.replace(/\/*$/, "/").startsWith(p1.replace(/\/*$/, "/"));
 }
+
+/**
+ * @example
+ * "/" => [""]
+ * "/a" => ["", "a"]
+ * "/a/b" => ["", "a", "b"]
+ */
+export function splitToSegments(pathname: string): string[] {
+  return pathname === "/" ? [""] : pathname.split("/");
+}
+
+/** reverse of `splitToSegments` */
+export function joinSegments(segments: string[]): string {
+  return segments.join("/") || "/";
+}

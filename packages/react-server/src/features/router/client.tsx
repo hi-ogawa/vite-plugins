@@ -12,8 +12,8 @@ import {
 } from "./manifest";
 import {
   type MatchSegment,
-  toMatchParamEntries,
   toMatchParamsObject,
+  toMatchSegmentValues,
 } from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
@@ -84,10 +84,7 @@ function useSelectedParamEntries() {
 
 export function useSelectedLayoutSegments(): string[] {
   const entries = useSelectedParamEntries();
-  return React.useMemo(
-    () => toMatchParamEntries(entries).map(([_k, v]) => v),
-    [entries],
-  );
+  return React.useMemo(() => toMatchSegmentValues(entries), [entries]);
 }
 
 export function RemountRoute(props: React.PropsWithChildren) {
