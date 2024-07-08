@@ -154,13 +154,11 @@ export function matchPageRoute<T extends AnyRouteModule>(
   };
 }
 
-type MatchResult2<T> = MatchEntry<T>[] | undefined;
-
 export function matchRouteTree<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
   leafType: "page" | "route",
-): MatchResult2<T> {
+): MatchEntry<T>[] | undefined {
   const decodedSegments = splitToSegments(pathname).map((s) => decodeURI(s));
   return recurse(tree, decodedSegments);
 

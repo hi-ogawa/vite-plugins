@@ -21,6 +21,11 @@ describe(createFsRouteTree, () => {
       "/dynamic/catchall/page.tsx",
       "/dynamic/catchall/static/page.tsx",
       "/dynamic/catchall/[...any]/page.tsx",
+      "/group/a/page.js",
+      "/group/(x)/b/page.js",
+      "/group/c/(y)/page.js",
+      "/group/(z)/d/(w)/page.js",
+      "/group/not-found.js",
     ];
     const input = Object.fromEntries(files.map((k) => [k, k]));
     const { tree } = createFsRouteTree<AnyRouteModule>(input);
@@ -28,12 +33,10 @@ describe(createFsRouteTree, () => {
 
     function testMatch(pathname: string) {
       const result = matchPageRoute(tree, pathname);
+      for (const m of result.matches) m.node = {};
       return {
         __pathname: pathname,
-        matches: result.matches.map((m) => ({
-          ...m,
-          node: !!m.node.value,
-        })),
+        ...result,
       };
     }
 
@@ -54,6 +57,11 @@ describe(createFsRouteTree, () => {
       "/dynamic/catchall/x",
       "/dynamic/catchall/x/y",
       "/dynamic/catchall/x/y/z",
+      "/group/a",
+      "/group/b",
+      "/group/c",
+      "/group/d",
+      "/group/e",
     ];
     for (const e of testCases) {
       expect(testMatch(e)).matchSnapshot();
@@ -62,50 +70,40 @@ describe(createFsRouteTree, () => {
 });
 
 describe(matchRouteTree, () => {
-  it("basic", async () => {
-    const files = ["/page.js", "/a/page.js"];
+  function createMatchTester(files: string[]) {
     const input = Object.fromEntries(files.map((k) => [k, k]));
     const { tree } = createFsRouteTree<AnyRouteModule>(input);
-    expect(tree).toMatchSnapshot();
 
-    function testMatch(pathname: string) {
+    function match(pathname: string) {
       const matches = matchRouteTree(tree, pathname, "page");
+      for (const m of matches ?? []) m.node = {};
       return {
-        _pathname: pathname,
-        matches: matches?.map((m) => ({
-          ...m,
-          node: !!m.node.value,
-        })),
+        __pathname: pathname,
+        matches,
       };
     }
 
+    return { tree, match };
+  }
+
+  it("basic", async () => {
+    const tester = createMatchTester(["/page.js", "/a/page.js"]);
+    expect(tester.tree).toMatchSnapshot();
+
     const testCases = ["/", "/a", "/b"];
     for (const e of testCases) {
-      expect(testMatch(e)).matchSnapshot();
+      expect(tester.match(e)).matchSnapshot();
     }
   });
 
   it("dynamic not-found", async () => {
-    const files = [
+    const tester = createMatchTester([
       "/a/b/c/page.js",
       "/a/not-found.js",
       "/[x]/b/d/page.js",
       "/[x]/not-found.js",
-    ];
-    const input = Object.fromEntries(files.map((k) => [k, k]));
-    const { tree } = createFsRouteTree<AnyRouteModule>(input);
-    expect(tree).toMatchSnapshot();
-
-    function testMatch(pathname: string) {
-      const matches = matchRouteTree(tree, pathname, "page");
-      return {
-        _pathname: pathname,
-        matches: matches?.map((m) => ({
-          ...m,
-          node: m.node.value,
-        })),
-      };
-    }
+    ]);
+    expect(tester.tree).toMatchSnapshot();
 
     const testCases = [
       "/a/b/c",
@@ -113,40 +111,27 @@ describe(matchRouteTree, () => {
       "/x/b/e", // -> /[x]/not-found.js
     ];
     for (const e of testCases) {
-      expect(testMatch(e)).matchSnapshot();
+      expect(tester.match(e)).matchSnapshot();
     }
   });
 
   it("group routes basic", async () => {
-    const files = [
+    const tester = createMatchTester([
       "/a/page.js",
       "/(x)/b/page.js",
       "/c/(x)/page.js",
       "/(x)/d/(y)/page.js",
-    ];
-    const input = Object.fromEntries(files.map((k) => [k, k]));
-    const { tree } = createFsRouteTree<AnyRouteModule>(input);
-    expect(tree).toMatchSnapshot();
-
-    function testMatch(pathname: string) {
-      const matches = matchRouteTree(tree, pathname, "page");
-      return {
-        _pathname: pathname,
-        matches: matches?.map((m) => ({
-          ...m,
-          node: m.node.value,
-        })),
-      };
-    }
+    ]);
+    expect(tester.tree).toMatchSnapshot();
 
     const testCases = ["/a", "/b", "/c", "/d"];
     for (const e of testCases) {
-      expect(testMatch(e)).matchSnapshot();
+      expect(tester.match(e)).matchSnapshot();
     }
   });
 
   it("group routes not-found", async () => {
-    const files = [
+    const tester = createMatchTester([
       "/a/b/page.js",
       "/a/not-found.js",
       "/(x)/a/c/page.js",
@@ -154,21 +139,8 @@ describe(matchRouteTree, () => {
       "/(x)/a/not-found.js",
       "/(x)/p/q/page.js",
       "/(x)/p/not-found.js",
-    ];
-    const input = Object.fromEntries(files.map((k) => [k, k]));
-    const { tree } = createFsRouteTree<AnyRouteModule>(input);
-    expect(tree).toMatchSnapshot();
-
-    function testMatch(pathname: string) {
-      const matches = matchRouteTree(tree, pathname, "page");
-      return {
-        _pathname: pathname,
-        matches: matches?.map((m) => ({
-          ...m,
-          node: m.node.value,
-        })),
-      };
-    }
+    ]);
+    expect(tester.tree).toMatchSnapshot();
 
     const testCases = [
       "/a/u",
@@ -179,66 +151,7 @@ describe(matchRouteTree, () => {
       "/p/u",
     ];
     for (const e of testCases) {
-      expect(testMatch(e)).matchSnapshot();
+      expect(tester.match(e)).matchSnapshot();
     }
-  });
-
-  // TODO: include this above
-  describe(matchPageRoute, () => {
-    it("basic", () => {
-      const files = [
-        "/page.js",
-        "/a/page.js",
-        "/a/b/page.js",
-        "/a/not-found.js",
-      ];
-      const input = Object.fromEntries(files.map((k) => [k, k]));
-      const { tree } = createFsRouteTree<AnyRouteModule>(input);
-      expect(tree).toMatchSnapshot();
-
-      function testMatch(pathname: string) {
-        const result = matchPageRoute(tree, pathname);
-        return {
-          _pathname: pathname,
-          matches: result.matches.map((m) => ({
-            ...m,
-            node: "_",
-          })),
-        };
-      }
-
-      const testCases = ["/", "/a", "/a/b", "/a/b/c"];
-      for (const e of testCases) {
-        expect(testMatch(e)).matchSnapshot();
-      }
-    });
-
-    it("group routes", () => {
-      const files = [
-        "/a/page.js",
-        "/(x)/b/page.js",
-        "/c/(x)/page.js",
-        "/(y)/d/(z)/page.js",
-      ];
-      const input = Object.fromEntries(files.map((k) => [k, k]));
-      const { tree } = createFsRouteTree<AnyRouteModule>(input);
-      expect(tree).toMatchSnapshot();
-
-      function testMatch(pathname: string) {
-        const result = matchPageRoute(tree, pathname);
-        return {
-          _pathname: pathname,
-          matches: result.matches.map((m) => ({
-            ...m,
-            node: "_",
-          })),
-        };
-      }
-
-      const testCases = ["/a", "/b", "/c", "/d"];
-      for (const e of testCases) {
-        expect(testMatch(e)).matchSnapshot();
-      }
-    });
   });
 });
