@@ -128,6 +128,8 @@ type MatchEntry2<T> = {
 export type MatchEntry3<T> = MatchEntry2<T> & {
   id: string;
   path: string;
+  // TODO
+  // type: "layout" | "page" | "not-found",
   params: MatchParamEntry[];
 };
 
@@ -135,13 +137,9 @@ export function withMatchRouteId<T>(
   matches: MatchEntry2<T>[],
 ): MatchEntry3<T>[] {
   const segments = matches.map((m) => m.segment);
-  const params = segments.map((s) => toMatchParamEntry(s));
-  params;
-  return matches.map((match, i) => {
-    const prefix = segments.slice(0, i + 1);
-    const params = prefix
-      .map((param) => toMatchParamEntry(param))
-      .filter(typedBoolean);
+  const allParams = toMatchParamEntries(segments);
+  const matches3 = matches.map((match, i) => {
+    const params = allParams.slice(0, i + 1);
     const path = fromRawSegments(params.map(([_k, v]) => v));
     const id = `${path}:${match.segment.type}`;
     return {
@@ -151,32 +149,40 @@ export function withMatchRouteId<T>(
       ...match,
     } satisfies MatchEntry3<T>;
   });
+  return matches3;
 }
 
-// export function matchRouteTree3<T extends AnyRouteModule>(
-//   tree: TreeNode<T>,
-//   pathname: string,
-// ) {
-//   const matches = matchRouteTree2(tree, pathname, "page");
-//   tinyassert(matches);
-//   const segments = matches.map((m) => m.segment);
-//   const params = segments.map((s) => toMatchParamEntry(s));
+export type MatchRouteResult3<T> = {
+  matches: MatchEntry3<T>[];
+  params: MatchParamEntry[];
+  notFound: boolean;
+};
 
-//   matches.map((match, i) => {
-//     const prefix = segments.slice(0, i + 1);
-//     const params = prefix
-//       .map((param) => toMatchParamEntry(param))
-//       .filter(typedBoolean);
-//     const path = fromRawSegments(params.map(([_k, v]) => v));
-//     const id = `${path}:${match.segment.type}`;
-//     return {
-//       id,
-//       path,
-//       params,
-//       ...match,
-//     } satisfies MatchEntry3<T>;
-//   });
-// }
+export function matchRouteTree3<T extends AnyRouteModule>(
+  tree: TreeNode<T>,
+  pathname: string,
+): MatchRouteResult3<T> {
+  const matches = matchRouteTree2(tree, pathname, "page");
+  tinyassert(matches && matches.length > 0);
+  const segments = matches.map((m) => m.segment);
+  const allParams = toMatchParamEntries(segments);
+  const matches3 = matches.map((match, i) => {
+    const params = allParams.slice(0, i + 1);
+    const path = fromRawSegments(params.map(([_k, v]) => v));
+    const id = `${path}:${match.segment.type}`;
+    return {
+      id,
+      path,
+      params,
+      ...match,
+    } satisfies MatchEntry3<T>;
+  });
+  return {
+    matches: matches3,
+    params: allParams,
+    notFound: segments.at(-1)?.type === "not-found",
+  };
+}
 
 type MatchResult2<T> = MatchEntry2<T>[] | undefined;
 
@@ -189,6 +195,12 @@ export function toMatchParamEntry(
   if (s.type === "group") return [null, s.value];
   if (s.type === "not-found") return [null, s.value];
   return;
+}
+
+export function toMatchParamEntries(
+  segments: MatchSegment[],
+): MatchParamEntry[] {
+  return segments.map((param) => toMatchParamEntry(param)).filter(typedBoolean);
 }
 
 export function toMatchParams(segments: MatchSegment[]) {

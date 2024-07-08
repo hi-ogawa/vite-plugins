@@ -10,6 +10,7 @@ import {
   type TreeNode,
   createFsRouteTree,
   matchRouteTree2,
+  matchRouteTree3,
   parseRoutePath,
   toMatchParamsObject,
   withMatchRouteId,
@@ -156,11 +157,8 @@ export async function renderRouteMap(
   const layoutContentMap: Record<string, string> = {};
   const nodeMap: Record<string, React.ReactNode> = {};
   let parentLayout = LAYOUT_ROOT_NAME;
-  const matches = matchRouteTree2(tree, url.pathname, "page");
-  // it's guaranteed to have default not-found page at least
-  tinyassert(matches && matches.length > 0);
-  const matches2 = withMatchRouteId(matches);
-  for (const m of matches2) {
+  const result = matchRouteTree3(tree, url.pathname);
+  for (const m of result.matches) {
     parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
       ...baseProps,
@@ -184,8 +182,8 @@ export async function renderRouteMap(
     layoutContentMap,
     nodeMap,
     metadata: renderMetadata(metadata),
-    params: matches2.at(-1)?.params ?? [],
-    notFound: matches2.at(-1)?.segment.type === "not-found",
+    params: result.params,
+    notFound: result.notFound,
   };
 }
 
@@ -195,9 +193,8 @@ export function getCachedRoutes(
   revalidations: (RevalidationType | undefined)[],
 ) {
   const routeIds: string[] = [];
-  const matches = matchRouteTree2(tree, lastPathname, "page");
-  tinyassert(matches);
-  for (const m of withMatchRouteId(matches)) {
+  const result = matchRouteTree3(tree, lastPathname);
+  for (const m of withMatchRouteId(result.matches)) {
     // find non-revalidated layouts
     if (
       m.segment.type !== "page" &&
