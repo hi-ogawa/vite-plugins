@@ -12,7 +12,6 @@ import {
   matchRouteTree3,
   parseRoutePath,
   toMatchParamsObject,
-  withMatchRouteId,
 } from "./tree";
 import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
 
@@ -193,7 +192,7 @@ export function getCachedRoutes(
 ) {
   const routeIds: string[] = [];
   const result = matchRouteTree3(tree, lastPathname);
-  for (const m of withMatchRouteId(result.matches)) {
+  for (const m of result.matches) {
     // find non-revalidated layouts
     if (
       m.segment.type !== "page" &&

@@ -48,13 +48,13 @@ exports[`generateRouteModuleTree > basic 2`] = `
 {
   "__pathname": "/x",
   "layoutContentMap": {
-    "/:static": "/x:static",
-    "/x:static": "/x:page",
-    "__root": "/:static",
+    "/:layout": "/x:layout",
+    "/x:layout": "/x:page",
+    "__root": "/:layout",
   },
   "metadata": <React.Fragment />,
   "nodeMap": {
-    "/:static": <LayoutMatchProvider
+    "/:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -96,11 +96,39 @@ exports[`generateRouteModuleTree > basic 2`] = `
         >
           <RedirectBoundary>
             <LayoutContent
-              name="/:static"
+              name="/:layout"
             />
           </RedirectBoundary>
         </NotFoundBoundary>
       <//LAYOUT.TSX>
+    </LayoutMatchProvider>,
+    "/x:layout": <LayoutMatchProvider
+      value={
+        {
+          "params": [
+            [
+              null,
+              "",
+            ],
+            [
+              null,
+              "x",
+            ],
+          ],
+        }
+      }
+    >
+      <React.Fragment>
+        <ErrorBoundary
+          errorComponent="/X/ERROR.TSX"
+        >
+          <RedirectBoundary>
+            <LayoutContent
+              name="/x:layout"
+            />
+          </RedirectBoundary>
+        </ErrorBoundary>
+      </React.Fragment>
     </LayoutMatchProvider>,
     "/x:page": </X/PAGE.TSX
       params={{}}
@@ -127,34 +155,6 @@ exports[`generateRouteModuleTree > basic 2`] = `
         }
       }
     />,
-    "/x:static": <LayoutMatchProvider
-      value={
-        {
-          "params": [
-            [
-              null,
-              "",
-            ],
-            [
-              null,
-              "x",
-            ],
-          ],
-        }
-      }
-    >
-      <React.Fragment>
-        <ErrorBoundary
-          errorComponent="/X/ERROR.TSX"
-        >
-          <RedirectBoundary>
-            <LayoutContent
-              name="/x:static"
-            />
-          </RedirectBoundary>
-        </ErrorBoundary>
-      </React.Fragment>
-    </LayoutMatchProvider>,
   },
   "notFound": false,
   "params": [
@@ -174,14 +174,14 @@ exports[`generateRouteModuleTree > basic 3`] = `
 {
   "__pathname": "/x/y",
   "layoutContentMap": {
-    "/:static": "/x:static",
-    "/x/y:static": "/x/y:page",
-    "/x:static": "/x/y:static",
-    "__root": "/:static",
+    "/:layout": "/x:layout",
+    "/x/y:layout": "/x/y:page",
+    "/x:layout": "/x/y:layout",
+    "__root": "/:layout",
   },
   "metadata": <React.Fragment />,
   "nodeMap": {
-    "/:static": <LayoutMatchProvider
+    "/:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -223,38 +223,13 @@ exports[`generateRouteModuleTree > basic 3`] = `
         >
           <RedirectBoundary>
             <LayoutContent
-              name="/:static"
+              name="/:layout"
             />
           </RedirectBoundary>
         </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
-    "/x/y:page": </X/Y/PAGE.TSX
-      params={{}}
-      request={
-        {
-          "headers": {},
-          "url": "https://test.local/x/y",
-        }
-      }
-      searchParams={{}}
-      url={
-        {
-          "hash": "",
-          "host": "test.local",
-          "hostname": "test.local",
-          "href": "https://test.local/x/y",
-          "origin": "https://test.local",
-          "password": "",
-          "pathname": "/x/y",
-          "port": "",
-          "protocol": "https:",
-          "search": "",
-          "username": "",
-        }
-      }
-    />,
-    "/x/y:static": <LayoutMatchProvider
+    "/x/y:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -301,12 +276,37 @@ exports[`generateRouteModuleTree > basic 3`] = `
       >
         <RedirectBoundary>
           <LayoutContent
-            name="/x/y:static"
+            name="/x/y:layout"
           />
         </RedirectBoundary>
       <//X/Y/LAYOUT.TSX>
     </LayoutMatchProvider>,
-    "/x:static": <LayoutMatchProvider
+    "/x/y:page": </X/Y/PAGE.TSX
+      params={{}}
+      request={
+        {
+          "headers": {},
+          "url": "https://test.local/x/y",
+        }
+      }
+      searchParams={{}}
+      url={
+        {
+          "hash": "",
+          "host": "test.local",
+          "hostname": "test.local",
+          "href": "https://test.local/x/y",
+          "origin": "https://test.local",
+          "password": "",
+          "pathname": "/x/y",
+          "port": "",
+          "protocol": "https:",
+          "search": "",
+          "username": "",
+        }
+      }
+    />,
+    "/x:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -328,7 +328,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
         >
           <RedirectBoundary>
             <LayoutContent
-              name="/x:static"
+              name="/x:layout"
             />
           </RedirectBoundary>
         </ErrorBoundary>
@@ -357,12 +357,12 @@ exports[`generateRouteModuleTree > basic 4`] = `
 {
   "__pathname": "/z",
   "layoutContentMap": {
-    "/:static": "/z:not-found",
-    "__root": "/:static",
+    "/:layout": "/z:not-found",
+    "__root": "/:layout",
   },
   "metadata": <React.Fragment />,
   "nodeMap": {
-    "/:static": <LayoutMatchProvider
+    "/:layout": <LayoutMatchProvider
       value={
         {
           "params": [
@@ -404,7 +404,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
         >
           <RedirectBoundary>
             <LayoutContent
-              name="/:static"
+              name="/:layout"
             />
           </RedirectBoundary>
         </NotFoundBoundary>

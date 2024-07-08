@@ -1,15 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { AnyRouteModule } from "./server";
-import {
-  createFsRouteTree,
-  matchRouteTree,
-  matchRouteTree2,
-  withMatchRouteId,
-} from "./tree";
+import { createFsRouteTree, matchRouteTree2, matchRouteTree3 } from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
     const files = [
+      "/not-found.js",
       "/layout.tsx",
       "/page.tsx",
       "/other/page.tsx",
@@ -31,12 +27,12 @@ describe(createFsRouteTree, () => {
     expect(tree).toMatchSnapshot();
 
     function testMatch(pathname: string) {
-      const result = matchRouteTree(tree, pathname);
+      const result = matchRouteTree3(tree, pathname);
       return {
         __pathname: pathname,
         matches: result.matches.map((m) => ({
           ...m,
-          node: m.node.value,
+          node: !!m.node.value,
         })),
       };
     }
@@ -188,7 +184,7 @@ describe(matchRouteTree2, () => {
   });
 
   // TODO: include this above
-  describe(withMatchRouteId, () => {
+  describe(matchRouteTree3, () => {
     it("basic", () => {
       const files = [
         "/page.js",
@@ -201,11 +197,10 @@ describe(matchRouteTree2, () => {
       expect(tree).toMatchSnapshot();
 
       function testMatch(pathname: string) {
-        const matches = matchRouteTree2(tree, pathname, "page");
-        const matches3 = withMatchRouteId(matches ?? []);
+        const result = matchRouteTree3(tree, pathname);
         return {
           _pathname: pathname,
-          matches: matches3.map((m) => ({
+          matches: result.matches.map((m) => ({
             ...m,
             node: "_",
           })),
@@ -230,11 +225,10 @@ describe(matchRouteTree2, () => {
       expect(tree).toMatchSnapshot();
 
       function testMatch(pathname: string) {
-        const matches = matchRouteTree2(tree, pathname, "page");
-        const matches3 = withMatchRouteId(matches ?? []);
+        const result = matchRouteTree3(tree, pathname);
         return {
           _pathname: pathname,
-          matches: matches3.map((m) => ({
+          matches: result.matches.map((m) => ({
             ...m,
             node: "_",
           })),
