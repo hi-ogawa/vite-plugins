@@ -7,6 +7,7 @@ import type { RevalidationType } from "../server-component/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
   type MatchNodeEntry,
+  type MatchParamEntry,
   type TreeNode,
   createFsRouteTree,
   matchRouteTree,
@@ -81,7 +82,8 @@ function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
 async function renderLayout(
   node: RouteModuleTree,
   props: PageProps,
-  { prefix, params }: MatchNodeEntry<RouteModule>,
+  id: string,
+  params: MatchParamEntry[],
 ) {
   const {
     ErrorBoundary,
@@ -92,7 +94,7 @@ async function renderLayout(
     LayoutMatchProvider,
   } = await importRuntimeClient();
 
-  let acc = <LayoutContent name={prefix} />;
+  let acc = <LayoutContent name={id} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
   const NotFoundPage = node.value?.["not-found"]?.default;
@@ -128,12 +130,12 @@ async function renderLayout(
   const Layout = node.value?.layout?.default;
   if (Layout) {
     acc = (
-      <Layout key={prefix} {...props}>
+      <Layout key={id} {...props}>
         {acc}
       </Layout>
     );
   } else {
-    acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
+    acc = <React.Fragment key={id}>{acc}</React.Fragment>;
   }
 
   acc = <LayoutMatchProvider value={{ params }}>{acc}</LayoutMatchProvider>;
@@ -157,42 +159,70 @@ export async function renderRouteMap(
   const layoutContentMap: Record<string, string> = {};
   const nodeMap: Record<string, React.ReactNode> = {};
   let parentLayout = LAYOUT_ROOT_NAME;
-  const result = matchRouteTree(tree, url.pathname);
-  // there is always default not-found page
-  tinyassert(
-    result.matches.at(-1)?.type === "page" ||
-      result.matches.at(-1)?.type === "not-found",
-  );
-  for (const m of result.matches) {
-    const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
-    layoutContentMap[parentLayout] = routeId;
-    parentLayout = m.prefix;
+  const matches = matchRouteTree2(tree, url.pathname, "page");
+  // it's guaranteed to have default not-found page at least
+  tinyassert(matches && matches.length > 0);
+  const matches2 = withMatchRouteId(matches);
+  console.log({ matches, matches2 });
+  for (const m of matches2) {
+    parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
       ...baseProps,
       params: toMatchParamsObject(m.params),
     };
-    if (m.type === "layout") {
-      nodeMap[routeId] = await renderLayout(m.node, props, m);
-      Object.assign(metadata, m.node.value?.layout?.metadata);
-    } else if (m.type === "page") {
+    if (m.segment.type === "page") {
       const Page = m.node.value?.page?.default;
       tinyassert(Page, "No default export in 'page'");
-      nodeMap[routeId] = <Page {...props} />;
+      nodeMap[m.id] = <Page {...props} />;
       Object.assign(metadata, m.node.value?.page?.metadata);
-    } else if (m.type === "not-found") {
+    } else if (m.segment.type === "not-found") {
       const NotFound = m.node.value?.["not-found"]?.default;
       tinyassert(NotFound);
-      nodeMap[routeId] = <NotFound />;
+      nodeMap[m.id] = <NotFound />;
     } else {
-      m.type satisfies never;
+      nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.params);
+      Object.assign(metadata, m.node.value?.layout?.metadata);
     }
   }
+
+  // const result = matchRouteTree(tree, url.pathname);
+  // // there is always default not-found page
+  // tinyassert(
+  //   result.matches.at(-1)?.type === "page" ||
+  //     result.matches.at(-1)?.type === "not-found",
+  // );
+  // for (const m of result.matches) {
+  //   const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
+  //   layoutContentMap[parentLayout] = routeId;
+  //   parentLayout = m.prefix;
+  //   const props: BaseProps = {
+  //     ...baseProps,
+  //     params: toMatchParamsObject(m.params),
+  //   };
+  //   if (m.type === "layout") {
+  //     nodeMap[routeId] = await renderLayout(m.node, props, m);
+  //     Object.assign(metadata, m.node.value?.layout?.metadata);
+  //   } else if (m.type === "page") {
+  //     const Page = m.node.value?.page?.default;
+  //     tinyassert(Page, "No default export in 'page'");
+  //     nodeMap[routeId] = <Page {...props} />;
+  //     Object.assign(metadata, m.node.value?.page?.metadata);
+  //   } else if (m.type === "not-found") {
+  //     const NotFound = m.node.value?.["not-found"]?.default;
+  //     tinyassert(NotFound);
+  //     nodeMap[routeId] = <NotFound />;
+  //   } else {
+  //     m.type satisfies never;
+  //   }
+  // }
   return {
     layoutContentMap,
     nodeMap,
     metadata: renderMetadata(metadata),
-    params: result.matches.at(-1)?.params ?? [],
-    notFound: result.notFound,
+    params: matches2.at(-1)?.params ?? [],
+    notFound: matches2.at(-1)?.segment.type === "not-found",
+    // params: result.matches.at(-1)?.params ?? [],
+    // notFound: result.notFound,
   };
 }
 
@@ -202,29 +232,41 @@ export function getCachedRoutes(
   revalidations: (RevalidationType | undefined)[],
 ) {
   const routeIds: string[] = [];
-  const { matches } = matchRouteTree(tree, lastPathname, "page");
-  {
-    const matches = matchRouteTree2(tree, lastPathname, "page");
-    tinyassert(matches);
-    for (const m of withMatchRouteId(matches)) {
-      // find non-revalidated layouts
-      if (
-        0 &&
-        m.segment.type !== "page" &&
-        !revalidations.some((r) => r && isAncestorPath(r, m.path))
-      ) {
-        routeIds.push(m.id);
-      }
-    }
-  }
-  for (const m of matches) {
+  const matches = matchRouteTree2(tree, lastPathname, "page");
+  tinyassert(matches);
+  for (const m of withMatchRouteId(matches)) {
+    // find non-revalidated layouts
     if (
-      m.type === "layout" &&
-      !revalidations.some((r) => r && isAncestorPath(r, m.prefix))
+      0 &&
+      m.segment.type !== "page" &&
+      !revalidations.some((r) => r && isAncestorPath(r, m.path))
     ) {
-      routeIds.push(toRouteId(m.prefix, m.type));
+      routeIds.push(m.id);
     }
   }
+  // const { matches } = matchRouteTree(tree, lastPathname, "page");
+  // {
+  //   const matches = matchRouteTree2(tree, lastPathname, "page");
+  //   tinyassert(matches);
+  //   for (const m of withMatchRouteId(matches)) {
+  //     // find non-revalidated layouts
+  //     if (
+  //       0 &&
+  //       m.segment.type !== "page" &&
+  //       !revalidations.some((r) => r && isAncestorPath(r, m.path))
+  //     ) {
+  //       routeIds.push(m.id);
+  //     }
+  //   }
+  // }
+  // for (const m of matches) {
+  //   if (
+  //     m.type === "layout" &&
+  //     !revalidations.some((r) => r && isAncestorPath(r, m.prefix))
+  //   ) {
+  //     routeIds.push(toRouteId(m.prefix, m.type));
+  //   }
+  // }
   return routeIds;
 }
 
