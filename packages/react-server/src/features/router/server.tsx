@@ -162,18 +162,20 @@ export async function renderRouteMap(
       ...baseProps,
       params: toMatchParamsObject(m.params),
     };
-    if (m.segment.type === "page") {
+    if (m.type === "layout") {
+      nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.params);
+      Object.assign(metadata, m.node.value?.layout?.metadata);
+    } else if (m.type === "page") {
       const Page = m.node.value?.page?.default;
       tinyassert(Page, "No default export in 'page'");
       nodeMap[m.id] = <Page {...props} />;
       Object.assign(metadata, m.node.value?.page?.metadata);
-    } else if (m.segment.type === "not-found") {
+    } else if (m.type === "not-found") {
       const NotFound = m.node.value?.["not-found"]?.default;
       tinyassert(NotFound);
       nodeMap[m.id] = <NotFound />;
     } else {
-      nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.params);
-      Object.assign(metadata, m.node.value?.layout?.metadata);
+      m.type satisfies never;
     }
   }
   return {
@@ -195,7 +197,7 @@ export function getCachedRoutes(
   for (const m of result.matches) {
     // find non-revalidated layouts
     if (
-      m.segment.type !== "page" &&
+      m.type === "layout" &&
       !revalidations.some((r) => r && isAncestorPath(r, m.path))
     ) {
       routeIds.push(m.id);

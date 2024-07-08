@@ -124,12 +124,11 @@ type MatchEntry2<T> = {
   segment: MatchSegment;
 };
 
-// TODO: (refactor) more convenient wrapper for renderRouteMap and getCachedRoutes
-export type MatchEntry3<T> = MatchEntry2<T> & {
+export type MatchEntry3<T> = {
   id: string;
   path: string;
-  // TODO
-  // type: "layout" | "page" | "not-found",
+  type: "layout" | "page" | "not-found";
+  node: TreeNode<T>;
   params: MatchParamEntry[];
 };
 
@@ -160,8 +159,9 @@ export function matchRouteTree3<T extends AnyRouteModule>(
     return {
       id,
       path,
+      type,
       params,
-      ...m,
+      node: m.node,
     } satisfies MatchEntry3<T>;
   });
   return {
