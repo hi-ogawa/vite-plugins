@@ -132,6 +132,7 @@ export function matchPageRoute<T extends AnyRouteModule>(
   pathname: string,
 ): MatchRouteResult<T> {
   const matches = matchRouteTree(tree, pathname, "page");
+  // this assumes it has default not-found page at least
   tinyassert(matches && matches.length > 0);
   const segments = matches.map((m) => m.segment);
   const pageMatches = matches.map((m, i) => {
