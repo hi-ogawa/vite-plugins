@@ -90,7 +90,7 @@ async function start() {
           return {
             action: next.action,
             metadata: next.metadata,
-            params: next.params,
+            segments: next.segments,
             url: next.url,
             nodeMap: {
               ...current.nodeMap,

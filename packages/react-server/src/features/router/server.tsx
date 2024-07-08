@@ -79,7 +79,7 @@ async function renderLayout(
   node: RouteModuleTree,
   props: PageProps,
   id: string,
-  params: MatchSegment[],
+  segments: MatchSegment[],
 ) {
   const {
     ErrorBoundary,
@@ -134,7 +134,7 @@ async function renderLayout(
     acc = <React.Fragment key={id}>{acc}</React.Fragment>;
   }
 
-  acc = <LayoutMatchProvider value={{ params }}>{acc}</LayoutMatchProvider>;
+  acc = <LayoutMatchProvider value={{ segments }}>{acc}</LayoutMatchProvider>;
   return acc;
 }
 
@@ -160,10 +160,10 @@ export async function renderRouteMap(
     parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
       ...baseProps,
-      params: toMatchParams(m.params),
+      params: toMatchParams(m.segments),
     };
     if (m.type === "layout") {
-      nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.params);
+      nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.segments);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
       const Page = m.node.value?.page?.default;
@@ -182,7 +182,7 @@ export async function renderRouteMap(
     layoutContentMap,
     nodeMap,
     metadata: renderMetadata(metadata),
-    params: result.params,
+    segments: result.segments,
     notFound: result.notFound,
   };
 }

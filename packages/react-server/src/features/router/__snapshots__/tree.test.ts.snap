@@ -84,19 +84,20 @@ exports[`createFsRouteTree > basic 2`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/:page",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -105,7 +106,6 @@ exports[`createFsRouteTree > basic 2`] = `
           "type": "page",
         },
       ],
-      "path": "/",
       "type": "page",
     },
   ],
@@ -119,19 +119,20 @@ exports[`createFsRouteTree > basic 3`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/other:layout",
       "node": true,
-      "params": [
+      "path": "/other",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -141,13 +142,13 @@ exports[`createFsRouteTree > basic 3`] = `
           "value": "other",
         },
       ],
-      "path": "/other",
       "type": "layout",
     },
     {
       "id": "/other:page",
       "node": true,
-      "params": [
+      "path": "/other",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -160,7 +161,6 @@ exports[`createFsRouteTree > basic 3`] = `
           "type": "page",
         },
       ],
-      "path": "/other",
       "type": "page",
     },
   ],
@@ -174,19 +174,20 @@ exports[`createFsRouteTree > basic 4`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/not-found:not-found",
       "node": true,
-      "params": [
+      "path": "/not-found",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -196,7 +197,6 @@ exports[`createFsRouteTree > basic 4`] = `
           "value": "not-found",
         },
       ],
-      "path": "/not-found",
       "type": "not-found",
     },
   ],
@@ -210,19 +210,20 @@ exports[`createFsRouteTree > basic 5`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/test:layout",
       "node": true,
-      "params": [
+      "path": "/test",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -232,13 +233,13 @@ exports[`createFsRouteTree > basic 5`] = `
           "value": "test",
         },
       ],
-      "path": "/test",
       "type": "layout",
     },
     {
       "id": "/test:page",
       "node": true,
-      "params": [
+      "path": "/test",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -251,7 +252,6 @@ exports[`createFsRouteTree > basic 5`] = `
           "type": "page",
         },
       ],
-      "path": "/test",
       "type": "page",
     },
   ],
@@ -265,19 +265,20 @@ exports[`createFsRouteTree > basic 6`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/test:layout",
       "node": true,
-      "params": [
+      "path": "/test",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -287,13 +288,13 @@ exports[`createFsRouteTree > basic 6`] = `
           "value": "test",
         },
       ],
-      "path": "/test",
       "type": "layout",
     },
     {
       "id": "/test/other:layout",
       "node": true,
-      "params": [
+      "path": "/test/other",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -307,13 +308,13 @@ exports[`createFsRouteTree > basic 6`] = `
           "value": "other",
         },
       ],
-      "path": "/test/other",
       "type": "layout",
     },
     {
       "id": "/test/other:page",
       "node": true,
-      "params": [
+      "path": "/test/other",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -330,7 +331,6 @@ exports[`createFsRouteTree > basic 6`] = `
           "type": "page",
         },
       ],
-      "path": "/test/other",
       "type": "page",
     },
   ],
@@ -344,19 +344,20 @@ exports[`createFsRouteTree > basic 7`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/test/not-found:not-found",
       "node": true,
-      "params": [
+      "path": "/test/not-found",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -366,7 +367,6 @@ exports[`createFsRouteTree > basic 7`] = `
           "value": "test/not-found",
         },
       ],
-      "path": "/test/not-found",
       "type": "not-found",
     },
   ],
@@ -380,19 +380,20 @@ exports[`createFsRouteTree > basic 8`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -402,13 +403,13 @@ exports[`createFsRouteTree > basic 8`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic:page",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -421,7 +422,6 @@ exports[`createFsRouteTree > basic 8`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic",
       "type": "page",
     },
   ],
@@ -435,19 +435,20 @@ exports[`createFsRouteTree > basic 9`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -457,13 +458,13 @@ exports[`createFsRouteTree > basic 9`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/static:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/static",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -477,13 +478,13 @@ exports[`createFsRouteTree > basic 9`] = `
           "value": "static",
         },
       ],
-      "path": "/dynamic/static",
       "type": "layout",
     },
     {
       "id": "/dynamic/static:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/static",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -500,7 +501,6 @@ exports[`createFsRouteTree > basic 9`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/static",
       "type": "page",
     },
   ],
@@ -514,19 +514,20 @@ exports[`createFsRouteTree > basic 10`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -536,13 +537,13 @@ exports[`createFsRouteTree > basic 10`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/abc:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/abc",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -557,13 +558,13 @@ exports[`createFsRouteTree > basic 10`] = `
           "value": "abc",
         },
       ],
-      "path": "/dynamic/abc",
       "type": "layout",
     },
     {
       "id": "/dynamic/abc:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/abc",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -581,7 +582,6 @@ exports[`createFsRouteTree > basic 10`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/abc",
       "type": "page",
     },
   ],
@@ -595,19 +595,20 @@ exports[`createFsRouteTree > basic 11`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -617,13 +618,13 @@ exports[`createFsRouteTree > basic 11`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/abc:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/abc",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -638,13 +639,13 @@ exports[`createFsRouteTree > basic 11`] = `
           "value": "abc",
         },
       ],
-      "path": "/dynamic/abc",
       "type": "layout",
     },
     {
       "id": "/dynamic/abc/def:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/abc/def",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -664,13 +665,13 @@ exports[`createFsRouteTree > basic 11`] = `
           "value": "def",
         },
       ],
-      "path": "/dynamic/abc/def",
       "type": "layout",
     },
     {
       "id": "/dynamic/abc/def:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/abc/def",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -693,7 +694,6 @@ exports[`createFsRouteTree > basic 11`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/abc/def",
       "type": "page",
     },
   ],
@@ -707,19 +707,20 @@ exports[`createFsRouteTree > basic 12`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -729,13 +730,13 @@ exports[`createFsRouteTree > basic 12`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/✅:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/✅",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -750,13 +751,13 @@ exports[`createFsRouteTree > basic 12`] = `
           "value": "✅",
         },
       ],
-      "path": "/dynamic/✅",
       "type": "layout",
     },
     {
       "id": "/dynamic/✅:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/✅",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -774,7 +775,6 @@ exports[`createFsRouteTree > basic 12`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/✅",
       "type": "page",
     },
   ],
@@ -788,19 +788,20 @@ exports[`createFsRouteTree > basic 13`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -810,13 +811,13 @@ exports[`createFsRouteTree > basic 13`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -830,13 +831,13 @@ exports[`createFsRouteTree > basic 13`] = `
           "value": "catchall",
         },
       ],
-      "path": "/dynamic/catchall",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -853,7 +854,6 @@ exports[`createFsRouteTree > basic 13`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/catchall",
       "type": "page",
     },
   ],
@@ -867,19 +867,20 @@ exports[`createFsRouteTree > basic 14`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -889,13 +890,13 @@ exports[`createFsRouteTree > basic 14`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -909,13 +910,13 @@ exports[`createFsRouteTree > basic 14`] = `
           "value": "catchall",
         },
       ],
-      "path": "/dynamic/catchall",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/static:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/static",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -933,13 +934,13 @@ exports[`createFsRouteTree > basic 14`] = `
           "value": "static",
         },
       ],
-      "path": "/dynamic/catchall/static",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/static:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/static",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -960,7 +961,6 @@ exports[`createFsRouteTree > basic 14`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/catchall/static",
       "type": "page",
     },
   ],
@@ -974,19 +974,20 @@ exports[`createFsRouteTree > basic 15`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -996,13 +997,13 @@ exports[`createFsRouteTree > basic 15`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1016,13 +1017,13 @@ exports[`createFsRouteTree > basic 15`] = `
           "value": "catchall",
         },
       ],
-      "path": "/dynamic/catchall",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/x:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/x",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1041,13 +1042,13 @@ exports[`createFsRouteTree > basic 15`] = `
           "value": "x",
         },
       ],
-      "path": "/dynamic/catchall/x",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/x:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/x",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1069,7 +1070,6 @@ exports[`createFsRouteTree > basic 15`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/catchall/x",
       "type": "page",
     },
   ],
@@ -1083,19 +1083,20 @@ exports[`createFsRouteTree > basic 16`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1105,13 +1106,13 @@ exports[`createFsRouteTree > basic 16`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1125,13 +1126,13 @@ exports[`createFsRouteTree > basic 16`] = `
           "value": "catchall",
         },
       ],
-      "path": "/dynamic/catchall",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/x/y:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/x/y",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1150,13 +1151,13 @@ exports[`createFsRouteTree > basic 16`] = `
           "value": "x/y",
         },
       ],
-      "path": "/dynamic/catchall/x/y",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/x/y:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/x/y",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1178,7 +1179,6 @@ exports[`createFsRouteTree > basic 16`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/catchall/x/y",
       "type": "page",
     },
   ],
@@ -1192,19 +1192,20 @@ exports[`createFsRouteTree > basic 17`] = `
     {
       "id": "/:layout",
       "node": true,
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/dynamic:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1214,13 +1215,13 @@ exports[`createFsRouteTree > basic 17`] = `
           "value": "dynamic",
         },
       ],
-      "path": "/dynamic",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1234,13 +1235,13 @@ exports[`createFsRouteTree > basic 17`] = `
           "value": "catchall",
         },
       ],
-      "path": "/dynamic/catchall",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/x/y/z:layout",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/x/y/z",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1259,13 +1260,13 @@ exports[`createFsRouteTree > basic 17`] = `
           "value": "x/y/z",
         },
       ],
-      "path": "/dynamic/catchall/x/y/z",
       "type": "layout",
     },
     {
       "id": "/dynamic/catchall/x/y/z:page",
       "node": true,
-      "params": [
+      "path": "/dynamic/catchall/x/y/z",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1287,7 +1288,6 @@ exports[`createFsRouteTree > basic 17`] = `
           "type": "page",
         },
       ],
-      "path": "/dynamic/catchall/x/y/z",
       "type": "page",
     },
   ],
@@ -1918,19 +1918,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 2`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/:page",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1939,7 +1940,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 2`] = `
           "type": "page",
         },
       ],
-      "path": "/",
       "type": "page",
     },
   ],
@@ -1953,19 +1953,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 3`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/a:layout",
       "node": "_",
-      "params": [
+      "path": "/a",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1975,13 +1976,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 3`] = `
           "value": "a",
         },
       ],
-      "path": "/a",
       "type": "layout",
     },
     {
       "id": "/a:page",
       "node": "_",
-      "params": [
+      "path": "/a",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -1994,7 +1995,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 3`] = `
           "type": "page",
         },
       ],
-      "path": "/a",
       "type": "page",
     },
   ],
@@ -2008,19 +2008,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 4`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/a:layout",
       "node": "_",
-      "params": [
+      "path": "/a",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2030,13 +2031,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 4`] = `
           "value": "a",
         },
       ],
-      "path": "/a",
       "type": "layout",
     },
     {
       "id": "/a/b:layout",
       "node": "_",
-      "params": [
+      "path": "/a/b",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2050,13 +2051,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 4`] = `
           "value": "b",
         },
       ],
-      "path": "/a/b",
       "type": "layout",
     },
     {
       "id": "/a/b:page",
       "node": "_",
-      "params": [
+      "path": "/a/b",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2073,7 +2074,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 4`] = `
           "type": "page",
         },
       ],
-      "path": "/a/b",
       "type": "page",
     },
   ],
@@ -2087,19 +2087,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 5`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/a:layout",
       "node": "_",
-      "params": [
+      "path": "/a",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2109,13 +2110,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 5`] = `
           "value": "a",
         },
       ],
-      "path": "/a",
       "type": "layout",
     },
     {
       "id": "/a/b/c:not-found",
       "node": "_",
-      "params": [
+      "path": "/a/b/c",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2129,7 +2130,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > basic 5`] = `
           "value": "b/c",
         },
       ],
-      "path": "/a/b/c",
       "type": "not-found",
     },
   ],
@@ -2190,19 +2190,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 2`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/a:layout",
       "node": "_",
-      "params": [
+      "path": "/a",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2212,13 +2213,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 2`] = `
           "value": "a",
         },
       ],
-      "path": "/a",
       "type": "layout",
     },
     {
       "id": "/a:page",
       "node": "_",
-      "params": [
+      "path": "/a",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2231,7 +2232,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 2`] = `
           "type": "page",
         },
       ],
-      "path": "/a",
       "type": "page",
     },
   ],
@@ -2245,19 +2245,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 3`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/(x):layout",
       "node": "_",
-      "params": [
+      "path": "/(x)",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2267,13 +2268,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 3`] = `
           "value": "(x)",
         },
       ],
-      "path": "/(x)",
       "type": "layout",
     },
     {
       "id": "/(x)/b:layout",
       "node": "_",
-      "params": [
+      "path": "/(x)/b",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2287,13 +2288,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 3`] = `
           "value": "b",
         },
       ],
-      "path": "/(x)/b",
       "type": "layout",
     },
     {
       "id": "/(x)/b:page",
       "node": "_",
-      "params": [
+      "path": "/(x)/b",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2310,7 +2311,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 3`] = `
           "type": "page",
         },
       ],
-      "path": "/(x)/b",
       "type": "page",
     },
   ],
@@ -2324,19 +2324,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 4`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/c:layout",
       "node": "_",
-      "params": [
+      "path": "/c",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2346,13 +2347,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 4`] = `
           "value": "c",
         },
       ],
-      "path": "/c",
       "type": "layout",
     },
     {
       "id": "/c/(x):layout",
       "node": "_",
-      "params": [
+      "path": "/c/(x)",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2366,13 +2367,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 4`] = `
           "value": "(x)",
         },
       ],
-      "path": "/c/(x)",
       "type": "layout",
     },
     {
       "id": "/c/(x):page",
       "node": "_",
-      "params": [
+      "path": "/c/(x)",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2389,7 +2390,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 4`] = `
           "type": "page",
         },
       ],
-      "path": "/c/(x)",
       "type": "page",
     },
   ],
@@ -2403,19 +2403,20 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 5`] = `
     {
       "id": "/:layout",
       "node": "_",
-      "params": [
+      "path": "/",
+      "segments": [
         {
           "type": "static",
           "value": "",
         },
       ],
-      "path": "/",
       "type": "layout",
     },
     {
       "id": "/(y):layout",
       "node": "_",
-      "params": [
+      "path": "/(y)",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2425,13 +2426,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 5`] = `
           "value": "(y)",
         },
       ],
-      "path": "/(y)",
       "type": "layout",
     },
     {
       "id": "/(y)/d:layout",
       "node": "_",
-      "params": [
+      "path": "/(y)/d",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2445,13 +2446,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 5`] = `
           "value": "d",
         },
       ],
-      "path": "/(y)/d",
       "type": "layout",
     },
     {
       "id": "/(y)/d/(z):layout",
       "node": "_",
-      "params": [
+      "path": "/(y)/d/(z)",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2469,13 +2470,13 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 5`] = `
           "value": "(z)",
         },
       ],
-      "path": "/(y)/d/(z)",
       "type": "layout",
     },
     {
       "id": "/(y)/d/(z):page",
       "node": "_",
-      "params": [
+      "path": "/(y)/d/(z)",
+      "segments": [
         {
           "type": "static",
           "value": "",
@@ -2496,7 +2497,6 @@ exports[`matchRouteTree2 > matchRouteTree3 > group routes 5`] = `
           "type": "page",
         },
       ],
-      "path": "/(y)/d/(z)",
       "type": "page",
     },
   ],

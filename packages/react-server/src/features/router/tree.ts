@@ -27,15 +27,6 @@ export function createFsRouteTree<T>(globEntries: Record<string, unknown>): {
   return { entries, tree };
 }
 
-export type MatchParams = Record<string, string>;
-
-export function toMatchParams(segments: MatchSegment[]): MatchParams {
-  return Object.assign({}, ...segments.map((s) => matchSegmentToParams(s)));
-}
-
-// TODO: "segment" is confusing? matchType? matchEntry? VirtualSegment?
-// to raw segment
-// to virtual segment
 export type MatchSegment =
   | {
       type: "static";
@@ -67,21 +58,27 @@ export type MatchSegment =
       type: "route";
     };
 
-function matchSegmentToParams(s: MatchSegment): MatchParams {
-  switch (s.type) {
-    case "dynamic":
-    case "catchall":
-      return { [s.key]: s.value };
+export type MatchParams = Record<string, string>;
+
+export function toMatchParams(segments: MatchSegment[]): MatchParams {
+  const params: MatchParams = {};
+  for (const s of segments) {
+    switch (s.type) {
+      case "dynamic":
+      case "catchall": {
+        params[s.key] = s.value;
+      }
+    }
   }
-  return {};
+  return params;
+}
+
+export function toMatchValues(segments: MatchSegment[]): string[] {
+  return segments.map((s) => matchSegmentToVirtualSegment(s)).filter(isNotNil);
 }
 
 export function joinMatchSegments(segments: MatchSegment[]): string {
-  return joinSegments(toMatchSegmentValues(segments));
-}
-
-export function toMatchSegmentValues(segments: MatchSegment[]): string[] {
-  return segments.map((s) => matchSegmentToVirtualSegment(s)).filter(isNotNil);
+  return joinSegments(toMatchValues(segments));
 }
 
 export function matchSegmentToVirtualSegment(
@@ -98,19 +95,18 @@ export function matchSegmentToVirtualSegment(
   return;
 }
 
-type MatchEntry2<T> = {
+type MatchEntry<T> = {
   node: TreeNode<T>;
   segment: MatchSegment;
 };
 
-// TODO: rename to PageMatchEntry?
-export type MatchEntry3<T> = {
+export type PageMatchEntry<T> = {
   node: TreeNode<T>;
   id: string;
-  path: string; // TODO: rename to "key"? note that this `path` contains group segment e.g. /x/(g)/z
-  type: "layout" | "page" | "not-found";
-  // TODO: rename segments
-  params: MatchSegment[];
+  /** "virtual" path such that it includes group segment e.g. /x/(g)/z */
+  path: string;
+  type: PageMatchType;
+  segments: MatchSegment[];
 };
 
 type PageMatchType = "layout" | "page" | "not-found";
@@ -128,21 +124,20 @@ export function toPageMatchType(s: MatchSegment): PageMatchType {
   return "layout";
 }
 
-export type MatchRouteResult3<T> = {
-  matches: MatchEntry3<T>[];
-  // TODO: rename segments
-  params: MatchSegment[];
+export type MatchRouteResult<T> = {
+  matches: PageMatchEntry<T>[];
+  segments: MatchSegment[];
   notFound: boolean;
 };
 
 export function matchRouteTree3<T extends AnyRouteModule>(
   tree: TreeNode<T>,
   pathname: string,
-): MatchRouteResult3<T> {
+): MatchRouteResult<T> {
   const matches = matchRouteTree2(tree, pathname, "page");
   tinyassert(matches && matches.length > 0);
   const segments = matches.map((m) => m.segment);
-  const matches3 = matches.map((m, i) => {
+  const pageMatches = matches.map((m, i) => {
     const subSegments = segments.slice(0, i + 1);
     const path = joinMatchSegments(subSegments);
     const type = toPageMatchType(m.segment);
@@ -151,18 +146,18 @@ export function matchRouteTree3<T extends AnyRouteModule>(
       id,
       path,
       type,
-      params: subSegments,
+      segments: subSegments,
       node: m.node,
-    } satisfies MatchEntry3<T>;
+    } satisfies PageMatchEntry<T>;
   });
   return {
-    matches: matches3,
-    params: segments,
-    notFound: matches3.some((m) => m.type === "not-found"),
+    matches: pageMatches,
+    segments,
+    notFound: pageMatches.some((m) => m.type === "not-found"),
   };
 }
 
-type MatchResult2<T> = MatchEntry2<T>[] | undefined;
+type MatchResult2<T> = MatchEntry<T>[] | undefined;
 
 export function matchRouteTree2<T extends AnyRouteModule>(
   tree: TreeNode<T>,
@@ -175,9 +170,9 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   function recurse(
     node: TreeNode<T>,
     segments: string[],
-  ): MatchEntry2<T>[] | undefined {
+  ): MatchEntry<T>[] | undefined {
     // try all branches for group routes
-    const branches: MatchEntry2<T>[][] = [];
+    const branches: MatchEntry<T>[][] = [];
 
     // check page or route
     if (segments.length === 0 && node.value?.[leafType]) {
@@ -217,7 +212,7 @@ export function matchRouteTree2<T extends AnyRouteModule>(
   }
 }
 
-function scoreBranch<T>(branch: MatchEntry2<T>[]) {
+function scoreBranch<T>(branch: MatchEntry<T>[]) {
   const first = branch[0]?.segment.type;
   const last = branch.at(-1)!.segment.type;
   tinyassert(first && last);

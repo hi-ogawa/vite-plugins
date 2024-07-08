@@ -6,7 +6,7 @@ export type FlightData = {
   metadata?: React.ReactNode;
   nodeMap: Record<string, React.ReactNode>;
   layoutContentMap: Record<string, string>;
-  params: MatchSegment[];
+  segments: MatchSegment[];
   url: string;
 };
 

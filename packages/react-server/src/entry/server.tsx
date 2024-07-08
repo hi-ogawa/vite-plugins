@@ -108,7 +108,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     nodeMap: result.nodeMap,
     layoutContentMap: result.layoutContentMap,
     metadata: result.metadata,
-    params: result.params,
+    segments: result.segments,
     url: request.url,
     action: actionResult
       ? objectPick(actionResult, ["data", "error"])
