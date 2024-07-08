@@ -124,7 +124,7 @@ type MatchEntry2<T> = {
   segment: MatchSegment;
 };
 
-// TODO: refactor
+// TODO: (refactor) more convenient wrapper for renderRouteMap and getCachedRoutes
 export type MatchEntry3<T> = MatchEntry2<T> & {
   id: string;
   path: string;

@@ -180,45 +180,12 @@ export async function renderRouteMap(
       Object.assign(metadata, m.node.value?.layout?.metadata);
     }
   }
-
-  // const result = matchRouteTree(tree, url.pathname);
-  // // there is always default not-found page
-  // tinyassert(
-  //   result.matches.at(-1)?.type === "page" ||
-  //     result.matches.at(-1)?.type === "not-found",
-  // );
-  // for (const m of result.matches) {
-  //   const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
-  //   layoutContentMap[parentLayout] = routeId;
-  //   parentLayout = m.prefix;
-  //   const props: BaseProps = {
-  //     ...baseProps,
-  //     params: toMatchParamsObject(m.params),
-  //   };
-  //   if (m.type === "layout") {
-  //     nodeMap[routeId] = await renderLayout(m.node, props, m);
-  //     Object.assign(metadata, m.node.value?.layout?.metadata);
-  //   } else if (m.type === "page") {
-  //     const Page = m.node.value?.page?.default;
-  //     tinyassert(Page, "No default export in 'page'");
-  //     nodeMap[routeId] = <Page {...props} />;
-  //     Object.assign(metadata, m.node.value?.page?.metadata);
-  //   } else if (m.type === "not-found") {
-  //     const NotFound = m.node.value?.["not-found"]?.default;
-  //     tinyassert(NotFound);
-  //     nodeMap[routeId] = <NotFound />;
-  //   } else {
-  //     m.type satisfies never;
-  //   }
-  // }
   return {
     layoutContentMap,
     nodeMap,
     metadata: renderMetadata(metadata),
     params: matches2.at(-1)?.params ?? [],
     notFound: matches2.at(-1)?.segment.type === "not-found",
-    // params: result.matches.at(-1)?.params ?? [],
-    // notFound: result.notFound,
   };
 }
 
