@@ -191,8 +191,8 @@ export function matchRouteTree<T extends AnyRouteModule>(
     }
 
     // check not-found
-    if (node.value?.["not-found"]) {
-      branches.push([
+    if (branches.length === 0 && node.value?.["not-found"]) {
+      return [
         {
           node,
           segment: {
@@ -200,7 +200,7 @@ export function matchRouteTree<T extends AnyRouteModule>(
             value: segments.join("/"),
           },
         },
-      ]);
+      ];
     }
 
     // tie break branches

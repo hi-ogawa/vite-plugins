@@ -2814,8 +2814,16 @@ exports[`matchRouteTree > tie-break not-found dynamic 1`] = `
     {
       "node": {},
       "segment": {
+        "key": "a",
+        "type": "dynamic",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
         "type": "not-found",
-        "value": "a/b",
+        "value": "b",
       },
     },
   ],
