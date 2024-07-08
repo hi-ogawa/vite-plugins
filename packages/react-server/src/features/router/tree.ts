@@ -27,10 +27,9 @@ export function createFsRouteTree<T>(globEntries: Record<string, unknown>): {
   return { entries, tree };
 }
 
-export type MatchParamEntry = [key: string | null, value: string];
 export type MatchParams = Record<string, string>;
 
-export function toMatchParamsObject(segments: MatchSegment[]): MatchParams {
+export function toMatchParams(segments: MatchSegment[]): MatchParams {
   return Object.assign({}, ...segments.map((s) => matchSegmentToParams(s)));
 }
 

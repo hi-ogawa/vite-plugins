@@ -10,11 +10,7 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import {
-  type MatchSegment,
-  toMatchParamsObject,
-  toMatchSegmentValues,
-} from "./tree";
+import { type MatchSegment, toMatchParams, toMatchSegmentValues } from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
 export const FlightDataContext = React.createContext<Promise<FlightData>>(
@@ -60,7 +56,7 @@ function useParamEntries() {
 
 export function useParams() {
   const entries = useParamEntries();
-  return React.useMemo(() => toMatchParamsObject(entries), [entries]);
+  return React.useMemo(() => toMatchParams(entries), [entries]);
 }
 
 type LayoutMatchType = {
