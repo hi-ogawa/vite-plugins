@@ -1,4 +1,4 @@
-import { isNotNil, sortBy, tinyassert } from "@hiogawa/utils";
+import { sortBy, tinyassert } from "@hiogawa/utils";
 import type { AnyRouteModule } from "./server";
 import { joinSegments, splitToSegments } from "./utils";
 
@@ -74,25 +74,22 @@ export function toMatchParams(segments: MatchSegment[]): MatchParams {
 }
 
 export function toMatchValues(segments: MatchSegment[]): string[] {
-  return segments.map((s) => matchSegmentToVirtualSegment(s)).filter(isNotNil);
+  const values: string[] = [];
+  for (const s of segments) {
+    switch (s.type) {
+      case "static":
+      case "dynamic":
+      case "catchall":
+      case "group":
+      case "not-found":
+        values.push(s.value);
+    }
+  }
+  return values;
 }
 
 export function joinMatchSegments(segments: MatchSegment[]): string {
   return joinSegments(toMatchValues(segments));
-}
-
-export function matchSegmentToVirtualSegment(
-  s: MatchSegment,
-): string | undefined {
-  switch (s.type) {
-    case "static":
-    case "dynamic":
-    case "catchall":
-    case "group":
-    case "not-found":
-      return s.value;
-  }
-  return;
 }
 
 type MatchEntry<T> = {
