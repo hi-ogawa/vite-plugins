@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { AnyRouteModule } from "./server";
-import { createFsRouteTree, matchPageRoute, matchRouteTree } from "./tree";
+import {
+  createFsRouteTree,
+  matchPageRoute,
+  matchRouteTree,
+  parseRoutePath,
+} from "./tree";
 
 describe(createFsRouteTree, () => {
   it("basic", async () => {
@@ -153,5 +158,43 @@ describe(matchRouteTree, () => {
     for (const e of testCases) {
       expect(tester.match(e)).matchSnapshot();
     }
+  });
+});
+
+describe(parseRoutePath, () => {
+  it("basic", () => {
+    const result = parseRoutePath("/a/b/c");
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "dynamic": false,
+        "format": [Function],
+      }
+    `);
+    expect(result.format({})).toMatchInlineSnapshot(`"/a/b/c"`);
+    expect(() => result.format({ k: "v" })).toThrow();
+  });
+
+  it("dynamic", () => {
+    const result = parseRoutePath("/a/[b]/c");
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "dynamic": true,
+        "format": [Function],
+      }
+    `);
+    expect(result.format({ b: "hello" })).toMatchInlineSnapshot(`"/a/hello/c"`);
+    expect(() => result.format({})).toThrow();
+  });
+
+  it("group", () => {
+    const result = parseRoutePath("/a/(b)/c");
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "dynamic": false,
+        "format": [Function],
+      }
+    `);
+    expect(result.format({})).toMatchInlineSnapshot(`"/a/c"`);
+    expect(() => result.format({ k: "v" })).toThrow();
   });
 });

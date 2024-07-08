@@ -100,7 +100,7 @@ type MatchEntry<T> = {
 export type PageMatchEntry<T> = {
   node: TreeNode<T>;
   id: string;
-  /** "virtual" path such that it includes group segment e.g. /x/(g)/z */
+  /** not necessary an actual path as it includes group segment e.g. /x/(g)/z */
   path: string;
   type: PageMatchType;
   segments: MatchSegment[];
@@ -290,11 +290,15 @@ const DYNAMIC_RE = /^\[(\w*)\]$/;
 const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
 const GROUP_RE = /^\((\w+)\)$/;
 
-// TODO: support ssg with route groups
 export function parseRoutePath(pathname: string) {
   const dynamicMap: Record<string, string> = {};
 
   for (const segment of pathname.split("/")) {
+    const mGroup = segment.match(GROUP_RE);
+    if (mGroup) {
+      // strip off group segment
+      pathname = pathname.replace(`/${segment}`, "");
+    }
     const mAll = segment.match(CATCH_ALL_RE);
     if (mAll) {
       tinyassert(1 in mAll);
