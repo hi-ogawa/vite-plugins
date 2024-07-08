@@ -297,7 +297,6 @@ export function parseRoutePath(pathname: string) {
     const mAll = segment.match(CATCH_ALL_RE);
     if (mAll) {
       tinyassert(1 in mAll);
-      mAll[1];
       dynamicMap[mAll[1]] = segment;
     }
     const m = segment.match(DYNAMIC_RE);
