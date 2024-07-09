@@ -30,7 +30,10 @@ export default async function Page() {
         <div data-testid="action-bind">{getActionBindResult()}</div>
       </div>
       <FormStateTest />
+      <div className="border-t" />
       <TestActionReturnComponent />
+      <div className="border-t" />
+      <TestHigherOrder />
     </div>
   );
 }
@@ -69,4 +72,29 @@ function ServerActionBindTest() {
       </button>
     </form>
   );
+}
+
+function TestHigherOrder() {
+  return (
+    <>
+      <form
+        action={wrapAction(async (formData: FormData) => {
+          "use server";
+          console.log(formData);
+        })}
+      >
+        <input type="hidden" name="hello" value="world" />
+        <button className="antd-btn antd-btn-default px-2">
+          TestHigherOrder
+        </button>
+      </form>
+    </>
+  );
+}
+
+function wrapAction<F extends (...args: any[]) => any>(action: F): F {
+  return (async (...args: any[]) => {
+    "use server";
+    return action(...args);
+  }) as any;
 }
