@@ -60,7 +60,10 @@ async function start() {
       callServer,
     });
     $__startActionTransition(() => $__setFlight(result));
-    return (await result).action?.data;
+    const actionResult = (await result).action;
+    // TODO: rethrow?
+    actionResult?.error;
+    return actionResult?.data;
   };
 
   // expose as global to be used for createServerReference
@@ -180,7 +183,10 @@ async function start() {
   if (document.documentElement.dataset["noHydrate"]) {
     ReactDOMClient.createRoot(document).render(reactRootEl);
   } else {
-    const formState = (await initialFlight).action?.data;
+    const actionResult = (await initialFlight).action;
+    // TODO: rethrow from where?
+    actionResult?.error;
+    const formState = actionResult?.data;
     ReactDOMClient.hydrateRoot(document, reactRootEl, {
       formState,
     });
