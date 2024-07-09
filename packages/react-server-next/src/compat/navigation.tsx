@@ -5,7 +5,7 @@ import {
   useLocation,
   useParams as useParams_,
   useRouter as useRouter_,
-  useSelectedLayoutSegments,
+  useSelectedLayoutSegments as useSelectedLayoutSegments_,
 } from "@hiogawa/react-server/client";
 import React from "react";
 
@@ -26,10 +26,18 @@ export function useParams<T extends Params = Params>(): T {
   return useParams_() as any;
 }
 
-export { useSelectedLayoutSegments };
+export function useSelectedLayoutSegments(
+  /** @todo */
+  _parallelRouteKey?: string,
+): string[] {
+  return useSelectedLayoutSegments_();
+}
 
-export function useSelectedLayoutSegment(): string | null {
-  return useSelectedLayoutSegments()[0] ?? null;
+export function useSelectedLayoutSegment(
+  /** @todo */
+  _parallelRouteKey?: string,
+): string | null {
+  return useSelectedLayoutSegments_()[0] ?? null;
 }
 
 export function useRouter() {
