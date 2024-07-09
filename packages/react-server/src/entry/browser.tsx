@@ -71,6 +71,7 @@ async function start() {
             Promise.resolve(response),
             { callServer },
           );
+          // TODO: similar to redirection, we can also skip flight stream and return error json directly
           const actionResult = (await result).action;
           if (actionResult?.error) {
             throw createError(actionResult?.error);
