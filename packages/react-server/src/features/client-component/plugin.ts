@@ -17,7 +17,6 @@ import {
   USE_CLIENT,
   USE_CLIENT_RE,
   createVirtualPlugin,
-  hashString,
 } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:use-client");
