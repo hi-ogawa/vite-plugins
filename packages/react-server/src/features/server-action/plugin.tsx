@@ -5,11 +5,7 @@ import {
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { type Plugin, type PluginOption, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
-import {
-  USE_SERVER,
-  createVirtualPlugin,
-  hashString,
-} from "../../plugin/utils";
+import { USE_SERVER, createVirtualPlugin } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:server-action");
 
@@ -36,22 +32,27 @@ export function vitePluginClientUseServer({
     name: vitePluginClientUseServer.name,
     async transform(code, id, options) {
       if (!code.includes(USE_SERVER)) {
+        manager.serverReferenceMap.delete(id);
         return;
       }
+      const serverId = manager.normalizeReferenceId(id);
       const ast = await parseAstAsync(code);
       const output = await transformDirectiveProxyExport(ast, {
         directive: USE_SERVER,
-        id: manager.buildType ? hashString(id) : id,
+        id: serverId,
         runtime: "$$proxy",
       });
       if (!output) {
+        manager.serverReferenceMap.delete(id);
         return;
       }
-      if (manager.buildType && !manager.serverReferenceIds.has(id)) {
+      // during client build, all server references are expected to be discovered beforehand.
+      if (manager.buildType && !manager.serverReferenceMap.has(id)) {
         throw new Error(
           `client imported undiscovered server reference '${id}'`,
         );
       }
+      manager.serverReferenceMap.set(id, serverId);
       const importPath = options?.ssr ? ssrRuntimePath : runtimePath;
       output.prepend(`\
 import { createServerReference } from "${importPath}";
@@ -87,17 +88,18 @@ export function vitePluginServerUseServer({
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
-      manager.serverReferenceIds.delete(id);
+      manager.serverReferenceMap.delete(id);
       if (!code.includes(USE_SERVER)) {
         return;
       }
+      const serverId = manager.normalizeReferenceId(id);
       const ast = await parseAstAsync(code);
       const { output } = await transformServerActionServer(code, ast, {
-        id: manager.buildType ? hashString(id) : id,
+        id: serverId,
         runtime: "$$register",
       });
       if (output.hasChanged()) {
-        manager.serverReferenceIds.add(id);
+        manager.serverReferenceMap.set(id, serverId);
         output.prepend(
           `import { registerServerReference as $$register } from "${runtimePath}";\n`,
         );
@@ -118,8 +120,8 @@ export function vitePluginServerUseServer({
     }
     tinyassert(manager.buildType === "server");
     let result = `export default {\n`;
-    for (const id of manager.serverReferenceIds) {
-      result += `"${hashString(id)}": () => import("${id}"),\n`;
+    for (const [id, serverId] of manager.serverReferenceMap) {
+      result += `"${serverId}": () => import("${id}"),\n`;
     }
     result += "};\n";
     debug("[virtual:server-references]", result);
