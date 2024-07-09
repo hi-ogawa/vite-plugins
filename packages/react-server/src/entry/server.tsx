@@ -183,7 +183,10 @@ async function actionHandler({
     const body = contentType?.startsWith("multipart/form-data")
       ? await request.formData()
       : await request.text();
-    const args = await ReactServer.decodeReply(body);
+    const args = await ReactServer.decodeReply(
+      body,
+      createActionBundlerConfig(),
+    );
     const action = await importServerAction(streamActionId);
     boundAction = () => action.apply(null, args);
   } else {

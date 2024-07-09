@@ -25,7 +25,11 @@ declare module "react-server-dom-webpack/server.edge" {
     name: string,
   ): T;
 
-  export function decodeReply(body: string | FormData): Promise<unknown[]>;
+  export function decodeReply(
+    body: string | FormData,
+    bundlerConfig: import("./react").BundlerConfig,
+    // TODO: temporaryReferences
+  ): Promise<unknown[]>;
 
   export function decodeAction(
     body: FormData,
