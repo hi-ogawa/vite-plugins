@@ -30,7 +30,10 @@ export default async function Page() {
         <div data-testid="action-bind">{getActionBindResult()}</div>
       </div>
       <FormStateTest />
+      <div className="border-t" />
       <TestActionReturnComponent />
+      <div className="border-t" />
+      <TestHigherOrder />
     </div>
   );
 }
@@ -69,4 +72,34 @@ function ServerActionBindTest() {
       </button>
     </form>
   );
+}
+
+let testHigherOrderState: any;
+
+function TestHigherOrder() {
+  return (
+    <div className="flex items-center gap-2">
+      <form
+        action={wrapAction(async (formData: FormData) => {
+          "use server";
+          testHigherOrderState = testHigherOrderState
+            ? null
+            : formData.get("test");
+        })}
+      >
+        <input type="hidden" name="test" value="ok" />
+        <button className="antd-btn antd-btn-default px-2">Higher Order</button>
+      </form>
+      <div data-testid="higher-order-result">
+        {testHigherOrderState ?? "(none)"}
+      </div>
+    </div>
+  );
+}
+
+function wrapAction<F extends (...args: any[]) => any>(action: F): F {
+  return (async (...args: any[]) => {
+    "use server";
+    return action(...args);
+  }) as any;
 }

@@ -183,7 +183,10 @@ async function actionHandler({
     const body = contentType?.startsWith("multipart/form-data")
       ? await request.formData()
       : await request.text();
-    const args = await ReactServer.decodeReply(body);
+    const args = await ReactServer.decodeReply(
+      body,
+      createActionBundlerConfig(),
+    );
     const action = await importServerAction(streamActionId);
     boundAction = () => action.apply(null, args);
   } else {
@@ -203,7 +206,6 @@ async function actionHandler({
   try {
     result.data = await requestContext.run(() => boundAction());
   } catch (e) {
-    // TODO: we can respond redirection directly when nojs action
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   } finally {
     result.responseHeaders = {
