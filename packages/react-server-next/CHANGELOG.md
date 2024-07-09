@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.8
+
+- refactor!: string only for `RevalidationType` ([#499](https://github.com/hi-ogawa/vite-plugins/pull/499))
+
 ## v0.0.7
 
 - feat: support `Image.priority` ([#487](https://github.com/hi-ogawa/vite-plugins/pull/487))

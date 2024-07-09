@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.3.1
+
+- feat: route groups + ssr not-found page ([#517](https://github.com/hi-ogawa/vite-plugins/pull/517))
+- feat: optional catch-all route ([#518](https://github.com/hi-ogawa/vite-plugins/pull/518))
+- refactor!: string only for `RevalidationType` ([#499](https://github.com/hi-ogawa/vite-plugins/pull/499))
+- refactor: simplify catchall handling ([#505](https://github.com/hi-ogawa/vite-plugins/pull/505))
+- refactor: rename "layout" to "flight" ([#500](https://github.com/hi-ogawa/vite-plugins/pull/500))
+- refactor: rework route data structure ([#498](https://github.com/hi-ogawa/vite-plugins/pull/498))
+- chore: relax react peer deps + simplify monorepo deps ([#522](https://github.com/hi-ogawa/vite-plugins/pull/522))
+- test: test action returning components ([#503](https://github.com/hi-ogawa/vite-plugins/pull/503))
+
 ## v0.3.0
 
 - feat!: support `headers`, `cookies` and `revalidatePath` (and remove `useActionContext`) ([#484](https://github.com/hi-ogawa/vite-plugins/pull/484))
