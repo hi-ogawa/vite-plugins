@@ -11,6 +11,7 @@ import {
   ClientActionBindTest,
   FormStateTest,
   NonFormActionTest,
+  TestActionError,
   TestActionReturnComponent,
 } from "./_client";
 
@@ -34,6 +35,13 @@ export default async function Page() {
       <TestActionReturnComponent />
       <div className="border-t" />
       <TestHigherOrder />
+      <div className="border-t" />
+      <TestActionError
+        action={async () => {
+          "use server";
+          throw new Error("boom!");
+        }}
+      />
     </div>
   );
 }

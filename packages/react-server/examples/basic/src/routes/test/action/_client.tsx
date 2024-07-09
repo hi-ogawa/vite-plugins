@@ -226,3 +226,29 @@ export function TestActionReturnComponent() {
     </div>
   );
 }
+
+export function TestActionError(props: { action: () => Promise<void> }) {
+  const [error, setError] = React.useState<unknown>();
+  return (
+    <div className="flex flex-col gap-2 items-start">
+      <div className="flex items-center gap-2">
+        <form
+          action={async () => {
+            try {
+              await props.action();
+            } catch (e) {
+              setError(e);
+            }
+          }}
+        >
+          <button className="antd-btn antd-btn-default px-2">
+            TestActionError
+          </button>
+        </form>
+        <div data-testid="action-error-result">
+          Result: {error ? String(error) : "(none)"}
+        </div>
+      </div>
+    </div>
+  );
+}
