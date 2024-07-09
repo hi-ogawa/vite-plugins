@@ -201,4 +201,47 @@ function Counter() {
       "
     `);
   });
+
+  it("higher order", async () => {
+    // packages/react-server/examples/next/app/actions/header/page.tsx
+    // packages/react-server/examples/next/app/actions/header/validator.ts
+    const input = `
+export default function Page() {
+  const x = 0;
+  const action = validator(async (y) => {
+    "use server";
+    return x + y;
+  })
+}
+
+function validator(action) {
+  return async function (arg) {
+    "use server";
+    return action(arg);
+  };
+}
+`;
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      "
+      export default function Page() {
+        const x = 0;
+        const action = validator($$register($$hoist_0, "<id>", "$$hoist_0").bind(null, x))
+      }
+
+      function validator(action) {
+        return $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, action);
+      }
+
+      ;export async function $$hoist_0(x, y) {
+          "use server";
+          return x + y;
+        };
+
+      ;export async function $$hoist_1(action, arg) {
+          "use server";
+          return action(arg);
+        };
+      "
+    `);
+  });
 });
