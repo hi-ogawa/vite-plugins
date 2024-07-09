@@ -120,7 +120,7 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
 // trigger client navigation once and suspend forever
 const redirectSuspensionMap = new WeakMap<object, Promise<null>>();
 
-export function RedirectHandler(props: {
+function RedirectHandler(props: {
   suspensionKey: object;
   redirectLocation: string;
 }) {
