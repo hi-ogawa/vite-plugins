@@ -94,11 +94,9 @@ exports[`generateRouteModuleTree > basic 2`] = `
         <NotFoundBoundary
           fallback={<DefaultNotFoundPage />}
         >
-          <RedirectBoundary>
-            <LayoutContent
-              name="/:layout"
-            />
-          </RedirectBoundary>
+          <LayoutContent
+            name="/:layout"
+          />
         </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
@@ -122,11 +120,9 @@ exports[`generateRouteModuleTree > basic 2`] = `
         <ErrorBoundary
           errorComponent="/X/ERROR.TSX"
         >
-          <RedirectBoundary>
-            <LayoutContent
-              name="/x:layout"
-            />
-          </RedirectBoundary>
+          <LayoutContent
+            name="/x:layout"
+          />
         </ErrorBoundary>
       </React.Fragment>
     </LayoutMatchProvider>,
@@ -224,11 +220,9 @@ exports[`generateRouteModuleTree > basic 3`] = `
         <NotFoundBoundary
           fallback={<DefaultNotFoundPage />}
         >
-          <RedirectBoundary>
-            <LayoutContent
-              name="/:layout"
-            />
-          </RedirectBoundary>
+          <LayoutContent
+            name="/:layout"
+          />
         </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
@@ -277,11 +271,9 @@ exports[`generateRouteModuleTree > basic 3`] = `
           }
         }
       >
-        <RedirectBoundary>
-          <LayoutContent
-            name="/x/y:layout"
-          />
-        </RedirectBoundary>
+        <LayoutContent
+          name="/x/y:layout"
+        />
       <//X/Y/LAYOUT.TSX>
     </LayoutMatchProvider>,
     "/x/y:page": </X/Y/PAGE.TSX
@@ -329,11 +321,9 @@ exports[`generateRouteModuleTree > basic 3`] = `
         <ErrorBoundary
           errorComponent="/X/ERROR.TSX"
         >
-          <RedirectBoundary>
-            <LayoutContent
-              name="/x:layout"
-            />
-          </RedirectBoundary>
+          <LayoutContent
+            name="/x:layout"
+          />
         </ErrorBoundary>
       </React.Fragment>
     </LayoutMatchProvider>,
@@ -408,11 +398,9 @@ exports[`generateRouteModuleTree > basic 4`] = `
         <NotFoundBoundary
           fallback={<DefaultNotFoundPage />}
         >
-          <RedirectBoundary>
-            <LayoutContent
-              name="/:layout"
-            />
-          </RedirectBoundary>
+          <LayoutContent
+            name="/:layout"
+          />
         </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
