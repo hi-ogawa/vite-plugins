@@ -16,6 +16,7 @@ import {
   renderRouteMap,
 } from "../features/router/server";
 import { type FlightData, handleTrailingSlash } from "../features/router/utils";
+import { createActionRedirectResponse } from "../features/server-action/redirect";
 import {
   type ActionResult,
   createActionBundlerConfig,
@@ -154,7 +155,6 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
-import { createActionRedirectResponse } from "../features/server-action/redirect";
 
 export const router = generateRouteModuleTree(serverRoutes);
 
