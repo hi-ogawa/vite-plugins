@@ -25,6 +25,7 @@ import type { FlightData } from "../features/router/utils";
 import { ACTION_REDIRECT_LOCATION } from "../features/server-action/redirect";
 import { createStreamRequest } from "../features/server-component/utils";
 import { $__global } from "../global";
+import { createError } from "../server";
 import type { CallServerCallback } from "../types/react";
 import { getFlightStreamBrowser } from "../utils/stream-script";
 
@@ -70,8 +71,12 @@ async function start() {
             Promise.resolve(response),
             { callServer },
           );
+          const actionResult = (await result).action;
+          if (actionResult?.error) {
+            throw createError(actionResult?.error);
+          }
           $__setFlight(result);
-          return (await result).action?.data;
+          return actionResult?.data;
         })().then(resolve, reject);
       });
     });
