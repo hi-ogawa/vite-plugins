@@ -7,7 +7,6 @@ import {
   ReactServerDigestError,
   createError,
   getErrorContext,
-  isRedirectError,
 } from "../features/error/shared";
 import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
@@ -78,29 +77,11 @@ export const handler: ReactServerHandler = async (ctx) => {
       requestContext,
     });
     // respond action redirect error directly
-    const error = actionResult.error;
-    const redirect = error && isRedirectError(error);
-    if (redirect) {
-      if (isStream) {
-        const headers = new Headers({
-          ...actionResult.responseHeaders,
-          ...error.headers,
-        });
-        headers.delete("location");
-        headers.set("x-action-redirect-location", redirect.location);
-        return new Response(null, {
-          status: 200,
-          headers,
-        });
-      }
-      return new Response(null, {
-        status: error.status,
-        headers: {
-          ...actionResult.responseHeaders,
-          ...error.headers,
-        },
-      });
-    }
+    const redirectResponse = createActionRedirectResponse({
+      isStream,
+      actionResult,
+    });
+    if (redirectResponse) return redirectResponse;
   }
 
   // render flight stream
@@ -173,6 +154,7 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
 
 // @ts-ignore untyped virtual
 import serverRoutes from "virtual:server-routes";
+import { createActionRedirectResponse } from "../features/server-action/redirect";
 
 export const router = generateRouteModuleTree(serverRoutes);
 

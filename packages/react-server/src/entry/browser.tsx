@@ -22,6 +22,7 @@ import {
   emptyRouteManifest,
 } from "../features/router/manifest";
 import type { FlightData } from "../features/router/utils";
+import { ACTION_REDIRECT_LOCATION } from "../features/server-action/redirect";
 import { createStreamRequest } from "../features/server-component/utils";
 import { $__global } from "../global";
 import type { CallServerCallback } from "../types/react";
@@ -61,7 +62,7 @@ async function start() {
       $__startActionTransition(async () => {
         try {
           const response = await fetch(request);
-          const location = response.headers.get("x-action-redirect-location");
+          const location = response.headers.get(ACTION_REDIRECT_LOCATION);
           if (location) {
             history.push(location);
             resolve(undefined);
