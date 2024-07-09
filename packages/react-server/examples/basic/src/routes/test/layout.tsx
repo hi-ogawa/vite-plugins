@@ -4,7 +4,7 @@ import { EffectCount, Hydrated } from "./_client";
 
 export default async function Layout(props: LayoutProps) {
   return (
-    <div className="flex flex-col gap-2 max-w-lg">
+    <div className="flex flex-col gap-2">
       <h2 className="text-lg">Test</h2>
       <NavMenu
         className="grid grid-cols-3 gap-1"

@@ -15,10 +15,10 @@ export default function Layout(props: LayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <div className="p-4 flex flex-col gap-2">
+        <div className="p-4 flex flex-col gap-2  max-w-lg">
           <Header />
           <NavMenu
-            className="flex flex-col items-start gap-1"
+            className="grid grid-cols-3 gap-1"
             links={["/", "/test", "/demo/waku_02"]}
           />
           {props.children}
