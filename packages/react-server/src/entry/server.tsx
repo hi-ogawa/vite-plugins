@@ -7,7 +7,6 @@ import {
   ReactServerDigestError,
   createError,
   getErrorContext,
-  isRedirectError,
 } from "../features/error/shared";
 import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
@@ -17,6 +16,7 @@ import {
   renderRouteMap,
 } from "../features/router/server";
 import { type FlightData, handleTrailingSlash } from "../features/router/utils";
+import { createActionRedirectResponse } from "../features/server-action/redirect";
 import {
   type ActionResult,
   createActionBundlerConfig,
@@ -77,17 +77,12 @@ export const handler: ReactServerHandler = async (ctx) => {
       streamActionId: streamParam?.actionId,
       requestContext,
     });
-    // return action redirect directly when nojs
-    const error = actionResult.error;
-    if (!isStream && error && isRedirectError(error)) {
-      return new Response(null, {
-        status: error.status,
-        headers: {
-          ...actionResult.responseHeaders,
-          ...error.headers,
-        },
-      });
-    }
+    // respond action redirect error directly
+    const redirectResponse = createActionRedirectResponse({
+      isStream,
+      actionResult,
+    });
+    if (redirectResponse) return redirectResponse;
   }
 
   // render flight stream

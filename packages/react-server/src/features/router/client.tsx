@@ -3,7 +3,6 @@ import type { HistoryState } from "@tanstack/history";
 import React from "react";
 import ReactDom from "react-dom";
 import { useRouter } from "../../client";
-import { ActionRedirectHandler } from "../server-action/client";
 import type { RevalidationType } from "../server-component/utils";
 import {
   type AssetDeps,
@@ -32,7 +31,6 @@ export function LayoutRoot() {
   return (
     <>
       <LayoutContent name={LAYOUT_ROOT_NAME} />
-      <ActionRedirectHandler />
       <MetadataRenderer />
     </>
   );

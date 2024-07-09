@@ -22,6 +22,7 @@ import {
   emptyRouteManifest,
 } from "../features/router/manifest";
 import type { FlightData } from "../features/router/utils";
+import { ACTION_REDIRECT_LOCATION } from "../features/server-action/redirect";
 import { createStreamRequest } from "../features/server-component/utils";
 import { $__global } from "../global";
 import type { CallServerCallback } from "../types/react";
@@ -56,11 +57,24 @@ async function start() {
       body: await ReactClient.encodeReply(args),
       headers,
     });
-    const result = ReactClient.createFromFetch<FlightData>(fetch(request), {
-      callServer,
+    return new Promise((resolve, reject) => {
+      $__startActionTransition(async () => {
+        (async () => {
+          const response = await fetch(request);
+          const location = response.headers.get(ACTION_REDIRECT_LOCATION);
+          if (location) {
+            history.push(location);
+            return;
+          }
+          const result = ReactClient.createFromFetch<FlightData>(
+            Promise.resolve(response),
+            { callServer },
+          );
+          $__setFlight(result);
+          return (await result).action?.data;
+        })().then(resolve, reject);
+      });
     });
-    $__startActionTransition(() => $__setFlight(result));
-    return (await result).action?.data;
   };
 
   // expose as global to be used for createServerReference
