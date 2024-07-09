@@ -74,21 +74,26 @@ function ServerActionBindTest() {
   );
 }
 
+let testHigherOrderState: any;
+
 function TestHigherOrder() {
   return (
-    <>
+    <div className="flex items-center gap-2">
       <form
         action={wrapAction(async (formData: FormData) => {
           "use server";
-          console.log(formData);
+          testHigherOrderState = testHigherOrderState
+            ? null
+            : formData.get("test");
         })}
       >
-        <input type="hidden" name="hello" value="world" />
-        <button className="antd-btn antd-btn-default px-2">
-          TestHigherOrder
-        </button>
+        <input type="hidden" name="test" value="ok" />
+        <button className="antd-btn antd-btn-default px-2">Higher Order</button>
       </form>
-    </>
+      <div data-testid="higher-order-result">
+        {testHigherOrderState ?? "(none)"}
+      </div>
+    </div>
   );
 }
 

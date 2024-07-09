@@ -689,6 +689,25 @@ test("action returning component", async ({ page }) => {
   await page.getByText("[server] OK!").click();
 });
 
+test("higher order action @js", async ({ page }) => {
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await testHigherOrderAction(page);
+});
+
+testNoJs("higher order action @nojs", async ({ page }) => {
+  await page.goto("/test/action");
+  await testHigherOrderAction(page);
+});
+
+async function testHigherOrderAction(page: Page) {
+  await expect(page.getByTestId("higher-order-result")).toHaveText("(none)");
+  await page.getByRole("button", { name: "Higher Order" }).click();
+  await expect(page.getByTestId("higher-order-result")).toHaveText("ok");
+  await page.getByRole("button", { name: "Higher Order" }).click();
+  await expect(page.getByTestId("higher-order-result")).toHaveText("(none)");
+}
+
 test("use client > virtual module", async ({ page }) => {
   await page.goto("/test/deps");
   await page.getByText("TestVirtualUseClient").click();
