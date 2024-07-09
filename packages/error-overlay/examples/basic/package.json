@@ -9,12 +9,6 @@
   },
   "dependencies": {
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
-    "@hiogawa/vite-plugin-error-overlay": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "@vitejs/plugin-react": "^4.2.1",
-    "react": "latest",
-    "react-dom": "latest",
-    "vite": "latest"
+    "@hiogawa/vite-plugin-error-overlay": "latest"
   }
 }
