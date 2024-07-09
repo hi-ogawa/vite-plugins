@@ -91,24 +91,28 @@ function DefaultRootErrorPage(props: ErrorPageProps) {
 }
 
 export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
-  override state: { redirectLocation?: string } = {};
+  override state: { error: null } | { error: Error; redirectLocation: string } =
+    { error: null };
 
   static getDerivedStateFromError(error: Error) {
     if (!import.meta.env.SSR) {
       const ctx = getErrorContext(error);
       const redirect = ctx && isRedirectError(ctx);
       if (redirect) {
-        return { redirectLocation: redirect.location };
+        return {
+          error,
+          redirectLocation: redirect.location,
+        } satisfies RedirectBoundary["state"];
       }
     }
     throw error;
   }
 
   override render() {
-    if (this.state.redirectLocation) {
+    if (this.state.error) {
       return (
         <RedirectHandler
-          suspensionKey={this.state}
+          suspensionKey={this.state.error}
           redirectLocation={this.state.redirectLocation}
         />
       );

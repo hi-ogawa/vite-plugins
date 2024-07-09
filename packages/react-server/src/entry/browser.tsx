@@ -66,6 +66,7 @@ async function start() {
     $__startActionTransition(() => $__setFlight(result));
     const actionResult = (await result).action;
     // TODO: rethrow?
+    // TODO: isPending and isActionPending are true forever after the redirection
     if (actionResult?.error) {
       throw createError(actionResult?.error);
     }
