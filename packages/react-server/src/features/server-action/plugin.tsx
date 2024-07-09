@@ -32,22 +32,27 @@ export function vitePluginClientUseServer({
     name: vitePluginClientUseServer.name,
     async transform(code, id, options) {
       if (!code.includes(USE_SERVER)) {
+        manager.serverReferenceMap.delete(id);
         return;
       }
+      const serverId = manager.normalizeReferenceId(id);
       const ast = await parseAstAsync(code);
       const output = await transformDirectiveProxyExport(ast, {
         directive: USE_SERVER,
-        id: manager.normalizeReferenceId(id),
+        id: serverId,
         runtime: "$$proxy",
       });
       if (!output) {
+        manager.serverReferenceMap.delete(id);
         return;
       }
+      // during client build, all server references are expected to be discovered beforehand.
       if (manager.buildType && !manager.serverReferenceMap.has(id)) {
         throw new Error(
           `client imported undiscovered server reference '${id}'`,
         );
       }
+      manager.serverReferenceMap.set(id, serverId);
       const importPath = options?.ssr ? ssrRuntimePath : runtimePath;
       output.prepend(`\
 import { createServerReference } from "${importPath}";

@@ -68,7 +68,7 @@ export function initializeReactServer() {
 async function importServerReference(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
     const file = findMapInverse($__global.dev.manager.serverReferenceMap, id);
-    tinyassert(file);
+    tinyassert(file, `server reference not found '${id}'`);
     return await import(/* @vite-ignore */ file);
   } else {
     const mod = await import("virtual:server-references" as string);
