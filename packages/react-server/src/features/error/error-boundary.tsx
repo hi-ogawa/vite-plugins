@@ -24,6 +24,11 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error) {
+    // fallthrough "known" errors
+    const ctx = getErrorContext(error);
+    if (ctx && (ctx?.status === 404 || isRedirectError(ctx))) {
+      throw error;
+    }
     return { error };
   }
 
