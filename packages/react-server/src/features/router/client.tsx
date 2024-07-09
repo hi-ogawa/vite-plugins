@@ -32,7 +32,7 @@ export function LayoutRoot() {
   return (
     <>
       <LayoutContent name={LAYOUT_ROOT_NAME} />
-      <ActionRedirectHandler />
+      {false && <ActionRedirectHandler />}
       <MetadataRenderer />
     </>
   );

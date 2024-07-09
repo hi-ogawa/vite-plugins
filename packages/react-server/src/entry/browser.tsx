@@ -2,7 +2,10 @@ import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import { initializeReactClientBrowser } from "../features/client-component/browser";
-import { RootErrorBoundary } from "../features/error/error-boundary";
+import {
+  RedirectBoundary,
+  RootErrorBoundary,
+} from "../features/error/error-boundary";
 import {
   FlightDataContext,
   LayoutRoot,
@@ -24,6 +27,7 @@ import {
 import type { FlightData } from "../features/router/utils";
 import { createStreamRequest } from "../features/server-component/utils";
 import { $__global } from "../global";
+import { createError } from "../server";
 import type { CallServerCallback } from "../types/react";
 import { getFlightStreamBrowser } from "../utils/stream-script";
 
@@ -62,7 +66,9 @@ async function start() {
     $__startActionTransition(() => $__setFlight(result));
     const actionResult = (await result).action;
     // TODO: rethrow?
-    actionResult?.error;
+    if (actionResult?.error) {
+      throw createError(actionResult?.error);
+    }
     return actionResult?.data;
   };
 
@@ -164,8 +170,10 @@ async function start() {
       <RootErrorBoundary>
         <FlightDataHandler>
           <RouteManifestContext.Provider value={routeManifest}>
-            <RouteAssetLinks />
-            <LayoutRoot />
+            <RedirectBoundary>
+              <LayoutRoot />
+              <RouteAssetLinks />
+            </RedirectBoundary>
           </RouteManifestContext.Provider>
         </FlightDataHandler>
       </RootErrorBoundary>

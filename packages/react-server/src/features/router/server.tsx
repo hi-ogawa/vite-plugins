@@ -83,7 +83,7 @@ async function renderLayout(
 ) {
   const {
     ErrorBoundary,
-    RedirectBoundary,
+    // RedirectBoundary,
     NotFoundBoundary,
     RemountRoute,
     LayoutContent,
@@ -93,8 +93,8 @@ async function renderLayout(
   let acc = <LayoutContent name={id} />;
   // TODO: do we need this in each layer?
   // - just let our ErrorBoundary skip redirect error
-  // - and add global RedirectBoundary at the root.
-  acc = <RedirectBoundary>{acc}</RedirectBoundary>;
+  // - and add global RedirectBoundary at the root. (only for browser root?)
+  // acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
   const NotFoundPage = node.value?.["not-found"]?.default;
   if (NotFoundPage) {
