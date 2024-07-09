@@ -91,15 +91,13 @@ class PluginStateManager {
   // all files in rsc server
   serverIds = new Set<string>();
   // "use client" files
-  clientReferenceIds = new Set<string>();
-  // TODO
   clientReferenceMap = new Map<string, string>();
 
   // "use server" files
   serverReferenceMap = new Map<string, string>();
 
   shouldReloadRsc(id: string) {
-    const ok = this.serverIds.has(id) && !this.clientReferenceIds.has(id);
+    const ok = this.serverIds.has(id) && !this.clientReferenceMap.has(id);
     debug("[RscManager.shouldReloadRsc]", { ok, id });
     return ok;
   }
@@ -397,7 +395,7 @@ export function vitePluginReactServer(options?: {
         );
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "server";
-        manager.clientReferenceIds.clear();
+        manager.clientReferenceMap.clear();
         await build(reactServerViteConfig);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
         manager.buildType = "browser";

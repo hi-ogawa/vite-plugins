@@ -122,7 +122,7 @@ export function vitePluginServerUseClient({
       return await noramlizeClientReferenceId(id, manager.server);
     } else {
       // obfuscate reference
-      return hashString(id);
+      return manager.normalizeReferenceId(id);
     }
   }
 
@@ -130,14 +130,15 @@ export function vitePluginServerUseClient({
     name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
       manager.serverIds.add(id);
-      manager.clientReferenceIds.delete(id);
+      manager.clientReferenceMap.delete(id);
       if (!code.includes(USE_CLIENT)) {
         return;
       }
+      const clientId = await normalizeId(id);
       const ast = await parseAstAsync(code);
       const output = await transformDirectiveProxyExport(ast, {
         directive: USE_CLIENT,
-        id: await normalizeId(id),
+        id: clientId,
         runtime: "$$proxy",
       });
       if (!output) {
@@ -146,7 +147,7 @@ export function vitePluginServerUseClient({
       output.prepend(
         `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
       );
-      manager.clientReferenceIds.add(id);
+      manager.clientReferenceMap.set(id, clientId);
       if (manager.buildType === "scan") {
         // to discover server references imported only by client
         // we keep code as is and continue crawling
@@ -276,10 +277,10 @@ export function vitePluginClientUseClient({
         manager.buildType === "browser" || manager.buildType === "ssr",
       );
       let result = `export default {\n`;
-      for (let id of manager.clientReferenceIds) {
+      for (let [id, clientId] of manager.clientReferenceMap) {
         // virtual module needs to be mapped back to the original form
         const to = id.startsWith("\0") ? id.slice(1) : id;
-        result += `"${hashString(id)}": () => import("${to}"),\n`;
+        result += `"${clientId}": () => import("${to}"),\n`;
       }
       result += "};\n";
       return { code: result, map: null };
