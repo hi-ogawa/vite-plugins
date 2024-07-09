@@ -5,3 +5,4 @@ dist
 .wrangler
 *.log
 *.tgz
+test-results

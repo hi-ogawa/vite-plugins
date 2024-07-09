@@ -11,6 +11,7 @@ import {
   ClientActionBindTest,
   FormStateTest,
   NonFormActionTest,
+  TestActionErrorTryCatch,
   TestActionReturnComponent,
 } from "./_client";
 
@@ -34,6 +35,34 @@ export default async function Page() {
       <TestActionReturnComponent />
       <div className="border-t" />
       <TestHigherOrder />
+      <div className="border-t" />
+      <TestActionErrorTryCatch
+        action={async () => {
+          "use server";
+          throw new Error("boom!");
+        }}
+      />
+      <div className="border-t" />
+      <TestActionErrorBoundary />
+    </div>
+  );
+}
+
+function TestActionErrorBoundary() {
+  return (
+    <div className="flex flex-col gap-2 items-start">
+      <div className="flex items-center gap-2">
+        <form
+          action={async () => {
+            "use server";
+            throw new Error("boom!");
+          }}
+        >
+          <button className="antd-btn antd-btn-default px-2">
+            TestActionErrorBoundary
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
