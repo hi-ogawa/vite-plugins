@@ -88,11 +88,11 @@ export function vitePluginServerUseServer({
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
     async transform(code, id, _options) {
-      const serverId = manager.normalizeReferenceId(id);
       manager.serverReferenceMap.delete(id);
       if (!code.includes(USE_SERVER)) {
         return;
       }
+      const serverId = manager.normalizeReferenceId(id);
       const ast = await parseAstAsync(code);
       const { output } = await transformServerActionServer(code, ast, {
         id: serverId,
