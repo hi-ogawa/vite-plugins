@@ -46,6 +46,7 @@ import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
   createVirtualPlugin,
+  hashString,
   vitePluginSilenceDirectiveBuildWarning,
 } from "./utils";
 
@@ -91,13 +92,21 @@ class PluginStateManager {
   serverIds = new Set<string>();
   // "use client" files
   clientReferenceIds = new Set<string>();
+  // TODO
+  clientReferenceMap = new Map<string, string>();
+
   // "use server" files
-  serverReferenceIds = new Set<string>();
+  serverReferenceMap = new Map<string, string>();
 
   shouldReloadRsc(id: string) {
     const ok = this.serverIds.has(id) && !this.clientReferenceIds.has(id);
     debug("[RscManager.shouldReloadRsc]", { ok, id });
     return ok;
+  }
+
+  normalizeReferenceId(id: string) {
+    id = path.relative(this.config.root, id);
+    return this.buildType ? hashString(id) : id;
   }
 }
 
@@ -320,6 +329,7 @@ export function vitePluginReactServer(options?: {
         $__global.dev = {
           server: manager.server,
           reactServer: reactServer,
+          manager,
         };
       }
     },

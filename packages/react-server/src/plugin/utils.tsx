@@ -27,7 +27,8 @@ export function hashString(v: string) {
     .createHash("sha256")
     .update(v)
     .digest()
-    .toString("base64url");
+    .toString("hex")
+    .slice(0, 10);
 }
 
 export function createVirtualPlugin(name: string, load: Plugin["load"]) {
