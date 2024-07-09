@@ -48,6 +48,49 @@ exports[`createFsRouteTree > basic 1`] = `
             "page": "/dynamic/page.tsx",
           },
         },
+        "group": {
+          "children": {
+            "(x)": {
+              "children": {
+                "b": {
+                  "value": {
+                    "page": "/group/(x)/b/page.js",
+                  },
+                },
+              },
+            },
+            "(z)": {
+              "children": {
+                "d": {
+                  "children": {
+                    "(w)": {
+                      "value": {
+                        "page": "/group/(z)/d/(w)/page.js",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            "a": {
+              "value": {
+                "page": "/group/a/page.js",
+              },
+            },
+            "c": {
+              "children": {
+                "(y)": {
+                  "value": {
+                    "page": "/group/c/(y)/page.js",
+                  },
+                },
+              },
+            },
+          },
+          "value": {
+            "not-found": "/group/not-found.js",
+          },
+        },
         "other": {
           "value": {
             "page": "/other/page.tsx",
@@ -69,6 +112,7 @@ exports[`createFsRouteTree > basic 1`] = `
       },
       "value": {
         "layout": "/layout.tsx",
+        "not-found": "/not-found.js",
         "page": "/page.tsx",
       },
     },
@@ -81,31 +125,40 @@ exports[`createFsRouteTree > basic 2`] = `
   "__pathname": "/",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:page",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
       "type": "page",
     },
   ],
@@ -117,51 +170,64 @@ exports[`createFsRouteTree > basic 3`] = `
   "__pathname": "/other",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/other/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "other",
-        ],
+      "id": "/other:layout",
+      "node": {},
+      "path": "/other",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "other",
+        },
       ],
-      "prefix": "/other",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/other/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "other",
-        ],
+      "id": "/other:page",
+      "node": {},
+      "path": "/other",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "other",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/other",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "other",
+    },
+    {
       "type": "page",
     },
   ],
@@ -173,40 +239,43 @@ exports[`createFsRouteTree > basic 4`] = `
   "__pathname": "/not-found",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": undefined,
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/not-found:not-found",
+      "node": {},
+      "path": "/not-found",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "not-found",
+          "value": "not-found",
+        },
       ],
-      "prefix": "/not-found",
-      "type": "layout",
+      "type": "not-found",
+    },
+  ],
+  "notFound": true,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
     },
     {
-      "node": undefined,
-      "params": [
-        [
-          null,
-          "",
-        ],
-      ],
-      "prefix": "/not-found",
-      "type": "page",
+      "type": "not-found",
+      "value": "not-found",
     },
   ],
 }
@@ -217,53 +286,64 @@ exports[`createFsRouteTree > basic 5`] = `
   "__pathname": "/test",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/test/layout.tsx",
-        "page": "/test/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
+      "id": "/test:layout",
+      "node": {},
+      "path": "/test",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "test",
+        },
       ],
-      "prefix": "/test",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/test/layout.tsx",
-        "page": "/test/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
+      "id": "/test:page",
+      "node": {},
+      "path": "/test",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "test",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/test",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "test",
+    },
+    {
       "type": "page",
     },
   ],
@@ -275,77 +355,92 @@ exports[`createFsRouteTree > basic 6`] = `
   "__pathname": "/test/other",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/test/layout.tsx",
-        "page": "/test/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
+      "id": "/test:layout",
+      "node": {},
+      "path": "/test",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "test",
+        },
       ],
-      "prefix": "/test",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/test/other/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
-        [
-          null,
-          "other",
-        ],
+      "id": "/test/other:layout",
+      "node": {},
+      "path": "/test/other",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "test",
+        },
+        {
+          "type": "static",
+          "value": "other",
+        },
       ],
-      "prefix": "/test/other",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/test/other/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
-        [
-          null,
-          "other",
-        ],
+      "id": "/test/other:page",
+      "node": {},
+      "path": "/test/other",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "test",
+        },
+        {
+          "type": "static",
+          "value": "other",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/test/other",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "test",
+    },
+    {
+      "type": "static",
+      "value": "other",
+    },
+    {
       "type": "page",
     },
   ],
@@ -357,66 +452,43 @@ exports[`createFsRouteTree > basic 7`] = `
   "__pathname": "/test/not-found",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/test/layout.tsx",
-        "page": "/test/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
+      "id": "/test/not-found:not-found",
+      "node": {},
+      "path": "/test/not-found",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "not-found",
+          "value": "test/not-found",
+        },
       ],
-      "prefix": "/test",
-      "type": "layout",
+      "type": "not-found",
+    },
+  ],
+  "notFound": true,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
     },
     {
-      "node": undefined,
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
-      ],
-      "prefix": "/test/not-found",
-      "type": "layout",
-    },
-    {
-      "node": undefined,
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "test",
-        ],
-      ],
-      "prefix": "/test/not-found",
-      "type": "page",
+      "type": "not-found",
+      "value": "test/not-found",
     },
   ],
 }
@@ -427,53 +499,64 @@ exports[`createFsRouteTree > basic 8`] = `
   "__pathname": "/dynamic",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:page",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
       "type": "page",
     },
   ],
@@ -485,77 +568,92 @@ exports[`createFsRouteTree > basic 9`] = `
   "__pathname": "/dynamic/static",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/static/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "static",
-        ],
+      "id": "/dynamic/static:layout",
+      "node": {},
+      "path": "/dynamic/static",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "static",
+        },
       ],
-      "prefix": "/dynamic/static",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/static/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "static",
-        ],
+      "id": "/dynamic/static:page",
+      "node": {},
+      "path": "/dynamic/static",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "static",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/static",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "type": "static",
+      "value": "static",
+    },
+    {
       "type": "page",
     },
   ],
@@ -567,79 +665,95 @@ exports[`createFsRouteTree > basic 10`] = `
   "__pathname": "/dynamic/abc",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/[id]/layout.tsx",
-        "page": "/dynamic/[id]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
+      "id": "/dynamic/abc:layout",
+      "node": {},
+      "path": "/dynamic/abc",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "key": "id",
+          "type": "dynamic",
+          "value": "abc",
+        },
       ],
-      "prefix": "/dynamic/abc",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/[id]/layout.tsx",
-        "page": "/dynamic/[id]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
+      "id": "/dynamic/abc:page",
+      "node": {},
+      "path": "/dynamic/abc",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "key": "id",
+          "type": "dynamic",
+          "value": "abc",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/abc",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "key": "id",
+      "type": "dynamic",
+      "value": "abc",
+    },
+    {
       "type": "page",
     },
   ],
@@ -651,107 +765,131 @@ exports[`createFsRouteTree > basic 11`] = `
   "__pathname": "/dynamic/abc/def",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/[id]/layout.tsx",
-        "page": "/dynamic/[id]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
+      "id": "/dynamic/abc:layout",
+      "node": {},
+      "path": "/dynamic/abc",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "key": "id",
+          "type": "dynamic",
+          "value": "abc",
+        },
       ],
-      "prefix": "/dynamic/abc",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/[id]/[nested]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
-        [
-          "nested",
-          "def",
-        ],
+      "id": "/dynamic/abc/def:layout",
+      "node": {},
+      "path": "/dynamic/abc/def",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "key": "id",
+          "type": "dynamic",
+          "value": "abc",
+        },
+        {
+          "key": "nested",
+          "type": "dynamic",
+          "value": "def",
+        },
       ],
-      "prefix": "/dynamic/abc/def",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/[id]/[nested]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "abc",
-        ],
-        [
-          "nested",
-          "def",
-        ],
+      "id": "/dynamic/abc/def:page",
+      "node": {},
+      "path": "/dynamic/abc/def",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "key": "id",
+          "type": "dynamic",
+          "value": "abc",
+        },
+        {
+          "key": "nested",
+          "type": "dynamic",
+          "value": "def",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/abc/def",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "key": "id",
+      "type": "dynamic",
+      "value": "abc",
+    },
+    {
+      "key": "nested",
+      "type": "dynamic",
+      "value": "def",
+    },
+    {
       "type": "page",
     },
   ],
@@ -763,79 +901,95 @@ exports[`createFsRouteTree > basic 12`] = `
   "__pathname": "/dynamic/%E2%9C%85",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/[id]/layout.tsx",
-        "page": "/dynamic/[id]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "✅",
-        ],
+      "id": "/dynamic/✅:layout",
+      "node": {},
+      "path": "/dynamic/✅",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "key": "id",
+          "type": "dynamic",
+          "value": "✅",
+        },
       ],
-      "prefix": "/dynamic/%E2%9C%85",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/[id]/layout.tsx",
-        "page": "/dynamic/[id]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          "id",
-          "✅",
-        ],
+      "id": "/dynamic/✅:page",
+      "node": {},
+      "path": "/dynamic/✅",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "key": "id",
+          "type": "dynamic",
+          "value": "✅",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/%E2%9C%85",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "key": "id",
+      "type": "dynamic",
+      "value": "✅",
+    },
+    {
       "type": "page",
     },
   ],
@@ -847,77 +1001,92 @@ exports[`createFsRouteTree > basic 13`] = `
   "__pathname": "/dynamic/catchall",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
+      "id": "/dynamic/catchall:layout",
+      "node": {},
+      "path": "/dynamic/catchall",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
       ],
-      "prefix": "/dynamic/catchall",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
+      "id": "/dynamic/catchall:page",
+      "node": {},
+      "path": "/dynamic/catchall",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/catchall",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "type": "static",
+      "value": "catchall",
+    },
+    {
       "type": "page",
     },
   ],
@@ -929,106 +1098,124 @@ exports[`createFsRouteTree > basic 14`] = `
   "__pathname": "/dynamic/catchall/static",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
+      "id": "/dynamic/catchall:layout",
+      "node": {},
+      "path": "/dynamic/catchall",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
       ],
-      "prefix": "/dynamic/catchall",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/static/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          null,
-          "static",
-        ],
+      "id": "/dynamic/catchall/static:layout",
+      "node": {},
+      "path": "/dynamic/catchall/static",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "type": "static",
+          "value": "static",
+        },
       ],
-      "prefix": "/dynamic/catchall/static",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/static/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          null,
-          "static",
-        ],
+      "id": "/dynamic/catchall/static:page",
+      "node": {},
+      "path": "/dynamic/catchall/static",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "type": "static",
+          "value": "static",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/catchall/static",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "type": "static",
+      "value": "catchall",
+    },
+    {
+      "type": "static",
+      "value": "static",
+    },
+    {
       "type": "page",
     },
   ],
@@ -1040,106 +1227,127 @@ exports[`createFsRouteTree > basic 15`] = `
   "__pathname": "/dynamic/catchall/x",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
+      "id": "/dynamic/catchall:layout",
+      "node": {},
+      "path": "/dynamic/catchall",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
       ],
-      "prefix": "/dynamic/catchall",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/[...any]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x",
-        ],
+      "id": "/dynamic/catchall/x:layout",
+      "node": {},
+      "path": "/dynamic/catchall/x",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "key": "any",
+          "type": "catchall",
+          "value": "x",
+        },
       ],
-      "prefix": "/dynamic/catchall/x",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/[...any]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x",
-        ],
+      "id": "/dynamic/catchall/x:page",
+      "node": {},
+      "path": "/dynamic/catchall/x",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "key": "any",
+          "type": "catchall",
+          "value": "x",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/catchall/x",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "type": "static",
+      "value": "catchall",
+    },
+    {
+      "key": "any",
+      "type": "catchall",
+      "value": "x",
+    },
+    {
       "type": "page",
     },
   ],
@@ -1151,106 +1359,127 @@ exports[`createFsRouteTree > basic 16`] = `
   "__pathname": "/dynamic/catchall/x/y",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
+      "id": "/dynamic/catchall:layout",
+      "node": {},
+      "path": "/dynamic/catchall",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
       ],
-      "prefix": "/dynamic/catchall",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/[...any]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y",
-        ],
+      "id": "/dynamic/catchall/x/y:layout",
+      "node": {},
+      "path": "/dynamic/catchall/x/y",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "key": "any",
+          "type": "catchall",
+          "value": "x/y",
+        },
       ],
-      "prefix": "/dynamic/catchall/x/y",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/[...any]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y",
-        ],
+      "id": "/dynamic/catchall/x/y:page",
+      "node": {},
+      "path": "/dynamic/catchall/x/y",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "key": "any",
+          "type": "catchall",
+          "value": "x/y",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/catchall/x/y",
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "type": "static",
+      "value": "catchall",
+    },
+    {
+      "key": "any",
+      "type": "catchall",
+      "value": "x/y",
+    },
+    {
       "type": "page",
     },
   ],
@@ -1262,107 +1491,1369 @@ exports[`createFsRouteTree > basic 17`] = `
   "__pathname": "/dynamic/catchall/x/y/z",
   "matches": [
     {
-      "node": {
-        "layout": "/layout.tsx",
-        "page": "/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
       ],
-      "prefix": "/",
       "type": "layout",
     },
     {
-      "node": {
-        "layout": "/dynamic/layout.tsx",
-        "page": "/dynamic/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
+      "id": "/dynamic:layout",
+      "node": {},
+      "path": "/dynamic",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
       ],
-      "prefix": "/dynamic",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
+      "id": "/dynamic/catchall:layout",
+      "node": {},
+      "path": "/dynamic/catchall",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
       ],
-      "prefix": "/dynamic/catchall",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/[...any]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y/z",
-        ],
+      "id": "/dynamic/catchall/x/y/z:layout",
+      "node": {},
+      "path": "/dynamic/catchall/x/y/z",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "key": "any",
+          "type": "catchall",
+          "value": "x/y/z",
+        },
       ],
-      "prefix": "/dynamic/catchall/x/y/z",
       "type": "layout",
     },
     {
-      "node": {
-        "page": "/dynamic/catchall/[...any]/page.tsx",
-      },
-      "params": [
-        [
-          null,
-          "",
-        ],
-        [
-          null,
-          "dynamic",
-        ],
-        [
-          null,
-          "catchall",
-        ],
-        [
-          "any",
-          "x/y/z",
-        ],
+      "id": "/dynamic/catchall/x/y/z:page",
+      "node": {},
+      "path": "/dynamic/catchall/x/y/z",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "dynamic",
+        },
+        {
+          "type": "static",
+          "value": "catchall",
+        },
+        {
+          "key": "any",
+          "type": "catchall",
+          "value": "x/y/z",
+        },
+        {
+          "type": "page",
+        },
       ],
-      "prefix": "/dynamic/catchall/x/y/z",
       "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "dynamic",
+    },
+    {
+      "type": "static",
+      "value": "catchall",
+    },
+    {
+      "key": "any",
+      "type": "catchall",
+      "value": "x/y/z",
+    },
+    {
+      "type": "page",
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 18`] = `
+{
+  "__pathname": "/group/a",
+  "matches": [
+    {
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group:layout",
+      "node": {},
+      "path": "/group",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/a:layout",
+      "node": {},
+      "path": "/group/a",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/a:page",
+      "node": {},
+      "path": "/group/a",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "static",
+          "value": "a",
+        },
+        {
+          "type": "page",
+        },
+      ],
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "group",
+    },
+    {
+      "type": "static",
+      "value": "a",
+    },
+    {
+      "type": "page",
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 19`] = `
+{
+  "__pathname": "/group/b",
+  "matches": [
+    {
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group:layout",
+      "node": {},
+      "path": "/group",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/(x):layout",
+      "node": {},
+      "path": "/group/(x)",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "group",
+          "value": "(x)",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/(x)/b:layout",
+      "node": {},
+      "path": "/group/(x)/b",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "group",
+          "value": "(x)",
+        },
+        {
+          "type": "static",
+          "value": "b",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/(x)/b:page",
+      "node": {},
+      "path": "/group/(x)/b",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "group",
+          "value": "(x)",
+        },
+        {
+          "type": "static",
+          "value": "b",
+        },
+        {
+          "type": "page",
+        },
+      ],
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "group",
+    },
+    {
+      "type": "group",
+      "value": "(x)",
+    },
+    {
+      "type": "static",
+      "value": "b",
+    },
+    {
+      "type": "page",
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 20`] = `
+{
+  "__pathname": "/group/c",
+  "matches": [
+    {
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group:layout",
+      "node": {},
+      "path": "/group",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/c:layout",
+      "node": {},
+      "path": "/group/c",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "static",
+          "value": "c",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/c/(y):layout",
+      "node": {},
+      "path": "/group/c/(y)",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "static",
+          "value": "c",
+        },
+        {
+          "type": "group",
+          "value": "(y)",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/c/(y):page",
+      "node": {},
+      "path": "/group/c/(y)",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "static",
+          "value": "c",
+        },
+        {
+          "type": "group",
+          "value": "(y)",
+        },
+        {
+          "type": "page",
+        },
+      ],
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "group",
+    },
+    {
+      "type": "static",
+      "value": "c",
+    },
+    {
+      "type": "group",
+      "value": "(y)",
+    },
+    {
+      "type": "page",
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 21`] = `
+{
+  "__pathname": "/group/d",
+  "matches": [
+    {
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group:layout",
+      "node": {},
+      "path": "/group",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/(z):layout",
+      "node": {},
+      "path": "/group/(z)",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "group",
+          "value": "(z)",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/(z)/d:layout",
+      "node": {},
+      "path": "/group/(z)/d",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "group",
+          "value": "(z)",
+        },
+        {
+          "type": "static",
+          "value": "d",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/(z)/d/(w):layout",
+      "node": {},
+      "path": "/group/(z)/d/(w)",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "group",
+          "value": "(z)",
+        },
+        {
+          "type": "static",
+          "value": "d",
+        },
+        {
+          "type": "group",
+          "value": "(w)",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/(z)/d/(w):page",
+      "node": {},
+      "path": "/group/(z)/d/(w)",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "group",
+          "value": "(z)",
+        },
+        {
+          "type": "static",
+          "value": "d",
+        },
+        {
+          "type": "group",
+          "value": "(w)",
+        },
+        {
+          "type": "page",
+        },
+      ],
+      "type": "page",
+    },
+  ],
+  "notFound": false,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "group",
+    },
+    {
+      "type": "group",
+      "value": "(z)",
+    },
+    {
+      "type": "static",
+      "value": "d",
+    },
+    {
+      "type": "group",
+      "value": "(w)",
+    },
+    {
+      "type": "page",
+    },
+  ],
+}
+`;
+
+exports[`createFsRouteTree > basic 22`] = `
+{
+  "__pathname": "/group/e",
+  "matches": [
+    {
+      "id": "/:layout",
+      "node": {},
+      "path": "/",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group:layout",
+      "node": {},
+      "path": "/group",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+      ],
+      "type": "layout",
+    },
+    {
+      "id": "/group/e:not-found",
+      "node": {},
+      "path": "/group/e",
+      "segments": [
+        {
+          "type": "static",
+          "value": "",
+        },
+        {
+          "type": "static",
+          "value": "group",
+        },
+        {
+          "type": "not-found",
+          "value": "e",
+        },
+      ],
+      "type": "not-found",
+    },
+  ],
+  "notFound": true,
+  "segments": [
+    {
+      "type": "static",
+      "value": "",
+    },
+    {
+      "type": "static",
+      "value": "group",
+    },
+    {
+      "type": "not-found",
+      "value": "e",
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "a": {
+          "value": {
+            "page": "/a/page.js",
+          },
+        },
+      },
+      "value": {
+        "page": "/page.js",
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree > basic 2`] = `
+{
+  "__pathname": "/",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > basic 3`] = `
+{
+  "__pathname": "/a",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > basic 4`] = `
+{
+  "__pathname": "/b",
+  "matches": undefined,
+}
+`;
+
+exports[`matchRouteTree > dynamic not-found 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "[x]": {
+          "children": {
+            "b": {
+              "children": {
+                "d": {
+                  "value": {
+                    "page": "/[x]/b/d/page.js",
+                  },
+                },
+              },
+            },
+          },
+          "value": {
+            "not-found": "/[x]/not-found.js",
+          },
+        },
+        "a": {
+          "children": {
+            "b": {
+              "children": {
+                "c": {
+                  "value": {
+                    "page": "/a/b/c/page.js",
+                  },
+                },
+              },
+            },
+          },
+          "value": {
+            "not-found": "/a/not-found.js",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree > dynamic not-found 2`] = `
+{
+  "__pathname": "/a/b/c",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "b",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "c",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > dynamic not-found 3`] = `
+{
+  "__pathname": "/a/b/d",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "x",
+        "type": "dynamic",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "b",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "d",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > dynamic not-found 4`] = `
+{
+  "__pathname": "/x/b/e",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "x",
+        "type": "dynamic",
+        "value": "x",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "b/e",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > dynamic vs not-found 1`] = `
+{
+  "__pathname": "/a",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "x",
+        "type": "dynamic",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > group routes basic 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "(x)": {
+          "children": {
+            "b": {
+              "value": {
+                "page": "/(x)/b/page.js",
+              },
+            },
+            "d": {
+              "children": {
+                "(y)": {
+                  "value": {
+                    "page": "/(x)/d/(y)/page.js",
+                  },
+                },
+              },
+            },
+          },
+        },
+        "a": {
+          "value": {
+            "page": "/a/page.js",
+          },
+        },
+        "c": {
+          "children": {
+            "(x)": {
+              "value": {
+                "page": "/c/(x)/page.js",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree > group routes basic 2`] = `
+{
+  "__pathname": "/a",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > group routes basic 3`] = `
+{
+  "__pathname": "/b",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "group",
+        "value": "(x)",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "b",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > group routes basic 4`] = `
+{
+  "__pathname": "/c",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "c",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "group",
+        "value": "(x)",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > group routes basic 5`] = `
+{
+  "__pathname": "/d",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "group",
+        "value": "(x)",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "d",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "group",
+        "value": "(y)",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > group routes not-found 1`] = `
+{
+  "children": {
+    "": {
+      "children": {
+        "(x)": {
+          "children": {
+            "a": {
+              "children": {
+                "c": {
+                  "value": {
+                    "not-found": "/(x)/a/c/not-found.js",
+                    "page": "/(x)/a/c/page.js",
+                  },
+                },
+              },
+              "value": {
+                "not-found": "/(x)/a/not-found.js",
+              },
+            },
+            "p": {
+              "children": {
+                "q": {
+                  "value": {
+                    "page": "/(x)/p/q/page.js",
+                  },
+                },
+              },
+              "value": {
+                "not-found": "/(x)/p/not-found.js",
+              },
+            },
+          },
+        },
+        "a": {
+          "children": {
+            "b": {
+              "value": {
+                "page": "/a/b/page.js",
+              },
+            },
+          },
+          "value": {
+            "not-found": "/a/not-found.js",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`matchRouteTree > group routes not-found 2`] = `
+{
+  "__pathname": "/a/u",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "u",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > group routes not-found 3`] = `
+{
+  "__pathname": "/a/c/u",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "c/u",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > group routes not-found 4`] = `
+{
+  "__pathname": "/p/u",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "group",
+        "value": "(x)",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "p",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "u",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > tie-break not-found dynamic 1`] = `
+{
+  "__pathname": "/a/b",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "a",
+        "type": "dynamic",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "b",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > tie-break not-found static 1`] = `
+{
+  "__pathname": "/a/b",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "not-found",
+        "value": "b",
+      },
     },
   ],
 }

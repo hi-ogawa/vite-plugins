@@ -1,21 +1,21 @@
-import { sortBy } from "@hiogawa/utils";
+import { sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { type ReactServerErrorContext, createError } from "../error/shared";
+import { type ReactServerErrorContext } from "../error/shared";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
 import type { RevalidationType } from "../server-component/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
-  type MatchNodeEntry,
+  type MatchSegment,
   type TreeNode,
   createFsRouteTree,
-  matchRouteTree,
+  matchPageRoute,
   parseRoutePath,
-  toMatchParamsObject,
-  toRouteId,
+  toMatchParams,
 } from "./tree";
 import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
 
+// TODO(refactor): move to tree.ts with ROUTE_MODULE_KEYS constants
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions
 export interface RouteModule {
   page?: {
@@ -45,12 +45,29 @@ export interface RouteModule {
 
 export type RouteModuleKey = keyof RouteModule;
 
+export type AnyRouteModule = { [k in RouteModuleKey]?: unknown };
+
 export type RouteModuleTree = TreeNode<RouteModule>;
 
 export function generateRouteModuleTree(globEntries: Record<string, any>) {
-  const { tree, entries } = createFsRouteTree<RouteModule>(globEntries);
+  const { tree, entries } = createFsRouteTree<RouteModule>({
+    "/not-found.js": { default: DefaultNotFoundPage },
+    ...globEntries,
+  });
   const manifest = getRouteModuleManifest(entries);
   return { tree, manifest };
+}
+
+// https://github.com/vercel/next.js/blob/8f5f0ef141a907d083eedb7c7aca52b04f9d258b/packages/next/src/client/components/not-found-error.tsx#L34-L39
+function DefaultNotFoundPage() {
+  return (
+    <>
+      <h1>404 Not Found</h1>
+      <div>
+        Back to <a href="/">Home</a>
+      </div>
+    </>
+  );
 }
 
 // use own "use client" components as external
@@ -58,15 +75,11 @@ function importRuntimeClient(): Promise<typeof import("../../runtime/client")> {
   return import("@hiogawa/react-server/runtime/client" as string);
 }
 
-function renderPage(node: RouteModuleTree, props: PageProps) {
-  const Page = node.value?.page?.default ?? ThrowNotFound;
-  return <Page {...props} />;
-}
-
 async function renderLayout(
   node: RouteModuleTree,
   props: PageProps,
-  { prefix, params }: MatchNodeEntry<RouteModule>,
+  id: string,
+  segments: MatchSegment[],
 ) {
   const {
     ErrorBoundary,
@@ -77,7 +90,7 @@ async function renderLayout(
     LayoutMatchProvider,
   } = await importRuntimeClient();
 
-  let acc = <LayoutContent name={prefix} />;
+  let acc = <LayoutContent name={id} />;
   acc = <RedirectBoundary>{acc}</RedirectBoundary>;
 
   const NotFoundPage = node.value?.["not-found"]?.default;
@@ -113,15 +126,15 @@ async function renderLayout(
   const Layout = node.value?.layout?.default;
   if (Layout) {
     acc = (
-      <Layout key={prefix} {...props}>
+      <Layout key={id} {...props}>
         {acc}
       </Layout>
     );
   } else {
-    acc = <React.Fragment key={prefix}>{acc}</React.Fragment>;
+    acc = <React.Fragment key={id}>{acc}</React.Fragment>;
   }
 
-  acc = <LayoutMatchProvider value={{ params }}>{acc}</LayoutMatchProvider>;
+  acc = <LayoutMatchProvider value={{ segments }}>{acc}</LayoutMatchProvider>;
   return acc;
 }
 
@@ -142,21 +155,25 @@ export async function renderRouteMap(
   const layoutContentMap: Record<string, string> = {};
   const nodeMap: Record<string, React.ReactNode> = {};
   let parentLayout = LAYOUT_ROOT_NAME;
-  const result = matchRouteTree(tree, url.pathname);
+  const result = matchPageRoute(tree, url.pathname);
   for (const m of result.matches) {
-    const routeId = toRouteId(m.prefix, m.type); // TODO: move to MatchNodeEntry
-    layoutContentMap[parentLayout] = routeId;
-    parentLayout = m.prefix;
+    parentLayout = layoutContentMap[parentLayout] = m.id;
     const props: BaseProps = {
       ...baseProps,
-      params: toMatchParamsObject(m.params),
+      params: toMatchParams(m.segments),
     };
     if (m.type === "layout") {
-      nodeMap[routeId] = await renderLayout(m.node, props, m);
+      nodeMap[m.id] = await renderLayout(m.node, props, m.id, m.segments);
       Object.assign(metadata, m.node.value?.layout?.metadata);
     } else if (m.type === "page") {
-      nodeMap[routeId] = renderPage(m.node, props);
+      const Page = m.node.value?.page?.default;
+      tinyassert(Page, "No default export in 'page'");
+      nodeMap[m.id] = <Page {...props} />;
       Object.assign(metadata, m.node.value?.page?.metadata);
+    } else if (m.type === "not-found") {
+      const NotFound = m.node.value?.["not-found"]?.default;
+      tinyassert(NotFound);
+      nodeMap[m.id] = <NotFound />;
     } else {
       m.type satisfies never;
     }
@@ -165,7 +182,8 @@ export async function renderRouteMap(
     layoutContentMap,
     nodeMap,
     metadata: renderMetadata(metadata),
-    params: result.params,
+    segments: result.segments,
+    notFound: result.notFound,
   };
 }
 
@@ -175,24 +193,18 @@ export function getCachedRoutes(
   revalidations: (RevalidationType | undefined)[],
 ) {
   const routeIds: string[] = [];
-  const { matches } = matchRouteTree(tree, lastPathname);
-  for (const m of matches) {
+  const result = matchPageRoute(tree, lastPathname);
+  for (const m of result.matches) {
+    // find non-revalidated layouts
     if (
       m.type === "layout" &&
-      !revalidations.some((r) => r && isAncestorPath(r, m.prefix))
+      !revalidations.some((r) => r && isAncestorPath(r, m.path))
     ) {
-      routeIds.push(toRouteId(m.prefix, m.type));
+      routeIds.push(m.id);
     }
   }
   return routeIds;
 }
-
-// TODO
-// support SSR-ing not-found
-// requires passing status without throwing
-const ThrowNotFound: React.FC = () => {
-  throw createError({ status: 404 });
-};
 
 type SerializedURL = {
   [k in keyof URL]: URL[k] extends string ? URL[k] : never;

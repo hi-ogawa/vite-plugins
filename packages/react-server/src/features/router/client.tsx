@@ -10,7 +10,7 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import { type MatchParamEntry, toMatchParamsObject } from "./tree";
+import { type MatchSegment, toMatchParams, toMatchValues } from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
 export const FlightDataContext = React.createContext<Promise<FlightData>>(
@@ -49,18 +49,18 @@ export function useLocation() {
   return React.useMemo(() => new URL(data.url), [data.url]);
 }
 
-function useParamEntries() {
+function useMatchSegments() {
   const data = useFlightData();
-  return data.params;
+  return data.segments;
 }
 
 export function useParams() {
-  const entries = useParamEntries();
-  return React.useMemo(() => toMatchParamsObject(entries), [entries]);
+  const entries = useMatchSegments();
+  return React.useMemo(() => toMatchParams(entries), [entries]);
 }
 
 type LayoutMatchType = {
-  params: MatchParamEntry[];
+  segments: MatchSegment[];
 };
 
 const LayoutMatchContext = React.createContext<LayoutMatchType>(undefined!);
@@ -71,15 +71,10 @@ export function LayoutMatchProvider(
   return <LayoutMatchContext.Provider {...props} />;
 }
 
-function useSelectedParamEntries() {
-  const all = useParamEntries();
-  const prefix = React.useContext(LayoutMatchContext).params;
-  return React.useMemo(() => all.slice(prefix.length), [all, prefix]);
-}
-
 export function useSelectedLayoutSegments(): string[] {
-  const entries = useSelectedParamEntries();
-  return React.useMemo(() => entries.map(([_k, v]) => v), [entries]);
+  const all = useMatchSegments();
+  const sub = React.useContext(LayoutMatchContext).segments;
+  return React.useMemo(() => toMatchValues(all.slice(sub.length)), [all, sub]);
 }
 
 export function RemountRoute(props: React.PropsWithChildren) {

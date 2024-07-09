@@ -21,12 +21,12 @@ export function getRouteAssetDeps(
   manifest: RouteManifest,
   pathname: string,
 ): AssetDeps {
-  const result = matchRouteTree(manifest.routeTree, pathname);
-  const deps = result.matches.flatMap((m) => {
+  const matches = matchRouteTree(manifest.routeTree, pathname, "page");
+  const deps = matches?.flatMap((m) => {
     const v = m.node.value;
     return [v?.page, v?.layout, v?.error].filter(typedBoolean);
   });
-  return mergeAssetDeps(deps);
+  return mergeAssetDeps(deps ?? []);
 }
 
 export function mergeAssetDeps(entries: AssetDeps[]): AssetDeps {

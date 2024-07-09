@@ -39,6 +39,7 @@ export interface ReactServerHandlerContext {
 
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
+  status: number;
   actionResult?: ActionResult;
 }
 
@@ -107,7 +108,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     nodeMap: result.nodeMap,
     layoutContentMap: result.layoutContentMap,
     metadata: result.metadata,
-    params: result.params,
+    segments: result.segments,
     url: request.url,
     action: actionResult
       ? objectPick(actionResult, ["data", "error"])
@@ -132,7 +133,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     });
   }
 
-  return { stream, actionResult };
+  return { stream, actionResult, status: result.notFound ? 404 : 200 };
 };
 
 const reactServerOnError: RenderToReadableStreamOptions["onError"] = (

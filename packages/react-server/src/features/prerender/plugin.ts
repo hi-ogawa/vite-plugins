@@ -108,7 +108,7 @@ function createPrerenderPresets(manifest: RouteModuleManifest) {
       for (const entry of entries) {
         const page = entry.module?.page;
         if (page && !entry.dynamic) {
-          result.push(entry.pathname);
+          result.push(entry.format({}));
         }
       }
       return result;

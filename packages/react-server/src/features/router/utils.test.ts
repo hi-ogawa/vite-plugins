@@ -1,28 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getPathPrefixes, isAncestorPath } from "./utils";
-
-describe(getPathPrefixes, () => {
-  it("basic", () => {
-    expect(getPathPrefixes("/")).toMatchInlineSnapshot(`
-      [
-        "/",
-      ]
-    `);
-    expect(getPathPrefixes("/hello")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/hello",
-      ]
-    `);
-    expect(getPathPrefixes("/hello/world")).toMatchInlineSnapshot(`
-      [
-        "/",
-        "/hello",
-        "/hello/world",
-      ]
-    `);
-  });
-});
+import { isAncestorPath } from "./utils";
 
 describe(isAncestorPath, () => {
   it("basic", () => {

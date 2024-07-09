@@ -1,28 +1,16 @@
 import type { ActionResult } from "../server-action/server";
-import type { MatchParamEntry } from "./tree";
+import type { MatchSegment } from "./tree";
 
 export type FlightData = {
   action?: Pick<ActionResult, "error" | "data">;
   metadata?: React.ReactNode;
   nodeMap: Record<string, React.ReactNode>;
   layoutContentMap: Record<string, string>;
-  params: MatchParamEntry[];
+  segments: MatchSegment[];
   url: string;
 };
 
 export const LAYOUT_ROOT_NAME = "__root";
-
-/**
- * @example
- * "/" => ["/"]
- * "/a" => ["/", "/a"]
- * "/a/b" => ["/", "/a", "/a/b"]
- */
-export function getPathPrefixes(pathname: string) {
-  pathname = pathname.replaceAll(/\/*$/g, "");
-  const keys = pathname.split("/");
-  return keys.map((_key, i) => keys.slice(0, i + 1).join("/") || "/");
-}
 
 // enforce no trailing slash for simplicity
 export function handleTrailingSlash(url: URL) {
@@ -48,4 +36,19 @@ export function handleTrailingSlash(url: URL) {
 export function isAncestorPath(p1: string, p2: string) {
   // check prefix after trailing slash
   return p2.replace(/\/*$/, "/").startsWith(p1.replace(/\/*$/, "/"));
+}
+
+/**
+ * @example
+ * "/" => [""]
+ * "/a" => ["", "a"]
+ * "/a/b" => ["", "a", "b"]
+ */
+export function splitToSegments(pathname: string): string[] {
+  return pathname === "/" ? [""] : pathname.split("/");
+}
+
+/** reverse of `splitToSegments` */
+export function joinSegments(segments: string[]): string {
+  return segments.join("/") || "/";
 }
