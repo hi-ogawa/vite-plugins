@@ -227,7 +227,9 @@ export function TestActionReturnComponent() {
   );
 }
 
-export function TestActionError(props: { action: () => Promise<void> }) {
+export function TestActionErrorTryCatch(props: {
+  action: () => Promise<void>;
+}) {
   const [error, setError] = React.useState<unknown>();
   return (
     <div className="flex flex-col gap-2 items-start">
@@ -242,7 +244,7 @@ export function TestActionError(props: { action: () => Promise<void> }) {
           }}
         >
           <button className="antd-btn antd-btn-default px-2">
-            TestActionError
+            TestActionErrorTryCatch
           </button>
         </form>
         <div data-testid="action-error-result">
