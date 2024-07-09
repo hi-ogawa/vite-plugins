@@ -45,12 +45,7 @@
   },
   "devDependencies": {
     "@hiogawa/react-server": "workspace:*",
-    "@hiogawa/utils-node": "^0.0.1",
-    "@types/react": "18.3.1",
-    "@types/react-dom": "18.3.0",
-    "react": "$react",
-    "react-dom": "$react-dom",
-    "vite": "$vite"
+    "@hiogawa/utils-node": "^0.0.1"
   },
   "peerDependencies": {
     "@hiogawa/react-server": "*",

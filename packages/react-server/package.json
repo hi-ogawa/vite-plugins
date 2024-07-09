@@ -52,17 +52,12 @@
   "devDependencies": {
     "@hiogawa/utils-node": "^0.0.1",
     "@types/estree": "^1.0.5",
-    "@types/react": "18.3.1",
-    "@types/react-dom": "18.3.0",
-    "@types/use-sync-external-store": "^0.0.6",
-    "react": "19.0.0-rc-c21bcd627b-20240624",
-    "react-dom": "19.0.0-rc-c21bcd627b-20240624",
-    "react-server-dom-webpack": "19.0.0-rc-c21bcd627b-20240624"
+    "@types/use-sync-external-store": "^0.0.6"
   },
   "peerDependencies": {
-    "react": "19.0.0-rc-c21bcd627b-20240624",
-    "react-dom": "19.0.0-rc-c21bcd627b-20240624",
-    "react-server-dom-webpack": "19.0.0-rc-c21bcd627b-20240624",
+    "react": "*",
+    "react-dom": "*",
+    "react-server-dom-webpack": "*",
     "vite": "*"
   }
 }

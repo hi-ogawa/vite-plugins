@@ -9,6 +9,7 @@ overrides:
   react: 19.0.0-rc-c21bcd627b-20240624
   react-dom: 19.0.0-rc-c21bcd627b-20240624
   react-is: 19.0.0-rc-c21bcd627b-20240624
+  react-server-dom-webpack: 19.0.0-rc-c21bcd627b-20240624
   '@types/react': 18.3.1
   '@types/react-dom': 18.3.0
 
@@ -31,12 +32,30 @@ importers:
       '@types/node':
         specifier: ^20.11.28
         version: 20.11.28
+      '@types/react':
+        specifier: 18.3.1
+        version: 18.3.1
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.3(@types/node@20.11.28)(terser@5.29.2))
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
+      react:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624
+      react-dom:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624)
+      react-is:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624
+      react-server-dom-webpack:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624(react-dom@19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624))(react@19.0.0-rc-c21bcd627b-20240624)(webpack@5.90.3(esbuild@0.20.2))
       tsup:
         specifier: ^8.0.2
         version: 8.0.2(postcss@8.4.38)(typescript@5.4.2)
@@ -109,6 +128,15 @@ importers:
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
+      react:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624
+      react-dom:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624)
+      react-server-dom-webpack:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624(react-dom@19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624))(react@19.0.0-rc-c21bcd627b-20240624)(webpack@5.90.3(esbuild@0.20.2))
       use-sync-external-store:
         specifier: ^1.2.0
         version: 1.2.0(react@19.0.0-rc-c21bcd627b-20240624)
@@ -122,24 +150,9 @@ importers:
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
-      '@types/react':
-        specifier: 18.3.1
-        version: 18.3.1
-      '@types/react-dom':
-        specifier: 18.3.0
-        version: 18.3.0
       '@types/use-sync-external-store':
         specifier: ^0.0.6
         version: 0.0.6
-      react:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624
-      react-dom:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624)
-      react-server-dom-webpack:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624(react-dom@19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624))(react@19.0.0-rc-c21bcd627b-20240624)(webpack@5.90.3(esbuild@0.20.2))
 
   packages/react-server-next:
     dependencies:
@@ -152,6 +165,15 @@ importers:
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
+      react:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624
+      react-dom:
+        specifier: 19.0.0-rc-c21bcd627b-20240624
+        version: 19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624)
+      vite:
+        specifier: ^5.2.3
+        version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
       vite-tsconfig-paths:
         specifier: ^4.3.2
         version: 4.3.2(typescript@5.4.2)(vite@5.2.3(@types/node@20.11.28)(terser@5.29.2))
@@ -162,21 +184,6 @@ importers:
       '@hiogawa/utils-node':
         specifier: ^0.0.1
         version: 0.0.1
-      '@types/react':
-        specifier: 18.3.1
-        version: 18.3.1
-      '@types/react-dom':
-        specifier: 18.3.0
-        version: 18.3.0
-      react:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624
-      react-dom:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624)
-      vite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@20.11.28)(terser@5.29.2)
 
   packages/react-server/examples/basic:
     dependencies:
