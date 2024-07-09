@@ -65,8 +65,8 @@ async function start() {
     });
     $__startActionTransition(() => $__setFlight(result));
     const actionResult = (await result).action;
-    // TODO: rethrow?
     // TODO: isPending and isActionPending are true forever after the redirection
+    // TODO: do we even need to render node when action error?
     if (actionResult?.error) {
       throw createError(actionResult?.error);
     }
@@ -193,7 +193,7 @@ async function start() {
     ReactDOMClient.createRoot(document).render(reactRootEl);
   } else {
     const actionResult = (await initialFlight).action;
-    // TODO: rethrow from where?
+    // TODO: should rethrow action error from where?
     actionResult?.error;
     const formState = actionResult?.data;
     ReactDOMClient.hydrateRoot(document, reactRootEl, {
