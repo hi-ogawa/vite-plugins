@@ -6,14 +6,8 @@
   "scripts": {
     "dev": "vite dev"
   },
-  "dependencies": {
-    "react": "latest",
-    "react-dom": "latest"
-  },
   "devDependencies": {
     "@hiogawa/vite-plugin-simple-hmr": "workspace:*",
-    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@types/react": "latest",
-    "@types/react-dom": "latest"
+    "@hiogawa/vite-plugin-ssr-middleware": "workspace:*"
   }
 }

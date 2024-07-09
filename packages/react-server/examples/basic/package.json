@@ -33,11 +33,11 @@
     "@hiogawa/vite-plugin-error-overlay": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@iconify-json/ri": "^1.1.20",
-    "@playwright/test": "^1.42.1",
+    "@playwright/test": "^1.45.1",
     "@types/cookie": "^0.6.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "unocss": "^0.58.6",
     "vite": "latest"
   }

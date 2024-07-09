@@ -25,10 +25,10 @@
   "devDependencies": {
     "@hiogawa/utils-node": "^0.0.1",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
-    "@playwright/test": "^1.42.1",
+    "@playwright/test": "^1.45.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "latest",
     "vite": "latest"
   }
 }

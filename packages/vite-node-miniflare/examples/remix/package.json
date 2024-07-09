@@ -15,7 +15,7 @@
     "react-dom": "latest"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240314.0",
+    "@cloudflare/workers-types": "^4.20240620.0",
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "@remix-run/dev": "2.8.1",
     "@types/react": "latest",
