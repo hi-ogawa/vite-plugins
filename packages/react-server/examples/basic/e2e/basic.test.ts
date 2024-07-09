@@ -1106,6 +1106,18 @@ async function testCatchallRoute(page: Page, _options: { js: boolean }) {
   await expect(page.getByLabel("test state")).not.toBeChecked();
 }
 
+test("optional catch-all", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/catchall-opt");
+  await page.getByText('{"slug":""}').click();
+  await page
+    .getByRole("link", { name: "• /test/catchall-opt/x", exact: true })
+    .click();
+  await page.getByText('{"slug":"x"}').click();
+  await page.getByRole("link", { name: "• /test/catchall-opt/x/y" }).click();
+  await page.getByText('{"slug":"x/y"}').click();
+});
+
 test("useSelectedLayoutSegments", async ({ page }) => {
   await page.goto("/test/dynamic/selected");
   await page.getByText("/layout.tsx: []").click();

@@ -2284,6 +2284,193 @@ exports[`matchRouteTree > basic 4`] = `
 }
 `;
 
+exports[`matchRouteTree > catch-all opitonal 1`] = `
+{
+  "__pathname": "/a",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "any",
+        "type": "catchall-optional",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > catch-all opitonal 2`] = `
+{
+  "__pathname": "/a/b",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "any",
+        "type": "catchall-optional",
+        "value": "b",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > catch-all opitonal 3`] = `
+{
+  "__pathname": "/a/b/c",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "any",
+        "type": "catchall-optional",
+        "value": "b/c",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > catch-all strict 1`] = `
+{
+  "__pathname": "/a",
+  "matches": undefined,
+}
+`;
+
+exports[`matchRouteTree > catch-all strict 2`] = `
+{
+  "__pathname": "/a/b",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "any",
+        "type": "catchall",
+        "value": "b",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
+exports[`matchRouteTree > catch-all strict 3`] = `
+{
+  "__pathname": "/a/b/c",
+  "matches": [
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "static",
+        "value": "a",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "key": "any",
+        "type": "catchall",
+        "value": "b/c",
+      },
+    },
+    {
+      "node": {},
+      "segment": {
+        "type": "page",
+      },
+    },
+  ],
+}
+`;
+
 exports[`matchRouteTree > dynamic not-found 1`] = `
 {
   "children": {

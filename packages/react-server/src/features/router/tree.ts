@@ -43,6 +43,11 @@ export type MatchSegment =
       value: string;
     }
   | {
+      type: "catchall-optional";
+      key: string;
+      value: string;
+    }
+  | {
       type: "group";
       value: string;
     }
@@ -65,9 +70,9 @@ export function toMatchParams(segments: MatchSegment[]): MatchParams {
   for (const s of segments) {
     switch (s.type) {
       case "dynamic":
-      case "catchall": {
+      case "catchall":
+      case "catchall-optional":
         params[s.key] = s.value;
-      }
     }
   }
   return params;
@@ -80,6 +85,7 @@ export function toMatchValues(segments: MatchSegment[]): string[] {
       case "static":
       case "dynamic":
       case "catchall":
+      case "catchall-optional":
       case "group":
       case "not-found":
         values.push(s.value);
@@ -218,6 +224,7 @@ function scoreBranch<T>(branch: MatchEntry<T>[]) {
   // static = group < dynamic < catchall
   if (first === "dynamic") score += 2;
   if (first === "catchall") score += 3;
+  if (first === "catchall-optional") score += 4;
   return score;
 }
 
@@ -241,13 +248,27 @@ function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
       });
     }
     const matchCatchAll = key.match(CATCH_ALL_RE);
-    if (matchCatchAll) {
+    if (matchCatchAll && segments.length > 0) {
       candidates.push({
         match: {
           node: child,
           segment: {
             type: "catchall",
             key: matchCatchAll[1]!,
+            value: segments.join("/"),
+          },
+        },
+        nextSegments: [],
+      });
+    }
+    const matchCatchAllOpt = key.match(CATCH_ALL_OPTIONAL_RE);
+    if (matchCatchAllOpt) {
+      candidates.push({
+        match: {
+          node: child,
+          segment: {
+            type: "catchall-optional",
+            key: matchCatchAllOpt[1]!,
             value: segments.join("/"),
           },
         },
@@ -286,6 +307,7 @@ function matchChildren<T>(node: TreeNode<T>, segments: string[]) {
 
 const DYNAMIC_RE = /^\[(\w*)\]$/;
 const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
+const CATCH_ALL_OPTIONAL_RE = /^\[\[\.\.\.(\w*)\]\]$/;
 const GROUP_RE = /^\((\w+)\)$/;
 
 export function parseRoutePath(pathname: string) {
@@ -297,6 +319,7 @@ export function parseRoutePath(pathname: string) {
       // strip off group segment
       pathname = pathname.replace(`/${segment}`, "");
     }
+    // TODO: optional catch-all
     const mAll = segment.match(CATCH_ALL_RE);
     if (mAll) {
       tinyassert(1 in mAll);
