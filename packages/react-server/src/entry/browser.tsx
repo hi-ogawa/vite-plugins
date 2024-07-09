@@ -56,9 +56,19 @@ async function start() {
       body: await ReactClient.encodeReply(args),
       headers,
     });
-    const result = ReactClient.createFromFetch<FlightData>(fetch(request), {
-      callServer,
-    });
+    // TODO: inside __startActionTransition
+    const response = await fetch(request);
+    const location = response.headers.get("x-action-redirect-location");
+    if (location) {
+      history.push(location);
+      return undefined;
+    }
+    const result = ReactClient.createFromFetch<FlightData>(
+      Promise.resolve(response),
+      {
+        callServer,
+      },
+    );
     $__startActionTransition(() => $__setFlight(result));
     return (await result).action?.data;
   };

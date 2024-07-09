@@ -77,9 +77,22 @@ export const handler: ReactServerHandler = async (ctx) => {
       streamActionId: streamParam?.actionId,
       requestContext,
     });
-    // return action redirect directly when nojs
+    // respond action redirect error directly
     const error = actionResult.error;
-    if (!isStream && error && isRedirectError(error)) {
+    const redirect = error && isRedirectError(error);
+    if (redirect) {
+      if (isStream) {
+        const headers = new Headers({
+          ...actionResult.responseHeaders,
+          ...error.headers,
+        });
+        headers.delete("location");
+        headers.set("x-action-redirect-location", redirect.location);
+        return new Response(null, {
+          status: 200,
+          headers,
+        });
+      }
       return new Response(null, {
         status: error.status,
         headers: {
