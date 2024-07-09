@@ -57,28 +57,22 @@ async function start() {
       body: await ReactClient.encodeReply(args),
       headers,
     });
-    // TODO: refactor
     return new Promise((resolve, reject) => {
       $__startActionTransition(async () => {
-        try {
+        (async () => {
           const response = await fetch(request);
           const location = response.headers.get(ACTION_REDIRECT_LOCATION);
           if (location) {
             history.push(location);
-            resolve(undefined);
             return;
           }
           const result = ReactClient.createFromFetch<FlightData>(
             Promise.resolve(response),
-            {
-              callServer,
-            },
+            { callServer },
           );
           $__setFlight(result);
-          resolve((await result).action?.data);
-        } catch (e) {
-          reject(e);
-        }
+          return (await result).action?.data;
+        })().then(resolve, reject);
       });
     });
   };
