@@ -708,6 +708,26 @@ async function testHigherOrderAction(page: Page) {
   await expect(page.getByTestId("higher-order-result")).toHaveText("(none)");
 }
 
+test("action error caught by try/catch", async ({ page }) => {
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await expect(page.getByTestId("action-error-result")).toHaveText(
+    "Result: (none)",
+  );
+  await page.getByRole("button", { name: "TestActionErrorTryCatch" }).click();
+  await expect(page.getByTestId("action-error-result")).toContainText(
+    "Result: Error: ReactServerError",
+  );
+});
+
+test("action error triggers boundary", async ({ page }) => {
+  await page.goto("/test/action");
+  await waitForHydration(page);
+  await page.getByRole("button", { name: "TestActionErrorBoundary" }).click();
+  await page.getByRole("heading", { name: "ErrorPage" }).click();
+  await page.getByText('server error: {"status":500}').click();
+});
+
 test("use client > virtual module", async ({ page }) => {
   await page.goto("/test/deps");
   await page.getByText("TestVirtualUseClient").click();
