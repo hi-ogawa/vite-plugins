@@ -55,6 +55,8 @@ export default function UI({
       <button
         id="authed"
         onClick={async () => {
+          // TODO: propagate action error to client?
+          // https://github.com/hi-ogawa/vite-plugins/issues/387
           try {
             const res = await getAuthedUppercase("hello, world");
             setResult(res);
