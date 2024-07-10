@@ -24,6 +24,7 @@ export default function vitePluginReactServerNext(
     react(),
     tsconfigPaths(),
     vitePluginReactServer({
+      ...options,
       routeDir: options?.routeDir ?? "app",
       plugins: [
         tsconfigPaths(),
@@ -37,7 +38,6 @@ export default function vitePluginReactServerNext(
         },
         ...(options?.plugins ?? []),
       ],
-      prerender: options?.prerender,
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
