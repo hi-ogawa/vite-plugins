@@ -36,6 +36,10 @@ export function isRedirectError(ctx: ReactServerErrorContext) {
   return false;
 }
 
+export function isNotFoundError(ctx: ReactServerErrorContext) {
+  return ctx.status === 404;
+}
+
 export function getErrorContext(
   error: unknown,
 ): ReactServerErrorContext | undefined {
