@@ -6,8 +6,11 @@ import {
   useParams as useParams_,
   useRouter as useRouter_,
   useSelectedLayoutSegments as useSelectedLayoutSegments_,
+  useServerInsertedHTML,
 } from "@hiogawa/react-server/client";
 import React from "react";
+
+export { useServerInsertedHTML };
 
 export function useSearchParams() {
   return useLocation().searchParams;
@@ -47,8 +50,5 @@ export function useRouter() {
   };
   return React.useMemo(() => ({ ...history, refresh }), [history]);
 }
-
-/** @todo */
-export function useServerInsertedHTML(_callback: () => React.ReactNode): void {}
 
 export type * from "./navigation.react-server";
