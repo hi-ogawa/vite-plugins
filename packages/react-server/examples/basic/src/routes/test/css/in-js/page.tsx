@@ -17,7 +17,7 @@ export default function Page() {
       <div className="jsx-123">CSS in JS</div>
       <JSXStyle id="123">{`
         div.jsx-123 {
-          background: #fdd;
+          background: rgb(250, 220, 220);
           padding: 20px;
           width: 200px;
           border: 1px dashed gray;
