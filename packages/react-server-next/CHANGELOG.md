@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.0.9 (2024-07-11)
+
+- feat: support JSX in `.js` file ([#539](https://github.com/hi-ogawa/vite-plugins/pull/539))
+- feat!: expose `ReactServerPluginOptions` (require explicit prerender config) ([#538](https://github.com/hi-ogawa/vite-plugins/pull/538))
+- chore(next): re-export `useServerInsertedHTML` ([#537](https://github.com/hi-ogawa/vite-plugins/pull/537))
+- fix(next): fix `useSelectedLayoutSegment` type compat ([#525](https://github.com/hi-ogawa/vite-plugins/pull/525))
+
 ## v0.0.8
 
 - refactor!: string only for `RevalidationType` ([#499](https://github.com/hi-ogawa/vite-plugins/pull/499))

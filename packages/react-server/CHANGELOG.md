@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.3.2 (2024-07-11)
+
+- feat: support `useServerInsertedHTML` ([#536](https://github.com/hi-ogawa/vite-plugins/pull/536))
+- feat: expose `ReactServerPluginOptions` ([#538](https://github.com/hi-ogawa/vite-plugins/pull/538))
+- fix: support higher order server action when js enabled ([#526](https://github.com/hi-ogawa/vite-plugins/pull/526))
+- fix: rethrow action error on client ([#531](https://github.com/hi-ogawa/vite-plugins/pull/531))
+- fix: don't catch known errors from general ErrorBoundary ([#532](https://github.com/hi-ogawa/vite-plugins/pull/532))
+- fix: normalize reference id ([#528](https://github.com/hi-ogawa/vite-plugins/pull/528))
+- refactor: skip redundant flight render on action redirect ([#530](https://github.com/hi-ogawa/vite-plugins/pull/530))
+
 ## v0.3.1
 
 - feat: route groups + ssr not-found page ([#517](https://github.com/hi-ogawa/vite-plugins/pull/517))
