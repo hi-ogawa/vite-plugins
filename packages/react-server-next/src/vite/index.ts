@@ -9,7 +9,7 @@ import {
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react";
-import type { Plugin, PluginOption } from "vite";
+import { type Plugin, type PluginOption, transformWithEsbuild } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type AdapterType, adapterPlugin } from "./adapters";
 
@@ -22,22 +22,12 @@ export default function vitePluginReactServerNext(
 ): PluginOption {
   return [
     react(),
+    jsxPlugin(),
     tsconfigPaths(),
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
-      plugins: [
-        tsconfigPaths(),
-        {
-          // override next.js's default tsconfig `jsx: preserve`
-          name: "next-esbuild-jsx",
-          config: () => ({
-            esbuild: { jsx: "automatic" },
-            optimizeDeps: { esbuildOptions: { jsx: "automatic" } },
-          }),
-        },
-        ...(options?.plugins ?? []),
-      ],
+      plugins: [jsxPlugin(), tsconfigPaths(), ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
@@ -58,6 +48,31 @@ export default function vitePluginReactServerNext(
       }),
     },
   ];
+}
+
+function jsxPlugin(): Plugin {
+  return {
+    name: "jsx-in-js",
+    // override next.js's default tsconfig `jsx: preserve`
+    config: () => ({
+      esbuild: { jsx: "automatic" },
+      optimizeDeps: {
+        esbuildOptions: { jsx: "automatic", loader: { ".js": "jsx" } },
+      },
+    }),
+    // manually use esbuild transform to support jsx in js
+    // TODO: try using vite-plugin-react-swc and parserConfig to support HMR
+    // https://github.com/vitejs/vite-plugin-react-swc?tab=readme-ov-file#parserconfig
+    async transform(code, id, _options) {
+      if (!id.includes("/node_modules/") && id.endsWith(".js")) {
+        return transformWithEsbuild(code, id, {
+          loader: "jsx",
+          jsx: "automatic",
+        });
+      }
+      return;
+    },
+  };
 }
 
 /** @todo https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons */
