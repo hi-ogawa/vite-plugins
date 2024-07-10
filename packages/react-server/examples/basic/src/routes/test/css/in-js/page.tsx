@@ -14,10 +14,13 @@ export default function Page() {
 
   return (
     <StyleRegistry registry={registry}>
-      <button className="jsx-123">CSS in JS</button>
+      <div className="jsx-123">CSS in JS</div>
       <JSXStyle id="123">{`
-        button.jsx-123 {
-          color: red;
+        div.jsx-123 {
+          background: #fdd;
+          padding: 20px;
+          width: 200px;
+          border: 1px dashed gray;
         }
       `}</JSXStyle>
     </StyleRegistry>
