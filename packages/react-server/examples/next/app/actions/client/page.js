@@ -57,11 +57,8 @@ export default function Counter() {
         *2
       </button>
       <form>
-        <button
-          id="redirect-pages"
-          formAction={() => redirectAction("/pages-dir")}
-        >
-          redirect to a pages route
+        <button id="redirect-pages" formAction={() => redirectAction("/")}>
+          redirect
         </button>
       </form>
       <form action={getHeaders}>
