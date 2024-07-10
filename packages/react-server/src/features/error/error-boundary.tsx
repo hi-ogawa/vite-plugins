@@ -99,16 +99,13 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
     { error: null };
 
   static getDerivedStateFromError(error: Error) {
-    // TODO: can remove?
-    if (!import.meta.env.SSR) {
-      const ctx = getErrorContext(error);
-      const redirect = ctx && isRedirectError(ctx);
-      if (redirect) {
-        return {
-          error,
-          redirectLocation: redirect.location,
-        } satisfies RedirectBoundary["state"];
-      }
+    const ctx = getErrorContext(error);
+    const redirect = ctx && isRedirectError(ctx);
+    if (redirect) {
+      return {
+        error,
+        redirectLocation: redirect.location,
+      } satisfies RedirectBoundary["state"];
     }
     throw error;
   }
