@@ -15,6 +15,7 @@ export default function Layout(props: LayoutProps) {
           "/test/error/use-client",
           "/test/error/use-server",
           "/test/error/hydration",
+          "/test/error/boundary",
         ]}
       />
       <div>{props.children}</div>
