@@ -172,6 +172,70 @@ test("error", async ({ page }) => {
   await checkClientState();
 });
 
+test("error boundary @js", async ({ page }) => {
+  await page.goto("/test/error/boundary");
+  await waitForHydration(page);
+  await page.getByText("boundary/page.tsx").click();
+
+  await page
+    .getByRole("link", { name: "• /test/error/boundary/dir/redirect" })
+    .click();
+  await page.getByText("boundary/dir/[id]/page.tsx").click();
+  await page.getByText('{"id":"ok"}').click();
+
+  await page
+    .getByRole("link", { name: "• /test/error/boundary/dir/not-found" })
+    .click();
+  await page.getByText("boundary/not-found.tsx").click();
+
+  await page
+    .getByRole("link", { name: "• /test/error/boundary/dir/unexpected" })
+    .click();
+  await page.getByText("boundary/dir/error.tsx").click();
+
+  await page
+    .getByRole("link", { name: "• /test/error/boundary/dir", exact: true })
+    .click();
+  await page.getByText("boundary/dir/page.tsx").click();
+});
+
+testNoJs("error boundary @nojs", async ({ page }) => {
+  await page.goto("/test/error/boundary");
+  await page.getByText("boundary/page.tsx").click();
+
+  // redirect error works
+  await page
+    .getByRole("link", { name: "• /test/error/boundary/dir/redirect" })
+    .click();
+  await page.getByText("boundary/dir/[id]/page.tsx").click();
+  await page.getByText('{"id":"ok"}').click();
+
+  // other errors don't work
+  {
+    await page.goto("/test/error/boundary");
+    const repsonsePromise = page.waitForResponse(
+      "/test/error/boundary/dir/not-found",
+    );
+    await page
+      .getByRole("link", { name: "• /test/error/boundary/dir/not-found" })
+      .click();
+    const response = await repsonsePromise;
+    expect(response.status()).toBe(404);
+  }
+
+  {
+    await page.goto("/test/error/boundary");
+    const repsonsePromise = page.waitForResponse(
+      "/test/error/boundary/dir/unexpected",
+    );
+    await page
+      .getByRole("link", { name: "• /test/error/boundary/dir/unexpected" })
+      .click();
+    const response = await repsonsePromise;
+    expect(response.status()).toBe(500);
+  }
+});
+
 testNoJs("ssr not-found @nojs", async ({ page }) => {
   await page.goto("/test/error/not-found");
   await page.getByText(`NotFoundPage`).click();
