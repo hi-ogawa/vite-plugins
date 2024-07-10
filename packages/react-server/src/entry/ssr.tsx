@@ -181,9 +181,6 @@ export async function renderHtml(
     if (opitons?.prerender) {
       await ssrStream.allReady;
     }
-    // TODO: probably it neeeds to delay further during TransformStream
-    const ssrInserted = ssrContext.render();
-    console.log({ ssrInserted });
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
     if (isRedirectError(ctx)) {
@@ -213,7 +210,7 @@ export async function renderHtml(
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(createBufferedTransformStream())
-    .pipeThrough(injectToHead(head))
+    .pipeThrough(injectToHead(() => head + ssrContext.render()))
     .pipeThrough(injectDefaultMetaViewport())
     .pipeThrough(injectFlightStream(stream2))
     .pipeThrough(new TextEncoderStream());
@@ -227,14 +224,14 @@ export async function renderHtml(
   });
 }
 
-function injectToHead(data: string) {
+function injectToHead(getData: () => string) {
   const marker = "<head>";
   let done = false;
   return new TransformStream<string, string>({
     transform(chunk, controller) {
       if (!done && chunk.includes(marker)) {
         const [pre, post] = splitFirst(chunk, marker);
-        controller.enqueue(pre + marker + data + post);
+        controller.enqueue(pre + marker + getData() + post);
         done = true;
         return;
       }
