@@ -2,7 +2,12 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { useRouter } from "../router/client/router";
 import type { ErrorPageProps } from "../router/server";
-import { getErrorContext, getStatusText, isRedirectError } from "./shared";
+import {
+  getErrorContext,
+  getStatusText,
+  isNotFoundError,
+  isRedirectError,
+} from "./shared";
 
 // cf.
 // https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
@@ -24,6 +29,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error) {
+    const ctx = getErrorContext(error);
+    if (ctx && (isNotFoundError(ctx) || isRedirectError(ctx))) {
+      throw error;
+    }
     return { error };
   }
 
@@ -86,24 +95,29 @@ function DefaultRootErrorPage(props: ErrorPageProps) {
 }
 
 export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
-  override state: { redirectLocation?: string } = {};
+  override state: { error: null } | { error: Error; redirectLocation: string } =
+    { error: null };
 
   static getDerivedStateFromError(error: Error) {
+    // TODO: can remove?
     if (!import.meta.env.SSR) {
       const ctx = getErrorContext(error);
       const redirect = ctx && isRedirectError(ctx);
       if (redirect) {
-        return { redirectLocation: redirect.location };
+        return {
+          error,
+          redirectLocation: redirect.location,
+        } satisfies RedirectBoundary["state"];
       }
     }
     throw error;
   }
 
   override render() {
-    if (this.state.redirectLocation) {
+    if (this.state.error) {
       return (
         <RedirectHandler
-          suspensionKey={this.state}
+          suspensionKey={this.state.error}
           redirectLocation={this.state.redirectLocation}
         />
       );
@@ -139,7 +153,8 @@ export class NotFoundBoundary extends React.Component<{
   override state: { error?: Error } = {};
 
   static getDerivedStateFromError(error: Error) {
-    if (getErrorContext(error)?.status === 404) {
+    const ctx = getErrorContext(error);
+    if (ctx && isNotFoundError(ctx)) {
       return { error };
     }
     throw error;
