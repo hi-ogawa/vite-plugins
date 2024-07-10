@@ -22,12 +22,12 @@ export default function vitePluginReactServerNext(
 ): PluginOption {
   return [
     react(),
-    jsxPlugin(),
+    nextJsxPlugin(),
     tsconfigPaths(),
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
-      plugins: [jsxPlugin(), tsconfigPaths(), ...(options?.plugins ?? [])],
+      plugins: [nextJsxPlugin(), tsconfigPaths(), ...(options?.plugins ?? [])],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
@@ -50,10 +50,10 @@ export default function vitePluginReactServerNext(
   ];
 }
 
-function jsxPlugin(): Plugin {
+function nextJsxPlugin(): Plugin {
   return {
-    name: "jsx-in-js",
-    // override next.js's default tsconfig `jsx: preserve`
+    name: nextJsxPlugin.name,
+    // need to override next.js's default tsconfig `jsx: preserve`
     config: () => ({
       esbuild: { jsx: "automatic" },
       optimizeDeps: {
