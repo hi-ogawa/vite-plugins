@@ -18,7 +18,7 @@ export type ReactServerNextPluginOptions = {
 };
 
 export default function vitePluginReactServerNext(
-  options?: ReactServerNextPluginOptions & ReactServerPluginOptions,
+  options?: ReactServerPluginOptions & ReactServerNextPluginOptions,
 ): PluginOption {
   return [
     react(),
