@@ -15,7 +15,10 @@ import {
   getStatusText,
   isRedirectError,
 } from "../features/error/shared";
-import { injectDefaultMetaViewport } from "../features/next/ssr";
+import {
+  createSsrContext,
+  injectDefaultMetaViewport,
+} from "../features/next/ssr";
 import {
   FlightDataContext,
   LayoutRoot,
@@ -121,12 +124,16 @@ export async function renderHtml(
 
   const { routeManifestUrl, routeManifest } = await importRouteManifest();
 
+  const ssrContext = createSsrContext();
+
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <FlightDataContext.Provider value={flightDataPromise}>
         <RouteManifestContext.Provider value={routeManifest}>
           <RouteAssetLinks />
-          <LayoutRoot />
+          <ssrContext.Provider>
+            <LayoutRoot />
+          </ssrContext.Provider>
         </RouteManifestContext.Provider>
       </FlightDataContext.Provider>
     </RouterContext.Provider>
@@ -203,7 +210,7 @@ export async function renderHtml(
   const htmlStream = ssrStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(createBufferedTransformStream())
-    .pipeThrough(injectToHead(head))
+    .pipeThrough(injectToHead(() => head + ssrContext.render()))
     .pipeThrough(injectDefaultMetaViewport())
     .pipeThrough(injectFlightStream(stream2))
     .pipeThrough(new TextEncoderStream());
@@ -217,14 +224,14 @@ export async function renderHtml(
   });
 }
 
-function injectToHead(data: string) {
+function injectToHead(getData: () => string) {
   const marker = "<head>";
   let done = false;
   return new TransformStream<string, string>({
     transform(chunk, controller) {
       if (!done && chunk.includes(marker)) {
         const [pre, post] = splitFirst(chunk, marker);
-        controller.enqueue(pre + marker + data + post);
+        controller.enqueue(pre + marker + getData() + post);
         done = true;
         return;
       }

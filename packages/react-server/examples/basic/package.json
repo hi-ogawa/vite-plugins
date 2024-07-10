@@ -24,7 +24,8 @@
     "react": "rc",
     "react-dom": "rc",
     "react-server-dom-webpack": "rc",
-    "react-wrap-balancer": "^1.1.0"
+    "react-wrap-balancer": "^1.1.0",
+    "styled-jsx": "^5.1.6"
   },
   "devDependencies": {
     "@hiogawa/unocss-preset-antd": "2.2.1-pre.7",

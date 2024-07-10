@@ -8,3 +8,4 @@ export {
   useLocation,
   useSelectedLayoutSegments,
 } from "./features/router/client";
+export { useServerInsertedHTML } from "./features/next/client";

@@ -662,6 +662,14 @@ test("client css module hmr @dev", async ({ page, browser }) => {
   }
 });
 
+testNoJs("useServerInsertedHTML @nojs", async ({ page }) => {
+  await page.goto("/test/css/in-js");
+  await expect(page.getByText("CSS in JS")).toHaveCSS(
+    "background-color",
+    "rgb(250, 220, 220)",
+  );
+});
+
 test("server action @js", async ({ page }) => {
   checkNoError(page);
 
