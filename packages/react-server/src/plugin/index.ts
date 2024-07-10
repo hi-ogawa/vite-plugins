@@ -116,14 +116,18 @@ const manager: PluginStateManager = ((
   globalThis as any
 ).__VITE_REACT_SERVER_MANAGER ??= new PluginStateManager());
 
-export function vitePluginReactServer(options?: {
+export type ReactServerPluginOptions = {
   plugins?: PluginOption[];
   prerender?: PrerenderFn;
   entryBrowser?: string;
   entryServer?: string;
   routeDir?: string;
   noAsyncLocalStorage?: boolean;
-}): Plugin[] {
+};
+
+export function vitePluginReactServer(
+  options?: ReactServerPluginOptions,
+): Plugin[] {
   const entryBrowser =
     options?.entryBrowser ?? "@hiogawa/react-server/entry/browser";
   const entryServer =

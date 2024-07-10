@@ -1,6 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
+import {
+  type ReactServerPluginOptions,
+  vitePluginReactServer,
+} from "@hiogawa/react-server/plugin";
 import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
@@ -10,15 +13,19 @@ import type { Plugin, PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type AdapterType, adapterPlugin } from "./adapters";
 
-export default function vitePluginReactServerNext(options?: {
-  plugins?: PluginOption[];
+export type ReactServerNextPluginOptions = {
   adapter?: AdapterType;
-}): PluginOption {
+};
+
+export default function vitePluginReactServerNext(
+  options?: ReactServerPluginOptions & ReactServerNextPluginOptions,
+): PluginOption {
   return [
     react(),
     tsconfigPaths(),
     vitePluginReactServer({
-      routeDir: "app",
+      ...options,
+      routeDir: options?.routeDir ?? "app",
       plugins: [
         tsconfigPaths(),
         {
@@ -31,9 +38,6 @@ export default function vitePluginReactServerNext(options?: {
         },
         ...(options?.plugins ?? []),
       ],
-      // for now, we only enable generateStaticParams for the app route demo
-      // https://github.com/hi-ogawa/next-app-router-playground/pull/1
-      prerender: (_manifest, presets) => presets.generateStaticParams(),
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
