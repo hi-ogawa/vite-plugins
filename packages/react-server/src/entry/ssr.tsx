@@ -15,6 +15,7 @@ import {
   getStatusText,
   isRedirectError,
 } from "../features/error/shared";
+import { createSsrContext } from "../features/next/client";
 import { injectDefaultMetaViewport } from "../features/next/ssr";
 import {
   FlightDataContext,
@@ -121,12 +122,16 @@ export async function renderHtml(
 
   const { routeManifestUrl, routeManifest } = await importRouteManifest();
 
+  const ssrContext = createSsrContext();
+
   const reactRootEl = (
     <RouterContext.Provider value={router}>
       <FlightDataContext.Provider value={flightDataPromise}>
         <RouteManifestContext.Provider value={routeManifest}>
           <RouteAssetLinks />
-          <LayoutRoot />
+          <ssrContext.Provider>
+            <LayoutRoot />
+          </ssrContext.Provider>
         </RouteManifestContext.Provider>
       </FlightDataContext.Provider>
     </RouterContext.Provider>
@@ -174,6 +179,9 @@ export async function renderHtml(
     if (opitons?.prerender) {
       await ssrStream.allReady;
     }
+    // TODO: probably it neeeds to delay further during TransformStream
+    const ssrInserted = ssrContext.render();
+    console.log({ ssrInserted });
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
     if (isRedirectError(ctx)) {
