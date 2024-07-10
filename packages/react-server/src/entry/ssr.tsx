@@ -15,8 +15,10 @@ import {
   getStatusText,
   isRedirectError,
 } from "../features/error/shared";
-import { createSsrContext } from "../features/next/client";
-import { injectDefaultMetaViewport } from "../features/next/ssr";
+import {
+  createSsrContext,
+  injectDefaultMetaViewport,
+} from "../features/next/ssr";
 import {
   FlightDataContext,
   LayoutRoot,

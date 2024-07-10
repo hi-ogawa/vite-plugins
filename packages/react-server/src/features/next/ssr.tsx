@@ -1,3 +1,6 @@
+import ReactDOMServer from "react-dom/server.edge";
+import { SsrContext, type SsrContextType } from "./client";
+
 // inject default meta viewport
 export function injectDefaultMetaViewport() {
   const HEAD_END = "</head>";
@@ -23,4 +26,28 @@ export function injectDefaultMetaViewport() {
       controller.enqueue(chunk);
     },
   });
+}
+
+export function createSsrContext() {
+  const context: SsrContextType = {
+    callbacks: new Set(),
+  };
+
+  function Provider(props: React.PropsWithChildren) {
+    return (
+      <SsrContext.Provider value={context}>
+        {props.children}
+      </SsrContext.Provider>
+    );
+  }
+
+  function render() {
+    let html = "";
+    for (const calback of context.callbacks) {
+      html += ReactDOMServer.renderToStaticMarkup(calback());
+    }
+    return html;
+  }
+
+  return { Provider, render };
 }
