@@ -166,6 +166,8 @@ export function vitePluginReactServer(
       },
     },
     plugins: [
+      ...(options?.plugins ?? []),
+
       vitePluginSilenceDirectiveBuildWarning(),
 
       // expose server reference to react-server itself
@@ -249,8 +251,6 @@ export function vitePluginReactServer(
           return;
         },
       },
-
-      ...(options?.plugins ?? []),
     ],
     build: {
       ssr: true,

@@ -1,13 +1,12 @@
 "use client";
 
-import "client-only";
 import { useState } from "react";
 
 import double, {
   inc,
   dec,
   redirectAction,
-  // getHeaders,
+  getHeaders,
   renamed,
   slowInc,
 } from "./actions";
@@ -62,11 +61,11 @@ export default function Counter() {
           redirect
         </button>
       </form>
-      {/* <form action={getHeaders}>
+      <form action={getHeaders}>
         <button type="submit" id="get-header">
           submit
         </button>
-      </form> */}
+      </form>
       {/* <form action={test}>
         <button>test</button>
       </form> */}
