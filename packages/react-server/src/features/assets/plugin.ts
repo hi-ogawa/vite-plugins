@@ -97,16 +97,19 @@ export function vitePluginServerAssets({
       tinyassert(!manager.buildType);
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, [
-          entryServer,
-          "virtual:server-routes",
-        ]),
+        collectStyle($__global.dev.reactServer, {
+          entries: [entryServer, "virtual:server-routes"],
+          ssr: true,
+        }),
         `/******* client **************/`,
-        collectStyle($__global.dev.server, [
-          entryBrowser,
-          // TODO: dev should also use RouteManifest to manage client css
-          ...manager.clientReferenceMap.keys(),
-        ]),
+        collectStyle($__global.dev.server, {
+          entries: [
+            entryBrowser,
+            // TODO: dev should also use RouteManifest to manage client css
+            ...manager.clientReferenceMap.keys(),
+          ],
+          ssr: false,
+        }),
       ]);
       return styles.join("\n\n");
     }),
@@ -115,10 +118,10 @@ export function vitePluginServerAssets({
       // virtual module to proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        const urls = await collectStyleUrls($__global.dev.reactServer, [
-          entryServer,
-          "virtual:server-routes",
-        ]);
+        const urls = await collectStyleUrls($__global.dev.reactServer, {
+          entries: [entryServer, "virtual:server-routes"],
+          ssr: true,
+        });
         const code = urls.map((url) => `import "${url}";\n`).join("");
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
