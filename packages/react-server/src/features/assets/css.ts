@@ -4,8 +4,11 @@ import type { ViteDevServer } from "vite";
 // https://github.com/hi-ogawa/vite-plugins/blob/3c496fa1bb5ac66d2880986877a37ed262f1d2a6/packages/vite-glob-routes/examples/demo/vite-plugin-ssr-css.ts
 // https://github.com/remix-run/remix/blob/dev/packages/remix-dev/vite/styles.ts
 
-export async function collectStyle(server: ViteDevServer, entries: string[]) {
-  const urls = await collectStyleUrls(server, entries);
+export async function collectStyle(
+  server: ViteDevServer,
+  options: { entries: string[]; ssr: boolean },
+) {
+  const urls = await collectStyleUrls(server, options);
   const styles = await Promise.all(
     urls.map(async (url) => {
       const res = await server.transformRequest(url + "?direct");
@@ -17,7 +20,7 @@ export async function collectStyle(server: ViteDevServer, entries: string[]) {
 
 export async function collectStyleUrls(
   server: ViteDevServer,
-  entries: string[],
+  { entries, ssr }: { entries: string[]; ssr: boolean },
 ) {
   const visited = new Set<string>();
 
@@ -37,7 +40,7 @@ export async function collectStyleUrls(
   }
 
   // ensure import analysis is ready for top entries
-  await Promise.all(entries.map((e) => server.transformRequest(e)));
+  await Promise.all(entries.map((e) => server.transformRequest(e, { ssr })));
 
   // traverse
   await Promise.all(entries.map((url) => traverse(url)));
