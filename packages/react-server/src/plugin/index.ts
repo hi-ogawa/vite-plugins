@@ -195,6 +195,9 @@ export function vitePluginReactServer(
               ([k, v]) => [k.slice("/${routeDir}".length), v]
             )
           );
+
+          const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)");
+          export const middleware = Object.values(globMiddleware)[0];
         `;
       }),
 

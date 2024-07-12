@@ -14,3 +14,4 @@ export {
   cookies,
   revalidatePath,
 } from "./features/request-context/server";
+export { NextRequest, NextResponse } from "./features/next/request";
