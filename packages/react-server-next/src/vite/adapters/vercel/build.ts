@@ -27,7 +27,7 @@ const configJson = {
 const vcConfig = {
   edge: {
     runtime: "edge",
-    entrypoint: "index.js",
+    entrypoint: "index.mjs",
   },
   node: {
     runtime: "nodejs20.x",
@@ -81,7 +81,7 @@ export async function build({ runtime }: { runtime: VercelRuntime }) {
   const esbuild = await import("esbuild");
   const result = await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "functions/index.func/index.js"),
+    outfile: join(outDir, "functions/index.func/index.mjs"),
     metafile: true,
     bundle: true,
     minify: true,
