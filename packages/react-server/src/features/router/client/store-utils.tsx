@@ -1,4 +1,4 @@
-import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
+import React from "react";
 
 // tanstack-style selectable store
 // https://github.com/TanStack/router/blob/876b887589b14fb4bce0773eb520417682a741e2/packages/react-router/src/useRouterState.tsx
@@ -14,9 +14,8 @@ export function useStore<T, U = T>(
   store: ReadableStore<T>,
   select: (v: T) => U = (v: T) => v as any,
 ): U {
-  const v = useSyncExternalStoreWithSelector(
+  const v = useSyncExternalStoreWithSelectorDIY(
     store.subscribe,
-    store.get,
     store.get,
     select as any,
     isEqualShallow,
@@ -67,4 +66,17 @@ function isEqualShallow(x: object, y: object): boolean {
     }
   }
   return true;
+}
+
+// https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
+function useSyncExternalStoreWithSelectorDIY<Snapshot, Selection>(
+  subscribe: (onStoreChange: () => void) => () => void,
+  getSnapshot: () => Snapshot,
+  selector: (snapshot: Snapshot) => Selection,
+  isEqual: (a: Selection, b: Selection) => boolean,
+): Selection {
+  subscribe;
+  isEqual;
+  React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return selector(getSnapshot());
 }
