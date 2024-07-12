@@ -12,12 +12,12 @@ interface ReadableStore<T> {
 
 export function useStore<T, U = T>(
   store: ReadableStore<T>,
-  select: (v: T) => U = (v: T) => v as any,
+  selector: (v: T) => U = (v: T) => v as any,
 ): U {
   const v = useSyncExternalStoreWithSelectorDIY(
     store.subscribe,
     store.get,
-    select as any,
+    selector as any,
     isEqualShallow,
   );
   return v as any;
@@ -70,13 +70,26 @@ function isEqualShallow(x: object, y: object): boolean {
 
 // https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
 function useSyncExternalStoreWithSelectorDIY<Snapshot, Selection>(
-  subscribe: (onStoreChange: () => void) => () => void,
+  subscribe: (listener: () => void) => () => void,
   getSnapshot: () => Snapshot,
   selector: (snapshot: Snapshot) => Selection,
   isEqual: (a: Selection, b: Selection) => boolean,
 ): Selection {
-  subscribe;
-  isEqual;
-  React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  return selector(getSnapshot());
+  const getSnapshotWithSelector = React.useMemo(() => {
+    let prev: { selection: Selection } | undefined;
+    return () => {
+      const snapshot = getSnapshot();
+      const selection = selector(snapshot);
+      if (!(prev && isEqual(selection, prev.selection))) {
+        prev = { selection };
+      }
+      return prev.selection;
+    };
+  }, [getSnapshot, selector, isEqual]);
+
+  return React.useSyncExternalStore(
+    subscribe,
+    getSnapshotWithSelector,
+    getSnapshotWithSelector,
+  );
 }
