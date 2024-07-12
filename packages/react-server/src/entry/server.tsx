@@ -81,6 +81,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     const redirectResponse = createActionRedirectResponse({
       isStream,
       actionResult,
+      requestContext,
     });
     if (redirectResponse) return redirectResponse;
   }

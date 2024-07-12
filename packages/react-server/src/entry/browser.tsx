@@ -22,7 +22,7 @@ import {
   emptyRouteManifest,
 } from "../features/router/manifest";
 import type { FlightData } from "../features/router/utils";
-import { ACTION_REDIRECT_LOCATION } from "../features/server-action/redirect";
+import { parseActionRedirectResponse } from "../features/server-action/redirect";
 import { createStreamRequest } from "../features/server-component/utils";
 import { $__global } from "../global";
 import { createError } from "../server";
@@ -62,9 +62,12 @@ async function start() {
       $__startActionTransition(async () => {
         (async () => {
           const response = await fetch(request);
-          const location = response.headers.get(ACTION_REDIRECT_LOCATION);
-          if (location) {
-            history.push(location);
+          const redirect = parseActionRedirectResponse(response);
+          if (redirect) {
+            history.push(
+              redirect.location,
+              redirect.revalidate ? routerRevalidate(redirect.revalidate) : {},
+            );
             return;
           }
           const result = ReactClient.createFromFetch<FlightData>(

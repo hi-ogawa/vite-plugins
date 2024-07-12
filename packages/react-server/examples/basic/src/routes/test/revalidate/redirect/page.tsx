@@ -6,7 +6,7 @@ export default function Page() {
       <form
         action={() => {
           "use server";
-          revalidatePath("/");
+          revalidatePath("/test/revalidate");
           throw redirect("/test/revalidate");
         }}
       >
