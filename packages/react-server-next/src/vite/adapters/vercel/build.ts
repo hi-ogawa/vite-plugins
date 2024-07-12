@@ -24,13 +24,21 @@ const configJson = {
   overrides: {},
 };
 
-// edge only for now
-const vcConfigJson = {
-  runtime: "edge",
-  entrypoint: "index.js",
-};
+const vcConfig = {
+  edge: {
+    runtime: "edge",
+    entrypoint: "index.js",
+  },
+  node: {
+    runtime: "nodejs20.x",
+    handler: "index.mjs",
+    launcherType: "Nodejs",
+  },
+} satisfies Record<VercelRuntime, object>;
 
-export async function build() {
+type VercelRuntime = "node" | "edge";
+
+export async function build({ runtime }: { runtime: VercelRuntime }) {
   const buildDir = join(process.cwd(), "dist");
   const outDir = join(process.cwd(), ".vercel/output");
 
@@ -66,7 +74,7 @@ export async function build() {
   await mkdir(join(outDir, "functions/index.func"), { recursive: true });
   await writeFile(
     join(outDir, "functions/index.func/.vc-config.json"),
-    JSON.stringify(vcConfigJson, null, 2),
+    JSON.stringify(vcConfig[runtime], null, 2),
   );
 
   // bundle function
@@ -78,7 +86,7 @@ export async function build() {
     bundle: true,
     minify: true,
     format: "esm",
-    platform: "browser",
+    platform: runtime === "node" ? "node" : "browser",
     external: ["node:async_hooks"],
     define: {
       "process.env.NODE_ENV": `"production"`,

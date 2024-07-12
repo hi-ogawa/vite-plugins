@@ -1,6 +1,6 @@
 import type { Plugin } from "vite";
 
-export type AdapterType = "node" | "vercel" | "cloudflare";
+export type AdapterType = "node" | "vercel" | "vercel-edge" | "cloudflare";
 
 export function adapterPlugin(options: {
   adapter?: AdapterType;
@@ -35,7 +35,11 @@ export function adapterPlugin(options: {
         }
         if (adapter === "vercel") {
           const { build } = await import("./vercel/build");
-          await build();
+          await build({ runtime: "node" });
+        }
+        if (adapter === "vercel-edge") {
+          const { build } = await import("./vercel/build");
+          await build({ runtime: "edge" });
         }
       },
     },
