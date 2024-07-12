@@ -96,3 +96,9 @@ testNoJs("image preload", async ({ page }) => {
     page.locator('link[href="https://nextjs.org/icons/vercel.svg"]'),
   ).not.toHaveAttribute("fetchPriority", "high");
 });
+
+test("og", async ({ request }) => {
+  const res = await request.get("/api/og");
+  expect(res.status()).toBe(200);
+  expect(res.headers()).toMatchObject({ "content-type": "image/png" });
+});
