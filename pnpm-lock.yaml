@@ -280,6 +280,9 @@ importers:
       '@vercel/og':
         specifier: ^0.6.2
         version: 0.6.2
+      magic-string:
+        specifier: ^0.30.8
+        version: 0.30.10
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
@@ -6693,7 +6696,7 @@ snapshots:
       colorette: 2.0.20
       consola: 3.2.3
       fast-glob: 3.3.2
-      magic-string: 0.30.8
+      magic-string: 0.30.10
       pathe: 1.1.2
       perfect-debounce: 1.0.0
     transitivePeerDependencies:
@@ -6724,7 +6727,7 @@ snapshots:
       '@unocss/rule-utils': 0.58.6
       css-tree: 2.3.1
       fast-glob: 3.3.2
-      magic-string: 0.30.8
+      magic-string: 0.30.10
       postcss: 8.4.39
 
   '@unocss/preset-attributify@0.58.6':
@@ -6777,7 +6780,7 @@ snapshots:
   '@unocss/rule-utils@0.58.6':
     dependencies:
       '@unocss/core': 0.58.6
-      magic-string: 0.30.8
+      magic-string: 0.30.10
 
   '@unocss/scope@0.58.6': {}
 
@@ -6819,7 +6822,7 @@ snapshots:
       '@unocss/transformer-directives': 0.58.6
       chokidar: 3.6.0
       fast-glob: 3.3.2
-      magic-string: 0.30.8
+      magic-string: 0.30.10
       vite: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
     transitivePeerDependencies:
       - rollup

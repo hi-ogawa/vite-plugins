@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import MagicString from "magic-string";
 import next from "next/vite";
 import { defineConfig } from "vite";
 
@@ -46,25 +47,35 @@ export default defineConfig({
           },
         },
         {
-          name: "import-meta-url-asset-binary",
-          enforce: "pre",
+          name: "binary-data-url",
           async transform(code, id, _options) {
-            if (
-              code.includes(
-                `new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url)`,
-              )
-            ) {
-              const file = path.resolve(
-                id,
-                "..",
-                "noto-sans-v27-latin-regular.ttf",
-              );
-              const data = await readFile(file, "base64");
-              code = code.replace(
-                `new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url)`,
-                () => `${JSON.stringify("data:text/plain;base64," + data)}`,
-              );
-              return code;
+            // input:
+            //   new URL("./some-font.ttf", import.meta.url)
+            // output:
+            //   new URL("data:application/octet-stream;base64,...")
+
+            // https://github.com/vitejs/vite/blob/ec16a5efc04d8ab50301d184c20e7bd0c8d8f6a2/packages/vite/src/node/plugins/assetImportMetaUrl.ts
+            const assetImportMetaUrlRE =
+              /\bnew\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)/dg;
+            let match: RegExpExecArray | null;
+            let s: MagicString | undefined;
+            while ((match = assetImportMetaUrlRE.exec(code))) {
+              s ??= new MagicString(code);
+              const [[startIndex, endIndex], [urlStart, urlEnd]] =
+                match.indices!;
+              const url = code.slice(urlStart, urlEnd).slice(1, -1);
+              if (url[0] === ".") {
+                const file = path.resolve(path.dirname(id), url);
+                const data = await readFile(file, "base64");
+                s.update(
+                  startIndex,
+                  endIndex,
+                  `new URL(${JSON.stringify("data:application/octet-stream;base64," + data)})`,
+                );
+              }
+            }
+            if (s?.hasChanged()) {
+              return { code: s.toString(), map: s.generateMap() };
             }
           },
         },
