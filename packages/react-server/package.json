@@ -45,12 +45,10 @@
     "@hiogawa/transforms": "workspace:*",
     "@tanstack/history": "^1.15.13",
     "es-module-lexer": "^1.4.1",
-    "fast-glob": "^3.3.2",
-    "use-sync-external-store": "^1.2.0"
+    "fast-glob": "^3.3.2"
   },
   "devDependencies": {
-    "@types/estree": "^1.0.5",
-    "@types/use-sync-external-store": "^0.0.6"
+    "@types/estree": "^1.0.5"
   },
   "peerDependencies": {
     "react": "*",
