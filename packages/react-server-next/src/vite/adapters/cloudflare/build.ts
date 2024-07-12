@@ -59,7 +59,7 @@ export async function build() {
     metafile: true,
     format: "esm",
     platform: "browser",
-    external: ["node:async_hooks"],
+    external: ["node:async_hooks", "node:buffer"],
     define: {
       "process.env.NODE_ENV": `"production"`,
     },
