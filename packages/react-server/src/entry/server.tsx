@@ -1,4 +1,4 @@
-import serverRoutes from "virtual:server-routes";
+import * as serverRoutes from "virtual:server-routes";
 import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
@@ -9,6 +9,7 @@ import {
   createError,
   getErrorContext,
 } from "../features/error/shared";
+import { handleMiddleware } from "../features/next/middleware";
 import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
@@ -29,7 +30,7 @@ import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
 
-export const router = generateRouteModuleTree(serverRoutes);
+export const router = generateRouteModuleTree(serverRoutes.default);
 
 export type ReactServerHandler = (
   ctx: ReactServerHandlerContext,
@@ -61,6 +62,10 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (handled) return handled;
 
   const requestContext = new RequestContext(ctx.request.headers);
+
+  if (serverRoutes.middleware) {
+    await handleMiddleware(serverRoutes.middleware, requestContext);
+  }
 
   const handledApi = await handleApiRoutes(
     router.tree,
