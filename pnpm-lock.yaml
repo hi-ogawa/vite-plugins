@@ -98,9 +98,6 @@ importers:
       '@hiogawa/transforms':
         specifier: workspace:*
         version: link:../transforms
-      '@hiogawa/vite-plugin-ssr-middleware':
-        specifier: workspace:*
-        version: link:../vite-plugin-ssr-middleware
       '@tanstack/history':
         specifier: ^1.15.13
         version: 1.15.13
@@ -126,9 +123,6 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
     devDependencies:
-      '@hiogawa/utils-node':
-        specifier: ^0.0.1
-        version: 0.0.1
       '@types/estree':
         specifier: ^1.0.5
         version: 1.0.5
