@@ -7,7 +7,12 @@ export default function Layout(props: LayoutProps) {
     <div className="flex flex-col gap-3 p-2">
       <h3 className="font-bold">Revalidate Test</h3>
       <NavMenu
-        links={["/test/revalidate", "/test/revalidate/x", "/test/revalidate/y"]}
+        links={[
+          "/test/revalidate",
+          "/test/revalidate/x",
+          "/test/revalidate/y",
+          "/test/revalidate/redirect",
+        ]}
       />
       <div className="flex items-center gap-2 text-sm">
         <EffectCount label="effect-revalidate" />
