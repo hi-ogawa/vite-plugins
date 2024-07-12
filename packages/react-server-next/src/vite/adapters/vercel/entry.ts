@@ -1,1 +1,1 @@
-export * from "../../entry-ssr";
+export { default } from "../../entry-ssr";
