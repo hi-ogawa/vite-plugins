@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
+import { bundleEdge } from "../shared";
 
 const configJson = {
   version: 3,
@@ -70,27 +71,10 @@ export async function build() {
   );
 
   // bundle function
-  const esbuild = await import("esbuild");
-  const result = await esbuild.build({
+  await bundleEdge(buildDir, {
     entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(outDir, "functions/index.func/index.js"),
-    metafile: true,
-    bundle: true,
-    minify: true,
-    format: "esm",
-    platform: "browser",
-    external: ["node:async_hooks"],
-    define: {
-      "process.env.NODE_ENV": `"production"`,
-    },
-    logOverride: {
-      "ignored-bare-import": "silent",
-    },
   });
-  await writeFile(
-    join(buildDir, "esbuild-metafile.json"),
-    JSON.stringify(result.metafile),
-  );
 }
 
 async function getPrerenderManifest(buildDir: string) {

@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
+import { bundleEdge } from "../shared";
 
 export async function build() {
   const buildDir = join(process.cwd(), "dist");
@@ -50,27 +51,10 @@ export async function build() {
 
   // worker
   // https://developers.cloudflare.com/pages/functions/advanced-mode/
-  const esbuild = await import("esbuild");
-  const result = await esbuild.build({
+  await bundleEdge(buildDir, {
     entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(outDir, "_worker.js"),
-    bundle: true,
-    minify: true,
-    metafile: true,
-    format: "esm",
-    platform: "browser",
-    external: ["node:async_hooks"],
-    define: {
-      "process.env.NODE_ENV": `"production"`,
-    },
-    logOverride: {
-      "ignored-bare-import": "silent",
-    },
   });
-  await writeFile(
-    join(buildDir, "esbuild-metafile.json"),
-    JSON.stringify(result.metafile),
-  );
 }
 
 async function getPrerenderPaths(buildDir: string) {
