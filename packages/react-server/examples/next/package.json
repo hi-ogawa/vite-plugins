@@ -28,7 +28,6 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vercel/og": "^0.6.2",
-    "magic-string": "^0.30.8",
     "vite": "latest"
   }
 }
