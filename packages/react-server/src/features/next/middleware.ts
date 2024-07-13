@@ -1,6 +1,6 @@
 import type { RequestContext } from "../request-context/server";
 import {
-  NEXT_HANDLER_KEY,
+  MIDDLEWARE_NEXT_KEY,
   type NextFetchEvent,
   NextRequest,
   NextResponse,
@@ -43,7 +43,7 @@ export async function handleMiddleware(
   }
 
   // TODO: add up headers to context if `NextResponse.next()`
-  if (response.headers.has(NEXT_HANDLER_KEY)) {
+  if (response.headers.has(MIDDLEWARE_NEXT_KEY)) {
     requestContext;
     return;
   }

@@ -30,13 +30,13 @@ export class NextResponse extends Response {
   }) {
     return new NextResponse(null, {
       headers: {
-        [NEXT_HANDLER_KEY]: "1",
+        [MIDDLEWARE_NEXT_KEY]: "1",
       },
     });
   }
 }
 
-export const NEXT_HANDLER_KEY = "x-middleware-next";
+export const MIDDLEWARE_NEXT_KEY = "x-middleware-next";
 
 /** @todo */
 export type NextFetchEvent = {
