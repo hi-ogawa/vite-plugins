@@ -1,4 +1,1 @@
-/** @todo */
-export function Inter(_options?: unknown) {
-  return { className: "" };
-}
+export { noopFont as Inter, noopFont as Lusitana } from "./_noop";
