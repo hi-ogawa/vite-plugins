@@ -1,7 +1,9 @@
-export function middleware(_request: Request) {
-  return new Response("hello");
-}
+import { NextResponse } from "next/server";
 
-export const config = {
-  matcher: "/about/:path*",
-};
+export function middleware(request: Request) {
+  const url = new URL(request.url);
+  if (url.pathname == "/test-middleware") {
+    return new Response("hello");
+  }
+  return NextResponse.next();
+}
