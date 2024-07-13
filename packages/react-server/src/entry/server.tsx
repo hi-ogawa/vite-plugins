@@ -1,3 +1,4 @@
+import serverRoutes from "virtual:server-routes";
 import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
@@ -27,6 +28,8 @@ import {
 import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
+
+export const router = generateRouteModuleTree(serverRoutes);
 
 export type ReactServerHandler = (
   ctx: ReactServerHandlerContext,
@@ -149,15 +152,6 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
       : createError({ status: 500 });
   return serverError.digest;
 };
-
-//
-// glob import routes
-//
-
-// @ts-ignore untyped virtual
-import serverRoutes from "virtual:server-routes";
-
-export const router = generateRouteModuleTree(serverRoutes);
 
 //
 // server action
