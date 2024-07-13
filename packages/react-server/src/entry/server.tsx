@@ -64,7 +64,12 @@ export const handler: ReactServerHandler = async (ctx) => {
   const requestContext = new RequestContext(ctx.request.headers);
 
   if (serverRoutes.middleware) {
-    await handleMiddleware(serverRoutes.middleware, requestContext);
+    const response = await handleMiddleware(
+      serverRoutes.middleware,
+      ctx.request,
+      requestContext,
+    );
+    if (response) return response;
   }
 
   const handledApi = await handleApiRoutes(

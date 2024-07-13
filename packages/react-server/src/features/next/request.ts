@@ -19,13 +19,18 @@ export class NextResponse extends Response {
     this.cookies = new ResponseCookies(this.headers);
   }
 
-  static next() {
+  static next(_options?: {
+    request?: {
+      /** @todo */
+      headers?: Headers;
+    };
+  }) {
     return new NextResponse(null, {
       headers: {
-        [NEXT_RESPONSE_KEY]: "1",
+        [NEXT_HANDLER_KEY]: "1",
       },
     });
   }
 }
 
-export const NEXT_RESPONSE_KEY = "x-middleware-next";
+export const NEXT_HANDLER_KEY = "x-middleware-next";

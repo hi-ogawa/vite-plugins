@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-export function middleware(request: Request) {
+export function middleware(request: NextRequest) {
   const url = new URL(request.url);
   if (url.pathname == "/test-middleware") {
-    return new Response("hello");
+    return NextResponse.json({ hello: ["from", "middleware"] });
   }
   return NextResponse.next();
 }
