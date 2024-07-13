@@ -1,6 +1,7 @@
+// @ts-check
+
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import { nodeFileTrace } from "@vercel/nft";
-import * as esbuild from "esbuild";
 
 async function main() {
   const [arg = "esbuild"] = process.argv.slice(2);
@@ -8,6 +9,7 @@ async function main() {
   const entry = path.join(import.meta.dirname, "dist/server/index.js");
 
   if (arg === "nft") {
+    const { nodeFileTrace } = await import("@vercel/nft");
     const result = await nodeFileTrace([entry], {
       // set pnpm project root to correctly traverse dependency
       base: path.join(import.meta.dirname, "../../../.."),
@@ -16,6 +18,8 @@ async function main() {
   }
 
   if (arg === "esbuild") {
+    const esbuild = await import("esbuild");
+
     await esbuild.build({
       entryPoints: [entry],
       outfile: path.join(import.meta.dirname, "dist/esbuild"),
@@ -33,6 +37,28 @@ async function main() {
   }
 
   if (arg === "rolldown") {
+    const rolldown = await import("rolldown");
+    const bundle = await rolldown.rolldown({
+      input: entry,
+      cwd: import.meta.dirname,
+    });
+    const outDir = path.join(import.meta.dirname, "dist/rolldown");
+    await mkdir(outDir, { recursive: true });
+    await bundle.write({
+      dir: outDir,
+    });
+  }
+
+  if (arg === "rollup") {
+    const rollup = await import("rollup");
+    const bundle = await rollup.rollup({
+      input: entry,
+    });
+    const outDir = path.join(import.meta.dirname, "dist/rollup");
+    await mkdir(outDir, { recursive: true });
+    await bundle.write({
+      dir: outDir,
+    });
   }
 }
 
