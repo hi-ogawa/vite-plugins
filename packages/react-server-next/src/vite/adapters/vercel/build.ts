@@ -111,9 +111,10 @@ async function getPrerenderManifest(buildDir: string) {
   return JSON.parse(await readFile(file, "utf-8")) as PrerenderManifest;
 }
 
-// detect server static assets of this expression
+// TODO: detect server static assets of this expression
 //   join(import.meta.url, "../resvg.wasm")
 //   https://unpkg.com/browse/@vercel/og@0.6.2/dist/index.node.js
+// this doesn't look so simple since it's going to require reading all files
 function copyServerAssetPlugin(): esbuild.Plugin {
   return {
     name: copyServerAssetPlugin.name,
