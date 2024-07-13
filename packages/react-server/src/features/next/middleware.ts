@@ -9,7 +9,7 @@ import type { NextRequest, NextResponse } from "./request";
 
 export type MiddlewareModule = {
   middleware: (request: NextRequest) => Promise<NextResponse>;
-  config: { matcher: string };
+  config?: { matcher: string };
 };
 
 export async function handleMiddleware(
@@ -17,7 +17,7 @@ export async function handleMiddleware(
   requestContext: RequestContext,
 ) {
   // TODO: matcher
-  config.matcher;
+  config?.matcher;
 
   // TODO
   // NextRequest

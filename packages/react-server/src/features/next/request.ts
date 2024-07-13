@@ -18,4 +18,14 @@ export class NextResponse extends Response {
     super(...args);
     this.cookies = new ResponseCookies(this.headers);
   }
+
+  static next() {
+    return new NextResponse(null, {
+      headers: {
+        [NEXT_RESPONSE_KEY]: "1",
+      },
+    });
+  }
 }
+
+export const NEXT_RESPONSE_KEY = "x-middleware-next";
