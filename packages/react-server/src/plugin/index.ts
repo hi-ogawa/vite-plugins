@@ -196,7 +196,7 @@ export function vitePluginReactServer(
             )
           );
 
-          const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)");
+          const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
           export const middleware = Object.values(globMiddleware)[0];
         `;
       }),
