@@ -19,6 +19,9 @@ export class NextResponse extends Response {
     this.cookies = new ResponseCookies(this.headers);
   }
 
+  /** @todo */
+  static rewrite(..._args: unknown[]) {}
+
   static next(_options?: {
     request?: {
       /** @todo */
@@ -34,3 +37,8 @@ export class NextResponse extends Response {
 }
 
 export const NEXT_HANDLER_KEY = "x-middleware-next";
+
+/** @todo */
+export type NextFetchEvent = {
+  waitUntil(promise: Promise<unknown>): void;
+};
