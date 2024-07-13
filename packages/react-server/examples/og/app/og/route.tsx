@@ -2,7 +2,9 @@ import { ImageResponse } from "@vercel/og";
 
 // https://github.com/vercel/next.js/blob/9c55b45fe06baa6240de35521fc43a33869bf041/packages/next/src/server/og/image-response.ts
 
-export function GET() {
+export function GET(request: Request) {
+  const url = new URL(request.url);
+  const title = url.searchParams.get("title") ?? "Hello!";
   return new ImageResponse(
     <div
       style={{
@@ -14,7 +16,7 @@ export function GET() {
         fontWeight: "600",
       }}
     >
-      Hello!
+      {title}
     </div>,
     {
       width: 843,
