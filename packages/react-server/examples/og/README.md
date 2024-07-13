@@ -1,1 +1,1 @@
-minimal template for testing
+# @vercel/og example
