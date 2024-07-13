@@ -1,0 +1,27 @@
+{
+  "name": "@hiogawa/react-server-example-og",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "vc-build": "VERCEL=1 pnpm build",
+    "vc-release-staging": "vercel deploy --prebuilt",
+    "vc-release": "vercel deploy --prod --prebuilt"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "workspace:*",
+    "@vercel/og": "^0.6.2",
+    "next": "link:../../../react-server-next",
+    "react": "rc",
+    "react-dom": "rc",
+    "react-server-dom-webpack": "rc"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "vite": "latest"
+  }
+}
