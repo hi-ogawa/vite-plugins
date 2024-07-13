@@ -289,9 +289,6 @@ importers:
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
-      '@vercel/og':
-        specifier: ^0.6.2
-        version: 0.6.2
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
