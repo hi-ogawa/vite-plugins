@@ -31,7 +31,7 @@ export class RequestContext {
   injectResponseHeaders(response: Response): Response {
     this.mergeResponseHeaders(response.headers);
     return new Response(response.body, {
-      ...response,
+      status: response.status,
       headers: this.getResponseHeaders(),
     });
   }
