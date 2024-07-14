@@ -23,10 +23,7 @@ export function createActionRedirectResponse({
   const error = actionResult.error;
   const redirect = error && isRedirectError(error);
   if (redirect) {
-    const headers = new Headers({
-      ...actionResult.responseHeaders,
-      ...error.headers,
-    });
+    const headers = new Headers(requestContext.getResponseHeaders());
     if (isStream) {
       headers.delete("location");
       headers.set(

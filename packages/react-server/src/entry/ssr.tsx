@@ -184,7 +184,12 @@ export async function renderHtml(
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
     if (isRedirectError(ctx)) {
-      return new Response(null, { status: ctx.status, headers: ctx.headers });
+      return result.requestContext.injectResponseHeaders(
+        new Response(null, {
+          status: ctx.status,
+          headers: ctx.headers,
+        }),
+      );
     }
     status = ctx.status;
     // render empty as error fallback and
@@ -218,7 +223,7 @@ export async function renderHtml(
   return new Response(htmlStream, {
     status,
     headers: {
-      ...result.actionResult?.responseHeaders,
+      ...result.requestContext.getResponseHeaders(),
       "content-type": "text/html;charset=utf-8",
     },
   });

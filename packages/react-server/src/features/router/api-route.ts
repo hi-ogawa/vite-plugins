@@ -1,4 +1,3 @@
-import { injectResponseCookies } from "../next/cookie";
 import type { RequestContext } from "../request-context/server";
 import type { RouteModuleTree } from "./server";
 import { type MatchParams, matchRouteTree, toMatchParams } from "./tree";
@@ -39,10 +38,7 @@ export async function handleApiRoutes(
       const response = await requestContext.run(() =>
         handler(request, { params }),
       );
-      return injectResponseCookies(
-        response,
-        requestContext.nextCookies.toResponseCookies(),
-      );
+      return requestContext.injectResponseHeaders(response);
     }
   }
   return;
