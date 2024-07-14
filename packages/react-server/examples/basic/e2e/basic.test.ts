@@ -895,7 +895,8 @@ testNoJs("redirect server component @nojs", async ({ page }) => {
   expect(await res.text()).toBe("");
 
   await page.goto("/test/redirect");
-  await page.getByRole("link", { name: "From Server Component" }).click();
+  await page.getByRole("link", { name: "Server Component" }).click();
+  await page.getByText("ok=server-component").click();
   await page.waitForURL("/test/redirect?ok=server-component");
 });
 
@@ -904,7 +905,8 @@ test("redirect server component @js", async ({ page }) => {
 
   await page.goto("/test/redirect");
   await waitForHydration(page);
-  await page.getByRole("link", { name: "From Server Component" }).click();
+  await page.getByRole("link", { name: "Server Component" }).click();
+  await page.getByText("ok=server-component").click();
   await page.waitForURL("/test/redirect?ok=server-component");
 });
 
@@ -912,15 +914,25 @@ testNoJs("redirect server action @nojs", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test/redirect");
-  await page.getByRole("button", { name: "From Server Action" }).click();
+  await page.getByRole("button", { name: "Action" }).click();
+  await page.getByText("ok=server-action").click();
   await page.waitForURL("/test/redirect?ok=server-action");
 });
 
 test("redirect server action @js", async ({ page }) => {
   await page.goto("/test/redirect");
   await waitForHydration(page);
-  await page.getByRole("button", { name: "From Server Action" }).click();
+  await page.getByRole("button", { name: "Action" }).click();
   await page.waitForURL("/test/redirect?ok=server-action");
+});
+
+test("redirect suspense @js", async ({ page }) => {
+  await page.goto("/test/redirect");
+  await waitForHydration(page);
+  await page.getByRole("link", { name: "Suspense" }).click();
+  await page.getByText("fallback until redirect...").click();
+  await page.getByText("ok=suspense").click();
+  await page.waitForURL("/test/redirect?ok=suspense");
 });
 
 test("useActionState @js", async ({ page }) => {
