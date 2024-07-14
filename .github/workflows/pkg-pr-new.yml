@@ -1,0 +1,15 @@
+name: pkg-pr-new
+"on":
+  pull_request:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: |
+          pnpx pkg-pr-new publish \
+            packages/react-server \
+            packages/react-server-next \
+            packages/transforms \
+            packages/vite-plugin-ssr-middleware
