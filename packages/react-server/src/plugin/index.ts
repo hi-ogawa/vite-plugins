@@ -510,6 +510,8 @@ function serverDepsConfigPlugin(): Plugin {
             "react",
             "react-dom",
             "react-server-dom-webpack",
+            "server-only",
+            "client-only",
             ...result.ssr.noExternal,
           ],
           // pre-bundle cjs deps
