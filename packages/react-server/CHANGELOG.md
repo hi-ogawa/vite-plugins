@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.3 (2024-07-14)
+
+- fix: fix action `redirect` with `revalidatePath` ([#544](https://github.com/hi-ogawa/vite-plugins/pull/544))
+- fix: use ssr `transformRequest` for css crawling on server ([#554](https://github.com/hi-ogawa/vite-plugins/pull/554))
+- refactor: use own `useSyncExternalStoreWithSelector` ([#549](https://github.com/hi-ogawa/vite-plugins/pull/549))
+- refactor: type `virtual:server-routes` ([#557](https://github.com/hi-ogawa/vite-plugins/pull/557))
+- test: add suspense redirect test ([#565](https://github.com/hi-ogawa/vite-plugins/pull/565))
+- chore: remove unused deps ([#546](https://github.com/hi-ogawa/vite-plugins/pull/546))
+
 ## v0.3.2 (2024-07-11)
 
 - feat: support `useServerInsertedHTML` ([#536](https://github.com/hi-ogawa/vite-plugins/pull/536))

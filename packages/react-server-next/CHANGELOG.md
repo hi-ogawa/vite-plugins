@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.0.10 (2024-07-14)
+
+- feat: vercel node runtime adapter ([#555](https://github.com/hi-ogawa/vite-plugins/pull/555))
+- fix: more compat exports (e.g. `next/server.js`, `Lusitana` font) ([#559](https://github.com/hi-ogawa/vite-plugins/pull/559))
+
 ## v0.0.9 (2024-07-11)
 
 - feat: support JSX in `.js` file ([#539](https://github.com/hi-ogawa/vite-plugins/pull/539))
