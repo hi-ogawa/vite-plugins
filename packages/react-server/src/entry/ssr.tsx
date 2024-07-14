@@ -13,6 +13,7 @@ import {
   DEFAULT_ERROR_CONTEXT,
   getErrorContext,
   getStatusText,
+  isRedirectError,
 } from "../features/error/shared";
 import {
   createSsrContext,
@@ -182,6 +183,9 @@ export async function renderHtml(
     }
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+    if (isRedirectError(ctx)) {
+      return new Response(null, { status: ctx.status, headers: ctx.headers });
+    }
     status = ctx.status;
     // render empty as error fallback and
     // let browser render full CSR instead of hydration
