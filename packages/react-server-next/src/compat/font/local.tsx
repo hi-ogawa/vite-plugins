@@ -1,6 +1,1 @@
-/** @todo */
-export default function localFont(_options?: unknown) {
-  return {
-    variable: "",
-  };
-}
+export { noopFont as default } from "./_noop";
