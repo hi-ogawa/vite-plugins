@@ -14,28 +14,26 @@ import {
 // https://github.com/nextauthjs/next-auth/blob/a3d3d4bab3e037a5359ed22de8b1fff0b5557523/packages/next-auth/src/lib/index.ts#L3
 
 export type MiddlewareModule = {
-  middleware: (
+  default: (
     request: NextRequest,
     event: NextFetchEvent,
   ) => Promise<Response | undefined>;
+  // TODO: matcher
   config?: { matcher: string };
 };
 
 export async function handleMiddleware(
-  { middleware, config }: MiddlewareModule,
+  mod: MiddlewareModule,
   request: Request,
   requestContext: RequestContext,
 ): Promise<Response | undefined> {
-  // TODO: matcher
-  config?.matcher;
-
   // TODO: POST body
   const nextRequest = new NextRequest(request.url, {
     method: request.method,
     headers: request.headers,
   });
 
-  const response = await middleware(nextRequest, { waitUntil: () => {} });
+  const response = await mod.default(nextRequest, { waitUntil: () => {} });
   if (!response) return;
 
   if (response instanceof NextResponse) {
