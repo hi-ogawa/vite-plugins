@@ -1,4 +1,3 @@
-import { ResponseCookies } from "@edge-runtime/cookies";
 import type { RequestContext } from "../request-context/server";
 import {
   MIDDLEWARE_NEXT_KEY,
@@ -46,13 +45,7 @@ export async function handleMiddleware(
   // add up headers to context when `NextResponse.next()`
   if (response.headers.has(MIDDLEWARE_NEXT_KEY)) {
     response.headers.delete(MIDDLEWARE_NEXT_KEY);
-    const cookies = new ResponseCookies(response.headers);
-    for (const cookie of cookies.getAll()) {
-      requestContext.nextCookies.cookies.set(cookie);
-    }
-    for (const [k, v] of response.headers) {
-      requestContext.responseHeaders.set(k, v);
-    }
+    requestContext.mergeResponseHeaders(response.headers);
     return;
   }
 

@@ -215,7 +215,7 @@ async function actionHandler({
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
   }
   if (result.error?.headers) {
-    requestContext.mergeResponseHeaders(result.error?.headers);
+    requestContext.mergeResponseHeaders(new Headers(result.error?.headers));
   }
   return result;
 }

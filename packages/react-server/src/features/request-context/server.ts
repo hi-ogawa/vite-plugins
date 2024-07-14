@@ -6,18 +6,11 @@ const requestContextStorage = createContextStorage<RequestContext>();
 
 export class RequestContext {
   nextCookies: ReturnType<typeof createNextCookies>;
-  responseHeaders: Headers = new Headers();
-
-  // TODO: multiple revlidation paths
-  revalidate?: RevalidationType;
+  revalidate?: RevalidationType; // TODO: multiple revlidation paths
+  private responseHeaders: Headers = new Headers();
 
   constructor(public requestHeaders: Headers) {
     this.nextCookies = createNextCookies(requestHeaders);
-  }
-
-  mergeResponseHeaders(headers: Record<string, string>) {
-    // TODO
-    headers;
   }
 
   getResponseHeaders() {
@@ -25,6 +18,21 @@ export class RequestContext {
       ...Object.fromEntries(this.responseHeaders.entries()),
       "set-cookie": this.nextCookies.toSetCookie(),
     };
+  }
+
+  mergeResponseHeaders(headers: Headers) {
+    for (const [k, v] of headers) {
+      this.responseHeaders.set(k, v);
+    }
+    this.nextCookies.mergeSetCookie(headers);
+  }
+
+  injectResponseHeaders(response: Response): Response {
+    this.mergeResponseHeaders(response.headers);
+    return new Response(response.body, {
+      ...response,
+      headers: this.getResponseHeaders(),
+    });
   }
 
   run<T>(f: () => T): T {
