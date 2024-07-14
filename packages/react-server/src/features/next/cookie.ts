@@ -33,5 +33,5 @@ export function createNextCookies(requestHeaders: Headers) {
     return toResponseCookies().toString();
   }
 
-  return { cookies, mergeSetCookie, toSetCookie, toResponseCookies };
+  return { cookies, mergeSetCookie, toSetCookie };
 }
