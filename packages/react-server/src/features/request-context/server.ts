@@ -15,8 +15,6 @@ export class RequestContext {
     this.nextCookies = createNextCookies(requestHeaders);
   }
 
-  getSetCookie = () => this.nextCookies.toResponseCookies().toString();
-
   getResponseHeaders() {
     return {
       ...Object.fromEntries(this.responseHeaders.entries()),
