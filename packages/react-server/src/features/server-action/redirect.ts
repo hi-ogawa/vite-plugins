@@ -3,6 +3,8 @@ import type { RequestContext } from "../request-context/server";
 import type { RevalidationType } from "../server-component/utils";
 import type { ActionResult } from "./server";
 
+// TODO: generalize to any flight request redirection e.g. by middleware
+
 const ACTION_REDIRECT_KEY = "x-action-redirect";
 
 type ActionRedirectMeta = {

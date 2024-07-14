@@ -8,6 +8,7 @@ import {
   ReactServerDigestError,
   createError,
   getErrorContext,
+  isRedirectStatus,
 } from "../features/error/shared";
 import { handleMiddleware } from "../features/next/middleware";
 import { RequestContext } from "../features/request-context/server";
@@ -64,13 +65,21 @@ export const handler: ReactServerHandler = async (ctx) => {
 
   const requestContext = new RequestContext(ctx.request.headers);
 
+  // extract stream request details
+  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
+
   if (serverRoutes.middleware) {
     const response = await handleMiddleware(
       serverRoutes.middleware,
-      ctx.request,
+      request,
       requestContext,
     );
-    if (response) return response;
+    if (response) {
+      if (isStream && isRedirectStatus(response.status)) {
+        // createFlightRedirectResponse(response);
+      }
+      return response;
+    }
   }
 
   const handledApi = await handleApiRoutes(
@@ -79,9 +88,6 @@ export const handler: ReactServerHandler = async (ctx) => {
     requestContext,
   );
   if (handledApi) return handledApi;
-
-  // extract stream request details
-  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
 
   // action
   let actionResult: ActionResult | undefined;
