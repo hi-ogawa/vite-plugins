@@ -24,6 +24,7 @@ jobs:
       - run: pnpm build
       - run: pnpm tsc
       - run: pnpm test
+      - run: pnpx pkg-pr-new publish packages/react-server packages/react-server-next
 
   test-react-server-basic:
     runs-on: ubuntu-latest
