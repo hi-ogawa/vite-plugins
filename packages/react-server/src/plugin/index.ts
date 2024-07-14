@@ -261,12 +261,12 @@ export function vitePluginReactServer(
         optimizeDeps: {
           // this can potentially include unnecessary server only deps for client,
           // but there should be no issues except making deps optimization slightly slower.
-          entries: [
-            path.posix.join(
-              routeDir,
-              `**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)`,
-            ),
-          ],
+          // entries: [
+          //   path.posix.join(
+          //     routeDir,
+          //     `**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)`,
+          //   ),
+          // ],
           exclude: ["@hiogawa/react-server"],
           include: [
             "react",
