@@ -1,0 +1,14 @@
+name: pkg-pr-new
+"on":
+  issue_comment:
+    types: [created]
+jobs:
+  publish:
+    if: startsWith(github.event.comment.body, '/pkg-pr-new')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          playwright: false
+      - run: pnpx pkg-pr-new publish packages/react-server packages/react-server-next
