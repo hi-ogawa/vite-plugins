@@ -102,6 +102,7 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
     const ctx = getErrorContext(error);
     const redirect = ctx && isRedirectError(ctx);
     if (redirect) {
+      console.log("[RedirectBoundary.getDerivedStateFromError]", redirect);
       return {
         error,
         redirectLocation: redirect.location,
@@ -116,6 +117,7 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
         <RedirectHandler
           suspensionKey={this.state.error}
           redirectLocation={this.state.redirectLocation}
+          reset={() => this.setState({ error: null })}
         />
       );
     }
@@ -129,16 +131,23 @@ const redirectSuspensionMap = new WeakMap<object, Promise<null>>();
 export function RedirectHandler(props: {
   suspensionKey: object;
   redirectLocation: string;
+  reset: () => void;
 }) {
   tinyassert(!import.meta.env.SSR);
 
   // trigger client navigation once and suspend until router fixes this up
   const history = useRouter((s) => s.history);
   let suspension = redirectSuspensionMap.get(props.suspensionKey);
+  console.log("[RedirectHandler]", { props, suspension });
   if (!suspension) {
     suspension = new Promise(() => {});
     redirectSuspensionMap.set(props.suspensionKey, suspension);
-    setTimeout(() => history.replace(props.redirectLocation));
+    setTimeout(() => {
+      React.startTransition(() => {
+        props.reset();
+        history.replace(props.redirectLocation);
+      });
+    });
   }
   return React.use(suspension);
 }
