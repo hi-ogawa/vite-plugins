@@ -1,6 +1,6 @@
 // @ts-check
 
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 async function main() {
@@ -14,7 +14,26 @@ async function main() {
       // set pnpm project root to correctly traverse dependency
       base: path.join(import.meta.dirname, "../../../.."),
     });
-    console.log(result);
+    console.log(result.fileList);
+    for (const [k, v] of result.reasons) {
+      if (k.includes("@vercel/og")) {
+        console.log(k, v);
+      }
+    }
+  }
+
+  if (arg === "ncc") {
+    /** @type {any} */
+    const { default: ncc } = await import("@vercel/ncc");
+    const result = await ncc(entry, {
+      filterAssetBase: path.join(import.meta.dirname, "../../../.."),
+    });
+    const outDir = path.join(import.meta.dirname, "dist/ncc");
+    await mkdir(outDir, { recursive: true });
+    await writeFile(path.join(outDir, "index.js"), result.code);
+    for (const [name, { source }] of Object.entries(result.assets)) {
+      await writeFile(path.join(outDir, name), source);
+    }
   }
 
   if (arg === "esbuild") {

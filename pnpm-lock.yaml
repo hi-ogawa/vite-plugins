@@ -320,6 +320,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
+      '@vercel/ncc':
+        specifier: ^0.38.1
+        version: 0.38.1
       '@vercel/nft':
         specifier: ^0.27.3
         version: 0.27.3
@@ -2719,6 +2722,10 @@ packages:
 
   '@vanilla-extract/private@1.0.3':
     resolution: {integrity: sha512-17kVyLq3ePTKOkveHxXuIJZtGYs+cSoev7BlP+Lf4916qfDhk/HBjvlYDe8egrea7LNPHKwSZJK/bzZC+Q6AwQ==}
+
+  '@vercel/ncc@0.38.1':
+    resolution: {integrity: sha512-IBBb+iI2NLu4VQn3Vwldyi2QwaXt5+hTyh58ggAMoCGE6DJmPvwL3KPBWcJl1m9LYPChBLE980Jw+CS4Wokqxw==}
+    hasBin: true
 
   '@vercel/nft@0.27.3':
     resolution: {integrity: sha512-oySTdDSzUAFDXpsSLk9Q943o+/Yu/+TCFxnehpFQEf/3khi2stMpTHPVNwFdvZq/Z4Ky93lE+MGHpXCRpMkSCA==}
@@ -7379,6 +7386,8 @@ snapshots:
       - terser
 
   '@vanilla-extract/private@1.0.3': {}
+
+  '@vercel/ncc@0.38.1': {}
 
   '@vercel/nft@0.27.3':
     dependencies:
