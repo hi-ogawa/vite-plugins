@@ -210,7 +210,7 @@ async function actionHandler({
   } finally {
     result.responseHeaders = {
       ...result.error?.headers,
-      "set-cookie": requestContext.getSetCookie(),
+      ...requestContext.getResponseHeaders(),
     };
   }
   return result;

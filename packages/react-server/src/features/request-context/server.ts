@@ -5,16 +5,24 @@ import { createContextStorage } from "./utils";
 const requestContextStorage = createContextStorage<RequestContext>();
 
 export class RequestContext {
-  public nextCookies: ReturnType<typeof createNextCookies>;
+  nextCookies: ReturnType<typeof createNextCookies>;
+  responseHeaders: Headers = new Headers();
 
   // TODO: multiple revlidation paths
-  public revalidate?: RevalidationType;
+  revalidate?: RevalidationType;
 
   constructor(public requestHeaders: Headers) {
     this.nextCookies = createNextCookies(requestHeaders);
   }
 
   getSetCookie = () => this.nextCookies.toResponseCookies().toString();
+
+  getResponseHeaders() {
+    return {
+      ...Object.fromEntries(this.responseHeaders.entries()),
+      "set-cookie": this.nextCookies.toResponseCookies().toString(),
+    };
+  }
 
   run<T>(f: () => T): T {
     return requestContextStorage.run(this, f);
