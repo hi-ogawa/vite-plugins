@@ -5,9 +5,9 @@ import type { ActionResult } from "./server";
 
 // TODO: generalize to any flight request redirection e.g. by middleware
 
-const ACTION_REDIRECT_KEY = "x-action-redirect";
+const FLIGHT_REDIRECT_KEY = "x-flight-redirect";
 
-type ActionRedirectMeta = {
+type FlightRedirectMeta = {
   location: string;
   revalidate?: RevalidationType;
 };
@@ -29,11 +29,11 @@ export function createActionRedirectResponse({
     if (isStream) {
       headers.delete("location");
       headers.set(
-        ACTION_REDIRECT_KEY,
+        FLIGHT_REDIRECT_KEY,
         JSON.stringify({
           location: redirect.location,
           revalidate: requestContext.revalidate,
-        } satisfies ActionRedirectMeta),
+        } satisfies FlightRedirectMeta),
       );
       return new Response(null, {
         status: 200,
@@ -48,10 +48,12 @@ export function createActionRedirectResponse({
   return;
 }
 
-export function parseActionRedirectResponse(response: Response) {
-  const raw = response.headers.get(ACTION_REDIRECT_KEY);
+export function createFlightRedirectResponse() {}
+
+export function parseFlightRedirectResponse(response: Response) {
+  const raw = response.headers.get(FLIGHT_REDIRECT_KEY);
   if (raw) {
-    return JSON.parse(raw) as ActionRedirectMeta;
+    return JSON.parse(raw) as FlightRedirectMeta;
   }
   return;
 }

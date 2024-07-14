@@ -65,7 +65,7 @@ export const handler: ReactServerHandler = async (ctx) => {
 
   const requestContext = new RequestContext(ctx.request.headers);
 
-  // extract stream request details
+  // normalize stream requesnt and extract details
   const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
 
   if (serverRoutes.middleware) {
