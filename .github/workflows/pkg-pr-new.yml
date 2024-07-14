@@ -7,4 +7,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: pnpx pkg-pr-new publish
+      - run: |
+          pnpx pkg-pr-new publish \
+            packages/react-server \
+            packages/react-server-next \
+            packages/transforms \
+            packages/vite-plugin-ssr-middleware
