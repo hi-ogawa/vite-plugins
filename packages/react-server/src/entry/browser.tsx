@@ -163,7 +163,7 @@ async function start() {
         lastPathname,
         revalidate: location.state[ROUTER_REVALIDATE_KEY],
       });
-      startTransition(() => {
+      startTransition(async () => {
         $__setFlight(
           ReactClient.createFromFetch<FlightData>(fetch(request), {
             callServer,
