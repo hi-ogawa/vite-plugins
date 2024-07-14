@@ -164,8 +164,9 @@ async function start() {
         revalidate: location.state[ROUTER_REVALIDATE_KEY],
       });
       startTransition(async () => {
+        const response = await fetch(request);
         $__setFlight(
-          ReactClient.createFromFetch<FlightData>(fetch(request), {
+          ReactClient.createFromFetch<FlightData>(Promise.resolve(response), {
             callServer,
           }),
         );
