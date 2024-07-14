@@ -22,8 +22,6 @@ export function registerServerReference(
 export type ActionResult = {
   error?: ReactServerErrorContext;
   data?: unknown;
-  // TODO: replace it in favor of RequestContext.responseHeaders
-  responseHeaders?: Record<string, string>;
 };
 
 const REFERENCE_SEP = "#";

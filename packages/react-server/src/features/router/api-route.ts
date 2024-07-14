@@ -39,6 +39,7 @@ export async function handleApiRoutes(
       const response = await requestContext.run(() =>
         handler(request, { params }),
       );
+      // TODO: generalize for inject arbitrary response headers from middleware
       return injectResponseCookies(
         response,
         requestContext.nextCookies.toResponseCookies(),

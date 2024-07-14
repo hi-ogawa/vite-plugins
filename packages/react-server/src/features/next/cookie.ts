@@ -22,7 +22,18 @@ export function createNextCookies(requestHeaders: Headers) {
     return responseCookies;
   }
 
-  return { cookies, toResponseCookies };
+  function mergeSetCookie(headers: Headers) {
+    const newCookies = new ResponseCookies(headers);
+    for (const cookie of newCookies.getAll()) {
+      cookies.set(cookie);
+    }
+  }
+
+  function toSetCookie() {
+    return toResponseCookies().toString();
+  }
+
+  return { cookies, mergeSetCookie, toSetCookie, toResponseCookies };
 }
 
 export function injectResponseCookies(

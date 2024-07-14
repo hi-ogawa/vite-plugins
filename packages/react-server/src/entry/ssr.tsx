@@ -218,7 +218,7 @@ export async function renderHtml(
   return new Response(htmlStream, {
     status,
     headers: {
-      ...result.actionResult?.responseHeaders,
+      ...result.requestContext.getResponseHeaders(),
       "content-type": "text/html;charset=utf-8",
     },
   });

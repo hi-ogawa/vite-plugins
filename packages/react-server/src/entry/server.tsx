@@ -44,6 +44,7 @@ export interface ReactServerHandlerContext {
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
   status: number;
+  requestContext: RequestContext;
   actionResult?: ActionResult;
 }
 
@@ -136,13 +137,18 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (isStream) {
     return new Response(stream, {
       headers: {
-        ...actionResult?.responseHeaders,
+        ...requestContext.getResponseHeaders(),
         "content-type": "text/x-component; charset=utf-8",
       },
     });
   }
 
-  return { stream, actionResult, status: result.notFound ? 404 : 200 };
+  return {
+    stream,
+    actionResult,
+    requestContext,
+    status: result.notFound ? 404 : 200,
+  };
 };
 
 const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
@@ -207,11 +213,9 @@ async function actionHandler({
     result.data = await requestContext.run(() => boundAction());
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
-  } finally {
-    result.responseHeaders = {
-      ...result.error?.headers,
-      ...requestContext.getResponseHeaders(),
-    };
+  }
+  if (result.error?.headers) {
+    requestContext.mergeResponseHeaders(result.error?.headers);
   }
   return result;
 }

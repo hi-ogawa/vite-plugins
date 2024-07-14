@@ -15,10 +15,15 @@ export class RequestContext {
     this.nextCookies = createNextCookies(requestHeaders);
   }
 
+  mergeResponseHeaders(headers: Record<string, string>) {
+    // TODO
+    headers;
+  }
+
   getResponseHeaders() {
     return {
       ...Object.fromEntries(this.responseHeaders.entries()),
-      "set-cookie": this.nextCookies.toResponseCookies().toString(),
+      "set-cookie": this.nextCookies.toSetCookie(),
     };
   }
 
