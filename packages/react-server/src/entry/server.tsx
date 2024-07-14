@@ -19,7 +19,10 @@ import {
   renderRouteMap,
 } from "../features/router/server";
 import { type FlightData, handleTrailingSlash } from "../features/router/utils";
-import { createActionRedirectResponse } from "../features/server-action/redirect";
+import {
+  createActionRedirectResponse,
+  createFlightRedirectResponse,
+} from "../features/server-action/redirect";
 import {
   type ActionResult,
   createActionBundlerConfig,
@@ -76,7 +79,7 @@ export const handler: ReactServerHandler = async (ctx) => {
     );
     if (response) {
       if (isStream && isRedirectStatus(response.status)) {
-        // createFlightRedirectResponse(response);
+        return createFlightRedirectResponse(response, requestContext);
       }
       return response;
     }

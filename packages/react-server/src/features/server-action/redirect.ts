@@ -1,9 +1,8 @@
+import { tinyassert } from "@hiogawa/utils";
 import { isRedirectError } from "../error/shared";
 import type { RequestContext } from "../request-context/server";
 import type { RevalidationType } from "../server-component/utils";
 import type { ActionResult } from "./server";
-
-// TODO: generalize to any flight request redirection e.g. by middleware
 
 const FLIGHT_REDIRECT_KEY = "x-flight-redirect";
 
@@ -21,7 +20,6 @@ export function createActionRedirectResponse({
   isStream: boolean;
   requestContext: RequestContext;
 }): Response | undefined {
-  requestContext.revalidate;
   const error = actionResult.error;
   const redirect = error && isRedirectError(error);
   if (redirect) {
@@ -48,7 +46,26 @@ export function createActionRedirectResponse({
   return;
 }
 
-export function createFlightRedirectResponse() {}
+export function createFlightRedirectResponse(
+  response: Response,
+  requestContext: RequestContext,
+) {
+  const headers = new Headers(response.headers);
+  const location = headers.get("location");
+  tinyassert(typeof location === "string");
+  headers.delete("location");
+  headers.set(
+    FLIGHT_REDIRECT_KEY,
+    JSON.stringify({
+      location,
+      revalidate: requestContext.revalidate,
+    } satisfies FlightRedirectMeta),
+  );
+  return new Response(null, {
+    status: 200,
+    headers,
+  });
+}
 
 export function parseFlightRedirectResponse(response: Response) {
   const raw = response.headers.get(FLIGHT_REDIRECT_KEY);
