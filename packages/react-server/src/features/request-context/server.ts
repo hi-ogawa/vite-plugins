@@ -7,7 +7,7 @@ const requestContextStorage = createContextStorage<RequestContext>();
 export class RequestContext {
   nextCookies: ReturnType<typeof createNextCookies>;
   revalidate?: RevalidationType; // TODO: multiple revlidation paths
-  private responseHeaders: Headers = new Headers();
+  private responseHeaders = new Headers();
 
   constructor(public requestHeaders: Headers) {
     this.nextCookies = createNextCookies(requestHeaders);
@@ -21,6 +21,7 @@ export class RequestContext {
   }
 
   mergeResponseHeaders(headers: Headers) {
+    // TODO: not sure which should overwrite
     for (const [k, v] of headers) {
       this.responseHeaders.set(k, v);
     }
