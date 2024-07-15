@@ -13,6 +13,7 @@ import {
   createServer,
   mergeConfig,
 } from "vite";
+import { crawlFrameworkPkgs } from "vitefu";
 import { CSS_LANGS_RE } from "../features/assets/css";
 import {
   serverAssertsPluginServer,
@@ -146,25 +147,6 @@ export function vitePluginReactServer(
       noDiscovery: true,
       include: [],
     },
-    ssr: {
-      resolve: {
-        conditions: ["react-server"],
-      },
-      // no external to ensure loading all deps with react-server condition
-      // TODO: but probably users should be able to exclude
-      //       node builtin or non-react related dependencies.
-      noExternal: true,
-      // pre-bundle cjs deps
-      // TODO: should crawl user's cjs react 3rd party libs? (like svelte does?)
-      optimizeDeps: {
-        include: [
-          "react",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime",
-          "react-server-dom-webpack/server.edge",
-        ],
-      },
-    },
     plugins: [
       ...(options?.plugins ?? []),
 
@@ -228,6 +210,8 @@ export function vitePluginReactServer(
       }),
 
       serverAssertsPluginServer({ manager }),
+
+      serverDepsConfigPlugin(),
 
       {
         name: "patch-react-server-dom-webpack",
@@ -498,6 +482,49 @@ function validateImportPlugin(entries: Record<string, string | true>): Plugin {
         return "export {}";
       }
       return;
+    },
+  };
+}
+
+function serverDepsConfigPlugin(): Plugin {
+  return {
+    name: serverDepsConfigPlugin.name,
+    async config(_config, env) {
+      // crawl packages with "react" or "next" in "peerDependencies"
+      // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
+      const result = await crawlFrameworkPkgs({
+        root: process.cwd(),
+        isBuild: env.command === "build",
+        isFrameworkPkgByJson(pkgJson) {
+          const deps = pkgJson["peerDependencies"];
+          return deps && ("react" in deps || "next" in deps);
+        },
+      });
+
+      return {
+        ssr: {
+          resolve: {
+            conditions: ["react-server"],
+          },
+          noExternal: [
+            "react",
+            "react-dom",
+            "react-server-dom-webpack",
+            "server-only",
+            "client-only",
+            ...result.ssr.noExternal,
+          ],
+          // pre-bundle cjs deps
+          optimizeDeps: {
+            include: [
+              "react",
+              "react/jsx-runtime",
+              "react/jsx-dev-runtime",
+              "react-server-dom-webpack/server.edge",
+            ],
+          },
+        },
+      };
     },
   };
 }

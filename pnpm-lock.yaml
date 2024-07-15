@@ -122,6 +122,9 @@ importers:
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
+      vitefu:
+        specifier: ^0.2.5
+        version: 0.2.5(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))
     devDependencies:
       '@types/estree':
         specifier: ^1.0.5
@@ -5103,6 +5106,14 @@ packages:
       terser:
         optional: true
 
+  vitefu@0.2.5:
+    resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
+    peerDependencies:
+      vite: ^5.3.3
+    peerDependenciesMeta:
+      vite:
+        optional: true
+
   vitest@2.0.1:
     resolution: {integrity: sha512-PBPvNXRJiywtI9NmbnEqHIhcXlk8mB0aKf6REQIaYGY4JtWF1Pg8Am+N0vAuxdg/wUSlxPSVJr8QdjwcVxc2Hg==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -9841,6 +9852,10 @@ snapshots:
       '@types/node': 20.14.10
       fsevents: 2.3.3
       terser: 5.31.1
+
+  vitefu@0.2.5(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1)):
+    optionalDependencies:
+      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
 
   vitest@2.0.1(@types/node@20.14.10)(terser@5.31.1):
     dependencies:
