@@ -149,23 +149,24 @@ export function RedirectHandler(props: {
   tinyassert(!import.meta.env.SSR);
 
   // trigger client navigation once and suspend until router fixes this up
-  const history = useRouter((s) => s.history);
+  // const history = useRouter((s) => s.history);
   let suspension = redirectSuspensionMap.get(props.suspensionKey);
   console.log("[RedirectHandler]", { props, suspension });
   if (!suspension) {
     suspension = createManualPromise();
     redirectSuspensionMap.set(props.suspensionKey, suspension);
-    setTimeout(() => {
-      // suspension?.resolve(null);
-      history.replace(props.redirectLocation);
-      // props.reset();
-      // React.startTransition(() => {
-      //   props.reset();
-      // });
-    });
+    window.location.href = props.redirectLocation;
+    // setTimeout(() => {
+    //   // suspension?.resolve(null);
+    //   history.replace(props.redirectLocation);
+    //   // props.reset();
+    //   // React.startTransition(() => {
+    //   //   props.reset();
+    //   // });
+    // });
   }
-  return null;
-  // return React.use(suspension.promise);
+  // return null;
+  return React.use(suspension.promise);
 }
 
 export class NotFoundBoundary extends React.Component<{
