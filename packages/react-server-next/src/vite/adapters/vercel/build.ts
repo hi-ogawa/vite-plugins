@@ -87,7 +87,7 @@ export async function build({ runtime }: { runtime: VercelRuntime }) {
     minify: true,
     format: "esm",
     platform: runtime === "node" ? "node" : "browser",
-    external: ["node:async_hooks"],
+    external: ["node:async_hooks", "node:buffer"],
     define: {
       "process.env.NODE_ENV": `"production"`,
     },
