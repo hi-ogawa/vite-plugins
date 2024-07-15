@@ -133,12 +133,11 @@ export function RedirectHandler(props: {
   tinyassert(!import.meta.env.SSR);
 
   // trigger client navigation once and suspend until router fixes this up
-  const history = useRouter((s) => s.history);
   let suspension = redirectSuspensionMap.get(props.suspensionKey);
   if (!suspension) {
     suspension = new Promise(() => {});
     redirectSuspensionMap.set(props.suspensionKey, suspension);
-    setTimeout(() => history.replace(props.redirectLocation));
+    window.location.href = props.redirectLocation;
   }
   return React.use(suspension);
 }
