@@ -96,3 +96,29 @@ testNoJs("image preload", async ({ page }) => {
     page.locator('link[href="https://nextjs.org/icons/vercel.svg"]'),
   ).not.toHaveAttribute("fetchPriority", "high");
 });
+
+test("middleware", async ({ request }) => {
+  {
+    const res = await request.get("/test/middleware/response");
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      hello: ["from", "middleware"],
+    });
+  }
+
+  {
+    const res = await request.get("/test/middleware/headers");
+    expect(res.status()).toBe(404);
+    expect(res.headers()).toMatchObject({
+      "x-hello": "world",
+    });
+  }
+
+  {
+    const res = await request.get("/test/middleware/cookies");
+    expect(res.status()).toBe(404);
+    expect(res.headers()).toMatchObject({
+      "set-cookie": "x-hello=world; Path=/",
+    });
+  }
+});

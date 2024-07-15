@@ -1,4 +1,4 @@
-import serverRoutes from "virtual:server-routes";
+import * as serverRoutes from "virtual:server-routes";
 import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
@@ -9,6 +9,7 @@ import {
   createError,
   getErrorContext,
 } from "../features/error/shared";
+import { handleMiddleware } from "../features/next/middleware";
 import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
@@ -29,7 +30,7 @@ import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
 
-export const router = generateRouteModuleTree(serverRoutes);
+export const router = generateRouteModuleTree(serverRoutes.default);
 
 export type ReactServerHandler = (
   ctx: ReactServerHandlerContext,
@@ -43,6 +44,7 @@ export interface ReactServerHandlerContext {
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
   status: number;
+  requestContext: RequestContext;
   actionResult?: ActionResult;
 }
 
@@ -61,6 +63,15 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (handled) return handled;
 
   const requestContext = new RequestContext(ctx.request.headers);
+
+  if (serverRoutes.middleware) {
+    const response = await handleMiddleware(
+      serverRoutes.middleware,
+      ctx.request,
+      requestContext,
+    );
+    if (response) return response;
+  }
 
   const handledApi = await handleApiRoutes(
     router.tree,
@@ -126,13 +137,18 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (isStream) {
     return new Response(stream, {
       headers: {
-        ...actionResult?.responseHeaders,
+        ...requestContext.getResponseHeaders(),
         "content-type": "text/x-component; charset=utf-8",
       },
     });
   }
 
-  return { stream, actionResult, status: result.notFound ? 404 : 200 };
+  return {
+    stream,
+    actionResult,
+    requestContext,
+    status: result.notFound ? 404 : 200,
+  };
 };
 
 const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
@@ -197,11 +213,9 @@ async function actionHandler({
     result.data = await requestContext.run(() => boundAction());
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
-  } finally {
-    result.responseHeaders = {
-      ...result.error?.headers,
-      "set-cookie": requestContext.getSetCookie(),
-    };
+  }
+  if (result.error?.headers) {
+    requestContext.mergeResponseHeaders(new Headers(result.error?.headers));
   }
   return result;
 }
