@@ -43,7 +43,7 @@ importers:
         version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.7.0(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))
+        version: 3.7.0(@swc/helpers@0.5.12)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))
       esbuild:
         specifier: ^0.23.0
         version: 0.23.0
@@ -58,10 +58,10 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712
       react-server-dom-webpack:
         specifier: 19.0.0-rc-df5f2736-20240712
-        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
       tsup:
         specifier: ^8.1.0
-        version: 8.1.0(@swc/core@1.6.13)(postcss@8.4.39)(typescript@5.5.3)
+        version: 8.1.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(postcss@8.4.39)(typescript@5.5.3)
       tsx:
         specifier: ^4.16.2
         version: 4.16.2
@@ -118,7 +118,7 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       react-server-dom-webpack:
         specifier: 19.0.0-rc-df5f2736-20240712
-        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
@@ -137,7 +137,7 @@ importers:
         version: link:../vite-plugin-ssr-middleware
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.7.0(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))
+        version: 3.7.0(@swc/helpers@0.5.12)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
@@ -166,12 +166,15 @@ importers:
       '@hiogawa/react-server':
         specifier: latest
         version: link:../..
+      '@hiogawa/test-dep-mixed':
+        specifier: file:deps/mixed
+        version: '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@19.0.0-rc-df5f2736-20240712)'
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
-        version: '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)'
+        version: '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)'
       '@hiogawa/test-dep-use-client':
         specifier: file:deps/use-client
-        version: file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)
+        version: '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)'
       react:
         specifier: 19.0.0-rc-df5f2736-20240712
         version: 19.0.0-rc-df5f2736-20240712
@@ -180,7 +183,10 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       react-server-dom-webpack:
         specifier: 19.0.0-rc-df5f2736-20240712
-        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
+      react-tweet:
+        specifier: ^3.2.1
+        version: 3.2.1(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)
       react-wrap-balancer:
         specifier: ^1.1.0
         version: 1.1.0(react@19.0.0-rc-df5f2736-20240712)
@@ -244,7 +250,7 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       react-server-dom-webpack:
         specifier: 19.0.0-rc-df5f2736-20240712
-        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
     devDependencies:
       '@types/react':
         specifier: 18.3.3
@@ -272,7 +278,7 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       react-server-dom-webpack:
         specifier: 19.0.0-rc-df5f2736-20240712
-        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
     devDependencies:
       '@playwright/test':
         specifier: ^1.45.1
@@ -300,7 +306,7 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       react-server-dom-webpack:
         specifier: 19.0.0-rc-df5f2736-20240712
-        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: ^0.0.1
@@ -337,7 +343,7 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       react-server-dom-webpack:
         specifier: 19.0.0-rc-df5f2736-20240712
-        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest
@@ -1955,12 +1961,17 @@ packages:
       '@trpc/server':
         optional: true
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/server-component':
+  '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed':
+    resolution: {directory: packages/react-server/examples/basic/deps/mixed, type: directory}
+    peerDependencies:
+      react: 19.0.0-rc-df5f2736-20240712
+
+  '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component':
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
     peerDependencies:
       react: 19.0.0-rc-df5f2736-20240712
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/use-client':
+  '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client':
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
     peerDependencies:
       react: 19.0.0-rc-df5f2736-20240712
@@ -2351,6 +2362,9 @@ packages:
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
+
+  '@swc/helpers@0.5.12':
+    resolution: {integrity: sha512-KMZNXiGibsW9kvZAO1Pam2JPTDBm+KSHMMHWdsyI/1DbIZjT2A6Gy3hblVXUMEDvUAKq+e0vL0X0o54owWji7g==}
 
   '@swc/types@0.1.9':
     resolution: {integrity: sha512-qKnCno++jzcJ4lM4NTfYifm1EFSCeIfKiAHAfkENZAV5Kl9PjJIyd2yeeVv6c/2CckuLyv2NmRC5pv6pm2WQBg==}
@@ -2936,6 +2950,10 @@ packages:
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
+
+  clsx@2.1.1:
+    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
+    engines: {node: '>=6'}
 
   color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -4455,6 +4473,12 @@ packages:
       react-dom: 19.0.0-rc-df5f2736-20240712
       webpack: ^5.59.0
 
+  react-tweet@3.2.1:
+    resolution: {integrity: sha512-dktP3RMuwRB4pnSDocKpSsW5Hq1IXRW6fONkHhxT5EBIXsKZzdQuI70qtub1XN2dtZdkJWWxfBm/Q+kN+vRYFA==}
+    peerDependencies:
+      react: 19.0.0-rc-df5f2736-20240712
+      react-dom: 19.0.0-rc-df5f2736-20240712
+
   react-wrap-balancer@1.1.0:
     resolution: {integrity: sha512-EhF3jOZm5Fjx+Cx41e423qOv2c2aOvXAtym2OHqrGeMUnwERIyNsRBgnfT3plB170JmuYvts8K2KSPEIerKr5A==}
     peerDependencies:
@@ -4780,6 +4804,11 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  swr@2.2.5:
+    resolution: {integrity: sha512-QtxqyclFeAsxEUeZIYmsaQ0UjimSq1RZ9Un7I68/0ClKK/U3LoyQunwkQfJZr2fc22DfIXLNDc2wFyTEikCUpg==}
+    peerDependencies:
+      react: 19.0.0-rc-df5f2736-20240712
+
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
@@ -5027,6 +5056,11 @@ packages:
 
   urlpattern-polyfill@10.0.0:
     resolution: {integrity: sha512-H/A06tKD7sS1O1X2SshBVeA5FLycRpjqiBeqGKmBwBDBy28EnRjORxTNe269KSSr5un5qyWi1iL61wLxpd+ZOg==}
+
+  use-sync-external-store@1.2.2:
+    resolution: {integrity: sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==}
+    peerDependencies:
+      react: 19.0.0-rc-df5f2736-20240712
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -6163,11 +6197,15 @@ snapshots:
 
   '@hiogawa/query-proxy@0.1.1-pre.3': {}
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)':
+  '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@19.0.0-rc-df5f2736-20240712)':
     dependencies:
       react: 19.0.0-rc-df5f2736-20240712
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)':
+  '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)':
+    dependencies:
+      react: 19.0.0-rc-df5f2736-20240712
+
+  '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)':
     dependencies:
       react: 19.0.0-rc-df5f2736-20240712
 
@@ -6571,7 +6609,7 @@ snapshots:
   '@swc/core-win32-x64-msvc@1.6.13':
     optional: true
 
-  '@swc/core@1.6.13':
+  '@swc/core@1.6.13(@swc/helpers@0.5.12)':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.9
@@ -6586,8 +6624,13 @@ snapshots:
       '@swc/core-win32-arm64-msvc': 1.6.13
       '@swc/core-win32-ia32-msvc': 1.6.13
       '@swc/core-win32-x64-msvc': 1.6.13
+      '@swc/helpers': 0.5.12
 
   '@swc/counter@0.1.3': {}
+
+  '@swc/helpers@0.5.12':
+    dependencies:
+      tslib: 2.6.2
 
   '@swc/types@0.1.9':
     dependencies:
@@ -6942,9 +6985,9 @@ snapshots:
 
   '@vanilla-extract/private@1.0.3': {}
 
-  '@vitejs/plugin-react-swc@3.7.0(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))':
+  '@vitejs/plugin-react-swc@3.7.0(@swc/helpers@0.5.12)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))':
     dependencies:
-      '@swc/core': 1.6.13
+      '@swc/core': 1.6.13(@swc/helpers@0.5.12)
       vite: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
     transitivePeerDependencies:
       - '@swc/helpers'
@@ -7355,6 +7398,8 @@ snapshots:
   client-only@0.0.1: {}
 
   clone@1.0.4: {}
+
+  clsx@2.1.1: {}
 
   color-convert@1.9.3:
     dependencies:
@@ -9101,13 +9146,21 @@ snapshots:
       '@remix-run/router': 1.15.3
       react: 19.0.0-rc-df5f2736-20240712
 
-  react-server-dom-webpack@19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0)):
+  react-server-dom-webpack@19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)):
     dependencies:
       acorn-loose: 8.4.0
       neo-async: 2.6.2
       react: 19.0.0-rc-df5f2736-20240712
       react-dom: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
-      webpack: 5.92.1(@swc/core@1.6.13)(esbuild@0.23.0)
+      webpack: 5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)
+
+  react-tweet@3.2.1(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712):
+    dependencies:
+      '@swc/helpers': 0.5.12
+      clsx: 2.1.1
+      react: 19.0.0-rc-df5f2736-20240712
+      react-dom: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
+      swr: 2.2.5(react@19.0.0-rc-df5f2736-20240712)
 
   react-wrap-balancer@1.1.0(react@19.0.0-rc-df5f2736-20240712):
     dependencies:
@@ -9472,6 +9525,12 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
+  swr@2.2.5(react@19.0.0-rc-df5f2736-20240712):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.0.0-rc-df5f2736-20240712
+      use-sync-external-store: 1.2.2(react@19.0.0-rc-df5f2736-20240712)
+
   tapable@2.2.1: {}
 
   tar-fs@2.1.1:
@@ -9498,16 +9557,16 @@ snapshots:
       mkdirp: 1.0.4
       yallist: 4.0.0
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.6.13)(esbuild@0.23.0)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0)):
+  terser-webpack-plugin@5.3.10(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.31.1
-      webpack: 5.92.1(@swc/core@1.6.13)(esbuild@0.23.0)
+      webpack: 5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)
     optionalDependencies:
-      '@swc/core': 1.6.13
+      '@swc/core': 1.6.13(@swc/helpers@0.5.12)
       esbuild: 0.23.0
 
   terser@5.31.1:
@@ -9582,7 +9641,7 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsup@8.1.0(@swc/core@1.6.13)(postcss@8.4.39)(typescript@5.5.3):
+  tsup@8.1.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(postcss@8.4.39)(typescript@5.5.3):
     dependencies:
       bundle-require: 4.2.1(esbuild@0.21.5)
       cac: 6.7.14
@@ -9599,7 +9658,7 @@ snapshots:
       sucrase: 3.35.0
       tree-kill: 1.2.2
     optionalDependencies:
-      '@swc/core': 1.6.13
+      '@swc/core': 1.6.13(@swc/helpers@0.5.12)
       postcss: 8.4.39
       typescript: 5.5.3
     transitivePeerDependencies:
@@ -9756,6 +9815,10 @@ snapshots:
 
   urlpattern-polyfill@10.0.0: {}
 
+  use-sync-external-store@1.2.2(react@19.0.0-rc-df5f2736-20240712):
+    dependencies:
+      react: 19.0.0-rc-df5f2736-20240712
+
   util-deprecate@1.0.2: {}
 
   util@0.12.5:
@@ -9909,7 +9972,7 @@ snapshots:
 
   webpack-sources@3.2.3: {}
 
-  webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0):
+  webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.5
@@ -9932,7 +9995,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.6.13)(esbuild@0.23.0)(webpack@5.92.1(@swc/core@1.6.13)(esbuild@0.23.0))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     transitivePeerDependencies:

@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/test-deps-use-client",
+  "name": "@hiogawa/test-deps-mixed",
   "private": true,
   "type": "module",
   "exports": {
