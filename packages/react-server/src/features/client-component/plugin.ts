@@ -130,6 +130,8 @@ export function vitePluginServerUseClient({
     async transform(code, id, _options) {
       // when using external library's server component includes client reference,
       // it will end up here with deps optimization hash `?v=` resolved by server module graph.
+      // this is not entirely free from double module issue,
+      // but it allows handling simple server-client-mixed package such as react-tweet.
       if (!manager.buildType && id.includes("?v=")) {
         id = id.split("?v=")[0]!;
       }
