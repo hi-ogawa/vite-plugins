@@ -159,35 +159,17 @@ async function start() {
         lastPathname,
         revalidate: location.state[ROUTER_REVALIDATE_KEY],
       });
-      // TODO: how bad is this...?
-      // probably fine if we have a way to abort startTransition when two effects come in.
-      // maybe needs to move `lastLocation.current = location` to just before `startTransition`.
-      (async () => {
+      startTransition(async () => {
         const response = await fetch(request);
         if (handleFlightRedirectResponse(history, response)) {
           return;
         }
-        startTransition(() => {
-          $__setFlight(
-            ReactClient.createFromFetch<FlightData>(Promise.resolve(response), {
-              callServer,
-            }),
-          );
-        });
-      })();
-      // startTransition(async () => {
-      //   const response = await fetch(request);
-      //   if (handleFlightRedirectResponse(history, response)) {
-      //     return;
-      //   }
-      //   startTransition(() => {
-      //     $__setFlight(
-      //       ReactClient.createFromFetch<FlightData>(Promise.resolve(response), {
-      //         callServer,
-      //       }),
-      //     );
-      //   })
-      // });
+        $__setFlight(
+          ReactClient.createFromFetch<FlightData>(Promise.resolve(response), {
+            callServer,
+          }),
+        );
+      });
     }, [location]);
 
     return (
