@@ -9,10 +9,6 @@ import {
 // https://nextjs.org/docs/app/api-reference/file-conventions/middleware
 // https://nextjs.org/docs/app/building-your-application/routing/middleware
 
-// first goal is to support next-auth
-// https://github.com/nextauthjs/next-auth/blob/a3d3d4bab3e037a5359ed22de8b1fff0b5557523/packages/next-auth/src/index.ts#L86
-// https://github.com/nextauthjs/next-auth/blob/a3d3d4bab3e037a5359ed22de8b1fff0b5557523/packages/next-auth/src/lib/index.ts#L3
-
 export type MiddlewareModule = {
   default: (
     request: NextRequest,
