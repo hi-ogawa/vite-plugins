@@ -63,7 +63,11 @@ export default defineConfig({
     // is not recognized by NodeJS. See:
     //   node -e 'import("react-wrap-balancer").then(console.log)'
     //   https://publint.dev/react-wrap-balancer@1.1.0
-    noExternal: ["react-wrap-balancer"],
+    noExternal: [
+      "react-wrap-balancer",
+      // also need to inline react-tweet since obviously nodejs cannot import .module.css
+      "react-tweet",
+    ],
   },
 });
 
