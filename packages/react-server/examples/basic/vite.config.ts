@@ -60,7 +60,7 @@ export default defineConfig({
   ],
   ssr: {
     noExternal: [
-      // bad default export. try
+      // cjs default export. try
       //   node -e 'import("react-wrap-balancer").then(console.log)'
       //   https://publint.dev/react-wrap-balancer@1.1.0
       "react-wrap-balancer",

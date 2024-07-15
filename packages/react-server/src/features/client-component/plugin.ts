@@ -132,6 +132,7 @@ export function vitePluginServerUseClient({
       // it will end up here with deps optimization hash `?v=` resolved by server module graph.
       // this is not entirely free from double module issue,
       // but it allows handling simple server-client-mixed package such as react-tweet.
+      // cf. https://github.com/hi-ogawa/vite-plugins/issues/379
       if (!manager.buildType && id.includes("?v=")) {
         id = id.split("?v=")[0]!;
       }
