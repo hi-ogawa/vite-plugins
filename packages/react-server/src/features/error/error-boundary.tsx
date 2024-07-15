@@ -132,7 +132,9 @@ export function RedirectHandler(props: {
 }) {
   tinyassert(!import.meta.env.SSR);
 
-  // trigger client navigation once and suspend until router fixes this up
+  // trigger browser full-reload for simplicity until we figure out the mystery of react transition.
+  // note that, in practice, such server component redirection is (hopefullly) fairly unlikely
+  // since it means that app has a client navigation Link which redirects to somewhere else.
   let suspension = redirectSuspensionMap.get(props.suspensionKey);
   if (!suspension) {
     suspension = new Promise(() => {});
