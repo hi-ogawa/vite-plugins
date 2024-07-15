@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
+    "@hiogawa/test-dep-mixed": "file:deps/mixed",
     "@hiogawa/test-dep-server-component": "file:deps/server-component",
     "@hiogawa/test-dep-use-client": "file:deps/use-client",
     "react": "rc",

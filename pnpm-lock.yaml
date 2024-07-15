@@ -166,12 +166,15 @@ importers:
       '@hiogawa/react-server':
         specifier: latest
         version: link:../..
+      '@hiogawa/test-dep-mixed':
+        specifier: file:deps/mixed
+        version: '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@19.0.0-rc-df5f2736-20240712)'
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
-        version: '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)'
+        version: '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)'
       '@hiogawa/test-dep-use-client':
         specifier: file:deps/use-client
-        version: file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)
+        version: '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)'
       react:
         specifier: 19.0.0-rc-df5f2736-20240712
         version: 19.0.0-rc-df5f2736-20240712
@@ -1958,12 +1961,17 @@ packages:
       '@trpc/server':
         optional: true
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/server-component':
+  '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed':
+    resolution: {directory: packages/react-server/examples/basic/deps/mixed, type: directory}
+    peerDependencies:
+      react: 19.0.0-rc-df5f2736-20240712
+
+  '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component':
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
     peerDependencies:
       react: 19.0.0-rc-df5f2736-20240712
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/use-client':
+  '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client':
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
     peerDependencies:
       react: 19.0.0-rc-df5f2736-20240712
@@ -6189,11 +6197,15 @@ snapshots:
 
   '@hiogawa/query-proxy@0.1.1-pre.3': {}
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)':
+  '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@19.0.0-rc-df5f2736-20240712)':
     dependencies:
       react: 19.0.0-rc-df5f2736-20240712
 
-  '@hiogawa/test-dep-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)':
+  '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@19.0.0-rc-df5f2736-20240712)':
+    dependencies:
+      react: 19.0.0-rc-df5f2736-20240712
+
+  '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.0.0-rc-df5f2736-20240712)':
     dependencies:
       react: 19.0.0-rc-df5f2736-20240712
 

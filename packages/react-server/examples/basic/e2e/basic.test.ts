@@ -821,6 +821,13 @@ test("server compnoent > fixture", async ({ page }) => {
   await page.getByText("TestDepServerComponent").click();
 });
 
+test("server-client-mixed package", async ({ page }) => {
+  await page.goto("/test/deps");
+  await page.getByText("TestDepMixed(Server)").click();
+  await page.getByRole("button", { name: "TestDepMixed(Client): 0" }).click();
+  await page.getByRole("button", { name: "TestDepMixed(Client): 1" }).click();
+});
+
 test("client module used at boundary and non-boundary basic", async ({
   page,
 }) => {

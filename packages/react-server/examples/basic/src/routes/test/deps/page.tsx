@@ -1,4 +1,5 @@
 import { TestVirtualUseClient } from "virtual:test-use-client";
+import { TestDepMixed } from "@hiogawa/test-dep-mixed";
 import { TestDepServerComponent } from "@hiogawa/test-dep-server-component";
 import { TestDepUseClient } from "@hiogawa/test-dep-use-client";
 import {
@@ -19,6 +20,9 @@ export default function Page() {
       </div>
       <div>
         <TestDepServerComponent />
+      </div>
+      <div>
+        <TestDepMixed />
       </div>
       <div>
         <Client2Provider>
