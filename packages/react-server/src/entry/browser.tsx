@@ -150,7 +150,7 @@ async function start() {
 
     React.useEffect(() => {
       console.log(
-        `[location effect] ${lastLocation.current.pathname} ==> ${location.pathname}`,
+        `[location effect] ${lastLocation.current.href} ==> ${location.href}`,
       );
       if (location === lastLocation.current) {
         return;
@@ -174,6 +174,13 @@ async function start() {
           }),
         );
       });
+      // startTransition(() => {
+      //   $__setFlight(
+      //     ReactClient.createFromFetch<FlightData>(fetch(request), {
+      //       callServer,
+      //     }),
+      //   );
+      // });
     }, [location]);
 
     return (

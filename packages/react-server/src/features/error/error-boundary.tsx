@@ -1,4 +1,8 @@
-import { tinyassert } from "@hiogawa/utils";
+import {
+  type ManualPromise,
+  createManualPromise,
+  tinyassert,
+} from "@hiogawa/utils";
 import React from "react";
 import { useRouter } from "../router/client/router";
 import type { ErrorPageProps } from "../router/server";
@@ -114,11 +118,20 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
   override render() {
     if (this.state.error) {
       return (
-        <RedirectHandler
-          suspensionKey={this.state.error}
-          redirectLocation={this.state.redirectLocation}
-          reset={() => this.setState({ error: null })}
-        />
+        <>
+          <RedirectHandler
+            suspensionKey={this.state.error}
+            redirectLocation={this.state.redirectLocation}
+            // reset={() => this.setState({ error: null })}
+          />
+          <ErrorAutoReset
+            reset={() => {
+              React.startTransition(() => {
+                this.setState({ error: null });
+              });
+            }}
+          />
+        </>
       );
     }
     return this.props.children;
@@ -126,12 +139,12 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
 }
 
 // trigger client navigation once and suspend forever
-const redirectSuspensionMap = new WeakMap<object, Promise<null>>();
+const redirectSuspensionMap = new WeakMap<object, ManualPromise<null>>();
 
 export function RedirectHandler(props: {
   suspensionKey: object;
   redirectLocation: string;
-  reset: () => void;
+  // reset: () => void;
 }) {
   tinyassert(!import.meta.env.SSR);
 
@@ -140,16 +153,19 @@ export function RedirectHandler(props: {
   let suspension = redirectSuspensionMap.get(props.suspensionKey);
   console.log("[RedirectHandler]", { props, suspension });
   if (!suspension) {
-    suspension = new Promise(() => {});
+    suspension = createManualPromise();
     redirectSuspensionMap.set(props.suspensionKey, suspension);
     setTimeout(() => {
-      React.startTransition(() => {
-        props.reset();
-        history.replace(props.redirectLocation);
-      });
+      // suspension?.resolve(null);
+      history.replace(props.redirectLocation);
+      // props.reset();
+      // React.startTransition(() => {
+      //   props.reset();
+      // });
     });
   }
-  return React.use(suspension);
+  return null;
+  // return React.use(suspension.promise);
 }
 
 export class NotFoundBoundary extends React.Component<{
