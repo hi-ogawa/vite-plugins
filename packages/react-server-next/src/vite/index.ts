@@ -8,7 +8,7 @@ import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import { type Plugin, type PluginOption, transformWithEsbuild } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type AdapterType, adapterPlugin } from "./adapters";
