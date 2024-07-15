@@ -8,6 +8,7 @@ import {
   ReactServerDigestError,
   createError,
   getErrorContext,
+  isRedirectStatus,
 } from "../features/error/shared";
 import { handleMiddleware } from "../features/next/middleware";
 import { RequestContext } from "../features/request-context/server";
@@ -18,7 +19,10 @@ import {
   renderRouteMap,
 } from "../features/router/server";
 import { type FlightData, handleTrailingSlash } from "../features/router/utils";
-import { createActionRedirectResponse } from "../features/server-action/redirect";
+import {
+  createActionRedirectResponse,
+  createFlightRedirectResponse,
+} from "../features/server-action/redirect";
 import {
   type ActionResult,
   createActionBundlerConfig,
@@ -64,13 +68,21 @@ export const handler: ReactServerHandler = async (ctx) => {
 
   const requestContext = new RequestContext(ctx.request.headers);
 
+  // normalize stream request and extract metadata
+  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
+
   if (serverRoutes.middleware) {
     const response = await handleMiddleware(
       serverRoutes.middleware,
-      ctx.request,
+      request,
       requestContext,
     );
-    if (response) return response;
+    if (response) {
+      if (isStream && isRedirectStatus(response.status)) {
+        return createFlightRedirectResponse(response, requestContext);
+      }
+      return response;
+    }
   }
 
   const handledApi = await handleApiRoutes(
@@ -79,9 +91,6 @@ export const handler: ReactServerHandler = async (ctx) => {
     requestContext,
   );
   if (handledApi) return handledApi;
-
-  // extract stream request details
-  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
 
   // action
   let actionResult: ActionResult | undefined;

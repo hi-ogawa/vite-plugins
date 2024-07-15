@@ -1,3 +1,4 @@
+import { redirect } from "@hiogawa/react-server/server";
 import { type NextRequest, NextResponse } from "next/server";
 
 export default function middleware(request: NextRequest) {
@@ -14,6 +15,9 @@ export default function middleware(request: NextRequest) {
     const response = NextResponse.next();
     response.cookies.set("x-hello", "world");
     return response;
+  }
+  if (url.pathname == "/test/middleware/redirect") {
+    return Response.redirect(new URL("/?ok=redirect", url));
   }
   return NextResponse.next();
 }
