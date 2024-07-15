@@ -14,3 +14,11 @@ vercel link -p next-vite-example-og
 pnpm vc-build
 pnpm vc-release
 ```
+
+## test assets bundling
+
+```
+node packages/react-server/examples/og/test-bundle.js nft
+node packages/react-server/examples/og/test-bundle.js ncc
+node packages/react-server/examples/og/test-bundle.js esbuild
+```
