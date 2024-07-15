@@ -1,5 +1,8 @@
 name: pkg-pr-new
 "on":
+  push:
+    branches:
+      - main
   pull_request:
 jobs:
   publish:
