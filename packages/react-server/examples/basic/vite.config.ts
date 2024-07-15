@@ -59,11 +59,14 @@ export default defineConfig({
     testVitePluginVirtual(),
   ],
   ssr: {
-    // needs to inline react-wrap-balancer since its default export
-    // is not recognized by NodeJS. See:
-    //   node -e 'import("react-wrap-balancer").then(console.log)'
-    //   https://publint.dev/react-wrap-balancer@1.1.0
-    noExternal: ["react-wrap-balancer"],
+    noExternal: [
+      // bad default export. try
+      //   node -e 'import("react-wrap-balancer").then(console.log)'
+      //   https://publint.dev/react-wrap-balancer@1.1.0
+      "react-wrap-balancer",
+      // css import
+      "react-tweet",
+    ],
   },
 });
 
