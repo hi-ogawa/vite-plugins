@@ -139,6 +139,7 @@ export function RedirectHandler(props: {
   let suspension = redirectSuspensionMap.get(props.suspensionKey);
   if (!suspension) {
     suspension = new Promise(() => {});
+    redirectSuspensionMap.set(props.suspensionKey, suspension);
     window.location.href = props.redirectLocation;
   }
   return React.use(suspension);
