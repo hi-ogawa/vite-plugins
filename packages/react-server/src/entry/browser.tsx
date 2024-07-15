@@ -149,7 +149,9 @@ async function start() {
     const lastLocation = React.useRef(location);
 
     React.useEffect(() => {
-      console.log("[location]", { location, lastLocation });
+      console.log(
+        `[location effect] ${lastLocation.current.pathname} ==> ${location.pathname}`,
+      );
       if (location === lastLocation.current) {
         return;
       }
