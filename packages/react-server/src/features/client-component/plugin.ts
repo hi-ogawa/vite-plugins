@@ -131,7 +131,6 @@ export function vitePluginServerUseClient({
       // when using external library's server component includes client reference,
       // it will end up here with deps optimization hash `?v=` resolved by server module graph.
       if (!manager.buildType && id.includes("?v=")) {
-        console.error("[useClientPlugin]", { id });
         id = id.split("?v=")[0]!;
       }
       manager.serverIds.add(id);
