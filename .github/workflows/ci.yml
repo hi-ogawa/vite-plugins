@@ -36,6 +36,15 @@ jobs:
       - run: pnpm -C packages/react-server/examples/basic cf-build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-cf-preview
 
+  test-react-server-basic-swc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: USE_SWC=1 pnpm -C packages/react-server/examples/basic test-e2e
+      - run: USE_SWC=1 pnpm -C packages/react-server/examples/basic build
+      - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
+
   test-react-server-others:
     runs-on: ubuntu-latest
     steps:

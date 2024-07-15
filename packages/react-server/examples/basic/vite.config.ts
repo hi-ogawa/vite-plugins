@@ -12,7 +12,9 @@ import { type Plugin, defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    react(),
+    process.env["USE_SWC"]
+      ? (await import("@vitejs/plugin-react-swc".slice())).default()
+      : react(),
     unocss(),
     !process.env["E2E"] &&
       vitePluginErrorOverlay({
