@@ -2,7 +2,6 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
-import type * as esbuild from "esbuild";
 
 const configJson = {
   version: 3,
@@ -95,7 +94,6 @@ export async function build({ runtime }: { runtime: VercelRuntime }) {
     logOverride: {
       "ignored-bare-import": "silent",
     },
-    plugins: runtime === "node" ? [copyServerAssetPlugin()] : [],
   });
   await writeFile(
     join(buildDir, "esbuild-metafile.json"),
@@ -109,17 +107,4 @@ async function getPrerenderManifest(buildDir: string) {
     return;
   }
   return JSON.parse(await readFile(file, "utf-8")) as PrerenderManifest;
-}
-
-// TODO: detect server static assets of this expression
-//   join(import.meta.url, "../resvg.wasm")
-//   https://unpkg.com/browse/@vercel/og@0.6.2/dist/index.node.js
-// this doesn't look so simple since it's going to require reading all files
-function copyServerAssetPlugin(): esbuild.Plugin {
-  return {
-    name: copyServerAssetPlugin.name,
-    setup(build) {
-      build.onLoad;
-    },
-  };
 }
