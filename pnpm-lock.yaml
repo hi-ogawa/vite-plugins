@@ -158,8 +158,8 @@ importers:
         specifier: workspace:*
         version: link:../react-server
       '@hiogawa/utils-node':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.2
+        version: 0.0.2
 
   packages/react-server/examples/basic:
     dependencies:
@@ -352,8 +352,8 @@ importers:
         version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.92.1(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
     devDependencies:
       '@hiogawa/utils-node':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: latest
+        version: 0.0.2
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
@@ -2085,6 +2085,9 @@ packages:
 
   '@hiogawa/utils-node@0.0.1':
     resolution: {integrity: sha512-vEir6KhApTlPPT+0wX85wglFgZjxG/WZGjWGahSR7+ltNkpY0OpmxozbF5sLodYgXPObTK8cKgsQ4nzFLtZQ8g==}
+
+  '@hiogawa/utils-node@0.0.2':
+    resolution: {integrity: sha512-qT44AXLtRNwxkPR/3teLjurW5kgeXOAp+/zzHCeQs9Pl88jKwpjm4+gcE2OqFChM0lpZyodVN3llw7stXwLmvQ==}
 
   '@hiogawa/utils@1.7.0':
     resolution: {integrity: sha512-ghiEFWBR1NENoHn+lSuW7liicTIzVPN+8Srm5UedCTw43gus0mlse6Wp2lz6GmbOXJ/CalMPp/0Tz2X8tajkAg==}
@@ -6568,6 +6571,8 @@ snapshots:
       unocss: 0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.1))
 
   '@hiogawa/utils-node@0.0.1': {}
+
+  '@hiogawa/utils-node@0.0.2': {}
 
   '@hiogawa/utils@1.7.0': {}
 
