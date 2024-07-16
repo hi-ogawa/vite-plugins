@@ -75,16 +75,14 @@ async function main() {
     const rollup = await import("rollup");
     const bundle = await rollup.rollup({
       input: entry,
-      output: {
-        // bundle dynamic import like esbuild without splitting
-        // inlineDynamicImports: true,
-      },
     });
     const outDir = path.join(import.meta.dirname, "dist/rollup");
     await rm(outDir, { recursive: true, force: true });
     await mkdir(outDir, { recursive: true });
     await bundle.write({
       dir: outDir,
+      // bundle dynamic import like esbuild without splitting
+      // inlineDynamicImports: true,
     });
   }
 }
