@@ -15,7 +15,7 @@ pnpm vc-build
 pnpm vc-release
 ```
 
-## test assets bundling
+## compare bundlers
 
 ```
 node packages/react-server/examples/og/test-bundle.js nft
