@@ -23,7 +23,7 @@
     "react-server-dom-webpack": "rc"
   },
   "devDependencies": {
-    "@hiogawa/utils-node": "^0.0.1",
+    "@hiogawa/utils-node": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@playwright/test": "^1.45.1",
     "@types/react": "latest",
