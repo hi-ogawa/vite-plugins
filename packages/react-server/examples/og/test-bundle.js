@@ -81,6 +81,11 @@ async function main() {
     await bundle.write({
       dir: outDir,
     });
+    await bundle.destroy();
+    // seems necessary to force exit
+    // https://github.com/rolldown/rolldown/pull/1097
+    // https://github.com/rolldown/rolldown/pull/985
+    process.exit(0);
   }
 
   if (arg === "rollup") {
