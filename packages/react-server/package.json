@@ -41,14 +41,14 @@
     "test-package": "bash misc/test.sh"
   },
   "dependencies": {
-    "@edge-runtime/cookies": "^4.1.1",
     "@hiogawa/transforms": "workspace:*",
-    "@tanstack/history": "^1.15.13",
     "es-module-lexer": "^1.4.1",
     "fast-glob": "^3.3.2",
     "vitefu": "^0.2.5"
   },
   "devDependencies": {
+    "@edge-runtime/cookies": "^4.1.1",
+    "@tanstack/history": "^1.15.13",
     "@types/estree": "^1.0.5"
   },
   "peerDependencies": {
