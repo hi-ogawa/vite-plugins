@@ -47,8 +47,8 @@
     "vitefu": "^0.2.5"
   },
   "devDependencies": {
-    "@edge-runtime/cookies": "^4.1.1",
-    "@tanstack/history": "^1.15.13",
+    "@edge-runtime/cookies": "^5.0.0",
+    "@tanstack/history": "^1.44.2",
     "@types/estree": "^1.0.5"
   },
   "peerDependencies": {
