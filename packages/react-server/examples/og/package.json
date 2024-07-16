@@ -21,6 +21,9 @@
     "react-server-dom-webpack": "rc"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.7",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vercel/ncc": "^0.38.1",
