@@ -62,7 +62,6 @@ async function main() {
     const rolldown = await import("rolldown");
     const { default: replace } = await import("@rollup/plugin-replace");
 
-    console.time("[rolldown]");
     const bundle = await rolldown.rolldown({
       input: entry,
       platform: "node",
@@ -76,15 +75,12 @@ async function main() {
         }),
       ],
     });
-    console.timeEnd("[rolldown]");
     const outDir = path.join(import.meta.dirname, "dist/rolldown");
     await rm(outDir, { recursive: true, force: true });
     await mkdir(outDir, { recursive: true });
-    console.time("[bundle.write]");
     await bundle.write({
       dir: outDir,
     });
-    console.timeEnd("[bundle.write]");
     await bundle.destroy();
     // seems necessary to force exit
     // https://github.com/rolldown/rolldown/pull/1097
