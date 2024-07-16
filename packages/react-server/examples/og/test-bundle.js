@@ -41,7 +41,7 @@ async function main() {
 
     await esbuild.build({
       entryPoints: [entry],
-      outfile: path.join(import.meta.dirname, "dist/esbuild"),
+      outdir: path.join(import.meta.dirname, "dist/esbuild"),
       bundle: true,
       format: "esm",
       platform: "node",
@@ -59,7 +59,7 @@ async function main() {
     const rolldown = await import("rolldown");
     const bundle = await rolldown.rolldown({
       input: entry,
-      cwd: import.meta.dirname,
+      platform: "node",
     });
     const outDir = path.join(import.meta.dirname, "dist/rolldown");
     await mkdir(outDir, { recursive: true });
