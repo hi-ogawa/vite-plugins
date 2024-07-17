@@ -97,8 +97,6 @@ async function main() {
     const path = await import("node:path");
     const { fileURLToPath } = await import("node:url");
 
-    const ASSET_TRIGGER = Symbol.for("asset-trigger");
-
     /** @type {string[]} */
     const files = [];
     await rolldown.experimental_scan({
@@ -121,23 +119,25 @@ async function main() {
               const ast = await parseAstAsync(code);
               asyncWalk(ast, {
                 async enter(node) {
+                  // detect asset reference of this form, which is used by node build of @vercel/og
+                  //   fs.readFileSync(fileURLToPath(join(import.meta.url, "....")))
                   if (
                     node.type === "CallExpression" &&
                     node.arguments.length > 0
                   ) {
-                    // detect `fs.readFileSync(...)`
                     // https://github.com/vercel/nft/blob/099608f28ba1af5b8f6f98ac5ab05261ad45b42f/src/analyze.ts#L446-L458
                     const callee = await staticEval.evaluate(node.callee, {
                       fs: {
                         value: {
-                          readFileSync: ASSET_TRIGGER,
+                          readFileSync: Symbol.for("asset-trigger"),
                         },
                       },
                     });
-                    if (callee?.value === ASSET_TRIGGER) {
+                    if (callee?.value === Symbol.for("asset-trigger")) {
                       const argNode = node.arguments[0];
                       console.log(argNode);
 
+                      // not working...
                       const argValue = await staticEval.evaluate(argNode, {
                         "import.meta": {
                           url: id,
