@@ -95,13 +95,21 @@ async function main() {
     const { asyncWalk } = await import("estree-walker");
     const staticEval = await import("@vercel/nft/out/utils/static-eval.js");
     const path = await import("node:path");
-    const { fileURLToPath } = await import("node:url");
+    const { fileURLToPath, pathToFileURL } = await import("node:url");
 
     /** @type {string[]} */
     const files = [];
     await rolldown.experimental_scan({
       input: entry,
       platform: "node",
+      // TODO: external doesn't include subpath? (e.g. `react/jsx-runtime` is not externalized?)
+      external: [
+        "react",
+        "react/jsx-runtime",
+        "react-dom",
+        "react-dom/server.edge",
+        "react-server-dom-webpack/client.edge",
+      ],
       plugins: [
         // @ts-ignore rollup/rolldown plugin type
         replace({
@@ -135,12 +143,9 @@ async function main() {
                     });
                     if (callee?.value === Symbol.for("asset-trigger")) {
                       const argNode = node.arguments[0];
-                      console.log(argNode);
-
-                      // not working...
                       const argValue = await staticEval.evaluate(argNode, {
                         "import.meta": {
-                          url: id,
+                          url: pathToFileURL(id).href,
                         },
                         fileURLToPath: {
                           value: { [staticEval.FUNCTION]: fileURLToPath },
@@ -149,7 +154,10 @@ async function main() {
                           value: { [staticEval.FUNCTION]: path.join },
                         },
                       });
-                      console.log(argValue);
+                      console.log("[argValue]", argValue?.value);
+                      if (typeof argValue?.value === "string") {
+                        files.push(argValue?.value);
+                      }
                     }
                   }
                 },
@@ -159,7 +167,7 @@ async function main() {
         },
       ],
     });
-    // console.log(files.sort());
+    console.log(files.sort());
     process.exit(0);
   }
 
