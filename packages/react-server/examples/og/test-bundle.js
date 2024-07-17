@@ -127,7 +127,7 @@ async function main() {
               const ast = await parseAstAsync(code);
               asyncWalk(ast, {
                 async enter(node) {
-                  // detect asset reference of this form, which is used by node build of @vercel/og
+                  // detect asset reference of a following expression, which is used by node build of @vercel/og
                   //   fs.readFileSync(fileURLToPath(join(import.meta.url, "....")))
                   if (
                     node.type === "CallExpression" &&
