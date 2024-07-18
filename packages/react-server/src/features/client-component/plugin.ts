@@ -87,7 +87,9 @@ export function vitePluginServerUseClient({
         // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
         const ast = await parseAstAsync(code);
-        meta.exportNames = new Set(getExportNames(ast, {}).exportNames);
+        meta.exportNames = new Set(
+          getExportNames(ast, { ignoreExportAllDeclaration: true }).exportNames,
+        );
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = wrapId(id);
@@ -95,6 +97,7 @@ export function vitePluginServerUseClient({
           directive: USE_CLIENT,
           id,
           runtime: "$$proxy",
+          ignoreExportAllDeclaration: true,
         });
         tinyassert(output);
         output.prepend(
@@ -147,6 +150,7 @@ export function vitePluginServerUseClient({
         directive: USE_CLIENT,
         id: clientId,
         runtime: "$$proxy",
+        ignoreExportAllDeclaration: true,
       });
       if (!output) {
         return;
