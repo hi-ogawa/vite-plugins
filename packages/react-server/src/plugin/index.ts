@@ -275,8 +275,6 @@ export function vitePluginReactServer(
             "react-dom",
             "react-dom/client",
             "react-server-dom-webpack/client.browser",
-            "@hiogawa/react-server > @tanstack/history",
-            "@hiogawa/react-server > @edge-runtime/cookies",
           ],
         },
         ssr: {
