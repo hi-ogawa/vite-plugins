@@ -202,10 +202,10 @@ async function start() {
 
   // full client render on SSR error
   if (document.documentElement.dataset["noHydrate"]) {
-    ReactDOMClient.createRoot(document).render(reactRootEl);
+    ReactDOMClient.createRoot(document.body).render(reactRootEl);
   } else {
     const formState = (await initialFlight).action?.data;
-    ReactDOMClient.hydrateRoot(document, reactRootEl, {
+    ReactDOMClient.hydrateRoot(document.body, reactRootEl, {
       formState,
     });
   }
@@ -249,10 +249,6 @@ async function importRouteManifest(): Promise<RouteManifest> {
 declare module "react-dom/client" {
   interface HydrationOptions {
     formState?: unknown;
-  }
-
-  interface DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_CREATE_ROOT_CONTAINERS {
-    Document: Document;
   }
 }
 
