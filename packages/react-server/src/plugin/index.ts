@@ -354,7 +354,7 @@ export function vitePluginReactServer(
 
       // re-render RSC with custom event
       if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
-        manager.server.ws.send({
+        manager.server.hot.send({
           type: "custom",
           event: "rsc:update",
           data: {
