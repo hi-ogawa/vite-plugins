@@ -824,8 +824,20 @@ test("server compnoent > fixture", async ({ page }) => {
 test("server-client-mixed package", async ({ page }) => {
   await page.goto("/test/deps");
   await page.getByText("TestDepMixed(Server)").click();
+  await waitForHydration(page);
   await page.getByRole("button", { name: "TestDepMixed(Client): 0" }).click();
   await page.getByRole("button", { name: "TestDepMixed(Client): 1" }).click();
+});
+
+test("tolerate export all with use client", async ({ page }) => {
+  await page.goto("/test/deps");
+  await waitForHydration(page);
+  await page
+    .getByRole("button", { name: "TestDepReExportExplicit: 0" })
+    .click();
+  await page
+    .getByRole("button", { name: "TestDepReExportExplicit: 1" })
+    .click();
 });
 
 test("client module used at boundary and non-boundary basic", async ({

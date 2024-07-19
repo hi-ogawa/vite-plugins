@@ -2,6 +2,7 @@ import { TestVirtualUseClient } from "virtual:test-use-client";
 import { TestDepMixed } from "@hiogawa/test-dep-mixed";
 import { TestDepServerComponent } from "@hiogawa/test-dep-server-component";
 import { TestDepUseClient } from "@hiogawa/test-dep-use-client";
+import { TestDepReExportExplicit } from "@hiogawa/test-dep-use-client/re-export";
 import {
   default as BalancerDefault,
   Balancer as BalancerNamed,
@@ -17,6 +18,9 @@ export default function Page() {
       </div>
       <div>
         <TestDepUseClient />
+      </div>
+      <div>
+        <TestDepReExportExplicit />
       </div>
       <div>
         <TestDepServerComponent />
