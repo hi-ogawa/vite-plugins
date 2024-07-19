@@ -1552,3 +1552,13 @@ async function testRouteGroups(page: Page) {
   await page.getByRole("heading", { name: "(marketing)/layout.tsx" }).click();
   await page.getByText("(marketing)/blog/page.tsx").click();
 }
+
+test("head inline script", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test");
+  await waitForHydration(page);
+  const result = await page.evaluate(
+    () => (self as any).__testHeadInlineScript,
+  );
+  expect(result).toBe(true);
+});
