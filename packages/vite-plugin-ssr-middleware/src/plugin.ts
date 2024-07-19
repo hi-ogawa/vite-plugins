@@ -51,6 +51,7 @@ export function vitePluginSsrMiddleware({
         } else {
           // manual invalidation mode without hmr
           const runtime = await createViteRuntime(server, { hmr: false });
+          // @ts-ignore
           const connection = new ServerHMRConnector(server);
           connection.onUpdate(async (payload) => {
             if (payload.type === "update") {
