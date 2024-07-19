@@ -1,5 +1,7 @@
 "use server";
 
+console.log("[import]", import.meta.url);
+
 let counter = 0;
 
 export function getCounter() {
