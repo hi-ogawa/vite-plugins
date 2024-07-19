@@ -31,7 +31,7 @@ export function vitePluginErrorOverlay(
       return;
     },
     configureServer(server) {
-      server.ws.on("custom:runtime-error", (...args: any[]) => {
+      server.hot.on("custom:runtime-error", (...args: any[]) => {
         const [data, client] = args as [unknown, WebSocketClient];
         const error = Object.assign(new Error(), data);
         if (options?.filter?.(error) ?? true) {
