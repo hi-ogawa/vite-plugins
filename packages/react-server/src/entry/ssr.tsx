@@ -1,4 +1,4 @@
-import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
@@ -230,13 +230,15 @@ export async function renderHtml(
 }
 
 function injectToHead(getData: () => string) {
-  const marker = "<head>";
+  // need to inject last to avoid hydration mismatch
+  // when manually rendering head inline script in react
+  const marker = "</head>";
   let done = false;
   return new TransformStream<string, string>({
     transform(chunk, controller) {
       if (!done && chunk.includes(marker)) {
-        const [pre, post] = splitFirst(chunk, marker);
-        controller.enqueue(pre + marker + getData() + post);
+        const [pre, post] = chunk.split(marker);
+        controller.enqueue(pre + getData() + marker + post);
         done = true;
         return;
       }
