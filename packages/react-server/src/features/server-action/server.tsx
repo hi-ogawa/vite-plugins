@@ -66,6 +66,10 @@ export function initializeReactServer() {
 
 async function importServerReference(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
+    // workaround for https://github.com/vitejs/vite/pull/17422
+    if (1) {
+      return await import(/* @vite-ignore */ "/" + id);
+    }
     const file = findMapInverse($__global.dev.manager.serverReferenceMap, id);
     tinyassert(file, `server reference not found '${id}'`);
     return await import(/* @vite-ignore */ file);
