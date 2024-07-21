@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: |
-          pnpx pkg-pr-new publish \
+          pnpx pkg-pr-new publish --comment=off \
             packages/react-server \
             packages/react-server-next \
             packages/transforms \
