@@ -1,4 +1,4 @@
-import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
@@ -42,7 +42,7 @@ async function start() {
   const history = createEncodedBrowserHistory();
   const router = new Router(history);
 
-  let $__setFlight: (v: Promise<FlightData>) => void;
+  let $__setFlight: (v: FlightData) => void;
   let $__startActionTransition: React.TransitionStartFunction;
 
   //
@@ -66,13 +66,13 @@ async function start() {
           if (handleFlightRedirectResponse(history, response)) {
             return;
           }
-          const result = ReactClient.createFromFetch<FlightData>(
+          const result = await ReactClient.createFromFetch<FlightData>(
             Promise.resolve(response),
             { callServer },
           );
           // TODO: similar to redirection, we could also skip flight stream
           // and return serialized error only.
-          const actionResult = (await result).action;
+          const actionResult = result.action;
           if (actionResult?.error) {
             throw createError(actionResult?.error);
           }
@@ -86,9 +86,8 @@ async function start() {
   // expose as global to be used for createServerReference
   $__global.callServer = callServer;
 
-  // prepare initial layout data from inline <script>
-  // TODO: needs to await for hydration formState. does it affect startup perf?
-  const initialFlight = ReactClient.createFromReadableStream<FlightData>(
+  // prepare initial flight data from inline <script>
+  const initialFlight = await ReactClient.createFromReadableStream<FlightData>(
     getFlightStreamBrowser(),
     { callServer },
   );
@@ -98,15 +97,14 @@ async function start() {
   //
 
   function FlightDataHandler(props: React.PropsWithChildren) {
-    const [flight, setFlight] =
-      React.useState<Promise<FlightData>>(initialFlight);
+    const [flight, setFlight] = React.useState<FlightData>(initialFlight);
+    const [isPending, startTransition] = React.useTransition();
+    const [isActionPending, startActionTransition] = React.useTransition();
 
-    // very shaky trick to merge with current layout
-    $__setFlight = (nextPromise) => {
-      setFlight(
-        memoize(async (currentPromise: Promise<FlightData>) => {
-          const current = await currentPromise;
-          const next = await nextPromise;
+    React.useEffect(() => {
+      $__setFlight = (next) => {
+        setFlight((current: FlightData) => {
+          // merge only `nodeMap` and overwrite others
           return {
             action: next.action,
             metadata: next.metadata,
@@ -118,13 +116,11 @@ async function start() {
             },
             layoutContentMap: next.layoutContentMap,
           } satisfies FlightData;
-        }),
-      );
-    };
+        });
+      };
 
-    const [isPending, startTransition] = React.useTransition();
-    const [isActionPending, startActionTransition] = React.useTransition();
-    $__startActionTransition = startActionTransition;
+      $__startActionTransition = startActionTransition;
+    }, []);
 
     React.useEffect(() => router.setup(), []);
     React.useEffect(() => {
@@ -165,9 +161,12 @@ async function start() {
           return;
         }
         $__setFlight(
-          ReactClient.createFromFetch<FlightData>(Promise.resolve(response), {
-            callServer,
-          }),
+          await ReactClient.createFromFetch<FlightData>(
+            Promise.resolve(response),
+            {
+              callServer,
+            },
+          ),
         );
       });
     }, [location]);
@@ -204,7 +203,7 @@ async function start() {
   if (document.documentElement.dataset["noHydrate"]) {
     ReactDOMClient.createRoot(document).render(reactRootEl);
   } else {
-    const formState = (await initialFlight).action?.data;
+    const formState = initialFlight.action?.data;
     ReactDOMClient.hydrateRoot(document, reactRootEl, {
       formState,
     });

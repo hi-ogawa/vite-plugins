@@ -12,12 +12,10 @@ import {
 import { type MatchSegment, toMatchParams, toMatchValues } from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
-export const FlightDataContext = React.createContext<Promise<FlightData>>(
-  undefined!,
-);
+export const FlightDataContext = React.createContext<FlightData>(undefined!);
 
 export function useFlightData() {
-  return React.use(React.useContext(FlightDataContext));
+  return React.useContext(FlightDataContext);
 }
 
 export function LayoutContent(props: { name: string }) {

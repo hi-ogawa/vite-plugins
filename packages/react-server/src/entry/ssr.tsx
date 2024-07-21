@@ -106,7 +106,7 @@ export async function renderHtml(
 
   const [stream1, stream2] = result.stream.tee();
 
-  const flightDataPromise = ReactClient.createFromReadableStream<FlightData>(
+  const flightData = await ReactClient.createFromReadableStream<FlightData>(
     stream1,
     {
       ssrManifest: {
@@ -128,7 +128,7 @@ export async function renderHtml(
 
   const reactRootEl = (
     <RouterContext.Provider value={router}>
-      <FlightDataContext.Provider value={flightDataPromise}>
+      <FlightDataContext.Provider value={flightData}>
         <RouteManifestContext.Provider value={routeManifest}>
           <RouteAssetLinks />
           <ssrContext.Provider>
