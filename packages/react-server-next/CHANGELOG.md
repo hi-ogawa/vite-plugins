@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.11 (2024-07-22)
+
+- feat: support middleware ([#553](https://github.com/hi-ogawa/vite-plugins/pull/553))
+- chore: use plugin-react-swc ([#570](https://github.com/hi-ogawa/vite-plugins/pull/570))
+- chore: add `@vercel/og` example (node runtime) ([#558](https://github.com/hi-ogawa/vite-plugins/pull/558))
+
 ## v0.0.10 (2024-07-14)
 
 - feat: vercel node runtime adapter ([#555](https://github.com/hi-ogawa/vite-plugins/pull/555))
