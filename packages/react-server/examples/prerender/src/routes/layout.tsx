@@ -13,6 +13,7 @@ export default function Layout(props: React.PropsWithChildren) {
       </head>
       <body>
         <h3>React Server Prerender</h3>
+        <pre>[rendered at {new Date().toISOString()}]</pre>
         <a
           href="https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server"
           target="_blank"
