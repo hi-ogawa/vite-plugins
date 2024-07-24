@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.12 (2024-07-24)
+
+- fix: fix deployment with pre-rendered root path ([#587](https://github.com/hi-ogawa/vite-plugins/pull/587))
+
 ## v0.0.11 (2024-07-22)
 
 - feat: support middleware ([#553](https://github.com/hi-ogawa/vite-plugins/pull/553))
