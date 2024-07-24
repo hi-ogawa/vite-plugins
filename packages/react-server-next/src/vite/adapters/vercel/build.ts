@@ -58,6 +58,15 @@ export async function build({ runtime }: { runtime: VercelRuntime }) {
     );
   }
 
+  // `overrides` seems broken for root path, so add rewrite manually
+  if ("index.html" in configJson.overrides) {
+    delete configJson.overrides["index.html"];
+    configJson.routes.splice(1, 0, {
+      src: "^/$",
+      dest: "/index.html",
+    });
+  }
+
   // config
   await writeFile(
     join(outDir, "config.json"),
