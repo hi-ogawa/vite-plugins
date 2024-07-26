@@ -17,9 +17,10 @@ export function vitePluginSsrCss(pluginOpts: { entries: string[] }): Plugin {
       server = server_;
 
       // invalidate virtual modules for each direct request
-      server.middlewares.use((req, _res, next) => {
+      server.middlewares.use((req, res, next) => {
         if (req.url === virtualHref) {
           invalidateModule(server, "\0" + VIRTUAL_ENTRY + "?direct");
+          return res.status(200).set("Content-Type", "text/css").end();
         }
         next();
       });
