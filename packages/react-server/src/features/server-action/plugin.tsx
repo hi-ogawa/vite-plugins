@@ -41,6 +41,7 @@ export function vitePluginClientUseServer({
         directive: USE_SERVER,
         id: serverId,
         runtime: "$$proxy",
+        ignoreExportAllDeclaration: true,
       });
       if (!output) {
         manager.serverReferenceMap.delete(id);

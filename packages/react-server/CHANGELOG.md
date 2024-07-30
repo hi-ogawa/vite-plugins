@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.3.5 (2024-07-24)
+
+- fix: fix deployment with pre-rendered root path ([#587](https://github.com/hi-ogawa/vite-plugins/pull/587))
+
+## v0.3.4 (2024-07-22)
+
+- feat: support middleware ([#553](https://github.com/hi-ogawa/vite-plugins/pull/553))
+- feat: support plugin-react-swc ([#570](https://github.com/hi-ogawa/vite-plugins/pull/570))
+- fix!: selectively no-externalize server dependencies ([#545](https://github.com/hi-ogawa/vite-plugins/pull/545))
+- fix: fix head inline script ([#581](https://github.com/hi-ogawa/vite-plugins/pull/581))
+- fix: `ignoreExportAllDeclaration` during client/server transform ([#579](https://github.com/hi-ogawa/vite-plugins/pull/579))
+- fix: partial support of server-client-mixed package + chore: add react-tweet demo ([#384](https://github.com/hi-ogawa/vite-plugins/pull/384))
+- fix: handle middleware redirection of flight request ([#564](https://github.com/hi-ogawa/vite-plugins/pull/564))
+- fix: bundle runtime deps ([#573](https://github.com/hi-ogawa/vite-plugins/pull/573))
+- fix: remove unneecssary `optimizeDeps.include` ([#578](https://github.com/hi-ogawa/vite-plugins/pull/578))
+
+## v0.3.3 (2024-07-14)
+
+- fix: fix action `redirect` with `revalidatePath` ([#544](https://github.com/hi-ogawa/vite-plugins/pull/544))
+- fix: use ssr `transformRequest` for css crawling on server ([#554](https://github.com/hi-ogawa/vite-plugins/pull/554))
+- refactor: use own `useSyncExternalStoreWithSelector` ([#549](https://github.com/hi-ogawa/vite-plugins/pull/549))
+- refactor: type `virtual:server-routes` ([#557](https://github.com/hi-ogawa/vite-plugins/pull/557))
+- test: add suspense redirect test ([#565](https://github.com/hi-ogawa/vite-plugins/pull/565))
+- chore: remove unused deps ([#546](https://github.com/hi-ogawa/vite-plugins/pull/546))
+
 ## v0.3.2 (2024-07-11)
 
 - feat: support `useServerInsertedHTML` ([#536](https://github.com/hi-ogawa/vite-plugins/pull/536))

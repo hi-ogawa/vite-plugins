@@ -1,0 +1,35 @@
+{
+  "name": "@hiogawa/react-server-example-og",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "copy-assets": "cp node_modules/@vercel/og/dist/*.{ttf,wasm} .vercel/output/functions/index.func",
+    "vc-build": "VERCEL=1 pnpm build && pnpm copy-assets",
+    "vc-release-staging": "vercel deploy --prebuilt",
+    "vc-release": "vercel deploy --prod --prebuilt"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "workspace:*",
+    "@vercel/og": "^0.6.2",
+    "next": "link:../../../react-server-next",
+    "react": "rc",
+    "react-dom": "rc",
+    "react-server-dom-webpack": "rc"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.7",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vercel/ncc": "^0.38.1",
+    "@vercel/nft": "^0.27.3",
+    "rolldown": "^0.12.1",
+    "rollup": "^4.18.1",
+    "vite": "latest"
+  }
+}

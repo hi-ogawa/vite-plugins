@@ -36,6 +36,10 @@ export function isRedirectError(ctx: ReactServerErrorContext) {
   return false;
 }
 
+export function isRedirectStatus(status: number) {
+  return 300 <= status && status <= 399;
+}
+
 export function isNotFoundError(ctx: ReactServerErrorContext) {
   return ctx.status === 404;
 }

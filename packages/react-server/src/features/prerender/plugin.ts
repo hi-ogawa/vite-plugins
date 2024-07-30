@@ -63,14 +63,19 @@ export function prerenderPlugin(options: {
         server.middlewares.use((req, _res, next) => {
           // rewrite `/abc` to `/abc.html` since Vite "mpa" mode doesn't support this
           const url = new URL(req.url!, "https://test.local");
-          if (fs.existsSync(path.join(outDir, url.pathname + ".html"))) {
-            req.url = path.posix.join(url.pathname + ".html");
+          const htmlFile = urlPathToHtmlPath(url.pathname);
+          if (fs.existsSync(path.join(outDir, htmlFile))) {
+            req.url = htmlFile;
           }
           next();
         });
       },
     },
   ];
+}
+
+function urlPathToHtmlPath(pathname: string) {
+  return pathname + (pathname.endsWith("/") ? "index.html" : ".html");
 }
 
 async function processPrerender(getPrerenderRoutes: PrerenderFn) {
@@ -92,7 +97,7 @@ async function processPrerender(getPrerenderRoutes: PrerenderFn) {
     });
     const { stream, html } = await entry.prerender(request);
     const data = Readable.from(stream as any);
-    const htmlFile = route + (route.endsWith("/") ? "index.html" : ".html");
+    const htmlFile = urlPathToHtmlPath(route);
     const dataFile = route + RSC_PATH;
     await mkdir(path.dirname(path.join("dist/client", htmlFile)), {
       recursive: true,

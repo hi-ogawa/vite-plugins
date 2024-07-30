@@ -12,7 +12,9 @@ import { type Plugin, defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    react(),
+    process.env["USE_SWC"]
+      ? (await import("@vitejs/plugin-react-swc".slice())).default()
+      : react(),
     unocss(),
     !process.env["E2E"] &&
       vitePluginErrorOverlay({
@@ -57,11 +59,14 @@ export default defineConfig({
     testVitePluginVirtual(),
   ],
   ssr: {
-    // needs to inline react-wrap-balancer since its default export
-    // is not recognized by NodeJS. See:
-    //   node -e 'import("react-wrap-balancer").then(console.log)'
-    //   https://publint.dev/react-wrap-balancer@1.1.0
-    noExternal: ["react-wrap-balancer"],
+    noExternal: [
+      // cjs default export. try
+      //   node -e 'import("react-wrap-balancer").then(console.log)'
+      //   https://publint.dev/react-wrap-balancer@1.1.0
+      "react-wrap-balancer",
+      // css import
+      "react-tweet",
+    ],
   },
 });
 

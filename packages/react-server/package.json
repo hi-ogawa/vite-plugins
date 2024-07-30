@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server",
-  "version": "0.3.2",
+  "version": "0.3.5",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server",
@@ -41,16 +41,15 @@
     "test-package": "bash misc/test.sh"
   },
   "dependencies": {
-    "@edge-runtime/cookies": "^4.1.1",
     "@hiogawa/transforms": "workspace:*",
-    "@tanstack/history": "^1.15.13",
     "es-module-lexer": "^1.4.1",
     "fast-glob": "^3.3.2",
-    "use-sync-external-store": "^1.2.0"
+    "vitefu": "^0.2.5"
   },
   "devDependencies": {
-    "@types/estree": "^1.0.5",
-    "@types/use-sync-external-store": "^0.0.6"
+    "@edge-runtime/cookies": "^5.0.0",
+    "@tanstack/history": "^1.44.2",
+    "@types/estree": "^1.0.5"
   },
   "peerDependencies": {
     "react": "*",

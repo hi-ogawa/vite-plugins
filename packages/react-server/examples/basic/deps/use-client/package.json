@@ -1,10 +1,16 @@
 {
-  "name": "@hiogawa/test-dep-use-client",
+  "name": "@hiogawa/test-deps-use-client",
   "private": true,
   "type": "module",
   "exports": {
-    "types": "./index.d.ts",
-    "default": "./index.js"
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./re-export": {
+      "types": "./re-export/index.d.ts",
+      "default": "./re-export/index.js"
+    }
   },
   "dependencies": {
     "react": "*"

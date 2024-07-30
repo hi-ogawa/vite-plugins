@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/react-server-next",
-  "version": "0.0.9",
+  "version": "0.0.12",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server-next",
@@ -22,10 +22,19 @@
     ".": {
       "types": "./types/index.d.ts"
     },
+    "./navigation.js": {
+      "types": "./dist/compat/navigation.d.ts",
+      "react-server": "./dist/compat/navigation.react-server.js",
+      "default": "./dist/compat/navigation.js"
+    },
     "./navigation": {
       "types": "./dist/compat/navigation.d.ts",
       "react-server": "./dist/compat/navigation.react-server.js",
       "default": "./dist/compat/navigation.js"
+    },
+    "./*.js": {
+      "types": "./dist/compat/*.d.ts",
+      "default": "./dist/compat/*.js"
     },
     "./*": {
       "types": "./dist/compat/*.d.ts",
@@ -39,13 +48,13 @@
   },
   "dependencies": {
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react-swc": "^3.7.0",
     "esbuild": "^0.20.2",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "devDependencies": {
     "@hiogawa/react-server": "workspace:*",
-    "@hiogawa/utils-node": "^0.0.1"
+    "@hiogawa/utils-node": "^0.0.2"
   },
   "peerDependencies": {
     "@hiogawa/react-server": "*",

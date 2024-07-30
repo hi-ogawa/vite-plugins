@@ -13,6 +13,7 @@
     "cf-preview": "wrangler pages dev ./dist/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat",
     "cf-release": "wrangler pages deploy ./dist/cloudflare --commit-dirty --branch main --project-name test-next-vite",
     "vc-build": "VERCEL=1 pnpm build",
+    "vc-release-staging": "vercel deploy --prebuilt",
     "vc-release": "vercel deploy --prod --prebuilt"
   },
   "dependencies": {

@@ -96,3 +96,44 @@ testNoJs("image preload", async ({ page }) => {
     page.locator('link[href="https://nextjs.org/icons/vercel.svg"]'),
   ).not.toHaveAttribute("fetchPriority", "high");
 });
+
+test("middleware basic", async ({ request }) => {
+  {
+    const res = await request.get("/test/middleware/response");
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual({
+      hello: ["from", "middleware"],
+    });
+  }
+
+  {
+    const res = await request.get("/test/middleware/headers");
+    expect(res.status()).toBe(404);
+    expect(res.headers()).toMatchObject({
+      "x-hello": "world",
+    });
+  }
+
+  {
+    const res = await request.get("/test/middleware/cookies");
+    expect(res.status()).toBe(404);
+    expect(res.headers()).toMatchObject({
+      "set-cookie": "x-hello=world; Path=/",
+    });
+  }
+});
+
+test("middleware flight redirect @js", async ({ page }) => {
+  await page.goto("/test");
+  await waitForHydration(page);
+  await page.getByRole("link", { name: "/test/middleware/redirect" }).click();
+  await page.waitForURL("/?ok=redirect");
+  await page.getByRole("img", { name: "Next.js logo" }).click();
+});
+
+testNoJs("middleware flight redirect @nojs", async ({ page }) => {
+  await page.goto("/test");
+  await page.getByRole("link", { name: "/test/middleware/redirect" }).click();
+  await page.waitForURL("/?ok=redirect");
+  await page.getByRole("img", { name: "Next.js logo" }).click();
+});

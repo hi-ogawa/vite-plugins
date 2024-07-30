@@ -87,7 +87,9 @@ export function vitePluginServerUseClient({
         // node_modules is already transpiled so we can parse it right away
         const code = await fs.promises.readFile(meta.id, "utf-8");
         const ast = await parseAstAsync(code);
-        meta.exportNames = new Set(getExportNames(ast, {}).exportNames);
+        meta.exportNames = new Set(
+          getExportNames(ast, { ignoreExportAllDeclaration: true }).exportNames,
+        );
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = wrapId(id);
@@ -95,6 +97,7 @@ export function vitePluginServerUseClient({
           directive: USE_CLIENT,
           id,
           runtime: "$$proxy",
+          ignoreExportAllDeclaration: true,
         });
         tinyassert(output);
         output.prepend(
@@ -128,6 +131,14 @@ export function vitePluginServerUseClient({
   const useClientPlugin: Plugin = {
     name: vitePluginServerUseClient.name,
     async transform(code, id, _options) {
+      // when using external library's server component includes client reference,
+      // it will end up here with deps optimization hash `?v=` resolved by server module graph.
+      // this is not entirely free from double module issue,
+      // but it allows handling simple server-client-mixed package such as react-tweet.
+      // cf. https://github.com/hi-ogawa/vite-plugins/issues/379
+      if (!manager.buildType && id.includes("?v=")) {
+        id = id.split("?v=")[0]!;
+      }
       manager.serverIds.add(id);
       manager.clientReferenceMap.delete(id);
       if (!code.includes(USE_CLIENT)) {
@@ -139,6 +150,7 @@ export function vitePluginServerUseClient({
         directive: USE_CLIENT,
         id: clientId,
         runtime: "$$proxy",
+        ignoreExportAllDeclaration: true,
       });
       if (!output) {
         return;

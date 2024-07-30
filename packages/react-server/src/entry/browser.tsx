@@ -1,4 +1,5 @@
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import type { RouterHistory } from "@tanstack/history";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import { initializeReactClientBrowser } from "../features/client-component/browser";
@@ -22,7 +23,7 @@ import {
   emptyRouteManifest,
 } from "../features/router/manifest";
 import type { FlightData } from "../features/router/utils";
-import { parseActionRedirectResponse } from "../features/server-action/redirect";
+import { parseFlightRedirectResponse } from "../features/server-action/redirect";
 import { createStreamRequest } from "../features/server-component/utils";
 import { $__global } from "../global";
 import { createError } from "../server";
@@ -62,12 +63,7 @@ async function start() {
       $__startActionTransition(async () => {
         (async () => {
           const response = await fetch(request);
-          const redirect = parseActionRedirectResponse(response);
-          if (redirect) {
-            history.push(
-              redirect.location,
-              redirect.revalidate ? routerRevalidate(redirect.revalidate) : {},
-            );
+          if (handleFlightRedirectResponse(history, response)) {
             return;
           }
           const result = ReactClient.createFromFetch<FlightData>(
@@ -163,9 +159,13 @@ async function start() {
         lastPathname,
         revalidate: location.state[ROUTER_REVALIDATE_KEY],
       });
-      startTransition(() => {
+      startTransition(async () => {
+        const response = await fetch(request);
+        if (handleFlightRedirectResponse(history, response)) {
+          return;
+        }
         $__setFlight(
-          ReactClient.createFromFetch<FlightData>(fetch(request), {
+          ReactClient.createFromFetch<FlightData>(Promise.resolve(response), {
             callServer,
           }),
         );
@@ -217,6 +217,21 @@ async function start() {
       history.replace(history.location.href, routerRevalidate("/"));
     });
   }
+}
+
+function handleFlightRedirectResponse(
+  history: RouterHistory,
+  response: Response,
+) {
+  const redirect = parseFlightRedirectResponse(response);
+  if (redirect) {
+    history.push(
+      redirect.location,
+      redirect.revalidate ? routerRevalidate(redirect.revalidate) : {},
+    );
+    return true;
+  }
+  return false;
 }
 
 async function importRouteManifest(): Promise<RouteManifest> {

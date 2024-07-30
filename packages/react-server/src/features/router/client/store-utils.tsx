@@ -1,9 +1,8 @@
-import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
+import React from "react";
 
 // tanstack-style selectable store
 // https://github.com/TanStack/router/blob/876b887589b14fb4bce0773eb520417682a741e2/packages/react-router/src/useRouterState.tsx
 // https://github.com/TanStack/store/blob/8d6faa0c8eb54b5b1070148311e43bb011a929f9/packages/react-store/src/index.ts
-// https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
 
 interface ReadableStore<T> {
   get: () => T;
@@ -12,13 +11,12 @@ interface ReadableStore<T> {
 
 export function useStore<T, U = T>(
   store: ReadableStore<T>,
-  select: (v: T) => U = (v: T) => v as any,
+  selector: (v: T) => U = (v: T) => v as any,
 ): U {
-  const v = useSyncExternalStoreWithSelector(
+  const v = useSyncExternalStoreWithSelectorDIY(
     store.subscribe,
     store.get,
-    store.get,
-    select as any,
+    selector as any,
     isEqualShallow,
   );
   return v as any;
@@ -67,4 +65,30 @@ function isEqualShallow(x: object, y: object): boolean {
     }
   }
   return true;
+}
+
+// https://github.com/facebook/react/blob/f09e1599d631051a559974578a6d4c06effd95eb/packages/use-sync-external-store/src/useSyncExternalStoreWithSelector.js
+function useSyncExternalStoreWithSelectorDIY<Snapshot, Selection>(
+  subscribe: (listener: () => void) => () => void,
+  getSnapshot: () => Snapshot,
+  selector: (snapshot: Snapshot) => Selection,
+  isEqual: (a: Selection, b: Selection) => boolean,
+): Selection {
+  const getSnapshotWithSelector = React.useMemo(() => {
+    let prev: { selection: Selection } | undefined;
+    return () => {
+      const snapshot = getSnapshot();
+      const selection = selector(snapshot);
+      if (!(prev && isEqual(selection, prev.selection))) {
+        prev = { selection };
+      }
+      return prev.selection;
+    };
+  }, [getSnapshot, selector, isEqual]);
+
+  return React.useSyncExternalStore(
+    subscribe,
+    getSnapshotWithSelector,
+    getSnapshotWithSelector,
+  );
 }

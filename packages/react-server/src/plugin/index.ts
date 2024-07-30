@@ -13,6 +13,7 @@ import {
   createServer,
   mergeConfig,
 } from "vite";
+import { crawlFrameworkPkgs } from "vitefu";
 import { CSS_LANGS_RE } from "../features/assets/css";
 import {
   serverAssertsPluginServer,
@@ -149,25 +150,6 @@ export function vitePluginReactServer(
       noDiscovery: true,
       include: [],
     },
-    ssr: {
-      resolve: {
-        conditions: ["react-server"],
-      },
-      // no external to ensure loading all deps with react-server condition
-      // TODO: but probably users should be able to exclude
-      //       node builtin or non-react related dependencies.
-      noExternal: true,
-      // pre-bundle cjs deps
-      // TODO: should crawl user's cjs react 3rd party libs? (like svelte does?)
-      optimizeDeps: {
-        include: [
-          "react",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime",
-          "react-server-dom-webpack/server.edge",
-        ],
-      },
-    },
     plugins: [
       ...(options?.plugins ?? []),
 
@@ -198,6 +180,9 @@ export function vitePluginReactServer(
               ([k, v]) => [k.slice("/${routeDir}".length), v]
             )
           );
+
+          const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
+          export const middleware = Object.values(globMiddleware)[0];
         `;
       }),
 
@@ -228,6 +213,8 @@ export function vitePluginReactServer(
       }),
 
       serverAssertsPluginServer({ manager }),
+
+      serverDepsConfigPlugin(),
 
       {
         name: "patch-react-server-dom-webpack",
@@ -291,9 +278,6 @@ export function vitePluginReactServer(
             "react-dom",
             "react-dom/client",
             "react-server-dom-webpack/client.browser",
-            "@hiogawa/react-server > @tanstack/history",
-            "@hiogawa/react-server > use-sync-external-store/shim/with-selector.js",
-            "@hiogawa/react-server > @edge-runtime/cookies",
           ],
         },
         ssr: {
@@ -445,7 +429,7 @@ export function vitePluginReactServer(
         // wrapper entry to ensure client entry runs after vite/react inititialization
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
-          for (let i = 0; !window.__vite_plugin_react_preamble_installed__; i++) {
+          for (let i = 0; !window.$RefreshReg$; i++) {
             await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
           }
           await import("${entryBrowser}");
@@ -493,6 +477,49 @@ function validateImportPlugin(entries: Record<string, string | true>): Plugin {
         return "export {}";
       }
       return;
+    },
+  };
+}
+
+function serverDepsConfigPlugin(): Plugin {
+  return {
+    name: serverDepsConfigPlugin.name,
+    async config(_config, env) {
+      // crawl packages with "react" or "next" in "peerDependencies"
+      // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
+      const result = await crawlFrameworkPkgs({
+        root: process.cwd(),
+        isBuild: env.command === "build",
+        isFrameworkPkgByJson(pkgJson) {
+          const deps = pkgJson["peerDependencies"];
+          return deps && ("react" in deps || "next" in deps);
+        },
+      });
+
+      return {
+        ssr: {
+          resolve: {
+            conditions: ["react-server"],
+          },
+          noExternal: [
+            "react",
+            "react-dom",
+            "react-server-dom-webpack",
+            "server-only",
+            "client-only",
+            ...result.ssr.noExternal,
+          ],
+          // pre-bundle cjs deps
+          optimizeDeps: {
+            include: [
+              "react",
+              "react/jsx-runtime",
+              "react/jsx-dev-runtime",
+              "react-server-dom-webpack/server.edge",
+            ],
+          },
+        },
+      };
     },
   };
 }

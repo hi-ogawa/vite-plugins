@@ -1,3 +1,3 @@
-declare function TestDepUseClient(): string;
+declare function TestDepUseClient(): JSX.Element;
 
 export { TestDepUseClient };

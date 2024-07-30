@@ -24,13 +24,21 @@ const configJson = {
   overrides: {},
 };
 
-// edge only for now
-const vcConfigJson = {
-  runtime: "edge",
-  entrypoint: "index.js",
-};
+const vcConfig = {
+  edge: {
+    runtime: "edge",
+    entrypoint: "index.mjs",
+  },
+  node: {
+    runtime: "nodejs20.x",
+    handler: "index.mjs",
+    launcherType: "Nodejs",
+  },
+} satisfies Record<VercelRuntime, object>;
 
-export async function build() {
+type VercelRuntime = "node" | "edge";
+
+export async function build({ runtime }: { runtime: VercelRuntime }) {
   const buildDir = join(process.cwd(), "dist");
   const outDir = join(process.cwd(), ".vercel/output");
 
@@ -50,6 +58,15 @@ export async function build() {
     );
   }
 
+  // `overrides` seems broken for root path, so add rewrite manually
+  if ("index.html" in configJson.overrides) {
+    delete configJson.overrides["index.html"];
+    configJson.routes.splice(1, 0, {
+      src: "^/$",
+      dest: "/index.html",
+    });
+  }
+
   // config
   await writeFile(
     join(outDir, "config.json"),
@@ -66,19 +83,19 @@ export async function build() {
   await mkdir(join(outDir, "functions/index.func"), { recursive: true });
   await writeFile(
     join(outDir, "functions/index.func/.vc-config.json"),
-    JSON.stringify(vcConfigJson, null, 2),
+    JSON.stringify(vcConfig[runtime], null, 2),
   );
 
   // bundle function
   const esbuild = await import("esbuild");
   const result = await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "functions/index.func/index.js"),
+    outfile: join(outDir, "functions/index.func/index.mjs"),
     metafile: true,
     bundle: true,
     minify: true,
     format: "esm",
-    platform: "browser",
+    platform: runtime === "node" ? "node" : "browser",
     external: ["node:async_hooks"],
     define: {
       "process.env.NODE_ENV": `"production"`,

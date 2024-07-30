@@ -1,4 +1,4 @@
-import { createDebug, splitFirst, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
 import ReactDOMStatic from "react-dom/static.edge";
@@ -238,7 +238,12 @@ export async function renderHtml(
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
     if (isRedirectError(ctx)) {
-      return new Response(null, { status: ctx.status, headers: ctx.headers });
+      return result.requestContext.injectResponseHeaders(
+        new Response(null, {
+          status: ctx.status,
+          headers: ctx.headers,
+        }),
+      );
     }
     status = ctx.status;
     // render empty as error fallback and
@@ -272,20 +277,22 @@ export async function renderHtml(
   return new Response(htmlStream, {
     status,
     headers: {
-      ...result.actionResult?.responseHeaders,
+      ...result.requestContext.getResponseHeaders(),
       "content-type": "text/html;charset=utf-8",
     },
   });
 }
 
 function injectToHead(getData: () => string) {
-  const marker = "<head>";
+  // need to inject last to avoid hydration mismatch
+  // when manually rendering head inline script in react
+  const marker = "</head>";
   let done = false;
   return new TransformStream<string, string>({
     transform(chunk, controller) {
       if (!done && chunk.includes(marker)) {
-        const [pre, post] = splitFirst(chunk, marker);
-        controller.enqueue(pre + marker + getData() + post);
+        const [pre, post] = chunk.split(marker);
+        controller.enqueue(pre + getData() + marker + post);
         done = true;
         return;
       }

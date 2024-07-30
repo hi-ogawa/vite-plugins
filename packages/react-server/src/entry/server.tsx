@@ -1,3 +1,4 @@
+import * as serverRoutes from "virtual:server-routes";
 import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
@@ -7,7 +8,9 @@ import {
   ReactServerDigestError,
   createError,
   getErrorContext,
+  isRedirectStatus,
 } from "../features/error/shared";
+import { handleMiddleware } from "../features/next/middleware";
 import { RequestContext } from "../features/request-context/server";
 import { handleApiRoutes } from "../features/router/api-route";
 import {
@@ -16,7 +19,10 @@ import {
   renderRouteMap,
 } from "../features/router/server";
 import { type FlightData, handleTrailingSlash } from "../features/router/utils";
-import { createActionRedirectResponse } from "../features/server-action/redirect";
+import {
+  createActionRedirectResponse,
+  createFlightRedirectResponse,
+} from "../features/server-action/redirect";
 import {
   type ActionResult,
   createActionBundlerConfig,
@@ -27,6 +33,8 @@ import {
 import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
+
+export const router = generateRouteModuleTree(serverRoutes.default);
 
 export type ReactServerHandler = (
   ctx: ReactServerHandlerContext,
@@ -40,6 +48,7 @@ export interface ReactServerHandlerContext {
 export interface ReactServerHandlerStreamResult {
   stream: ReadableStream<Uint8Array>;
   status: number;
+  requestContext: RequestContext;
   actionResult?: ActionResult;
 }
 
@@ -59,15 +68,29 @@ export const handler: ReactServerHandler = async (ctx) => {
 
   const requestContext = new RequestContext(ctx.request.headers);
 
+  // normalize stream request and extract metadata
+  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
+
+  if (serverRoutes.middleware) {
+    const response = await handleMiddleware(
+      serverRoutes.middleware,
+      request,
+      requestContext,
+    );
+    if (response) {
+      if (isStream && isRedirectStatus(response.status)) {
+        return createFlightRedirectResponse(response, requestContext);
+      }
+      return response;
+    }
+  }
+
   const handledApi = await handleApiRoutes(
     router.tree,
     ctx.request,
     requestContext,
   );
   if (handledApi) return handledApi;
-
-  // extract stream request details
-  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
 
   // action
   let actionResult: ActionResult | undefined;
@@ -123,13 +146,18 @@ export const handler: ReactServerHandler = async (ctx) => {
   if (isStream) {
     return new Response(stream, {
       headers: {
-        ...actionResult?.responseHeaders,
+        ...requestContext.getResponseHeaders(),
         "content-type": "text/x-component; charset=utf-8",
       },
     });
   }
 
-  return { stream, actionResult, status: result.notFound ? 404 : 200 };
+  return {
+    stream,
+    actionResult,
+    requestContext,
+    status: result.notFound ? 404 : 200,
+  };
 };
 
 const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
@@ -149,15 +177,6 @@ const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
       : createError({ status: 500 });
   return serverError.digest;
 };
-
-//
-// glob import routes
-//
-
-// @ts-ignore untyped virtual
-import serverRoutes from "virtual:server-routes";
-
-export const router = generateRouteModuleTree(serverRoutes);
 
 //
 // server action
@@ -203,11 +222,9 @@ async function actionHandler({
     result.data = await requestContext.run(() => boundAction());
   } catch (e) {
     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
-  } finally {
-    result.responseHeaders = {
-      ...result.error?.headers,
-      "set-cookie": requestContext.getSetCookie(),
-    };
+  }
+  if (result.error?.headers) {
+    requestContext.mergeResponseHeaders(new Headers(result.error?.headers));
   }
   return result;
 }

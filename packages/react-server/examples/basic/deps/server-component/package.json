@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/test-dep-use-client",
+  "name": "@hiogawa/test-deps-server-component",
   "private": true,
   "type": "module",
   "exports": {
