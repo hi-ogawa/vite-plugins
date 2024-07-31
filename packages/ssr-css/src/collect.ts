@@ -8,8 +8,13 @@ export async function collectStyle(server: ViteDevServer, entries: string[]) {
   const urls = await collectStyleUrls(server, entries);
   const codes = await Promise.all(
     urls.map(async (url) => {
-      const res = await server.transformRequest(url + "?direct");
-      return [`/* [collectStyle] ${url} */`, res?.code];
+      const res = url.includes("\0")
+        ? await server.ssrLoadModule(url).then((m) => m["default"])
+        : await server
+            .transformRequest(url + "?direct")
+            .then((result) => result?.code);
+
+      return [`/* [collectStyle] ${url} */`, res];
     }),
   );
   return codes.flat().filter(Boolean).join("\n\n");
@@ -43,9 +48,7 @@ async function collectStyleUrls(
   await Promise.all(entries.map((url) => traverse(url)));
 
   // filter
-  return [...visited]
-    .filter((url) => !url.includes("\0"))
-    .filter((url) => url.match(CSS_LANGS_RE));
+  return [...visited].filter((url) => url.match(CSS_LANGS_RE));
 }
 
 // cf. https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
