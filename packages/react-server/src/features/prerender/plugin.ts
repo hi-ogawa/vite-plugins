@@ -39,7 +39,7 @@ export function prerenderPlugin({
       writeBundle: {
         sequential: true,
         handler() {
-          return processPrerender(prerender);
+          return processPrerender(prerender, manager.outDir);
         },
       },
     },
@@ -66,10 +66,13 @@ function urlPathToHtmlPath(pathname: string) {
   return pathname + (pathname.endsWith("/") ? "index.html" : ".html");
 }
 
-async function processPrerender(getPrerenderRoutes: PrerenderFn) {
+async function processPrerender(
+  getPrerenderRoutes: PrerenderFn,
+  outDir: string,
+) {
   console.log("▶▶▶ PRERENDER");
   const entry: typeof import("../../entry/ssr") = await import(
-    path.resolve("dist/server/__entry_ssr.js")
+    path.resolve(path.join(outDir, "server", "__entry_ssr.js"))
   );
   const { router } = await entry.importReactServer();
   const presets = createPrerenderPresets(router.manifest);
@@ -87,11 +90,11 @@ async function processPrerender(getPrerenderRoutes: PrerenderFn) {
     const data = Readable.from(stream as any);
     const htmlFile = urlPathToHtmlPath(route);
     const dataFile = route + RSC_PATH;
-    await mkdir(path.dirname(path.join("dist/client", htmlFile)), {
+    await mkdir(path.dirname(path.join(outDir, "client", htmlFile)), {
       recursive: true,
     });
-    await writeFile(path.join("dist/client", htmlFile), html);
-    await writeFile(path.join("dist/client", dataFile), data);
+    await writeFile(path.join(outDir, "client", htmlFile), html);
+    await writeFile(path.join(outDir, "client", dataFile), data);
     manifest.entries.push({
       route,
       html: htmlFile,
@@ -99,7 +102,7 @@ async function processPrerender(getPrerenderRoutes: PrerenderFn) {
     });
   }
   await writeFile(
-    "dist/client/__prerender.json",
+    path.join(outDir, "client", "__prerender.json"),
     JSON.stringify(manifest, null, 2),
   );
 }

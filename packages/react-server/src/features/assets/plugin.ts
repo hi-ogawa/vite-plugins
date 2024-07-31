@@ -65,7 +65,7 @@ export function vitePluginServerAssets({
         // TODO: (refactor) use RouteManifest?
         const manifest: Manifest = JSON.parse(
           await fs.promises.readFile(
-            "dist/client/.vite/manifest.json",
+            path.join(manager.outDir, "client", ".vite", "manifest.json"),
             "utf-8",
           ),
         );
@@ -138,8 +138,8 @@ export function vitePluginServerAssets({
         if (manager.buildType === "browser") {
           for (const file of manager.serverAssets) {
             await fs.promises.cp(
-              path.join("dist/rsc", file),
-              path.join("dist/client", file),
+              path.join(manager.outDir, "rsc", file),
+              path.join(manager.outDir, "client", file),
             );
           }
         }
@@ -150,7 +150,9 @@ export function vitePluginServerAssets({
 
 export function serverAssertsPluginServer({
   manager,
-}: { manager: PluginStateManager }): Plugin[] {
+}: {
+  manager: PluginStateManager;
+}): Plugin[] {
   // 0. track server assets during server build (this plugin)
   // 1. copy all server assets to browser build (copy-build plugin)
   // 2. out of those, inject links automatically (ssr-assets virtual plugin)

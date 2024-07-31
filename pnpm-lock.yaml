@@ -234,6 +234,37 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
 
+  packages/react-server/examples/custom-out-dir:
+    dependencies:
+      '@hiogawa/react-server':
+        specifier: workspace:*
+        version: link:../..
+      next:
+        specifier: link:../../../react-server-next
+        version: link:../../../react-server-next
+      react:
+        specifier: 19.0.0-rc-df5f2736-20240712
+        version: 19.0.0-rc-df5f2736-20240712
+      react-dom:
+        specifier: 19.0.0-rc-df5f2736-20240712
+        version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
+      react-server-dom-webpack:
+        specifier: 19.0.0-rc-df5f2736-20240712
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.93.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.45.1
+        version: 1.45.1
+      '@types/react':
+        specifier: 18.3.3
+        version: 18.3.3
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
+      vite:
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+
   packages/react-server/examples/minimal:
     dependencies:
       '@hiogawa/react-server':
