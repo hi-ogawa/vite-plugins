@@ -8,8 +8,13 @@ export async function collectStyle(server: ViteDevServer, entries: string[]) {
   const urls = await collectStyleUrls(server, entries);
   const codes = await Promise.all(
     urls.map(async (url) => {
-      const res = await server.transformRequest(url + "?direct");
-      return [`/* [collectStyle] ${url} */`, res?.code];
+      const res = url.includes("\0")
+        ? await server.ssrLoadModule(url).then((m) => m["default"])
+        : await server
+            .transformRequest(url + "?direct")
+            .then((result) => result?.code);
+
+      return [`/* [collectStyle] ${url} */`, res];
     }),
   );
   return codes.flat().filter(Boolean).join("\n\n");

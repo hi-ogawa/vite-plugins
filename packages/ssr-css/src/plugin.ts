@@ -32,12 +32,16 @@ export function vitePluginSsrCss(pluginOpts: { entries: string[] }): Plugin {
     },
     async load(id, _options) {
       if (id.startsWith("\0" + VIRTUAL_ENTRY)) {
-        const url = new URL(id.slice(1), "https://test.local");
-        let code = await collectStyle(server, pluginOpts.entries);
-        if (!url.searchParams.has("direct")) {
-          code = `export default ${JSON.stringify(code)}`;
+        try {
+          const url = new URL(id.slice(1), "https://test.local");
+          let code = await collectStyle(server, pluginOpts.entries);
+          if (!url.searchParams.has("direct")) {
+            code = `export default ${JSON.stringify(code)}`;
+          }
+          return code;
+        } catch (e) {
+          console.error(e);
         }
-        return code;
       }
       return;
     },
