@@ -324,8 +324,7 @@ test("client hmr @dev", async ({ page }) => {
   expect(resText).toContain("<div>test-hmr-edit-div</div>");
 });
 
-// TODO
-test.skip("rsc + client + rsc hmr @dev", async ({ page }) => {
+test("rsc + client + rsc hmr @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");

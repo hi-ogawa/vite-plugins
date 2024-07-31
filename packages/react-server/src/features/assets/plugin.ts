@@ -95,6 +95,14 @@ export function vitePluginServerAssets({
 
     createVirtualPlugin(DEV_SSR_CSS.split(":")[1]!, async () => {
       tinyassert(!manager.buildType);
+      // normalize it again to workaround inconsistent hmr path issue
+      // https://github.com/hi-ogawa/reproductions/tree/main/vite-v6-hmr-path
+      const root = manager.config.root;
+      const clientReferences = [...manager.clientReferenceMap.keys()].map(
+        (file) => {
+          return file.startsWith(root) ? file.slice(root.length) : file;
+        },
+      );
       const styles = await Promise.all([
         `/******* react-server ********/`,
         collectStyle($__global.dev.reactServer, {
@@ -107,7 +115,7 @@ export function vitePluginServerAssets({
             entryBrowser,
             "virtual:client-routes",
             // TODO: dev should also use RouteManifest to manage client css
-            ...manager.clientReferenceMap.keys(),
+            ...clientReferences,
           ],
           ssr: false,
         }),
