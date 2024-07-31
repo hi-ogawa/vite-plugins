@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 import type { Rollup } from "vite";
 
 // ensure `.js` extension even if project root is cjs
@@ -8,7 +9,7 @@ export const OUTPUT_SERVER_JS_EXT = {
   chunkFileNames: "assets/[name]-[hash].js",
 } satisfies Rollup.OutputOptions;
 
-export async function createServerPackageJson() {
-  await mkdir("dist", { recursive: true });
-  await writeFile("dist/package.json", `{ "type": "module" }`);
+export async function createServerPackageJson(outDir: string) {
+  await mkdir(outDir, { recursive: true });
+  await writeFile(path.join(outDir, "package.json"), `{ "type": "module" }`);
 }

@@ -1,3 +1,4 @@
+import path from "path";
 import type { Connect, Plugin } from "vite";
 import { name as packageName } from "../package.json";
 
@@ -10,6 +11,7 @@ export function vitePluginSsrMiddleware({
   preview?: string;
   mode?: "ssrLoadModule" | "ViteRuntime" | "ViteRuntime-no-hmr";
 }): Plugin {
+  let outDir: string = "dist";
   return {
     name: packageName,
 
@@ -37,6 +39,10 @@ export function vitePluginSsrMiddleware({
         };
       }
       return;
+    },
+
+    configResolved(config) {
+      outDir = path.dirname(config.build.outDir);
     },
 
     async configureServer(server) {
@@ -81,6 +87,9 @@ export function vitePluginSsrMiddleware({
 
     async configurePreviewServer(server) {
       if (preview) {
+        if (!path.isAbsolute(preview)) {
+          preview = path.resolve(outDir, preview);
+        }
         const mod = await import(preview);
         return () => server.middlewares.use(mod.default);
       }

@@ -75,6 +75,8 @@ class PluginStateManager {
   config!: ResolvedConfig;
   configEnv!: ConfigEnv;
 
+  outDir!: string;
+
   buildType?: "scan" | "server" | "browser" | "ssr";
 
   routeToClientReferences: Record<string, string[]> = {};
@@ -135,127 +137,136 @@ export function vitePluginReactServer(
     options?.entryServer ?? "@hiogawa/react-server/entry/server";
   const routeDir = options?.routeDir ?? "src/routes";
 
-  const reactServerViteConfig: InlineConfig = {
-    customLogger: createLogger(undefined, {
-      prefix: "[react-server]",
-      allowClearScreen: false,
-    }),
-    clearScreen: false,
-    configFile: false,
-    cacheDir: "./node_modules/.vite-rsc",
-    optimizeDeps: {
-      noDiscovery: true,
-      include: [],
-    },
-    plugins: [
-      ...(options?.plugins ?? []),
-
-      vitePluginSilenceDirectiveBuildWarning(),
-
-      // expose server reference to react-server itself
-      vitePluginServerUseServer({
-        manager,
-        runtimePath: RUNTIME_SERVER_PATH,
+  const createReactServerViteConfig = (outDir: string): InlineConfig => {
+    return {
+      customLogger: createLogger(undefined, {
+        prefix: "[react-server]",
+        allowClearScreen: false,
       }),
+      clearScreen: false,
+      configFile: false,
+      cacheDir: "./node_modules/.vite-rsc",
+      optimizeDeps: {
+        noDiscovery: true,
+        include: [],
+      },
+      plugins: [
+        ...(options?.plugins ?? []),
 
-      // transform "use client" into client referecnes
-      vitePluginServerUseClient({
-        manager,
-        runtimePath: RUNTIME_SERVER_PATH,
-      }),
+        vitePluginSilenceDirectiveBuildWarning(),
 
-      routeManifestPluginServer({ manager, routeDir }),
+        // expose server reference to react-server itself
+        vitePluginServerUseServer({
+          manager,
+          runtimePath: RUNTIME_SERVER_PATH,
+        }),
 
-      createVirtualPlugin("server-routes", () => {
-        return `
-          const glob = import.meta.glob(
-            "/${routeDir}/**/(page|layout|error|not-found|loading|template|route).(js|jsx|ts|tsx)",
-            { eager: true },
-          );
-          export default Object.fromEntries(
-            Object.entries(glob).map(
-              ([k, v]) => [k.slice("/${routeDir}".length), v]
-            )
-          );
+        // transform "use client" into client referecnes
+        vitePluginServerUseClient({
+          manager,
+          runtimePath: RUNTIME_SERVER_PATH,
+        }),
 
-          const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
-          export const middleware = Object.values(globMiddleware)[0];
-        `;
-      }),
+        routeManifestPluginServer({ manager, routeDir }),
 
-      createVirtualPlugin(
-        ENTRY_SERVER_WRAPPER.slice("virtual:".length),
-        () => `
-          import "virtual:inject-async-local-storage";
-          export { handler } from "${entryServer}";
-          export { router } from "@hiogawa/react-server/entry/server";
-        `,
-      ),
-
-      // make `AsyncLocalStorage` available globally for React.cache from edge build
-      // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
-      createVirtualPlugin("inject-async-local-storage", () => {
-        if (options?.noAsyncLocalStorage) {
-          return "export {}";
-        }
-        return `
-          import { AsyncLocalStorage } from "node:async_hooks";
-          Object.assign(globalThis, { AsyncLocalStorage });
-        `;
-      }),
-
-      validateImportPlugin({
-        "client-only": `'client-only' is included in server build`,
-        "server-only": true,
-      }),
-
-      serverAssertsPluginServer({ manager }),
-
-      serverDepsConfigPlugin(),
-
-      {
-        name: "patch-react-server-dom-webpack",
-        transform(code, id, _options) {
-          if (id.includes("react-server-dom-webpack")) {
-            // rename webpack markers in react server runtime
-            // to avoid conflict with ssr runtime which shares same globals
-            code = code.replaceAll(
-              "__webpack_require__",
-              "__vite_react_server_webpack_require__",
+        createVirtualPlugin("server-routes", () => {
+          return `
+            const glob = import.meta.glob(
+              "/${routeDir}/**/(page|layout|error|not-found|loading|template|route).(js|jsx|ts|tsx)",
+              { eager: true },
             );
-            code = code.replaceAll(
-              "__webpack_chunk_load__",
-              "__vite_react_server_webpack_chunk_load__",
+            export default Object.fromEntries(
+              Object.entries(glob).map(
+                ([k, v]) => [k.slice("/${routeDir}".length), v]
+              )
             );
+  
+            const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
+            export const middleware = Object.values(globMiddleware)[0];
+          `;
+        }),
 
-            // make server reference async for simplicity (stale chunkCache, etc...)
-            // see TODO in https://github.com/facebook/react/blob/33a32441e991e126e5e874f831bd3afc237a3ecf/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js#L131-L132
-            code = code.replaceAll("if (isAsyncImport(metadata))", "if (true)");
-            code = code.replaceAll("4 === metadata.length", "true");
+        createVirtualPlugin(
+          ENTRY_SERVER_WRAPPER.slice("virtual:".length),
+          () => `
+            import "virtual:inject-async-local-storage";
+            export { handler } from "${entryServer}";
+            export { router } from "@hiogawa/react-server/entry/server";
+          `,
+        ),
 
-            return code;
+        // make `AsyncLocalStorage` available globally for React.cache from edge build
+        // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
+        createVirtualPlugin("inject-async-local-storage", () => {
+          if (options?.noAsyncLocalStorage) {
+            return "export {}";
           }
-          return;
+          return `
+            import { AsyncLocalStorage } from "node:async_hooks";
+            Object.assign(globalThis, { AsyncLocalStorage });
+          `;
+        }),
+
+        validateImportPlugin({
+          "client-only": `'client-only' is included in server build`,
+          "server-only": true,
+        }),
+
+        serverAssertsPluginServer({ manager }),
+
+        serverDepsConfigPlugin(),
+
+        {
+          name: "patch-react-server-dom-webpack",
+          transform(code, id, _options) {
+            if (id.includes("react-server-dom-webpack")) {
+              // rename webpack markers in react server runtime
+              // to avoid conflict with ssr runtime which shares same globals
+              code = code.replaceAll(
+                "__webpack_require__",
+                "__vite_react_server_webpack_require__",
+              );
+              code = code.replaceAll(
+                "__webpack_chunk_load__",
+                "__vite_react_server_webpack_chunk_load__",
+              );
+
+              // make server reference async for simplicity (stale chunkCache, etc...)
+              // see TODO in https://github.com/facebook/react/blob/33a32441e991e126e5e874f831bd3afc237a3ecf/packages/react-server-dom-webpack/src/ReactFlightClientConfigBundlerWebpack.js#L131-L132
+              code = code.replaceAll(
+                "if (isAsyncImport(metadata))",
+                "if (true)",
+              );
+              code = code.replaceAll("4 === metadata.length", "true");
+
+              return code;
+            }
+            return;
+          },
+        },
+      ],
+      build: {
+        ssr: true,
+        manifest: true,
+        ssrEmitAssets: true,
+        outDir: path.join(outDir, "rsc"),
+        rollupOptions: {
+          input: {
+            index: ENTRY_SERVER_WRAPPER,
+          },
+          output: OUTPUT_SERVER_JS_EXT,
         },
       },
-    ],
-    build: {
-      ssr: true,
-      manifest: true,
-      ssrEmitAssets: true,
-      outDir: "dist/rsc",
-      rollupOptions: {
-        input: {
-          index: ENTRY_SERVER_WRAPPER,
-        },
-        output: OUTPUT_SERVER_JS_EXT,
-      },
-    },
+    };
   };
 
   const rscParentPlugin: Plugin = {
     name: vitePluginReactServer.name,
     config(_config, env) {
+      tinyassert(
+        _config.build?.outDir,
+        "outDir is undefined in rscParentPlugin",
+      );
       manager.configEnv = env;
       return {
         optimizeDeps: {
@@ -285,7 +296,10 @@ export function vitePluginReactServer(
         },
         build: {
           manifest: true,
-          outDir: env.isSsrBuild ? "dist/server" : "dist/client",
+          outDir: path.join(
+            _config.build.outDir,
+            env.isSsrBuild ? "server" : "client",
+          ),
           rollupOptions: env.isSsrBuild
             ? {
                 input: options?.prerender
@@ -303,6 +317,7 @@ export function vitePluginReactServer(
     },
     configResolved(config) {
       manager.config = config;
+      manager.outDir = path.dirname(config.build.outDir);
     },
     async configureServer(server) {
       manager.server = server;
@@ -310,7 +325,9 @@ export function vitePluginReactServer(
     async buildStart(_options) {
       if (manager.configEnv.command === "serve") {
         tinyassert(manager.server);
-        const reactServer = await createServer(reactServerViteConfig);
+        const reactServer = await createServer(
+          createReactServerViteConfig(manager.outDir),
+        );
         reactServer.pluginContainer.buildStart({});
         $__global.dev = {
           server: manager.server,
@@ -373,7 +390,10 @@ export function vitePluginReactServer(
     apply: "build",
     async buildStart(_options) {
       if (!manager.buildType) {
-        await createServerPackageJson();
+        await createServerPackageJson(manager.outDir);
+        const reactServerViteConfig = createReactServerViteConfig(
+          manager.outDir,
+        );
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         await build(

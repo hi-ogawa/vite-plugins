@@ -41,7 +41,10 @@ import type { ReactServerHandlerStreamResult } from "./server";
 
 const debug = createDebug("react-server:ssr");
 
-export async function handler(request: Request): Promise<Response> {
+export async function handler(
+  request: Request,
+  outDir: string,
+): Promise<Response> {
   // dev only api endpoint to test internal
   if (
     import.meta.env.DEV &&
@@ -50,7 +53,7 @@ export async function handler(request: Request): Promise<Response> {
     return devInspectHandler(request);
   }
 
-  const reactServer = await importReactServer();
+  const reactServer = await importReactServer(outDir);
 
   // server action and render rsc stream
   const result = await reactServer.handler({ request });
@@ -63,8 +66,8 @@ export async function handler(request: Request): Promise<Response> {
 }
 
 // return stream and ssr at once for prerender
-export async function prerender(request: Request) {
-  const reactServer = await importReactServer();
+export async function prerender(request: Request, outDir: string) {
+  const reactServer = await importReactServer(outDir);
 
   const result = await reactServer.handler({ request });
   tinyassert(!(result instanceof Response));
@@ -77,11 +80,13 @@ export async function prerender(request: Request) {
   return { stream, response, html };
 }
 
-export async function importReactServer(): Promise<typeof import("./server")> {
+export async function importReactServer(
+  outDir: string,
+): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
   } else {
-    return import("/dist/rsc/index.js" as string);
+    return import(`./${outDir}/rsc/index.js` as string);
   }
 }
 
