@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-plugin-ssr-css",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/ssr-css",
   "repository": {
     "type": "git",
