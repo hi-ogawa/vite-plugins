@@ -86,7 +86,8 @@ export async function importReactServer(
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
   } else {
-    return import(`./${outDir}/rsc/index.js` as string);
+    //TODO: FIND A WAY TO IMPORT RSC HERE
+    return import(`/dist/rsc/index.js` as string);
   }
 }
 

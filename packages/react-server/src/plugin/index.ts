@@ -263,10 +263,7 @@ export function vitePluginReactServer(
   const rscParentPlugin: Plugin = {
     name: vitePluginReactServer.name,
     config(_config, env) {
-      tinyassert(
-        _config.build?.outDir,
-        "outDir is undefined in rscParentPlugin",
-      );
+      const outDir = _config.build?.outDir ?? "dist";
       manager.configEnv = env;
       return {
         optimizeDeps: {
@@ -296,10 +293,7 @@ export function vitePluginReactServer(
         },
         build: {
           manifest: true,
-          outDir: path.join(
-            _config.build.outDir,
-            env.isSsrBuild ? "server" : "client",
-          ),
+          outDir: path.join(outDir, env.isSsrBuild ? "server" : "client"),
           rollupOptions: env.isSsrBuild
             ? {
                 input: options?.prerender
