@@ -8,7 +8,7 @@ export function vitePluginSsrMiddleware({
 }: {
   entry: string;
   preview?: string;
-  mode?: "ssrLoadModule" | "ViteRuntime" | "ViteRuntime-no-hmr";
+  mode?: "ssrLoadModule" | "ModuleRunner" | "ModuleRunner-HMR";
 }): Plugin {
   return {
     name: packageName,
@@ -41,30 +41,12 @@ export function vitePluginSsrMiddleware({
 
     async configureServer(server) {
       let loadModule = server.ssrLoadModule;
-      if (mode === "ViteRuntime" || mode === "ViteRuntime-no-hmr") {
-        // @ts-ignore
-        const { createViteRuntime, ServerHMRConnector } = await import("vite");
-        if (mode === "ViteRuntime") {
-          // simple default vite runtime
-          const runtime = await createViteRuntime(server);
-          loadModule = runtime.executeEntrypoint.bind(runtime);
-        } else {
-          // manual invalidation mode without hmr
-          const runtime = await createViteRuntime(server, { hmr: false });
-          // @ts-ignore
-          const connection = new ServerHMRConnector(server);
-          connection.onUpdate(async (payload) => {
-            if (payload.type === "update") {
-              // unwrapId?
-              runtime.moduleCache.invalidateDepTree(
-                payload.updates.map((update) => update.path),
-              );
-            } else if (payload.type === "full-reload") {
-              runtime.moduleCache.clear();
-            }
-          });
-          loadModule = runtime.executeEntrypoint.bind(runtime);
-        }
+      if (mode === "ModuleRunner" || mode === "ModuleRunner-HMR") {
+        const { createServerModuleRunner } = await import("vite");
+        const runner = createServerModuleRunner(server.environments.ssr, {
+          hmr: mode === "ModuleRunner-HMR" ? undefined : false,
+        });
+        loadModule = (id: string) => runner.import(id);
       }
 
       const handler: Connect.NextHandleFunction = async (req, res, next) => {
