@@ -6,3 +6,7 @@ declare module "virtual:server-routes" {
     | import("../features/next/middleware").MiddlewareModule
     | undefined;
 }
+
+declare module "virtual:import-react-server" {
+  export const reactServerImport: Promise<typeof import("../entry/server")>;
+}

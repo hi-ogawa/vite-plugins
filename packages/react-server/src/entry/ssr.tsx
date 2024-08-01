@@ -1,3 +1,4 @@
+import { reactServerImport } from "virtual:import-react-server";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
@@ -41,10 +42,7 @@ import type { ReactServerHandlerStreamResult } from "./server";
 
 const debug = createDebug("react-server:ssr");
 
-export async function handler(
-  request: Request,
-  outDir: string,
-): Promise<Response> {
+export async function handler(request: Request): Promise<Response> {
   // dev only api endpoint to test internal
   if (
     import.meta.env.DEV &&
@@ -53,7 +51,7 @@ export async function handler(
     return devInspectHandler(request);
   }
 
-  const reactServer = await importReactServer(outDir);
+  const reactServer = await importReactServer();
 
   // server action and render rsc stream
   const result = await reactServer.handler({ request });
@@ -66,8 +64,8 @@ export async function handler(
 }
 
 // return stream and ssr at once for prerender
-export async function prerender(request: Request, outDir: string) {
-  const reactServer = await importReactServer(outDir);
+export async function prerender(request: Request) {
+  const reactServer = await importReactServer();
 
   const result = await reactServer.handler({ request });
   tinyassert(!(result instanceof Response));
@@ -80,14 +78,11 @@ export async function prerender(request: Request, outDir: string) {
   return { stream, response, html };
 }
 
-export async function importReactServer(
-  outDir: string,
-): Promise<typeof import("./server")> {
+export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
   } else {
-    //TODO: FIND A WAY TO IMPORT RSC HERE
-    return import(`/dist/rsc/index.js` as string);
+    return reactServerImport;
   }
 }
 

@@ -74,7 +74,7 @@ async function processPrerender(
   const entry: typeof import("../../entry/ssr") = await import(
     path.resolve(path.join(outDir, "server", "__entry_ssr.js"))
   );
-  const { router } = await entry.importReactServer(outDir);
+  const { router } = await entry.importReactServer();
   const presets = createPrerenderPresets(router.manifest);
   const routes = await getPrerenderRoutes(router.manifest, presets);
   const manifest: PrerenderManifest = { entries: [] };
@@ -86,7 +86,7 @@ async function processPrerender(
         "x-react-server-render-mode": "prerender",
       },
     });
-    const { stream, html } = await entry.prerender(request, outDir);
+    const { stream, html } = await entry.prerender(request);
     const data = Readable.from(stream as any);
     const htmlFile = urlPathToHtmlPath(route);
     const dataFile = route + RSC_PATH;
