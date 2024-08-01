@@ -1,11 +1,8 @@
-import { objectPickBy, tinyassert } from "@hiogawa/utils";
+import { tinyassert } from "@hiogawa/utils";
 import { ModuleRunner } from "vite/module-runner";
 import {
   ANY_URL,
-  type EvalFn,
-  type EvalMetadata,
   type FetchMetadata,
-  RUNNER_EVAL_PATH,
   RUNNER_INIT_PATH,
   type RunnerEnv,
 } from "./shared";
@@ -40,22 +37,6 @@ export class RunnerObject implements DurableObject {
       tinyassert(!this.#runner);
       this.#runner = createRunner(this.#env, pair[0]);
       return new Response(null, { status: 101, webSocket: pair[1] });
-    }
-
-    if (url.pathname === RUNNER_EVAL_PATH) {
-      tinyassert(this.#runner);
-      const meta = JSON.parse(
-        request.headers.get("x-vite-eval")!,
-      ) as EvalMetadata;
-      const mod = await this.#runner.import(meta.entry);
-      const data = await request.json();
-      const env = objectPickBy(this.#env, (_v, k) => !k.startsWith("__vite"));
-      const fn: EvalFn = this.#env.__viteUnsafeEval.eval(
-        `() => ${meta.fnString}`,
-      )();
-      const result = await fn({ mod, data, env, runner: this.#runner });
-      const body = JSON.stringify(result ?? null);
-      return new Response(body);
     }
 
     tinyassert(this.#runner);

@@ -18,10 +18,7 @@ import {
 import type { SourcelessWorkerOptions } from "wrangler";
 import {
   ANY_URL,
-  type EvalApi,
-  type EvalMetadata,
   type FetchMetadata,
-  RUNNER_EVAL_PATH,
   RUNNER_INIT_PATH,
   type RunnerEnv,
 } from "./shared";
@@ -86,7 +83,6 @@ export type WorkerdDevEnvironment = DevEnvironment & {
 
 type WorkerdDevApi = {
   dispatchFetch: (entry: string, request: Request) => Promise<Response>;
-  eval: EvalApi;
 };
 
 export async function createWorkerdDevEnvironment(
@@ -214,30 +210,6 @@ export async function createWorkerdDevEnvironment(
         statusText: res.statusText,
         headers: res.headers,
       });
-    },
-
-    // playwright-like eval interface https://playwright.dev/docs/evaluating
-    eval: async (ctx) => {
-      const headers = new Headers();
-      headers.set(
-        "x-vite-eval",
-        JSON.stringify({
-          entry: ctx.entry,
-          fnString: ctx.fn.toString(),
-        } satisfies EvalMetadata),
-      );
-      const body = JSON.stringify(ctx.data ?? (null as any));
-      const fetch_ = runnerObject.fetch as any as typeof fetch; // fix web/undici types
-      const response = await fetch_(ANY_URL + RUNNER_EVAL_PATH, {
-        method: "POST",
-        headers,
-        body,
-        // @ts-ignore undici
-        duplex: "half",
-      });
-      tinyassert(response.ok);
-      const result = await response.json();
-      return result as any;
     },
   };
 
