@@ -17,7 +17,7 @@ function createFetchHandler() {
     Object.assign(globalThis, { env });
 
     // DevServerHook is implemented via custom rpc
-    if (import.meta.env.DEV) {
+    if (import.meta.env.DEV && 0) {
       unstable_setDevServerHooks({
         getCriticalCss: env.__RPC.__remixGetCriticalCss,
       });
