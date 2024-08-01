@@ -22,8 +22,7 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
-    "prepack": "tsup --clean",
-    "release": "pnpm publish --no-git-checks --access public"
+    "prepack": "tsup --clean"
   },
   "dependencies": {
     "@hattip/adapter-node": "^0.0.44",

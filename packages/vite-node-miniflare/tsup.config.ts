@@ -2,7 +2,8 @@ import { defineConfig } from "tsup";
 
 export default [
   defineConfig({
-    entry: ["src/client/worker-entry.ts"],
+    // entry: ["src/client/worker-entry.ts"],
+    entry: ["src/v6/worker.ts"],
     format: ["esm"],
     platform: "browser",
     noExternal: [/.*/],
