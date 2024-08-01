@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { tinyReactVitePlugin } from "@hiogawa/tiny-react/dist/plugins/vite";
-// import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 import { vitePluginWorkerd } from "@hiogawa/vite-node-miniflare";
 import { vitePluginSimpleHmr } from "@hiogawa/vite-plugin-simple-hmr";
 import { Log } from "miniflare";
@@ -9,9 +8,6 @@ import { type Plugin, type ViteDevServer, defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   appType: "custom",
-  // ssr: {
-  //   noExternal: true,
-  // },
   plugins: [
     vitePluginSimpleHmr({
       include: new URL("./src/**/*.tsx", import.meta.url).pathname,
@@ -22,14 +18,6 @@ export default defineConfig({
         log: new Log(),
       },
     }),
-    // vitePluginViteNodeMiniflare({
-    //   debug: true,
-    //   hmr: true,
-    //   entry: "/src/worker-entry.ts",
-    //   miniflareOptions(options) {
-    //     options.log = new Log();
-    //   },
-    // }),
     tinyReactVitePlugin(),
     vitePluginVirtualIndexHtml(),
   ],

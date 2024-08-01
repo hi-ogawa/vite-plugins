@@ -1,5 +1,4 @@
 import { fileURLToPath } from "url";
-// import { createMiddleware } from "@hattip/adapter-node/native-fetch";
 import { DefaultMap, tinyassert } from "@hiogawa/utils";
 import { webToNodeHandler } from "@hiogawa/utils-node";
 import {
@@ -25,6 +24,8 @@ import {
   RUNNER_EVAL_PATH,
   RUNNER_INIT_PATH,
 } from "./shared";
+
+// TODO: hmr: false mode?
 
 interface WorkerdPluginOptions extends WorkerdEnvironmentOptions {
   entry: string;
@@ -72,10 +73,6 @@ export function vitePluginWorkerd(pluginOptions: WorkerdPluginOptions): Plugin {
       const nodeMiddleware = webToNodeHandler((request) =>
         devEnv.api.dispatchFetch(entry, request),
       );
-      // const nodeMiddleware = createMiddleware(
-      //   (ctx) => devEnv.api.dispatchFetch(entry, ctx.request),
-      //   { alwaysCallNext: false },
-      // );
       return () => {
         server.middlewares.use(nodeMiddleware);
       };
