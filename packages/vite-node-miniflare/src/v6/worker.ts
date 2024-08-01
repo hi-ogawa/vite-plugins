@@ -23,7 +23,7 @@ export class RunnerObject implements DurableObject {
       return await this.#fetch(request);
     } catch (e) {
       console.error(e);
-      let body = "[vite workerd runner error]\n";
+      let body = "[vite-node-miniflare error]\n";
       if (e instanceof Error) {
         body += `${e.stack ?? e.message}`;
       }
