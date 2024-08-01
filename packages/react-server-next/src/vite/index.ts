@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 import {
   type ReactServerPluginOptions,
   vitePluginReactServer,
@@ -31,7 +32,7 @@ export default function vitePluginReactServerNext(
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
-      preview: "server/index.js",
+      preview: path.resolve(options?.outDir ?? "dist", "server", "index.js"),
     }),
     adapterPlugin({ adapter: options?.adapter }),
     appFaviconPlugin(),

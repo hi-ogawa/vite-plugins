@@ -56,13 +56,13 @@ const debug = createDebug("react-server:plugin");
 // resolve import paths for `createClientReference`, `createServerReference`, etc...
 // since `import "@hiogawa/react-server"` is not always visible for exernal library.
 const RUNTIME_BROWSER_PATH = fileURLToPath(
-  new URL("../runtime/browser.js", import.meta.url)
+  new URL("../runtime/browser.js", import.meta.url),
 );
 const RUNTIME_SSR_PATH = fileURLToPath(
-  new URL("../runtime/ssr.js", import.meta.url)
+  new URL("../runtime/ssr.js", import.meta.url),
 );
 const RUNTIME_SERVER_PATH = fileURLToPath(
-  new URL("../runtime/server.js", import.meta.url)
+  new URL("../runtime/server.js", import.meta.url),
 );
 
 export type { PrerenderManifest };
@@ -130,7 +130,7 @@ export type ReactServerPluginOptions = {
 };
 
 export function vitePluginReactServer(
-  options?: ReactServerPluginOptions
+  options?: ReactServerPluginOptions,
 ): Plugin[] {
   const entryBrowser =
     options?.entryBrowser ?? "@hiogawa/react-server/entry/browser";
@@ -192,7 +192,7 @@ export function vitePluginReactServer(
             import "virtual:inject-async-local-storage";
             export { handler } from "${entryServer}";
             export { router } from "@hiogawa/react-server/entry/server";
-          `
+          `,
       ),
 
       // make `AsyncLocalStorage` available globally for React.cache from edge build
@@ -224,11 +224,11 @@ export function vitePluginReactServer(
             // to avoid conflict with ssr runtime which shares same globals
             code = code.replaceAll(
               "__webpack_require__",
-              "__vite_react_server_webpack_require__"
+              "__vite_react_server_webpack_require__",
             );
             code = code.replaceAll(
               "__webpack_chunk_load__",
-              "__vite_react_server_webpack_chunk_load__"
+              "__vite_react_server_webpack_chunk_load__",
             );
 
             // make server reference async for simplicity (stale chunkCache, etc...)
@@ -267,7 +267,7 @@ export function vitePluginReactServer(
           entries: [
             path.posix.join(
               routeDir,
-              `**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)`
+              `**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx)`,
             ),
           ],
           exclude: ["@hiogawa/react-server"],
@@ -383,7 +383,7 @@ export function vitePluginReactServer(
         await build(
           mergeConfig(reactServerViteConfig, {
             build: { write: false },
-          } satisfies InlineConfig)
+          } satisfies InlineConfig),
         );
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "server";
