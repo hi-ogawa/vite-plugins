@@ -117,7 +117,7 @@ function createRunner(env: RunnerEnv, webSocket: WebSocket) {
         Object.freeze(context.__vite_ssr_exports__);
       },
       async runExternalModule(filepath) {
-        console.log("[runExternalModule]", filepath);
+        // with nodejs_compat, workerd can import node:util etc... as external module
         return import(filepath);
       },
     },
