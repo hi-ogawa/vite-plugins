@@ -34,7 +34,7 @@
     "@hiogawa/tiny-rpc": "0.2.3-pre.18",
     "@hiogawa/utils-node": "^0.0.2",
     "miniflare": "^3.20240821.0",
-    "wrangler": "3.49.0"
+    "wrangler": "^3.72.2"
   },
   "peerDependencies": {
     "miniflare": "*",

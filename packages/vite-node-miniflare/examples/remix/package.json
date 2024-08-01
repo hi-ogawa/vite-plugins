@@ -20,6 +20,6 @@
     "@remix-run/dev": "2.8.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "wrangler": "3.49.0"
+    "wrangler": "^3.72.2"
   }
 }
