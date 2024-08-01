@@ -1,6 +1,7 @@
 import { fileURLToPath } from "url";
-import { createMiddleware } from "@hattip/adapter-node/native-fetch";
+// import { createMiddleware } from "@hattip/adapter-node/native-fetch";
 import { DefaultMap, tinyassert } from "@hiogawa/utils";
+import { webToNodeHandler } from "@hiogawa/utils-node";
 import {
   Miniflare,
   Response as MiniflareResponse,
@@ -26,7 +27,7 @@ import {
 } from "./shared";
 
 interface WorkerdPluginOptions extends WorkerdEnvironmentOptions {
-  entry?: string;
+  entry: string;
 }
 
 interface WorkerdEnvironmentOptions {
@@ -68,10 +69,13 @@ export function vitePluginWorkerd(pluginOptions: WorkerdPluginOptions): Plugin {
         return;
       }
       const devEnv = server.environments["workerd"] as WorkerdDevEnvironment;
-      const nodeMiddleware = createMiddleware(
-        (ctx) => devEnv.api.dispatchFetch(entry, ctx.request),
-        { alwaysCallNext: false },
+      const nodeMiddleware = webToNodeHandler((request) =>
+        devEnv.api.dispatchFetch(entry, request),
       );
+      // const nodeMiddleware = createMiddleware(
+      //   (ctx) => devEnv.api.dispatchFetch(entry, ctx.request),
+      //   { alwaysCallNext: false },
+      // );
       return () => {
         server.middlewares.use(nodeMiddleware);
       };
