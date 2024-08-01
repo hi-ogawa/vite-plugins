@@ -21,7 +21,7 @@ export default defineConfig({
             const result = await (globalThis as any)[
               "__remix_devServerHooks"
             ].getCriticalCss(...args);
-            return new MiniflareResponse(JSON.stringify(result));
+            return new MiniflareResponse(JSON.stringify({ result }));
           },
         },
       },

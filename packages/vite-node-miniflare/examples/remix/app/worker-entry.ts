@@ -26,7 +26,7 @@ function createFetchHandler() {
               body: JSON.stringify(args),
             }),
           );
-          const result = await response.json();
+          const { result } = await response.json();
           return result as any;
         },
       });
