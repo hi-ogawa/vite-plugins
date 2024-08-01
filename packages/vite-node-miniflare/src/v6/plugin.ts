@@ -23,9 +23,8 @@ import {
   type FetchMetadata,
   RUNNER_EVAL_PATH,
   RUNNER_INIT_PATH,
+  type RunnerEnv,
 } from "./shared";
-
-// TODO: hmr: false mode?
 
 interface WorkerdPluginOptions extends WorkerdEnvironmentOptions {
   entry: string;
@@ -36,6 +35,7 @@ interface WorkerdEnvironmentOptions {
   wrangler?: {
     configPath?: string;
   };
+  hmr?: boolean;
 }
 
 export function vitePluginWorkerd(pluginOptions: WorkerdPluginOptions): Plugin {
@@ -120,7 +120,10 @@ export async function createWorkerdDevEnvironment(
       },
     },
     bindings: {
-      __viteRoot: config.root,
+      __viteOptions: {
+        root: config.root,
+        hmr: !!pluginOptions.hmr,
+      } satisfies RunnerEnv["__viteOptions"],
     },
   };
 

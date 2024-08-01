@@ -77,7 +77,7 @@ export class RunnerObject implements DurableObject {
 function createRunner(env: RunnerEnv, webSocket: WebSocket) {
   return new ModuleRunner(
     {
-      root: env.__viteRoot,
+      root: env.__viteOptions.root,
       sourcemapInterceptor: "prepareStackTrace",
       transport: {
         fetchModule: async (...args) => {
@@ -92,7 +92,7 @@ function createRunner(env: RunnerEnv, webSocket: WebSocket) {
           return result as any;
         },
       },
-      hmr: {
+      hmr: env.__viteOptions.hmr && {
         connection: {
           isReady: () => true,
           onUpdate(callback) {
