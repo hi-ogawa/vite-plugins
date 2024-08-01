@@ -132,6 +132,7 @@ export async function createWorkerdDevEnvironment(
     // TODO: could this be useful to not delete?
     delete wranglerOptions.workerOptions.sitePath;
     runnerWorkerOptions = mergeWorkerOptions(
+      // @xts-ignore TODO
       wranglerOptions.workerOptions,
       runnerWorkerOptions,
     ) as WorkerOptions;
@@ -139,6 +140,7 @@ export async function createWorkerdDevEnvironment(
 
   if (pluginOptions.miniflare) {
     runnerWorkerOptions = mergeWorkerOptions(
+      // @ts-ignore TODO
       pluginOptions.miniflare,
       runnerWorkerOptions,
     ) as WorkerOptions;
