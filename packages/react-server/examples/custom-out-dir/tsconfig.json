@@ -11,7 +11,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
-    "types": ["next"],
+    "types": ["next", "vitest/globals"],
     "jsx": "react-jsx"
   }
 }

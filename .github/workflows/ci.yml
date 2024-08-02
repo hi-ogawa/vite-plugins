@@ -61,7 +61,11 @@ jobs:
       - run: pnpm -C packages/react-server/examples/prerender test-e2e-preview
       - run: pnpm -C packages/react-server/examples/prerender cf-build
       - run: pnpm -C packages/react-server/examples/prerender vc-build
-
+      - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e
+      - run: pnpm -C packages/react-server/examples/custom-out-dir build
+      - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e-preview
+      - run: pnpm -C packages/react-server/examples/custom-out-dir cf-test-e2e-preview
+      
   test-react-server-package:
     runs-on: ubuntu-latest
     steps:
