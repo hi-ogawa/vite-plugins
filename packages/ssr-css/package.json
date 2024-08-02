@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-plugin-ssr-css",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/ssr-css",
   "repository": {
     "type": "git",
@@ -19,8 +19,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "prepack": "tsup --clean",
-    "release": "pnpm publish --no-git-checks --access public"
+    "prepack": "tsup --clean"
   },
   "peerDependencies": {
     "vite": "*"
