@@ -1,4 +1,3 @@
-import { reactServerImport } from "virtual:import-react-server";
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
@@ -82,7 +81,7 @@ export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
   } else {
-    return reactServerImport;
+    return import("virtual:import-react-server");
   }
 }
 

@@ -433,7 +433,7 @@ export function vitePluginReactServer(
 
     createVirtualPlugin("import-react-server", () => {
       return `
-        export const reactServerImport = import("/${outDir}/rsc/index.js")
+          export * from "/${outDir}/rsc/index.js";
         `;
     }),
 

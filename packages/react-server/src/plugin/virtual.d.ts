@@ -8,5 +8,5 @@ declare module "virtual:server-routes" {
 }
 
 declare module "virtual:import-react-server" {
-  export const reactServerImport: Promise<typeof import("../entry/server")>;
+  export const { handler, router }: typeof import("../entry/server");
 }
