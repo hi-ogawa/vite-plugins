@@ -1,6 +1,7 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
+import ReactDOMStatic from "react-dom/static.edge";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
@@ -19,6 +20,11 @@ import {
   createSsrContext,
   injectDefaultMetaViewport,
 } from "../features/next/ssr";
+import {
+  type PPRData,
+  type PPRManifest,
+  streamToString,
+} from "../features/prerender/utils";
 import {
   FlightDataContext,
   LayoutRoot,
@@ -77,6 +83,16 @@ export async function prerender(request: Request) {
   return { stream, response, html };
 }
 
+export async function partialPrerender(request: Request) {
+  const reactServer = await importReactServer();
+
+  const result = await reactServer.handler({ request });
+  tinyassert(!(result instanceof Response));
+
+  const response = await renderHtml(request, result, { ppr: true });
+  return (await response.json()) as PPRData;
+}
+
 export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
@@ -88,7 +104,7 @@ export async function importReactServer(): Promise<typeof import("./server")> {
 export async function renderHtml(
   request: Request,
   result: ReactServerHandlerStreamResult,
-  opitons?: { prerender?: boolean },
+  options?: { prerender?: boolean; ppr?: boolean },
 ) {
   initializeReactClientSsr();
 
@@ -139,6 +155,17 @@ export async function renderHtml(
     </RouterContext.Provider>
   );
 
+  // PPR during build
+  if (options?.ppr) {
+    const { prelude, postponed } = await ReactDOMStatic.prerender(reactRootEl);
+    const pprData: PPRData = {
+      preludeString: await streamToString(prelude),
+      postponed,
+    };
+    // TODO: (refactor) don't go through Response to workaround types
+    return new Response(JSON.stringify(pprData));
+  }
+
   //
   // render
   //
@@ -163,10 +190,10 @@ export async function renderHtml(
   }
 
   // two pass SSR to re-render on error
-  let ssrStream: ReactDOMServer.ReactDOMServerReadableStream;
+  let ssrStream: ReadableStream<Uint8Array>;
   let status = result.status;
   try {
-    ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
+    const renderOptions: ReactDOMServer.RenderToReadableStreamOptions = {
       formState: result.actionResult?.data,
       bootstrapModules: url.search.includes("__nojs")
         ? []
@@ -177,9 +204,36 @@ export async function renderHtml(
           console.error("[react-dom:renderToReadableStream]", error);
         }
       },
-    });
-    if (opitons?.prerender) {
-      await ssrStream.allReady;
+    };
+
+    // PPR
+    const pprManifest = await importPPRManifest();
+    if (pprManifest) {
+      // TODO: reuse same prelude at layout boundary?
+      // TODO: send off prelude eariler?
+      const data = pprManifest.entries[url.pathname];
+      if (data) {
+        const { preludeString, postponed } = data;
+        const resumed = await ReactDOMServer.resume(
+          reactRootEl,
+          JSON.parse(JSON.stringify(postponed)), // deep clone since it's mutated
+          renderOptions,
+        );
+        ssrStream = resumed.pipeThrough(
+          new TransformStream({
+            start(controller) {
+              controller.enqueue(new TextEncoder().encode(preludeString));
+            },
+          }),
+        );
+      }
+    }
+    ssrStream ??= await ReactDOMServer.renderToReadableStream(
+      reactRootEl,
+      renderOptions,
+    );
+    if (options?.prerender) {
+      await (ssrStream as ReactDOMServer.ReactDOMServerReadableStream).allReady;
     }
   } catch (e) {
     const ctx = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
@@ -257,6 +311,11 @@ async function importRouteManifest(): Promise<{
     const mod = await import("virtual:route-manifest" as string);
     return mod.default;
   }
+}
+
+export async function importPPRManifest(): Promise<PPRManifest | null> {
+  const mod = await import("virtual:ppr-manifest" as string);
+  return mod.default;
 }
 
 //#region debug dev module graph
