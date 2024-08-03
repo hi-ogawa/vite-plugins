@@ -16,10 +16,19 @@ function createFetchHandler() {
     // expose env.kv
     Object.assign(globalThis, { env });
 
-    // DevServerHook is implemented via custom rpc
+    // DevServerHook is implemented via serviceBindings
     if (import.meta.env.DEV) {
       unstable_setDevServerHooks({
-        getCriticalCss: env.__RPC.__remixGetCriticalCss,
+        getCriticalCss: async (...args) => {
+          const response = await env.__remixGetCriticalCss.fetch(
+            new Request("https://test.local", {
+              method: "POST",
+              body: JSON.stringify(args),
+            }),
+          );
+          const { result } = await response.json();
+          return result as any;
+        },
       });
     }
 

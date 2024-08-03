@@ -22,18 +22,27 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
-    "prepack": "tsup --clean",
-    "release": "pnpm publish --no-git-checks --access public"
+    "prepack": "tsup --clean"
   },
   "dependencies": {
     "@hattip/adapter-node": "^0.0.44",
-    "@hattip/compose": "^0.0.44",
-    "miniflare": "^3.20240304.2"
+    "@hattip/compose": "^0.0.44"
   },
   "devDependencies": {
-    "@hiogawa/tiny-rpc": "0.2.3-pre.18"
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "@hiogawa/tiny-rpc": "0.2.3-pre.18",
+    "@hiogawa/utils-node": "^0.0.2",
+    "miniflare": "3.20240405.0",
+    "wrangler": "3.49.0"
   },
   "peerDependencies": {
-    "vite": "*"
+    "miniflare": "*",
+    "vite": "*",
+    "wrangler": "*"
+  },
+  "peerDependenciesMeta": {
+    "wrangler": {
+      "optional": true
+    }
   }
 }
