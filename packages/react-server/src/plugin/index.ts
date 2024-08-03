@@ -181,6 +181,9 @@ export function vitePluginReactServer(
               )
             );
 
+            const globGlobalError = import.meta.glob("/global-error.(js|jsx|ts|tsx)", { eager: true });
+            export const globalError = Object.values(globGlobalError)[0];
+
             const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
             export const middleware = Object.values(globMiddleware)[0];
           `;
