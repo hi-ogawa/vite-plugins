@@ -14,11 +14,7 @@ import { type Plugin, defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    // https://mdxjs.com/docs/getting-started/#vite
-    { ...mdx(), enforce: "pre" },
-    process.env["USE_SWC"]
-      ? reactSwc()
-      : react({ include: /\.(jsx|tsx|mdx)$/ }),
+    process.env["USE_SWC"] ? reactSwc() : react(),
     unocss(),
     !process.env["E2E"] &&
       vitePluginErrorOverlay({
