@@ -180,7 +180,7 @@ export function vitePluginReactServer(
                 ([k, v]) => [k.slice("/${routeDir}".length), v]
               )
             );
-  
+
             const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
             export const middleware = Object.values(globMiddleware)[0];
           `;
@@ -431,10 +431,8 @@ export function vitePluginReactServer(
       "server-only": `'server-only' is included in client build`,
     }),
 
-    createVirtualPlugin("import-react-server", () => {
-      return `
-          export * from "/${outDir}/rsc/index.js";
-        `;
+    createVirtualPlugin("react-server-build", () => {
+      return `export * from "/${outDir}/rsc/index.js";`;
     }),
 
     createVirtualPlugin(ENTRY_BROWSER_WRAPPER.slice("virtual:".length), () => {
