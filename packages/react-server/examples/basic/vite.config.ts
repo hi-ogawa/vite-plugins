@@ -14,6 +14,7 @@ import { type Plugin, defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
+    mdx(), // TODO: client hmr https://mdxjs.com/docs/getting-started/#vite
     process.env["USE_SWC"] ? reactSwc() : react(),
     unocss(),
     !process.env["E2E"] &&
