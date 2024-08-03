@@ -7,15 +7,15 @@ import {
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import mdx from "@mdx-js/rollup";
 import react from "@vitejs/plugin-react";
-import reactSwc from "@vitejs/plugin-react-swc";
 import unocss from "unocss/vite";
 import { type Plugin, defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
   plugins: [
-    mdx(), // TODO: client hmr https://mdxjs.com/docs/getting-started/#vite
-    process.env["USE_SWC"] ? reactSwc() : react(),
+    process.env["USE_SWC"]
+      ? (await import("@vitejs/plugin-react-swc".slice())).default()
+      : react(),
     unocss(),
     !process.env["E2E"] &&
       vitePluginErrorOverlay({
@@ -25,6 +25,8 @@ export default defineConfig({
       entryBrowser: "/src/entry-browser",
       entryServer: "/src/entry-server",
       plugins: [
+        // TODO: for now mdx is server only.
+        // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
         mdx(),
         testVitePluginVirtual(),
         {
