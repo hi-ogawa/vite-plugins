@@ -31,7 +31,10 @@ export function hashString(v: string) {
     .slice(0, 10);
 }
 
-export function createVirtualPlugin(name: string, load: Plugin["load"]) {
+export function createVirtualPlugin(
+  name: string,
+  load: Plugin["load"],
+): Plugin {
   name = "virtual:" + name;
   return {
     name: `virtual-${name}`,
@@ -46,7 +49,7 @@ export function createVirtualPlugin(name: string, load: Plugin["load"]) {
         return (load as any).apply(this, [id, options]);
       }
     },
-  } satisfies Plugin;
+  };
 }
 
 // silence warning due to "use ..." directives

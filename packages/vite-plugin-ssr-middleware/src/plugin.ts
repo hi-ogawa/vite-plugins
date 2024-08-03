@@ -42,6 +42,7 @@ export function vitePluginSsrMiddleware({
     async configureServer(server) {
       let loadModule = server.ssrLoadModule;
       if (mode === "ViteRuntime" || mode === "ViteRuntime-no-hmr") {
+        // @ts-ignore
         const { createViteRuntime, ServerHMRConnector } = await import("vite");
         if (mode === "ViteRuntime") {
           // simple default vite runtime
@@ -50,6 +51,7 @@ export function vitePluginSsrMiddleware({
         } else {
           // manual invalidation mode without hmr
           const runtime = await createViteRuntime(server, { hmr: false });
+          // @ts-ignore
           const connection = new ServerHMRConnector(server);
           connection.onUpdate(async (payload) => {
             if (payload.type === "update") {
