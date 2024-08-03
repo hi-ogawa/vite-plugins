@@ -3,23 +3,23 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
 
-export async function build() {
-  const buildDir = join(process.cwd(), "dist");
-  const outDir = join(process.cwd(), "dist/cloudflare");
+export async function build({ outDir }: { outDir: string }) {
+  const buildDir = join(process.cwd(), outDir);
+  const adapterOutDir = join(process.cwd(), outDir, "cloudflare");
 
   // clean
-  await rm(outDir, { recursive: true, force: true });
-  await mkdir(outDir, { recursive: true });
+  await rm(adapterOutDir, { recursive: true, force: true });
+  await mkdir(adapterOutDir, { recursive: true });
 
   // assets
-  await cp(join(buildDir, "client"), outDir, {
+  await cp(join(buildDir, "client"), adapterOutDir, {
     recursive: true,
   });
 
   // worker routes
   // https://developers.cloudflare.com/pages/functions/routing/#create-a-_routesjson-file
   await writeFile(
-    join(outDir, "_routes.json"),
+    join(adapterOutDir, "_routes.json"),
     JSON.stringify(
       {
         version: 1,
@@ -39,7 +39,7 @@ export async function build() {
   // headers
   // https://developers.cloudflare.com/pages/configuration/headers/
   await writeFile(
-    join(outDir, "_headers"),
+    join(adapterOutDir, "_headers"),
     `\
 /favicon.ico
   Cache-Control: public, max-age=3600, s-maxage=3600
@@ -53,7 +53,7 @@ export async function build() {
   const esbuild = await import("esbuild");
   const result = await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "_worker.js"),
+    outfile: join(adapterOutDir, "_worker.js"),
     bundle: true,
     minify: true,
     metafile: true,

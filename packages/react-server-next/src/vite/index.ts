@@ -20,6 +20,7 @@ export type ReactServerNextPluginOptions = {
 export default function vitePluginReactServerNext(
   options?: ReactServerPluginOptions & ReactServerNextPluginOptions,
 ): PluginOption {
+  const outDir = options?.outDir ?? "dist";
   return [
     react(),
     nextJsxPlugin(),
@@ -32,9 +33,9 @@ export default function vitePluginReactServerNext(
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
-      preview: path.resolve("./dist/server/index.js"),
+      preview: path.resolve(outDir, "server", "index.js"),
     }),
-    adapterPlugin({ adapter: options?.adapter }),
+    adapterPlugin({ adapter: options?.adapter, outDir }),
     appFaviconPlugin(),
     {
       name: "next-exclude-optimize",

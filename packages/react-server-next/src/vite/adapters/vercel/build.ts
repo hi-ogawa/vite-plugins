@@ -38,13 +38,19 @@ const vcConfig = {
 
 type VercelRuntime = "node" | "edge";
 
-export async function build({ runtime }: { runtime: VercelRuntime }) {
-  const buildDir = join(process.cwd(), "dist");
-  const outDir = join(process.cwd(), ".vercel/output");
+export async function build({
+  runtime,
+  outDir,
+}: {
+  runtime: VercelRuntime;
+  outDir: string;
+}) {
+  const buildDir = join(process.cwd(), outDir);
+  const adapterOutDir = join(process.cwd(), ".vercel/output");
 
   // clean
-  await rm(outDir, { recursive: true, force: true });
-  await mkdir(outDir, { recursive: true });
+  await rm(adapterOutDir, { recursive: true, force: true });
+  await mkdir(adapterOutDir, { recursive: true });
 
   // overrides for ssg html
   // https://vercel.com/docs/build-output-api/v3/configuration#overrides
@@ -69,20 +75,20 @@ export async function build({ runtime }: { runtime: VercelRuntime }) {
 
   // config
   await writeFile(
-    join(outDir, "config.json"),
+    join(adapterOutDir, "config.json"),
     JSON.stringify(configJson, null, 2),
   );
 
   // static
-  await mkdir(join(outDir, "static"), { recursive: true });
-  await cp(join(buildDir, "client"), join(outDir, "static"), {
+  await mkdir(join(adapterOutDir, "static"), { recursive: true });
+  await cp(join(buildDir, "client"), join(adapterOutDir, "static"), {
     recursive: true,
   });
 
   // function config
-  await mkdir(join(outDir, "functions/index.func"), { recursive: true });
+  await mkdir(join(adapterOutDir, "functions/index.func"), { recursive: true });
   await writeFile(
-    join(outDir, "functions/index.func/.vc-config.json"),
+    join(adapterOutDir, "functions/index.func/.vc-config.json"),
     JSON.stringify(vcConfig[runtime], null, 2),
   );
 
@@ -90,7 +96,7 @@ export async function build({ runtime }: { runtime: VercelRuntime }) {
   const esbuild = await import("esbuild");
   const result = await esbuild.build({
     entryPoints: [join(buildDir, "server/index.js")],
-    outfile: join(outDir, "functions/index.func/index.mjs"),
+    outfile: join(adapterOutDir, "functions/index.func/index.mjs"),
     metafile: true,
     bundle: true,
     minify: true,

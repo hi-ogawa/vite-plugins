@@ -1,0 +1,30 @@
+{
+  "name": "@hiogawa/react-server-example-custom-out-dir",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "start": "next start",
+    "build": "next build",
+    "cf-build": "CF_PAGES=1 pnpm build",
+    "cf-preview": "wrangler pages dev ./custom-out-dir/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat",
+    "vc-build": "VERCEL=1 pnpm build",
+    "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
+    "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 pnpm test-e2e"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "workspace:*",
+    "next": "link:../../../react-server-next",
+    "react": "rc",
+    "react-dom": "rc",
+    "react-server-dom-webpack": "rc"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.1",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "vite": "latest"
+  }
+}

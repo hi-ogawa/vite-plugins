@@ -4,6 +4,7 @@ export type AdapterType = "node" | "vercel" | "vercel-edge" | "cloudflare";
 
 export function adapterPlugin(options: {
   adapter?: AdapterType;
+  outDir: string;
 }): Plugin[] {
   const adapter = options.adapter ?? autoSelectAdapter();
   if (adapter === "node") {
@@ -31,15 +32,15 @@ export function adapterPlugin(options: {
         console.log(`▶▶▶ ADAPTER: ${adapter}`);
         if (adapter === "cloudflare") {
           const { build } = await import("./cloudflare/build");
-          await build();
+          await build({ outDir: options.outDir });
         }
         if (adapter === "vercel") {
           const { build } = await import("./vercel/build");
-          await build({ runtime: "node" });
+          await build({ runtime: "node", outDir: options.outDir });
         }
         if (adapter === "vercel-edge") {
           const { build } = await import("./vercel/build");
-          await build({ runtime: "edge" });
+          await build({ runtime: "edge", outDir: options.outDir });
         }
       },
     },

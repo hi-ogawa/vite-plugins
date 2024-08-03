@@ -75,6 +75,8 @@ class PluginStateManager {
   config!: ResolvedConfig;
   configEnv!: ConfigEnv;
 
+  outDir!: string;
+
   buildType?: "scan" | "server" | "browser" | "ssr";
 
   routeToClientReferences: Record<string, string[]> = {};
@@ -123,6 +125,7 @@ export type ReactServerPluginOptions = {
   entryBrowser?: string;
   entryServer?: string;
   routeDir?: string;
+  outDir?: string;
   noAsyncLocalStorage?: boolean;
 };
 
@@ -134,6 +137,7 @@ export function vitePluginReactServer(
   const entryServer =
     options?.entryServer ?? "@hiogawa/react-server/entry/server";
   const routeDir = options?.routeDir ?? "src/routes";
+  const outDir = options?.outDir ?? "dist";
 
   const reactServerViteConfig: InlineConfig = {
     customLogger: createLogger(undefined, {
@@ -149,7 +153,6 @@ export function vitePluginReactServer(
     },
     plugins: [
       ...(options?.plugins ?? []),
-
       vitePluginSilenceDirectiveBuildWarning(),
 
       // expose server reference to react-server itself
@@ -168,28 +171,28 @@ export function vitePluginReactServer(
 
       createVirtualPlugin("server-routes", () => {
         return `
-          const glob = import.meta.glob(
-            "/${routeDir}/**/(page|layout|error|not-found|loading|template|route).(js|jsx|ts|tsx)",
-            { eager: true },
-          );
-          export default Object.fromEntries(
-            Object.entries(glob).map(
-              ([k, v]) => [k.slice("/${routeDir}".length), v]
-            )
-          );
+            const glob = import.meta.glob(
+              "/${routeDir}/**/(page|layout|error|not-found|loading|template|route).(js|jsx|ts|tsx)",
+              { eager: true },
+            );
+            export default Object.fromEntries(
+              Object.entries(glob).map(
+                ([k, v]) => [k.slice("/${routeDir}".length), v]
+              )
+            );
 
-          const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
-          export const middleware = Object.values(globMiddleware)[0];
-        `;
+            const globMiddleware = import.meta.glob("/middleware.(js|jsx|ts|tsx)", { eager: true });
+            export const middleware = Object.values(globMiddleware)[0];
+          `;
       }),
 
       createVirtualPlugin(
         ENTRY_SERVER_WRAPPER.slice("virtual:".length),
         () => `
-          import "virtual:inject-async-local-storage";
-          export { handler } from "${entryServer}";
-          export { router } from "@hiogawa/react-server/entry/server";
-        `,
+            import "virtual:inject-async-local-storage";
+            export { handler } from "${entryServer}";
+            export { router } from "@hiogawa/react-server/entry/server";
+          `,
       ),
 
       // make `AsyncLocalStorage` available globally for React.cache from edge build
@@ -199,9 +202,9 @@ export function vitePluginReactServer(
           return "export {}";
         }
         return `
-          import { AsyncLocalStorage } from "node:async_hooks";
-          Object.assign(globalThis, { AsyncLocalStorage });
-        `;
+            import { AsyncLocalStorage } from "node:async_hooks";
+            Object.assign(globalThis, { AsyncLocalStorage });
+          `;
       }),
 
       validateImportPlugin({
@@ -243,7 +246,7 @@ export function vitePluginReactServer(
       ssr: true,
       manifest: true,
       ssrEmitAssets: true,
-      outDir: "dist/rsc",
+      outDir: path.join(outDir, "rsc"),
       rollupOptions: {
         input: {
           index: ENTRY_SERVER_WRAPPER,
@@ -285,7 +288,7 @@ export function vitePluginReactServer(
         },
         build: {
           manifest: true,
-          outDir: env.isSsrBuild ? "dist/server" : "dist/client",
+          outDir: path.join(outDir, env.isSsrBuild ? "server" : "client"),
           rollupOptions: env.isSsrBuild
             ? {
                 input: options?.prerender
@@ -303,6 +306,7 @@ export function vitePluginReactServer(
     },
     configResolved(config) {
       manager.config = config;
+      manager.outDir = outDir;
     },
     async configureServer(server) {
       manager.server = server;
@@ -373,7 +377,7 @@ export function vitePluginReactServer(
     apply: "build",
     async buildStart(_options) {
       if (!manager.buildType) {
-        await createServerPackageJson();
+        await createServerPackageJson(manager.outDir);
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         await build(
@@ -426,6 +430,11 @@ export function vitePluginReactServer(
       "client-only": true,
       "server-only": `'server-only' is included in client build`,
     }),
+
+    createVirtualPlugin("react-server-build", () => {
+      return `export * from "/${outDir}/rsc/index.js";`;
+    }),
+
     createVirtualPlugin(ENTRY_BROWSER_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {

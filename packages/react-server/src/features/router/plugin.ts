@@ -96,7 +96,10 @@ export function routeManifestPluginClient({
       const source = `${JSON.stringify(data, null, 2)}`;
       const sourceHash = hashString(source).slice(0, 8);
       const url = `/assets/route-manifest-${sourceHash}.js`;
-      writeFileSync(`dist/client${url}`, `export default ${source}`);
+      writeFileSync(
+        path.join(manager.outDir, `client${url}`),
+        `export default ${source}`,
+      );
 
       // give asset url and manifest to ssr
       return `export default ${JSON.stringify(
