@@ -1574,3 +1574,28 @@ test("head inline script", async ({ page }) => {
   );
   expect(result).toBe(true);
 });
+
+test("mdx simple", async ({ page }) => {
+  await page.goto("/test/mdx/simple");
+  await waitForHydration(page);
+  await expect(page.getByRole("heading", { name: "Heading" })).toHaveCSS(
+    "font-size",
+    "32px",
+  );
+  await page.getByRole("button", { name: "Count is 0" }).click();
+  await page.getByRole("button", { name: "Count is 1" }).click();
+  await page.getByRole("link", { name: "Link to /test/mdx" }).click();
+  await page.waitForURL("/test/mdx");
+});
+
+test("mdx dynamic", async ({ page }) => {
+  await page.goto("/test/mdx/dynamic");
+  await page.getByText("Choose a post from menu").click();
+  await page.getByRole("link", { name: "• /test/mdx/dynamic/assets" }).click();
+  await page.getByRole("heading", { name: "Static Asset Handling" }).click();
+  await page.getByRole("link", { name: "• /test/mdx/dynamic/cli" }).click();
+  await page.getByRole("heading", { name: "Command Line Interface" }).click();
+
+  await page.goto("/test/mdx/dynamic/no-such-post");
+  await page.getByText("Page not found :(").click();
+});
