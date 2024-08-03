@@ -8,11 +8,11 @@
     "start": "next start",
     "build": "next build",
     "cf-build": "CF_PAGES=1 pnpm build",
-    "cf-preview": "wrangler pages dev ./dist-cf/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat",
+    "cf-preview": "wrangler pages dev ./custom-out-dir/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat",
     "vc-build": "VERCEL=1 pnpm build",
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
-    "cf-test-e2e-preview": "VITE_E2E_OUT_DIR=dist-cf pnpm cf-build && VITE_E2E_OUT_DIR=dist-cf E2E_CF=1 pnpm test-e2e"
+    "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 pnpm test-e2e"
   },
   "dependencies": {
     "@hiogawa/react-server": "workspace:*",
