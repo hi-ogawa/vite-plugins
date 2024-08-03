@@ -150,9 +150,7 @@ export function vitePluginServerAssets({
 
 export function serverAssertsPluginServer({
   manager,
-}: {
-  manager: PluginStateManager;
-}): Plugin[] {
+}: { manager: PluginStateManager }): Plugin[] {
   // 0. track server assets during server build (this plugin)
   // 1. copy all server assets to browser build (copy-build plugin)
   // 2. out of those, inject links automatically (ssr-assets virtual plugin)
