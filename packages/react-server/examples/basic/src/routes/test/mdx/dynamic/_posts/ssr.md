@@ -1,21 +1,3 @@
 # Server-Side Rendering
 
-## Source Structure
-
-A typical SSR application will have the following source file structure:
-
-```
-- index.html
-- server.js # main application server
-- src/
-  - main.js          # exports env-agnostic (universal) app code
-  - entry-client.js  # mounts the app to a DOM element
-  - entry-server.js  # renders the app using the framework's SSR API
-```
-
-The `index.html` will need to reference `entry-client.js` and include a placeholder where the server-rendered markup should be injected:
-
-```html
-<div id="app"><!--ssr-outlet--></div>
-<script type="module" src="/src/entry-client.js"></script>
-```
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec orci lectus, gravida et egestas sit amet, volutpat et lacus. Nunc pretium, nisl et maximus ullamcorper, elit arcu suscipit quam, non luctus elit mauris sit amet mi. Mauris ac nulla eu ex venenatis congue. Nulla faucibus lacinia diam eu varius. Etiam imperdiet fringilla risus vitae ornare. Etiam ante diam, facilisis at enim non, interdum pretium neque. Nunc sagittis arcu id interdum egestas. Phasellus vehicula nunc magna, sit amet sollicitudin mi iaculis ac.

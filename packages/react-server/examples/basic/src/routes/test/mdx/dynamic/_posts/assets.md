@@ -1,14 +1,3 @@
 # Static Asset Handling
 
-## Importing Asset as URL
-
-Importing a static asset will return the resolved public URL when it is served:
-
-```js
-import imgUrl from './img.png'
-document.getElementById('hero-img').src = imgUrl
-```
-
-For example, `imgUrl` will be `/img.png` during development, and become `/assets/img.2d8efhg.png` in the production build.
-
-The behavior is similar to webpack's `file-loader`. The difference is that the import can be either using absolute public paths (based on project root during dev) or relative paths.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ac ligula iaculis massa feugiat suscipit et id nunc. Cras eu magna in nisl placerat finibus at id orci. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas ac rutrum nunc, vel vulputate lectus. Integer tristique efficitur odio, non interdum nisl sagittis id. Aenean ac interdum odio, nec suscipit nibh. Suspendisse eu massa tortor. Nam velit turpis, maximus nec magna eget, volutpat aliquet orci.
