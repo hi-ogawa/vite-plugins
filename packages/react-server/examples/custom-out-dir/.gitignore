@@ -1,4 +1,1 @@
-custom-out-dir/
-.vercel/
-.wrangler/
-dist-*/
+custom-out-dir
