@@ -241,7 +241,7 @@ testNoJs("ssr not-found @nojs", async ({ page }) => {
   await page.getByText(`NotFoundPage`).click();
 });
 
-test.only("default not-found page", async ({ page }) => {
+test("default not-found page", async ({ page }) => {
   const res = await page.goto("/not-found");
   expect(res?.status()).toBe(404);
   await page.getByText("404").click();
