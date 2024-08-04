@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.13 (2024-08-04)
+
+- feat: Add plugin option for custom outDir ([#591](https://github.com/hi-ogawa/vite-plugins/pull/591))
+
 ## v0.0.12 (2024-07-24)
 
 - fix: fix deployment with pre-rendered root path ([#587](https://github.com/hi-ogawa/vite-plugins/pull/587))

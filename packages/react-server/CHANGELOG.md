@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.6 (2024-08-04)
+
+- feat: Add plugin option for custom outDir ([#591](https://github.com/hi-ogawa/vite-plugins/pull/591))
+- feat: support mdx route ([#595](https://github.com/hi-ogawa/vite-plugins/pull/595))
+- feat: support `global-error.js` ([#596](https://github.com/hi-ogawa/vite-plugins/pull/596))
+- refactor: tweak default not-found page ([#598](https://github.com/hi-ogawa/vite-plugins/pull/598))
+
 ## v0.3.5 (2024-07-24)
 
 - fix: fix deployment with pre-rendered root path ([#587](https://github.com/hi-ogawa/vite-plugins/pull/587))
