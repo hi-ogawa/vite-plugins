@@ -1600,6 +1600,9 @@ test("mdx dynamic", async ({ page }) => {
   await page.getByText("Page not found :(").click();
 });
 
-test("global-error.js", async ({ page }) => {
-  await page.goto("/");
+test("global-error", async ({ page }) => {
+  await page.goto("/?test-error");
+  await page.getByRole("heading", { name: "Something went wrong." }).click();
+  await page.getByRole("link", { name: "Home" }).click();
+  await page.waitForURL("/");
 });

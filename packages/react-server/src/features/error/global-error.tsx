@@ -5,7 +5,7 @@ import type { ErrorPageProps } from "../../server";
 export function DefaultGlobalErrorPage(props: ErrorPageProps) {
   const message = props.serverError
     ? `Unknown Server Error (see server logs for the details)`
-    : "Unknown Client Error (see browser console for the details)";
+    : "Unknown Client Error (see browser console for the detail)";
   return (
     <html>
       <title>{message}</title>
@@ -14,30 +14,16 @@ export function DefaultGlobalErrorPage(props: ErrorPageProps) {
           fontFamily:
             'system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
           height: "100vh",
-          textAlign: "center",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          placeContent: "center",
+          placeItems: "center",
           fontSize: "14px",
           fontWeight: 400,
           lineHeight: "28px",
         }}
       >
         <h2>{message}</h2>
-        <div>
-          Back to{" "}
-          <a
-            href="/"
-            style={{
-              textDecoration: "underline",
-              textUnderlineOffset: "2px",
-              color: "#3451b2",
-            }}
-          >
-            Home
-          </a>
-        </div>
       </body>
     </html>
   );
