@@ -5,7 +5,7 @@ import type { ErrorPageProps } from "../../server";
 export function DefaultGlobalErrorPage(props: ErrorPageProps) {
   const message = props.serverError
     ? `Unknown Server Error (see server logs for the details)`
-    : "Unknown Client Error (see browser console for the detail)";
+    : `Unknown Client Error (see browser console for the details)`;
   return (
     <html>
       <title>{message}</title>
