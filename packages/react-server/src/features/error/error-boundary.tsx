@@ -2,7 +2,12 @@ import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import { useRouter } from "../router/client/router";
 import type { ErrorPageProps } from "../router/server";
-import { getErrorContext, isNotFoundError, isRedirectError } from "./shared";
+import {
+  getErrorContext,
+  getStatusText,
+  isNotFoundError,
+  isRedirectError,
+} from "./shared";
 
 // cf.
 // https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
@@ -64,6 +69,24 @@ function ErrorAutoReset(props: Pick<ErrorPageProps, "reset">) {
     }
   }, [href]);
   return null;
+}
+
+export function DefaultGlobalErrorPage(props: ErrorPageProps) {
+  const status = props.serverError?.status;
+  const message = status
+    ? `${status} ${getStatusText(status)}`
+    : "Unknown Error";
+  return (
+    <html>
+      <title>{message}</title>
+      <body>
+        <h1>{message}</h1>
+        <div>
+          Back to <a href="/">Home</a>
+        </div>
+      </body>
+    </html>
+  );
 }
 
 export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
