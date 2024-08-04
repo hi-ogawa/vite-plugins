@@ -8,5 +8,5 @@ declare module "virtual:server-routes" {
 }
 
 declare module "virtual:client-routes" {
-  export const globalError: React.FC | undefined;
+  export const GlobalErrorPage: React.FC | undefined;
 }

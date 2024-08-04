@@ -440,7 +440,7 @@ export function vitePluginReactServer(
 
     createVirtualPlugin("client-routes", () => {
       return `
-        export const globalError = Object.values(
+        export const GlobalErrorPage = Object.values(
           import.meta.glob("/global-error.(js|jsx|ts|tsx)", { eager: true }),
         )[0];
       `;
