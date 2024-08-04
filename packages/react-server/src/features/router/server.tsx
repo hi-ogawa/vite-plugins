@@ -1,6 +1,5 @@
 import { sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { DefaultNotFoundPage } from "../error/not-found";
 import { type ReactServerErrorContext } from "../error/shared";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
@@ -51,10 +50,7 @@ export type AnyRouteModule = { [k in RouteModuleKey]?: unknown };
 export type RouteModuleTree = TreeNode<RouteModule>;
 
 export function generateRouteModuleTree(globEntries: Record<string, any>) {
-  const { tree, entries } = createFsRouteTree<RouteModule>({
-    "/not-found.js": { default: DefaultNotFoundPage },
-    ...globEntries,
-  });
+  const { tree, entries } = createFsRouteTree<RouteModule>(globEntries);
   const manifest = getRouteModuleManifest(entries);
   return { tree, manifest };
 }
