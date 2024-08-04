@@ -17,7 +17,12 @@
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "react/experimental", "react-dom/experimental"],
+    "types": [
+      "vite/client",
+      "react/experimental",
+      "react-dom/experimental",
+      "@types/mdx"
+    ],
     "jsx": "react-jsx"
   }
 }
