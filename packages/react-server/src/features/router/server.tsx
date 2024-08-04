@@ -1,6 +1,5 @@
 import { sortBy, tinyassert } from "@hiogawa/utils";
 import React from "react";
-import { DefaultNotFoundPage } from "../error/not-found";
 import { type ReactServerErrorContext } from "../error/shared";
 import { renderMetadata } from "../meta/server";
 import type { Metadata } from "../meta/utils";
@@ -57,6 +56,18 @@ export function generateRouteModuleTree(globEntries: Record<string, any>) {
   });
   const manifest = getRouteModuleManifest(entries);
   return { tree, manifest };
+}
+
+// https://github.com/vercel/next.js/blob/8f5f0ef141a907d083eedb7c7aca52b04f9d258b/packages/next/src/client/components/not-found-error.tsx#L34-L39
+function DefaultNotFoundPage() {
+  return (
+    <>
+      <h1>404 Not Found</h1>
+      <div>
+        Back to <a href="/">Home</a>
+      </div>
+    </>
+  );
 }
 
 // use own "use client" components as external
