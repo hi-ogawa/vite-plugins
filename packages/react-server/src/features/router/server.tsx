@@ -50,24 +50,9 @@ export type AnyRouteModule = { [k in RouteModuleKey]?: unknown };
 export type RouteModuleTree = TreeNode<RouteModule>;
 
 export function generateRouteModuleTree(globEntries: Record<string, any>) {
-  const { tree, entries } = createFsRouteTree<RouteModule>({
-    "/not-found.js": { default: DefaultNotFoundPage },
-    ...globEntries,
-  });
+  const { tree, entries } = createFsRouteTree<RouteModule>(globEntries);
   const manifest = getRouteModuleManifest(entries);
   return { tree, manifest };
-}
-
-// https://github.com/vercel/next.js/blob/8f5f0ef141a907d083eedb7c7aca52b04f9d258b/packages/next/src/client/components/not-found-error.tsx#L34-L39
-function DefaultNotFoundPage() {
-  return (
-    <>
-      <h1>404 Not Found</h1>
-      <div>
-        Back to <a href="/">Home</a>
-      </div>
-    </>
-  );
 }
 
 // use own "use client" components as external

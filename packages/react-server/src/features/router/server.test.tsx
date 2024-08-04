@@ -4,6 +4,7 @@ import { generateRouteModuleTree, renderRouteMap } from "./server";
 describe(generateRouteModuleTree, () => {
   it("basic", async () => {
     const files = [
+      "/not-found.js",
       "/layout.tsx",
       "/page.tsx",
       "/x/page.tsx",

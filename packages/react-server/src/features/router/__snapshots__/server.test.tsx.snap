@@ -33,7 +33,7 @@ exports[`generateRouteModuleTree > basic 1`] = `
           "default": "/LAYOUT.TSX",
         },
         "not-found": {
-          "default": [Function],
+          "default": "/NOT-FOUND.JS",
         },
         "page": {
           "default": "/PAGE.TSX",
@@ -92,7 +92,7 @@ exports[`generateRouteModuleTree > basic 2`] = `
         }
       >
         <NotFoundBoundary
-          fallback={<DefaultNotFoundPage />}
+          fallback={</NOT-FOUND.JS />}
         >
           <RedirectBoundary>
             <LayoutContent
@@ -222,7 +222,7 @@ exports[`generateRouteModuleTree > basic 3`] = `
         }
       >
         <NotFoundBoundary
-          fallback={<DefaultNotFoundPage />}
+          fallback={</NOT-FOUND.JS />}
         >
           <RedirectBoundary>
             <LayoutContent
@@ -406,7 +406,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
         }
       >
         <NotFoundBoundary
-          fallback={<DefaultNotFoundPage />}
+          fallback={</NOT-FOUND.JS />}
         >
           <RedirectBoundary>
             <LayoutContent
@@ -416,7 +416,7 @@ exports[`generateRouteModuleTree > basic 4`] = `
         </NotFoundBoundary>
       <//LAYOUT.TSX>
     </LayoutMatchProvider>,
-    "/z:not-found": <DefaultNotFoundPage />,
+    "/z:not-found": </NOT-FOUND.JS />,
   },
   "notFound": true,
   "segments": [

@@ -3,6 +3,7 @@ import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "../features/client-component/server";
+import { DefaultNotFoundPage } from "../features/error/not-found";
 import {
   DEFAULT_ERROR_CONTEXT,
   ReactServerDigestError,
@@ -34,7 +35,10 @@ import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
 
-export const router = generateRouteModuleTree(serverRoutes.default);
+export const router = generateRouteModuleTree({
+  "/not-found.js": { default: DefaultNotFoundPage },
+  ...serverRoutes.default,
+});
 
 export type ReactServerHandler = (
   ctx: ReactServerHandlerContext,
