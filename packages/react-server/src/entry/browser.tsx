@@ -4,10 +4,8 @@ import type { RouterHistory } from "@tanstack/history";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import { initializeReactClientBrowser } from "../features/client-component/browser";
-import {
-  DefaultGlobalErrorPage,
-  ErrorBoundary,
-} from "../features/error/error-boundary";
+import { ErrorBoundary } from "../features/error/error-boundary";
+import { DefaultGlobalErrorPage } from "../features/error/global-error";
 import {
   FlightDataContext,
   LayoutRoot,
