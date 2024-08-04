@@ -2,7 +2,6 @@
 export function DefaultNotFoundPage() {
   return (
     <>
-      <title>404 Not Found</title>
       <h1>404 Not Found</h1>
       <div>
         Back to <a href="/">Home</a>
