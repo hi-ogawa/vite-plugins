@@ -1,3 +1,4 @@
+import { globalError } from "virtual:client-routes";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
@@ -183,7 +184,7 @@ async function start() {
   const routeManifest = await importRouteManifest();
   let reactRootEl = (
     <RouterContext.Provider value={router}>
-      <ErrorBoundary errorComponent={DefaultGlobalErrorPage}>
+      <ErrorBoundary errorComponent={globalError ?? DefaultGlobalErrorPage}>
         <FlightDataHandler>
           <RouteManifestContext.Provider value={routeManifest}>
             <RouteAssetLinks />
