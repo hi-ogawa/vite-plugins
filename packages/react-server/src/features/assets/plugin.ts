@@ -105,6 +105,7 @@ export function vitePluginServerAssets({
         collectStyle($__global.dev.server, {
           entries: [
             entryBrowser,
+            "virtual:client-routes",
             // TODO: dev should also use RouteManifest to manage client css
             ...manager.clientReferenceMap.keys(),
           ],
