@@ -3,7 +3,8 @@ import type { RouterHistory } from "@tanstack/history";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import { initializeReactClientBrowser } from "../features/client-component/browser";
-import { RootErrorBoundary } from "../features/error/error-boundary";
+import { ErrorBoundary } from "../features/error/error-boundary";
+import { DefaultGlobalErrorPage } from "../features/error/global-error";
 import {
   FlightDataContext,
   LayoutRoot,
@@ -182,14 +183,14 @@ async function start() {
   const routeManifest = await importRouteManifest();
   let reactRootEl = (
     <RouterContext.Provider value={router}>
-      <RootErrorBoundary>
+      <ErrorBoundary errorComponent={DefaultGlobalErrorPage}>
         <FlightDataHandler>
           <RouteManifestContext.Provider value={routeManifest}>
             <RouteAssetLinks />
             <LayoutRoot />
           </RouteManifestContext.Provider>
         </FlightDataHandler>
-      </RootErrorBoundary>
+      </ErrorBoundary>
     </RouterContext.Provider>
   );
   if (!window.location.search.includes("__noStrict")) {
