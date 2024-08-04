@@ -1599,3 +1599,7 @@ test("mdx dynamic", async ({ page }) => {
   await page.goto("/test/mdx/dynamic/no-such-post");
   await page.getByText("Page not found :(").click();
 });
+
+test("global-error.js", async ({ page }) => {
+  await page.goto("/");
+});
