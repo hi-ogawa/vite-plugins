@@ -3,9 +3,37 @@
 export function DefaultNotFoundPage() {
   return (
     <>
-      <h1>404 Not Found</h1>
-      <div>
-        Back to <a href="/">Home</a>
+      <div
+        style={{
+          fontFamily:
+            'system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
+          height: "100vh",
+          display: "flex",
+          placeContent: "center",
+          placeItems: "center",
+        }}
+      >
+        <div style={{ display: "flex", lineHeight: "50px" }}>
+          <h1
+            style={{
+              margin: "0 20px 0 0",
+              padding: "0 23px 0 0",
+              fontSize: 24,
+              fontWeight: 500,
+              borderRight: "1px solid rgba(0, 0, 0, .3)",
+            }}
+          >
+            404
+          </h1>
+          <h2
+            style={{
+              fontSize: 14,
+              fontWeight: 400,
+            }}
+          >
+            This page could not be found.
+          </h2>
+        </div>
       </div>
     </>
   );
