@@ -6,3 +6,7 @@ declare module "virtual:server-routes" {
     | import("../features/next/middleware").MiddlewareModule
     | undefined;
 }
+
+declare module "virtual:client-routes" {
+  export const GlobalErrorPage: React.FC | undefined;
+}

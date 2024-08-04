@@ -435,6 +435,13 @@ export function vitePluginReactServer(
       return `export * from "/${outDir}/rsc/index.js";`;
     }),
 
+    createVirtualPlugin("client-routes", () => {
+      return `
+        const glob = import.meta.glob("/${routeDir}/global-error.(js|jsx|ts|tsx)", { eager: true });
+        export const GlobalErrorPage = Object.values(glob)[0]?.default;
+      `;
+    }),
+
     createVirtualPlugin(ENTRY_BROWSER_WRAPPER.slice("virtual:".length), () => {
       // dev
       if (!manager.buildType) {
