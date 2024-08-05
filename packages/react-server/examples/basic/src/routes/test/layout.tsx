@@ -32,6 +32,7 @@ export default async function Layout(props: LayoutProps) {
           "/test/group",
           "/test/catchall-opt",
           "/test/mdx",
+          "/test/env",
         ]}
       />
       <div className="flex items-center gap-2 text-sm">

@@ -217,6 +217,15 @@ export function vitePluginReactServer(
       serverDepsConfigPlugin(),
 
       {
+        name: "inherit-parent-config",
+        config(_config, _env) {
+          return {
+            envPrefix: manager.config.envPrefix,
+          };
+        },
+      },
+
+      {
         name: "patch-react-server-dom-webpack",
         transform(code, id, _options) {
           if (id.includes("react-server-dom-webpack")) {
