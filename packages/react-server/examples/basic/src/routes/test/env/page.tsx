@@ -6,11 +6,13 @@ export default function Page() {
     <div className="text-sm">
       <div>
         <h3>Server component</h3>
-        <pre>{JSON.stringify(getTestEnv(), null, 2)}</pre>
+        <pre data-testid="server-env">
+          {JSON.stringify(getTestEnv(), null, 2)}
+        </pre>
       </div>
       <div>
         <h3>Client component</h3>
-        <pre>
+        <pre data-testid="client-env">
           <TestEnvClient />
         </pre>
       </div>
