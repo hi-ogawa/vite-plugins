@@ -37,6 +37,7 @@ export default function vitePluginReactServerNext(
     }),
     adapterPlugin({ adapter: options?.adapter, outDir }),
     appFaviconPlugin(),
+    nextConfigPlugin(),
     {
       name: "next-exclude-optimize",
       config: () => ({
@@ -49,6 +50,21 @@ export default function vitePluginReactServerNext(
       }),
     },
   ];
+}
+
+function nextConfigPlugin(): Plugin {
+  return {
+    name: nextConfigPlugin.name,
+    config(config, _env) {
+      // TODO
+      // this is only for import.meta.env.NEXT_PUBLIC_xxx replacement.
+      // we might want to define process.env.NEXT_PUBLIC_xxx for better compatibility.
+      // https://nextjs.org/docs/app/building-your-application/configuring/environment-variables#bundling-environment-variables-for-the-browser
+      return {
+        envPrefix: ["NEXT_PUBLIC_", ...[config.envPrefix ?? []]].flat(),
+      };
+    },
+  };
 }
 
 function nextJsxPlugin(): Plugin {

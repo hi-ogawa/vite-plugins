@@ -219,6 +219,9 @@ export function vitePluginReactServer(
       {
         name: "inherit-parent-config",
         config(_config, _env) {
+          // this is only for `import.meta.env.xxx` replacement.
+          // users need to handle .env manually to have `process.env.xxx`
+          // avaiable on server runtime.
           return {
             envPrefix: manager.config.envPrefix,
           };
