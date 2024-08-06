@@ -16,4 +16,5 @@ jobs:
             packages/react-server-next \
             packages/transforms \
             packages/vite-plugin-ssr-middleware \
+            packages/pre-bundle-new-url \
             packages/vite-plugin-ssr-css

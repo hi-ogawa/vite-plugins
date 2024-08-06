@@ -1,0 +1,21 @@
+{
+  "name": "@hiogawa/vite-plugin-pre-bundle-new-url-examples-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "test-dep-image": "file:./deps/image",
+    "test-dep-worker": "file:./deps/worker"
+  },
+  "devDependencies": {
+    "@hiogawa/vite-plugin-pre-bundle-new-url": "latest",
+    "vite": "latest"
+  },
+  "stackblitz": {
+    "startCommand": "pnpm dev"
+  }
+}

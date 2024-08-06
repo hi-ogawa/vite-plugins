@@ -1,0 +1,31 @@
+{
+  "name": "@hiogawa/vite-plugin-pre-bundle-new-url",
+  "version": "0.0.0-pre.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/pre-bundle-new-url",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/pre-bundle-new-url"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "prepack": "tsup --clean"
+  },
+  "dependencies": {
+    "esbuild": "^0.21.5",
+    "magic-string": "^0.30.8"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}

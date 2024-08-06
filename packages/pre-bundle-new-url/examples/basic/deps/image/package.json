@@ -1,0 +1,6 @@
+{
+  "name": "test-dep-image",
+  "private": true,
+  "type": "module",
+  "exports": "./index.js"
+}
