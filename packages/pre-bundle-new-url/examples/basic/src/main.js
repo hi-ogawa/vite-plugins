@@ -3,37 +3,55 @@ import * as testDepWorker from "test-dep-worker";
 import * as testDepWorkerWasm from "test-dep-worker-wasm";
 
 async function main() {
-  render(`
-    <pre>new URL("./vite.svg", import.meta.url)</pre>
-    <img width="40" src="${testDepImage.image1}" />
-  `);
+  render(
+    "image1",
+    `\
+<h4>new URL("./vite.svg", import.meta.url)</h4>
+<img width="40" src="${testDepImage.image1}" />
+`,
+  );
 
-  render(`
-    <pre>new URL("vite.svg", import.meta.url)</pre>
-    <img width="40" src="${testDepImage.image2}" />
-  `);
+  render(
+    "image2",
+    `\
+<h4>new URL("vite.svg", import.meta.url)</h4>
+<img width="40" src="${testDepImage.image2}" />
+`,
+  );
 
   testDepWorker.startWorker((e) => {
-    render(`<pre>worker-classic = ${e.data}</pre>`);
+    render(
+      "worker-classic",
+      `\
+<h4>worker-classic</h4>
+<pre>${e.data}</pre>
+`,
+    );
   });
 
   testDepWorker.startWorkerEsm((e) => {
-    render(`<pre>worker-esm = ${e.data}</pre>`);
+    render(
+      "worker-esm",
+      `\
+<h4>worker-esm</h4>
+<pre>worker-esm = ${e.data}</pre>
+`,
+    );
   });
 
   // worker with wasm
   testDepWorkerWasm.startWorker((e) => {
-    render(`<pre>
-worker-wasm = ${e.data.href}
-              ${JSON.stringify(e.data.oxc).slice(0, 100)}...
-</pre>`);
+    render(
+      "worker-wasm",
+      `\
+<h4>worker-wasm</h4>
+<pre>worker-wasm = ${e.data.href}\n${JSON.stringify(e.data.oxc).slice(0, 100)}...</pre>
+`,
+    );
   });
 }
-
-function render(innerHTML) {
-  const el = document.createElement("div");
-  el.innerHTML = innerHTML;
-  document.body.appendChild(el);
+function render(id, innerHTML) {
+  document.getElementById(id).innerHTML = innerHTML;
 }
 
 main();
