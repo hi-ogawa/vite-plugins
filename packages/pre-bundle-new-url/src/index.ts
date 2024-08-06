@@ -15,10 +15,9 @@ export function vitePluginPreBundleNewUrl(): Plugin {
         optimizeDeps: {
           esbuildOptions: {
             plugins: [
-              esbuildPluginWorkerNewUrl({
+              esbuildPluginNewUrl({
                 getResolvedConfig: () => resolvedConfig,
               }),
-              esbuildPluginNewUrl(),
             ],
           },
         },
@@ -38,95 +37,84 @@ const assetImportMetaUrlRE =
 const workerImportMetaUrlRE =
   /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\))/dg;
 
-// replace
-//   new URL("./asset.svg", import.meta.url)
-// with
-//   new URL("/(absolute-path-to)/asset.svg", import.meta.url)
-export function esbuildPluginNewUrl(): esbuild.Plugin {
-  return {
-    name: esbuildPluginNewUrl.name,
-    setup(build) {
-      build.onLoad({ filter: /\.js$/, namespace: "file" }, async (args) => {
-        const data = await fs.promises.readFile(args.path, "utf-8");
-        if (data.includes("import.meta.url")) {
-          const matches = data.matchAll(assetImportMetaUrlRE);
-          const output = new MagicString(data);
-          for (const match of matches) {
-            const rawUrl = match[1]!;
-            const url = rawUrl.slice(1, -1);
-            if (url[0] !== "/") {
-              const absUrl = path.resolve(path.dirname(args.path), url);
-              if (fs.existsSync(absUrl)) {
-                const [start, end] = match.indices![1]!;
-                output.update(start, end, JSON.stringify(absUrl));
-              }
-            }
-          }
-          if (output.hasChanged()) {
-            return {
-              loader: "js",
-              contents: output.toString(),
-            };
-          }
-        }
-        return null;
-      });
-    },
-  };
-}
-
-// replace
-//   new URL("./worker.js", import.meta.url)
-// with
-//   new URL("/(absolute-path-to)/bundled-worker.js", import.meta.url)
-export function esbuildPluginWorkerNewUrl(options: {
+function esbuildPluginNewUrl(options: {
   getResolvedConfig: () => ResolvedConfig;
 }): esbuild.Plugin {
   return {
-    name: esbuildPluginWorkerNewUrl.name,
+    name: esbuildPluginNewUrl.name,
     setup(build) {
       const resolvedConfig = options.getResolvedConfig();
 
       build.onLoad({ filter: /\.js$/, namespace: "file" }, async (args) => {
-        // TODO: merge it above
         const data = await fs.promises.readFile(args.path, "utf-8");
         if (data.includes("import.meta.url")) {
-          const matches = data.matchAll(workerImportMetaUrlRE);
           const output = new MagicString(data);
-          for (const match of matches) {
-            const rawUrl = match[2]!;
-            const url = rawUrl.slice(1, -1);
-            if (url[0] !== "/") {
-              const absUrl = path.resolve(path.dirname(args.path), url);
-              if (fs.existsSync(absUrl)) {
-                const outfile = path.resolve(
-                  resolvedConfig.cacheDir,
-                  "__worker",
-                  hashString(absUrl) + ".js",
-                );
-                // bundle worker if not exist
-                if (
-                  resolvedConfig.optimizeDeps.force ||
-                  !fs.existsSync(outfile)
-                ) {
-                  await esbuild.build({
-                    outfile,
-                    entryPoints: [absUrl],
-                    bundle: true,
-                    plugins: [esbuildPluginNewUrl()],
-                    banner: {
-                      // https://github.com/vitejs/vite/issues/17826
-                      // without this separator, Vite breaks the code by injecting
-                      //   importScripts("/@vite/env")(() => ...)()
-                      js: ";\n",
-                    },
-                  });
+          const workerMatched = new Set<number>();
+
+          // replace
+          //   new Worker(new URL("./worker.js", import.meta.url))
+          // with
+          //   new Worker(new URL("/absolute/path/to/bundled-worker.js", import.meta.url))
+          {
+            const matches = data.matchAll(workerImportMetaUrlRE);
+            for (const match of matches) {
+              const [urlStart, urlEnd] = match.indices![2]!;
+              workerMatched.add(urlStart);
+
+              const url = match[2]!.slice(1, -1);
+              if (url[0] !== "/") {
+                const absUrl = path.resolve(path.dirname(args.path), url);
+                if (fs.existsSync(absUrl)) {
+                  const outfile = path.resolve(
+                    resolvedConfig.cacheDir,
+                    "__worker",
+                    hashString(absUrl) + ".js",
+                  );
+                  // recursively bundle worker
+                  if (
+                    resolvedConfig.optimizeDeps.force ||
+                    !fs.existsSync(outfile)
+                  ) {
+                    await esbuild.build({
+                      outfile,
+                      entryPoints: [absUrl],
+                      bundle: true,
+                      plugins: [esbuildPluginNewUrl(options)],
+                      banner: {
+                        // https://github.com/vitejs/vite/issues/17826
+                        // without this separator, Vite breaks the code by injecting
+                        //   importScripts("/@vite/env")(() => ...)()
+                        js: ";\n",
+                      },
+                    });
+                  }
+                  output.update(urlStart, urlEnd, JSON.stringify(outfile));
                 }
-                const [start, end] = match.indices![2]!;
-                output.update(start, end, JSON.stringify(outfile));
               }
             }
           }
+
+          // replace
+          //   new URL("./asset.svg", import.meta.url)
+          // with
+          //   new URL("/absolute-path-to/asset.svg", import.meta.url)
+          {
+            const matches = data.matchAll(assetImportMetaUrlRE);
+            for (const match of matches) {
+              const [argStart, argEnd] = match.indices![1]!;
+              if (workerMatched.has(argStart)) {
+                continue;
+              }
+              const url = match[1]!.slice(1, -1);
+              if (url[0] !== "/") {
+                const absUrl = path.resolve(path.dirname(args.path), url);
+                if (fs.existsSync(absUrl)) {
+                  output.update(argStart, argEnd, JSON.stringify(absUrl));
+                }
+              }
+            }
+          }
+
           if (output.hasChanged()) {
             return {
               loader: "js",
