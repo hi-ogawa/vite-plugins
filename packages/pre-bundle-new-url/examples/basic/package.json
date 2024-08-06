@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "test-dep-image": "file:./deps/image",
-    "test-dep-worker": "file:./deps/worker"
+    "test-dep-worker": "file:./deps/worker",
+    "test-dep-worker-wasm": "file:./deps/worker-wasm"
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-pre-bundle-new-url": "latest",
