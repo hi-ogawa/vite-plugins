@@ -16,6 +16,7 @@
     "vite": "latest"
   },
   "stackblitz": {
-    "startCommand": "pnpm dev"
+    "installDependencies": false,
+    "startCommand": "pnpm i && pnpm dev"
   }
 }
