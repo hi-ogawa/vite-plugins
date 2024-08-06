@@ -17,7 +17,7 @@ export function vitePluginPreBundleNewUrl(): Plugin {
           esbuildOptions: {
             plugins: [
               esbuildPluginWorkerNewUrl({
-                getOutDir: () => path.join(resolvedConfig.cacheDir, "__worker"),
+                getResolvedConfig: () => resolvedConfig,
               }),
               esbuildPluginNewUrl(),
             ],
@@ -83,12 +83,12 @@ export function esbuildPluginNewUrl(): esbuild.Plugin {
 // with
 //   new URL("/(absolute-path-to)/bundled-worker.js", import.meta.url)
 export function esbuildPluginWorkerNewUrl(options: {
-  getOutDir: () => string;
+  getResolvedConfig: () => ResolvedConfig;
 }): esbuild.Plugin {
   return {
     name: esbuildPluginWorkerNewUrl.name,
     setup(build) {
-      const outDir = options.getOutDir();
+      const resolvedConfig = options.getResolvedConfig();
 
       build.onLoad({ filter: /\.js$/, namespace: "file" }, async (args) => {
         // TODO: merge it above
@@ -103,11 +103,16 @@ export function esbuildPluginWorkerNewUrl(options: {
               const absUrl = path.resolve(path.dirname(args.path), url);
               if (fs.existsSync(absUrl)) {
                 const outfile = path.resolve(
-                  outDir,
+                  resolvedConfig.cacheDir,
+                  "__worker",
                   hashString(absUrl) + ".js",
                 );
                 // bundle worker if not exist
-                if (!fs.existsSync(outfile)) {
+                if (
+                  resolvedConfig.optimizeDeps.force ||
+                  !fs.existsSync(outfile)
+                ) {
+                  console.log({ outfile });
                   await esbuild.build({
                     outfile,
                     entryPoints: [absUrl],
