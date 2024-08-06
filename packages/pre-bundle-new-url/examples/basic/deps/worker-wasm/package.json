@@ -1,0 +1,9 @@
+{
+  "name": "test-dep-worker-wasm",
+  "private": true,
+  "type": "module",
+  "exports": "./index.js",
+  "dependencies": {
+    "@oxc-parser/wasm": "^0.23.0"
+  }
+}

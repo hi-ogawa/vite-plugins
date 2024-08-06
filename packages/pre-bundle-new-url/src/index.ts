@@ -76,7 +76,9 @@ function esbuildPluginNewUrl(options: {
                       outfile,
                       entryPoints: [absUrl],
                       bundle: true,
+                      // TODO: should detect WorkerType and use esm only for `{ type: "module" }`?
                       format: "esm",
+                      platform: "browser",
                       plugins: [esbuildPluginNewUrl(options)],
                       banner: {
                         // https://github.com/vitejs/vite/issues/17826

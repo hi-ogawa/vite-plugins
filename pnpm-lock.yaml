@@ -113,6 +113,9 @@ importers:
       test-dep-worker:
         specifier: file:./deps/worker
         version: file:packages/pre-bundle-new-url/examples/basic/deps/worker
+      test-dep-worker-wasm:
+        specifier: file:./deps/worker-wasm
+        version: file:packages/pre-bundle-new-url/examples/basic/deps/worker-wasm
     devDependencies:
       '@hiogawa/vite-plugin-pre-bundle-new-url':
         specifier: latest
@@ -2134,6 +2137,9 @@ packages:
   '@npmcli/promise-spawn@6.0.2':
     resolution: {integrity: sha512-gGq0NJkIGSwdbUt4yhdF8ZrmkGKVz9vAdVzpOfnom+V8PLSmSOVhZwbNvZZS1EYcJN5hzzKBxmmVVAInM6HQLg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  '@oxc-parser/wasm@0.23.0':
+    resolution: {integrity: sha512-vo3HVL7ynx1u82hlACYdl+JrSDpQ7dRdEXBnq/TC3RmjW/gS6r43X6TZdc2BvJNFMgb9gbRb/Qb6tUEJGdGRJw==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -5239,6 +5245,9 @@ packages:
   test-dep-image@file:packages/pre-bundle-new-url/examples/basic/deps/image:
     resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/image, type: directory}
 
+  test-dep-worker-wasm@file:packages/pre-bundle-new-url/examples/basic/deps/worker-wasm:
+    resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/worker-wasm, type: directory}
+
   test-dep-worker@file:packages/pre-bundle-new-url/examples/basic/deps/worker:
     resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/worker, type: directory}
 
@@ -6727,6 +6736,8 @@ snapshots:
   '@npmcli/promise-spawn@6.0.2':
     dependencies:
       which: 3.0.1
+
+  '@oxc-parser/wasm@0.23.0': {}
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -10550,6 +10561,10 @@ snapshots:
       source-map-support: 0.5.21
 
   test-dep-image@file:packages/pre-bundle-new-url/examples/basic/deps/image: {}
+
+  test-dep-worker-wasm@file:packages/pre-bundle-new-url/examples/basic/deps/worker-wasm:
+    dependencies:
+      '@oxc-parser/wasm': 0.23.0
 
   test-dep-worker@file:packages/pre-bundle-new-url/examples/basic/deps/worker: {}
 

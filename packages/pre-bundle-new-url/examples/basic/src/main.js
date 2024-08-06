@@ -1,5 +1,6 @@
 import * as testDepImage from "test-dep-image";
 import * as testDepWorker from "test-dep-worker";
+import * as testDepWorkerWasm from "test-dep-worker-wasm";
 
 async function main() {
   render(`
@@ -18,6 +19,14 @@ async function main() {
 
   testDepWorker.startWorkerEsm((e) => {
     render(`<pre>worker-esm = ${e.data}</pre>`);
+  });
+
+  // worker with wasm
+  testDepWorkerWasm.startWorker((e) => {
+    render(`<pre>
+worker-wasm = ${e.data.href}
+              ${JSON.stringify(e.data.oxc).slice(0, 100)}...
+</pre>`);
   });
 }
 
