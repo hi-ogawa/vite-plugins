@@ -39,6 +39,13 @@ function esbuildPluginNewUrl(options: {
   return {
     name: esbuildPluginNewUrl.name,
     setup(build) {
+      // do nothing during dep-scan
+      if (
+        build.initialOptions.plugins?.find((p) => p.name === "vite:dep-scan")
+      ) {
+        return;
+      }
+
       const resolvedConfig = options.getResolvedConfig();
       const filter = options.filter ?? /\.js$/;
 
@@ -76,7 +83,7 @@ function esbuildPluginNewUrl(options: {
                       outfile,
                       entryPoints: [absUrl],
                       bundle: true,
-                      // TODO: should detect WorkerType and use esm only for `{ type: "module" }`?
+                      // TODO: should we detect WorkerType and use esm only when `{ type: "module" }`?
                       format: "esm",
                       platform: "browser",
                       plugins: [esbuildPluginNewUrl(options)],
