@@ -6,13 +6,13 @@ export function vitePluginPreBundleNewUrl(): Plugin {
     name: "pre-bundle-new-url",
     config(config, _env) {
       config.cacheDir;
-      esbuildPluginNewUrl;
-      esbuildPluginWorkerNewUrl;
       return {
         optimizeDeps: {
           esbuildOptions: {
-            // TODO
-            plugins: [],
+            plugins: [
+              esbuildPluginWorkerNewUrl(),
+              esbuildPluginNewUrl(),
+            ],
           },
         },
       };

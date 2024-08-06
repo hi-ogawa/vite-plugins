@@ -96,14 +96,27 @@ importers:
   packages/pre-bundle-new-url:
     dependencies:
       esbuild:
-        specifier: ^0.23.0
-        version: 0.23.0
+        specifier: ^0.21.5
+        version: 0.21.5
       magic-string:
         specifier: ^0.30.8
         version: 0.30.10
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+
+  packages/pre-bundle-new-url/examples/basic:
+    dependencies:
+      test-dep-image:
+        specifier: file:./deps/image
+        version: file:packages/pre-bundle-new-url/examples/basic/deps/image
+      test-dep-worker:
+        specifier: file:./deps/worker
+        version: file:packages/pre-bundle-new-url/examples/basic/deps/worker
+    devDependencies:
+      '@hiogawa/vite-plugin-pre-bundle-new-url':
+        specifier: workspace:*
+        version: link:../..
 
   packages/react-server:
     dependencies:
@@ -5219,6 +5232,12 @@ packages:
     resolution: {integrity: sha512-LGyRZVFm/QElZHy/CPr/O4eNZOZIzsrQ92y4v9UJe/pFJjypje2yI3C2FmPtvUEnhadlSbmG2nXtdcjHOjCfxw==}
     engines: {node: '>=10'}
     hasBin: true
+
+  test-dep-image@file:packages/pre-bundle-new-url/examples/basic/deps/image:
+    resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/image, type: directory}
+
+  test-dep-worker@file:packages/pre-bundle-new-url/examples/basic/deps/worker:
+    resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/worker, type: directory}
 
   thenify-all@1.6.0:
     resolution: {integrity: sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==}
@@ -10526,6 +10545,10 @@ snapshots:
       acorn: 8.12.1
       commander: 2.20.3
       source-map-support: 0.5.21
+
+  test-dep-image@file:packages/pre-bundle-new-url/examples/basic/deps/image: {}
+
+  test-dep-worker@file:packages/pre-bundle-new-url/examples/basic/deps/worker: {}
 
   thenify-all@1.6.0:
     dependencies:

@@ -22,7 +22,7 @@
     "prepack": "tsup --clean"
   },
   "dependencies": {
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.21.5",
     "magic-string": "^0.30.8"
   },
   "peerDependencies": {

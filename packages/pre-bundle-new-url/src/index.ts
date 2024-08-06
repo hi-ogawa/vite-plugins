@@ -1,1 +1,1 @@
-export { vitePluginPreBundleNewUrl as vitePluginEsbuildNewUrl } from "./vite";
+export { vitePluginPreBundleNewUrl } from "./vite";
