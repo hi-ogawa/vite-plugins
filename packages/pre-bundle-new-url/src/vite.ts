@@ -9,10 +9,7 @@ export function vitePluginPreBundleNewUrl(): Plugin {
       return {
         optimizeDeps: {
           esbuildOptions: {
-            plugins: [
-              esbuildPluginWorkerNewUrl(),
-              esbuildPluginNewUrl(),
-            ],
+            plugins: [esbuildPluginWorkerNewUrl(), esbuildPluginNewUrl()],
           },
         },
       };
