@@ -2,7 +2,6 @@ import * as testDepImage from "test-dep-image";
 import * as testDepWorker from "test-dep-worker";
 
 async function main() {
-  document.createDocumentFragment;
   document.body.appendChild(
     Object.assign(document.createElement("div"), {
       innerHTML: `
@@ -22,9 +21,13 @@ async function main() {
 
   // worker
   testDepWorker.startWorker((e) => {
-    const el = document.createElement("pre");
-    el.textContent = "worker = " + e.data;
-    document.body.appendChild(el);
+    document.body.appendChild(
+      Object.assign(document.createElement("div"), {
+        innerHTML: `
+          <pre>worker = ${e.data}</pre>
+        `,
+      }),
+    );
   });
 }
 
