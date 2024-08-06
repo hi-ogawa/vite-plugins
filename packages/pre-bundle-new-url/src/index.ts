@@ -5,7 +5,9 @@ import * as esbuild from "esbuild";
 import MagicString from "magic-string";
 import type { Plugin, ResolvedConfig } from "vite";
 
-export function vitePluginPreBundleNewUrl(): Plugin {
+export function vitePluginPreBundleNewUrl(options: {
+  filter?: RegExp;
+}): Plugin {
   let resolvedConfig: ResolvedConfig;
 
   return {
@@ -16,6 +18,7 @@ export function vitePluginPreBundleNewUrl(): Plugin {
           esbuildOptions: {
             plugins: [
               esbuildPluginNewUrl({
+                filter: options.filter,
                 getResolvedConfig: () => resolvedConfig,
               }),
             ],
@@ -38,14 +41,16 @@ const workerImportMetaUrlRE =
   /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\))/dg;
 
 function esbuildPluginNewUrl(options: {
+  filter?: RegExp;
   getResolvedConfig: () => ResolvedConfig;
 }): esbuild.Plugin {
   return {
     name: esbuildPluginNewUrl.name,
     setup(build) {
       const resolvedConfig = options.getResolvedConfig();
+      const filter = options.filter ?? /\.js$/;
 
-      build.onLoad({ filter: /\.js$/, namespace: "file" }, async (args) => {
+      build.onLoad({ filter, namespace: "file" }, async (args) => {
         const data = await fs.promises.readFile(args.path, "utf-8");
         if (data.includes("import.meta.url")) {
           const output = new MagicString(data);
