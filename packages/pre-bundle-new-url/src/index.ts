@@ -10,8 +10,7 @@ export function vitePluginPreBundleNewUrl(): Plugin {
 
   return {
     name: "pre-bundle-new-url",
-    config(config, _env) {
-      config.cacheDir;
+    config() {
       return {
         optimizeDeps: {
           esbuildOptions: {
@@ -41,14 +40,12 @@ const workerImportMetaUrlRE =
 
 // replace
 //   new URL("./asset.svg", import.meta.url)
-//   new URL("asset.svg", import.meta.url)
 // with
 //   new URL("/(absolute-path-to)/asset.svg", import.meta.url)
 export function esbuildPluginNewUrl(): esbuild.Plugin {
   return {
     name: esbuildPluginNewUrl.name,
     setup(build) {
-      build.initialOptions;
       build.onLoad({ filter: /\.js$/, namespace: "file" }, async (args) => {
         const data = await fs.promises.readFile(args.path, "utf-8");
         if (data.includes("import.meta.url")) {
@@ -112,7 +109,6 @@ export function esbuildPluginWorkerNewUrl(options: {
                   resolvedConfig.optimizeDeps.force ||
                   !fs.existsSync(outfile)
                 ) {
-                  console.log({ outfile });
                   await esbuild.build({
                     outfile,
                     entryPoints: [absUrl],
