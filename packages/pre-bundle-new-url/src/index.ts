@@ -5,7 +5,7 @@ import * as esbuild from "esbuild";
 import MagicString from "magic-string";
 import type { Plugin, ResolvedConfig } from "vite";
 
-export function vitePluginPreBundleNewUrl(options: {
+export function vitePluginPreBundleNewUrl(options?: {
   filter?: RegExp;
 }): Plugin {
   let resolvedConfig: ResolvedConfig;
@@ -18,7 +18,7 @@ export function vitePluginPreBundleNewUrl(options: {
           esbuildOptions: {
             plugins: [
               esbuildPluginNewUrl({
-                filter: options.filter,
+                filter: options?.filter,
                 getResolvedConfig: () => resolvedConfig,
               }),
             ],
