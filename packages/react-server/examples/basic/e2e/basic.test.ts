@@ -1607,7 +1607,7 @@ test("global-error", async ({ page }) => {
   await page.waitForURL("/");
 });
 
-test.only("envPrefix", async ({ page }) => {
+test("envPrefix", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/env");
   await waitForHydration(page);
