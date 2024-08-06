@@ -1,1 +1,1 @@
-export const workerDep = "workerDep";
+export const workerDep = "ok";

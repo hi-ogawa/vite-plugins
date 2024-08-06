@@ -2,17 +2,23 @@ import * as testDepImage from "test-dep-image";
 import * as testDepWorker from "test-dep-worker";
 
 async function main() {
-  document.getElementById("test").textContent = JSON.stringify(
-    [testDepImage.image1, testDepImage.image2],
-    null,
-    2,
+  document.createDocumentFragment;
+  document.body.appendChild(
+    Object.assign(document.createElement("div"), {
+      innerHTML: `
+        <pre>new URL("./vite.svg", import.meta.url)</pre>
+        <img width="40" src="${testDepImage.image1}" />
+      `,
+    }),
   );
-
-  // image
-  const img = document.createElement("img");
-  img.src = testDepImage.image1;
-  img.width = "40";
-  document.body.appendChild(img);
+  document.body.appendChild(
+    Object.assign(document.createElement("div"), {
+      innerHTML: `
+        <pre>new URL("vite.svg", import.meta.url)</pre>
+        <img width="40" src="${testDepImage.image2}" />
+      `,
+    }),
+  );
 
   // worker
   testDepWorker.startWorker((e) => {
