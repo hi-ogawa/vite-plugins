@@ -1,7 +1,7 @@
 # vite-plugin-pre-bundle-new-url
 
 Vite plugin to handle `new URL(..., import.meta.url)` and `new Worker(new URL(..., import.meta.url))`
-for pre-bundled dependenceis.
+for pre-bundled dependencies.
 
 - https://github.com/vitejs/vite/pull/13501
 - https://github.com/vitejs/vite/pull/16418
