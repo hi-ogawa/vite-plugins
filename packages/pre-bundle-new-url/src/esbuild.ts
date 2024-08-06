@@ -4,16 +4,20 @@ import path from "node:path";
 import * as esbuild from "esbuild";
 import MagicString from "magic-string";
 
+// https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
+const assetImportMetaUrlRE =
+  /\bnew\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)/dg;
+
+// https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/workerImportMetaUrl.ts#L133-L134
+const workerImportMetaUrlRE =
+  /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\))/dg;
+
 // replace
 //   new URL("./asset.svg", import.meta.url)
 //   new URL("asset.svg", import.meta.url)
 // with
 //   new URL("/(absolute-path-to)/asset.svg", import.meta.url)
 export function esbuildPluginNewUrl(): esbuild.Plugin {
-  // https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
-  const assetImportMetaUrlRE =
-    /\bnew\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)/dg;
-
   return {
     name: esbuildPluginNewUrl.name,
     setup(build) {
@@ -51,14 +55,11 @@ export function esbuildPluginNewUrl(): esbuild.Plugin {
 // with
 //   new URL("/(absolute-path-to)/bundled-worker.js", import.meta.url)
 export function esbuildPluginWorkerNewUrl(): esbuild.Plugin {
-  // https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/workerImportMetaUrl.ts#L133-L134
-  const workerImportMetaUrlRE =
-    /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\))/dg;
-
   return {
     name: esbuildPluginWorkerNewUrl.name,
     setup(build) {
       build.onLoad({ filter: /\.js$/, namespace: "file" }, async (args) => {
+        // TODO: merge it above
         const data = await fs.promises.readFile(args.path, "utf-8");
         if (data.includes("import.meta.url")) {
           const matches = data.matchAll(workerImportMetaUrlRE);
