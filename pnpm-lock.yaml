@@ -93,12 +93,6 @@ importers:
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
 
-  packages/esbuild-new-url:
-    dependencies:
-      vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
-
   packages/pre-bundle-new-url:
     dependencies:
       esbuild:
@@ -107,6 +101,9 @@ importers:
       magic-string:
         specifier: ^0.30.8
         version: 0.30.10
+      vite:
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server:
     dependencies:
