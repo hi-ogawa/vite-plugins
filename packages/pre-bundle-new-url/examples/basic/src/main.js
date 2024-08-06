@@ -13,7 +13,11 @@ async function main() {
   `);
 
   testDepWorker.startWorker((e) => {
-    render(`<pre>worker = ${e.data}</pre>`);
+    render(`<pre>worker-classic = ${e.data}</pre>`);
+  });
+
+  testDepWorker.startWorkerEsm((e) => {
+    render(`<pre>worker-esm = ${e.data}</pre>`);
   });
 }
 
