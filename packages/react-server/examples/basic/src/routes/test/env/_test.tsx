@@ -1,12 +1,7 @@
 export function getTestEnv() {
   return {
-    "import.meta.env.MY_PREFIX_ENV_YES":
-      import.meta.env.MY_PREFIX_ENV_YES ?? null,
-    "import.meta.env.MY_PREFIX_ENV_NO":
-      import.meta.env.MY_PREFIX_ENV_NO ?? null,
-
-    // vite doesn't replace `process.env` by default
-    // "process.env.MY_PREFIX_ENV_YES": process.env.MY_PREFIX_ENV_YES ?? null,
-    // "process.env.MY_PREFIX_ENV_NO": process.env.MY_PREFIX_ENV_NO ?? null,
+    MY_PREFIX_ENV_TEST: import.meta.env.MY_PREFIX_ENV_TEST ?? null,
+    VITE_ENV_TEST: import.meta.env.VITE_ENV_TEST ?? null,
+    OTHER_ENV_TEST: import.meta.env.OTHER_ENV_TEST ?? null,
   };
 }

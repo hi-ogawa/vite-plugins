@@ -72,7 +72,7 @@ export default defineConfig({
       "react-tweet",
     ],
   },
-  envPrefix: "MY_PREFIX",
+  envPrefix: "MY_PREFIX_",
 });
 
 function testVitePluginVirtual(): Plugin {

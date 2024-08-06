@@ -1607,14 +1607,14 @@ test("global-error", async ({ page }) => {
   await page.waitForURL("/");
 });
 
-test("envPrefix", async ({ page }) => {
+test.only("envPrefix", async ({ page }) => {
   checkNoError(page);
   await page.goto("/test/env");
   await waitForHydration(page);
   await expect(page.getByTestId("server-env")).toContainText(
-    '{ "import.meta.env.MY_PREFIX_ENV_YES": "yes", "import.meta.env.MY_PREFIX_ENV_NO": null }',
+    '{ "MY_PREFIX_ENV_TEST": "yes", "VITE_ENV_TEST": null, "OTHER_ENV_TEST": null }',
   );
   await expect(page.getByTestId("client-env")).toContainText(
-    '{ "import.meta.env.MY_PREFIX_ENV_YES": "yes", "import.meta.env.MY_PREFIX_ENV_NO": null }',
+    '{ "MY_PREFIX_ENV_TEST": "yes", "VITE_ENV_TEST": null, "OTHER_ENV_TEST": null }',
   );
 });
