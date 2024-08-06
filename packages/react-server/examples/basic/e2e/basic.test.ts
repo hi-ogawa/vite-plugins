@@ -1606,3 +1606,15 @@ test("global-error", async ({ page }) => {
   await page.getByRole("link", { name: "Home" }).click();
   await page.waitForURL("/");
 });
+
+test("envPrefix", async ({ page }) => {
+  checkNoError(page);
+  await page.goto("/test/env");
+  await waitForHydration(page);
+  await expect(page.getByTestId("server-env")).toContainText(
+    '{ "MY_PREFIX_ENV_TEST": "yes", "VITE_ENV_TEST": null, "OTHER_ENV_TEST": null }',
+  );
+  await expect(page.getByTestId("client-env")).toContainText(
+    '{ "MY_PREFIX_ENV_TEST": "yes", "VITE_ENV_TEST": null, "OTHER_ENV_TEST": null }',
+  );
+});
