@@ -14,5 +14,8 @@
   "devDependencies": {
     "@hiogawa/vite-plugin-pre-bundle-new-url": "latest",
     "vite": "latest"
+  },
+  "stackblitz": {
+    "startCommand": "pnpm dev"
   }
 }
