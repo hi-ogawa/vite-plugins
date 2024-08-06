@@ -12,6 +12,7 @@
     "test-dep-worker": "file:./deps/worker"
   },
   "devDependencies": {
-    "@hiogawa/vite-plugin-pre-bundle-new-url": "workspace:*"
+    "@hiogawa/vite-plugin-pre-bundle-new-url": "latest",
+    "vite": "latest"
   }
 }
