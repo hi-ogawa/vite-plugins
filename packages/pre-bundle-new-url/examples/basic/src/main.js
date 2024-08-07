@@ -1,7 +1,7 @@
+import * as testDepEmscriptenEsm from "test-dep-emscripten-esm";
 import * as testDepImage from "test-dep-image";
 import * as testDepWorker from "test-dep-worker";
 import * as testDepWorkerWasm from "test-dep-worker-wasm";
-import * as testDepEmscriptenEsm from "test-dep-emscripten-esm";
 
 async function main() {
   render(

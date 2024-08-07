@@ -21,9 +21,8 @@ new URL("/absoute-path-to/node_modules/some-package/image.svg", import.meta.url)
 new Worker(new URL("/absolute-path-to/node_modules/.vite/__worker/(hash).js", import.meta.url))
 ```
 
-Note that this is only for external packages during development
-since Vite already handles this in normal transform pipeline and that works for
-external packages during build.
+Note that this is only for _external packages_ during _development_
+since Vite's normal transform pipeline works for non pre-bundled code.
 
 ## related
 
