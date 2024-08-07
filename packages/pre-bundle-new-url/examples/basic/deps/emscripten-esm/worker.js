@@ -1,4 +1,4 @@
-import Module from "./lib/lib.js";
+import Module from "./lib/build-esm.js";
 
 let lib;
 

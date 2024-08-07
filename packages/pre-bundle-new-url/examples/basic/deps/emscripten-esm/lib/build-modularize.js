@@ -1,5 +1,6 @@
 var Module = (() => {
-  var _scriptName = import.meta.url;
+  var _scriptName =
+    typeof document != "undefined" ? document.currentScript?.src : undefined;
 
   return function (moduleArg = {}) {
     var moduleRtn;
@@ -712,15 +713,11 @@ var Module = (() => {
     // include: runtime_exceptions.js
     // end include: runtime_exceptions.js
     function findWasmBinary() {
-      if (Module["locateFile"]) {
-        var f = "lib.wasm";
-        if (!isDataURI(f)) {
-          return locateFile(f);
-        }
-        return f;
+      var f = "build-modularize.wasm";
+      if (!isDataURI(f)) {
+        return locateFile(f);
       }
-      // Use bundler-friendly `new URL(..., import.meta.url)` pattern; works in browsers too.
-      return new URL("lib.wasm", import.meta.url).href;
+      return f;
     }
 
     var wasmBinaryFile;
@@ -3183,4 +3180,7 @@ var Module = (() => {
     return moduleRtn;
   };
 })();
-export default Module;
+if (typeof exports === "object" && typeof module === "object")
+  module.exports = Module;
+else if (typeof define === "function" && define["amd"])
+  define([], () => Module);
