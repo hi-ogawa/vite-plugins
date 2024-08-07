@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "test-dep-emscripten-esm": "file:./deps/emscripten-esm",
     "test-dep-image": "file:./deps/image",
     "test-dep-worker": "file:./deps/worker",
     "test-dep-worker-wasm": "file:./deps/worker-wasm"
