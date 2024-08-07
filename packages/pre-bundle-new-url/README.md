@@ -3,6 +3,8 @@
 Vite plugin to handle `new URL(..., import.meta.url)` and `new Worker(new URL(..., import.meta.url))`
 for pre-bundled dependencies.
 
+It uses esbuild's [`onLoad`](https://esbuild.github.io/plugins/#on-load) hook to transform in a following way:
+
 ```ts
 // some-package/
 //   index.js
@@ -13,11 +15,15 @@ for pre-bundled dependencies.
 new URL("./image.svg", import.meta.url)
 new Worker(new URL("./worker.js", import.meta.url))
 
-// ⇓ transformed to
+// ⇓ transform
 
 new URL("/absoute-path-to/node_modules/some-package/image.svg", import.meta.url)
 new Worker(new URL("/absolute-path-to/node_modules/.vite/__worker/(hash).js", import.meta.url))
 ```
+
+Note that this is only for external packages during development
+since Vite already handles this in normal transform pipeline and that works for
+external packages during build.
 
 ## related
 
