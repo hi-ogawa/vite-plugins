@@ -7,6 +7,7 @@ import type { Plugin, ResolvedConfig } from "vite";
 
 export function vitePluginPreBundleNewUrl(options?: {
   filter?: RegExp;
+  debug?: boolean;
 }): Plugin {
   let resolvedConfig: ResolvedConfig;
 
@@ -34,6 +35,7 @@ export function vitePluginPreBundleNewUrl(options?: {
 
 function esbuildPluginNewUrl(options: {
   filter?: RegExp;
+  debug?: boolean;
   getResolvedConfig: () => ResolvedConfig;
 }): esbuild.Plugin {
   return {
@@ -79,6 +81,14 @@ function esbuildPluginNewUrl(options: {
                     resolvedConfig.optimizeDeps.force ||
                     !fs.existsSync(outfile)
                   ) {
+                    if (options.debug) {
+                      console.log(
+                        "[pre-bundenew-url]",
+                        args.path,
+                        "=>",
+                        absUrl,
+                      );
+                    }
                     await esbuild.build({
                       outfile,
                       entryPoints: [absUrl],
@@ -93,6 +103,7 @@ function esbuildPluginNewUrl(options: {
                         //   importScripts("/@vite/env")(() => ...)()
                         js: ";\n",
                       },
+                      logLevel: options.debug ? "debug" : undefined,
                     });
                   }
                   output.update(urlStart, urlEnd, JSON.stringify(outfile));
