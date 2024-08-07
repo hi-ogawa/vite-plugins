@@ -1,0 +1,6 @@
+{
+  "name": "test-dep-emscripten-esm",
+  "private": true,
+  "type": "module",
+  "exports": "./index.js"
+}

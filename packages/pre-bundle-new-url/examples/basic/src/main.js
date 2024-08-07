@@ -1,6 +1,7 @@
 import * as testDepImage from "test-dep-image";
 import * as testDepWorker from "test-dep-worker";
 import * as testDepWorkerWasm from "test-dep-worker-wasm";
+import * as testDepEmscriptenEsm from "test-dep-emscripten-esm";
 
 async function main() {
   render(
@@ -49,7 +50,19 @@ async function main() {
 `,
     );
   });
+
+  // manual worker integration for emscripten esm
+  testDepEmscriptenEsm.startWorker((e) => {
+    render(
+      "worker-emscripten-esm",
+      `\
+<h4>worker-emscripten-esm</h4>
+<pre>worker-wasm = ${e.data.href}\n${JSON.stringify(e.data.oxc).slice(0, 100)}...</pre>
+`,
+    );
+  });
 }
+
 function render(id, innerHTML) {
   document.getElementById(id).innerHTML = innerHTML;
 }
