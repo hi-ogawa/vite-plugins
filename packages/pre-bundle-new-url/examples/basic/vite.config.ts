@@ -3,5 +3,9 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   clearScreen: false,
-  plugins: [vitePluginPreBundleNewUrl()],
+  plugins: [
+    vitePluginPreBundleNewUrl({
+      // debug: true,
+    }),
+  ],
 });

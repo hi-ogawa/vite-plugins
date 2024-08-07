@@ -7,6 +7,7 @@ import type { Plugin, ResolvedConfig } from "vite";
 
 export function vitePluginPreBundleNewUrl(options?: {
   filter?: RegExp;
+  debug?: boolean;
 }): Plugin {
   let resolvedConfig: ResolvedConfig;
 
@@ -18,7 +19,7 @@ export function vitePluginPreBundleNewUrl(options?: {
           esbuildOptions: {
             plugins: [
               esbuildPluginNewUrl({
-                filter: options?.filter,
+                ...options,
                 getResolvedConfig: () => resolvedConfig,
               }),
             ],
@@ -26,14 +27,25 @@ export function vitePluginPreBundleNewUrl(options?: {
         },
       };
     },
-    configResolved(config) {
+    async configResolved(config) {
       resolvedConfig = config;
+      if (resolvedConfig.optimizeDeps.force) {
+        await fs.promises.rm(
+          path.resolve(resolvedConfig.cacheDir, "__worker"),
+          { recursive: true, force: true },
+        );
+      }
     },
   };
 }
 
+// track worker build to handle recursive worker such as
+// https://github.com/gkjohnson/three-mesh-bvh/blob/9718501eee2619f1015fa332d7bddafaf6cf562a/src/workers/parallelMeshBVH.worker.js#L12
+let buildPromiseMap = new Map<string, Promise<unknown>>();
+
 function esbuildPluginNewUrl(options: {
   filter?: RegExp;
+  debug?: boolean;
   getResolvedConfig: () => ResolvedConfig;
 }): esbuild.Plugin {
   return {
@@ -75,11 +87,17 @@ function esbuildPluginNewUrl(options: {
                     hashString(absUrl) + ".js",
                   );
                   // recursively bundle worker
-                  if (
-                    resolvedConfig.optimizeDeps.force ||
-                    !fs.existsSync(outfile)
-                  ) {
-                    await esbuild.build({
+                  let buildPromise = buildPromiseMap.get(outfile);
+                  if (!fs.existsSync(outfile) && !buildPromise) {
+                    if (options.debug) {
+                      console.log(
+                        "[pre-bundenew-url]",
+                        args.path,
+                        "=>",
+                        absUrl,
+                      );
+                    }
+                    buildPromise = esbuild.build({
                       outfile,
                       entryPoints: [absUrl],
                       bundle: true,
@@ -93,7 +111,10 @@ function esbuildPluginNewUrl(options: {
                         //   importScripts("/@vite/env")(() => ...)()
                         js: ";\n",
                       },
+                      logLevel: options.debug ? "debug" : undefined,
                     });
+                    buildPromiseMap.set(outfile, buildPromise);
+                    await buildPromise;
                   }
                   output.update(urlStart, urlEnd, JSON.stringify(outfile));
                 }
