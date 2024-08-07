@@ -119,7 +119,7 @@ importers:
     devDependencies:
       '@hiogawa/vite-plugin-pre-bundle-new-url':
         specifier: latest
-        version: link:../..
+        version: 0.0.0-pre.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
@@ -172,6 +172,9 @@ importers:
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
+      esbuild-plugin-polyfill-node:
+        specifier: ^0.3.0
+        version: 0.3.0(esbuild@0.20.2)
       react:
         specifier: 19.0.0-rc-df5f2736-20240712
         version: 19.0.0-rc-df5f2736-20240712
@@ -2045,6 +2048,11 @@ packages:
   '@hiogawa/utils@1.7.0':
     resolution: {integrity: sha512-ghiEFWBR1NENoHn+lSuW7liicTIzVPN+8Srm5UedCTw43gus0mlse6Wp2lz6GmbOXJ/CalMPp/0Tz2X8tajkAg==}
 
+  '@hiogawa/vite-plugin-pre-bundle-new-url@0.0.0-pre.1':
+    resolution: {integrity: sha512-2pQLpaizkTZ94Ws/AJeDe9XT0tF0r2bLk2oaxx4dflrzSgxFbYMqdXmUhxJ4srinztN6gnJ9igvJr/7sZtP7tA==}
+    peerDependencies:
+      vite: ^5.3.3
+
   '@iconify-json/ri@1.1.20':
     resolution: {integrity: sha512-yScIGjLFBCJKWKskQTWRjNI2Awoq+VRDkRxEsCQvSfdz41n+xkRtFG2K6J1OVI90ClRHfjFC8VJ2+WzxxyFjTQ==}
 
@@ -3389,6 +3397,11 @@ packages:
   es-module-lexer@1.5.4:
     resolution: {integrity: sha512-MVNK56NiMrOwitFB7cqDwq0CQutbw+0BvLshJSse0MUNU+y1FC3bUS/AQg7oUng+/wKrrki7JfmwtVHkVfPLlw==}
 
+  esbuild-plugin-polyfill-node@0.3.0:
+    resolution: {integrity: sha512-SHG6CKUfWfYyYXGpW143NEZtcVVn8S/WHcEOxk62LuDXnY4Zpmc+WmxJKN6GMTgTClXJXhEM5KQlxKY6YjbucQ==}
+    peerDependencies:
+      esbuild: '*'
+
   esbuild-plugins-node-modules-polyfill@1.6.3:
     resolution: {integrity: sha512-nydQGT3RijD8mBd3Hek+2gSAxndgceZU9GIjYYiqU+7CE7veN8utTmupf0frcKpwIXCXWpRofL9CY9k0yU70CA==}
     engines: {node: '>=14.0.0'}
@@ -3790,6 +3803,9 @@ packages:
   ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
+
+  import-meta-resolve@3.1.1:
+    resolution: {integrity: sha512-qeywsE/KC3w9Fd2ORrRDUw6nS/nLwZpXgfrOc2IILvZYnCaEMd+D56Vfg9k4G29gIeVi3XKql1RQatME8iYsiw==}
 
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
@@ -6548,6 +6564,12 @@ snapshots:
 
   '@hiogawa/utils@1.7.0': {}
 
+  '@hiogawa/vite-plugin-pre-bundle-new-url@0.0.0-pre.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))':
+    dependencies:
+      esbuild: 0.21.5
+      magic-string: 0.30.10
+      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+
   '@iconify-json/ri@1.1.20':
     dependencies:
       '@iconify/types': 2.0.0
@@ -8103,6 +8125,12 @@ snapshots:
 
   es-module-lexer@1.5.4: {}
 
+  esbuild-plugin-polyfill-node@0.3.0(esbuild@0.20.2):
+    dependencies:
+      '@jspm/core': 2.0.1
+      esbuild: 0.20.2
+      import-meta-resolve: 3.1.1
+
   esbuild-plugins-node-modules-polyfill@1.6.3(esbuild@0.17.6):
     dependencies:
       '@jspm/core': 2.0.1
@@ -8720,6 +8748,8 @@ snapshots:
   ieee754@1.2.1: {}
 
   ignore@5.3.1: {}
+
+  import-meta-resolve@3.1.1: {}
 
   imurmurhash@0.1.4: {}
 

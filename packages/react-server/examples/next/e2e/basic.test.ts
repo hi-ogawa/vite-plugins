@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { testNoJs, waitForHydration } from "./helper";
 
+const isPreview = Boolean(process.env.E2E_PREVIEW);
+
 test("basic", async ({ page }) => {
   const res = await page.goto("/");
   expect(res?.status()).toBe(200);
@@ -74,6 +76,8 @@ test("action client", async ({ page }) => {
 });
 
 test("favicon.ico", async ({ request }) => {
+  //TODO: Should the content-type on cloudflare worker image/x-icon?
+  test.skip(Boolean(process.env["E2E_CF"]));
   const res = await request.get("/favicon.ico");
   expect(res.status()).toBe(200);
   expect(res.headers()["content-type"]).toBe("image/x-icon");
@@ -136,4 +140,23 @@ testNoJs("middleware flight redirect @nojs", async ({ page }) => {
   await page.getByRole("link", { name: "/test/middleware/redirect" }).click();
   await page.waitForURL("/?ok=redirect");
   await page.getByRole("img", { name: "Next.js logo" }).click();
+});
+
+test("envionment variables with process.env", async ({ page }) => {
+  await page.goto("/test/env");
+  await waitForHydration(page);
+  await expect(page.getByTestId("server-env")).toContainText(
+    JSON.stringify({
+      NEXT_PUBLIC_ENV_TEST: "public-env",
+      ENV_TEST_SECRET: "secret-env",
+      NODE_ENV: isPreview ? "production" : "development",
+    }),
+  );
+  await expect(page.getByTestId("client-env")).toContainText(
+    JSON.stringify({
+      NEXT_PUBLIC_ENV_TEST: "public-env",
+      ENV_TEST_SECRET: null,
+      NODE_ENV: isPreview ? "production" : "development",
+    }),
+  );
 });

@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
-
+import { polyfillNode } from "esbuild-plugin-polyfill-node";
 export async function build({ outDir }: { outDir: string }) {
   const buildDir = join(process.cwd(), outDir);
   const adapterOutDir = join(process.cwd(), outDir, "cloudflare");
@@ -66,6 +66,13 @@ export async function build({ outDir }: { outDir: string }) {
     logOverride: {
       "ignored-bare-import": "silent",
     },
+    plugins: [
+      polyfillNode({
+        polyfills: {
+          async_hooks: false,
+        },
+      }),
+    ],
   });
   await writeFile(
     join(buildDir, "esbuild-metafile.json"),

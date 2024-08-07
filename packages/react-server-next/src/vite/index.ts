@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
+import path, { resolve } from "node:path";
 import {
   type ReactServerPluginOptions,
   vitePluginReactServer,
@@ -9,7 +9,12 @@ import {
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react-swc";
-import { type Plugin, type PluginOption, transformWithEsbuild } from "vite";
+import {
+  type Plugin,
+  type PluginOption,
+  loadEnv,
+  transformWithEsbuild,
+} from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type AdapterType, adapterPlugin } from "./adapters";
 
@@ -37,7 +42,7 @@ export default function vitePluginReactServerNext(
     }),
     adapterPlugin({ adapter: options?.adapter, outDir }),
     appFaviconPlugin(),
-    nextConfigPlugin(),
+    nextEnvironmentPlugin(),
     {
       name: "next-exclude-optimize",
       config: () => ({
@@ -52,16 +57,27 @@ export default function vitePluginReactServerNext(
   ];
 }
 
-function nextConfigPlugin(): Plugin {
+function nextEnvironmentPlugin(): Plugin {
   return {
-    name: nextConfigPlugin.name,
-    config(config, _env) {
-      // TODO
-      // this is only for import.meta.env.NEXT_PUBLIC_xxx replacement.
-      // we might want to define process.env.NEXT_PUBLIC_xxx for better compatibility.
-      // https://nextjs.org/docs/app/building-your-application/configuring/environment-variables#bundling-environment-variables-for-the-browser
+    name: nextEnvironmentPlugin.name,
+    config: ({ root: root = process.cwd(), envDir, envPrefix }, { mode }) => {
+      envPrefix = ["NEXT_PUBLIC_", ...[envPrefix ?? []]].flat();
+      const resolvedRoot = resolve(root);
+      envDir = envDir ? resolve(resolvedRoot, envDir) : resolvedRoot;
+
+      const env = loadEnv(mode, envDir, envPrefix);
+      const allEnvs = loadEnv(mode, envDir, "");
+      Object.assign(process.env, { ...process.env, ...allEnvs });
       return {
-        envPrefix: ["NEXT_PUBLIC_", ...[config.envPrefix ?? []]].flat(),
+        define: Object.entries(env).reduce(
+          (vars, [key, value]) => {
+            if (value !== undefined)
+              vars[`process.env.${key}`] = JSON.stringify(value);
+            return vars;
+          },
+          {} as Record<string, string | null>,
+        ),
+        envPrefix,
       };
     },
   };
