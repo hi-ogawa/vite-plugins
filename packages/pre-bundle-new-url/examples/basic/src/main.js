@@ -57,7 +57,7 @@ async function main() {
       "worker-emscripten-esm",
       `\
 <h4>worker-emscripten-esm</h4>
-<pre>worker-wasm = ${e.data.href}\n${JSON.stringify(e.data.oxc).slice(0, 100)}...</pre>
+<pre>${e.data}</pre>
 `,
     );
   });

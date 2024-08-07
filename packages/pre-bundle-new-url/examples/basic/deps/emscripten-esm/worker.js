@@ -1,7 +1,8 @@
 import Module from "./lib/lib.js";
 
-const lib = await Module();
+let lib;
 
-self.onmessage = () => {
+self.onmessage = async () => {
+  lib ??= await Module();
   self.postMessage(lib.hello("world"));
 };
