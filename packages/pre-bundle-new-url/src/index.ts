@@ -39,7 +39,7 @@ export function vitePluginPreBundleNewUrl(options?: {
   };
 }
 
-// track which worker is built to handle recursive worker such as
+// track worker build to handle recursive worker such as
 // https://github.com/gkjohnson/three-mesh-bvh/blob/9718501eee2619f1015fa332d7bddafaf6cf562a/src/workers/parallelMeshBVH.worker.js#L12
 let buildPromiseMap = new Map<string, Promise<unknown>>();
 
@@ -114,7 +114,7 @@ function esbuildPluginNewUrl(options: {
                       logLevel: options.debug ? "debug" : undefined,
                     });
                     buildPromiseMap.set(outfile, buildPromise);
-                    await buildPromise
+                    await buildPromise;
                   }
                   output.update(urlStart, urlEnd, JSON.stringify(outfile));
                 }
