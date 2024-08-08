@@ -5,7 +5,7 @@ export default defineConfig({
   clearScreen: false,
   plugins: [
     vitePluginPreBundleNewUrl({
-      // debug: true,
+      debug: true,
     }),
   ],
   worker: {
