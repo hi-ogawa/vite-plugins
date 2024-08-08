@@ -107,9 +107,9 @@ importers:
 
   packages/pre-bundle-new-url/examples/basic:
     dependencies:
-      test-dep-emscripten-esm:
-        specifier: file:./deps/emscripten-esm
-        version: file:packages/pre-bundle-new-url/examples/basic/deps/emscripten-esm
+      test-dep-emscripten:
+        specifier: file:./deps/emscripten
+        version: test-dep-emscripten-esm@file:packages/pre-bundle-new-url/examples/basic/deps/emscripten
       test-dep-image:
         specifier: file:./deps/image
         version: file:packages/pre-bundle-new-url/examples/basic/deps/image
@@ -5245,8 +5245,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  test-dep-emscripten-esm@file:packages/pre-bundle-new-url/examples/basic/deps/emscripten-esm:
-    resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/emscripten-esm, type: directory}
+  test-dep-emscripten-esm@file:packages/pre-bundle-new-url/examples/basic/deps/emscripten:
+    resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/emscripten, type: directory}
 
   test-dep-image@file:packages/pre-bundle-new-url/examples/basic/deps/image:
     resolution: {directory: packages/pre-bundle-new-url/examples/basic/deps/image, type: directory}
@@ -10566,7 +10566,7 @@ snapshots:
       commander: 2.20.3
       source-map-support: 0.5.21
 
-  test-dep-emscripten-esm@file:packages/pre-bundle-new-url/examples/basic/deps/emscripten-esm: {}
+  test-dep-emscripten-esm@file:packages/pre-bundle-new-url/examples/basic/deps/emscripten: {}
 
   test-dep-image@file:packages/pre-bundle-new-url/examples/basic/deps/image: {}
 

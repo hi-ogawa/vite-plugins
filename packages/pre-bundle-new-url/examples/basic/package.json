@@ -10,7 +10,7 @@
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
   },
   "dependencies": {
-    "test-dep-emscripten-esm": "file:./deps/emscripten-esm",
+    "test-dep-emscripten": "file:./deps/emscripten",
     "test-dep-image": "file:./deps/image",
     "test-dep-worker": "file:./deps/worker",
     "test-dep-worker-wasm": "file:./deps/worker-wasm"
