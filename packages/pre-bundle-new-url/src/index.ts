@@ -21,6 +21,7 @@ export function vitePluginPreBundleNewUrl(options?: {
               esbuildPluginNewUrl({
                 ...options,
                 getResolvedConfig: () => resolvedConfig,
+                visited: new Set(),
               }),
             ],
           },
@@ -39,14 +40,13 @@ export function vitePluginPreBundleNewUrl(options?: {
   };
 }
 
-// track worker build to handle recursive worker such as
-// https://github.com/gkjohnson/three-mesh-bvh/blob/9718501eee2619f1015fa332d7bddafaf6cf562a/src/workers/parallelMeshBVH.worker.js#L12
-let buildPromiseMap = new Map<string, Promise<unknown>>();
-
 function esbuildPluginNewUrl(options: {
   filter?: RegExp;
   debug?: boolean;
   getResolvedConfig: () => ResolvedConfig;
+  // track worker build to prevent infinite loop on recursive worker such as
+  // https://github.com/gkjohnson/three-mesh-bvh/blob/9718501eee2619f1015fa332d7bddafaf6cf562a/src/workers/parallelMeshBVH.worker.js#L12
+  visited: Set<string>;
 }): esbuild.Plugin {
   return {
     name: esbuildPluginNewUrl.name,
@@ -87,8 +87,11 @@ function esbuildPluginNewUrl(options: {
                     hashString(absUrl) + ".js",
                   );
                   // recursively bundle worker
-                  let buildPromise = buildPromiseMap.get(outfile);
-                  if (!fs.existsSync(outfile) && !buildPromise) {
+                  if (
+                    !fs.existsSync(outfile) &&
+                    !options.visited.has(outfile)
+                  ) {
+                    options.visited.add(outfile);
                     if (options.debug) {
                       console.log(
                         "[pre-bundenew-url]",
@@ -97,7 +100,7 @@ function esbuildPluginNewUrl(options: {
                         absUrl,
                       );
                     }
-                    buildPromise = esbuild.build({
+                    await esbuild.build({
                       outfile,
                       entryPoints: [absUrl],
                       bundle: true,
@@ -113,8 +116,6 @@ function esbuildPluginNewUrl(options: {
                       },
                       logLevel: options.debug ? "debug" : undefined,
                     });
-                    buildPromiseMap.set(outfile, buildPromise);
-                    await buildPromise;
                   }
                   output.update(urlStart, urlEnd, JSON.stringify(outfile));
                 }
