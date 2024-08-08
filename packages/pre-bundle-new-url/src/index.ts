@@ -18,7 +18,7 @@ export function vitePluginPreBundleNewUrl(options?: {
         optimizeDeps: {
           esbuildOptions: {
             plugins: [
-              esbuildPluginNewUrl({
+              esbuildPluginPreBundleNewUrl({
                 ...options,
                 visited: new Set(),
                 getWorkerOutDir: () => workerOutDir,
@@ -37,7 +37,7 @@ export function vitePluginPreBundleNewUrl(options?: {
   };
 }
 
-function esbuildPluginNewUrl(options: {
+export function esbuildPluginPreBundleNewUrl(options: {
   filter?: RegExp;
   debug?: boolean;
   // track worker build to prevent infinite loop on recursive worker such as
@@ -46,7 +46,7 @@ function esbuildPluginNewUrl(options: {
   getWorkerOutDir: () => string;
 }): esbuild.Plugin {
   return {
-    name: esbuildPluginNewUrl.name,
+    name: esbuildPluginPreBundleNewUrl.name,
     setup(build) {
       // do nothing during dep-scan
       if (
@@ -101,7 +101,7 @@ function esbuildPluginNewUrl(options: {
                       // TODO: should we detect WorkerType and use esm only when `{ type: "module" }`?
                       format: "esm",
                       platform: "browser",
-                      plugins: [esbuildPluginNewUrl(options)],
+                      plugins: [esbuildPluginPreBundleNewUrl(options)],
                       logLevel: options.debug ? "debug" : undefined,
                     });
                   }
@@ -148,7 +148,7 @@ function esbuildPluginNewUrl(options: {
 function getWorkerFileName(file: string) {
   const hash = hashString(file);
   file = file.split("/node_modules/").at(-1)!;
-  file = file.slice(0, 50).replace(/[^0-9a-zA-Z]/g, "_");
+  file = file.slice(0, 100).replace(/[^0-9a-zA-Z]/g, "_");
   return `${file}-${hash}.js`;
 }
 
