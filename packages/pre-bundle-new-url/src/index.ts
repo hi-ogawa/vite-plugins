@@ -103,12 +103,6 @@ function esbuildPluginNewUrl(options: {
                       format: "esm",
                       platform: "browser",
                       plugins: [esbuildPluginNewUrl(options)],
-                      banner: {
-                        // https://github.com/vitejs/vite/issues/17826
-                        // without this separator, Vite breaks the code by injecting
-                        //   importScripts("/@vite/env")(() => ...)()
-                        js: ";\n",
-                      },
                       logLevel: options.debug ? "debug" : undefined,
                     });
                   }
