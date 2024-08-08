@@ -1,4 +1,4 @@
-import * as testDepEmscriptenEsm from "test-dep-emscripten-esm";
+import * as testDepEmscripten from "test-dep-emscripten";
 import * as testDepImage from "test-dep-image";
 import * as testDepWorker from "test-dep-worker";
 import * as testDepWorkerWasm from "test-dep-worker-wasm";
@@ -52,7 +52,7 @@ async function main() {
   });
 
   // manual worker integration for emscripten esm
-  testDepEmscriptenEsm.startWorker((e) => {
+  testDepEmscripten.startWorker((e) => {
     render(
       "worker-emscripten-esm",
       `\

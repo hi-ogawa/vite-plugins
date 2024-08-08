@@ -1,5 +1,5 @@
 {
-  "name": "test-dep-emscripten-esm",
+  "name": "test-dep-emscripten",
   "private": true,
   "type": "module",
   "exports": "./index.js"

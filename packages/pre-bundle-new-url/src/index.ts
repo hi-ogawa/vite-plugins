@@ -79,7 +79,7 @@ function esbuildPluginNewUrl(options: {
                 if (fs.existsSync(absUrl)) {
                   const outfile = path.resolve(
                     options.getWorkerOutDir(),
-                    hashString(absUrl) + ".js",
+                    getWorkerFileName(absUrl),
                   );
                   // recursively bundle worker
                   if (
@@ -88,12 +88,11 @@ function esbuildPluginNewUrl(options: {
                   ) {
                     options.visited.add(outfile);
                     if (options.debug) {
-                      console.log(
-                        "[pre-bundenew-url]",
-                        args.path,
-                        "=>",
-                        absUrl,
-                      );
+                      console.log("[pre-bunde-new-url:worker]", {
+                        path: args.path,
+                        worker: absUrl,
+                        outfile,
+                      });
                     }
                     await esbuild.build({
                       outfile,
@@ -144,6 +143,13 @@ function esbuildPluginNewUrl(options: {
       });
     },
   };
+}
+
+function getWorkerFileName(file: string) {
+  const hash = hashString(file);
+  file = file.split("/node_modules/").at(-1)!;
+  file = file.slice(0, 50).replace(/[^0-9a-zA-Z]/g, "_");
+  return `${file}-${hash}.js`;
 }
 
 function hashString(s: string) {
