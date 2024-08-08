@@ -18,7 +18,7 @@ new Worker(new URL("./worker.js", import.meta.url))
 // ⇓ transform (worker.js is recursively bundled using esbuild)
 
 new URL("/absoute-path-to/node_modules/some-package/image.svg", import.meta.url)
-new Worker(new URL("/absolute-path-to/node_modules/.vite/__worker/(hash).js", import.meta.url))
+new Worker(new URL("/absolute-path-to/node_modules/.vite/__worker/some_package_worker_js-(hash).js", import.meta.url))
 ```
 
 Note that this is only for _external packages_ during _development_
