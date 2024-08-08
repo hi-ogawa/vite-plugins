@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-plugin-pre-bundle-new-url",
-  "version": "0.0.0-pre.1",
+  "version": "0.0.0-pre.3",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/pre-bundle-new-url",
   "repository": {
     "type": "git",

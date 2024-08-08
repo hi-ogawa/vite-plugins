@@ -55,7 +55,7 @@ function esbuildPluginNewUrl(options: {
         return;
       }
 
-      const filter = options.filter ?? /\.js$/;
+      const filter = options.filter ?? /\.m?js$/;
 
       build.onLoad({ filter, namespace: "file" }, async (args) => {
         const data = await fs.promises.readFile(args.path, "utf-8");

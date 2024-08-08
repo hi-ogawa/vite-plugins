@@ -2,5 +2,5 @@
   "name": "test-dep-worker",
   "private": true,
   "type": "module",
-  "exports": "./index.js"
+  "exports": "./index.mjs"
 }
