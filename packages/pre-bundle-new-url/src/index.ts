@@ -88,12 +88,11 @@ function esbuildPluginNewUrl(options: {
                   ) {
                     options.visited.add(outfile);
                     if (options.debug) {
-                      console.log(
-                        "[pre-bundenew-url]",
-                        args.path,
-                        "=>",
-                        absUrl,
-                      );
+                      console.log("[pre-bunde-new-url:worker]", {
+                        path: args.path,
+                        worker: absUrl,
+                        outfile,
+                      });
                     }
                     await esbuild.build({
                       outfile,
