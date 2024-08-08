@@ -1,0 +1,3 @@
+[vars]
+NEXT_PUBLIC_ENV_TEST="public-env"
+ENV_TEST_SECRET="secret-env"
