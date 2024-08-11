@@ -7,6 +7,8 @@ const getHighlither = once(async () => {
   return createHighlighterCore({
     themes: [nord],
     langs: [js],
+    // non js extension file is not externalized
+    // https://github.com/vitejs/vite/blob/fcf50c2e881356ea0d725cc563722712a2bf5695/packages/vite/src/node/plugins/resolve.ts#L810-L818
     loadWasm: import("shiki/onig.wasm" as string),
   });
 });
