@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
 import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
@@ -29,6 +30,7 @@ export default defineConfig({
         // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
         mdx(),
         testVitePluginVirtual(),
+        wasmModulePlugin(),
         {
           name: "cusotm-react-server-config",
           config() {
@@ -94,6 +96,19 @@ function testVitePluginVirtual(): Plugin {
         `.trimStart();
       }
       return;
+    },
+  };
+}
+
+// https://github.com/withastro/adapters/blob/cd4c0842aadc58defc67f4ccf6d6ef6f0401a9ac/packages/cloudflare/src/utils/cloudflare-module-loader.ts#L213-L216
+function wasmModulePlugin(): Plugin {
+  return {
+    name: wasmModulePlugin.name,
+    load(id) {
+      if (id.endsWith(".wasm")) {
+        const base64 = fs.readFileSync(id).toString("base64");
+        return `export default new WebAssembly.Module(Uint8Array.from(atob("${base64}"), c => c.charCodeAt(0)));`;
+      }
     },
   };
 }
