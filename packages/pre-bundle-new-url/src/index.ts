@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { tinyassert } from "@hiogawa/utils";
 import * as esbuild from "esbuild";
 import MagicString from "magic-string";
 import type { Plugin } from "vite";
@@ -44,6 +45,9 @@ export function esbuildPluginPreBundleNewUrl(options: {
   // https://github.com/gkjohnson/three-mesh-bvh/blob/9718501eee2619f1015fa332d7bddafaf6cf562a/src/workers/parallelMeshBVH.worker.js#L12
   visited: Set<string>;
   getWorkerOutDir: () => string;
+
+  bundleChain?: string[]; // track recursive worker build
+  bundleMap?: Map<string, ReturnType<typeof esbuild.build>>;
 }): esbuild.Plugin {
   return {
     name: esbuildPluginPreBundleNewUrl.name,
@@ -54,6 +58,10 @@ export function esbuildPluginPreBundleNewUrl(options: {
       ) {
         return;
       }
+
+      // TODO: uses .vite/deps_temp_xxx directory
+      // https://github.com/vitejs/vite/blob/321b213756a1e69eb0ddc4dc06e59a30db099c8e/packages/vite/src/node/optimizer/index.ts#L810
+      tinyassert(build.initialOptions.outdir);
 
       const filter = options.filter ?? /\.m?js$/;
 
@@ -75,6 +83,7 @@ export function esbuildPluginPreBundleNewUrl(options: {
 
               const url = match[2]!.slice(1, -1);
               if (url[0] !== "/") {
+                // TODO: use build.resolve
                 const absUrl = path.resolve(path.dirname(args.path), url);
                 if (fs.existsSync(absUrl)) {
                   const outfile = path.resolve(
