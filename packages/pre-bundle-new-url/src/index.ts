@@ -87,8 +87,13 @@ export function esbuildPluginPreBundleNewUrl({
                   if (!bundlePromise) {
                     const entryName = makeOutputFilename(absUrl);
                     bundlePromise = esbuild.build({
+                      // inherit config
                       absWorkingDir: build.initialOptions.absWorkingDir,
                       outdir: build.initialOptions.outdir,
+                      platform: build.initialOptions.platform,
+                      define: build.initialOptions.define,
+                      target: build.initialOptions.target,
+                      // own config
                       entryPoints: {
                         [entryName]: absUrl,
                       },
@@ -97,7 +102,6 @@ export function esbuildPluginPreBundleNewUrl({
                       metafile: true,
                       // TODO: should we detect WorkerType and use esm only when `{ type: "module" }`?
                       format: "esm",
-                      platform: "browser",
                       plugins: [
                         esbuildPluginPreBundleNewUrl({
                           filter,
