@@ -38,7 +38,12 @@ export function vitePluginPreBundleNewUrl(options?: {
   };
 }
 
-export function esbuildPluginPreBundleNewUrl(options: {
+export function esbuildPluginPreBundleNewUrl({
+  filter = /\.m?js$/,
+  debug,
+  visited,
+  getWorkerOutDir,
+}: {
   filter?: RegExp;
   debug?: boolean;
   // track worker build to prevent infinite loop on recursive worker such as
@@ -63,8 +68,6 @@ export function esbuildPluginPreBundleNewUrl(options: {
       // https://github.com/vitejs/vite/blob/321b213756a1e69eb0ddc4dc06e59a30db099c8e/packages/vite/src/node/optimizer/index.ts#L810
       tinyassert(build.initialOptions.outdir);
 
-      const filter = options.filter ?? /\.m?js$/;
-
       build.onLoad({ filter, namespace: "file" }, async (args) => {
         const data = await fs.promises.readFile(args.path, "utf-8");
         if (data.includes("import.meta.url")) {
@@ -87,16 +90,13 @@ export function esbuildPluginPreBundleNewUrl(options: {
                 const absUrl = path.resolve(path.dirname(args.path), url);
                 if (fs.existsSync(absUrl)) {
                   const outfile = path.resolve(
-                    options.getWorkerOutDir(),
+                    getWorkerOutDir(),
                     getWorkerFileName(absUrl),
                   );
                   // recursively bundle worker
-                  if (
-                    !fs.existsSync(outfile) &&
-                    !options.visited.has(outfile)
-                  ) {
-                    options.visited.add(outfile);
-                    if (options.debug) {
+                  if (!fs.existsSync(outfile) && !visited.has(outfile)) {
+                    visited.add(outfile);
+                    if (debug) {
                       console.log("[pre-bunde-new-url:worker]", {
                         path: args.path,
                         worker: absUrl,
@@ -110,8 +110,15 @@ export function esbuildPluginPreBundleNewUrl(options: {
                       // TODO: should we detect WorkerType and use esm only when `{ type: "module" }`?
                       format: "esm",
                       platform: "browser",
-                      plugins: [esbuildPluginPreBundleNewUrl(options)],
-                      logLevel: options.debug ? "debug" : undefined,
+                      plugins: [
+                        esbuildPluginPreBundleNewUrl({
+                          filter,
+                          debug,
+                          visited,
+                          getWorkerOutDir,
+                        }),
+                      ],
+                      logLevel: debug ? "debug" : undefined,
                     });
                   }
                   output.update(urlStart, urlEnd, JSON.stringify(outfile));
