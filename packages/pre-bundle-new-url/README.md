@@ -17,11 +17,11 @@ new Worker(new URL("./worker.js", import.meta.url))
 
 // ⇓ transform (worker.js is recursively bundled using esbuild)
 
-new URL("/absoute-path-to/node_modules/some-package/image.svg", import.meta.url)
-new Worker(new URL("/absolute-path-to/node_modules/.vite/__worker/some_package_worker_js-(hash).js", import.meta.url))
+new URL("./__assets/image-(hash).svg", import.meta.url)
+new Worker(new URL("./__workers/worker-(hash).js", import.meta.url))
 ```
 
-Note that this is only for _external packages_ during _development_
+Note that this is only to support `new URL` in _external packages_ during _development_
 since Vite's normal transform pipeline works for non pre-bundled code.
 
 ## related
