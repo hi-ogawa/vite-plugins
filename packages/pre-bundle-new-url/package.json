@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-plugin-pre-bundle-new-url",
-  "version": "0.0.0-pre.6",
+  "version": "0.0.0-pre.7",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/pre-bundle-new-url",
   "repository": {
     "type": "git",
@@ -22,10 +22,13 @@
     "prepack": "tsup --clean"
   },
   "dependencies": {
-    "esbuild": "^0.21.5",
     "magic-string": "^0.30.8"
   },
+  "devDependencies": {
+    "esbuild": "^0.21.5"
+  },
   "peerDependencies": {
-    "vite": "*"
+    "vite": "*",
+    "esbuild": "*"
   }
 }

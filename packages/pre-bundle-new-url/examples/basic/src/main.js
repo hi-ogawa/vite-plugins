@@ -8,6 +8,7 @@ async function main() {
     "image1",
     `\
 <h4>new URL("./vite.svg", import.meta.url)</h4>
+<a href="${testDepImage.image1}">${testDepImage.image1}</a><br/>
 <img width="40" src="${testDepImage.image1}" />
 `,
   );
@@ -16,6 +17,7 @@ async function main() {
     "image2",
     `\
 <h4>new URL("vite.svg", import.meta.url)</h4>
+<a href="${testDepImage.image2}">${testDepImage.image2}</a><br/>
 <img width="40" src="${testDepImage.image2}" />
 `,
   );
@@ -25,7 +27,8 @@ async function main() {
       "worker-classic",
       `\
 <h4>worker-classic</h4>
-<pre>${e.data}</pre>
+<a href="${e.data.href}">${e.data.href}</a><br/>
+<pre>${JSON.stringify(e.data, null, 2)}</pre>
 `,
     );
   });
@@ -35,7 +38,9 @@ async function main() {
       "worker-esm",
       `\
 <h4>worker-esm</h4>
-<pre>worker-esm = ${e.data}</pre>
+<a href="${e.data.href}">${e.data.href}</a><br/>
+<a href="${e.data.viteSvg}">${e.data.viteSvg}</a><br/>
+<pre>${JSON.stringify(e.data, null, 2)}</pre>
 `,
     );
   });
