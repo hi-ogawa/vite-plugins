@@ -4,6 +4,27 @@ import js from "shiki/langs/javascript.mjs";
 import nord from "shiki/themes/nord.mjs";
 
 const getHighlither = once(async () => {
+  // https://github.com/nodejs/undici/issues/2751#issuecomment-1944132179
+
+  // const url = new URL("shiki/onig.wasm", import.meta.url);
+  // url;
+  // fetch(new URL("shiki/onig.wasm", import.meta.url));
+
+  // fetch(new URL("shiki/onig.wasm", import.meta.url)).then((res) =>
+  //   res.arrayBuffer(),
+  // );
+  // // const data
+  // const wasmModule = new WebAssembly.Module(
+  //   await fetch(new URL("shiki/onig.wasm", import.meta.url)).then((res) =>
+  //     res.arrayBuffer(),
+  //   ),
+  // );
+  // (await import("node:fs")).promises.readFile(new URL("shiki/onig.wasm", import.meta.url))
+  // transformed to
+  //   import("shiki/onig.wasm")
+  // on cloudflare bundler
+  // fetch
+
   return createHighlighterCore({
     themes: [nord],
     langs: [js],
