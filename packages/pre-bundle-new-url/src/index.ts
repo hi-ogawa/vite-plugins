@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import * as esbuild from "esbuild";
@@ -43,6 +44,11 @@ export function esbuildPluginPreBundleNewUrl({
         return;
       }
 
+      let outdir: string;
+      build.onStart(() => {
+        outdir = build.initialOptions.outdir!;
+      });
+
       build.onLoad({ filter, namespace: "file" }, async (args) => {
         const data = await fs.promises.readFile(args.path, "utf-8");
         if (data.includes("import.meta.url")) {
@@ -52,7 +58,7 @@ export function esbuildPluginPreBundleNewUrl({
           // replace
           //   new Worker(new URL("./worker.js", import.meta.url))
           // with
-          //   new Worker(new URL("/__worker-name-hash.js", import.meta.url))
+          //   new Worker(new URL("/__worker-(name)-(hash).js", import.meta.url))
           {
             const matches = data.matchAll(workerImportMetaUrlRE);
             for (const match of matches) {
@@ -61,7 +67,7 @@ export function esbuildPluginPreBundleNewUrl({
 
               const url = match[2]!.slice(1, -1);
               if (url[0] !== "/") {
-                // TODO: use build.resolve
+                // TODO: use build.resolve?
                 const absUrl = path.resolve(path.dirname(args.path), url);
 
                 if (fs.existsSync(absUrl)) {
@@ -69,7 +75,8 @@ export function esbuildPluginPreBundleNewUrl({
                   if (bundleChain.at(-1) === absUrl) {
                     output.update(urlStart, urlEnd, "self.location.href");
                     continue;
-                  } else if (bundleChain.includes(absUrl)) {
+                  }
+                  if (bundleChain.includes(absUrl)) {
                     throw new Error(
                       "Unsupported circular worker imports: " +
                         [...bundleChain, "..."].join(" -> "),
@@ -77,10 +84,7 @@ export function esbuildPluginPreBundleNewUrl({
                   }
                   let bundlePromise = bundleMap.get(absUrl);
                   if (!bundlePromise) {
-                    const entryName = absUrl
-                      .split("/node_modules/")
-                      .at(-1)!
-                      .replace(/[^0-9a-zA-Z]/g, "_");
+                    const entryName = makeOutputFilename(absUrl);
                     bundlePromise = esbuild.build({
                       absWorkingDir: build.initialOptions.absWorkingDir,
                       outdir: build.initialOptions.outdir,
@@ -121,20 +125,37 @@ export function esbuildPluginPreBundleNewUrl({
           // replace
           //   new URL("./asset.svg", import.meta.url)
           // with
-          //   new URL("/absolute-path-to/asset.svg", import.meta.url)
-          // TODO: copy asset to __asset-[name]-[hash].[ext]
+          //   new URL("./__asset-(name)-(hash).svg", import.meta.url)
           {
             const matches = data.matchAll(assetImportMetaUrlRE);
             for (const match of matches) {
-              const [argStart, argEnd] = match.indices![1]!;
-              if (workerMatched.has(argStart)) {
+              const [urlStart, urlEnd] = match.indices![1]!;
+              if (workerMatched.has(urlStart)) {
                 continue;
               }
               const url = match[1]!.slice(1, -1);
               if (url[0] !== "/") {
                 const absUrl = path.resolve(path.dirname(args.path), url);
                 if (fs.existsSync(absUrl)) {
-                  output.update(argStart, argEnd, JSON.stringify(absUrl));
+                  const assetName = makeOutputFilename(absUrl);
+                  const assetData = await fs.promises.readFile(absUrl);
+                  const hash = crypto
+                    .createHash("sha1")
+                    .update(assetData)
+                    .digest()
+                    .toString("hex")
+                    .slice(0, 8);
+                  const filename =
+                    `__asset-${assetName}-${hash}` + path.extname(absUrl);
+                  await fs.promises.writeFile(
+                    path.join(outdir, filename),
+                    assetData,
+                  );
+                  output.update(
+                    urlStart,
+                    urlEnd,
+                    JSON.stringify(`./${filename}`),
+                  );
                 }
               }
             }
@@ -151,6 +172,13 @@ export function esbuildPluginPreBundleNewUrl({
       });
     },
   };
+}
+
+function makeOutputFilename(id: string) {
+  return id
+    .split("/node_modules/")
+    .at(-1)!
+    .replace(/[^0-9a-zA-Z]/g, "_");
 }
 
 // https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
