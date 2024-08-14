@@ -112,3 +112,10 @@ function wasmModulePlugin(): Plugin {
     },
   };
 }
+
+// function fetchServerFileTransformPlugin(): Plugin {
+//   return {
+//     name: fetchServerFileTransformPlugin.name,
+//     // fs
+//   }
+// }
