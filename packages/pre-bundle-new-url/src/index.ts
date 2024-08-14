@@ -26,13 +26,14 @@ export function vitePluginPreBundleNewUrl(options?: {
 export function esbuildPluginPreBundleNewUrl({
   filter = /\.m?js$/,
   debug,
-  bundleChain = [],
-  bundleMap = new Map(),
+  buildChain = [],
+  buildPromiseMap = new Map(),
 }: {
   filter?: RegExp;
   debug?: boolean;
-  bundleChain?: string[]; // track recursive worker build
-  bundleMap?: Map<string, ReturnType<typeof esbuild.build>>;
+  // track recursive worker build
+  buildChain?: string[];
+  buildPromiseMap?: Map<string, ReturnType<typeof esbuild.build>>;
 }): esbuild.Plugin {
   return {
     name: esbuildPluginPreBundleNewUrl.name,
@@ -72,17 +73,17 @@ export function esbuildPluginPreBundleNewUrl({
 
                 if (fs.existsSync(absUrl)) {
                   // handle circular worker import similar to vite build
-                  if (bundleChain.at(-1) === absUrl) {
+                  if (buildChain.at(-1) === absUrl) {
                     output.update(urlStart, urlEnd, "self.location.href");
                     continue;
                   }
-                  if (bundleChain.includes(absUrl)) {
+                  if (buildChain.includes(absUrl)) {
                     throw new Error(
                       "Unsupported circular worker imports: " +
-                        [...bundleChain, "..."].join(" -> "),
+                        [...buildChain, "..."].join(" -> "),
                     );
                   }
-                  let bundlePromise = bundleMap.get(absUrl);
+                  let bundlePromise = buildPromiseMap.get(absUrl);
                   if (!bundlePromise) {
                     const entryName = makeOutputFilename(absUrl);
                     bundlePromise = esbuild.build({
@@ -101,12 +102,12 @@ export function esbuildPluginPreBundleNewUrl({
                         esbuildPluginPreBundleNewUrl({
                           filter,
                           debug,
-                          bundleChain: [...bundleChain, absUrl],
-                          bundleMap,
+                          buildChain: [...buildChain, absUrl],
+                          buildPromiseMap: buildPromiseMap,
                         }),
                       ],
                     });
-                    bundleMap.set(absUrl, bundlePromise);
+                    buildPromiseMap.set(absUrl, bundlePromise);
                   }
                   const result = await bundlePromise;
                   const filename = path.basename(
