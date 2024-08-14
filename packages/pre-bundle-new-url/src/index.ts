@@ -68,7 +68,10 @@ export function esbuildPluginPreBundleNewUrl({
 
               const url = match[2]!.slice(1, -1);
               if (url[0] !== "/") {
-                // TODO: use build.resolve?
+                // TODO: use build.resolve? https://esbuild.github.io/plugins/#resolve
+                // however esbuild requires explicit "./", so need to resolve twice for
+                // - build.resolve("relative-or-package")
+                // - build.resolve("./relative-or-package")
                 const absUrl = path.resolve(path.dirname(args.path), url);
 
                 if (fs.existsSync(absUrl)) {
