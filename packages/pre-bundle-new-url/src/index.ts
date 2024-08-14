@@ -77,11 +77,10 @@ export function esbuildPluginPreBundleNewUrl({
                   }
                   let bundlePromise = bundleMap.get(absUrl);
                   if (!bundlePromise) {
-                    const entryName =
-                      absUrl
-                        .split("/node_modules/")
-                        .at(-1)!
-                        .replace(/[^0-9a-zA-Z]/g, "_") + ".js";
+                    const entryName = absUrl
+                      .split("/node_modules/")
+                      .at(-1)!
+                      .replace(/[^0-9a-zA-Z]/g, "_");
                     bundlePromise = esbuild.build({
                       absWorkingDir: build.initialOptions.absWorkingDir,
                       outdir: build.initialOptions.outdir,
