@@ -17,8 +17,8 @@ new Worker(new URL("./worker.js", import.meta.url))
 
 // ⇓ transform (worker.js is recursively bundled using esbuild)
 
-new URL("./__assets-image-(hash).svg", import.meta.url)
-new Worker(new URL("./__workers-worker-(hash).js", import.meta.url))
+new URL("./__asset-image-(hash).svg", import.meta.url)
+new Worker(new URL("./__worker-worker-(hash).js", import.meta.url))
 ```
 
 Note that this is only to support `new URL` in _external packages_ during _development_
