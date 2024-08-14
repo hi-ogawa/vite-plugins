@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { tinyassert } from "@hiogawa/utils";
 import * as esbuild from "esbuild";
 import MagicString from "magic-string";
 import type { Plugin } from "vite";
@@ -44,11 +43,6 @@ export function esbuildPluginPreBundleNewUrl({
         return;
       }
 
-      // uses .vite/deps_temp_xxx directory
-      // https://github.com/vitejs/vite/blob/321b213756a1e69eb0ddc4dc06e59a30db099c8e/packages/vite/src/node/optimizer/index.ts#L810
-      tinyassert(build.initialOptions.outdir, "'outdir' option is required.");
-      const outdir = build.initialOptions.outdir;
-
       build.onLoad({ filter, namespace: "file" }, async (args) => {
         const data = await fs.promises.readFile(args.path, "utf-8");
         if (data.includes("import.meta.url")) {
@@ -89,7 +83,8 @@ export function esbuildPluginPreBundleNewUrl({
                         .at(-1)!
                         .replace(/[^0-9a-zA-Z]/g, "_") + ".js";
                     bundlePromise = esbuild.build({
-                      outdir,
+                      absWorkingDir: build.initialOptions.absWorkingDir,
+                      outdir: build.initialOptions.outdir,
                       entryPoints: {
                         [entryName]: absUrl,
                       },
