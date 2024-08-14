@@ -102,6 +102,8 @@ export function esbuildPluginPreBundleNewUrl({
                       metafile: true,
                       // TODO: should we detect WorkerType and use esm only when `{ type: "module" }`?
                       format: "esm",
+                      // TODO: worker condition? https://github.com/vitejs/vite/issues/7439
+                      // conditions: ["worker"],
                       plugins: [
                         esbuildPluginPreBundleNewUrl({
                           filter,
