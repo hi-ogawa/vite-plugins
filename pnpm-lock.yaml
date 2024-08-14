@@ -95,15 +95,16 @@ importers:
 
   packages/pre-bundle-new-url:
     dependencies:
-      esbuild:
-        specifier: ^0.21.5
-        version: 0.21.5
       magic-string:
         specifier: ^0.30.8
         version: 0.30.10
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+    devDependencies:
+      esbuild:
+        specifier: ^0.21.5
+        version: 0.21.5
 
   packages/pre-bundle-new-url/examples/basic:
     dependencies:

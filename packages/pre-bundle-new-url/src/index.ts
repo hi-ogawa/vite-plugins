@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { tinyassert } from "@hiogawa/utils";
@@ -10,30 +9,16 @@ export function vitePluginPreBundleNewUrl(options?: {
   filter?: RegExp;
   debug?: boolean;
 }): Plugin {
-  let workerOutDir: string;
-
   return {
     name: "pre-bundle-new-url",
     config() {
       return {
         optimizeDeps: {
           esbuildOptions: {
-            plugins: [
-              esbuildPluginPreBundleNewUrl({
-                ...options,
-                visited: new Set(),
-                getWorkerOutDir: () => workerOutDir,
-              }),
-            ],
+            plugins: [esbuildPluginPreBundleNewUrl({ ...options })],
           },
         },
       };
-    },
-    async configResolved(config) {
-      workerOutDir = path.resolve(config.cacheDir, "__worker");
-      if (config.optimizeDeps.force) {
-        await fs.promises.rm(workerOutDir, { recursive: true, force: true });
-      }
     },
   };
 }
@@ -41,16 +26,11 @@ export function vitePluginPreBundleNewUrl(options?: {
 export function esbuildPluginPreBundleNewUrl({
   filter = /\.m?js$/,
   debug,
-  visited,
-  getWorkerOutDir,
+  bundleChain = [],
+  bundleMap = new Map(),
 }: {
   filter?: RegExp;
   debug?: boolean;
-  // track worker build to prevent infinite loop on recursive worker such as
-  // https://github.com/gkjohnson/three-mesh-bvh/blob/9718501eee2619f1015fa332d7bddafaf6cf562a/src/workers/parallelMeshBVH.worker.js#L12
-  visited: Set<string>;
-  getWorkerOutDir: () => string;
-
   bundleChain?: string[]; // track recursive worker build
   bundleMap?: Map<string, ReturnType<typeof esbuild.build>>;
 }): esbuild.Plugin {
@@ -64,9 +44,10 @@ export function esbuildPluginPreBundleNewUrl({
         return;
       }
 
-      // TODO: uses .vite/deps_temp_xxx directory
+      // uses .vite/deps_temp_xxx directory
       // https://github.com/vitejs/vite/blob/321b213756a1e69eb0ddc4dc06e59a30db099c8e/packages/vite/src/node/optimizer/index.ts#L810
-      tinyassert(build.initialOptions.outdir);
+      tinyassert(build.initialOptions.outdir, "'outdir' option is required.");
+      const outdir = build.initialOptions.outdir;
 
       build.onLoad({ filter, namespace: "file" }, async (args) => {
         const data = await fs.promises.readFile(args.path, "utf-8");
@@ -77,7 +58,7 @@ export function esbuildPluginPreBundleNewUrl({
           // replace
           //   new Worker(new URL("./worker.js", import.meta.url))
           // with
-          //   new Worker(new URL("/absolute/path/to/bundled-worker.js", import.meta.url))
+          //   new Worker(new URL("/__worker-name-hash.js", import.meta.url))
           {
             const matches = data.matchAll(workerImportMetaUrlRE);
             for (const match of matches) {
@@ -88,25 +69,33 @@ export function esbuildPluginPreBundleNewUrl({
               if (url[0] !== "/") {
                 // TODO: use build.resolve
                 const absUrl = path.resolve(path.dirname(args.path), url);
+
                 if (fs.existsSync(absUrl)) {
-                  const outfile = path.resolve(
-                    getWorkerOutDir(),
-                    getWorkerFileName(absUrl),
-                  );
-                  // recursively bundle worker
-                  if (!fs.existsSync(outfile) && !visited.has(outfile)) {
-                    visited.add(outfile);
-                    if (debug) {
-                      console.log("[pre-bunde-new-url:worker]", {
-                        path: args.path,
-                        worker: absUrl,
-                        outfile,
-                      });
-                    }
-                    await esbuild.build({
-                      outfile,
-                      entryPoints: [absUrl],
+                  // handle circular worker import similar to vite build
+                  if (bundleChain.at(-1) === absUrl) {
+                    output.update(urlStart, urlEnd, "self.location.href");
+                    continue;
+                  } else if (bundleChain.includes(absUrl)) {
+                    throw new Error(
+                      "Unsupported circular worker imports: " +
+                        [...bundleChain, "..."].join(" -> "),
+                    );
+                  }
+                  let bundlePromise = bundleMap.get(absUrl);
+                  if (!bundlePromise) {
+                    const entryName =
+                      absUrl
+                        .split("/node_modules/")
+                        .at(-1)!
+                        .replace(/[^0-9a-zA-Z]/g, "_") + ".js";
+                    bundlePromise = esbuild.build({
+                      outdir,
+                      entryPoints: {
+                        [entryName]: absUrl,
+                      },
+                      entryNames: "./__worker-[name]-[hash]",
                       bundle: true,
+                      metafile: true,
                       // TODO: should we detect WorkerType and use esm only when `{ type: "module" }`?
                       format: "esm",
                       platform: "browser",
@@ -114,14 +103,22 @@ export function esbuildPluginPreBundleNewUrl({
                         esbuildPluginPreBundleNewUrl({
                           filter,
                           debug,
-                          visited,
-                          getWorkerOutDir,
+                          bundleChain: [...bundleChain, absUrl],
+                          bundleMap,
                         }),
                       ],
-                      logLevel: debug ? "debug" : undefined,
                     });
+                    bundleMap.set(absUrl, bundlePromise);
                   }
-                  output.update(urlStart, urlEnd, JSON.stringify(outfile));
+                  const result = await bundlePromise;
+                  const filename = path.basename(
+                    Object.keys(result.metafile!.outputs)[0]!,
+                  );
+                  output.update(
+                    urlStart,
+                    urlEnd,
+                    JSON.stringify(`./${filename}`),
+                  );
                 }
               }
             }
@@ -131,6 +128,7 @@ export function esbuildPluginPreBundleNewUrl({
           //   new URL("./asset.svg", import.meta.url)
           // with
           //   new URL("/absolute-path-to/asset.svg", import.meta.url)
+          // TODO: copy asset to __asset-[name]-[hash].[ext]
           {
             const matches = data.matchAll(assetImportMetaUrlRE);
             for (const match of matches) {
@@ -159,22 +157,6 @@ export function esbuildPluginPreBundleNewUrl({
       });
     },
   };
-}
-
-function getWorkerFileName(file: string) {
-  const hash = hashString(file);
-  file = file.split("/node_modules/").at(-1)!;
-  file = file.slice(0, 100).replace(/[^0-9a-zA-Z]/g, "_");
-  return `${file}-${hash}.js`;
-}
-
-function hashString(s: string) {
-  return crypto
-    .createHash("sha256")
-    .update(s)
-    .digest()
-    .toString("hex")
-    .slice(0, 10);
 }
 
 // https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
