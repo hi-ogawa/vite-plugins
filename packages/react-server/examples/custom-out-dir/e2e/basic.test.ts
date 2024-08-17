@@ -9,7 +9,7 @@ test("custom outDir app can be visited", async ({ page }) => {
   if (!process.env.E2E_CF) {
     await expect(page.getByTestId("import-meta-url")).toContainText(
       process.env.E2E_PREVIEW
-        ? "examples/custom-out-dir/custom-out-dir/server"
+        ? "examples/custom-out-dir/custom-out-dir/rsc/"
         : "examples/custom-out-dir/app/page.tsx",
     );
   }
