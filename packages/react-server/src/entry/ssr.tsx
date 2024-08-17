@@ -81,6 +81,13 @@ export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
   } else {
+    // TODO: process this as relative external e.g.
+    // dist/
+    //   server/index.js
+    //   rsc/index.js
+    // where
+    //   server/index.js can simply have
+    //     await import("../rsc/index.js")
     return import("virtual:react-server-build" as string);
   }
 }
@@ -254,13 +261,6 @@ async function importRouteManifest(): Promise<{
   if (import.meta.env.DEV) {
     return { routeManifest: emptyRouteManifest() };
   } else {
-    // TODO: process this as relative external e.g.
-    // dist/
-    //   server/index.js
-    //   rsc/index.js
-    // where
-    //   server/index.js can simply do
-    //     await import("../rsc/index.js")
     const mod = await import("virtual:route-manifest" as string);
     return mod.default;
   }
