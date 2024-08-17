@@ -32,7 +32,10 @@ export default defineConfig({
         mdx(),
         testVitePluginVirtual(),
         wasmModulePlugin({
-          mode: process.env.CF_PAGES ? "asset-import" : "asset-fs",
+          mode:
+            process.env.VERCEL || process.env.CF_PAGES
+              ? "asset-import"
+              : "asset-fs",
         }),
         {
           name: "cusotm-react-server-config",
