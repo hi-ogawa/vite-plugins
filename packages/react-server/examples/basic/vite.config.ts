@@ -12,7 +12,7 @@ import MagicString from "magic-string";
 import unocss from "unocss/vite";
 import { type ConfigEnv, type Plugin, defineConfig } from "vite";
 
-export default defineConfig(async (_env) => ({
+export default defineConfig({
   clearScreen: false,
   plugins: [
     process.env["USE_SWC"]
@@ -66,7 +66,7 @@ export default defineConfig(async (_env) => ({
           next();
         });
       },
-    } satisfies Plugin,
+    },
     testVitePluginVirtual(),
   ],
   build: {
@@ -83,7 +83,7 @@ export default defineConfig(async (_env) => ({
     ],
   },
   envPrefix: "MY_PREFIX_",
-}));
+});
 
 function testVitePluginVirtual(): Plugin {
   return {

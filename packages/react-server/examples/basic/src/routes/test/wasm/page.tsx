@@ -15,14 +15,19 @@ const getHighlither = once(async () => {
 
 export default async function Page() {
   const highligher = await getHighlither();
-  const code = "const a = 1";
+  const code = `export default "ok"`;
   const html = highligher.codeToHtml(code, {
     lang: "js",
     theme: "nord",
   });
   return (
-    <div>
+    <div className="flex flex-col gap-2 p-2">
       <h4 className="font-bold">Wasm</h4>
+      <style>{`
+        .shiki {
+          padding: 0.5rem 1rem;
+        }
+      `}</style>
       <div dangerouslySetInnerHTML={{ __html: html }}></div>
     </div>
   );
