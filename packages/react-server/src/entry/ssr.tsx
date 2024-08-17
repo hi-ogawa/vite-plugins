@@ -254,6 +254,13 @@ async function importRouteManifest(): Promise<{
   if (import.meta.env.DEV) {
     return { routeManifest: emptyRouteManifest() };
   } else {
+    // TODO: process this as relative external e.g.
+    // dist/
+    //   server/index.js
+    //   rsc/index.js
+    // where
+    //   server/index.js can simply do
+    //     await import("../rsc/index.js")
     const mod = await import("virtual:route-manifest" as string);
     return mod.default;
   }
