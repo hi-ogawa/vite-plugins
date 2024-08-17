@@ -10,10 +10,10 @@
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 playwright test",
-    "vc-build": "SSR_ENTRY=/src/adapters/vercel-edge pnpm build && node misc/vercel/build.js",
+    "vc-build": "VERCEL=1 SSR_ENTRY=/src/adapters/vercel-edge pnpm build && node misc/vercel/build.js",
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel",
     "vc-release-staging": "vercel deploy --prebuilt misc/vercel",
-    "cf-build": "SSR_ENTRY=/src/adapters/cf pnpm build && node misc/cf/build.js",
+    "cf-build": "CF_PAGES=1 SSR_ENTRY=/src/adapters/cf pnpm build && node misc/cf/build.js",
     "cf-preview": "cd misc/cf && wrangler dev",
     "cf-release": "cd misc/cf && wrangler deploy"
   },
