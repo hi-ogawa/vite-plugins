@@ -12,7 +12,7 @@ import MagicString from "magic-string";
 import unocss from "unocss/vite";
 import { type ConfigEnv, type Plugin, defineConfig } from "vite";
 
-export default defineConfig(async (env) => ({
+export default defineConfig(async (_env) => ({
   clearScreen: false,
   plugins: [
     process.env["USE_SWC"]
@@ -32,12 +32,7 @@ export default defineConfig(async (env) => ({
         mdx(),
         testVitePluginVirtual(),
         wasmModulePlugin({
-          mode:
-            env.command === "serve"
-              ? "asset-fs"
-              : process.env.CF_PAGES
-                ? "asset-import"
-                : "inline",
+          mode: process.env.CF_PAGES ? "asset-import" : "asset-fs",
         }),
         {
           name: "cusotm-react-server-config",
@@ -54,9 +49,8 @@ export default defineConfig(async (env) => ({
         },
       ],
     }),
-    wasmModulePlugin({
-      mode: process.env.CF_PAGES ? "asset-import" : "inline",
-    }),
+    wasmModulePlugin({ mode: "asset-import" }),
+    assetImportMetaUrlPlugin(),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",
@@ -146,12 +140,19 @@ function wasmModulePlugin(options: {
 
         // file + WebAssembly.Module
         if (options.mode === "asset-fs") {
+          let source = JSON.stringify(id);
           if (env.command === "build") {
-            this.emitFile;
+            const referenceId = this.emitFile({
+              type: "asset",
+              name: path.basename(id),
+              source: fs.readFileSync(id),
+            });
+            source = `fileURLToPath(import.meta.ROLLUP_FILE_URL_${referenceId})`;
           }
           return `
             import fs from "node:fs";
-            const buffer = fs.readFileSync(${JSON.stringify(id)});
+            import { fileURLToPath } from "node:url";
+            const buffer = fs.readFileSync(${source});
             export default new WebAssembly.Module(buffer);
           `;
         }
@@ -189,6 +190,54 @@ function wasmModulePlugin(options: {
       }
       if (output.hasChanged()) {
         return output.toString();
+      }
+    },
+  };
+}
+
+function assetImportMetaUrlPlugin(): Plugin {
+  // https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
+  const assetImportMetaUrlRE =
+    /\bnew\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)/dg;
+
+  return {
+    name: assetImportMetaUrlPlugin.name,
+    apply: (_config, env) => !!env.isSsrBuild,
+    transform(code, id) {
+      if (code.includes("import.meta.url")) {
+        // replace
+        //   new URL("./asset.svg", import.meta.url)
+        // with
+        //   new URL(import.meta.ROLLUP_FILE_URL_xxx)
+        // which in turn rollup repalces with
+        //   new URL(new URL("...", import.meta.url).href)
+        const output = new MagicString(code);
+        const matches = code.matchAll(assetImportMetaUrlRE);
+        for (const match of matches) {
+          const url = match[1]!.slice(1, -1);
+          if (url[0] !== "/") {
+            const absUrl = path.resolve(path.dirname(id), url);
+            if (fs.existsSync(absUrl)) {
+              const referenceId = this.emitFile({
+                type: "asset",
+                name: path.basename(absUrl),
+                source: fs.readFileSync(absUrl),
+              });
+              const [start, end] = match.indices![0]!;
+              output.update(
+                start,
+                end,
+                `new URL(import.meta.ROLLUP_FILE_URL_${referenceId})`,
+              );
+            }
+          }
+        }
+        if (output.hasChanged()) {
+          return {
+            code: output.toString(),
+            map: output.generateMap(),
+          };
+        }
       }
     },
   };
