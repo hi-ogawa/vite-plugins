@@ -1618,3 +1618,8 @@ test("envPrefix", async ({ page }) => {
     '{ "MY_PREFIX_ENV_TEST": "yes", "VITE_ENV_TEST": null, "OTHER_ENV_TEST": null }',
   );
 });
+
+test("wasm", async ({ page }) => {
+  await page.goto("/test/wasm");
+  await expect(page.locator("pre.shiki")).toContainText('export default "ok"');
+});
