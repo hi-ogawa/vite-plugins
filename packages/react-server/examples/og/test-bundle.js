@@ -2,6 +2,7 @@
 
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { parseAstAsync } from "vite";
 
 async function main() {
   const [arg = "esbuild"] = process.argv.slice(2);
@@ -88,6 +89,88 @@ async function main() {
     process.exit(0);
   }
 
+  if (arg === "rolldown-scan") {
+    const rolldown = await import("rolldown");
+    const { default: replace } = await import("@rollup/plugin-replace");
+    const { asyncWalk } = await import("estree-walker");
+    const staticEval = await import("@vercel/nft/out/utils/static-eval.js");
+    const path = await import("node:path");
+    const { fileURLToPath, pathToFileURL } = await import("node:url");
+
+    /** @type {string[]} */
+    const files = [];
+    await rolldown.experimental_scan({
+      input: entry,
+      platform: "node",
+      // TODO: external doesn't include subpath? (e.g. `react/jsx-runtime` is not externalized?)
+      external: [
+        "react",
+        "react/jsx-runtime",
+        "react-dom",
+        "react-dom/server.edge",
+        "react-server-dom-webpack/client.edge",
+      ],
+      plugins: [
+        // @ts-ignore rollup/rolldown plugin type
+        replace({
+          preventAssignment: true,
+          values: {
+            "process.env.NODE_ENV": `"production"`,
+          },
+        }),
+        {
+          name: "trace-asset",
+          async transform(code, id) {
+            files.push(id);
+
+            if (code.includes("fs.readFileSync")) {
+              const ast = await parseAstAsync(code);
+              asyncWalk(ast, {
+                async enter(node) {
+                  // detect asset reference of a following expression, which is used by node build of @vercel/og
+                  //   fs.readFileSync(fileURLToPath(join(import.meta.url, "....")))
+                  if (
+                    node.type === "CallExpression" &&
+                    node.arguments.length > 0
+                  ) {
+                    // https://github.com/vercel/nft/blob/099608f28ba1af5b8f6f98ac5ab05261ad45b42f/src/analyze.ts#L446-L458
+                    const callee = await staticEval.evaluate(node.callee, {
+                      fs: {
+                        value: {
+                          readFileSync: Symbol.for("asset-trigger"),
+                        },
+                      },
+                    });
+                    if (callee?.value === Symbol.for("asset-trigger")) {
+                      const argNode = node.arguments[0];
+                      const argValue = await staticEval.evaluate(argNode, {
+                        "import.meta": {
+                          url: pathToFileURL(id).href,
+                        },
+                        fileURLToPath: {
+                          value: { [staticEval.FUNCTION]: fileURLToPath },
+                        },
+                        join: {
+                          value: { [staticEval.FUNCTION]: path.join },
+                        },
+                      });
+                      console.log("[argValue]", argValue?.value);
+                      if (typeof argValue?.value === "string") {
+                        files.push(argValue?.value);
+                      }
+                    }
+                  }
+                },
+              });
+            }
+          },
+        },
+      ],
+    });
+    console.log(files.sort());
+    process.exit(0);
+  }
+
   if (arg === "rollup") {
     const rollup = await import("rollup");
     const { default: replace } = await import("@rollup/plugin-replace");
@@ -96,6 +179,7 @@ async function main() {
     );
     const { default: commonjs } = await import("@rollup/plugin-commonjs");
 
+    console.time("[rollup]");
     const bundle = await rollup.rollup({
       input: entry,
       plugins: [
@@ -109,14 +193,17 @@ async function main() {
         commonjs(),
       ],
     });
+    console.timeEnd("[rollup]");
     const outDir = path.join(import.meta.dirname, "dist/rollup");
     await rm(outDir, { recursive: true, force: true });
     await mkdir(outDir, { recursive: true });
+    console.time("[bundle.write]");
     await bundle.write({
       dir: outDir,
       // bundle dynamic import like esbuild without splitting
       // inlineDynamicImports: true,
     });
+    console.timeEnd("[bundle.write]");
   }
 }
 
