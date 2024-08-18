@@ -9,10 +9,7 @@ import mdx from "@mdx-js/rollup";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
 import { type Plugin, defineConfig } from "vite";
-import {
-  assetImportMetaUrlPlugin,
-  wasmModulePlugin,
-} from "./vite-plugin-wasm-module";
+import { wasmModulePlugin } from "./vite-plugin-wasm-module";
 
 export default defineConfig({
   clearScreen: false,
@@ -54,8 +51,6 @@ export default defineConfig({
         },
       ],
     }),
-    wasmModulePlugin({ mode: "asset-import" }),
-    assetImportMetaUrlPlugin(),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: process.env["SSR_ENTRY"] || "/src/adapters/node.ts",

@@ -3,12 +3,13 @@ import path from "node:path";
 import MagicString from "magic-string";
 import { type ConfigEnv, type Plugin } from "vite";
 
-// normalize wasm import based on environments
-// - CF: keep import "xxx.wasm"
-// - Vercel edge: rewrite to import "xxx.wasm?module"
+// normalize wasm import for various environments
+// - CF (including Vercel Edge): keep import "xxx.wasm"
 // - Others: replace it with explicit instantiation of `WebAssembly.Module`
 //   - inline
 //   - local asset + fs.readFile
+
+// references
 // https://developers.cloudflare.com/pages/functions/module-support/#webassembly-modules
 // https://github.com/withastro/adapters/blob/cd4c0842aadc58defc67f4ccf6d6ef6f0401a9ac/packages/cloudflare/src/utils/cloudflare-module-loader.ts#L213-L216
 // https://vercel.com/docs/functions/wasm
@@ -86,55 +87,6 @@ export function wasmModulePlugin(options: {
       }
       if (output.hasChanged()) {
         return output.toString();
-      }
-    },
-  };
-}
-
-// copied from https://github.com/hi-ogawa/reproductions/blob/7c97fab6ca35d67711557f7463b311a71d959e42/webpack-new-url-worker-bundle-or-copy/rollup.config.ts
-export function assetImportMetaUrlPlugin(): Plugin {
-  // https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
-  const assetImportMetaUrlRE =
-    /\bnew\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)/dg;
-
-  return {
-    name: assetImportMetaUrlPlugin.name,
-    apply: (_config, env) => !!env.isSsrBuild,
-    transform(code, id) {
-      if (code.includes("import.meta.url")) {
-        // replace
-        //   new URL("./asset.svg", import.meta.url)
-        // with
-        //   new URL(import.meta.ROLLUP_FILE_URL_xxx)
-        // which in turn rollup repalces with
-        //   new URL(new URL("...", import.meta.url).href)
-        const output = new MagicString(code);
-        const matches = code.matchAll(assetImportMetaUrlRE);
-        for (const match of matches) {
-          const url = match[1]!.slice(1, -1);
-          if (url[0] !== "/") {
-            const absUrl = path.resolve(path.dirname(id), url);
-            if (fs.existsSync(absUrl)) {
-              const referenceId = this.emitFile({
-                type: "asset",
-                name: path.basename(absUrl),
-                source: fs.readFileSync(absUrl),
-              });
-              const [start, end] = match.indices![0]!;
-              output.update(
-                start,
-                end,
-                `new URL(import.meta.ROLLUP_FILE_URL_${referenceId})`,
-              );
-            }
-          }
-        }
-        if (output.hasChanged()) {
-          return {
-            code: output.toString(),
-            map: output.generateMap(),
-          };
-        }
       }
     },
   };
