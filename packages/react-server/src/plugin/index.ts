@@ -443,9 +443,18 @@ export function vitePluginReactServer(
       "server-only": `'server-only' is included in client build`,
     }),
 
-    createVirtualPlugin("react-server-build", () => {
-      return `export * from "/${outDir}/rsc/index.js";`;
-    }),
+    {
+      name: "virtual:react-server-build",
+      resolveId(source) {
+        if (source === "virtual:react-server-build") {
+          // externalize as relative path
+          // from: dist/server/index.js  (ssr build)
+          // to:   dist/rsc/index.js     (rsc build)
+          return { id: "../rsc/index.js", external: true };
+        }
+        return;
+      },
+    },
 
     createVirtualPlugin("client-routes", () => {
       return `
