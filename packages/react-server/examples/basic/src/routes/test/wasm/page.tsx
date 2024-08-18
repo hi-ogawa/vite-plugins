@@ -22,7 +22,10 @@ export default async function Page() {
   });
   return (
     <div className="flex flex-col gap-2 p-2">
-      <h4 className="font-bold">Wasm</h4>
+      <h4 className="font-lg">Wasm</h4>
+      <a className="antd-link" href="https://github.com/shikijs/shiki">
+        Shiki
+      </a>
       <style>{`
         .shiki {
           padding: 0.5rem 1rem;
