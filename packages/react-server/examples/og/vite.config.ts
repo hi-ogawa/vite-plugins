@@ -100,16 +100,49 @@ function nextEdgeWasmPlugin(): Plugin {
   };
 }
 
+//
 // input
 //   fetch(new URL("some-asset.bin", import.meta.url))
-// output
+//
+// output (dev)
+//   import("node:fs").then(fs => new Response(fs.readFileSync(...)))
+//
+// output (build)
 //   ???
+//
 function nextEdgeAssetPlugin(): Plugin {
+  // cf. https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
+  const FETCH_ASSET_RE =
+    /\bfetch\s*\(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)\s*(?:,\s*)?\)/dg;
+
+  let env: ConfigEnv;
   return {
     name: nextEdgeAssetPlugin.name,
-    transform(code) {
-      // TODO
-      code;
+    config(_, env_) {
+      env = env_;
+    },
+    transform(code, id) {
+      if (code.includes("import.meta.url")) {
+        const output = new MagicString(code);
+        const matches = code.matchAll(FETCH_ASSET_RE);
+        for (const match of matches) {
+          const urlArg = match[1]!.slice(1, -1);
+          const absFile = path.resolve(id, "..", urlArg);
+          if (fs.existsSync(absFile)) {
+            let replacement: string;
+            if (env.command === "serve") {
+              replacement = `import("node:fs").then(fs => new Response(fs.readFileSync(${JSON.stringify(absFile)})))`;
+            } else {
+              replacement = "todo";
+            }
+            const [start, end] = match.indices![0]!;
+            output.update(start, end, replacement);
+          }
+        }
+        if (output.hasChanged()) {
+          return { code: output.toString(), map: output.generateMap() };
+        }
+      }
     },
   };
 }
