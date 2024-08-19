@@ -7,11 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "copy-assets": "cp node_modules/@vercel/og/dist/*.{ttf,wasm} .vercel/output/functions/index.func",
     "cf-build": "CF_PAGES=1 pnpm build",
     "cf-preview": "wrangler pages dev ./dist/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat",
     "cf-release": "wrangler pages deploy ./dist/cloudflare --commit-dirty --branch main --project-name next-vite-example-og",
-    "vc-build": "VERCEL=1 pnpm build && pnpm copy-assets",
+    "vc-build": "VERCEL=1 pnpm build",
     "vc-release-staging": "vercel deploy --prebuilt",
     "vc-release": "vercel deploy --prod --prebuilt"
   },

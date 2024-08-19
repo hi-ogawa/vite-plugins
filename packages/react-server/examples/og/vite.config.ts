@@ -29,7 +29,7 @@ export default defineConfig({
   ],
 });
 
-// cf. packages/react-server/examples/basic/vite-plugin-wasm-module.ts
+// cf. https://github.com/hi-ogawa/vite-plugins/blob/998561660c8a27e067e976d4ede9dca53984d41a/packages/react-server/examples/basic/vite-plugin-wasm-module.ts
 //
 // input
 //   import wasm from "xxx.wasm?module"
