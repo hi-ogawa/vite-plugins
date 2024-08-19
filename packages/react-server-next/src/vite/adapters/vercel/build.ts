@@ -97,6 +97,7 @@ export async function build({
   await bundleEdge(buildDir, {
     entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(adapterOutDir, "functions/index.func/index.js"),
+    platform: runtime === "node" ? "node" : "browser",
   });
 }
 
