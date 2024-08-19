@@ -133,7 +133,12 @@ function nextEdgeAssetPlugin(): Plugin {
             if (env.command === "serve") {
               replacement = `import("node:fs").then(fs => new Response(fs.readFileSync(${JSON.stringify(absFile)})))`;
             } else {
-              replacement = "todo";
+              const referenceId = this.emitFile({
+                type: "asset",
+                name: path.basename(absFile) + ".bin",
+                source: fs.readFileSync(absFile),
+              });
+              replacement = `"__FETCH_ASSET_IMPORT_${referenceId}".then(mod => new Response(mod.default))`;
             }
             const [start, end] = match.indices![0]!;
             output.update(start, end, replacement);
@@ -142,6 +147,26 @@ function nextEdgeAssetPlugin(): Plugin {
         if (output.hasChanged()) {
           return { code: output.toString(), map: output.generateMap() };
         }
+      }
+    },
+    renderChunk(code, chunk) {
+      const matches = code.matchAll(/"__FETCH_ASSET_IMPORT_(\w+)"/dg);
+      const output = new MagicString(code);
+      for (const match of matches) {
+        const referenceId = match[1];
+        const assetFileName = this.getFileName(referenceId);
+        const importSource =
+          "./" +
+          path.relative(
+            path.resolve(chunk.fileName, ".."),
+            path.resolve(assetFileName),
+          );
+        const [start, end] = match.indices![0];
+        const replacement = `import(${JSON.stringify(importSource)})`;
+        output.update(start, end, replacement);
+      }
+      if (output.hasChanged()) {
+        return output.toString();
       }
     },
   };
