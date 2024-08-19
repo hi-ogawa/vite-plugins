@@ -1,6 +1,7 @@
 import next from "next/vite";
 import { defineConfig } from "vite";
-import { fetchImportMetaUrlPlugin, wasmModulePlugin } from "./vite-plugins";
+import { wasmModulePlugin } from "../basic/vite-plugin-wasm-module";
+import { fetchImportMetaUrlPlugin } from "./vite-plugins";
 
 export default defineConfig({
   plugins: [
