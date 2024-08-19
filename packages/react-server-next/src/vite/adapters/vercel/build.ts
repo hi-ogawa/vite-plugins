@@ -103,6 +103,13 @@ export async function build({
     format: "esm",
     platform: runtime === "node" ? "node" : "browser",
     external: ["node:async_hooks"],
+    loader:
+      runtime === "node"
+        ? undefined
+        : {
+            ".wasm": "copy",
+            ".bin": "copy",
+          },
     define: {
       "process.env.NODE_ENV": `"production"`,
     },

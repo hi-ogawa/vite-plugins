@@ -60,6 +60,13 @@ export async function build({ outDir }: { outDir: string }) {
     format: "esm",
     platform: "browser",
     external: ["node:async_hooks"],
+    // externalize known module types
+    // https://developers.cloudflare.com/pages/functions/module-support
+    // https://github.com/cloudflare/workers-sdk/blob/a9b4f252ccbce4856ffc967e51c0aa8cf2e1bb4f/packages/workers-playground/src/QuickEditor/module-collection.ts#L78-L84
+    loader: {
+      ".wasm": "copy",
+      ".bin": "copy",
+    },
     define: {
       "process.env.NODE_ENV": `"production"`,
     },

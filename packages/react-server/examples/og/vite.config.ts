@@ -102,13 +102,13 @@ function nextEdgeWasmPlugin(): Plugin {
 
 //
 // input
-//   fetch(new URL("some-asset.bin", import.meta.url))
+//   fetch(new URL("./some-asset.bin", import.meta.url))
 //
 // output (dev)
 //   import("node:fs").then(fs => new Response(fs.readFileSync(...)))
 //
 // output (build)
-//   ???
+//   import("./relocated-asset.bin").then(mod => new Response(mod.default))
 //
 function nextEdgeAssetPlugin(): Plugin {
   // cf. https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
