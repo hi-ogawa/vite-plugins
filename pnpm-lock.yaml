@@ -176,6 +176,9 @@ importers:
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
+      magic-string:
+        specifier: ^0.30.8
+        version: 0.30.10
       react:
         specifier: 19.0.0-rc-df5f2736-20240712
         version: 19.0.0-rc-df5f2736-20240712
