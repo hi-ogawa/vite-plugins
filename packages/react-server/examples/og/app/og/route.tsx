@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const { ImageResponse } = await import("@vercel/og");
 
   const url = new URL(request.url);
-  const title = url.searchParams.get("title") ?? "Hello!";
+  const title = url.searchParams.get("title") ?? "Test";
   return new ImageResponse(
     <div
       style={{
