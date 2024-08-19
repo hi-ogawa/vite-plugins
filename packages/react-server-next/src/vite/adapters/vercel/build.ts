@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
-import { bundleEdge } from "../shared";
+import { bundleEntry } from "../shared";
 
 const configJson = {
   version: 3,
@@ -94,7 +94,7 @@ export async function build({
   );
 
   // bundle function
-  await bundleEdge(buildDir, {
+  await bundleEntry(buildDir, {
     entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(adapterOutDir, "functions/index.func/index.js"),
     platform: runtime === "node" ? "node" : "browser",

@@ -5,7 +5,7 @@ import type { BuildOptions } from "esbuild";
 // cf.
 // https://github.com/sveltejs/kit/blob/144fb75c8280695d8aeb3228904bebb262e171a7/packages/adapter-cloudflare/index.js
 
-export async function bundleEdge(buildDir: string, options: BuildOptions) {
+export async function bundleEntry(buildDir: string, options: BuildOptions) {
   const esbuild = await import("esbuild");
   const result = await esbuild.build({
     bundle: true,

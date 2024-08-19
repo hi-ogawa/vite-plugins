@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
-import { bundleEdge } from "../shared";
+import { bundleEntry } from "../shared";
 
 export async function build({ outDir }: { outDir: string }) {
   const buildDir = join(process.cwd(), outDir);
@@ -51,7 +51,7 @@ export async function build({ outDir }: { outDir: string }) {
 
   // worker
   // https://developers.cloudflare.com/pages/functions/advanced-mode/
-  await bundleEdge(buildDir, {
+  await bundleEntry(buildDir, {
     entryPoints: [join(buildDir, "server/index.js")],
     outfile: join(adapterOutDir, "_worker.js"),
   });
