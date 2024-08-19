@@ -14,13 +14,13 @@ import { type ConfigEnv, type Plugin } from "vite";
 //   import wasm from "xxx.wasm?module"
 //
 // output (fs / dev)
-//   ??
+//   export default new WebAssembly.Module(fs.readFileSync("/absolute-path-to/xxx.wasm"))
 //
 // output (fs / build)
-//   ??
+//   export default new WebAssembly.Module(fs.readFileSync(fileURLToPath(new URL("./relocated-xxx.wasm", import.meta.url).href)))
 //
 // output (import / build)
-//   ??
+//   import wasm from "./relocated-xxx.wasm"
 //
 export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
   const MARKER = "\0virtual:wasm-module";
