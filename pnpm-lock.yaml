@@ -500,14 +500,14 @@ importers:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
       react:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624
+        specifier: 19.0.0-rc-df5f2736-20240712
+        version: 19.0.0-rc-df5f2736-20240712
       react-dom:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624)
+        specifier: 19.0.0-rc-df5f2736-20240712
+        version: 19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712)
       react-server-dom-webpack:
-        specifier: 19.0.0-rc-c21bcd627b-20240624
-        version: 19.0.0-rc-c21bcd627b-20240624(react-dom@19.0.0-rc-c21bcd627b-20240624(react@19.0.0-rc-c21bcd627b-20240624))(react@19.0.0-rc-c21bcd627b-20240624)(webpack@5.92.1(esbuild@0.23.0))
+        specifier: 19.0.0-rc-df5f2736-20240712
+        version: 19.0.0-rc-df5f2736-20240712(react-dom@19.0.0-rc-df5f2736-20240712(react@19.0.0-rc-df5f2736-20240712))(react@19.0.0-rc-df5f2736-20240712)(webpack@5.93.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
     devDependencies:
       '@types/react':
         specifier: 18.3.3
@@ -517,7 +517,7 @@ importers:
         version: 18.3.0
       vite:
         specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.1)
+        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
 
   packages/ssr-css:
     dependencies:
