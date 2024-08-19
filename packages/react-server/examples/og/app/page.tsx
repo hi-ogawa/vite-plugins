@@ -19,9 +19,12 @@ export default function Page(props: PageProps) {
           <a href="/og">/og</a>
         </li>
         <li>
-          <a href="/og?title=World">/og?title=World</a>
+          <a href="/og?title=Hello">/og?title=Hello</a>
         </li>
       </ul>
+      <form method="GET" action="/og">
+        <input name="title" placeholder="Input title..." />
+      </form>
     </div>
   );
 }

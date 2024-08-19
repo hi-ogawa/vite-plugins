@@ -3,46 +3,63 @@ import path from "node:path";
 import MagicString from "magic-string";
 import { type ConfigEnv, type Plugin } from "vite";
 
-// normalize wasm import for various environments
-// - CF (including Vercel Edge): keep import "xxx.wasm"
-// - Others: replace it with explicit instantiation of `WebAssembly.Module`
-//   - inline
-//   - local asset + fs.readFile
-
-// references
+// cf.
 // https://developers.cloudflare.com/pages/functions/module-support/#webassembly-modules
 // https://github.com/withastro/adapters/blob/cd4c0842aadc58defc67f4ccf6d6ef6f0401a9ac/packages/cloudflare/src/utils/cloudflare-module-loader.ts#L213-L216
 // https://vercel.com/docs/functions/wasm
 // https://github.com/unjs/unwasm
 
-export function wasmModulePlugin(options: {
-  mode: "inline" | "asset-fs" | "asset-import";
-}): Plugin {
+//
+// input
+//   import wasm from "xxx.wasm?module"
+//
+// output (fs / dev)
+//   export default new WebAssembly.Module(fs.readFileSync("/absolute-path-to/xxx.wasm"))
+//
+// output (fs / build)
+//   export default new WebAssembly.Module(fs.readFileSync(fileURLToPath(new URL("./relocated-xxx.wasm", import.meta.url).href)))
+//
+// output (import / build)
+//   import wasm from "./relocated-xxx.wasm"
+//
+export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
+  const MARKER = "\0virtual:wasm-module";
   let env: ConfigEnv;
+
   return {
     name: wasmModulePlugin.name,
-    config(_config, env_) {
+    config(_, env_) {
       env = env_;
     },
-    load(id) {
-      if (id.endsWith(".wasm")) {
-        // inline + WebAssembly.Module
-        if (options.mode === "inline") {
-          const base64 = fs.readFileSync(id).toString("base64");
-          return `
-            const buffer = Uint8Array.from(atob("${base64}"), c => c.charCodeAt(0));
-            export default new WebAssembly.Module(buffer);
-          `;
+    resolveId: {
+      order: "pre",
+      async handler(source, importer, options) {
+        if (source.endsWith(".wasm?module")) {
+          const resolved = await this.resolve(
+            source.slice(0, -"?module".length),
+            importer,
+            options,
+          );
+          if (resolved) {
+            return { id: MARKER + resolved.id };
+          }
         }
+      },
+    },
+    load(id) {
+      if (id.startsWith(MARKER)) {
+        const file = id.slice(MARKER.length);
 
-        // file + WebAssembly.Module
-        if (options.mode === "asset-fs") {
-          let source = JSON.stringify(id);
-          if (env.command === "build") {
+        // readFile + new WebAssembly.Module
+        if (options.mode === "fs") {
+          let source: string;
+          if (env.command === "serve") {
+            source = JSON.stringify(file);
+          } else {
             const referenceId = this.emitFile({
               type: "asset",
-              name: path.basename(id),
-              source: fs.readFileSync(id),
+              name: path.basename(file),
+              source: fs.readFileSync(file),
             });
             source = `fileURLToPath(import.meta.ROLLUP_FILE_URL_${referenceId})`;
           }
@@ -54,22 +71,23 @@ export function wasmModulePlugin(options: {
           `;
         }
 
-        // keep wasm import
-        if (options.mode === "asset-import") {
-          if (env.command === "build") {
-            const referenceId = this.emitFile({
-              type: "asset",
-              name: path.basename(id),
-              source: fs.readFileSync(id),
-            });
-            // temporary placeholder replaced during renderChunk
-            return `export default "__WASM_IMPORT_URL_${referenceId}"`;
+        // emit wasm asset + rewrite import
+        if (options.mode === "import") {
+          if (env.command === "serve") {
+            throw new Error("unsupported");
           }
+          const referenceId = this.emitFile({
+            type: "asset",
+            name: path.basename(file),
+            source: fs.readFileSync(file),
+          });
+          // temporary placeholder which we replace during `renderChunk`
+          return `export default "__WASM_MODULE_IMPORT_${referenceId}"`;
         }
       }
     },
     renderChunk(code, chunk) {
-      const matches = code.matchAll(/"__WASM_IMPORT_URL_(\w+)"/dg);
+      const matches = code.matchAll(/"__WASM_MODULE_IMPORT_(\w+)"/dg);
       const output = new MagicString(code);
       for (const match of matches) {
         const referenceId = match[1];

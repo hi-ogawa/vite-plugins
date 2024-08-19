@@ -7,10 +7,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "copy-assets": "cp node_modules/@vercel/og/dist/*.{ttf,wasm} .vercel/output/functions/index.func",
-    "vc-build": "VERCEL=1 pnpm build && pnpm copy-assets",
+    "cf-build": "CF_PAGES=1 pnpm build",
+    "cf-preview": "wrangler pages dev ./dist/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat",
+    "cf-release": "wrangler pages deploy ./dist/cloudflare --commit-dirty --branch main --project-name next-vite-example-og",
+    "vc-build": "VERCEL=1 pnpm build",
     "vc-release-staging": "vercel deploy --prebuilt",
-    "vc-release": "vercel deploy --prod --prebuilt"
+    "vc-release": "vercel deploy --prod --prebuilt",
+    "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
+    "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 pnpm test-e2e"
   },
   "dependencies": {
     "@hiogawa/react-server": "workspace:*",
@@ -28,6 +33,7 @@
     "@types/react-dom": "latest",
     "@vercel/ncc": "^0.38.1",
     "@vercel/nft": "^0.27.3",
+    "magic-string": "^0.30.8",
     "rolldown": "^0.12.1",
     "rollup": "^4.18.1",
     "vite": "latest"
