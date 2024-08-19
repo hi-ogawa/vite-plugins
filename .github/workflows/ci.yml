@@ -67,6 +67,9 @@ jobs:
       - run: pnpm -C packages/react-server/examples/custom-out-dir cf-build
       - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e-cf-preview
       - run: pnpm -C packages/react-server/examples/custom-out-dir vc-build
+      - run: pnpm -C packages/react-server/examples/og build
+      - run: pnpm -C packages/react-server/examples/og cf-build
+      - run: pnpm -C packages/react-server/examples/og vc-build
 
   test-react-server-package:
     runs-on: ubuntu-latest
