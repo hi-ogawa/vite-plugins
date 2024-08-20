@@ -6,13 +6,17 @@ import {
   vitePluginReactServer,
 } from "@hiogawa/react-server/plugin";
 import {
+  vitePluginFetchUrlImportMetaUrl,
+  vitePluginWasmModule,
+} from "@hiogawa/vite-plugin-server-asset";
+import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react-swc";
 import { type Plugin, type PluginOption, transformWithEsbuild } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { type AdapterType, adapterPlugin } from "./adapters";
+import { type AdapterType, adapterPlugin, autoSelectAdapter } from "./adapters";
 
 export type ReactServerNextPluginOptions = {
   adapter?: AdapterType;
@@ -22,6 +26,9 @@ export default function vitePluginReactServerNext(
   options?: ReactServerPluginOptions & ReactServerNextPluginOptions,
 ): PluginOption {
   const outDir = options?.outDir ?? "dist";
+  const adapter = options?.adapter ?? autoSelectAdapter();
+  const isCF = adapter === "cloudflare" || adapter === "vercel-edge";
+
   return [
     react(),
     nextJsxPlugin(),
@@ -33,6 +40,12 @@ export default function vitePluginReactServerNext(
         nextJsxPlugin(),
         tsconfigPaths(),
         nextOgPlugin(),
+        vitePluginWasmModule({
+          mode: isCF ? "import" : "fs",
+        }),
+        vitePluginFetchUrlImportMetaUrl({
+          mode: isCF ? "import" : "fs",
+        }),
         ...(options?.plugins ?? []),
       ],
     }),
@@ -41,7 +54,7 @@ export default function vitePluginReactServerNext(
       entry: "next/vite/entry-ssr",
       preview: path.resolve(outDir, "server", "index.js"),
     }),
-    adapterPlugin({ adapter: options?.adapter, outDir }),
+    adapterPlugin({ adapter, outDir }),
     appFaviconPlugin(),
     nextConfigPlugin(),
     {

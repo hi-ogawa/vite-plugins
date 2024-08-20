@@ -23,6 +23,7 @@ import { type ConfigEnv, type Plugin } from "vite";
 //   import wasm from "./relocated-xxx.wasm"
 //
 export function vitePluginWasmModule(options: {
+  // TODO: rename to `buildMode`?
   mode: "fs" | "import";
 }): Plugin {
   const MARKER = "\0virtual:wasm-module";

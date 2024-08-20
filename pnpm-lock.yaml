@@ -167,6 +167,9 @@ importers:
 
   packages/react-server-next:
     dependencies:
+      '@hiogawa/vite-plugin-server-asset':
+        specifier: workspace:*
+        version: link:../server-asset
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: workspace:*
         version: link:../vite-plugin-ssr-middleware
