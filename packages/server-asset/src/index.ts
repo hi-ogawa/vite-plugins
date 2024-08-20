@@ -1,2 +1,2 @@
-export * from "./import-meta-url";
-export * from "./wasm-module";
+export { vitePluginFetchUrlImportMetaUrl } from "./import-meta-url";
+export { vitePluginWasmModule } from "./wasm-module";

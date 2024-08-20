@@ -17,9 +17,10 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
     "dev": "tsup --watch",
-    "prepack": "tsup --clean"
+    "build": "tsup",
+    "prepack": "tsup --clean",
+    "test": "vitest"
   },
   "peerDependencies": {
     "vite": "*"
