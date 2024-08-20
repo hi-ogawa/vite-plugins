@@ -76,7 +76,9 @@ test("action client", async ({ page }) => {
 test("favicon.ico", async ({ request }) => {
   const res = await request.get("/favicon.ico");
   expect(res.status()).toBe(200);
-  expect(res.headers()["content-type"]).toBe("image/x-icon");
+  expect(res.headers()["content-type"]).toBe(
+    process.env.E2E_CF ? "image/vnd.microsoft.icon" : "image/x-icon",
+  );
 });
 
 test("viewport", async ({ page }) => {

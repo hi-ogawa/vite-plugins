@@ -10,6 +10,9 @@ export default function Page() {
             <Link href={href}>{href}</Link>
           </li>
         ))}
+        <li>
+          <a href="/test/og?title=Hey!">/test/og?title=Hey!</a>
+        </li>
       </ul>
     </div>
   );
@@ -26,5 +29,4 @@ const links = [
   "/navigation/redirect/servercomponent2",
   "/navigation/not-found/servercomponent",
   "/test/middleware/redirect",
-  "/test/og?title=Hey!",
 ];
