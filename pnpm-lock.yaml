@@ -250,6 +250,9 @@ importers:
       '@hiogawa/vite-plugin-error-overlay':
         specifier: latest
         version: link:../../../error-overlay
+      '@hiogawa/vite-plugin-server-asset':
+        specifier: latest
+        version: link:../../../server-asset
       '@hiogawa/vite-plugin-ssr-middleware':
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
