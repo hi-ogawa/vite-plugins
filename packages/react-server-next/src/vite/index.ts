@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import {
   type ReactServerPluginOptions,
@@ -28,7 +29,12 @@ export default function vitePluginReactServerNext(
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
-      plugins: [nextJsxPlugin(), tsconfigPaths(), ...(options?.plugins ?? [])],
+      plugins: [
+        nextJsxPlugin(),
+        tsconfigPaths(),
+        nextOgPlugin(),
+        ...(options?.plugins ?? []),
+      ],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
@@ -48,6 +54,31 @@ export default function vitePluginReactServerNext(
           exclude: ["next"],
         },
       }),
+    },
+  ];
+}
+
+function nextOgPlugin(): Plugin[] {
+  const require = createRequire(import.meta.url);
+
+  return [
+    {
+      name: nextOgPlugin.name + ":config",
+      config() {
+        return {
+          resolve: {
+            alias: {
+              // use only edge build and deal with a following special triggers uniformly via plugins
+              //   import "xxx.wasm?module"
+              //   fetch(new URL("xxx", import.meta.url))
+              "@vercel/og": path.resolve(
+                require.resolve("@vercel/og/package.json"),
+                "../dist/index.edge.js",
+              ),
+            },
+          },
+        };
+      },
     },
   ];
 }
