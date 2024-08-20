@@ -500,6 +500,15 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
 
+  packages/server-asset:
+    dependencies:
+      magic-string:
+        specifier: ^0.30.8
+        version: 0.30.10
+      vite:
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+
   packages/ssr-css:
     dependencies:
       vite:

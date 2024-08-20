@@ -1,0 +1,30 @@
+{
+  "name": "@hiogawa/vite-plugin-server-asset",
+  "version": "0.0.0-pre.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/server-asset",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/server-asset"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepack": "tsup --clean"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  },
+  "dependencies": {
+    "magic-string": "^0.30.8"
+  }
+}
