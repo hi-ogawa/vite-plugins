@@ -31,7 +31,8 @@ export default defineConfig({
         mdx(),
         testVitePluginVirtual(),
         vitePluginWasmModule({
-          mode: process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
+          buildMode:
+            process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
         }),
         {
           name: "cusotm-react-server-config",
