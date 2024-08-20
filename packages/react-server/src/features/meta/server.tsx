@@ -11,7 +11,9 @@ export function renderMetadata(m: Metadata) {
 
   // cf. https://github.com/vercel/next.js/blob/a6b2e8bf85316855995fad84ebfc93c62ab3ce04/packages/next/src/lib/metadata/resolvers/resolve-url.ts
   const metadataBase = new URL(
-    m.metadataBase ?? process.env["METADATA_BASE"] ?? "http://localhost:5243",
+    m.metadataBase ??
+      globalThis?.process?.env?.["METADATA_BASE"] ??
+      "http://localhost:5243",
   );
 
   return (
