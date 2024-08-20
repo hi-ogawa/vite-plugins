@@ -17,7 +17,7 @@ import { type ConfigEnv, type Plugin } from "vite";
 //   import("./relocated-xxx.bin").then(mod => new Response(mod.default))
 //
 export function vitePluginFetchUrlImportMetaUrl(options: {
-  mode: "fs" | "import";
+  buildMode: "fs" | "import";
 }): Plugin {
   let env: ConfigEnv;
 
@@ -35,7 +35,7 @@ export function vitePluginFetchUrlImportMetaUrl(options: {
           const absFile = path.resolve(id, "..", urlArg);
           if (fs.existsSync(absFile)) {
             let replacement!: string;
-            if (options.mode === "fs") {
+            if (env.command === "serve" || options.buildMode === "fs") {
               if (env.command === "serve") {
                 replacement = `((async () => {
                   const fs = await import("node:fs");
@@ -53,11 +53,7 @@ export function vitePluginFetchUrlImportMetaUrl(options: {
                   return new Response(fs.readFileSync(fileURLToPath(import.meta.ROLLUP_FILE_URL_${referenceId})));
                 })())`;
               }
-            }
-            if (options.mode === "import") {
-              if (env.command === "serve") {
-                throw new Error("unsupported");
-              }
+            } else if (options.buildMode === "import") {
               const referenceId = this.emitFile({
                 type: "asset",
                 name: path.basename(absFile) + ".bin",

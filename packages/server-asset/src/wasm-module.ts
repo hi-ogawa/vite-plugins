@@ -23,8 +23,7 @@ import { type ConfigEnv, type Plugin } from "vite";
 //   import wasm from "./relocated-xxx.wasm"
 //
 export function vitePluginWasmModule(options: {
-  // TODO: rename to `buildMode`?
-  mode: "fs" | "import";
+  buildMode: "fs" | "import";
 }): Plugin {
   const MARKER = "\0virtual:wasm-module";
   let env: ConfigEnv;
@@ -55,7 +54,7 @@ export function vitePluginWasmModule(options: {
         const file = id.slice(MARKER.length);
 
         // readFile + new WebAssembly.Module
-        if (options.mode === "fs") {
+        if (env.command === "serve" || options.buildMode === "fs") {
           let source: string;
           if (env.command === "serve") {
             source = JSON.stringify(file);
@@ -76,10 +75,7 @@ export function vitePluginWasmModule(options: {
         }
 
         // emit wasm asset + rewrite import
-        if (options.mode === "import") {
-          if (env.command === "serve") {
-            throw new Error("unsupported");
-          }
+        if (options.buildMode === "import") {
           const referenceId = this.emitFile({
             type: "asset",
             name: path.basename(file),

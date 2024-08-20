@@ -41,10 +41,10 @@ export default function vitePluginReactServerNext(
         tsconfigPaths(),
         nextOgPlugin(),
         vitePluginWasmModule({
-          mode: isCF ? "import" : "fs",
+          buildMode: isCF ? "import" : "fs",
         }),
         vitePluginFetchUrlImportMetaUrl({
-          mode: isCF ? "import" : "fs",
+          buildMode: isCF ? "import" : "fs",
         }),
         ...(options?.plugins ?? []),
       ],
