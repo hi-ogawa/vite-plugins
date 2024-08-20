@@ -14,6 +14,7 @@ export class ImageResponse extends Response {
         for await (const chunk of response.body) {
           controller.enqueue(chunk);
         }
+        controller.close();
       },
     });
     const headers = new Headers(args[1]?.headers);

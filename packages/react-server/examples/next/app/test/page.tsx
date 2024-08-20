@@ -26,4 +26,5 @@ const links = [
   "/navigation/redirect/servercomponent2",
   "/navigation/not-found/servercomponent",
   "/test/middleware/redirect",
+  "/test/og?title=Hey!",
 ];

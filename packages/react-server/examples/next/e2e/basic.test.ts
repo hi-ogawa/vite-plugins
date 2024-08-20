@@ -137,3 +137,9 @@ testNoJs("middleware flight redirect @nojs", async ({ page }) => {
   await page.waitForURL("/?ok=redirect");
   await page.getByRole("img", { name: "Next.js logo" }).click();
 });
+
+test("next/og", async ({ page }) => {
+  const res = await page.goto("/test/og?title=Hey!");
+  expect(res?.status()).toBe(200);
+  expect(res?.headers()).toMatchObject({ "content-type": "image/png" });
+});
