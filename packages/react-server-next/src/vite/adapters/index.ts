@@ -76,6 +76,9 @@ export function adapterPlugin(options: {
 
 // cf. https://github.com/sveltejs/kit/blob/52e5461b055a104694f276859a7104f58452fab0/packages/adapter-auto/adapters.js
 export function autoSelectAdapter(): AdapterType {
+  if (process.env["ADAPTER"]) {
+    return process.env["ADAPTER"] as any;
+  }
   if (process.env["VERCEL"]) {
     return "vercel";
   }
