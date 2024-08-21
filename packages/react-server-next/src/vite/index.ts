@@ -41,10 +41,18 @@ export default function vitePluginReactServerNext(
         tsconfigPaths(),
         nextOgPlugin(),
         vitePluginWasmModule({
-          buildMode: isCF ? "import" : "fs",
+          buildMode:
+            adapter === "cloudflare" || adapter === "vercel-edge"
+              ? "import"
+              : "fs",
         }),
         vitePluginFetchUrlImportMetaUrl({
-          buildMode: isCF ? "import" : "fs",
+          buildMode:
+            adapter === "cloudflare"
+              ? "import"
+              : adapter === "vercel-edge"
+                ? "inline"
+                : "fs",
         }),
         ...(options?.plugins ?? []),
       ],

@@ -13,11 +13,14 @@ import { type ConfigEnv, type Plugin } from "vite";
 // output (fs / build)
 //   import("node:fs").then(fs => new Response(fs.readFileSync(new URL("./relocated-xxx", import.meta.url).href)))
 //
-// output (import / build)
+// output (inline)
+//   new Response(Uint8Array.from(...base64...))
+//
+// output (import)
 //   import("./relocated-xxx.bin").then(mod => new Response(mod.default))
 //
 export function vitePluginFetchUrlImportMetaUrl(options: {
-  buildMode: "fs" | "import";
+  buildMode: "fs" | "inline" | "import";
 }): Plugin {
   let env: ConfigEnv;
 
@@ -53,6 +56,9 @@ export function vitePluginFetchUrlImportMetaUrl(options: {
                   return new Response(fs.readFileSync(fileURLToPath(import.meta.ROLLUP_FILE_URL_${referenceId})));
                 })())`;
               }
+            } else if (options.buildMode === "inline") {
+              const base64 = fs.readFileSync(absFile).toString("base64");
+              replacement = `Promise.resolve(new Response(Uint8Array.from(atob("${base64}"), c => c.charCodeAt(0))))`;
             } else if (options.buildMode === "import") {
               const referenceId = this.emitFile({
                 type: "asset",
