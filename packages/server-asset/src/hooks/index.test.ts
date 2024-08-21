@@ -5,7 +5,23 @@ import { expect, test } from "vitest";
 
 const $ = promisify(execFile);
 
-test("basic", async () => {
+test("data", async () => {
+  const result = await $("node", [
+    "--import",
+    "tsx/esm",
+    path.join(import.meta.dirname, "./fixtures/test-data.js"),
+  ]);
+  expect(result).toMatchInlineSnapshot(`
+    {
+      "stderr": "",
+      "stdout": "hello
+
+    ",
+    }
+  `);
+});
+
+test("wasm", async () => {
   const result = await $("node", [
     "--import",
     "tsx/esm",
