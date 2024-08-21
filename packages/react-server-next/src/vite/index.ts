@@ -27,7 +27,6 @@ export default function vitePluginReactServerNext(
 ): PluginOption {
   const outDir = options?.outDir ?? "dist";
   const adapter = options?.adapter ?? autoSelectAdapter();
-  const isCF = adapter === "cloudflare" || adapter === "vercel-edge";
 
   return [
     react(),
