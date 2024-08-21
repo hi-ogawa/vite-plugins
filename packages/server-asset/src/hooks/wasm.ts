@@ -2,13 +2,13 @@ import fs from "node:fs";
 import type { LoadHook, ResolveHook } from "node:module";
 import { fileURLToPath } from "node:url";
 
-// support importing ".wasm?module" like CF
+// support importing ".wasm" like CF
 // https://developers.cloudflare.com/pages/functions/module-support/#webassembly-modules
 
 const PROTOCOL = "server-asset-wasm:";
 
 export const resolve: ResolveHook = (specifier, context, nextResolve) => {
-  if (specifier.endsWith(".wasm?module")) {
+  if (specifier.endsWith(".wasm")) {
     const url = new URL(specifier, context.parentURL);
     url.search = "";
     if (fs.existsSync(url)) {
