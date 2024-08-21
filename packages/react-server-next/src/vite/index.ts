@@ -114,7 +114,7 @@ function nextConfigPlugin(): Plugin {
       // we might want to define process.env.NEXT_PUBLIC_xxx for better compatibility.
       // https://nextjs.org/docs/app/building-your-application/configuring/environment-variables#bundling-environment-variables-for-the-browser
       return {
-        envPrefix: ["NEXT_PUBLIC_", ...[config.envPrefix ?? []]].flat(),
+        envPrefix: ["VITE_", "NEXT_PUBLIC_", ...[config.envPrefix ?? []]].flat(),
       };
     },
   };
