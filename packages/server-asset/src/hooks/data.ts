@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 // support importing ".bin" like CF
 // https://developers.cloudflare.com/pages/functions/module-support/#binary-modules
 
-const PROTOCOL = "server-asset-bin:";
+const PROTOCOL = "server-asset-data:";
 
 export const resolve: ResolveHook = (specifier, context, nextResolve) => {
   if (specifier.endsWith(".bin")) {
