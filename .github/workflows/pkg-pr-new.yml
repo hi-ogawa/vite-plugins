@@ -17,4 +17,5 @@ jobs:
             packages/transforms \
             packages/vite-plugin-ssr-middleware \
             packages/pre-bundle-new-url \
-            packages/vite-plugin-ssr-css
+            packages/server-asset \
+            packages/ssr-css

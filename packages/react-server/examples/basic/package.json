@@ -35,6 +35,7 @@
     "@hiogawa/utils": "latest",
     "@hiogawa/utils-node": "latest",
     "@hiogawa/vite-plugin-error-overlay": "latest",
+    "@hiogawa/vite-plugin-server-asset": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@iconify-json/ri": "^1.1.20",
     "@mdx-js/rollup": "^3.0.1",

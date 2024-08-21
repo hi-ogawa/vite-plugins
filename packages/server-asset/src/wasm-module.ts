@@ -22,12 +22,14 @@ import { type ConfigEnv, type Plugin } from "vite";
 // output (import / build)
 //   import wasm from "./relocated-xxx.wasm"
 //
-export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
+export function vitePluginWasmModule(options: {
+  buildMode: "fs" | "import";
+}): Plugin {
   const MARKER = "\0virtual:wasm-module";
   let env: ConfigEnv;
 
   return {
-    name: wasmModulePlugin.name,
+    name: vitePluginWasmModule.name,
     config(_, env_) {
       env = env_;
     },
@@ -44,6 +46,7 @@ export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
             return { id: MARKER + resolved.id };
           }
         }
+        return;
       },
     },
     load(id) {
@@ -51,7 +54,7 @@ export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
         const file = id.slice(MARKER.length);
 
         // readFile + new WebAssembly.Module
-        if (options.mode === "fs") {
+        if (env.command === "serve" || options.buildMode === "fs") {
           let source: string;
           if (env.command === "serve") {
             source = JSON.stringify(file);
@@ -72,10 +75,7 @@ export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
         }
 
         // emit wasm asset + rewrite import
-        if (options.mode === "import") {
-          if (env.command === "serve") {
-            throw new Error("unsupported");
-          }
+        if (options.buildMode === "import") {
           const referenceId = this.emitFile({
             type: "asset",
             name: path.basename(file),
@@ -85,12 +85,13 @@ export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
           return `export default "__WASM_MODULE_IMPORT_${referenceId}"`;
         }
       }
+      return;
     },
     renderChunk(code, chunk) {
       const matches = code.matchAll(/"__WASM_MODULE_IMPORT_(\w+)"/dg);
       const output = new MagicString(code);
       for (const match of matches) {
-        const referenceId = match[1];
+        const referenceId = match[1]!;
         const assetFileName = this.getFileName(referenceId);
         const importSource =
           "./" +
@@ -99,13 +100,14 @@ export function wasmModulePlugin(options: { mode: "fs" | "import" }): Plugin {
             path.resolve(assetFileName),
           );
         const importName = `__wasm_${referenceId}`;
-        const [start, end] = match.indices![0];
+        const [start, end] = match.indices![0]!;
         output.prepend(`import ${importName} from "${importSource}";\n`);
         output.update(start, end, importName);
       }
       if (output.hasChanged()) {
         return output.toString();
       }
+      return;
     },
   };
 }

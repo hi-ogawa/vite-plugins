@@ -3,7 +3,7 @@ import type { Plugin } from "vite";
 export type AdapterType = "node" | "vercel" | "vercel-edge" | "cloudflare";
 
 export function adapterPlugin(options: {
-  adapter?: AdapterType;
+  adapter: AdapterType;
   outDir: string;
 }): Plugin[] {
   const adapter = options.adapter ?? autoSelectAdapter();
@@ -50,7 +50,7 @@ export function adapterPlugin(options: {
 }
 
 // cf. https://github.com/sveltejs/kit/blob/52e5461b055a104694f276859a7104f58452fab0/packages/adapter-auto/adapters.js
-function autoSelectAdapter(): AdapterType {
+export function autoSelectAdapter(): AdapterType {
   if (process.env["VERCEL"]) {
     return "vercel";
   }

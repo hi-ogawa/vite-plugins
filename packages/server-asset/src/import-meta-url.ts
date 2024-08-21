@@ -16,30 +16,26 @@ import { type ConfigEnv, type Plugin } from "vite";
 // output (import / build)
 //   import("./relocated-xxx.bin").then(mod => new Response(mod.default))
 //
-export function fetchImportMetaUrlPlugin(options: {
-  mode: "fs" | "import";
+export function vitePluginFetchUrlImportMetaUrl(options: {
+  buildMode: "fs" | "import";
 }): Plugin {
-  // cf. https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
-  const FETCH_ASSET_RE =
-    /\bfetch\s*\(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)\s*(?:,\s*)?\)/dg;
-
   let env: ConfigEnv;
 
   return {
-    name: fetchImportMetaUrlPlugin.name,
+    name: vitePluginFetchUrlImportMetaUrl.name,
     config(_, env_) {
       env = env_;
     },
     transform(code, id) {
       if (code.includes("import.meta.url")) {
         const output = new MagicString(code);
-        const matches = code.matchAll(FETCH_ASSET_RE);
+        const matches = code.matchAll(FETCH_URL_RE);
         for (const match of matches) {
           const urlArg = match[1]!.slice(1, -1);
           const absFile = path.resolve(id, "..", urlArg);
           if (fs.existsSync(absFile)) {
             let replacement!: string;
-            if (options.mode === "fs") {
+            if (env.command === "serve" || options.buildMode === "fs") {
               if (env.command === "serve") {
                 replacement = `((async () => {
                   const fs = await import("node:fs");
@@ -57,11 +53,7 @@ export function fetchImportMetaUrlPlugin(options: {
                   return new Response(fs.readFileSync(fileURLToPath(import.meta.ROLLUP_FILE_URL_${referenceId})));
                 })())`;
               }
-            }
-            if (options.mode === "import") {
-              if (env.command === "serve") {
-                throw new Error("unsupported");
-              }
+            } else if (options.buildMode === "import") {
               const referenceId = this.emitFile({
                 type: "asset",
                 name: path.basename(absFile) + ".bin",
@@ -77,12 +69,13 @@ export function fetchImportMetaUrlPlugin(options: {
           return { code: output.toString(), map: output.generateMap() };
         }
       }
+      return;
     },
     renderChunk(code, chunk) {
       const matches = code.matchAll(/"__FETCH_ASSET_IMPORT_(\w+)"/dg);
       const output = new MagicString(code);
       for (const match of matches) {
-        const referenceId = match[1];
+        const referenceId = match[1]!;
         const assetFileName = this.getFileName(referenceId);
         const importSource =
           "./" +
@@ -90,13 +83,18 @@ export function fetchImportMetaUrlPlugin(options: {
             path.resolve(chunk.fileName, ".."),
             path.resolve(assetFileName),
           );
-        const [start, end] = match.indices![0];
+        const [start, end] = match.indices![0]!;
         const replacement = `import(${JSON.stringify(importSource)})`;
         output.update(start, end, replacement);
       }
       if (output.hasChanged()) {
         return output.toString();
       }
+      return;
     },
   };
 }
+
+// cf. https://github.com/vitejs/vite/blob/0f56e1724162df76fffd5508148db118767ebe32/packages/vite/src/node/plugins/assetImportMetaUrl.ts#L51-L52
+export const FETCH_URL_RE =
+  /\bfetch\s*\(\s*new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*(?:,\s*)?\)\s*(?:,\s*)?\)/dg;

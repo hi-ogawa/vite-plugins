@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
+    "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 pnpm test-e2e",
     "cf-build": "CF_PAGES=1 pnpm build",
     "cf-preview": "wrangler pages dev ./dist/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat",
     "cf-release": "wrangler pages deploy ./dist/cloudflare --commit-dirty --branch main --project-name test-next-vite",

@@ -55,6 +55,7 @@ jobs:
       - run: pnpm -C packages/react-server/examples/next build
       - run: pnpm -C packages/react-server/examples/next test-e2e-preview
       - run: pnpm -C packages/react-server/examples/next cf-build
+      - run: pnpm -C packages/react-server/examples/next test-e2e-cf-preview
       - run: pnpm -C packages/react-server/examples/next vc-build
       - run: pnpm -C packages/react-server/examples/prerender test-e2e
       - run: pnpm -C packages/react-server/examples/prerender build
@@ -67,12 +68,6 @@ jobs:
       - run: pnpm -C packages/react-server/examples/custom-out-dir cf-build
       - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e-cf-preview
       - run: pnpm -C packages/react-server/examples/custom-out-dir vc-build
-      - run: pnpm -C packages/react-server/examples/og test-e2e
-      - run: pnpm -C packages/react-server/examples/og build
-      - run: pnpm -C packages/react-server/examples/og test-e2e-preview
-      - run: pnpm -C packages/react-server/examples/og cf-build
-      - run: pnpm -C packages/react-server/examples/og test-e2e-cf-preview
-      - run: pnpm -C packages/react-server/examples/og vc-build
 
   test-react-server-package:
     runs-on: ubuntu-latest

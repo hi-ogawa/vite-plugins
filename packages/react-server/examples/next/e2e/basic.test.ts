@@ -76,7 +76,9 @@ test("action client", async ({ page }) => {
 test("favicon.ico", async ({ request }) => {
   const res = await request.get("/favicon.ico");
   expect(res.status()).toBe(200);
-  expect(res.headers()["content-type"]).toBe("image/x-icon");
+  expect(res.headers()["content-type"]).toBe(
+    process.env.E2E_CF ? "image/vnd.microsoft.icon" : "image/x-icon",
+  );
 });
 
 test("viewport", async ({ page }) => {
@@ -136,4 +138,10 @@ testNoJs("middleware flight redirect @nojs", async ({ page }) => {
   await page.getByRole("link", { name: "/test/middleware/redirect" }).click();
   await page.waitForURL("/?ok=redirect");
   await page.getByRole("img", { name: "Next.js logo" }).click();
+});
+
+test("next/og", async ({ page }) => {
+  const res = await page.goto("/test/og?title=Hey!");
+  expect(res?.status()).toBe(200);
+  expect(res?.headers()).toMatchObject({ "content-type": "image/png" });
 });
