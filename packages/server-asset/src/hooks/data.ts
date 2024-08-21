@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import type { LoadHook, ResolveHook } from "node:module";
+import { fileURLToPath } from "node:url";
 
 // support importing ".bin" like CF
 // https://developers.cloudflare.com/pages/functions/module-support/#binary-modules
@@ -12,6 +13,7 @@ export const resolve: ResolveHook = (specifier, context, nextResolve) => {
     if (fs.existsSync(url)) {
       return {
         url: PROTOCOL + url.href,
+        format: "module",
         shortCircuit: true,
       };
     }
@@ -22,13 +24,14 @@ export const resolve: ResolveHook = (specifier, context, nextResolve) => {
 export const load: LoadHook = (url, context, nextLoad) => {
   if (url.startsWith(PROTOCOL)) {
     const fileUrl = url.slice(PROTOCOL.length);
+    const filePath = fileURLToPath(new URL(fileUrl));
     return {
       source: `
         import fs from "node:fs";
-        export default fs.readFileSync(new URL(${JSON.stringify(fileUrl)}))
+        export default fs.readFileSync(${JSON.stringify(filePath)});
       `,
-      shortCircuit: true,
       format: "module",
+      shortCircuit: true,
     };
   }
   return nextLoad(url, context);

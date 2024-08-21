@@ -13,7 +13,8 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./hooks/*": "./hooks/*"
   },
   "files": ["dist"],
   "scripts": {
