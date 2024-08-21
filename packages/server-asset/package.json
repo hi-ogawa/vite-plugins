@@ -14,7 +14,7 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./hooks/*": "./hooks/*"
+    "./hooks/*": "./dist/hooks/*.js"
   },
   "files": ["dist"],
   "scripts": {
