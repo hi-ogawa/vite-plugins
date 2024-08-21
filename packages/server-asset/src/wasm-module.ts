@@ -69,8 +69,7 @@ export function vitePluginWasmModule(options: {
           return `
             import fs from "node:fs";
             import { fileURLToPath } from "node:url";
-            const buffer = fs.readFileSync(${source});
-            export default new WebAssembly.Module(buffer);
+            export default new WebAssembly.Module(fs.readFileSync(${source}));
           `;
         }
 
