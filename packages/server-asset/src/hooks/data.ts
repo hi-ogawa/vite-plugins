@@ -23,13 +23,13 @@ export const resolve: ResolveHook = (specifier, context, nextResolve) => {
 
 export const load: LoadHook = (url, context, nextLoad) => {
   if (url.startsWith(PROTOCOL)) {
-    const fileUrl = url.slice(PROTOCOL.length);
-    const filePath = fileURLToPath(new URL(fileUrl));
+    const filePath = fileURLToPath(new URL(url.slice(PROTOCOL.length)));
+    const source = `\
+import fs from "node:fs";
+export default fs.readFileSync(${JSON.stringify(filePath)});
+`;
     return {
-      source: `
-        import fs from "node:fs";
-        export default fs.readFileSync(${JSON.stringify(filePath)});
-      `,
+      source,
       format: "module",
       shortCircuit: true,
     };

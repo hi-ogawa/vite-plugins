@@ -2,7 +2,7 @@ import fs from "node:fs";
 import type { LoadHook, ResolveHook } from "node:module";
 import { fileURLToPath } from "node:url";
 
-// support importing ".wasm" like CF
+// support importing ".wasm?module" like CF
 // https://developers.cloudflare.com/pages/functions/module-support/#webassembly-modules
 
 const PROTOCOL = "server-asset-wasm:";
@@ -24,8 +24,7 @@ export const resolve: ResolveHook = (specifier, context, nextResolve) => {
 
 export const load: LoadHook = (url, context, nextLoad) => {
   if (url.startsWith(PROTOCOL)) {
-    const fileUrl = url.slice(PROTOCOL.length);
-    const filePath = fileURLToPath(new URL(fileUrl));
+    const filePath = fileURLToPath(new URL(url.slice(PROTOCOL.length)));
     const source = `\
 import fs from "node:fs";
 export default new WebAssembly.Module(fs.readFileSync(${JSON.stringify(filePath)}));
