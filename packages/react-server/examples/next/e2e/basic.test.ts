@@ -154,6 +154,8 @@ testNoJs("Metadata.openGraph", async ({ page }) => {
   );
   await expect(page.locator(`meta[property="og:image"]`)).toHaveAttribute(
     "content",
-    "http://localhost:5243/test/og?title=Next%20on%20Vite",
+    (process.env.E2E_CF
+      ? "https://test-next-vite.pages.dev"
+      : "http://localhost:5243") + "/test/og?title=Next%20on%20Vite",
   );
 });
