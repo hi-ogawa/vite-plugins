@@ -34,6 +34,9 @@ const fallbackFont = import("./noto-sans-v27-latin-regular.ttf-CirskmZh.bin")
 
 ## `vitePluginWasmModule`
 
+This plugin enables `.wasm?module` import as a uniform syntax to initialize `WebAssembly.Module`
+since [Cloudflare](https://developers.cloudflare.com/pages/functions/module-support) requires WASM to be only initialized via import.
+
 ```ts
 import resvg_wasm from "./resvg.wasm?module";
 
