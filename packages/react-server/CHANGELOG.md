@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.7 (2024-08-22)
+
+- feat: support `Metadata.openGraph` ([#621](https://github.com/hi-ogawa/vite-plugins/pull/621))
+- refactor: perf: externalize rsc build from ssr build ([#617](https://github.com/hi-ogawa/vite-plugins/pull/617))
+- fix: inherit `envPrefix` config + add `NEXT_PUBLIC_` ([#601](https://github.com/hi-ogawa/vite-plugins/pull/601))
+
 ## v0.3.6 (2024-08-04)
 
 - feat: Add plugin option for custom outDir ([#591](https://github.com/hi-ogawa/vite-plugins/pull/591))
