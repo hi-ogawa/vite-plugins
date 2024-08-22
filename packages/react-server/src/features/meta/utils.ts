@@ -2,5 +2,15 @@
 export type Metadata = {
   title?: null | string | { default: string; [k: string]: unknown };
   description?: null | string;
+  metadataBase?: null | URL;
+  openGraph?: null | MetadataOpenGraph;
   [k: string]: unknown;
 };
+
+export type MetadataOpenGraph = {
+  title?: string;
+  description?: string;
+  images?: MetadataOgImage | Array<MetadataOgImage>;
+};
+
+type MetadataOgImage = string | URL;
