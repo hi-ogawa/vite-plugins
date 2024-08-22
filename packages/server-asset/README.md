@@ -32,14 +32,6 @@ const fallbackFont = import("./noto-sans-v27-latin-regular.ttf-CirskmZh.bin")
   .then((res) => res.arrayBuffer());
 ```
 
-To run `import "xxx.bin"` on Node, a following custom loader is provided:
-
-```ts
-import { register } from "node:module"
-
-register("@hiogawa/vite-plugin-server-asset/hooks/data", import.meta.url);
-```
-
 ## `vitePluginWasmModule`
 
 ```ts
@@ -58,11 +50,17 @@ const resvg_wasm = new WebAssembly.Module(
 import __wasm_B7t_kJnM from "./resvg-Cjh1zH0p.wasm"
 ```
 
-To run `import "xxx.wasm"` on Node, a following custom loader is provided:
+## hooks
+
+Custom hooks are provided to run `.bin` and `.wasm` on Node.
 
 ```ts
 import { register } from "node:module"
 
+// import "xxx.bin"
+register("@hiogawa/vite-plugin-server-asset/hooks/data", import.meta.url);
+
+// import "xxx.wasm"
 register("@hiogawa/vite-plugin-server-asset/hooks/wasm", import.meta.url);
 ```
 
