@@ -9,15 +9,28 @@ export async function GET(request: Request) {
   return new ImageResponse(
     <div
       style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontSize: "48px",
-        fontWeight: "600",
+        position: "relative",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        color: "#171717",
+        backgroundColor: "#ffffff",
+        width: "100%",
+        height: "100%",
       }}
     >
-      {title}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          fontSize: "48px",
+          fontWeight: "600",
+        }}
+      >
+        {title}
+      </div>
     </div>,
     {
       width: 843,
