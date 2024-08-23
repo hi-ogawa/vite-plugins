@@ -24,3 +24,16 @@ type MetadataTwitter = {
 };
 
 type Arrayable<T> = T | Array<T>;
+
+export function normalizeMetadata(m: Metadata) {
+  // copy from openGraph to twitter
+  // cf. https://github.com/vercel/next.js/blob/afc73d5eadb108f10a22b223cbcb55f491bf5431/packages/next/src/lib/metadata/resolve-metadata.ts#L579-L652
+  if (m.openGraph) {
+    for (const key of ["title", "description", "images"] as const) {
+      if (m.openGraph[key] && !m.twitter?.[key]) {
+        m.twitter ??= {};
+        m.twitter[key] = m.openGraph[key] as any;
+      }
+    }
+  }
+}

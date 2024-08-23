@@ -146,13 +146,27 @@ test("next/og", async ({ page }) => {
   expect(res?.headers()).toMatchObject({ "content-type": "image/png" });
 });
 
-testNoJs("Metadata.openGraph", async ({ page }) => {
+testNoJs("Metadata", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(`meta[property="og:title"]`)).toHaveAttribute(
     "content",
     "Next on Vite",
   );
   await expect(page.locator(`meta[property="og:image"]`)).toHaveAttribute(
+    "content",
+    (process.env.E2E_CF
+      ? "https://test-next-vite.pages.dev"
+      : "http://localhost:5243") + "/test/og?title=Next%20on%20Vite",
+  );
+  await expect(page.locator(`meta[name="twitter:card"]`)).toHaveAttribute(
+    "content",
+    "summary_large_image",
+  );
+  await expect(page.locator(`meta[name="twitter:title"]`)).toHaveAttribute(
+    "content",
+    "Next on Vite",
+  );
+  await expect(page.locator(`meta[name="twitter:image"]`)).toHaveAttribute(
     "content",
     (process.env.E2E_CF
       ? "https://test-next-vite.pages.dev"
