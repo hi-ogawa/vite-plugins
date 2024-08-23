@@ -4,13 +4,22 @@ export type Metadata = {
   description?: null | string;
   metadataBase?: null | URL;
   openGraph?: null | MetadataOpenGraph;
+  twitter?: null | MetadataTwitter;
   [k: string]: unknown;
 };
 
-export type MetadataOpenGraph = {
+type MetadataOpenGraph = {
   title?: string;
   description?: string;
-  images?: MetadataOgImage | Array<MetadataOgImage>;
+  images?: Arrayable<string | URL>;
+  [k: string]: unknown;
 };
 
-type MetadataOgImage = string | URL;
+type MetadataTwitter = {
+  title?: string;
+  description?: string;
+  images?: Arrayable<string | URL>;
+  [k: string]: unknown;
+};
+
+type Arrayable<T> = T | Array<T>;
