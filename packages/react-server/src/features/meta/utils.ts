@@ -19,6 +19,7 @@ type MetadataTwitter = {
   title?: string;
   description?: string;
   images?: Arrayable<string | URL>;
+  card?: string;
   [k: string]: unknown;
 };
 

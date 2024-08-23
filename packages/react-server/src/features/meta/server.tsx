@@ -38,6 +38,9 @@ export function renderMetadata(m: Metadata) {
               content={new URL(image, metadataBase).href}
             />
           ))}
+      {typeof m.twitter?.card === "string" && (
+        <meta property="twitter:card" content={m.twitter.card} />
+      )}
     </>
   );
 }
