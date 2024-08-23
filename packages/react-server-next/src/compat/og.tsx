@@ -19,6 +19,14 @@ export class ImageResponse extends Response {
     });
     const headers = new Headers(args[1]?.headers);
     headers.set("content-type", "image/png");
+    if (!headers.has("cache-control")) {
+      headers.set(
+        "cache-control",
+        process.env["NODE_ENV"] === "development"
+          ? "no-cache, no-store"
+          : "public, immutable, no-transform, max-age=31536000",
+      );
+    }
     super(body, { ...args[1], headers });
   }
 }
