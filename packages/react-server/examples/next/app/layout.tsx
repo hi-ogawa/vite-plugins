@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     title: "Next on Vite",
     images: [encodeURI("/test/og?title=Next on Vite")],
   },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

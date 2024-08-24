@@ -1,7 +1,9 @@
 import { objectHas } from "@hiogawa/utils";
-import type { Metadata } from "./utils";
+import { type Metadata, normalizeMetadata } from "./utils";
 
 export function renderMetadata(m: Metadata) {
+  normalizeMetadata(m);
+
   const title =
     typeof m.title === "string"
       ? m.title
@@ -35,6 +37,25 @@ export function renderMetadata(m: Metadata) {
             <meta
               key={i}
               property="og:image"
+              content={new URL(image, metadataBase).href}
+            />
+          ))}
+      {typeof m.twitter?.card === "string" && (
+        <meta name="twitter:card" content={m.twitter.card} />
+      )}
+      {typeof m.twitter?.title === "string" && (
+        <meta name="twitter:title" content={m.twitter.title} />
+      )}
+      {typeof m.twitter?.description === "string" && (
+        <meta name="twitter:description" content={m.twitter.description} />
+      )}
+      {typeof m.twitter?.images !== "undefined" &&
+        [m.twitter.images]
+          .flat()
+          .map((image, i) => (
+            <meta
+              key={i}
+              name="twitter:image"
               content={new URL(image, metadataBase).href}
             />
           ))}

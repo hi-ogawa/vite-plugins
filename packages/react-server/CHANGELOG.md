@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.8 (2024-08-23)
+
+- feat: support `Metadata.twitter` ([#626](https://github.com/hi-ogawa/vite-plugins/pull/626))
+
 ## v0.3.7 (2024-08-22)
 
 - feat: support `Metadata.openGraph` ([#621](https://github.com/hi-ogawa/vite-plugins/pull/621))
