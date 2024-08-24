@@ -749,6 +749,8 @@ test("ReactDom.useFormStatus", async ({ page }) => {
 });
 
 test("action returning component", async ({ page }) => {
+  if (process.env["E2E_CF"]) test.skip();
+
   await page.goto("/test/action");
   await waitForHydration(page);
   await page
@@ -946,6 +948,8 @@ test("redirect server action @js", async ({ page }) => {
 });
 
 test("redirect suspense @js", async ({ page }) => {
+  if (process.env["E2E_CF"]) test.skip();
+
   await page.goto("/test/redirect");
   await waitForHydration(page);
   await page.getByRole("link", { name: "Suspense" }).click();
@@ -1380,6 +1384,8 @@ async function testMetadata(page: Page) {
 }
 
 test("loading @js", async ({ page }) => {
+  if (process.env["E2E_CF"]) test.skip();
+
   await page.goto("/test/loading");
   await waitForHydration(page);
   await page.getByRole("link", { name: "• /test/loading/1" }).click();
