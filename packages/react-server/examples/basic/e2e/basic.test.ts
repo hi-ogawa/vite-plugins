@@ -749,6 +749,8 @@ test("ReactDom.useFormStatus", async ({ page }) => {
 });
 
 test("action returning component", async ({ page }) => {
+  // streaming not working on wrangler dev
+  // https://github.com/cloudflare/workers-sdk/issues/6577
   if (process.env["E2E_CF"]) test.skip();
 
   await page.goto("/test/action");
