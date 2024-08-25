@@ -1,18 +1,14 @@
 {
   "name": "@hiogawa/react-server-next",
   "version": "0.0.14",
-  "license": "MIT",
-  "type": "module",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server-next",
   "repository": {
     "type": "git",
     "url": "https://github.com/hi-ogawa/vite-plugins",
     "directory": "packages/react-server-next"
   },
-  "files": ["bin", "dist", "types"],
-  "bin": {
-    "next": "./bin/cli.js"
-  },
+  "license": "MIT",
+  "type": "module",
   "exports": {
     "./vite": {
       "types": "./dist/vite/index.d.ts",
@@ -41,6 +37,10 @@
       "default": "./dist/compat/*.js"
     }
   },
+  "bin": {
+    "next": "./bin/cli.js"
+  },
+  "files": ["bin", "dist", "types"],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
