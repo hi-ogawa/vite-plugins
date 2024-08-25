@@ -23,10 +23,10 @@
     "prepack": "tsup --clean",
     "test": "vitest"
   },
-  "peerDependencies": {
-    "vite": "*"
-  },
   "dependencies": {
     "magic-string": "^0.30.8"
+  },
+  "peerDependencies": {
+    "vite": "*"
   }
 }

@@ -1,14 +1,14 @@
 {
   "name": "@hiogawa/react-server",
   "version": "0.3.8",
-  "license": "MIT",
-  "type": "module",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/react-server",
   "repository": {
     "type": "git",
     "url": "https://github.com/hi-ogawa/vite-plugins",
     "directory": "packages/react-server"
   },
+  "license": "MIT",
+  "type": "module",
   "exports": {
     "./client": {
       "types": "./dist/client.d.ts",
