@@ -3,6 +3,8 @@ import { JsxInJs } from "./_jsx-in";
 import styles from "./page.module.css";
 
 export default function Home() {
+  console.log("[Home]", process.env);
+
   return (
     <div className={styles.page}>
       <JsxInJs />
