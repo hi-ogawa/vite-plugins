@@ -105,7 +105,9 @@ export function vitePluginServerAssets({
       );
       const styles = await Promise.all([
         `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, {
+        // @ts-ignore
+        // biome-ignore format:
+        "" && collectStyle($__global.dev.reactServer, {
           entries: [entryServer, "virtual:server-routes"],
           ssr: true,
         }),
@@ -127,6 +129,8 @@ export function vitePluginServerAssets({
       // virtual module to proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
+        if (1) return "export {}";
+        // @ts-ignore
         const urls = await collectStyleUrls($__global.dev.reactServer, {
           entries: [entryServer, "virtual:server-routes"],
           ssr: true,

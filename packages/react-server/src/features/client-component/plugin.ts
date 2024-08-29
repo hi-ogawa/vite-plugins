@@ -49,6 +49,7 @@ export function vitePluginServerUseClient({
     name: "server-virtual-use-client-node-modules",
     enforce: "pre", // "pre" to steal Vite's node resolve
     apply: "serve",
+    applyToEnvironment: (env) => env.name === "react-server",
     resolveId: memoize(async function (this, source, importer) {
       if (
         source[0] !== "." &&
@@ -130,6 +131,7 @@ export function vitePluginServerUseClient({
 
   const useClientPlugin: Plugin = {
     name: vitePluginServerUseClient.name,
+    applyToEnvironment: (env) => env.name === "react-server",
     async transform(code, id, _options) {
       // when using external library's server component includes client reference,
       // it will end up here with deps optimization hash `?v=` resolved by server module graph.
@@ -181,6 +183,7 @@ export function vitePluginServerUseClient({
     name: vitePluginServerUseClient + ":strip-strip",
     apply: "build",
     enforce: "post",
+    applyToEnvironment: (env) => env.name === "react-server",
     async buildStart() {
       if (manager.buildType !== "scan") return;
 
@@ -254,6 +257,7 @@ export function vitePluginClientUseClient({
   const devExternalPlugin: Plugin = {
     name: vitePluginClientUseClient.name + ":dev-external",
     apply: "serve",
+    applyToEnvironment: (env) => env.name !== "react-server",
     resolveId(source, _importer, _options) {
       if (source.startsWith(VIRTUAL_PREFIX)) {
         return "\0" + source;

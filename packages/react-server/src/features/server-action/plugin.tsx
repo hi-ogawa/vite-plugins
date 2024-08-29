@@ -30,6 +30,7 @@ export function vitePluginClientUseServer({
 }): Plugin {
   return {
     name: vitePluginClientUseServer.name,
+    applyToEnvironment: (env) => env.name !== "react-server",
     async transform(code, id, options) {
       if (!code.includes(USE_SERVER)) {
         manager.serverReferenceMap.delete(id);
@@ -88,6 +89,7 @@ export function vitePluginServerUseServer({
 }): PluginOption {
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
+    applyToEnvironment: (env) => env.name === "react-server",
     async transform(code, id, _options) {
       manager.serverReferenceMap.delete(id);
       if (!code.includes(USE_SERVER)) {

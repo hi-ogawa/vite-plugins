@@ -8,7 +8,7 @@ import type { CallServerCallback } from "./types/react";
 export const $__global: {
   dev: {
     server: ViteDevServer;
-    reactServer: ViteDevServer;
+    // reactServer: ViteDevServer;
     reactServerRunner: ModuleRunner;
     manager: PluginStateManager;
   };
