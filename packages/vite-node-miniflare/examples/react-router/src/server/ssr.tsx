@@ -46,16 +46,7 @@ export function ssrHandler(): RequestHandler {
     }
 
     // load tempalte
-    let html: string;
-    if (import.meta.env.DEV) {
-      html = (await import("/index.html?raw")).default;
-      html = await (ctx.platform as any).env.__RPC.transformIndexHtml(
-        "/",
-        html,
-      );
-    } else {
-      html = (await import("/dist/client/index.html?raw")).default;
-    }
+    let html: string = (await import("virtual:index-html" as string)).default;
 
     html = html.replace("<!--@INJECT_SSR@-->", () => ssrHtml);
     html = html.replace(
