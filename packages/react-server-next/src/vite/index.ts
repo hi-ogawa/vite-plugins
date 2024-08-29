@@ -1,9 +1,14 @@
 import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import {
   type ReactServerPluginOptions,
   vitePluginReactServer,
 } from "@hiogawa/react-server/plugin";
+import {
+  vitePluginFetchUrlImportMetaUrl,
+  vitePluginWasmModule,
+} from "@hiogawa/vite-plugin-server-asset";
 import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
@@ -11,7 +16,7 @@ import {
 import react from "@vitejs/plugin-react-swc";
 import { type Plugin, type PluginOption, transformWithEsbuild } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { type AdapterType, adapterPlugin } from "./adapters";
+import { type AdapterType, adapterPlugin, autoSelectAdapter } from "./adapters";
 
 export type ReactServerNextPluginOptions = {
   adapter?: AdapterType;
@@ -21,6 +26,8 @@ export default function vitePluginReactServerNext(
   options?: ReactServerPluginOptions & ReactServerNextPluginOptions,
 ): PluginOption {
   const outDir = options?.outDir ?? "dist";
+  const adapter = options?.adapter ?? autoSelectAdapter();
+
   return [
     react(),
     nextJsxPlugin(),
@@ -28,14 +35,33 @@ export default function vitePluginReactServerNext(
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
-      plugins: [nextJsxPlugin(), tsconfigPaths(), ...(options?.plugins ?? [])],
+      plugins: [
+        nextJsxPlugin(),
+        tsconfigPaths(),
+        nextOgPlugin(),
+        vitePluginWasmModule({
+          buildMode:
+            adapter === "cloudflare" || adapter === "vercel-edge"
+              ? "import"
+              : "fs",
+        }),
+        vitePluginFetchUrlImportMetaUrl({
+          buildMode:
+            adapter === "cloudflare"
+              ? "import"
+              : adapter === "vercel-edge"
+                ? "inline"
+                : "fs",
+        }),
+        ...(options?.plugins ?? []),
+      ],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
       preview: path.resolve(outDir, "server", "index.js"),
     }),
-    adapterPlugin({ adapter: options?.adapter, outDir }),
+    adapterPlugin({ adapter, outDir }),
     appFaviconPlugin(),
     nextConfigPlugin(),
     {
@@ -52,6 +78,33 @@ export default function vitePluginReactServerNext(
   ];
 }
 
+function nextOgPlugin(): Plugin[] {
+  const require = createRequire(import.meta.url);
+
+  return [
+    {
+      name: nextOgPlugin.name + ":config",
+      config() {
+        return {
+          resolve: {
+            alias: {
+              // use only edge build and deal with following special triggers
+              // uniformly for any adapters via plugins
+              //   import resvg_wasm from "./resvg.wasm?module";
+              //   import yoga_wasm from "./yoga.wasm?module";
+              //   fetch(new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url))
+              "@vercel/og": path.resolve(
+                require.resolve("@vercel/og/package.json"),
+                "../dist/index.edge.js",
+              ),
+            },
+          },
+        };
+      },
+    },
+  ];
+}
+
 function nextConfigPlugin(): Plugin {
   return {
     name: nextConfigPlugin.name,
@@ -61,7 +114,11 @@ function nextConfigPlugin(): Plugin {
       // we might want to define process.env.NEXT_PUBLIC_xxx for better compatibility.
       // https://nextjs.org/docs/app/building-your-application/configuring/environment-variables#bundling-environment-variables-for-the-browser
       return {
-        envPrefix: ["NEXT_PUBLIC_", ...[config.envPrefix ?? []]].flat(),
+        envPrefix: [
+          "VITE_",
+          "NEXT_PUBLIC_",
+          ...[config.envPrefix ?? []],
+        ].flat(),
       };
     },
   };

@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
+import { esbuildPluginAssetImportMetaUrl } from "../shared";
 
 const configJson = {
   version: 3,
@@ -103,12 +104,20 @@ export async function build({
     format: "esm",
     platform: runtime === "node" ? "node" : "browser",
     external: ["node:async_hooks"],
+    loader:
+      runtime === "node"
+        ? undefined
+        : {
+            ".wasm": "copy",
+            ".bin": "copy",
+          },
     define: {
       "process.env.NODE_ENV": `"production"`,
     },
     logOverride: {
       "ignored-bare-import": "silent",
     },
+    plugins: runtime === "node" ? [esbuildPluginAssetImportMetaUrl()] : [],
   });
   await writeFile(
     join(buildDir, "esbuild-metafile.json"),

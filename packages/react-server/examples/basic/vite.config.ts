@@ -1,6 +1,7 @@
 import path from "node:path";
 import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
 import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
+import { vitePluginWasmModule } from "@hiogawa/vite-plugin-server-asset";
 import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
@@ -29,6 +30,10 @@ export default defineConfig({
         // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
         mdx(),
         testVitePluginVirtual(),
+        vitePluginWasmModule({
+          buildMode:
+            process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
+        }),
         {
           name: "cusotm-react-server-config",
           config() {
@@ -62,6 +67,9 @@ export default defineConfig({
     },
     testVitePluginVirtual(),
   ],
+  build: {
+    ssrEmitAssets: true,
+  },
   ssr: {
     noExternal: [
       // cjs default export. try

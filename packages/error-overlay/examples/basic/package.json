@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hiogawa/vite-plugin-ssr-middleware": "latest",
-    "@hiogawa/vite-plugin-error-overlay": "latest"
+    "@hiogawa/vite-plugin-error-overlay": "latest",
+    "@hiogawa/vite-plugin-ssr-middleware": "latest"
   }
 }

@@ -1,11 +1,5 @@
 {
-  "include": [
-    "src",
-    "e2e",
-    "vite.config.ts",
-    "uno.config.ts",
-    "playwright.config.ts"
-  ],
+  "include": ["src", "e2e", "*.ts"],
   "compilerOptions": {
     "strict": true,
     "noUnusedLocals": true,

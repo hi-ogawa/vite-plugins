@@ -749,6 +749,10 @@ test("ReactDom.useFormStatus", async ({ page }) => {
 });
 
 test("action returning component", async ({ page }) => {
+  // streaming not working on wrangler dev
+  // https://github.com/cloudflare/workers-sdk/issues/6577
+  if (process.env["E2E_CF"]) test.skip();
+
   await page.goto("/test/action");
   await waitForHydration(page);
   await page
@@ -946,6 +950,8 @@ test("redirect server action @js", async ({ page }) => {
 });
 
 test("redirect suspense @js", async ({ page }) => {
+  if (process.env["E2E_CF"]) test.skip();
+
   await page.goto("/test/redirect");
   await waitForHydration(page);
   await page.getByRole("link", { name: "Suspense" }).click();
@@ -1380,6 +1386,8 @@ async function testMetadata(page: Page) {
 }
 
 test("loading @js", async ({ page }) => {
+  if (process.env["E2E_CF"]) test.skip();
+
   await page.goto("/test/loading");
   await waitForHydration(page);
   await page.getByRole("link", { name: "• /test/loading/1" }).click();
@@ -1617,4 +1625,9 @@ test("envPrefix", async ({ page }) => {
   await expect(page.getByTestId("client-env")).toContainText(
     '{ "MY_PREFIX_ENV_TEST": "yes", "VITE_ENV_TEST": null, "OTHER_ENV_TEST": null }',
   );
+});
+
+test("wasm", async ({ page }) => {
+  await page.goto("/test/wasm");
+  await expect(page.locator("pre.shiki")).toContainText('export default "ok"');
 });

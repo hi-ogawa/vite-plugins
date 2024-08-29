@@ -76,7 +76,9 @@ test("action client", async ({ page }) => {
 test("favicon.ico", async ({ request }) => {
   const res = await request.get("/favicon.ico");
   expect(res.status()).toBe(200);
-  expect(res.headers()["content-type"]).toBe("image/x-icon");
+  expect(res.headers()["content-type"]).toBe(
+    process.env.E2E_CF ? "image/vnd.microsoft.icon" : "image/x-icon",
+  );
 });
 
 test("viewport", async ({ page }) => {
@@ -136,4 +138,38 @@ testNoJs("middleware flight redirect @nojs", async ({ page }) => {
   await page.getByRole("link", { name: "/test/middleware/redirect" }).click();
   await page.waitForURL("/?ok=redirect");
   await page.getByRole("img", { name: "Next.js logo" }).click();
+});
+
+test("next/og", async ({ page }) => {
+  const res = await page.goto("/test/og?title=Hey!");
+  expect(res?.status()).toBe(200);
+  expect(res?.headers()).toMatchObject({ "content-type": "image/png" });
+});
+
+testNoJs("Metadata", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(`meta[property="og:title"]`)).toHaveAttribute(
+    "content",
+    "Next on Vite",
+  );
+  await expect(page.locator(`meta[property="og:image"]`)).toHaveAttribute(
+    "content",
+    (process.env.E2E_CF
+      ? "https://test-next-vite.pages.dev"
+      : "http://localhost:5243") + "/test/og?title=Next%20on%20Vite",
+  );
+  await expect(page.locator(`meta[name="twitter:card"]`)).toHaveAttribute(
+    "content",
+    "summary_large_image",
+  );
+  await expect(page.locator(`meta[name="twitter:title"]`)).toHaveAttribute(
+    "content",
+    "Next on Vite",
+  );
+  await expect(page.locator(`meta[name="twitter:image"]`)).toHaveAttribute(
+    "content",
+    (process.env.E2E_CF
+      ? "https://test-next-vite.pages.dev"
+      : "http://localhost:5243") + "/test/og?title=Next%20on%20Vite",
+  );
 });

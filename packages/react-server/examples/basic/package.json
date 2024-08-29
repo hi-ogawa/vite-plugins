@@ -10,10 +10,10 @@
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 playwright test",
-    "vc-build": "SSR_ENTRY=/src/adapters/vercel-edge pnpm build && node misc/vercel/build.js",
+    "vc-build": "VERCEL=1 SSR_ENTRY=/src/adapters/vercel-edge pnpm build && node misc/vercel/build.js",
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel",
     "vc-release-staging": "vercel deploy --prebuilt misc/vercel",
-    "cf-build": "SSR_ENTRY=/src/adapters/cf pnpm build && node misc/cf/build.js",
+    "cf-build": "CF_PAGES=1 SSR_ENTRY=/src/adapters/cf pnpm build && node misc/cf/build.js",
     "cf-preview": "cd misc/cf && wrangler dev",
     "cf-release": "cd misc/cf && wrangler deploy"
   },
@@ -27,6 +27,7 @@
     "react-server-dom-webpack": "rc",
     "react-tweet": "^3.2.1",
     "react-wrap-balancer": "^1.1.0",
+    "shiki": "^1.12.1",
     "styled-jsx": "^5.1.6"
   },
   "devDependencies": {
@@ -34,6 +35,7 @@
     "@hiogawa/utils": "latest",
     "@hiogawa/utils-node": "latest",
     "@hiogawa/vite-plugin-error-overlay": "latest",
+    "@hiogawa/vite-plugin-server-asset": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@iconify-json/ri": "^1.1.20",
     "@mdx-js/rollup": "^3.0.1",
@@ -42,6 +44,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "^4.3.1",
+    "magic-string": "^0.30.8",
     "unocss": "^0.58.6",
     "vite": "latest"
   }

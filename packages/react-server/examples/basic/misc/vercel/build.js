@@ -66,6 +66,9 @@ async function main() {
     format: "esm",
     platform: "browser",
     external: ["node:async_hooks"],
+    loader: {
+      ".wasm": "copy",
+    },
     define: {
       "process.env.NODE_ENV": `"production"`,
     },

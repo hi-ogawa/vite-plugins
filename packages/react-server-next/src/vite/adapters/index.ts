@@ -3,7 +3,7 @@ import type { Plugin } from "vite";
 export type AdapterType = "node" | "vercel" | "vercel-edge" | "cloudflare";
 
 export function adapterPlugin(options: {
-  adapter?: AdapterType;
+  adapter: AdapterType;
   outDir: string;
 }): Plugin[] {
   const adapter = options.adapter ?? autoSelectAdapter();
@@ -46,11 +46,39 @@ export function adapterPlugin(options: {
     },
   };
 
-  return [buildPlugin];
+  const registerHooksPlugin: Plugin = {
+    name: adapterPlugin.name + ":register-hooks",
+    enforce: "pre",
+    writeBundle: {
+      sequential: true,
+      async handler() {
+        // allow importing ".bin" and ".wasm" to simulate CF runtime
+        // during pre-rendering
+        if (adapter === "cloudflare" || adapter === "vercel-edge") {
+          const {
+            default: { register },
+          } = await import("node:module");
+          register(
+            "@hiogawa/vite-plugin-server-asset/hooks/data",
+            import.meta.url,
+          );
+          register(
+            "@hiogawa/vite-plugin-server-asset/hooks/wasm",
+            import.meta.url,
+          );
+        }
+      },
+    },
+  };
+
+  return [registerHooksPlugin, buildPlugin];
 }
 
 // cf. https://github.com/sveltejs/kit/blob/52e5461b055a104694f276859a7104f58452fab0/packages/adapter-auto/adapters.js
-function autoSelectAdapter(): AdapterType {
+export function autoSelectAdapter(): AdapterType {
+  if (process.env["ADAPTER"]) {
+    return process.env["ADAPTER"] as any;
+  }
   if (process.env["VERCEL"]) {
     return "vercel";
   }

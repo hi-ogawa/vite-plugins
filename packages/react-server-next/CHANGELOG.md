@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.14 (2024-08-22)
+
+- feat: support `Metadata.openGraph` + add `VITE_` envPrefix ([#621](https://github.com/hi-ogawa/vite-plugins/pull/621))
+- feat: support `next/og` ([#619](https://github.com/hi-ogawa/vite-plugins/pull/619))
+- fix: inherit `envPrefix` config + add `NEXT_PUBLIC_` ([#601](https://github.com/hi-ogawa/vite-plugins/pull/601))
+
 ## v0.0.13 (2024-08-04)
 
 - feat: Add plugin option for custom outDir ([#591](https://github.com/hi-ogawa/vite-plugins/pull/591))
