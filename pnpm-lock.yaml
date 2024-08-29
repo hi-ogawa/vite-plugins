@@ -702,9 +702,6 @@ importers:
       '@cloudflare/workers-types':
         specifier: ^4.20240821.1
         version: 4.20240821.1
-      '@hiogawa/tiny-rpc':
-        specifier: 0.2.3-pre.18
-        version: 0.2.3-pre.18
       '@hiogawa/utils-node':
         specifier: ^0.0.2
         version: 0.0.2
