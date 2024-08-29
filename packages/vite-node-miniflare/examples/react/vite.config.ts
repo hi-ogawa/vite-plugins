@@ -2,6 +2,7 @@ import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
 import react from "@vitejs/plugin-react";
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
+import { vitePluginVirtualIndexHtml } from "../basic/vite.config";
 
 export default defineConfig({
   clearScreen: false,
@@ -27,5 +28,6 @@ export default defineConfig({
       },
     }),
     react(),
+    vitePluginVirtualIndexHtml(),
   ],
 });
