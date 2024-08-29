@@ -9,7 +9,6 @@ import {
   type ResolvedConfig,
   type ViteDevServer,
   build,
-  createLogger,
   createServerModuleRunner,
   mergeConfig,
 } from "vite";
@@ -46,6 +45,7 @@ import { $__global } from "../global";
 import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
+  applyPluginToServer,
   createVirtualPlugin,
   hashString,
   vitePluginSilenceDirectiveBuildWarning,
@@ -140,20 +140,6 @@ export function vitePluginReactServer(
   const outDir = options?.outDir ?? "dist";
 
   const reactServerViteConfig: InlineConfig = {
-    customLogger: createLogger(undefined, {
-      prefix: "[react-server]",
-      allowClearScreen: false,
-    }),
-    clearScreen: false,
-    configFile: false,
-    cacheDir: "./node_modules/.vite-rsc",
-    server: {
-      middlewareMode: true,
-    },
-    optimizeDeps: {
-      noDiscovery: true,
-      include: [],
-    },
     plugins: [
       ...(options?.plugins ?? []),
       // vitePluginSilenceDirectiveBuildWarning(),
@@ -233,7 +219,7 @@ export function vitePluginReactServer(
 
       {
         name: "patch-react-server-dom-webpack",
-        applyToEnvironment: (env) => env.name === "react-server",
+        applyToEnvironment: applyPluginToServer,
         transform(code, id, _options) {
           if (id.includes("react-server-dom-webpack")) {
             // rename webpack markers in react server runtime
@@ -258,18 +244,6 @@ export function vitePluginReactServer(
         },
       },
     ],
-    build: {
-      ssr: true,
-      manifest: true,
-      ssrEmitAssets: true,
-      outDir: path.join(outDir, "rsc"),
-      rollupOptions: {
-        input: {
-          index: ENTRY_SERVER_WRAPPER,
-        },
-        output: OUTPUT_SERVER_JS_EXT,
-      },
-    },
   };
 
   const rscParentPlugin: Plugin = {
@@ -335,15 +309,16 @@ export function vitePluginReactServer(
               },
             },
             build: {
-              outDir: "dist/react-server",
+              outDir: path.join(outDir, "rsc"),
               sourcemap: true,
               ssr: true,
               emitAssets: true,
               manifest: true,
               rollupOptions: {
                 input: {
-                  index: "/src/entry-server",
+                  index: ENTRY_SERVER_WRAPPER,
                 },
+                output: OUTPUT_SERVER_JS_EXT,
               },
             },
           },
@@ -468,6 +443,14 @@ export function vitePluginReactServer(
     rscParentPlugin,
     buildOrchestrationPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
+
+    //
+    // react server
+    //
+
+    //
+    // react client
+    //
     vitePluginClientUseServer({
       manager,
       runtimePath: RUNTIME_BROWSER_PATH,

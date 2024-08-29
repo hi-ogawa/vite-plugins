@@ -5,7 +5,12 @@ import {
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { type Plugin, type PluginOption, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
-import { USE_SERVER, createVirtualPlugin } from "../../plugin/utils";
+import {
+  USE_SERVER,
+  applyPluginToClient,
+  applyPluginToServer,
+  createVirtualPlugin,
+} from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:server-action");
 
@@ -30,7 +35,7 @@ export function vitePluginClientUseServer({
 }): Plugin {
   return {
     name: vitePluginClientUseServer.name,
-    applyToEnvironment: (env) => env.name !== "react-server",
+    applyToEnvironment: applyPluginToClient,
     async transform(code, id, options) {
       if (!code.includes(USE_SERVER)) {
         manager.serverReferenceMap.delete(id);
@@ -89,7 +94,7 @@ export function vitePluginServerUseServer({
 }): PluginOption {
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
-    applyToEnvironment: (env) => env.name === "react-server",
+    applyToEnvironment: applyPluginToServer,
     async transform(code, id, _options) {
       manager.serverReferenceMap.delete(id);
       if (!code.includes(USE_SERVER)) {

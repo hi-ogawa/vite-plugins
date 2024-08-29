@@ -46,8 +46,8 @@ export default function vitePluginReactServerNext(
       ...options,
       routeDir: options?.routeDir ?? "app",
       plugins: [
-        nextJsxPlugin(),
-        tsconfigPaths(),
+        // nextJsxPlugin(),
+        // tsconfigPaths(),
         nextOgPlugin(),
         vitePluginWasmModule({
           buildMode:
