@@ -1,6 +1,11 @@
 import nodeCrypto from "node:crypto";
 import type { Plugin, ViteDevServer } from "vite";
 
+export const applyPluginToServer: Plugin["applyToEnvironment"] = (env) =>
+  env.name === "react-server";
+export const applyPluginToClient: Plugin["applyToEnvironment"] = (env) =>
+  env.name !== "react-server";
+
 export function invalidateModule(server: ViteDevServer, id: string) {
   const mod = server.moduleGraph.getModuleById(id);
   if (mod) {
