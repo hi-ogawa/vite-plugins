@@ -18,7 +18,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
@@ -31,7 +33,9 @@
     "miniflare": "^3.20240821.0"
   },
   "devDependencies": {
-    "@hiogawa/tiny-rpc": "0.2.3-pre.18"
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "@hiogawa/tiny-rpc": "0.2.3-pre.18",
+    "@hiogawa/utils-node": "^0.0.2"
   },
   "peerDependencies": {
     "vite": "*"

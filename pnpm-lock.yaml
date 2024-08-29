@@ -708,9 +708,15 @@ importers:
         specifier: 6.0.0-alpha.19
         version: 6.0.0-alpha.19(@types/node@20.14.10)(terser@5.31.2)
     devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240620.0
+        version: 4.20240821.1
       '@hiogawa/tiny-rpc':
         specifier: 0.2.3-pre.18
         version: 0.2.3-pre.18
+      '@hiogawa/utils-node':
+        specifier: ^0.0.2
+        version: 0.0.2
 
   packages/vite-node-miniflare/examples/basic:
     dependencies:
