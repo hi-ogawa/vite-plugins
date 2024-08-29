@@ -11,6 +11,7 @@ import {
   build,
   createLogger,
   createServer,
+  createServerModuleRunner,
   mergeConfig,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
@@ -331,9 +332,13 @@ export function vitePluginReactServer(
         tinyassert(manager.server);
         const reactServer = await createServer(reactServerViteConfig);
         reactServer.pluginContainer.buildStart({});
+        const reactServerEnv = manager.server.environments["react-server"];
+        tinyassert(reactServerEnv);
+        const reactServerRunner = createServerModuleRunner(reactServerEnv);
         $__global.dev = {
           server: manager.server,
           reactServer: reactServer,
+          reactServerRunner,
           manager,
         };
       }
