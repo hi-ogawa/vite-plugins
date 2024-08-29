@@ -79,7 +79,7 @@ export async function prerender(request: Request) {
 
 export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
-    return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
+    return $__global.dev.reactServerRunner.import(ENTRY_SERVER_WRAPPER);
   } else {
     return import("virtual:react-server-build" as string);
   }
@@ -269,7 +269,7 @@ async function devInspectHandler(request: Request) {
       mod = await getModuleNode($__global.dev.server, data.url, true);
     }
     if (data.environment === "react-server") {
-      mod = await getModuleNode($__global.dev.reactServer, data.url, true);
+      // mod = await getModuleNode($__global.dev.reactServer, data.url, true);
     }
     const result = mod && {
       id: mod.id,

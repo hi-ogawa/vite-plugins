@@ -10,7 +10,6 @@ import {
   type ViteDevServer,
   build,
   createLogger,
-  createServer,
   createServerModuleRunner,
   mergeConfig,
 } from "vite";
@@ -157,7 +156,7 @@ export function vitePluginReactServer(
     },
     plugins: [
       ...(options?.plugins ?? []),
-      vitePluginSilenceDirectiveBuildWarning(),
+      // vitePluginSilenceDirectiveBuildWarning(),
 
       // expose server reference to react-server itself
       vitePluginServerUseServer({
@@ -218,9 +217,9 @@ export function vitePluginReactServer(
 
       serverAssertsPluginServer({ manager }),
 
-      serverDepsConfigPlugin(),
+      false && serverDepsConfigPlugin(),
 
-      {
+      false && {
         name: "inherit-parent-config",
         config(_config, _env) {
           // this is only for `import.meta.env.xxx` replacement.
@@ -234,6 +233,7 @@ export function vitePluginReactServer(
 
       {
         name: "patch-react-server-dom-webpack",
+        applyToEnvironment: (env) => env.name === "react-server",
         transform(code, id, _options) {
           if (id.includes("react-server-dom-webpack")) {
             // rename webpack markers in react server runtime
@@ -318,6 +318,36 @@ export function vitePluginReactServer(
                 input: ENTRY_BROWSER_WRAPPER,
               },
         },
+        environments: {
+          "react-server": {
+            resolve: {
+              conditions: ["react-server"],
+              noExternal: true,
+            },
+            dev: {
+              optimizeDeps: {
+                include: [
+                  "react",
+                  "react/jsx-runtime",
+                  "react/jsx-dev-runtime",
+                  "react-server-dom-webpack/server.edge",
+                ],
+              },
+            },
+            build: {
+              outDir: "dist/react-server",
+              sourcemap: true,
+              ssr: true,
+              emitAssets: true,
+              manifest: true,
+              rollupOptions: {
+                input: {
+                  index: "/src/entry-server",
+                },
+              },
+            },
+          },
+        },
       };
     },
     configResolved(config) {
@@ -330,14 +360,11 @@ export function vitePluginReactServer(
     async buildStart(_options) {
       if (manager.configEnv.command === "serve") {
         tinyassert(manager.server);
-        const reactServer = await createServer(reactServerViteConfig);
-        reactServer.pluginContainer.buildStart({});
         const reactServerEnv = manager.server.environments["react-server"];
         tinyassert(reactServerEnv);
         const reactServerRunner = createServerModuleRunner(reactServerEnv);
         $__global.dev = {
           server: manager.server,
-          reactServer: reactServer,
           reactServerRunner,
           manager,
         };
@@ -345,7 +372,7 @@ export function vitePluginReactServer(
     },
     async buildEnd(_options) {
       if (manager.configEnv.command === "serve") {
-        await $__global.dev.reactServer.close();
+        // await $__global.dev.reactServer.close();
         delete ($__global as any).dev;
       }
     },
@@ -436,6 +463,8 @@ export function vitePluginReactServer(
 
   // plugins for main vite dev server (browser / ssr)
   return [
+    // @ts-ignore
+    ...reactServerViteConfig.plugins?.flat(),
     rscParentPlugin,
     buildOrchestrationPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
