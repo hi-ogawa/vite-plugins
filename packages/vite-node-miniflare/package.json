@@ -24,13 +24,9 @@
     "build": "tsup",
     "prepack": "tsup --clean"
   },
-  "dependencies": {
-    "@hattip/adapter-node": "^0.0.44",
-    "@hattip/compose": "^0.0.44"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240821.1",
-    "@hiogawa/tiny-rpc": "0.2.3-pre.18",
     "@hiogawa/utils-node": "^0.0.2",
     "miniflare": "^3.20240821.0",
     "wrangler": "^3.72.2"

@@ -695,12 +695,6 @@ importers:
 
   packages/vite-node-miniflare:
     dependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.44
-        version: 0.0.44
-      '@hattip/compose':
-        specifier: ^0.0.44
-        version: 0.0.44
       vite:
         specifier: 6.0.0-alpha.19
         version: 6.0.0-alpha.19(@types/node@20.14.10)(terser@5.31.2)
