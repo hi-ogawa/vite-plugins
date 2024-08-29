@@ -695,22 +695,22 @@ importers:
 
   packages/vite-node-miniflare:
     dependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.44
-        version: 0.0.44
-      '@hattip/compose':
-        specifier: ^0.0.44
-        version: 0.0.44
-      miniflare:
-        specifier: ^3.20240821.0
-        version: 3.20240821.0
       vite:
         specifier: 6.0.0-alpha.19
         version: 6.0.0-alpha.19(@types/node@20.14.10)(terser@5.31.2)
     devDependencies:
-      '@hiogawa/tiny-rpc':
-        specifier: 0.2.3-pre.18
-        version: 0.2.3-pre.18
+      '@cloudflare/workers-types':
+        specifier: ^4.20240821.1
+        version: 4.20240821.1
+      '@hiogawa/utils-node':
+        specifier: ^0.0.2
+        version: 0.0.2
+      miniflare:
+        specifier: ^3.20240821.0
+        version: 3.20240821.0
+      wrangler:
+        specifier: ^3.72.2
+        version: 3.72.2(@cloudflare/workers-types@4.20240821.1)
 
   packages/vite-node-miniflare/examples/basic:
     dependencies:
@@ -829,6 +829,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
+      wrangler:
+        specifier: ^3.72.2
+        version: 3.72.2(@cloudflare/workers-types@4.20240821.1)
 
   packages/vite-null-export:
     dependencies:
