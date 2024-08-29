@@ -14,7 +14,7 @@ export default defineConfig((env) => ({
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
       preview: path.resolve("./dist/server/index.js"),
-      mode: "ViteRuntime-no-hmr",
+      mode: "ModuleRunner",
     }),
   ],
   build: {
