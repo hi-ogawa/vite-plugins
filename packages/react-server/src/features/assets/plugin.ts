@@ -139,7 +139,6 @@ export function vitePluginServerAssets({
       // virtual module to proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        if (1) return "export {}";
         const urls = await collectStyleUrls(
           $__global.dev.server.environments["react-server"]!,
           {
