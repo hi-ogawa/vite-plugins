@@ -6,6 +6,22 @@ export const applyPluginToServer: Plugin["applyToEnvironment"] = (env) =>
 export const applyPluginToClient: Plugin["applyToEnvironment"] = (env) =>
   env.name !== "react-server";
 
+export function wrapServerPlugin<T extends Plugin | Plugin[]>(p: T): T {
+  const wrap = (p: Plugin): Plugin => ({
+    ...p,
+    applyToEnvironment: applyPluginToServer,
+  });
+  return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
+}
+
+export function wrapClientPlugin<T extends Plugin | Plugin[]>(p: T): T {
+  const wrap = (p: Plugin): Plugin => ({
+    ...p,
+    applyToEnvironment: applyPluginToServer,
+  });
+  return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
+}
+
 export function invalidateModule(server: ViteDevServer, id: string) {
   const mod = server.moduleGraph.getModuleById(id);
   if (mod) {

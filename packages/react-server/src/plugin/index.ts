@@ -43,12 +43,14 @@ import { $__global } from "../global";
 import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
-  applyPluginToClient,
   applyPluginToServer,
   createVirtualPlugin,
   hashString,
   vitePluginSilenceDirectiveBuildWarning,
+  wrapClientPlugin,
+  wrapServerPlugin,
 } from "./utils";
+export { wrapClientPlugin, wrapServerPlugin } from "./utils";
 
 const debug = createDebug("react-server:plugin");
 
@@ -367,13 +369,12 @@ export function vitePluginReactServer(
         Object.assign(globalThis, { AsyncLocalStorage });
       `;
     }),
-    {
-      applyToEnvironment: applyPluginToServer,
-      ...validateImportPlugin({
+    wrapServerPlugin(
+      validateImportPlugin({
         "client-only": `'client-only' is included in server build`,
         "server-only": true,
       }),
-    },
+    ),
     ...serverAssetsPluginServer({ manager }),
     serverDepsConfigPlugin(),
     {
@@ -418,13 +419,12 @@ export function vitePluginReactServer(
     ...(options?.prerender
       ? prerenderPlugin({ manager, prerender: options.prerender })
       : []),
-    {
-      applyToEnvironment: applyPluginToClient,
-      ...validateImportPlugin({
+    wrapClientPlugin(
+      validateImportPlugin({
         "client-only": true,
         "server-only": `'server-only' is included in client build`,
       }),
-    },
+    ),
     {
       name: "virtual:react-server-build",
       resolveId(source) {
