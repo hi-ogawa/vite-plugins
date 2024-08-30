@@ -1,0 +1,40 @@
+diff --git a/dist/node/index.d.ts b/dist/node/index.d.ts
+index c2c1bdae45811860c366cc38b24231fd9fd72596..af378a7eb752718107d3974c5e426456c988e0d8 100644
+--- a/dist/node/index.d.ts
++++ b/dist/node/index.d.ts
+@@ -1062,7 +1062,7 @@ declare class EnvironmentModuleGraph {
+     getModulesByFile(file: string): Set<EnvironmentModuleNode> | undefined;
+     onFileChange(file: string): void;
+     onFileDelete(file: string): void;
+-    invalidateModule(mod: EnvironmentModuleNode, seen?: Set<EnvironmentModuleNode>, timestamp?: number, isHmr?: boolean, 
++    invalidateModule(mod: EnvironmentModuleNode, seen?: Set<EnvironmentModuleNode>, timestamp?: number, isHmr?: boolean,
+     ): void;
+     invalidateAll(): void;
+     /**
+@@ -1073,7 +1073,7 @@ declare class EnvironmentModuleGraph {
+      * @param staticImportedUrls Subset of `importedModules` where they're statically imported in code.
+      *   This is only used for soft invalidations so `undefined` is fine but may cause more runtime processing.
+      */
+-    updateModuleInfo(mod: EnvironmentModuleNode, importedModules: Set<string | EnvironmentModuleNode>, importedBindings: Map<string, Set<string>> | null, acceptedModules: Set<string | EnvironmentModuleNode>, acceptedExports: Set<string> | null, isSelfAccepting: boolean, 
++    updateModuleInfo(mod: EnvironmentModuleNode, importedModules: Set<string | EnvironmentModuleNode>, importedBindings: Map<string, Set<string>> | null, acceptedModules: Set<string | EnvironmentModuleNode>, acceptedExports: Set<string> | null, isSelfAccepting: boolean,
+     ): Promise<Set<EnvironmentModuleNode> | undefined>;
+     ensureEntryFromUrl(rawUrl: string, setIsSelfAccepting?: boolean): Promise<EnvironmentModuleNode>;
+     createFileOnlyEntry(file: string): EnvironmentModuleNode;
+@@ -1140,7 +1140,7 @@ declare class ModuleGraph {
+     getModulesByFile(file: string): Set<ModuleNode> | undefined;
+     onFileChange(file: string): void;
+     onFileDelete(file: string): void;
+-    invalidateModule(mod: ModuleNode, seen?: Set<ModuleNode>, timestamp?: number, isHmr?: boolean, 
++    invalidateModule(mod: ModuleNode, seen?: Set<ModuleNode>, timestamp?: number, isHmr?: boolean,
+     ): void;
+     invalidateAll(): void;
+     ensureEntryFromUrl(rawUrl: string, ssr?: boolean, setIsSelfAccepting?: boolean): Promise<ModuleNode>;
+@@ -2886,7 +2886,7 @@ interface ViteDevServer {
+     /**
+      * Module execution environments attached to the Vite server.
+      */
+-    environments: Record<'client' | 'ssr' | (string & Record<string, never>), DevEnvironment>;
++    environments: Record<'client' | 'ssr' | (string & {}), DevEnvironment>;
+     /**
+      * Module graph that tracks the import relationships, url to file mapping
+      * and hmr state.
