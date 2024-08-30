@@ -1,6 +1,7 @@
 import path from "node:path";
 import {
   vitePluginReactServer,
+  wrapClientPlugin,
   wrapServerPlugin,
 } from "@hiogawa/react-server/plugin";
 import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
@@ -23,7 +24,7 @@ export default defineConfig({
     process.env["USE_SWC"]
       ? (await import("@vitejs/plugin-react-swc".slice())).default()
       : react(),
-    unocss(),
+    wrapClientPlugin(unocss()),
     !process.env["E2E"] &&
       vitePluginErrorOverlay({
         patchConsoleError: true,
