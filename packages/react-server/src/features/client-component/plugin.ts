@@ -5,12 +5,7 @@ import {
   transformDirectiveProxyExport,
 } from "@hiogawa/transforms";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import {
-  type Plugin,
-  type PluginOption,
-  type ViteDevServer,
-  parseAstAsync,
-} from "vite";
+import { type Plugin, type ViteDevServer, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
   type CustomModuleMeta,
@@ -40,7 +35,7 @@ export function vitePluginServerUseClient({
 }: {
   manager: PluginStateManager;
   runtimePath: string;
-}): PluginOption {
+}): Plugin[] {
   // TODO:
   // eventually we should try entirely virtual module approach for client reference (not only node_modules)
   // so that we can delegate precise resolution (e.g. `?v=` deps optimization hash, `?t=` hmr timestamp)
