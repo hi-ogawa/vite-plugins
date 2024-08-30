@@ -1,5 +1,8 @@
 import path from "node:path";
-import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
+import {
+  vitePluginReactServer,
+  wrapServerPlugin,
+} from "@hiogawa/react-server/plugin";
 import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
 import { vitePluginWasmModule } from "@hiogawa/vite-plugin-server-asset";
 import {
@@ -25,29 +28,6 @@ export default defineConfig({
     vitePluginReactServer({
       entryBrowser: "/src/entry-browser",
       entryServer: "/src/entry-server",
-      plugins: [
-        // TODO: for now mdx is server only.
-        // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
-        mdx(),
-        testVitePluginVirtual(),
-        vitePluginWasmModule({
-          buildMode:
-            process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
-        }),
-        {
-          name: "cusotm-react-server-config",
-          config() {
-            return {
-              build: {
-                assetsInlineLimit(filePath) {
-                  // test non-inlined server asset
-                  return !filePath.includes("/test/assets/");
-                },
-              },
-            };
-          },
-        },
-      ],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
@@ -66,9 +46,21 @@ export default defineConfig({
       },
     },
     testVitePluginVirtual(),
+    wrapServerPlugin([
+      // TODO: for now mdx is server only.
+      // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
+      mdx(),
+      vitePluginWasmModule({
+        buildMode: process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
+      }),
+    ]),
   ],
   build: {
     ssrEmitAssets: true,
+    assetsInlineLimit(filePath) {
+      // test non-inlined server asset
+      return !filePath.includes("/test/assets/");
+    },
   },
   ssr: {
     noExternal: [

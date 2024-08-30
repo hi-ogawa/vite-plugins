@@ -4,6 +4,7 @@ import path from "node:path";
 import {
   type ReactServerPluginOptions,
   vitePluginReactServer,
+  wrapServerPlugin,
 } from "@hiogawa/react-server/plugin";
 import {
   vitePluginFetchUrlImportMetaUrl,
@@ -43,18 +44,14 @@ export default function vitePluginReactServerNext(
       routeDir: options?.routeDir ?? "app",
     }),
     nextOgPlugin(),
-    {
-      applyToEnvironment: (env) => env.name === "react-server",
-      ...vitePluginWasmModule({
+    wrapServerPlugin([
+      vitePluginWasmModule({
         buildMode:
           adapter === "cloudflare" || adapter === "vercel-edge"
             ? "import"
             : "fs",
       }),
-    },
-    {
-      applyToEnvironment: (env) => env.name === "react-server",
-      ...vitePluginFetchUrlImportMetaUrl({
+      vitePluginFetchUrlImportMetaUrl({
         buildMode:
           adapter === "cloudflare"
             ? "import"
@@ -62,7 +59,7 @@ export default function vitePluginReactServerNext(
               ? "inline"
               : "fs",
       }),
-    },
+    ]),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
