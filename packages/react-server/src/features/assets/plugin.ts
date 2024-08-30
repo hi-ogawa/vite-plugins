@@ -161,7 +161,7 @@ export function vitePluginServerAssets({
   ];
 }
 
-export function serverAssertsPluginServer({
+export function serverAssetsPluginServer({
   manager,
 }: { manager: PluginStateManager }): Plugin[] {
   // 0. track server assets during server build (this plugin)
@@ -176,7 +176,7 @@ export function serverAssertsPluginServer({
 
   return [
     {
-      name: serverAssertsPluginServer.name + ":build",
+      name: serverAssetsPluginServer.name + ":build",
       apply: "build",
       generateBundle(_options, bundle) {
         if (manager.buildType !== "server") {

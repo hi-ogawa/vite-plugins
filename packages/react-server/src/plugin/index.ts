@@ -13,7 +13,7 @@ import {
 import { crawlFrameworkPkgs } from "vitefu";
 import { CSS_LANGS_RE } from "../features/assets/css";
 import {
-  serverAssertsPluginServer,
+  serverAssetsPluginServer,
   vitePluginServerAssets,
 } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
@@ -374,7 +374,7 @@ export function vitePluginReactServer(
         "server-only": true,
       }),
     },
-    ...serverAssertsPluginServer({ manager }),
+    ...serverAssetsPluginServer({ manager }),
     serverDepsConfigPlugin(),
     {
       name: "patch-react-server-dom-webpack",
