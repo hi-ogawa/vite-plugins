@@ -278,7 +278,10 @@ export function vitePluginReactServer(
         // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
         const importers = ctx.modules.flatMap((m) => [...m.importers]);
-        if (importers.every((m) => m.id && isCSSRequest(m.id))) {
+        if (
+          importers.length > 0 &&
+          importers.every((m) => m.id && isCSSRequest(m.id))
+        ) {
           for (const m of importers) {
             await $__global.dev.server.reloadEnvironmentModule(m);
           }
