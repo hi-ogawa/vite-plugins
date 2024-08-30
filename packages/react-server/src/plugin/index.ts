@@ -8,6 +8,7 @@ import {
   type ResolvedConfig,
   type ViteDevServer,
   build,
+  createBuilder,
   createServerModuleRunner,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
@@ -43,6 +44,7 @@ import { $__global } from "../global";
 import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
+  applyPluginToClient,
   applyPluginToServer,
   createVirtualPlugin,
   hashString,
@@ -185,19 +187,9 @@ export function vitePluginReactServer(
         },
         environments: {
           "react-server": {
+            // external and optimizeDeps are configured by `serverDepsConfigPlugin`
             resolve: {
               conditions: ["react-server"],
-              noExternal: true,
-            },
-            dev: {
-              optimizeDeps: {
-                include: [
-                  "react",
-                  "react/jsx-runtime",
-                  "react/jsx-dev-runtime",
-                  "react-server-dom-webpack/server.edge",
-                ],
-              },
             },
             build: {
               outDir: path.join(outDir, "rsc"),
@@ -297,15 +289,12 @@ export function vitePluginReactServer(
         await createServerPackageJson(manager.outDir);
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
-        // await build(
-        //   mergeConfig(reactServerViteConfig, {
-        //     build: { write: false },
-        //   } satisfies InlineConfig),
-        // );
+        const builder = await createBuilder();
+        await builder.build(builder.environments["react-server"]!);
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "server";
         manager.clientReferenceMap.clear();
-        // await build(reactServerViteConfig);
+        await builder.build(builder.environments["react-server"]!);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
         manager.buildType = "browser";
       }
@@ -380,10 +369,13 @@ export function vitePluginReactServer(
         Object.assign(globalThis, { AsyncLocalStorage });
       `;
     }),
-    validateImportPlugin({
-      "client-only": `'client-only' is included in server build`,
-      "server-only": true,
-    }),
+    {
+      applyToEnvironment: applyPluginToServer,
+      ...validateImportPlugin({
+        "client-only": `'client-only' is included in server build`,
+        "server-only": true,
+      }),
+    },
     ...serverAssertsPluginServer({ manager }),
     serverDepsConfigPlugin(),
     {
@@ -407,7 +399,7 @@ export function vitePluginReactServer(
           code = code.replaceAll("if (isAsyncImport(metadata))", "if (true)");
           code = code.replaceAll("4 === metadata.length", "true");
 
-          return code;
+          return { code, map: null };
         }
         return;
       },
@@ -428,11 +420,13 @@ export function vitePluginReactServer(
     ...(options?.prerender
       ? prerenderPlugin({ manager, prerender: options.prerender })
       : []),
-    validateImportPlugin({
-      "client-only": true,
-      "server-only": `'server-only' is included in client build`,
-    }),
-
+    {
+      applyToEnvironment: applyPluginToClient,
+      ...validateImportPlugin({
+        "client-only": true,
+        "server-only": `'server-only' is included in client build`,
+      }),
+    },
     {
       name: "virtual:react-server-build",
       resolveId(source) {
@@ -514,9 +508,11 @@ function validateImportPlugin(entries: Record<string, string | true>): Plugin {
 function serverDepsConfigPlugin(): Plugin {
   return {
     name: serverDepsConfigPlugin.name,
-    // TODO
-    apply: () => false,
-    async config(_config, env) {
+    async configEnvironment(name, _config, env) {
+      if (name !== "react-server") {
+        return;
+      }
+
       // crawl packages with "react" or "next" in "peerDependencies"
       // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
       const result = await crawlFrameworkPkgs({
@@ -529,10 +525,7 @@ function serverDepsConfigPlugin(): Plugin {
       });
 
       return {
-        ssr: {
-          resolve: {
-            conditions: ["react-server"],
-          },
+        resolve: {
           noExternal: [
             "react",
             "react-dom",
@@ -541,6 +534,8 @@ function serverDepsConfigPlugin(): Plugin {
             "client-only",
             ...result.ssr.noExternal,
           ],
+        },
+        dev: {
           // pre-bundle cjs deps
           optimizeDeps: {
             include: [
