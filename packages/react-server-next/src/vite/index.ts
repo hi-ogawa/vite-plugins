@@ -96,6 +96,11 @@ function nextOgPlugin(): Plugin[] {
         return {
           resolve: {
             alias: {
+              // use only edge build and deal with following special triggers
+              // uniformly for any adapters via plugins
+              //   import resvg_wasm from "./resvg.wasm?module";
+              //   import yoga_wasm from "./yoga.wasm?module";
+              //   fetch(new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url))
               "@vercel/og": path.resolve(
                 require.resolve("@vercel/og/package.json"),
                 "../dist/index.edge.js",
@@ -109,11 +114,6 @@ function nextOgPlugin(): Plugin[] {
           //   'react-server': {
           //     resolve: {
           //       alias: {
-          //         // use only edge build and deal with following special triggers
-          //         // uniformly for any adapters via plugins
-          //         //   import resvg_wasm from "./resvg.wasm?module";
-          //         //   import yoga_wasm from "./yoga.wasm?module";
-          //         //   fetch(new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url))
           //         "@vercel/og": path.resolve(
           //           require.resolve("@vercel/og/package.json"),
           //           "../dist/index.edge.js",
