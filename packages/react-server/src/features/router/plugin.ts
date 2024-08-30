@@ -29,8 +29,8 @@ export function routeManifestPluginServer({
     {
       name: "server-route-manifest",
       apply: "build",
-      async buildEnd() {
-        if (manager.buildType === "server") {
+      async buildEnd(error) {
+        if (!error && manager.buildType === "server") {
           const routeFiles = await FastGlob(
             path.posix.join(
               routeDir,
