@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createDebug, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert, uniq } from "@hiogawa/utils";
 import {
   type ConfigEnv,
   type Plugin,
@@ -516,14 +516,14 @@ function serverDepsConfigPlugin(): Plugin {
 
       return {
         resolve: {
-          noExternal: [
+          noExternal: uniq([
             "react",
             "react-dom",
             "react-server-dom-webpack",
             "server-only",
             "client-only",
             ...result.ssr.noExternal,
-          ],
+          ]).sort(),
         },
         dev: {
           // pre-bundle cjs deps
