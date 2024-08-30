@@ -25,7 +25,6 @@ export async function collectStyleUrls(
   server: DevEnvironment,
   { entries }: { entries: string[] },
 ) {
-  // const visited = new Set<string>();
   const visited = new Set<EnvironmentModuleNode>();
 
   async function traverse(url: string) {
