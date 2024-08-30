@@ -230,7 +230,6 @@ export function vitePluginReactServer(
     },
     async buildEnd(_options) {
       if (manager.configEnv.command === "serve") {
-        // await $__global.dev.reactServer.close();
         delete ($__global as any).dev;
       }
     },
@@ -239,7 +238,14 @@ export function vitePluginReactServer(
         manager.parentIds.add(id);
       }
     },
-    hotUpdate(ctx) {
+    async hotUpdate(ctx) {
+      // console.log("[hotUpdate]", [
+      //   this.environment.name,
+      //   ctx.file,
+      //   // ctx.modules,
+      //   // ctx.modules.flatMap(m => [...m.importers]),
+      // ]);
+
       if (this.environment.name === "react-server") {
         // client reference id is also in react server module graph,
         // but we skip RSC HMR for this case to avoid conflicting with Client HMR.
@@ -265,6 +271,18 @@ export function vitePluginReactServer(
         // (see packages/react-server/src/features/assets/css.ts)
         if (isCSSRequest(ctx.file)) {
           return ctx.modules.filter((m) => !m.id?.includes("?direct"));
+        }
+
+        // Server files can be included in client module graph
+        // due to postcss creating dependencies from style.css to all source files.
+        // In this case, reload all importers (for css hmr),
+        // and return empty modules to avoid full-reload
+        const importers = ctx.modules.flatMap((m) => [...m.importers]);
+        if (importers.every((m) => m.id && isCSSRequest(m.id))) {
+          for (const m of importers) {
+            await $__global.dev.server.reloadEnvironmentModule(m);
+          }
+          return [];
         }
       }
 
