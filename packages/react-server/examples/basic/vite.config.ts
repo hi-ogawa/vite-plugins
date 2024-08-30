@@ -17,6 +17,9 @@ import { type Plugin, defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
+    // TODO: for now mdx is server only.
+    // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
+    mdx(),
     process.env["USE_SWC"]
       ? (await import("@vitejs/plugin-react-swc".slice())).default()
       : react(),
@@ -47,9 +50,6 @@ export default defineConfig({
     },
     testVitePluginVirtual(),
     wrapServerPlugin([
-      // TODO: for now mdx is server only.
-      // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
-      mdx(),
       vitePluginWasmModule({
         buildMode: process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
       }),
