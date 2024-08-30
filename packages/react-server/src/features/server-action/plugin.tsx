@@ -3,7 +3,7 @@ import {
   transformServerActionServer,
 } from "@hiogawa/transforms";
 import { createDebug, tinyassert } from "@hiogawa/utils";
-import { type Plugin, type PluginOption, parseAstAsync } from "vite";
+import { type Plugin, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
   USE_SERVER,
@@ -91,7 +91,7 @@ export function vitePluginServerUseServer({
 }: {
   manager: PluginStateManager;
   runtimePath: string;
-}): PluginOption {
+}): Plugin[] {
   const transformPlugin: Plugin = {
     name: vitePluginServerUseServer.name,
     applyToEnvironment: applyPluginToServer,
