@@ -17,7 +17,7 @@ export function wrapServerPlugin<T extends Plugin | Plugin[]>(p: T): T {
 export function wrapClientPlugin<T extends Plugin | Plugin[]>(p: T): T {
   const wrap = (p: Plugin): Plugin => ({
     ...p,
-    applyToEnvironment: applyPluginToServer,
+    applyToEnvironment: applyPluginToClient,
   });
   return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
 }
