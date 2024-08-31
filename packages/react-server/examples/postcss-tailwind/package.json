@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/react-server-example-minimal",
+  "name": "@hiogawa/react-server-example-postcss-tailwind",
   "version": "0.0.0",
   "private": true,
   "type": "module",
