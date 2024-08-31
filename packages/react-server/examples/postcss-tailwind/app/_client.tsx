@@ -5,5 +5,12 @@ import React from "react";
 export function TestClient() {
   const [count, setCount] = React.useState(0);
 
-  return <button onClick={() => setCount(count + 1)}>Client: {count}</button>;
+  return (
+    <button
+      className="text-blue-500 p-2 px-3 min-w-sm rounded-xl border flex items-center"
+      onClick={() => setCount(count + 1)}
+    >
+      Test Client: {count}
+    </button>
+  );
 }
