@@ -7,7 +7,7 @@ export function TestClient() {
 
   return (
     <button
-      className="text-blue-500 p-2 px-3 min-w-sm rounded-xl border flex items-center"
+      className="text-blue-500 p-2 px-3 min-w-sm rounded-xl border flex items-center hover:shadow"
       onClick={() => setCount(count + 1)}
     >
       Test Client: {count}

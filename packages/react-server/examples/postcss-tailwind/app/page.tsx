@@ -19,7 +19,7 @@ function TestServer() {
         serverCount += 1;
       }}
     >
-      <button className="text-orange-500 p-2 px-3 rounded-xl border flex items-center">
+      <button className="text-orange-500 p-2 px-3 rounded-xl border flex items-center hover:shadow">
         Test Server: {serverCount}
       </button>
     </form>
