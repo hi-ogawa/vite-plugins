@@ -173,3 +173,20 @@ testNoJs("Metadata", async ({ page }) => {
       : "http://localhost:5243") + "/test/og?title=Next%20on%20Vite",
   );
 });
+
+test("dotenv", async ({ page }) => {
+  await page.goto("/test/env");
+  await waitForHydration(page);
+  if (process.env.E2E_CF) {
+    await expect(page.getByTestId("process.env")).toContainText(
+      '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": null, "VITE_ENV_TEST": null }',
+    );
+  } else {
+    await expect(page.getByTestId("process.env")).toContainText(
+      '{ "SECRET_ENV_TEST": "ok", "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+    );
+  }
+  await expect(page.getByTestId("import.meta.env")).toContainText(
+    '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+  );
+});
