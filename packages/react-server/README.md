@@ -37,6 +37,7 @@ pnpm preview
 ```sh
 # NO_DTS=1 to skip type error
 pnpm -C packages/react-server dev
+pnpm --parallel --filter './packages/react-server*' dev
 
 # DEBUG=react-server:*
 pnpm -C packages/react-server/examples/basic dev
