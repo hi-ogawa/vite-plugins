@@ -123,7 +123,6 @@ function nextConfigPlugin(): Plugin {
       };
     },
     configResolved(config) {
-      // TODO: workaround https://github.com/vitejs/vite/issues/17689
       Object.assign(process.env, loadEnv(config.mode, config.envDir, ""));
     },
   };
