@@ -108,17 +108,13 @@ function nextOgPlugin(): Plugin[] {
 function nextConfigPlugin(): Plugin {
   return {
     name: nextConfigPlugin.name,
-    config(config, _env) {
+    config() {
       // TODO
       // this is only for import.meta.env.NEXT_PUBLIC_xxx replacement.
       // we might want to define process.env.NEXT_PUBLIC_xxx for better compatibility.
       // https://nextjs.org/docs/app/building-your-application/configuring/environment-variables#bundling-environment-variables-for-the-browser
       return {
-        envPrefix: [
-          "VITE_",
-          "NEXT_PUBLIC_",
-          ...[config.envPrefix ?? []],
-        ].flat(),
+        envPrefix: ["VITE_", "NEXT_PUBLIC_"],
       };
     },
   };
