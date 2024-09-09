@@ -1,6 +1,3 @@
-// TODO: cloudflare
-import process from "node:process";
-
 export default function Page() {
   return (
     <div style={{ padding: 4 }}>
