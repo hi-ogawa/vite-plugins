@@ -1,5 +1,11 @@
 [Deno Deploy](https://deno.com/deploy) example
 
+```sh
+pnpm deno-build
+pnpm deno-preview
+pnpm deno-deploy
+```
+
 ## references
 
 - https://jsr.io/@std/http/doc/file-server/~
