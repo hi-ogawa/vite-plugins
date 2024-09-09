@@ -14,7 +14,12 @@ import {
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react-swc";
-import { type Plugin, type PluginOption, transformWithEsbuild } from "vite";
+import {
+  type Plugin,
+  type PluginOption,
+  loadEnv,
+  transformWithEsbuild,
+} from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type AdapterType, adapterPlugin, autoSelectAdapter } from "./adapters";
 
@@ -32,6 +37,7 @@ export default function vitePluginReactServerNext(
     react(),
     nextJsxPlugin(),
     tsconfigPaths(),
+    nextConfigPlugin(),
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
@@ -63,7 +69,6 @@ export default function vitePluginReactServerNext(
     }),
     adapterPlugin({ adapter, outDir }),
     appFaviconPlugin(),
-    nextConfigPlugin(),
     {
       name: "next-exclude-optimize",
       config: () => ({
@@ -116,6 +121,9 @@ function nextConfigPlugin(): Plugin {
       return {
         envPrefix: ["VITE_", "NEXT_PUBLIC_"],
       };
+    },
+    configResolved(config) {
+      Object.assign(process.env, loadEnv(config.mode, config.envDir, ""));
     },
   };
 }

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { testNoJs, waitForHydration } from "./helper";
+import { createEditor, testNoJs, waitForHydration } from "./helper";
 
 test("basic", async ({ page }) => {
   const res = await page.goto("/");
@@ -172,4 +172,46 @@ testNoJs("Metadata", async ({ page }) => {
       ? "https://test-next-vite.pages.dev"
       : "http://localhost:5243") + "/test/og?title=Next%20on%20Vite",
   );
+});
+
+test("dotenv", async ({ page }) => {
+  await page.goto("/test/env");
+  await waitForHydration(page);
+  if (process.env.E2E_CF) {
+    await expect(page.getByTestId("process.env")).toContainText(
+      '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": null, "VITE_ENV_TEST": null }',
+    );
+  } else {
+    await expect(page.getByTestId("process.env")).toContainText(
+      '{ "SECRET_ENV_TEST": "ok", "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+    );
+  }
+  await expect(page.getByTestId("import.meta.env")).toContainText(
+    '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+  );
+
+  if (!process.env.E2E_PREVIEW) {
+    // TODO: dotenv reload not working
+    // https://github.com/vitejs/vite/issues/17689
+    const reloadPromise = page.waitForEvent("load");
+    using file = createEditor(".env");
+    file.edit((s) =>
+      s
+        .replace("SECRET_ENV_TEST=ok", "SECRET_ENV_TEST=edit")
+        .replace("VITE_ENV_TEST=ok", "VITE_ENV_TEST=edit"),
+    );
+    await reloadPromise;
+    if (process.env.E2E_CF) {
+      await expect(page.getByTestId("process.env")).toContainText(
+        '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": null, "VITE_ENV_TEST": null }',
+      );
+    } else {
+      await expect(page.getByTestId("process.env")).toContainText(
+        '{ "SECRET_ENV_TEST": "ok", "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+      );
+    }
+    await expect(page.getByTestId("import.meta.env")).toContainText(
+      '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+    );
+  }
 });

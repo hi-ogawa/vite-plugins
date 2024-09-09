@@ -103,7 +103,7 @@ export async function build({
     minify: true,
     format: "esm",
     platform: runtime === "node" ? "node" : "browser",
-    external: ["node:async_hooks"],
+    external: ["node:async_hooks", "node:process"],
     loader:
       runtime === "node"
         ? undefined
