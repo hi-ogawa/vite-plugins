@@ -1,0 +1,26 @@
+{
+  "name": "@hiogawa/react-server-example-deno",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "deno-build": "",
+    "deno-preview": "deno run --allow-net dist/deno/main.ts",
+    "deno-deploy": "deployctl deploy"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "workspace:*",
+    "next": "link:../../../react-server-next",
+    "react": "rc",
+    "react-dom": "rc",
+    "react-server-dom-webpack": "rc"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "vite": "latest"
+  }
+}
