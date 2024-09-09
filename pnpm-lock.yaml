@@ -321,34 +321,6 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
 
-  packages/react-server/examples/deno:
-    dependencies:
-      '@hiogawa/react-server':
-        specifier: workspace:*
-        version: link:../..
-      next:
-        specifier: link:../../../react-server-next
-        version: link:../../../react-server-next
-      react:
-        specifier: 19.0.0-rc-eb3ad065-20240822
-        version: 19.0.0-rc-eb3ad065-20240822
-      react-dom:
-        specifier: 19.0.0-rc-eb3ad065-20240822
-        version: 19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822)
-      react-server-dom-webpack:
-        specifier: 19.0.0-rc-eb3ad065-20240822
-        version: 19.0.0-rc-eb3ad065-20240822(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)(webpack@5.93.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
-    devDependencies:
-      '@types/react':
-        specifier: 18.3.3
-        version: 18.3.3
-      '@types/react-dom':
-        specifier: 18.3.0
-        version: 18.3.0
-      vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
-
   packages/react-server/examples/minimal:
     dependencies:
       '@hiogawa/react-server':
