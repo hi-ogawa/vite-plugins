@@ -19,14 +19,19 @@ async function main() {
 
   // worker
   const result = await esbuild.build({
-    entryPoints: [join(buildDir, "server/index.js")],
+    entryPoints: [join(import.meta.dirname, "entry.js")],
     outfile: join(outDir, "index.js"),
     metafile: true,
     bundle: true,
-    minify: true,
+    // minify: true,
     format: "esm",
     platform: "browser",
-    external: ["node:async_hooks", "node:fs", "node:url"],
+    external: [
+      "node:async_hooks",
+      "node:fs",
+      "node:url",
+      "jsr:@std/http/file-server",
+    ],
     loader: {
       ".wasm": "copy",
     },

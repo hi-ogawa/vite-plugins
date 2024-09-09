@@ -1,3 +1,18 @@
-import { handler } from "@hiogawa/react-server/entry/ssr";
+import { serveDir, serveFile } from "jsr:@std/http/file-server@1.0.5";
+import { handler } from "../../dist/server/index.js";
 
-Deno.serve((request) => handler(request));
+Deno.serve(async (request) => {
+  // https://jsr.io/@std/http/doc/file-server/~
+  const url = new URL(request.url);
+  if (url.pathname.startsWith("/assets/")) {
+    return serveDir(request, {
+      fsRoot: "dist/client",
+      showIndex: false,
+      headers: [`cache-control: public, immutable, max-age=31536000`],
+    });
+  }
+  if (url.pathname === "/favicon.ico") {
+    return serveFile(request, "dist/client/favicon.ico");
+  }
+  return handler(request);
+});
