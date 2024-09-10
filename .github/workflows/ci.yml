@@ -35,6 +35,7 @@ jobs:
       - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
       - run: pnpm -C packages/react-server/examples/basic cf-build
       - run: pnpm -C packages/react-server/examples/basic test-e2e-cf-preview
+      - run: pnpm -C packages/react-server/examples/basic deno-build
 
   test-react-server-basic-swc:
     runs-on: ubuntu-latest
