@@ -1,0 +1,8 @@
+{
+  "deploy": {
+    "project": "c9e7f320-ceca-4b7f-aeae-efe04329eeb2",
+    "exclude": ["**/node_modules"],
+    "include": ["dist"],
+    "entrypoint": "dist/index.js"
+  }
+}
