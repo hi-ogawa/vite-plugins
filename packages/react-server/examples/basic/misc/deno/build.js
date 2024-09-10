@@ -23,7 +23,7 @@ async function main() {
     outfile: join(outDir, "index.js"),
     metafile: true,
     bundle: true,
-    // minify: true,
+    minify: true,
     format: "esm",
     platform: "browser",
     external: [
