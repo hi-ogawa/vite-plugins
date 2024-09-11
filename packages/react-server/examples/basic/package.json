@@ -10,6 +10,8 @@
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 playwright test",
+    "ntl-build": "SSR_ENTRY=misc/netlify/entry.js pnpm build && node misc/netlify/build.js",
+    "ntl-deploy": "cd misc/netlify && netlify deploy",
     "deno-build": "SSR_ENTRY=@hiogawa/react-server/entry/ssr pnpm build && node misc/deno/build.js && cp dist/rsc/assets/*.wasm misc/deno/dist",
     "deno-preview": "cd misc/deno && deno run --allow-net --allow-read=dist dist/index.js",
     "deno-deploy": "cd misc/deno && deployctl deploy --prod --entrypoint=dist/index.js --include=dist",
