@@ -3,6 +3,7 @@ dist
 .vercel
 .vite-node
 .wrangler
+.netlify
 *.log
 *.tgz
 test-results
