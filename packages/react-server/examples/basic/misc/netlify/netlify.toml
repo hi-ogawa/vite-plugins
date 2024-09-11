@@ -1,0 +1,9 @@
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    cache-control = "public, immutable, max-age=31536000"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/index"
+  status = 200
