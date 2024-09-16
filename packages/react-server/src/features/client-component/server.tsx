@@ -11,17 +11,7 @@ import type { BundlerConfig, ImportManifestEntry } from "../../types/react";
 
 /* @__NO_SIDE_EFFECTS__ */
 export function registerClientReference(id: string, name: string) {
-  // reuse everything but { $$async: true }.
-  // `$$async` is not strictly necessary if we use `__webpack_chunk_load__` trick
-  // but for now, we go with async `__webpack_require__` for simplicity.
-  const reference = ReactServer.registerClientReference({}, id, name);
-  return Object.defineProperties(
-    {},
-    {
-      ...Object.getOwnPropertyDescriptors(reference),
-      $$async: { value: true },
-    },
-  );
+  return ReactServer.registerClientReference({}, id, name);
 }
 
 export function createBundlerConfig(): BundlerConfig {
@@ -33,7 +23,12 @@ export function createBundlerConfig(): BundlerConfig {
         let [id, name] = $$id.split("#");
         tinyassert(id);
         tinyassert(name);
-        return { id, name, chunks: [] } satisfies ImportManifestEntry;
+        return {
+          id,
+          name,
+          chunks: [],
+          async: true,
+        } satisfies ImportManifestEntry;
       },
     },
   );
