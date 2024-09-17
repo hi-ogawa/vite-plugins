@@ -27,6 +27,8 @@ export function createBundlerConfig(): BundlerConfig {
           id,
           name,
           chunks: [],
+          // `async` is not strictly necessary if we use `__webpack_chunk_load__` trick
+          // but for now, going with async `__webpack_require__` seems simpler.
           async: true,
         } satisfies ImportManifestEntry;
       },
