@@ -8,7 +8,9 @@
     "build": "next build",
     "build-types": "wrangler types",
     "start": "wrangler pages dev",
-    "release": "wrangler pages deploy --commit-dirty --branch main"
+    "release": "wrangler pages deploy --commit-dirty --branch main",
+    "test-e2e": "rm -rf .wrangler/state && playwright test",
+    "test-e2e-preview": "rm -rf .wrangler/state && E2E_PREVIEW=1 playwright test"
   },
   "dependencies": {
     "@hiogawa/react-server": "workspace:*",

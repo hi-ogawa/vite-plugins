@@ -5,7 +5,7 @@ export default async function Page() {
   return (
     <>
       <ClientCounter />
-      <form action={changeCount}>
+      <form data-testid="server-counter" action={changeCount}>
         <p>Server Counter: {await getCount()}</p>
         <button name="change" value={-1}>
           -1
