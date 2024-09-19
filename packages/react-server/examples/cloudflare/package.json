@@ -7,8 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "build-types": "wrangler types",
-    "start": "wrangler pages dev ./dist/cloudflare",
-    "deploy": "wrangler pages deploy ./dist/cloudflare --commit-dirty --branch main --project-name test-next-vite-platform"
+    "start": "wrangler pages dev",
+    "release": "wrangler pages deploy --commit-dirty --branch main"
   },
   "dependencies": {
     "@hiogawa/react-server": "workspace:*",
