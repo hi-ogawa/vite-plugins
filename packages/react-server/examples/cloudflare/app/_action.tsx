@@ -11,6 +11,6 @@ export async function getCount() {
 
 export async function changeCount(formData: FormData) {
   const count = await getCount();
-  const change = Number(formData.get("change"));
+  const change = formData.get("change") === "+1" ? 1 : -1;
   await kv().put("count", String(count + change));
 }
