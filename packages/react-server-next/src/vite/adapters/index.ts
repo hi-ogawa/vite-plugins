@@ -77,7 +77,8 @@ export function adapterPlugin(options: {
     async buildStart() {
       if (adapter === "cloudflare") {
         const { getPlatformProxy } = await import("wrangler");
-        const proxy = await getPlatformProxy();
+        // TODO: support options
+        const proxy = await getPlatformProxy({ persist: true });
         (globalThis as any).__reactServerCloudflarePlatform = proxy;
       }
     },

@@ -1,13 +1,18 @@
 import { changeCount, getCount } from "./_action";
-import { TestClient } from "./_client";
+import { ClientCounter } from "./_client";
 
 export default async function Page() {
   return (
     <>
-      <div>[Page]</div>
-      <TestClient />
+      <ClientCounter />
       <form action={changeCount}>
-        <button>Action: {await getCount()}</button>
+        <p>Server Counter: {await getCount()}</p>
+        <button name="change" value={-1}>
+          -1
+        </button>
+        <button name="change" value={+1}>
+          +1
+        </button>
       </form>
     </>
   );

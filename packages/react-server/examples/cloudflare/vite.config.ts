@@ -9,7 +9,7 @@ export default defineConfig({
   ],
   server: {
     watch: {
-      // TODO: fix in https://github.com/hi-ogawa/vite-plugins/pull/645
+      // TODO: fix https://github.com/hi-ogawa/vite-plugins/pull/645
       ignored: ["**/.wrangler/**"],
     },
   },
