@@ -15,6 +15,10 @@
       "default": "./dist/vite/index.js"
     },
     "./vite/*": "./dist/vite/*.js",
+    "./cloudflare": {
+      "types": "./dist/vite/adapters/cloudflare/runtime.d.ts",
+      "default": "./dist/vite/adapters/cloudflare/runtime.js"
+    },
     ".": {
       "types": "./types/index.d.ts"
     },
@@ -57,12 +61,19 @@
   },
   "devDependencies": {
     "@hiogawa/react-server": "workspace:*",
-    "@hiogawa/utils-node": "^0.0.2"
+    "@hiogawa/utils-node": "^0.0.2",
+    "wrangler": "^3.76.0"
   },
   "peerDependencies": {
     "@hiogawa/react-server": "*",
     "react": "*",
     "react-dom": "*",
-    "vite": "*"
+    "vite": "*",
+    "wrangler": "*"
+  },
+  "peerDependenciesMeta": {
+    "wrangler": {
+      "optional": true
+    }
   }
 }

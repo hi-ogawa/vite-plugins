@@ -11,8 +11,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
-    // TODO: "next/vite/platform/cloudflare"
-    "types": ["next"],
+    "types": ["next", "@cloudflare/workers-types"],
     "jsx": "react-jsx"
   }
 }

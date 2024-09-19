@@ -71,7 +71,25 @@ export function adapterPlugin(options: {
     },
   };
 
-  return [registerHooksPlugin, buildPlugin];
+  const devPlatformPlugin: Plugin = {
+    name: adapterPlugin.name + ":dev-platform",
+    apply: "serve",
+    async buildStart() {
+      if (adapter === "cloudflare") {
+        const { getPlatformProxy } = await import("wrangler");
+        const proxy = await getPlatformProxy();
+        (globalThis as any).__reactServerCloudflarePlatform = proxy;
+      }
+    },
+    async buildEnd() {
+      if (adapter === "cloudflare") {
+        const proxy = (globalThis as any).__reactServerCloudflarePlatform;
+        await (proxy as import("wrangler").PlatformProxy).dispose();
+      }
+    },
+  };
+
+  return [registerHooksPlugin, buildPlugin, devPlatformPlugin];
 }
 
 // cf. https://github.com/sveltejs/kit/blob/52e5461b055a104694f276859a7104f58452fab0/packages/adapter-auto/adapters.js
