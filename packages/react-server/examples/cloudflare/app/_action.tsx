@@ -1,8 +1,8 @@
 "use server";
 
-import { getPlatform } from "next/cloudflare";
+import { getPlatform } from "next/vite/platform";
 
-const kv = () => getPlatform<Env>().env.kv;
+const kv = () => getPlatform().env.kv;
 
 export async function getCount() {
   const count = Number(await kv().get("count"));
