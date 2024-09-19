@@ -32,6 +32,10 @@ export default function vitePluginReactServerNext(
 ): PluginOption {
   const outDir = options?.outDir ?? "dist";
   const adapter = options?.adapter ?? autoSelectAdapter();
+  const [adapterPluginsClient, adapterPluginsServer] = adapterPlugin({
+    adapter,
+    outDir,
+  });
 
   return [
     react(),
@@ -59,19 +63,8 @@ export default function vitePluginReactServerNext(
                 ? "inline"
                 : "fs",
         }),
-        {
-          name: "next-platform-alias",
-          config() {
-            return {
-              resolve: {
-                alias: {
-                  "next/vite/platform": `next/vite/adapters/${adapter}/platform`,
-                },
-              },
-            };
-          },
-        },
-        ...(options?.plugins ?? []),
+        adapterPluginsServer,
+        options?.plugins,
       ],
     }),
     vitePluginLogger(),
@@ -79,7 +72,7 @@ export default function vitePluginReactServerNext(
       entry: "next/vite/entry-ssr",
       preview: path.resolve(outDir, "server", "index.js"),
     }),
-    adapterPlugin({ adapter, outDir }),
+    adapterPluginsClient,
     appFaviconPlugin(),
     {
       name: "next-exclude-optimize",
