@@ -1,1 +1,1 @@
-cloudflare platform example
+cloudflare runtime api example
