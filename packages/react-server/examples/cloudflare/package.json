@@ -1,0 +1,24 @@
+{
+  "name": "@hiogawa/react-server-example-cloudflare",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "wrangler pages dev ./dist/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat_v2",
+    "deploy": "wrangler pages deploy ./dist/cloudflare --commit-dirty --branch main --project-name test-next-vite-platform"
+  },
+  "dependencies": {
+    "@hiogawa/react-server": "workspace:*",
+    "next": "link:../../../react-server-next",
+    "react": "rc",
+    "react-dom": "rc",
+    "react-server-dom-webpack": "rc"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "vite": "latest"
+  }
+}
