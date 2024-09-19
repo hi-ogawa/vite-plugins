@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "build-types": "wrangler types",
-    "start": "wrangler pages dev ./dist/cloudflare --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat_v2",
+    "start": "wrangler pages dev ./dist/cloudflare",
     "deploy": "wrangler pages deploy ./dist/cloudflare --commit-dirty --branch main --project-name test-next-vite-platform"
   },
   "dependencies": {
