@@ -1,5 +1,7 @@
 cloudflare runtime api example
 
+- https://test-next-vite-platform.pages.dev/
+
 ```sh
 pnpm dev
 pnpm build
