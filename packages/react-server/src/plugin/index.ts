@@ -353,7 +353,10 @@ export function vitePluginReactServer(
       tinyassert(manager.server);
 
       // re-render RSC with custom event
-      if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
+      if (
+        ctx.modules.length > 0 &&
+        ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))
+      ) {
         manager.server.hot.send({
           type: "custom",
           event: "rsc:update",
