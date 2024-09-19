@@ -1,5 +1,8 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { handler } from "@hiogawa/react-server/entry/ssr";
-import { storage } from "./platform-utils";
+
+const storage = ((globalThis as any).__reactServerCloudflareStorage =
+  new AsyncLocalStorage());
 
 export default {
   fetch(request: Request, env: any, ctx: any) {
