@@ -14,6 +14,10 @@
       "types": "./dist/vite/index.d.ts",
       "default": "./dist/vite/index.js"
     },
+    "./vite/platform": {
+      "types": "./dist/vite/platform.d.ts",
+      "default": "./dist/vite/platform.js"
+    },
     "./vite/*": "./dist/vite/*.js",
     ".": {
       "types": "./types/index.d.ts"
@@ -57,12 +61,19 @@
   },
   "devDependencies": {
     "@hiogawa/react-server": "workspace:*",
-    "@hiogawa/utils-node": "^0.0.2"
+    "@hiogawa/utils-node": "^0.0.2",
+    "wrangler": "^3.76.0"
   },
   "peerDependencies": {
     "@hiogawa/react-server": "*",
     "react": "*",
     "react-dom": "*",
-    "vite": "*"
+    "vite": "*",
+    "wrangler": "*"
+  },
+  "peerDependenciesMeta": {
+    "wrangler": {
+      "optional": true
+    }
   }
 }

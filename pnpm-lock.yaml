@@ -204,6 +204,9 @@ importers:
       '@hiogawa/utils-node':
         specifier: ^0.0.2
         version: 0.0.2
+      wrangler:
+        specifier: ^3.76.0
+        version: 3.76.0(@cloudflare/workers-types@4.20240909.0)
 
   packages/react-server/examples/basic:
     dependencies:
@@ -286,6 +289,37 @@ importers:
       unocss:
         specifier: ^0.58.6
         version: 0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+      vite:
+        specifier: ^5.3.3
+        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+
+  packages/react-server/examples/cloudflare:
+    dependencies:
+      '@hiogawa/react-server':
+        specifier: workspace:*
+        version: link:../..
+      next:
+        specifier: link:../../../react-server-next
+        version: link:../../../react-server-next
+      react:
+        specifier: 19.0.0-rc-eb3ad065-20240822
+        version: 19.0.0-rc-eb3ad065-20240822
+      react-dom:
+        specifier: 19.0.0-rc-eb3ad065-20240822
+        version: 19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822)
+      react-server-dom-webpack:
+        specifier: 19.0.0-rc-eb3ad065-20240822
+        version: 19.0.0-rc-eb3ad065-20240822(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)(webpack@5.93.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240909.0
+        version: 4.20240909.0
+      '@types/react':
+        specifier: 18.3.3
+        version: 18.3.3
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
       vite:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)

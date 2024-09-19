@@ -72,6 +72,9 @@ jobs:
       - run: pnpm -C packages/react-server/examples/postcss-tailwind test-e2e
       - run: pnpm -C packages/react-server/examples/postcss-tailwind build
       - run: pnpm -C packages/react-server/examples/postcss-tailwind test-e2e-preview
+      - run: pnpm -C packages/react-server/examples/cloudflare test-e2e
+      - run: pnpm -C packages/react-server/examples/cloudflare build
+      - run: pnpm -C packages/react-server/examples/cloudflare test-e2e-preview
 
   test-react-server-package:
     runs-on: ubuntu-latest
