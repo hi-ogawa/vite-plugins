@@ -1,7 +1,6 @@
-import type { PlatformProxy } from "wrangler";
 import { $cloudflare } from "./global";
 
-export function getPlatform<Env>(): PlatformProxy<Env> {
+export function getPlatform() {
   if (import.meta.env.DEV) {
     return $cloudflare.platformProxy;
   } else {

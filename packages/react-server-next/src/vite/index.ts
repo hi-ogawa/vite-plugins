@@ -59,6 +59,18 @@ export default function vitePluginReactServerNext(
                 ? "inline"
                 : "fs",
         }),
+        {
+          name: "next-platform-alias",
+          config() {
+            return {
+              resolve: {
+                alias: {
+                  "next/vite/platform": `next/vite/adapters/${adapter}/platform`,
+                },
+              },
+            };
+          },
+        },
         ...(options?.plugins ?? []),
       ],
     }),
