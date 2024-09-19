@@ -1,5 +1,5 @@
 import type { PlatformProxy } from "wrangler";
-import { storage } from "./runtime-utils";
+import { storage } from "./platform-utils";
 
 export function getPlatform<Env>(): PlatformProxy<Env> {
   if (import.meta.env.DEV) {

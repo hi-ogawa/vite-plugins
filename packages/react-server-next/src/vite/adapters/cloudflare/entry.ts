@@ -1,5 +1,5 @@
 import { handler } from "@hiogawa/react-server/entry/ssr";
-import { storage } from "./runtime-utils";
+import { storage } from "./platform-utils";
 
 export default {
   fetch(request: Request, env: any, ctx: any) {
