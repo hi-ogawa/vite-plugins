@@ -6,6 +6,7 @@ export default defineConfig([
       "src/cli.ts",
       "src/vite/index.ts",
       "src/vite/entry-ssr.tsx",
+      "src/vite/platform.ts",
       "src/vite/adapters/cloudflare/entry.ts",
       "src/vite/adapters/cloudflare/platform.ts",
       "src/vite/adapters/vercel/entry.ts",
