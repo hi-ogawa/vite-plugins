@@ -1,4 +1,5 @@
 import type { Plugin } from "vite";
+import { $cloudflare } from "./cloudflare/global";
 
 export type AdapterType = "node" | "vercel" | "vercel-edge" | "cloudflare";
 
@@ -76,16 +77,14 @@ export function adapterPlugin(options: {
     apply: "serve",
     async buildStart() {
       if (adapter === "cloudflare") {
-        const { getPlatformProxy } = await import("wrangler");
         // TODO: support options
-        const proxy = await getPlatformProxy({ persist: true });
-        (globalThis as any).__reactServerCloudflarePlatform = proxy;
+        const { getPlatformProxy } = await import("wrangler");
+        $cloudflare.platformProxy = await getPlatformProxy({ persist: true });
       }
     },
     async buildEnd() {
       if (adapter === "cloudflare") {
-        const proxy = (globalThis as any).__reactServerCloudflarePlatform;
-        await (proxy as import("wrangler").PlatformProxy).dispose();
+        await $cloudflare.platformProxy.dispose();
       }
     },
   };

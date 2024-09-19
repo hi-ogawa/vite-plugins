@@ -1,9 +1,10 @@
 import type { PlatformProxy } from "wrangler";
+import { $cloudflare } from "./global";
 
 export function getPlatform<Env>(): PlatformProxy<Env> {
   if (import.meta.env.DEV) {
-    return (globalThis as any).__reactServerCloudflarePlatform;
+    return $cloudflare.platformProxy;
   } else {
-    return (globalThis as any).__reactServerCloudflareStorage.getStore();
+    return $cloudflare.storage.getStore();
   }
 }
