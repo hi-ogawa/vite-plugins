@@ -7,10 +7,4 @@ export default defineConfig({
       adapter: "cloudflare",
     }),
   ],
-  server: {
-    watch: {
-      // TODO: fix https://github.com/hi-ogawa/vite-plugins/pull/645
-      ignored: ["**/.wrangler/**"],
-    },
-  },
 });
