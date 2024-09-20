@@ -354,7 +354,8 @@ export function vitePluginReactServer(
 
       // re-render RSC with custom event
       if (
-        $__global.dev.reactServer.moduleGraph.getModuleById(ctx.file) &&
+        $__global.dev.reactServer.moduleGraph.getModulesByFile(ctx.file)
+          ?.size &&
         ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))
       ) {
         manager.server.hot.send({
