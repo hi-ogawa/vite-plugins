@@ -6,10 +6,10 @@ export type AdapterType = "node" | "vercel" | "vercel-edge" | "cloudflare";
 export function adapterPlugin(options: {
   adapter: AdapterType;
   outDir: string;
-}): { server?: Plugin[]; client?: Plugin[] } {
+}): Plugin[] {
   const adapter = options.adapter ?? autoSelectAdapter();
   if (adapter === "node") {
-    return {};
+    return [];
   }
 
   const buildPlugin: Plugin = {
@@ -102,10 +102,12 @@ export function adapterPlugin(options: {
     },
   };
 
-  return {
-    server: [aliasPlatformPlugin],
-    client: [registerHooksPlugin, buildPlugin, devPlatformPlugin],
-  };
+  return [
+    registerHooksPlugin,
+    buildPlugin,
+    devPlatformPlugin,
+    aliasPlatformPlugin,
+  ];
 }
 
 // cf. https://github.com/sveltejs/kit/blob/52e5461b055a104694f276859a7104f58452fab0/packages/adapter-auto/adapters.js

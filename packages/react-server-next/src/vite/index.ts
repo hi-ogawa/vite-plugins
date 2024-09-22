@@ -65,12 +65,10 @@ export default function vitePluginReactServerNext(
       entry: "next/vite/entry-ssr",
       preview: path.resolve(outDir, "server", "index.js"),
     }),
-    Object.values(
-      adapterPlugin({
-        adapter,
-        outDir,
-      }),
-    ),
+    adapterPlugin({
+      adapter,
+      outDir,
+    }),
     appFaviconPlugin(),
     {
       name: "next-exclude-optimize",
@@ -107,21 +105,6 @@ function nextOgPlugin(): Plugin[] {
               ),
             },
           },
-          // per-environment alias actually requires an extra plugin
-          // so let's avoid this for now
-          // https://github.com/vitejs/vite/pull/17583/#issuecomment-2200115882
-          // environments: {
-          //   'react-server': {
-          //     resolve: {
-          //       alias: {
-          //         "@vercel/og": path.resolve(
-          //           require.resolve("@vercel/og/package.json"),
-          //           "../dist/index.edge.js",
-          //         ),
-          //       }
-          //     }
-          //   }
-          // }
         };
       },
     },
