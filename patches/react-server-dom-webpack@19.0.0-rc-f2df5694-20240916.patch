@@ -1,0 +1,14 @@
+diff --git a/cjs/react-server-dom-webpack-server.edge.development.js b/cjs/react-server-dom-webpack-server.edge.development.js
+index 1df2ff9f969eb5e8fd875df5a7a0bbddc3d49f9f..69644a1e8d651d856e5c4bdd2ac8dfd35129a37b 100644
+--- a/cjs/react-server-dom-webpack-server.edge.development.js
++++ b/cjs/react-server-dom-webpack-server.edge.development.js
+@@ -2390,7 +2390,8 @@
+               '" in the React Server Manifest. This is probably a bug in the React Server Components bundler.'
+           );
+       }
+-      return [resolvedModuleData.id, resolvedModuleData.chunks, name];
++      // TODO
++      return [resolvedModuleData.id, resolvedModuleData.chunks, name, 1];
+     }
+     function requireAsyncModule(id) {
+       var promise = __webpack_require__(id);
