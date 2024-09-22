@@ -242,19 +242,18 @@ export function vitePluginReactServer(
       // console.log("[hotUpdate]", [
       //   this.environment.name,
       //   ctx.file,
-      //   // ctx.modules,
-      //   // ctx.modules.flatMap(m => [...m.importers]),
+      //   ctx.modules.length,
+      //   ctx.modules.flatMap(m => [...m.importers]),
       // ]);
+
+      const isClientReference = ctx.modules.every(
+        (mod) => mod.id && manager.clientReferenceMap.has(mod.id),
+      );
 
       if (this.environment.name === "react-server") {
         // client reference id is also in react server module graph,
         // but we skip RSC HMR for this case to avoid conflicting with Client HMR.
-        if (
-          ctx.modules.length > 0 &&
-          ctx.modules.every(
-            (mod) => mod.id && !manager.clientReferenceMap.has(mod.id),
-          )
-        ) {
+        if (ctx.modules.length > 0 && !isClientReference) {
           $__global.dev.server.environments.client.hot.send({
             type: "custom",
             event: "rsc:update",
@@ -277,15 +276,22 @@ export function vitePluginReactServer(
         // due to postcss creating dependencies from style.css to all source files.
         // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
-        const importers = ctx.modules.flatMap((m) => [...m.importers]);
+        const reactServerEnv =
+          $__global.dev.server.environments["react-server"]!;
         if (
-          importers.length > 0 &&
-          importers.every((m) => m.id && isCSSRequest(m.id))
+          !isClientReference &&
+          reactServerEnv.moduleGraph.getModulesByFile(ctx.file)
         ) {
-          for (const m of importers) {
-            await $__global.dev.server.reloadEnvironmentModule(m);
+          const importers = ctx.modules.flatMap((m) => [...m.importers]);
+          if (
+            importers.length > 0 &&
+            importers.every((m) => m.id && isCSSRequest(m.id))
+          ) {
+            for (const m of importers) {
+              await $__global.dev.server.reloadEnvironmentModule(m);
+            }
+            return [];
           }
-          return [];
         }
       }
 
