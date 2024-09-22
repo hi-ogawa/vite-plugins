@@ -22,19 +22,10 @@
     ".": {
       "types": "./types/index.d.ts"
     },
-    "./navigation.js": {
-      "types": "./dist/compat/navigation.d.ts",
-      "react-server": "./dist/compat/navigation.react-server.js",
-      "default": "./dist/compat/navigation.js"
-    },
     "./navigation": {
       "types": "./dist/compat/navigation.d.ts",
       "react-server": "./dist/compat/navigation.react-server.js",
       "default": "./dist/compat/navigation.js"
-    },
-    "./*.js": {
-      "types": "./dist/compat/*.d.ts",
-      "default": "./dist/compat/*.js"
     },
     "./*": {
       "types": "./dist/compat/*.d.ts",
