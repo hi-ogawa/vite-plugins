@@ -4,7 +4,6 @@ import { createDebug, tinyassert } from "@hiogawa/utils";
 import {
   type ConfigEnv,
   type Plugin,
-  type PluginOption,
   type ResolvedConfig,
   type ViteDevServer,
   build,
@@ -120,7 +119,6 @@ const manager: PluginStateManager = ((
 ).__VITE_REACT_SERVER_MANAGER ??= new PluginStateManager());
 
 export type ReactServerPluginOptions = {
-  plugins?: PluginOption[];
   prerender?: PrerenderFn;
   entryBrowser?: string;
   entryServer?: string;

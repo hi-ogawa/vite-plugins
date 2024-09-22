@@ -32,10 +32,6 @@ export default function vitePluginReactServerNext(
 ): PluginOption {
   const outDir = options?.outDir ?? "dist";
   const adapter = options?.adapter ?? autoSelectAdapter();
-  const adapterPlugins = adapterPlugin({
-    adapter,
-    outDir,
-  });
 
   return [
     react(),
@@ -45,34 +41,39 @@ export default function vitePluginReactServerNext(
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
-      plugins: [
-        // nextJsxPlugin(),
-        // tsconfigPaths(),
-        nextOgPlugin(),
-        vitePluginWasmModule({
-          buildMode:
-            adapter === "cloudflare" || adapter === "vercel-edge"
-              ? "import"
-              : "fs",
-        }),
-        vitePluginFetchUrlImportMetaUrl({
-          buildMode:
-            adapter === "cloudflare"
-              ? "import"
-              : adapter === "vercel-edge"
-                ? "inline"
-                : "fs",
-        }),
-        adapterPlugins.server,
-        options?.plugins,
-      ],
     }),
+    nextOgPlugin(),
+    {
+      applyToEnvironment: (env) => env.name === "react-server",
+      ...vitePluginWasmModule({
+        buildMode:
+          adapter === "cloudflare" || adapter === "vercel-edge"
+            ? "import"
+            : "fs",
+      }),
+    },
+    {
+      applyToEnvironment: (env) => env.name === "react-server",
+      ...vitePluginFetchUrlImportMetaUrl({
+        buildMode:
+          adapter === "cloudflare"
+            ? "import"
+            : adapter === "vercel-edge"
+              ? "inline"
+              : "fs",
+      }),
+    },
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
       preview: path.resolve(outDir, "server", "index.js"),
     }),
-    adapterPlugins.client,
+    Object.values(
+      adapterPlugin({
+        adapter,
+        outDir,
+      }),
+    ),
     appFaviconPlugin(),
     {
       name: "next-exclude-optimize",
@@ -98,17 +99,32 @@ function nextOgPlugin(): Plugin[] {
         return {
           resolve: {
             alias: {
-              // use only edge build and deal with following special triggers
-              // uniformly for any adapters via plugins
-              //   import resvg_wasm from "./resvg.wasm?module";
-              //   import yoga_wasm from "./yoga.wasm?module";
-              //   fetch(new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url))
               "@vercel/og": path.resolve(
                 require.resolve("@vercel/og/package.json"),
                 "../dist/index.edge.js",
               ),
             },
           },
+          // per-environment alias actually requires an extra plugin
+          // so let's avoid this for now
+          // https://github.com/vitejs/vite/pull/17583/#issuecomment-2200115882
+          // environments: {
+          //   'react-server': {
+          //     resolve: {
+          //       alias: {
+          //         // use only edge build and deal with following special triggers
+          //         // uniformly for any adapters via plugins
+          //         //   import resvg_wasm from "./resvg.wasm?module";
+          //         //   import yoga_wasm from "./yoga.wasm?module";
+          //         //   fetch(new URL("./noto-sans-v27-latin-regular.ttf", import.meta.url))
+          //         "@vercel/og": path.resolve(
+          //           require.resolve("@vercel/og/package.json"),
+          //           "../dist/index.edge.js",
+          //         ),
+          //       }
+          //     }
+          //   }
+          // }
         };
       },
     },
