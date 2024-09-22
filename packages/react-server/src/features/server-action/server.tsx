@@ -39,6 +39,7 @@ export function createActionBundlerConfig(): BundlerConfig {
           id,
           name,
           chunks: [],
+          async: true,
         } satisfies ImportManifestEntry;
       },
     },
