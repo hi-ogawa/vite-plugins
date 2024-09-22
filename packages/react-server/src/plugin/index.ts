@@ -239,45 +239,78 @@ export function vitePluginReactServer(
         manager.parentIds.add(id);
       }
     },
-    async handleHotUpdate(ctx) {
-      tinyassert(manager.server);
+    hotUpdate(ctx) {
+      // console.log("[hotUpdate]", [
+      //   this.environment.name,
+      //   ctx.file,
+      //   ctx.modules.length,
+      // ]);
 
-      // re-render RSC with custom event
-      if (
-        $__global.dev.reactServer.moduleGraph.getModulesByFile(ctx.file)
-          ?.size &&
-        ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))
-      ) {
-        manager.server.hot.send({
-          type: "custom",
-          event: "rsc:update",
-          data: {
-            file: ctx.file,
-          },
-        });
-
-        // Some rsc files are included in parent module graph
-        // due to postcss creating dependency from style.css to all source files.
-        // In this case, reload all importers (for css hmr),
-        // and return empty modules to avoid full-reload
-        if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
-          for (const m of ctx.modules) {
-            for (const imod of m.importers) {
-              await manager.server.reloadModule(imod);
-            }
-          }
-          return [];
+      if (this.environment.name === "react-server") {
+        // client reference id is also in react server module graph,
+        // but we skip RSC HMR for this case to avoid conflicting with Client HMR.
+        if (
+          ctx.modules.length > 0 &&
+          ctx.modules.every(
+            (mod) => mod.id && !manager.clientReferenceMap.has(mod.id),
+          )
+        ) {
+          $__global.dev.server.environments.client.hot.send({
+            type: "custom",
+            event: "rsc:update",
+            data: {
+              file: ctx.file,
+            },
+          });
         }
       }
 
-      // css module is not self-accepting, so we filter out
-      // `?direct` module (used for SSR CSS) to avoid browser full reload.
-      // (see packages/react-server/src/features/assets/css.ts)
-      if (isCSSRequest(ctx.file)) {
-        return ctx.modules.filter((m) => !m.id?.includes("?direct"));
+      if (this.environment.name === "client") {
+        // css module is not self-accepting, so we filter out
+        // `?direct` module (used for SSR CSS) to avoid browser full reload.
+        // (see packages/react-server/src/features/assets/css.ts)
+        if (isCSSRequest(ctx.file)) {
+          return ctx.modules.filter((m) => !m.id?.includes("?direct"));
+        }
       }
+
       return;
     },
+    // async handleHotUpdate(ctx) {
+    //   tinyassert(manager.server);
+
+    //   // re-render RSC with custom event
+    //   if (ctx.modules.every((m) => m.id && manager.shouldReloadRsc(m.id))) {
+    //     manager.server.hot.send({
+    //       type: "custom",
+    //       event: "rsc:update",
+    //       data: {
+    //         file: ctx.file,
+    //       },
+    //     });
+
+    //     // Some rsc files are included in parent module graph
+    //     // due to postcss creating dependency from style.css to all source files.
+    //     // In this case, reload all importers (for css hmr),
+    //     // and return empty modules to avoid full-reload
+    //     if (ctx.modules.every((m) => m.id && !manager.parentIds.has(m.id))) {
+    //       for (const m of ctx.modules) {
+    //         for (const imod of m.importers) {
+    //           await manager.server.reloadModule(imod);
+    //         }
+    //       }
+    //       return [];
+    //     }
+    //   }
+
+    //   // css module is not self-accepting, so we filter out
+    //   // `?direct` module (used for SSR CSS) to avoid browser full reload.
+    //   // (see packages/react-server/src/features/assets/css.ts)
+    //   if (isCSSRequest(ctx.file)) {
+    //     return ctx.modules.filter((m) => !m.id?.includes("?direct"));
+    //   }
+    //   return;
+    // },
   };
 
   // orchestrate four builds from a single vite (browser) build
