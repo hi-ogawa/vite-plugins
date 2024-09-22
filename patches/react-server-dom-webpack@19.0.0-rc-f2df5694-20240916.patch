@@ -1,14 +1,28 @@
 diff --git a/cjs/react-server-dom-webpack-server.edge.development.js b/cjs/react-server-dom-webpack-server.edge.development.js
-index 1df2ff9f969eb5e8fd875df5a7a0bbddc3d49f9f..69644a1e8d651d856e5c4bdd2ac8dfd35129a37b 100644
+index 1df2ff9f969eb5e8fd875df5a7a0bbddc3d49f9f..7911983d70b6a4faaf3f324442c334f34612faae 100644
 --- a/cjs/react-server-dom-webpack-server.edge.development.js
 +++ b/cjs/react-server-dom-webpack-server.edge.development.js
-@@ -2390,7 +2390,8 @@
+@@ -2390,6 +2390,9 @@
                '" in the React Server Manifest. This is probably a bug in the React Server Components bundler.'
            );
        }
--      return [resolvedModuleData.id, resolvedModuleData.chunks, name];
-+      // TODO
-+      return [resolvedModuleData.id, resolvedModuleData.chunks, name, 1];
++      if (resolvedModuleData.async) {
++        return [resolvedModuleData.id, resolvedModuleData.chunks, name, 1];
++      }
+       return [resolvedModuleData.id, resolvedModuleData.chunks, name];
      }
      function requireAsyncModule(id) {
-       var promise = __webpack_require__(id);
+diff --git a/cjs/react-server-dom-webpack-server.edge.production.js b/cjs/react-server-dom-webpack-server.edge.production.js
+index 9f51d993e2bd17481f5d951018e33dcbb2cb7ce1..5871b870791506597fab7cf8db3f2ea0782371f0 100644
+--- a/cjs/react-server-dom-webpack-server.edge.production.js
++++ b/cjs/react-server-dom-webpack-server.edge.production.js
+@@ -1941,6 +1941,9 @@ function resolveServerReference(bundlerConfig, id) {
+           '" in the React Server Manifest. This is probably a bug in the React Server Components bundler.'
+       );
+   }
++  if (resolvedModuleData.async) {
++    return [resolvedModuleData.id, resolvedModuleData.chunks, name, 1];
++  }
+   return [resolvedModuleData.id, resolvedModuleData.chunks, name];
+ }
+ var chunkCache = new Map();
