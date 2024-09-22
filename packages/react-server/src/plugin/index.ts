@@ -288,7 +288,7 @@ export function vitePluginReactServer(
             importers.every((m) => m.id && isCSSRequest(m.id))
           ) {
             for (const m of importers) {
-              await $__global.dev.server.reloadEnvironmentModule(m);
+              await this.environment.reloadModule(m);
             }
             return [];
           }
