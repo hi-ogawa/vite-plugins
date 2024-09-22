@@ -239,13 +239,6 @@ export function vitePluginReactServer(
       }
     },
     async hotUpdate(ctx) {
-      // console.log("[hotUpdate]", [
-      //   this.environment.name,
-      //   ctx.file,
-      //   ctx.modules.length,
-      //   ctx.modules.flatMap(m => [...m.importers]),
-      // ]);
-
       const isClientReference = ctx.modules.every(
         (mod) => mod.id && manager.clientReferenceMap.has(mod.id),
       );
