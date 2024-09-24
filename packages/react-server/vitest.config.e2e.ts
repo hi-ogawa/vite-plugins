@@ -10,5 +10,6 @@ export default defineConfig({
     dir: "e2e",
     pool: "forks",
     fileParallelism: false,
+    watch: false,
   },
 });
