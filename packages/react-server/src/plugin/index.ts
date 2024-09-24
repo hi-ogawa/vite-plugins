@@ -220,7 +220,9 @@ export function vitePluginReactServer(
         tinyassert(manager.server);
         const reactServerEnv = manager.server.environments["react-server"];
         tinyassert(reactServerEnv);
-        const reactServerRunner = createServerModuleRunner(reactServerEnv);
+        const reactServerRunner = createServerModuleRunner(reactServerEnv, {
+          hmr: false,
+        });
         $__global.dev = {
           server: manager.server,
           reactServerRunner,
