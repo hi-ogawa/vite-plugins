@@ -70,14 +70,6 @@ export function vitePluginSilenceDirectiveBuildWarning(): Plugin {
               ) {
                 return;
               }
-              // https://github.com/TanStack/query/pull/5161#issuecomment-1506683450
-              if (
-                warning.code === "MODULE_LEVEL_DIRECTIVE" &&
-                (warning.message.includes(`use client`) ||
-                  warning.message.includes(`use server`))
-              ) {
-                return;
-              }
               if (config.build?.rollupOptions?.onwarn) {
                 config.build.rollupOptions.onwarn(warning, defaultHandler);
               } else {
