@@ -19,6 +19,7 @@
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "@remix-run/dev": "2.8.1",
     "@types/react": "latest",
-    "@types/react-dom": "latest"
+    "@types/react-dom": "latest",
+    "wrangler": "^3.72.2"
   }
 }

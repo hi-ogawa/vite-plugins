@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  vite: ^5.3.3
+  vite: 6.0.0-beta.1
   react: 19.0.0-rc-eb3ad065-20240822
   react-dom: 19.0.0-rc-eb3ad065-20240822
   react-is: 19.0.0-rc-eb3ad065-20240822
@@ -40,10 +40,10 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.7.0(@swc/helpers@0.5.12)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 3.7.0(@swc/helpers@0.5.12)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       esbuild:
         specifier: ^0.23.0
         version: 0.23.0
@@ -61,7 +61,7 @@ importers:
         version: 19.0.0-rc-eb3ad065-20240822(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)(webpack@5.93.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
       tsup:
         specifier: ^8.1.0
-        version: 8.1.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(postcss@8.4.39)(typescript@5.5.4)
+        version: 8.1.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(postcss@8.4.45)(typescript@5.5.4)
       tsx:
         specifier: ^4.16.2
         version: 4.16.2
@@ -69,8 +69,8 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
       vitest:
         specifier: ^2.0.1
         version: 2.0.1(@types/node@20.14.10)(terser@5.31.2)
@@ -81,8 +81,8 @@ importers:
   packages/error-overlay:
     dependencies:
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/error-overlay/examples/basic:
     dependencies:
@@ -99,8 +99,8 @@ importers:
         specifier: ^0.30.8
         version: 0.30.10
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     devDependencies:
       esbuild:
         specifier: ^0.21.5
@@ -125,8 +125,8 @@ importers:
         specifier: latest
         version: link:../..
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server:
     dependencies:
@@ -149,11 +149,11 @@ importers:
         specifier: 19.0.0-rc-eb3ad065-20240822
         version: 19.0.0-rc-eb3ad065-20240822(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)(webpack@5.93.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0))
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
       vitefu:
         specifier: ^0.2.5
-        version: 0.2.5(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 0.2.5(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
     devDependencies:
       '@edge-runtime/cookies':
         specifier: ^5.0.0
@@ -178,7 +178,7 @@ importers:
         version: 0.6.2
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.7.0(@swc/helpers@0.5.12)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 3.7.0(@swc/helpers@0.5.12)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
@@ -192,11 +192,11 @@ importers:
         specifier: 19.0.0-rc-eb3ad065-20240822
         version: 19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822)
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
       vite-tsconfig-paths:
         specifier: ^4.3.2
-        version: 4.3.2(typescript@5.5.4)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.2(typescript@5.5.4)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
     devDependencies:
       '@hiogawa/react-server':
         specifier: workspace:*
@@ -246,7 +246,7 @@ importers:
     devDependencies:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
-        version: 2.2.1-pre.7(unocss@0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2)))
+        version: 2.2.1-pre.7(unocss@0.58.6(postcss@8.4.45)(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)))
       '@hiogawa/utils':
         specifier: latest
         version: 1.7.0
@@ -267,7 +267,7 @@ importers:
         version: 1.1.20
       '@mdx-js/rollup':
         specifier: ^3.0.1
-        version: 3.0.1(rollup@4.18.1)
+        version: 3.0.1(rollup@4.21.2)
       '@playwright/test':
         specifier: ^1.45.1
         version: 1.45.1
@@ -282,16 +282,16 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       magic-string:
         specifier: ^0.30.8
         version: 0.30.10
       unocss:
         specifier: ^0.58.6
-        version: 0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 0.58.6(postcss@8.4.45)(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server/examples/cloudflare:
     dependencies:
@@ -321,8 +321,8 @@ importers:
         specifier: 18.3.0
         version: 18.3.0
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server/examples/custom-out-dir:
     dependencies:
@@ -352,8 +352,8 @@ importers:
         specifier: 18.3.0
         version: 18.3.0
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server/examples/minimal:
     dependencies:
@@ -380,8 +380,8 @@ importers:
         specifier: 18.3.0
         version: 18.3.0
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server/examples/next:
     dependencies:
@@ -411,8 +411,8 @@ importers:
         specifier: 18.3.0
         version: 18.3.0
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server/examples/postcss-tailwind:
     dependencies:
@@ -442,8 +442,8 @@ importers:
         specifier: ^3.4.10
         version: 3.4.10
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server/examples/prerender:
     dependencies:
@@ -477,10 +477,10 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: latest
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/react-server/examples/starter:
     dependencies:
@@ -511,10 +511,10 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/server-asset:
     dependencies:
@@ -522,14 +522,14 @@ importers:
         specifier: ^0.30.8
         version: 0.30.10
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/ssr-css:
     dependencies:
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/transforms:
     dependencies:
@@ -550,8 +550,8 @@ importers:
   packages/vite-glob-routes:
     dependencies:
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     devDependencies:
       '@hattip/compose':
         specifier: ^0.0.44
@@ -579,7 +579,7 @@ importers:
         version: 0.1.1-pre.3
       '@hiogawa/theme-script':
         specifier: 0.0.4-pre.3
-        version: 0.0.4-pre.3(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 0.0.4-pre.3(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       '@hiogawa/tiny-cli':
         specifier: 0.0.4-pre.1
         version: 0.0.4-pre.1
@@ -600,7 +600,7 @@ importers:
         version: 0.1.1-pre.10(react@19.0.0-rc-eb3ad065-20240822)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
-        version: 2.2.1-pre.7(unocss@0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2)))
+        version: 2.2.1-pre.7(unocss@0.58.6(postcss@8.4.45)(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)))
       '@hiogawa/vite-glob-routes':
         specifier: workspace:*
         version: link:../..
@@ -639,7 +639,7 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
@@ -660,7 +660,7 @@ importers:
         version: 6.22.3(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)
       unocss:
         specifier: ^0.58.6
-        version: 0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 0.58.6(postcss@8.4.45)(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -684,7 +684,7 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       react:
         specifier: 19.0.0-rc-eb3ad065-20240822
         version: 19.0.0-rc-eb3ad065-20240822
@@ -695,8 +695,8 @@ importers:
         specifier: ^6.22.3
         version: 6.22.3(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-glob-routes/examples/ssr:
     devDependencies:
@@ -732,7 +732,7 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
@@ -749,39 +749,39 @@ importers:
         specifier: ^6.22.3
         version: 6.22.3(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-import-dev-server:
     dependencies:
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-node-miniflare:
     dependencies:
-      '@hattip/adapter-node':
-        specifier: ^0.0.44
-        version: 0.0.44
-      '@hattip/compose':
-        specifier: ^0.0.44
-        version: 0.0.44
-      miniflare:
-        specifier: ^3.20240821.2
-        version: 3.20240821.2
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     devDependencies:
-      '@hiogawa/tiny-rpc':
-        specifier: 0.2.3-pre.18
-        version: 0.2.3-pre.18
+      '@cloudflare/workers-types':
+        specifier: ^4.20240821.1
+        version: 4.20240909.0
+      '@hiogawa/utils-node':
+        specifier: ^0.0.2
+        version: 0.0.2
+      miniflare:
+        specifier: ^3.20240821.0
+        version: 3.20240821.2
+      wrangler:
+        specifier: ^3.76.0
+        version: 3.76.0(@cloudflare/workers-types@4.20240909.0)
 
   packages/vite-node-miniflare/examples/basic:
     dependencies:
       '@hiogawa/tiny-react':
         specifier: 0.0.2-pre.9
-        version: 0.0.2-pre.9(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 0.0.2-pre.9(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       '@hiogawa/vite-node-miniflare':
         specifier: latest
         version: link:../..
@@ -792,8 +792,8 @@ importers:
         specifier: ^3.20240821.2
         version: 3.20240821.2
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-node-miniflare/examples/react:
     dependencies:
@@ -808,7 +808,7 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       miniflare:
         specifier: ^3.20240821.2
         version: 3.20240821.2
@@ -819,8 +819,8 @@ importers:
         specifier: 19.0.0-rc-eb3ad065-20240822
         version: 19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822)
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-node-miniflare/examples/react-router:
     dependencies:
@@ -844,7 +844,7 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       miniflare:
         specifier: ^3.20240821.2
         version: 3.20240821.2
@@ -858,8 +858,8 @@ importers:
         specifier: ^6.22.3
         version: 6.22.3(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-node-miniflare/examples/remix:
     dependencies:
@@ -887,13 +887,16 @@ importers:
         version: link:../..
       '@remix-run/dev':
         specifier: 2.8.1
-        version: 2.8.1(@types/node@20.14.10)(terser@5.31.2)(typescript@5.5.4)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(wrangler@3.76.0(@cloudflare/workers-types@4.20240909.0))
+        version: 2.8.1(@types/node@20.14.10)(terser@5.31.2)(typescript@5.5.4)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))(wrangler@3.76.0(@cloudflare/workers-types@4.20240909.0))
       '@types/react':
         specifier: 18.3.3
         version: 18.3.3
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
+      wrangler:
+        specifier: ^3.72.2
+        version: 3.76.0(@cloudflare/workers-types@4.20240909.0)
 
   packages/vite-null-export:
     dependencies:
@@ -901,8 +904,8 @@ importers:
         specifier: ^1.4.1
         version: 1.5.4
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-plugin-simple-hmr:
     dependencies:
@@ -910,8 +913,8 @@ importers:
         specifier: ^0.30.8
         version: 0.30.10
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     devDependencies:
       '@types/estree':
         specifier: ^1.0.5
@@ -929,8 +932,8 @@ importers:
   packages/vite-plugin-ssr-middleware:
     dependencies:
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   packages/vite-plugin-ssr-middleware/examples/react:
     dependencies:
@@ -945,7 +948,7 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+        version: 4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
       react:
         specifier: 19.0.0-rc-eb3ad065-20240822
         version: 19.0.0-rc-eb3ad065-20240822
@@ -953,8 +956,8 @@ importers:
         specifier: 19.0.0-rc-eb3ad065-20240822
         version: 19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822)
       vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+        specifier: 6.0.0-beta.1
+        version: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
 packages:
 
@@ -1994,7 +1997,7 @@ packages:
   '@hiogawa/theme-script@0.0.4-pre.3':
     resolution: {integrity: sha512-2uxVhemdAMUFE/OaUcaTT2QeZsXnxtnF/CLNs+CcrlgwaUXXfsnXUTvUZCz8MTmxzzz4Vp5hfAyi4pp58XHJCQ==}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
     peerDependenciesMeta:
       vite:
         optional: true
@@ -2025,7 +2028,7 @@ packages:
   '@hiogawa/tiny-react@0.0.2-pre.9':
     resolution: {integrity: sha512-q5zIFwmJMMLbq4g0e/2/AKaggjsOl0dQ6fAiG7k/PjOdj3/xWJvcxr7oCOzybEuxR7oNIOgsBhydBqZPRQ+BLQ==}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
     peerDependenciesMeta:
       vite:
         optional: true
@@ -2160,7 +2163,7 @@ packages:
     peerDependencies:
       '@remix-run/serve': ^2.8.1
       typescript: ^5.1.0
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
       wrangler: ^3.28.2
     peerDependenciesMeta:
       '@remix-run/serve':
@@ -2243,8 +2246,18 @@ packages:
     cpu: [arm]
     os: [android]
 
+  '@rollup/rollup-android-arm-eabi@4.21.2':
+    resolution: {integrity: sha512-fSuPrt0ZO8uXeS+xP3b+yYTCBUd05MoSp2N/MFOgjhhUhMmchXlpTQrTpI8T+YAwAQuK7MafsCOxW7VrPMrJcg==}
+    cpu: [arm]
+    os: [android]
+
   '@rollup/rollup-android-arm64@4.18.1':
     resolution: {integrity: sha512-F/tkdw0WSs4ojqz5Ovrw5r9odqzFjb5LIgHdHZG65dFI1lWTWRVy32KDJLKRISHgJvqUeUhdIvy43fX41znyDg==}
+    cpu: [arm64]
+    os: [android]
+
+  '@rollup/rollup-android-arm64@4.21.2':
+    resolution: {integrity: sha512-xGU5ZQmPlsjQS6tzTTGwMsnKUtu0WVbl0hYpTPauvbRAnmIvpInhJtgjj3mcuJpEiuUw4v1s4BimkdfDWlh7gA==}
     cpu: [arm64]
     os: [android]
 
@@ -2253,8 +2266,18 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@rollup/rollup-darwin-arm64@4.21.2':
+    resolution: {integrity: sha512-99AhQ3/ZMxU7jw34Sq8brzXqWH/bMnf7ZVhvLk9QU2cOepbQSVTns6qoErJmSiAvU3InRqC2RRZ5ovh1KN0d0Q==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@rollup/rollup-darwin-x64@4.18.1':
     resolution: {integrity: sha512-IgpzXKauRe1Tafcej9STjSSuG0Ghu/xGYH+qG6JwsAUxXrnkvNHcq/NL6nz1+jzvWAnQkuAJ4uIwGB48K9OCGA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@rollup/rollup-darwin-x64@4.21.2':
+    resolution: {integrity: sha512-ZbRaUvw2iN/y37x6dY50D8m2BnDbBjlnMPotDi/qITMJ4sIxNY33HArjikDyakhSv0+ybdUxhWxE6kTI4oX26w==}
     cpu: [x64]
     os: [darwin]
 
@@ -2263,8 +2286,18 @@ packages:
     cpu: [arm]
     os: [linux]
 
+  '@rollup/rollup-linux-arm-gnueabihf@4.21.2':
+    resolution: {integrity: sha512-ztRJJMiE8nnU1YFcdbd9BcH6bGWG1z+jP+IPW2oDUAPxPjo9dverIOyXz76m6IPA6udEL12reYeLojzW2cYL7w==}
+    cpu: [arm]
+    os: [linux]
+
   '@rollup/rollup-linux-arm-musleabihf@4.18.1':
     resolution: {integrity: sha512-5RnjpACoxtS+aWOI1dURKno11d7krfpGDEn19jI8BuWmSBbUC4ytIADfROM1FZrFhQPSoP+KEa3NlEScznBTyQ==}
+    cpu: [arm]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm-musleabihf@4.21.2':
+    resolution: {integrity: sha512-flOcGHDZajGKYpLV0JNc0VFH361M7rnV1ee+NTeC/BQQ1/0pllYcFmxpagltANYt8FYf9+kL6RSk80Ziwyhr7w==}
     cpu: [arm]
     os: [linux]
 
@@ -2273,8 +2306,18 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@rollup/rollup-linux-arm64-gnu@4.21.2':
+    resolution: {integrity: sha512-69CF19Kp3TdMopyteO/LJbWufOzqqXzkrv4L2sP8kfMaAQ6iwky7NoXTp7bD6/irKgknDKM0P9E/1l5XxVQAhw==}
+    cpu: [arm64]
+    os: [linux]
+
   '@rollup/rollup-linux-arm64-musl@4.18.1':
     resolution: {integrity: sha512-dJX9u4r4bqInMGOAQoGYdwDP8lQiisWb9et+T84l2WXk41yEej8v2iGKodmdKimT8cTAYt0jFb+UEBxnPkbXEQ==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm64-musl@4.21.2':
+    resolution: {integrity: sha512-48pD/fJkTiHAZTnZwR0VzHrao70/4MlzJrq0ZsILjLW/Ab/1XlVUStYyGt7tdyIiVSlGZbnliqmult/QGA2O2w==}
     cpu: [arm64]
     os: [linux]
 
@@ -2283,8 +2326,18 @@ packages:
     cpu: [ppc64]
     os: [linux]
 
+  '@rollup/rollup-linux-powerpc64le-gnu@4.21.2':
+    resolution: {integrity: sha512-cZdyuInj0ofc7mAQpKcPR2a2iu4YM4FQfuUzCVA2u4HI95lCwzjoPtdWjdpDKyHxI0UO82bLDoOaLfpZ/wviyQ==}
+    cpu: [ppc64]
+    os: [linux]
+
   '@rollup/rollup-linux-riscv64-gnu@4.18.1':
     resolution: {integrity: sha512-f+pJih7sxoKmbjghrM2RkWo2WHUW8UbfxIQiWo5yeCaCM0TveMEuAzKJte4QskBp1TIinpnRcxkquY+4WuY/tg==}
+    cpu: [riscv64]
+    os: [linux]
+
+  '@rollup/rollup-linux-riscv64-gnu@4.21.2':
+    resolution: {integrity: sha512-RL56JMT6NwQ0lXIQmMIWr1SW28z4E4pOhRRNqwWZeXpRlykRIlEpSWdsgNWJbYBEWD84eocjSGDu/XxbYeCmwg==}
     cpu: [riscv64]
     os: [linux]
 
@@ -2293,8 +2346,18 @@ packages:
     cpu: [s390x]
     os: [linux]
 
+  '@rollup/rollup-linux-s390x-gnu@4.21.2':
+    resolution: {integrity: sha512-PMxkrWS9z38bCr3rWvDFVGD6sFeZJw4iQlhrup7ReGmfn7Oukrr/zweLhYX6v2/8J6Cep9IEA/SmjXjCmSbrMQ==}
+    cpu: [s390x]
+    os: [linux]
+
   '@rollup/rollup-linux-x64-gnu@4.18.1':
     resolution: {integrity: sha512-7O5u/p6oKUFYjRbZkL2FLbwsyoJAjyeXHCU3O4ndvzg2OFO2GinFPSJFGbiwFDaCFc+k7gs9CF243PwdPQFh5g==}
+    cpu: [x64]
+    os: [linux]
+
+  '@rollup/rollup-linux-x64-gnu@4.21.2':
+    resolution: {integrity: sha512-B90tYAUoLhU22olrafY3JQCFLnT3NglazdwkHyxNDYF/zAxJt5fJUB/yBoWFoIQ7SQj+KLe3iL4BhOMa9fzgpw==}
     cpu: [x64]
     os: [linux]
 
@@ -2303,8 +2366,18 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@rollup/rollup-linux-x64-musl@4.21.2':
+    resolution: {integrity: sha512-7twFizNXudESmC9oneLGIUmoHiiLppz/Xs5uJQ4ShvE6234K0VB1/aJYU3f/4g7PhssLGKBVCC37uRkkOi8wjg==}
+    cpu: [x64]
+    os: [linux]
+
   '@rollup/rollup-win32-arm64-msvc@4.18.1':
     resolution: {integrity: sha512-W2ZNI323O/8pJdBGil1oCauuCzmVd9lDmWBBqxYZcOqWD6aWqJtVBQ1dFrF4dYpZPks6F+xCZHfzG5hYlSHZ6g==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@rollup/rollup-win32-arm64-msvc@4.21.2':
+    resolution: {integrity: sha512-9rRero0E7qTeYf6+rFh3AErTNU1VCQg2mn7CQcI44vNUWM9Ze7MSRS/9RFuSsox+vstRt97+x3sOhEey024FRQ==}
     cpu: [arm64]
     os: [win32]
 
@@ -2313,8 +2386,18 @@ packages:
     cpu: [ia32]
     os: [win32]
 
+  '@rollup/rollup-win32-ia32-msvc@4.21.2':
+    resolution: {integrity: sha512-5rA4vjlqgrpbFVVHX3qkrCo/fZTj1q0Xxpg+Z7yIo3J2AilW7t2+n6Q8Jrx+4MrYpAnjttTYF8rr7bP46BPzRw==}
+    cpu: [ia32]
+    os: [win32]
+
   '@rollup/rollup-win32-x64-msvc@4.18.1':
     resolution: {integrity: sha512-yjk2MAkQmoaPYCSu35RLJ62+dz358nE83VfTePJRp8CG7aMg25mEJYpXFiD+NcevhX8LxD5OP5tktPXnXN7GDw==}
+    cpu: [x64]
+    os: [win32]
+
+  '@rollup/rollup-win32-x64-msvc@4.21.2':
+    resolution: {integrity: sha512-6UUxd0+SKomjdzuAcp+HAmxw1FlGBnl1v2yEPSabtx4lBfdXHDVsW7+lQkgz9cNFJGY3AWR7+V8P5BqkD9L9nA==}
     cpu: [x64]
     os: [win32]
 
@@ -2548,7 +2631,7 @@ packages:
   '@unocss/astro@0.58.6':
     resolution: {integrity: sha512-0BvbhEp5Ln6wFNnhISusB2hcfycWkdgnjlFMcLT69efvj4G39MzB6JYT/1qiidLfpj35HcqkpBz7TfZ4bUmOAw==}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
     peerDependenciesMeta:
       vite:
         optional: true
@@ -2629,7 +2712,7 @@ packages:
   '@unocss/vite@0.58.6':
     resolution: {integrity: sha512-DPXCoYU/Ozqc/Jeptd41XvtW8MSgVxmtTyhpMAsm/hJuBfwIV7Fy3TZquf4V9BpaTb4ao1LVXzgXmVUmj2HXpA==}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
 
   '@vanilla-extract/babel-plugin-debug-ids@1.0.5':
     resolution: {integrity: sha512-Rc9A6ylsw7EBErmpgqCMvc/Z/eEZxI5k1xfLQHw7f5HHh3oc5YfzsAsYU/PdmSNjF1dp3sGEViBdDltvwnfVaA==}
@@ -2650,13 +2733,13 @@ packages:
   '@vitejs/plugin-react-swc@3.7.0':
     resolution: {integrity: sha512-yrknSb3Dci6svCd/qhHqhFPDSw0QtjumcqdKMoNNzmOl5lMXTTiqzjWtG4Qask2HdvvzaNgSunbQGet8/GrKdA==}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
 
   '@vitejs/plugin-react@4.3.1':
     resolution: {integrity: sha512-m/V2syj5CuVnaxcUJOQRel/Wr31FFXRFlnOoq1TVtkCxsY5veGMTEmpWHndrhB2U8ScHtCQB1e+4hWYExQc6Lg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
 
   '@vitest/expect@2.0.1':
     resolution: {integrity: sha512-yw70WL3ZwzbI2O3MOXYP2Shf4vqVkS3q5FckLJ6lhT9VMMtDyWdofD53COZcoeuHwsBymdOZp99r5bOr5g+oeA==}
@@ -4555,6 +4638,10 @@ packages:
     resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
     engines: {node: ^10 || ^12 || >=14}
 
+  postcss@8.4.45:
+    resolution: {integrity: sha512-7KTLTdzdZZYscUc65XmjFiB73vBhBfbPztCYdUNvlaso9PrzjzcmjqBPR0lNGkcVlcO4BjiO5rK/qNz+XAen1Q==}
+    engines: {node: ^10 || ^12 || >=14}
+
   prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
@@ -4760,6 +4847,11 @@ packages:
 
   rollup@4.18.1:
     resolution: {integrity: sha512-Elx2UT8lzxxOXMpy5HWQGZqkrQOtrVDDa/bm9l10+U4rQnVzbL/LgZ4NOM1MPIDyHk69W4InuYDF5dzRh4Kw1A==}
+    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
+    hasBin: true
+
+  rollup@4.21.2:
+    resolution: {integrity: sha512-e3TapAgYf9xjdLvKQCkQTnbTKd4a6jwlpQSJJFokHGaX2IVjoEqkIIhiQfqsi0cdwlOD+tQGuOd5AJkc5RngBw==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -5266,7 +5358,7 @@ packages:
     engines: {node: '>=14'}
     peerDependencies:
       '@unocss/webpack': 0.58.6
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
     peerDependenciesMeta:
       '@unocss/webpack':
         optional: true
@@ -5345,13 +5437,13 @@ packages:
   vite-tsconfig-paths@4.3.2:
     resolution: {integrity: sha512-0Vd/a6po6Q+86rPlntHye7F31zA2URZMbH8M3saAZ/xR9QoGN/L21bxEGfXdWmFdNkqPpRdxFT7nmNe12e9/uA==}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
     peerDependenciesMeta:
       vite:
         optional: true
 
-  vite@5.3.3:
-    resolution: {integrity: sha512-NPQdeCU0Dv2z5fu+ULotpuq5yfCS1BzKUIPhNbP3YBfAMGJXbt2nS+sbTFu+qchaqWTD+H3JK++nRwr6XIcp6A==}
+  vite@6.0.0-beta.1:
+    resolution: {integrity: sha512-E22XKY2pvL12/sJV4oEtoOnMC6HPaC3HmSBFAjwWontAtbf0Oj2eK3sYgg3ggWvfNx1PlKDdOccxMD4wXGKwPQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -5359,6 +5451,7 @@ packages:
       less: '*'
       lightningcss: ^1.21.0
       sass: '*'
+      sass-embedded: '*'
       stylus: '*'
       sugarss: '*'
       terser: ^5.4.0
@@ -5371,6 +5464,8 @@ packages:
         optional: true
       sass:
         optional: true
+      sass-embedded:
+        optional: true
       stylus:
         optional: true
       sugarss:
@@ -5381,7 +5476,7 @@ packages:
   vitefu@0.2.5:
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
     peerDependencies:
-      vite: ^5.3.3
+      vite: 6.0.0-beta.1
     peerDependenciesMeta:
       vite:
         optional: true
@@ -6261,9 +6356,9 @@ snapshots:
     dependencies:
       react: 19.0.0-rc-eb3ad065-20240822
 
-  '@hiogawa/theme-script@0.0.4-pre.3(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))':
+  '@hiogawa/theme-script@0.0.4-pre.3(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))':
     optionalDependencies:
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   '@hiogawa/tiny-cli@0.0.4-pre.1': {}
 
@@ -6277,9 +6372,9 @@ snapshots:
     optionalDependencies:
       react: 19.0.0-rc-eb3ad065-20240822
 
-  '@hiogawa/tiny-react@0.0.2-pre.9(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))':
+  '@hiogawa/tiny-react@0.0.2-pre.9(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))':
     optionalDependencies:
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   '@hiogawa/tiny-rpc@0.2.3-pre.18': {}
 
@@ -6287,9 +6382,9 @@ snapshots:
     optionalDependencies:
       react: 19.0.0-rc-eb3ad065-20240822
 
-  '@hiogawa/unocss-preset-antd@2.2.1-pre.7(unocss@0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2)))':
+  '@hiogawa/unocss-preset-antd@2.2.1-pre.7(unocss@0.58.6(postcss@8.4.45)(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)))':
     dependencies:
-      unocss: 0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+      unocss: 0.58.6(postcss@8.4.45)(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
 
   '@hiogawa/utils-node@0.0.2': {}
 
@@ -6407,11 +6502,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/rollup@3.0.1(rollup@4.18.1)':
+  '@mdx-js/rollup@3.0.1(rollup@4.21.2)':
     dependencies:
       '@mdx-js/mdx': 3.0.1
-      '@rollup/pluginutils': 5.1.0(rollup@4.18.1)
-      rollup: 4.18.1
+      '@rollup/pluginutils': 5.1.0(rollup@4.21.2)
+      rollup: 4.21.2
       source-map: 0.7.4
       vfile: 6.0.2
     transitivePeerDependencies:
@@ -6473,7 +6568,7 @@ snapshots:
 
   '@polka/url@1.0.0-next.25': {}
 
-  '@remix-run/dev@2.8.1(@types/node@20.14.10)(terser@5.31.2)(typescript@5.5.4)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(wrangler@3.76.0(@cloudflare/workers-types@4.20240909.0))':
+  '@remix-run/dev@2.8.1(@types/node@20.14.10)(terser@5.31.2)(typescript@5.5.4)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))(wrangler@3.76.0(@cloudflare/workers-types@4.20240909.0))':
     dependencies:
       '@babel/core': 7.24.7
       '@babel/generator': 7.24.7
@@ -6530,7 +6625,7 @@ snapshots:
       ws: 7.5.9
     optionalDependencies:
       typescript: 5.5.4
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
       wrangler: 3.76.0(@cloudflare/workers-types@4.20240909.0)
     transitivePeerDependencies:
       - '@types/node'
@@ -6539,6 +6634,7 @@ snapshots:
       - less
       - lightningcss
       - sass
+      - sass-embedded
       - stylus
       - sugarss
       - supports-color
@@ -6615,60 +6711,108 @@ snapshots:
 
   '@resvg/resvg-wasm@2.4.0': {}
 
-  '@rollup/pluginutils@5.1.0(rollup@4.18.1)':
+  '@rollup/pluginutils@5.1.0(rollup@4.21.2)':
     dependencies:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
     optionalDependencies:
-      rollup: 4.18.1
+      rollup: 4.21.2
 
   '@rollup/rollup-android-arm-eabi@4.18.1':
+    optional: true
+
+  '@rollup/rollup-android-arm-eabi@4.21.2':
     optional: true
 
   '@rollup/rollup-android-arm64@4.18.1':
     optional: true
 
+  '@rollup/rollup-android-arm64@4.21.2':
+    optional: true
+
   '@rollup/rollup-darwin-arm64@4.18.1':
+    optional: true
+
+  '@rollup/rollup-darwin-arm64@4.21.2':
     optional: true
 
   '@rollup/rollup-darwin-x64@4.18.1':
     optional: true
 
+  '@rollup/rollup-darwin-x64@4.21.2':
+    optional: true
+
   '@rollup/rollup-linux-arm-gnueabihf@4.18.1':
+    optional: true
+
+  '@rollup/rollup-linux-arm-gnueabihf@4.21.2':
     optional: true
 
   '@rollup/rollup-linux-arm-musleabihf@4.18.1':
     optional: true
 
+  '@rollup/rollup-linux-arm-musleabihf@4.21.2':
+    optional: true
+
   '@rollup/rollup-linux-arm64-gnu@4.18.1':
+    optional: true
+
+  '@rollup/rollup-linux-arm64-gnu@4.21.2':
     optional: true
 
   '@rollup/rollup-linux-arm64-musl@4.18.1':
     optional: true
 
+  '@rollup/rollup-linux-arm64-musl@4.21.2':
+    optional: true
+
   '@rollup/rollup-linux-powerpc64le-gnu@4.18.1':
+    optional: true
+
+  '@rollup/rollup-linux-powerpc64le-gnu@4.21.2':
     optional: true
 
   '@rollup/rollup-linux-riscv64-gnu@4.18.1':
     optional: true
 
+  '@rollup/rollup-linux-riscv64-gnu@4.21.2':
+    optional: true
+
   '@rollup/rollup-linux-s390x-gnu@4.18.1':
+    optional: true
+
+  '@rollup/rollup-linux-s390x-gnu@4.21.2':
     optional: true
 
   '@rollup/rollup-linux-x64-gnu@4.18.1':
     optional: true
 
+  '@rollup/rollup-linux-x64-gnu@4.21.2':
+    optional: true
+
   '@rollup/rollup-linux-x64-musl@4.18.1':
+    optional: true
+
+  '@rollup/rollup-linux-x64-musl@4.21.2':
     optional: true
 
   '@rollup/rollup-win32-arm64-msvc@4.18.1':
     optional: true
 
+  '@rollup/rollup-win32-arm64-msvc@4.21.2':
+    optional: true
+
   '@rollup/rollup-win32-ia32-msvc@4.18.1':
     optional: true
 
+  '@rollup/rollup-win32-ia32-msvc@4.21.2':
+    optional: true
+
   '@rollup/rollup-win32-x64-msvc@4.18.1':
+    optional: true
+
+  '@rollup/rollup-win32-x64-msvc@4.21.2':
     optional: true
 
   '@shikijs/core@1.12.1':
@@ -6898,20 +7042,20 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@unocss/astro@0.58.6(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))':
+  '@unocss/astro@0.58.6(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))':
     dependencies:
       '@unocss/core': 0.58.6
       '@unocss/reset': 0.58.6
-      '@unocss/vite': 0.58.6(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+      '@unocss/vite': 0.58.6(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
     optionalDependencies:
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - rollup
 
-  '@unocss/cli@0.58.6(rollup@4.18.1)':
+  '@unocss/cli@0.58.6(rollup@4.21.2)':
     dependencies:
       '@ampproject/remapping': 2.3.0
-      '@rollup/pluginutils': 5.1.0(rollup@4.18.1)
+      '@rollup/pluginutils': 5.1.0(rollup@4.21.2)
       '@unocss/config': 0.58.6
       '@unocss/core': 0.58.6
       '@unocss/preset-uno': 0.58.6
@@ -6944,7 +7088,7 @@ snapshots:
       gzip-size: 6.0.0
       sirv: 2.0.4
 
-  '@unocss/postcss@0.58.6(postcss@8.4.39)':
+  '@unocss/postcss@0.58.6(postcss@8.4.45)':
     dependencies:
       '@unocss/config': 0.58.6
       '@unocss/core': 0.58.6
@@ -6952,7 +7096,7 @@ snapshots:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.10
-      postcss: 8.4.39
+      postcss: 8.4.45
 
   '@unocss/preset-attributify@0.58.6':
     dependencies:
@@ -7035,10 +7179,10 @@ snapshots:
     dependencies:
       '@unocss/core': 0.58.6
 
-  '@unocss/vite@0.58.6(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))':
+  '@unocss/vite@0.58.6(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))':
     dependencies:
       '@ampproject/remapping': 2.3.0
-      '@rollup/pluginutils': 5.1.0(rollup@4.18.1)
+      '@rollup/pluginutils': 5.1.0(rollup@4.21.2)
       '@unocss/config': 0.58.6
       '@unocss/core': 0.58.6
       '@unocss/inspector': 0.58.6
@@ -7047,7 +7191,7 @@ snapshots:
       chokidar: 3.6.0
       fast-glob: 3.3.2
       magic-string: 0.30.10
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - rollup
 
@@ -7084,13 +7228,14 @@ snapshots:
       lodash: 4.17.21
       mlly: 1.6.1
       outdent: 0.8.0
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
       vite-node: 1.4.0(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - '@types/node'
       - less
       - lightningcss
       - sass
+      - sass-embedded
       - stylus
       - sugarss
       - supports-color
@@ -7104,21 +7249,21 @@ snapshots:
       satori: 0.10.9
       yoga-wasm-web: 0.3.3
 
-  '@vitejs/plugin-react-swc@3.7.0(@swc/helpers@0.5.12)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))':
+  '@vitejs/plugin-react-swc@3.7.0(@swc/helpers@0.5.12)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))':
     dependencies:
       '@swc/core': 1.6.13(@swc/helpers@0.5.12)
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@vitejs/plugin-react@4.3.1(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))':
+  '@vitejs/plugin-react@4.3.1(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))':
     dependencies:
       '@babel/core': 7.24.7
       '@babel/plugin-transform-react-jsx-self': 7.24.7(@babel/core@7.24.7)
       '@babel/plugin-transform-react-jsx-source': 7.24.7(@babel/core@7.24.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -9444,6 +9589,13 @@ snapshots:
     optionalDependencies:
       postcss: 8.4.39
 
+  postcss-load-config@4.0.2(postcss@8.4.45):
+    dependencies:
+      lilconfig: 3.1.1
+      yaml: 2.4.1
+    optionalDependencies:
+      postcss: 8.4.45
+
   postcss-modules-extract-imports@3.0.0(postcss@8.4.39):
     dependencies:
       postcss: 8.4.39
@@ -9495,6 +9647,12 @@ snapshots:
   postcss-value-parser@4.2.0: {}
 
   postcss@8.4.39:
+    dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.0.1
+      source-map-js: 1.2.0
+
+  postcss@8.4.45:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.0.1
@@ -9756,6 +9914,28 @@ snapshots:
       '@rollup/rollup-win32-arm64-msvc': 4.18.1
       '@rollup/rollup-win32-ia32-msvc': 4.18.1
       '@rollup/rollup-win32-x64-msvc': 4.18.1
+      fsevents: 2.3.3
+
+  rollup@4.21.2:
+    dependencies:
+      '@types/estree': 1.0.5
+    optionalDependencies:
+      '@rollup/rollup-android-arm-eabi': 4.21.2
+      '@rollup/rollup-android-arm64': 4.21.2
+      '@rollup/rollup-darwin-arm64': 4.21.2
+      '@rollup/rollup-darwin-x64': 4.21.2
+      '@rollup/rollup-linux-arm-gnueabihf': 4.21.2
+      '@rollup/rollup-linux-arm-musleabihf': 4.21.2
+      '@rollup/rollup-linux-arm64-gnu': 4.21.2
+      '@rollup/rollup-linux-arm64-musl': 4.21.2
+      '@rollup/rollup-linux-powerpc64le-gnu': 4.21.2
+      '@rollup/rollup-linux-riscv64-gnu': 4.21.2
+      '@rollup/rollup-linux-s390x-gnu': 4.21.2
+      '@rollup/rollup-linux-x64-gnu': 4.21.2
+      '@rollup/rollup-linux-x64-musl': 4.21.2
+      '@rollup/rollup-win32-arm64-msvc': 4.21.2
+      '@rollup/rollup-win32-ia32-msvc': 4.21.2
+      '@rollup/rollup-win32-x64-msvc': 4.21.2
       fsevents: 2.3.3
 
   run-parallel@1.2.0:
@@ -10163,7 +10343,7 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsup@8.1.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(postcss@8.4.39)(typescript@5.5.4):
+  tsup@8.1.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(postcss@8.4.45)(typescript@5.5.4):
     dependencies:
       bundle-require: 4.2.1(esbuild@0.21.5)
       cac: 6.7.14
@@ -10173,7 +10353,7 @@ snapshots:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 4.0.2(postcss@8.4.39)
+      postcss-load-config: 4.0.2(postcss@8.4.45)
       resolve-from: 5.0.0
       rollup: 4.18.1
       source-map: 0.8.0-beta.0
@@ -10181,7 +10361,7 @@ snapshots:
       tree-kill: 1.2.2
     optionalDependencies:
       '@swc/core': 1.6.13(@swc/helpers@0.5.12)
-      postcss: 8.4.39
+      postcss: 8.4.45
       typescript: 5.5.4
     transitivePeerDependencies:
       - supports-color
@@ -10326,13 +10506,13 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss@0.58.6(postcss@8.4.39)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2)):
+  unocss@0.58.6(postcss@8.4.45)(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)):
     dependencies:
-      '@unocss/astro': 0.58.6(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
-      '@unocss/cli': 0.58.6(rollup@4.18.1)
+      '@unocss/astro': 0.58.6(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
+      '@unocss/cli': 0.58.6(rollup@4.21.2)
       '@unocss/core': 0.58.6
       '@unocss/extractor-arbitrary-variants': 0.58.6
-      '@unocss/postcss': 0.58.6(postcss@8.4.39)
+      '@unocss/postcss': 0.58.6(postcss@8.4.45)
       '@unocss/preset-attributify': 0.58.6
       '@unocss/preset-icons': 0.58.6
       '@unocss/preset-mini': 0.58.6
@@ -10347,9 +10527,9 @@ snapshots:
       '@unocss/transformer-compile-class': 0.58.6
       '@unocss/transformer-directives': 0.58.6
       '@unocss/transformer-variant-group': 0.58.6
-      '@unocss/vite': 0.58.6(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
+      '@unocss/vite': 0.58.6(rollup@4.21.2)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2))
     optionalDependencies:
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -10438,12 +10618,13 @@ snapshots:
       debug: 4.3.5
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - '@types/node'
       - less
       - lightningcss
       - sass
+      - sass-embedded
       - stylus
       - sugarss
       - supports-color
@@ -10455,41 +10636,42 @@ snapshots:
       debug: 4.3.5
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - '@types/node'
       - less
       - lightningcss
       - sass
+      - sass-embedded
       - stylus
       - sugarss
       - supports-color
       - terser
 
-  vite-tsconfig-paths@4.3.2(typescript@5.5.4)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2)):
+  vite-tsconfig-paths@4.3.2(typescript@5.5.4)(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)):
     dependencies:
       debug: 4.3.5
       globrex: 0.1.2
       tsconfck: 3.1.0(typescript@5.5.4)
     optionalDependencies:
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.3.3(@types/node@20.14.10)(terser@5.31.2):
+  vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2):
     dependencies:
       esbuild: 0.21.5
-      postcss: 8.4.39
-      rollup: 4.18.1
+      postcss: 8.4.45
+      rollup: 4.21.2
     optionalDependencies:
       '@types/node': 20.14.10
       fsevents: 2.3.3
       terser: 5.31.2
 
-  vitefu@0.2.5(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2)):
+  vitefu@0.2.5(vite@6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)):
     optionalDependencies:
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
 
   vitest@2.0.1(@types/node@20.14.10)(terser@5.31.2):
     dependencies:
@@ -10508,7 +10690,7 @@ snapshots:
       std-env: 3.7.0
       tinybench: 2.8.0
       tinypool: 1.0.0
-      vite: 5.3.3(@types/node@20.14.10)(terser@5.31.2)
+      vite: 6.0.0-beta.1(@types/node@20.14.10)(terser@5.31.2)
       vite-node: 2.0.1(@types/node@20.14.10)(terser@5.31.2)
       why-is-node-running: 2.3.0
     optionalDependencies:
@@ -10517,6 +10699,7 @@ snapshots:
       - less
       - lightningcss
       - sass
+      - sass-embedded
       - stylus
       - sugarss
       - supports-color
