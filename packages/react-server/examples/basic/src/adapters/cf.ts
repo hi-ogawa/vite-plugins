@@ -7,7 +7,7 @@ export default {
     // https://github.com/cloudflare/workers-sdk/issues/6577
     if (env.LOCAL_PREVIEW) {
       let headers = response.headers;
-      if (!headers.has("content-encoding")) {
+      if (response.status === 200 && !headers.has("content-encoding")) {
         headers = new Headers(headers);
         headers.set("content-encoding", "identity");
         return new Response(response.body, { ...response, headers });
