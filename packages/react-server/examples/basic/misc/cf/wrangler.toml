@@ -1,9 +1,7 @@
 name = "rsc-experiment"
 
 main = "dist/main.js"
-assets = "dist/client"
+assets = { directory = "dist/client" }
 workers_dev = true
-compatibility_date = "2024-01-01"
-# for now we need full `nodejs_compat` instead of `nodejs_als`
-# https://github.com/cloudflare/workers-sdk/issues/6011
-compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2024-09-19"
+compatibility_flags = ["nodejs_als"]
