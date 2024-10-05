@@ -19,7 +19,7 @@
     "vc-release": "vercel deploy --prod --prebuilt misc/vercel",
     "vc-release-staging": "vercel deploy --prebuilt misc/vercel",
     "cf-build": "CF_PAGES=1 SSR_ENTRY=/src/adapters/cf pnpm build && node misc/cf/build.js",
-    "cf-preview": "cd misc/cf && wrangler dev",
+    "cf-preview": "cd misc/cf && wrangler dev --var LOCAL_PREVIEW:true",
     "cf-release": "cd misc/cf && wrangler deploy"
   },
   "dependencies": {
