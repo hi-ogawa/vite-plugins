@@ -116,11 +116,15 @@ function nextOgPlugin(): Plugin[] {
 }
 
 // workaround https://github.com/vitejs/vite/issues/17689
-const initEnvKeys = new Set(Object.keys(process.env));
+let initEnvKeys: typeof process.env | undefined;
 
 function resetEnv() {
+  if (!initEnvKeys) {
+    initEnvKeys = { ...process.env };
+    return;
+  }
   for (const k in process.env) {
-    if (!initEnvKeys.has(k)) {
+    if (!(k in initEnvKeys)) {
       delete process.env[k];
     }
   }
