@@ -185,8 +185,6 @@ test("dotenv", async ({ page }) => {
   );
 
   if (!process.env.E2E_PREVIEW) {
-    // TODO: dotenv reload not working
-    // https://github.com/vitejs/vite/issues/17689
     const reloadPromise = page.waitForEvent("load");
     using file = createEditor(".env");
     file.edit((s) =>
@@ -196,10 +194,10 @@ test("dotenv", async ({ page }) => {
     );
     await reloadPromise;
     await expect(page.getByTestId("process.env")).toContainText(
-      '{ "SECRET_ENV_TEST": "ok", "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+      '{ "SECRET_ENV_TEST": "edit", "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "edit" }',
     );
     await expect(page.getByTestId("import.meta.env")).toContainText(
-      '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "ok" }',
+      '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "edit" }',
     );
   }
 });

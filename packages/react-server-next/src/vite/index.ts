@@ -128,9 +128,24 @@ function nextConfigPlugin(): Plugin {
       };
     },
     configResolved(config) {
-      Object.assign(process.env, loadEnv(config.mode, config.envDir, ""));
+      updateEnv(() => loadEnv(config.mode, config.envDir, ""));
     },
   };
+}
+
+// workaround https://github.com/vitejs/vite/issues/17689
+(globalThis as any).__next_vite_last_env__ ??= [];
+declare let __next_vite_last_env__: string[];
+
+function updateEnv(loadEnv: () => Record<string, string>) {
+  for (const key of __next_vite_last_env__) {
+    delete process.env[key];
+  }
+  const loadedEnv = loadEnv();
+  __next_vite_last_env__ = Object.keys(loadedEnv).filter(
+    (key) => !(key in process.env),
+  );
+  Object.assign(process.env, loadedEnv);
 }
 
 function nextJsxPlugin(): Plugin {
