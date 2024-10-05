@@ -115,6 +115,17 @@ function nextOgPlugin(): Plugin[] {
   ];
 }
 
+// workaround https://github.com/vitejs/vite/issues/17689
+const initEnvKeys = new Set(Object.keys(process.env));
+
+function resetEnv() {
+  for (const k in process.env) {
+    if (!initEnvKeys.has(k)) {
+      delete process.env[k];
+    }
+  }
+}
+
 function nextConfigPlugin(): Plugin {
   return {
     name: nextConfigPlugin.name,
@@ -128,6 +139,7 @@ function nextConfigPlugin(): Plugin {
       };
     },
     configResolved(config) {
+      resetEnv();
       Object.assign(process.env, loadEnv(config.mode, config.envDir, ""));
     },
   };
