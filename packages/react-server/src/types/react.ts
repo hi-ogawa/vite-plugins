@@ -6,8 +6,8 @@
 export interface ImportManifestEntry {
   id: string;
   name: string;
-  // TODO
   chunks: string[];
+  async?: boolean;
 }
 
 export interface BundlerConfig {
