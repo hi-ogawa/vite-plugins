@@ -53,7 +53,7 @@
   "devDependencies": {
     "@hiogawa/react-server": "workspace:*",
     "@hiogawa/utils-node": "^0.0.2",
-    "wrangler": "^3.76.0"
+    "wrangler": "^3.79.0"
   },
   "peerDependencies": {
     "@hiogawa/react-server": "*",
