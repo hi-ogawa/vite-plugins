@@ -556,12 +556,18 @@ importers:
       '@hattip/compose':
         specifier: ^0.0.44
         version: 0.0.44
+      react:
+        specifier: 19.0.0-rc-09111202-20241011
+        version: 19.0.0-rc-09111202-20241011
+      react-dom:
+        specifier: 19.0.0-rc-09111202-20241011
+        version: 19.0.0-rc-09111202-20241011(react@19.0.0-rc-09111202-20241011)
       react-router:
         specifier: ^6.22.3
-        version: 6.22.3(react@19.0.0-rc-eb3ad065-20240822)
+        version: 6.22.3(react@19.0.0-rc-09111202-20241011)
       react-router-dom:
         specifier: ^6.22.3
-        version: 6.22.3(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822)
+        version: 6.22.3(react-dom@19.0.0-rc-09111202-20241011(react@19.0.0-rc-09111202-20241011))(react@19.0.0-rc-09111202-20241011)
 
   packages/vite-glob-routes/examples/demo:
     devDependencies:
@@ -4630,11 +4636,6 @@ packages:
     peerDependencies:
       react: 19.0.0-rc-09111202-20241011
 
-  react-dom@19.0.0-rc-eb3ad065-20240822:
-    resolution: {integrity: sha512-PkEZhqpGHRKgX6+pbh/TA/P00evzbekvVgHYdZATzq5Alt0pO+v9VQeoJiVJUCmx6hfX3/7J9Q6d3X11Dv9X0w==}
-    peerDependencies:
-      react: 19.0.0-rc-09111202-20241011
-
   react-is@19.0.0-rc-09111202-20241011:
     resolution: {integrity: sha512-r6jpkK8M3yTEfK2rRUlWa/yg6JBFh24/qKPZyyc1DjrlcQiMZfTIzFWGPqbhh+eZdVQqDHNns745SjJt7i3+2Q==}
 
@@ -4676,10 +4677,6 @@ packages:
 
   react@19.0.0-rc-09111202-20241011:
     resolution: {integrity: sha512-kAz5u4PAPQJI2VJzUrYC/p82CoPcl/KD7i1tHe+nu3RezaAvHGCZY339bLFMBzY91jnJoo07JQZ6UsqivtQ2vQ==}
-    engines: {node: '>=0.10.0'}
-
-  react@19.0.0-rc-eb3ad065-20240822:
-    resolution: {integrity: sha512-513yEft7EGkntyU77wVBDXtUaEBVCaegbqBuNP4YfsDjvIgNrbVpJVW3JoSdfEpXPWaqlS89ALb3mRmJpDYbUQ==}
     engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
@@ -4791,9 +4788,6 @@ packages:
 
   scheduler@0.25.0-rc-09111202-20241011:
     resolution: {integrity: sha512-XIsordE2/I3s52ujwT5PZIxHMQca8L2ca6Gu3o0YHXDVTYucwXQW6m8/2fVKqfzoJRH1ne7/49M7/5Wick8qOA==}
-
-  scheduler@0.25.0-rc-eb3ad065-20240822:
-    resolution: {integrity: sha512-9hA+IyqsTvVrALciz4PEG5z4PecftOsp+JEMLqkywELxVD+7H73pO/Ig9BI0pDCcq+d6uyaYWo5Kbnv3J37nXg==}
 
   schema-utils@3.3.0:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
@@ -9584,11 +9578,6 @@ snapshots:
       react: 19.0.0-rc-09111202-20241011
       scheduler: 0.25.0-rc-09111202-20241011
 
-  react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822):
-    dependencies:
-      react: 19.0.0-rc-eb3ad065-20240822
-      scheduler: 0.25.0-rc-eb3ad065-20240822
-
   react-is@19.0.0-rc-09111202-20241011: {}
 
   react-refresh@0.14.2: {}
@@ -9600,22 +9589,10 @@ snapshots:
       react-dom: 19.0.0-rc-09111202-20241011(react@19.0.0-rc-09111202-20241011)
       react-router: 6.22.3(react@19.0.0-rc-09111202-20241011)
 
-  react-router-dom@6.22.3(react-dom@19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822))(react@19.0.0-rc-eb3ad065-20240822):
-    dependencies:
-      '@remix-run/router': 1.15.3
-      react: 19.0.0-rc-eb3ad065-20240822
-      react-dom: 19.0.0-rc-eb3ad065-20240822(react@19.0.0-rc-eb3ad065-20240822)
-      react-router: 6.22.3(react@19.0.0-rc-eb3ad065-20240822)
-
   react-router@6.22.3(react@19.0.0-rc-09111202-20241011):
     dependencies:
       '@remix-run/router': 1.15.3
       react: 19.0.0-rc-09111202-20241011
-
-  react-router@6.22.3(react@19.0.0-rc-eb3ad065-20240822):
-    dependencies:
-      '@remix-run/router': 1.15.3
-      react: 19.0.0-rc-eb3ad065-20240822
 
   react-server-dom-webpack@19.0.0-rc-09111202-20241011(react-dom@19.0.0-rc-09111202-20241011(react@19.0.0-rc-09111202-20241011))(react@19.0.0-rc-09111202-20241011)(webpack@5.93.0(@swc/core@1.6.13(@swc/helpers@0.5.12))(esbuild@0.23.0)):
     dependencies:
@@ -9639,8 +9616,6 @@ snapshots:
       react: 19.0.0-rc-09111202-20241011
 
   react@19.0.0-rc-09111202-20241011: {}
-
-  react@19.0.0-rc-eb3ad065-20240822: {}
 
   read-cache@1.0.0:
     dependencies:
@@ -9815,8 +9790,6 @@ snapshots:
       yoga-wasm-web: 0.3.3
 
   scheduler@0.25.0-rc-09111202-20241011: {}
-
-  scheduler@0.25.0-rc-eb3ad065-20240822: {}
 
   schema-utils@3.3.0:
     dependencies:
