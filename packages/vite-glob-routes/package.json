@@ -47,11 +47,15 @@
   },
   "devDependencies": {
     "@hattip/compose": "^0.0.44",
+    "react": "latest",
+    "react-dom": "latest",
     "react-router": "^6.22.3",
     "react-router-dom": "^6.22.3"
   },
   "peerDependencies": {
     "@hattip/compose": "*",
+    "react": "*",
+    "react-dom": "*",
     "react-router": "*",
     "react-router-dom": "*",
     "vite": "*"
