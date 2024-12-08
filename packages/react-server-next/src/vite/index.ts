@@ -4,6 +4,7 @@ import path from "node:path";
 import {
   type ReactServerPluginOptions,
   vitePluginReactServer,
+  wrapServerPlugin,
 } from "@hiogawa/react-server/plugin";
 import {
   vitePluginFetchUrlImportMetaUrl,
@@ -32,10 +33,6 @@ export default function vitePluginReactServerNext(
 ): PluginOption {
   const outDir = options?.outDir ?? "dist";
   const adapter = options?.adapter ?? autoSelectAdapter();
-  const adapterPlugins = adapterPlugin({
-    adapter,
-    outDir,
-  });
 
   return [
     react(),
@@ -45,34 +42,33 @@ export default function vitePluginReactServerNext(
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
-      plugins: [
-        nextJsxPlugin(),
-        tsconfigPaths(),
-        nextOgPlugin(),
-        vitePluginWasmModule({
-          buildMode:
-            adapter === "cloudflare" || adapter === "vercel-edge"
-              ? "import"
-              : "fs",
-        }),
-        vitePluginFetchUrlImportMetaUrl({
-          buildMode:
-            adapter === "cloudflare"
-              ? "import"
-              : adapter === "vercel-edge"
-                ? "inline"
-                : "fs",
-        }),
-        adapterPlugins.server,
-        options?.plugins,
-      ],
     }),
+    nextOgPlugin(),
+    wrapServerPlugin([
+      vitePluginWasmModule({
+        buildMode:
+          adapter === "cloudflare" || adapter === "vercel-edge"
+            ? "import"
+            : "fs",
+      }),
+      vitePluginFetchUrlImportMetaUrl({
+        buildMode:
+          adapter === "cloudflare"
+            ? "import"
+            : adapter === "vercel-edge"
+              ? "inline"
+              : "fs",
+      }),
+    ]),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
       preview: path.resolve(outDir, "server", "index.js"),
     }),
-    adapterPlugins.client,
+    adapterPlugin({
+      adapter,
+      outDir,
+    }),
     appFaviconPlugin(),
     {
       name: "next-exclude-optimize",

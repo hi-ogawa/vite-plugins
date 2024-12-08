@@ -1,5 +1,9 @@
 import path from "node:path";
-import { vitePluginReactServer } from "@hiogawa/react-server/plugin";
+import {
+  vitePluginReactServer,
+  wrapClientPlugin,
+  wrapServerPlugin,
+} from "@hiogawa/react-server/plugin";
 import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
 import { vitePluginWasmModule } from "@hiogawa/vite-plugin-server-asset";
 import {
@@ -14,10 +18,13 @@ import { type Plugin, defineConfig } from "vite";
 export default defineConfig({
   clearScreen: false,
   plugins: [
+    // TODO: for now mdx is server only.
+    // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
+    mdx(),
     process.env["USE_SWC"]
       ? (await import("@vitejs/plugin-react-swc".slice())).default()
       : react(),
-    unocss(),
+    wrapClientPlugin(unocss()),
     !process.env["E2E"] &&
       vitePluginErrorOverlay({
         patchConsoleError: true,
@@ -25,29 +32,6 @@ export default defineConfig({
     vitePluginReactServer({
       entryBrowser: "/src/entry-browser",
       entryServer: "/src/entry-server",
-      plugins: [
-        // TODO: for now mdx is server only.
-        // see https://mdxjs.com/docs/getting-started/#vite for how to setup client hmr.
-        mdx(),
-        testVitePluginVirtual(),
-        vitePluginWasmModule({
-          buildMode:
-            process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
-        }),
-        {
-          name: "cusotm-react-server-config",
-          config() {
-            return {
-              build: {
-                assetsInlineLimit(filePath) {
-                  // test non-inlined server asset
-                  return !filePath.includes("/test/assets/");
-                },
-              },
-            };
-          },
-        },
-      ],
     }),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
@@ -66,9 +50,18 @@ export default defineConfig({
       },
     },
     testVitePluginVirtual(),
+    wrapServerPlugin([
+      vitePluginWasmModule({
+        buildMode: process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
+      }),
+    ]),
   ],
   build: {
     ssrEmitAssets: true,
+    assetsInlineLimit(filePath) {
+      // test non-inlined server asset
+      return !filePath.includes("/test/assets/");
+    },
   },
   ssr: {
     noExternal: [

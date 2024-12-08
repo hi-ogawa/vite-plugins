@@ -1,4 +1,5 @@
 import type { ViteDevServer } from "vite";
+import type { ModuleRunner } from "vite/module-runner";
 import type { PluginStateManager } from "./plugin";
 import type { CallServerCallback } from "./types/react";
 
@@ -7,7 +8,7 @@ import type { CallServerCallback } from "./types/react";
 export const $__global: {
   dev: {
     server: ViteDevServer;
-    reactServer: ViteDevServer;
+    reactServerRunner: ModuleRunner;
     manager: PluginStateManager;
   };
   callServer: CallServerCallback;
