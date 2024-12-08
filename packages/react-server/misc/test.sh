@@ -14,6 +14,7 @@ cd "$test_dir"
 rm -rf dist node_modules
 
 node "$lib_dir/misc/overrides.mjs" "$test_dir/package.json"
+pnpm i
 
 if test "${CI:-}" = "true"; then
   npx playwright install chromium
