@@ -1,9 +1,10 @@
 import { Link } from "@hiogawa/react-server/client";
+import type React from "react";
 
 export function NavMenu(props: {
   links: string[];
   className?: string;
-  activeProps?: JSX.IntrinsicElements["a"];
+  activeProps?: React.JSX.IntrinsicElements["a"];
 }) {
   return (
     <ul className={props.className}>

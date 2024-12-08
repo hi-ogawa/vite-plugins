@@ -12,7 +12,7 @@ import { useRouter } from "./router";
 
 interface LinkProps {
   revalidate?: RevalidationType;
-  activeProps?: JSX.IntrinsicElements["a"];
+  activeProps?: React.JSX.IntrinsicElements["a"];
   preload?: boolean;
 }
 
@@ -32,7 +32,7 @@ export function Link({
   activeProps,
   preload,
   ...props
-}: JSX.IntrinsicElements["a"] & { href: string } & LinkProps) {
+}: React.JSX.IntrinsicElements["a"] & { href: string } & LinkProps) {
   const history = useRouter((s) => s.history);
   const pathname = useRouter((s) => s.location.pathname);
   const href = encodeHref(props.href);
@@ -60,7 +60,7 @@ export function Link({
               );
             }
           },
-        } satisfies JSX.IntrinsicElements["a"],
+        } satisfies React.JSX.IntrinsicElements["a"],
       )}
     />
   );
@@ -71,7 +71,7 @@ export function LinkForm({
   activeProps,
   preload: _preload,
   ...props
-}: JSX.IntrinsicElements["form"] & { action: string } & LinkProps) {
+}: React.JSX.IntrinsicElements["form"] & { action: string } & LinkProps) {
   const history = useRouter((s) => s.history);
 
   // cf. react-router's getFormSubmissionInfo and normalizeNavigateOptions
@@ -94,7 +94,7 @@ export function LinkForm({
             revalidate ? routerRevalidate(revalidate) : {},
           );
         },
-      } satisfies JSX.IntrinsicElements["form"])}
+      } satisfies React.JSX.IntrinsicElements["form"])}
     />
   );
 }

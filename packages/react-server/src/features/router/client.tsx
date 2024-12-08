@@ -114,7 +114,7 @@ export function RouteAssetLinks() {
         <link key={href} rel="modulepreload" href={href} />
       ))}
       {deps.css.map((href) => (
-        // @ts-expect-error precedence to force head rendering
+        // precedence to force head rendering
         // https://react.dev/reference/react-dom/components/link#special-rendering-behavior
         <link key={href} rel="stylesheet" href={href} precedence="high" />
       ))}
@@ -143,5 +143,5 @@ export function usePreloadHandlers({
     onMouseEnter: callback,
     onTouchStart: callback,
     onFocus: callback,
-  } satisfies JSX.IntrinsicElements["a"];
+  } satisfies React.JSX.IntrinsicElements["a"];
 }
