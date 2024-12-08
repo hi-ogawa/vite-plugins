@@ -2,10 +2,10 @@
 
 ## v0.0.15 (2024-12-08)
 
-- feat(next): auto load dotenv for dev and preview ([#637](https://github.com/hi-ogawa/vite-plugins/pull/637))
+- feat: auto load dotenv for dev and preview ([#637](https://github.com/hi-ogawa/vite-plugins/pull/637))
 - refactor!: remove `next/*.js` exports ([#647](https://github.com/hi-ogawa/vite-plugins/pull/647))
-- refactor(next): simplify `envPrefix` merge ([#636](https://github.com/hi-ogawa/vite-plugins/pull/636))
-- fix(next): fix reload dot env ([#657](https://github.com/hi-ogawa/vite-plugins/pull/657))
+- refactor: simplify `envPrefix` merge ([#636](https://github.com/hi-ogawa/vite-plugins/pull/636))
+- fix: fix reload dot env ([#657](https://github.com/hi-ogawa/vite-plugins/pull/657))
 - chore(deps): react 19 stable ([#661](https://github.com/hi-ogawa/vite-plugins/pull/661))
 
 ## v0.0.14 (2024-08-22)
