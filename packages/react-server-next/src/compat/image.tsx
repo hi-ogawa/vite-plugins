@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import ReactDOM from "react-dom";
 
 /** @todo */
@@ -8,7 +9,7 @@ export default function Image({
   placeholder,
   blurDataURL,
   ...props
-}: JSX.IntrinsicElements["img"] & {
+}: React.JSX.IntrinsicElements["img"] & {
   priority?: boolean;
   placeholder?: unknown;
   blurDataURL?: unknown;

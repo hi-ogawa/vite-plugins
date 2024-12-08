@@ -109,9 +109,8 @@ export async function renderHtml(
   const flightDataPromise = ReactClient.createFromReadableStream<FlightData>(
     stream1,
     {
-      ssrManifest: {
+      serverConsumerManifest: {
         moduleMap: createModuleMap(),
-        moduleLoading: null,
       },
     },
   );

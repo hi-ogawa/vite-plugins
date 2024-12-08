@@ -1,4 +1,5 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
+import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { $__global } from "../../global";
 import type { ReactServerErrorContext } from "../../server";
@@ -21,7 +22,7 @@ export function registerServerReference(
 
 export type ActionResult = {
   error?: ReactServerErrorContext;
-  data?: unknown;
+  data?: ReactFormState | null;
 };
 
 const REFERENCE_SEP = "#";
