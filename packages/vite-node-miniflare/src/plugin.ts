@@ -1,4 +1,4 @@
-import { fileURLToPath } from "url";
+import { readFileSync } from "fs";
 import { webToNodeHandler } from "@hiogawa/utils-node";
 import {
   Miniflare,
@@ -90,7 +90,19 @@ export async function createWorkerdDevEnvironment(
     modules: [
       {
         type: "ESModule",
-        path: fileURLToPath(new URL("./worker.js", import.meta.url)),
+        path: "__vite_worker__",
+        contents: readFileSync(
+          new URL("./worker.js", import.meta.url),
+          "utf-8",
+        ),
+      },
+      {
+        type: "ESModule",
+        path: "vite/module-runner",
+        contents: readFileSync(
+          new URL(import.meta.resolve("vite/module-runner")),
+          "utf-8",
+        ),
       },
     ],
     durableObjects: {
