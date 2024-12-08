@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.9 (2024-12-08)
+
+- feat: cloudflare platform api ([#644](https://github.com/hi-ogawa/vite-plugins/pull/644))
+- fix: wrong parentheses in `vitePluginSilenceDirectiveBuildWarning` ([#650](https://github.com/hi-ogawa/vite-plugins/pull/650))
+- fix: fix rsc hmr for unrelated file changes ([#645](https://github.com/hi-ogawa/vite-plugins/pull/645))
+- fix: apply changes from vite 6 compat ([#632](https://github.com/hi-ogawa/vite-plugins/pull/632))
+- chore(deps): react 19 stable ([#661](https://github.com/hi-ogawa/vite-plugins/pull/661))
+
 ## v0.3.8 (2024-08-23)
 
 - feat: support `Metadata.twitter` ([#626](https://github.com/hi-ogawa/vite-plugins/pull/626))
