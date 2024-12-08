@@ -62,7 +62,7 @@ export function vitePluginWasmModule(options: {
             const referenceId = this.emitFile({
               type: "asset",
               name: path.basename(file),
-              source: fs.readFileSync(file),
+              source: new Uint8Array(fs.readFileSync(file)),
             });
             source = `fileURLToPath(import.meta.ROLLUP_FILE_URL_${referenceId})`;
           }
@@ -78,7 +78,7 @@ export function vitePluginWasmModule(options: {
           const referenceId = this.emitFile({
             type: "asset",
             name: path.basename(file),
-            source: fs.readFileSync(file),
+            source: new Uint8Array(fs.readFileSync(file)),
           });
           // temporary placeholder which we replace during `renderChunk`
           return `export default "__WASM_MODULE_IMPORT_${referenceId}"`;

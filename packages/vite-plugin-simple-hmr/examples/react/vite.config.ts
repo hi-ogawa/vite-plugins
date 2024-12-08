@@ -12,7 +12,7 @@ export default defineConfig({
     }),
     vitePluginSsrMiddleware({
       entry: "/src/entry-server.tsx",
-      mode: "ViteRuntime",
+      mode: "ModuleRunner",
     }),
   ],
 });

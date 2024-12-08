@@ -1,1 +1,1 @@
-export { vitePluginViteNodeMiniflare } from "./server/plugin";
+export * from "./plugin";
