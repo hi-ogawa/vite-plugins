@@ -1,21 +1,31 @@
-export const RUNNER_INIT_PATH = "/__viteInit";
-export const RUNNER_EVAL_PATH = "/__viteEval";
-export const ANY_URL = "https://any.local";
+import type { HotPayload } from "vite";
 
 export type RunnerEnv = {
+  __viteRoot: string;
   __viteUnsafeEval: {
     eval: (code: string, filename?: string) => any;
   };
-  __viteFetchModule: {
+  __viteInvoke: {
+    fetch: (request: Request) => Promise<Response>;
+  };
+  __viteRunnerSend: {
     fetch: (request: Request) => Promise<Response>;
   };
   __viteRunner: DurableObject;
-  __viteOptions: {
-    root: string;
-    hmr: boolean;
-  };
+};
+
+export type RunnerRpc = {
+  __viteInit: () => Promise<void>;
+  __viteServerSend: (payload: HotPayload) => Promise<void>;
 };
 
 export type FetchMetadata = {
   entry: string;
 };
+
+export function requestJson(data: unknown) {
+  return new Request("https://any.local", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
