@@ -54,7 +54,7 @@ declare module "react-server-dom-webpack/client.edge" {
   export function createFromReadableStream<T>(
     stream: ReadableStream<Uint8Array>,
     options: {
-      ssrManifest: import("./react").SsrManifest;
+      serverConsumerManifest: import("./react").SsrManifest;
       // TODO
       // encodeFormAction
     },
