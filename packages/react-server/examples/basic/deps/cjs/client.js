@@ -8,9 +8,9 @@ export function TestClient() {
 }
 
 function useHydrated() {
-	return React.useSyncExternalStore(
-		React.useCallback(() => () => {}, []),
-		() => true,
-		() => false,
-	);
+  return React.useSyncExternalStore(
+    React.useCallback(() => () => {}, []),
+    () => true,
+    () => false,
+  );
 }
