@@ -1,1 +1,1 @@
-exports.test = "[ok]"
+exports.test = "[ok]";

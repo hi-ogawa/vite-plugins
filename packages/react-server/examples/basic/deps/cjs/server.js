@@ -1,5 +1,6 @@
 import React from "react";
+import { TestClient } from "./client.js";
 
 export function TestServer() {
-  // return
+  return React.createElement(TestClient);
 }
