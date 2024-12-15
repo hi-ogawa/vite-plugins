@@ -4,7 +4,7 @@ import React from "react";
 
 const MyContext = React.createContext("not-ok");
 
-export function MyContextProvider(props) {
+export function TestClientProvider(props) {
   return React.createElement(
     MyContext.Provider,
     { value: "ok" },

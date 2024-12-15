@@ -1,6 +1,6 @@
 import React from "react";
-import { MyContextProvider } from "./client.js";
+import { TestClientProvider } from "./client.js";
 
 export function TestServer(props) {
-  return React.createElement(MyContextProvider, null, props.children);
+  return React.createElement(TestClientProvider, null, props.children);
 }
