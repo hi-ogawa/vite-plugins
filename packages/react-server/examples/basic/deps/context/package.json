@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     "./server": "./server.js",
+    "./server2": "./server2.js",
     "./client": "./client.js"
   },
   "dependencies": {
