@@ -1,0 +1,14 @@
+{
+  "name": "@hiogawa/test-deps-cjs",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./server.js"
+  },
+  "dependencies": {
+    "react": "*"
+  },
+  "peerDependencies": {
+    "react": "*"
+  }
+}
