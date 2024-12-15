@@ -211,10 +211,10 @@ importers:
         version: link:../..
       '@hiogawa/test-dep-cjs':
         specifier: file:deps/cjs
-        version: '@hiogawa/test-deps-cjs@file:packages/react-server/examples/basic/deps/cjs(react@19.0.0)'
+        version: file:packages/react-server/examples/basic/deps/cjs(react@19.0.0)
       '@hiogawa/test-dep-context':
         specifier: file:deps/context
-        version: '@hiogawa/test-deps-context@file:packages/react-server/examples/basic/deps/context(react@19.0.0)'
+        version: file:packages/react-server/examples/basic/deps/context(react@19.0.0)
       '@hiogawa/test-dep-mixed':
         specifier: file:deps/mixed
         version: '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@19.0.0)'
@@ -1984,12 +1984,12 @@ packages:
       '@trpc/server':
         optional: true
 
-  '@hiogawa/test-deps-cjs@file:packages/react-server/examples/basic/deps/cjs':
+  '@hiogawa/test-dep-cjs@file:packages/react-server/examples/basic/deps/cjs':
     resolution: {directory: packages/react-server/examples/basic/deps/cjs, type: directory}
     peerDependencies:
       react: ^19.0.0
 
-  '@hiogawa/test-deps-context@file:packages/react-server/examples/basic/deps/context':
+  '@hiogawa/test-dep-context@file:packages/react-server/examples/basic/deps/context':
     resolution: {directory: packages/react-server/examples/basic/deps/context, type: directory}
     peerDependencies:
       react: ^19.0.0
@@ -6243,11 +6243,11 @@ snapshots:
 
   '@hiogawa/query-proxy@0.1.1-pre.3': {}
 
-  '@hiogawa/test-deps-cjs@file:packages/react-server/examples/basic/deps/cjs(react@19.0.0)':
+  '@hiogawa/test-dep-cjs@file:packages/react-server/examples/basic/deps/cjs(react@19.0.0)':
     dependencies:
       react: 19.0.0
 
-  '@hiogawa/test-deps-context@file:packages/react-server/examples/basic/deps/context(react@19.0.0)':
+  '@hiogawa/test-dep-context@file:packages/react-server/examples/basic/deps/context(react@19.0.0)':
     dependencies:
       react: 19.0.0
 

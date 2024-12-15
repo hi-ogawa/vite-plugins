@@ -1,9 +1,11 @@
 {
-  "name": "@hiogawa/test-deps-cjs",
+  "name": "@hiogawa/test-dep-cjs",
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./server.js"
+    "./server": "./server.js",
+    "./server2": "./server2.js",
+    "./client": "./cilent.js"
   },
   "dependencies": {
     "react": "*"

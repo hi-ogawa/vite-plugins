@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/test-deps-context",
+  "name": "@hiogawa/test-dep-context",
   "private": true,
   "type": "module",
   "exports": {
