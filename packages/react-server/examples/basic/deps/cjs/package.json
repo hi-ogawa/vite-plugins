@@ -5,7 +5,7 @@
   "exports": {
     "./server": "./server.js",
     "./server2": "./server2.js",
-    "./client": "./cilent.js"
+    "./client": "./client.js"
   },
   "dependencies": {
     "react": "*"
