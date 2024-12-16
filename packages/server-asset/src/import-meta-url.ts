@@ -48,7 +48,7 @@ export function vitePluginFetchUrlImportMetaUrl(options: {
                 const referenceId = this.emitFile({
                   type: "asset",
                   name: path.basename(absFile),
-                  source: fs.readFileSync(absFile),
+                  source: new Uint8Array(fs.readFileSync(absFile)),
                 });
                 replacement = `((async () => {
                   const fs = await import("node:fs");
@@ -63,7 +63,7 @@ export function vitePluginFetchUrlImportMetaUrl(options: {
               const referenceId = this.emitFile({
                 type: "asset",
                 name: path.basename(absFile) + ".bin",
-                source: fs.readFileSync(absFile),
+                source: new Uint8Array(fs.readFileSync(absFile)),
               });
               replacement = `"__FETCH_ASSET_IMPORT_${referenceId}".then(mod => new Response(mod.default))`;
             }

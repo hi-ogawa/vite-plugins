@@ -196,7 +196,7 @@ function appFaviconPlugin(): Plugin {
         this.emitFile({
           type: "asset",
           fileName: "favicon.ico",
-          source: readFileSync("app/favicon.ico"),
+          source: new Uint8Array(readFileSync("app/favicon.ico")),
         });
       }
     },

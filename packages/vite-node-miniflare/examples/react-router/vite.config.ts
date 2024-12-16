@@ -1,5 +1,5 @@
 import globRoutesPlugin from "@hiogawa/vite-glob-routes";
-import { vitePluginViteNodeMiniflare } from "@hiogawa/vite-node-miniflare";
+import { vitePluginWorkerd } from "@hiogawa/vite-node-miniflare";
 import react from "@vitejs/plugin-react";
 import { Log } from "miniflare";
 import { defineConfig } from "vite";
@@ -7,30 +7,36 @@ import { vitePluginVirtualIndexHtml } from "../basic/vite.config";
 
 export default defineConfig({
   clearScreen: false,
-  ssr: {
-    resolve: {
-      conditions: ["workerd"],
-    },
-    optimizeDeps: {
-      include: [
-        "react",
-        "react/jsx-dev-runtime",
-        "react-dom",
-        "react-dom/server",
-      ],
-    },
-  },
+  appType: "custom",
   plugins: [
+    react(),
     globRoutesPlugin({ root: "/src/routes" }),
-    vitePluginViteNodeMiniflare({
-      debug: true,
-      entry: "/src/server/worker-entry.ts",
-      miniflareOptions(options) {
-        options.log = new Log();
-        options.compatibilityFlags = ["nodejs_compat"];
+    vitePluginWorkerd({
+      entry: "/src/server/worker-entry",
+      miniflare: {
+        log: new Log(),
+        compatibilityFlags: ["nodejs_compat"],
       },
     }),
-    react(),
     vitePluginVirtualIndexHtml(),
   ],
+  environments: {
+    workerd: {
+      webCompatible: true,
+      resolve: {
+        noExternal: true,
+        conditions: ["workerd"],
+      },
+      dev: {
+        optimizeDeps: {
+          include: [
+            "react",
+            "react/jsx-dev-runtime",
+            "react-dom",
+            "react-dom/server",
+          ],
+        },
+      },
+    },
+  },
 });

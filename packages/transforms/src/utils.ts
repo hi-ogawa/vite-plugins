@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import { extract_names } from "periscopic";
 
@@ -49,6 +50,7 @@ export function getExportNames(
          * export { foo, bar as car }
          */
         for (const spec of node.specifiers) {
+          tinyassert(spec.exported.type === "Identifier");
           exportNames.push(spec.exported.name);
         }
       }
