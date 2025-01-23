@@ -196,9 +196,8 @@ test("dotenv", async ({ page }) => {
     await expect(page.getByTestId("process.env")).toContainText(
       '{ "SECRET_ENV_TEST": "edit", "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "edit" }',
     );
-    // TODO: why broken?
-    // await expect(page.getByTestId("import.meta.env")).toContainText(
-    //   '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "edit" }',
-    // );
+    await expect(page.getByTestId("import.meta.env")).toContainText(
+      '{ "SECRET_ENV_TEST": null, "NEXT_PUBLIC_ENV_TEST": "ok", "VITE_ENV_TEST": "edit" }',
+    );
   }
 });
