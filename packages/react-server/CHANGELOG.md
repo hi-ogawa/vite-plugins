@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.9 (2024-12-08)
+## v0.3.9 (2025-01-23)
 
 - feat: cloudflare platform api ([#644](https://github.com/hi-ogawa/vite-plugins/pull/644))
 - fix: wrong parentheses in `vitePluginSilenceDirectiveBuildWarning` ([#650](https://github.com/hi-ogawa/vite-plugins/pull/650))
