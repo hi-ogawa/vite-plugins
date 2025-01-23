@@ -45,8 +45,8 @@
     "@hiogawa/vite-plugin-server-asset": "workspace:*",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
     "@vercel/og": "^0.6.2",
-    "@vitejs/plugin-react-swc": "^3.7.0",
-    "esbuild": "^0.20.2",
+    "@vitejs/plugin-react-swc": "^3.7.2",
+    "esbuild": "^0.24.0",
     "magic-string": "^0.30.8",
     "vite-tsconfig-paths": "^4.3.2"
   },

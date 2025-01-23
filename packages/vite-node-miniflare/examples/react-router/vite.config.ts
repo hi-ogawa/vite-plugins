@@ -22,21 +22,22 @@ export default defineConfig({
   ],
   environments: {
     workerd: {
-      webCompatible: true,
       resolve: {
         noExternal: true,
         conditions: ["workerd"],
       },
-      dev: {
-        optimizeDeps: {
-          include: [
-            "react",
-            "react/jsx-dev-runtime",
-            "react-dom",
-            "react-dom/server",
-          ],
+      optimizeDeps: {
+        include: [
+          "react",
+          "react/jsx-dev-runtime",
+          "react-dom",
+          "react-dom/server",
+        ],
+        esbuildOptions: {
+          platform: "browser",
         },
       },
+      keepProcessEnv: false,
     },
   },
 });

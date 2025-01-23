@@ -34,22 +34,23 @@ export default defineConfig({
   ],
   environments: {
     workerd: {
-      webCompatible: true,
       resolve: {
         noExternal: true,
         conditions: ["workerd"],
       },
-      dev: {
-        optimizeDeps: {
-          include: [
-            "react",
-            "react/jsx-dev-runtime",
-            "react-dom",
-            "react-dom/server",
-            "@remix-run/server-runtime",
-          ],
+      optimizeDeps: {
+        include: [
+          "react",
+          "react/jsx-dev-runtime",
+          "react-dom",
+          "react-dom/server",
+          "@remix-run/server-runtime",
+        ],
+        esbuildOptions: {
+          platform: "browser",
         },
       },
+      keepProcessEnv: false,
     },
   },
 });

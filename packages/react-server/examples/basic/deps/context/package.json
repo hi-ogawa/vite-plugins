@@ -1,0 +1,16 @@
+{
+  "name": "@hiogawa/test-dep-context",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./server": "./server.js",
+    "./server2": "./server2.js",
+    "./client": "./client.js"
+  },
+  "dependencies": {
+    "react": "*"
+  },
+  "peerDependencies": {
+    "react": "*"
+  }
+}

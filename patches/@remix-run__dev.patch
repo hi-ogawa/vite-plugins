@@ -1,0 +1,13 @@
+diff --git a/dist/vite/styles.js b/dist/vite/styles.js
+index 63f039af5f2736089c996ec46fefac8d891493f6..4cf4c15026a5d6fd54d9c7108d304505d1f62fc8 100644
+--- a/dist/vite/styles.js
++++ b/dist/vite/styles.js
+@@ -84,7 +84,7 @@ const getStylesForFiles = async ({
+     if (dep.file && isCssFile(dep.file) && !dep.url.endsWith("?url") // Ignore styles that resolved as URLs, otherwise we'll end up injecting URLs into the style tag contents
+     ) {
+       try {
+-        let css = isCssModulesFile(dep.file) ? cssModulesManifest[dep.file] : (await viteDevServer.ssrLoadModule(dep.url)).default;
++        let css = isCssModulesFile(dep.file) ? cssModulesManifest[dep.file] : (await viteDevServer.ssrLoadModule(dep.url + "?inline")).default;
+         if (css === undefined) {
+           throw new Error();
+         }

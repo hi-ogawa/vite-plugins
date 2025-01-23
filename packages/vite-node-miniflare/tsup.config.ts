@@ -5,7 +5,7 @@ export default [
     entry: ["src/worker.ts"],
     format: ["esm"],
     platform: "browser",
-    noExternal: [/.*/],
+    external: ["cloudflare:workers"],
   }),
   defineConfig({
     entry: ["src/index.ts"],

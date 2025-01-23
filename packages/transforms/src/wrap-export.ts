@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import type { Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
@@ -73,6 +74,8 @@ export async function transformWrapExport(
            */
           output.remove(node.start, node.end);
           for (const spec of node.specifiers) {
+            tinyassert(spec.local.type === "Identifier");
+            tinyassert(spec.exported.type === "Identifier");
             const name = spec.local.name;
             toAppend.push(
               `import { ${name} as $$import_${name} } from ${node.source.raw}`,
@@ -85,6 +88,8 @@ export async function transformWrapExport(
            */
           output.remove(node.start, node.end);
           for (const spec of node.specifiers) {
+            tinyassert(spec.local.type === "Identifier");
+            tinyassert(spec.exported.type === "Identifier");
             wrapExport(spec.local.name, spec.exported.name);
           }
         }
