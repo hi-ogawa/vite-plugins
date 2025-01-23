@@ -51,7 +51,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
-    "magic-string": "^0.30.8",
+    "magic-string": "^0.30.17",
     "unocss": "^0.58.6",
     "vite": "latest"
   }
