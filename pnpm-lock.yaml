@@ -13,6 +13,11 @@ overrides:
   '@types/react-dom': ^19.0.1
   '@vitejs/plugin-react': ^4.3.4
 
+patchedDependencies:
+  '@remix-run/dev':
+    hash: wbbigiu2gugv4awqyovmoo6rc4
+    path: patches/@remix-run__dev.patch
+
 importers:
 
   .:
@@ -896,7 +901,7 @@ importers:
         version: link:../..
       '@remix-run/dev':
         specifier: 2.8.1
-        version: 2.8.1(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2)(typescript@5.5.4)(vite@6.0.11(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2))(wrangler@3.79.0(@cloudflare/workers-types@4.20240925.0))
+        version: 2.8.1(patch_hash=wbbigiu2gugv4awqyovmoo6rc4)(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2)(typescript@5.5.4)(vite@6.0.11(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2))(wrangler@3.79.0(@cloudflare/workers-types@4.20240925.0))
       '@types/react':
         specifier: ^19.0.1
         version: 19.0.1
@@ -6690,7 +6695,7 @@ snapshots:
 
   '@polka/url@1.0.0-next.25': {}
 
-  '@remix-run/dev@2.8.1(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2)(typescript@5.5.4)(vite@6.0.11(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2))(wrangler@3.79.0(@cloudflare/workers-types@4.20240925.0))':
+  '@remix-run/dev@2.8.1(patch_hash=wbbigiu2gugv4awqyovmoo6rc4)(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2)(typescript@5.5.4)(vite@6.0.11(@types/node@20.14.10)(jiti@1.21.0)(terser@5.31.2)(tsx@4.16.2))(wrangler@3.79.0(@cloudflare/workers-types@4.20240925.0))':
     dependencies:
       '@babel/core': 7.24.7
       '@babel/generator': 7.24.7

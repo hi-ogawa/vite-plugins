@@ -45,6 +45,9 @@
       "@types/react": "$@types/react",
       "@types/react-dom": "$@types/react-dom",
       "@vitejs/plugin-react": "$@vitejs/plugin-react"
+    },
+    "patchedDependencies": {
+      "@remix-run/dev": "patches/@remix-run__dev.patch"
     }
   }
 }
