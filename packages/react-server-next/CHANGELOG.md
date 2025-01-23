@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.0.15 (2024-12-08)
+## v0.0.15 (2025-01-23)
 
 - feat: auto load dotenv for dev and preview ([#637](https://github.com/hi-ogawa/vite-plugins/pull/637))
 - refactor!: remove `next/*.js` exports ([#647](https://github.com/hi-ogawa/vite-plugins/pull/647))
