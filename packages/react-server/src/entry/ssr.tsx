@@ -271,9 +271,9 @@ async function devInspectHandler(request: Request) {
         data.url,
       );
     }
-    if (data.environment === "react-server") {
+    if (data.environment === "rsc") {
       mod = await getModuleNode(
-        $__global.dev.server.environments["react-server"]!,
+        $__global.dev.server.environments["rsc"]!,
         data.url,
       );
     }

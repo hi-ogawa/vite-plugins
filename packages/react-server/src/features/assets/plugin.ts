@@ -104,7 +104,7 @@ export function vitePluginServerAssets({
         },
       );
       const serverStyleUrls = await collectStyleUrls(
-        $__global.dev.server.environments["react-server"]!,
+        $__global.dev.server.environments["rsc"]!,
         {
           entries: [entryServer, "virtual:server-routes"],
         },
@@ -140,7 +140,7 @@ export function vitePluginServerAssets({
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
         const urls = await collectStyleUrls(
-          $__global.dev.server.environments["react-server"]!,
+          $__global.dev.server.environments["rsc"]!,
           {
             entries: [entryServer, "virtual:server-routes"],
           },

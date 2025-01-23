@@ -186,7 +186,7 @@ export function vitePluginReactServer(
               },
         },
         environments: {
-          "react-server": {
+          rsc: {
             // external and optimizeDeps are configured by `serverDepsConfigPlugin`
             resolve: {
               conditions: ["react-server"],
@@ -218,7 +218,7 @@ export function vitePluginReactServer(
     async buildStart(_options) {
       if (manager.configEnv.command === "serve") {
         tinyassert(manager.server);
-        const reactServerEnv = manager.server.environments["react-server"];
+        const reactServerEnv = manager.server.environments["rsc"];
         tinyassert(reactServerEnv);
         // custom environment's node runner doesn't have hmr currently
         const reactServerRunner = createServerModuleRunner(reactServerEnv);
@@ -244,7 +244,7 @@ export function vitePluginReactServer(
         (mod) => mod.id && manager.clientReferenceMap.has(mod.id),
       );
 
-      if (this.environment.name === "react-server") {
+      if (this.environment.name === "rsc") {
         // client reference id is also in react server module graph,
         // but we skip RSC HMR for this case to avoid conflicting with Client HMR.
         if (ctx.modules.length > 0 && !isClientReference) {
@@ -270,8 +270,7 @@ export function vitePluginReactServer(
         // due to postcss creating dependencies from style.css to all source files.
         // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
-        const reactServerEnv =
-          $__global.dev.server.environments["react-server"]!;
+        const reactServerEnv = $__global.dev.server.environments["rsc"]!;
         if (
           !isClientReference &&
           reactServerEnv.moduleGraph.getModulesByFile(ctx.file)
@@ -303,11 +302,11 @@ export function vitePluginReactServer(
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         const builder = await createBuilder();
-        await builder.build(builder.environments["react-server"]!);
+        await builder.build(builder.environments["rsc"]!);
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "server";
         manager.clientReferenceMap.clear();
-        await builder.build(builder.environments["react-server"]!);
+        await builder.build(builder.environments["rsc"]!);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
         manager.buildType = "browser";
       }
@@ -520,7 +519,7 @@ function serverDepsConfigPlugin(): Plugin {
   return {
     name: serverDepsConfigPlugin.name,
     async configEnvironment(name, _config, env) {
-      if (name !== "react-server") {
+      if (name !== "rsc") {
         return;
       }
 

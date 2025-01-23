@@ -87,6 +87,7 @@ export async function inspectDevModules<T extends string>(
 }
 
 export const testNoJs = test.extend({
+  // @ts-ignore
   javaScriptEnabled: ({}, use) => use(false),
 });
 

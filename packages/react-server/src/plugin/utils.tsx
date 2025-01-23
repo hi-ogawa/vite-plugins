@@ -2,9 +2,9 @@ import nodeCrypto from "node:crypto";
 import type { Plugin, ViteDevServer } from "vite";
 
 export const applyPluginToServer: Plugin["applyToEnvironment"] = (env) =>
-  env.name === "react-server";
+  env.name === "rsc";
 export const applyPluginToClient: Plugin["applyToEnvironment"] = (env) =>
-  env.name !== "react-server";
+  env.name !== "rsc";
 
 export function wrapServerPlugin<T extends Plugin | Plugin[]>(p: T): T {
   const wrap = (p: Plugin): Plugin => ({
