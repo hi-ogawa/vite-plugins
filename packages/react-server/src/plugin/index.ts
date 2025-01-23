@@ -546,16 +546,14 @@ function serverDepsConfigPlugin(): Plugin {
             ...result.ssr.noExternal,
           ]).sort(),
         },
-        dev: {
-          // pre-bundle cjs deps
-          optimizeDeps: {
-            include: [
-              "react",
-              "react/jsx-runtime",
-              "react/jsx-dev-runtime",
-              "react-server-dom-webpack/server.edge",
-            ],
-          },
+        // pre-bundle cjs deps
+        optimizeDeps: {
+          include: [
+            "react",
+            "react/jsx-runtime",
+            "react/jsx-dev-runtime",
+            "react-server-dom-webpack/server.edge",
+          ],
         },
       };
     },
