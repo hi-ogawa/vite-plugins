@@ -67,7 +67,7 @@ if (import.meta.env.SSR && import.meta.hot) {
 ",
   "map": SourceMap {
     "file": undefined,
-    "mappings": "AAAA;AACA;AACA;AACA;AACA;AACA,mBAAqB;AACrB;AACA;",
+    "mappings": ";AACA;;AAEA;;AAEA,mBAAqB;;AAErB;",
     "names": [],
     "sources": [
       "",
@@ -102,7 +102,7 @@ if (import.meta.env.SSR && import.meta.hot) {
 ",
   "map": SourceMap {
     "file": undefined,
-    "mappings": "AAAA;AACA;AACA;",
+    "mappings": ";AACA;AACA;",
     "names": [],
     "sources": [
       "",
@@ -137,7 +137,7 @@ if (import.meta.env.SSR && import.meta.hot) {
 ",
   "map": SourceMap {
     "file": undefined,
-    "mappings": "AAAA;AACA;AACA;",
+    "mappings": ";AACA;AACA;",
     "names": [],
     "sources": [
       "",
@@ -171,7 +171,7 @@ if (import.meta.env.SSR && import.meta.hot) {
 ",
   "map": SourceMap {
     "file": undefined,
-    "mappings": "AAAA;AACA;",
+    "mappings": ";AACA;",
     "names": [],
     "sources": [
       "",

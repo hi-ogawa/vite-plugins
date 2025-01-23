@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
+    "@hiogawa/test-dep-cjs": "file:deps/cjs",
+    "@hiogawa/test-dep-context": "file:deps/context",
     "@hiogawa/test-dep-mixed": "file:deps/mixed",
     "@hiogawa/test-dep-server-component": "file:deps/server-component",
     "@hiogawa/test-dep-use-client": "file:deps/use-client",
@@ -48,7 +50,7 @@
     "@types/mdx": "^2.0.13",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "latest",
     "magic-string": "^0.30.8",
     "unocss": "^0.58.6",
     "vite": "latest"

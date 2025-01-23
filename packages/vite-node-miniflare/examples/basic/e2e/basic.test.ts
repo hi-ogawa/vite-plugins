@@ -22,9 +22,9 @@ test("server error", async ({ request }) => {
   text = text.replaceAll(/[/].*node_modules/gm, "__NODE_MODULES__");
   text = text.replaceAll(process.cwd(), "__CWD__");
   expect(text).toMatch(`\
-[vite-node-miniflare error]
+[vite workerd runner error]
 Error: crash ssr
-    at Module.crash (__CWD__/src/crash-dep.ts:3:9)
+    at crash (__CWD__/src/crash-dep.ts:3:9)
     at CrashSsr (__CWD__/src/crash.tsx:5:5)
     at __NODE_MODULES__/@hiogawa/tiny-react/dist/index.js`);
 });
