@@ -23,7 +23,6 @@ export default defineConfig({
   ],
   environments: {
     workerd: {
-      webCompatible: true,
       resolve: {
         noExternal: true,
       },
