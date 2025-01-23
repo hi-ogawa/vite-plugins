@@ -2,10 +2,10 @@ import { defineConfig } from "tsup";
 
 export default [
   defineConfig({
-    entry: ["src/client/worker-entry.ts"],
+    entry: ["src/worker.ts"],
     format: ["esm"],
     platform: "browser",
-    noExternal: [/.*/],
+    external: ["cloudflare:workers"],
   }),
   defineConfig({
     entry: ["src/index.ts"],

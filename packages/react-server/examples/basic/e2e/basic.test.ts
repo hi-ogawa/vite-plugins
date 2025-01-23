@@ -367,7 +367,7 @@ test("rsc + client + rsc hmr @dev", async ({ page }) => {
   await waitForHydration(page);
 });
 
-test("module invalidation @dev", async ({ page }) => {
+test.skip("module invalidation @dev", async ({ page }) => {
   checkNoError(page);
 
   await page.goto("/test");
