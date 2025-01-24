@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.1 (2025-01-24)
+
+- fix: disable hmr for react server runner ([#671](https://github.com/hi-ogawa/vite-plugins/pull/671))
+
 ## v0.4.0 (2025-01-24)
 
 - feat!: migrate to Vite 6 environment API ([#634](https://github.com/hi-ogawa/vite-plugins/pull/634))
