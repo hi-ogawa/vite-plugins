@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.0 (2025-01-24)
+
+- feat!: migrate to Vite 6 environment API ([#634](https://github.com/hi-ogawa/vite-plugins/pull/634))
+
 ## v0.0.15 (2025-01-23)
 
 - feat: auto load dotenv for dev and preview ([#637](https://github.com/hi-ogawa/vite-plugins/pull/637))

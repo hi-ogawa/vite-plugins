@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.0 (2025-01-24)
+
+- feat!: migrate to Vite 6 environment API ([#634](https://github.com/hi-ogawa/vite-plugins/pull/634))
+
 ## v0.3.9 (2025-01-23)
 
 - feat: cloudflare platform api ([#644](https://github.com/hi-ogawa/vite-plugins/pull/644))
