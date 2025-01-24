@@ -220,8 +220,9 @@ export function vitePluginReactServer(
         tinyassert(manager.server);
         const reactServerEnv = manager.server.environments["rsc"];
         tinyassert(reactServerEnv);
-        // custom environment's node runner doesn't have hmr currently
-        const reactServerRunner = createServerModuleRunner(reactServerEnv);
+        const reactServerRunner = createServerModuleRunner(reactServerEnv, {
+          hmr: false,
+        });
         $__global.dev = {
           server: manager.server,
           reactServerRunner,
