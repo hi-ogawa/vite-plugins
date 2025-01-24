@@ -24,6 +24,7 @@ export default defineConfig({
     process.env["USE_SWC"]
       ? (await import("@vitejs/plugin-react-swc".slice())).default()
       : react(),
+    // TODO: remove from ssr build
     wrapClientPlugin(unocss()),
     !process.env["E2E"] &&
       vitePluginErrorOverlay({
