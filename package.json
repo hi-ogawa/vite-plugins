@@ -32,7 +32,7 @@
     "vitest": "^3.0.3",
     "wrangler": "^3.79.0"
   },
-  "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4",
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
   "volta": {
     "node": "20.14.0"
   },
@@ -42,6 +42,7 @@
       "react": "$react",
       "react-dom": "$react-dom",
       "react-server-dom-webpack": "$react-server-dom-webpack",
+      "@hiogawa/react-server": "workspace:*",
       "@types/react": "$@types/react",
       "@types/react-dom": "$@types/react-dom",
       "@vitejs/plugin-react": "$@vitejs/plugin-react"

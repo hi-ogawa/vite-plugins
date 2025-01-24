@@ -9,6 +9,7 @@ overrides:
   react: ^19.0.0
   react-dom: ^19.0.0
   react-server-dom-webpack: ^19.0.0
+  '@hiogawa/react-server': workspace:*
   '@types/react': ^19.0.1
   '@types/react-dom': ^19.0.1
   '@vitejs/plugin-react': ^4.3.4
@@ -213,7 +214,7 @@ importers:
   packages/react-server/examples/basic:
     dependencies:
       '@hiogawa/react-server':
-        specifier: latest
+        specifier: workspace:*
         version: link:../..
       '@hiogawa/test-dep-cjs':
         specifier: file:deps/cjs
@@ -394,7 +395,7 @@ importers:
   packages/react-server/examples/next:
     dependencies:
       '@hiogawa/react-server':
-        specifier: latest
+        specifier: workspace:*
         version: link:../..
       next:
         specifier: link:../../../react-server-next
@@ -456,7 +457,7 @@ importers:
   packages/react-server/examples/prerender:
     dependencies:
       '@hiogawa/react-server':
-        specifier: latest
+        specifier: workspace:*
         version: link:../..
       react:
         specifier: ^19.0.0
@@ -493,7 +494,7 @@ importers:
   packages/react-server/examples/starter:
     dependencies:
       '@hiogawa/react-server':
-        specifier: latest
+        specifier: workspace:*
         version: link:../..
       react:
         specifier: ^19.0.0
