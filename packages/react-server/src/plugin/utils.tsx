@@ -1,6 +1,27 @@
 import nodeCrypto from "node:crypto";
 import type { Plugin, ViteDevServer } from "vite";
 
+export const applyPluginToServer: Plugin["applyToEnvironment"] = (env) =>
+  env.name === "rsc";
+export const applyPluginToClient: Plugin["applyToEnvironment"] = (env) =>
+  env.name !== "rsc";
+
+export function wrapServerPlugin<T extends Plugin | Plugin[]>(p: T): T {
+  const wrap = (p: Plugin): Plugin => ({
+    ...p,
+    applyToEnvironment: applyPluginToServer,
+  });
+  return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
+}
+
+export function wrapClientPlugin<T extends Plugin | Plugin[]>(p: T): T {
+  const wrap = (p: Plugin): Plugin => ({
+    ...p,
+    applyToEnvironment: applyPluginToClient,
+  });
+  return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
+}
+
 export function invalidateModule(server: ViteDevServer, id: string) {
   const mod = server.moduleGraph.getModuleById(id);
   if (mod) {

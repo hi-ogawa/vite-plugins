@@ -5,7 +5,7 @@ import type { Manifest, Plugin, ViteDevServer } from "vite";
 import { $__global } from "../../global";
 import type { PluginStateManager } from "../../plugin";
 import { ENTRY_BROWSER_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
-import { collectStyle, collectStyleUrls } from "./css";
+import { collectStyleUrls, transformStyleUrls } from "./css";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "./shared";
 
 export interface SsrAssetsType {
@@ -103,22 +103,34 @@ export function vitePluginServerAssets({
           return file.startsWith(root) ? file.slice(root.length) : file;
         },
       );
-      const styles = await Promise.all([
-        `/******* react-server ********/`,
-        collectStyle($__global.dev.reactServer, {
+      const serverStyleUrls = await collectStyleUrls(
+        $__global.dev.server.environments["rsc"]!,
+        {
           entries: [entryServer, "virtual:server-routes"],
-          ssr: true,
-        }),
-        `/******* client **************/`,
-        collectStyle($__global.dev.server, {
+        },
+      );
+      const clientStyleUrls = await collectStyleUrls(
+        $__global.dev.server.environments.client,
+        {
           entries: [
             entryBrowser,
             "virtual:client-routes",
             // TODO: dev should also use RouteManifest to manage client css
             ...clientReferences,
           ],
-          ssr: false,
-        }),
+        },
+      );
+      const styles = await Promise.all([
+        `/******* react-server ********/`,
+        await transformStyleUrls(
+          $__global.dev.server.environments.client,
+          serverStyleUrls,
+        ),
+        `/******* client **************/`,
+        await transformStyleUrls(
+          $__global.dev.server.environments.client,
+          clientStyleUrls,
+        ),
       ]);
       return styles.join("\n\n");
     }),
@@ -127,10 +139,12 @@ export function vitePluginServerAssets({
       // virtual module to proxy css imports from react server to client
       // TODO: invalidate + full reload when add/remove css file?
       if (!manager.buildType) {
-        const urls = await collectStyleUrls($__global.dev.reactServer, {
-          entries: [entryServer, "virtual:server-routes"],
-          ssr: true,
-        });
+        const urls = await collectStyleUrls(
+          $__global.dev.server.environments["rsc"]!,
+          {
+            entries: [entryServer, "virtual:server-routes"],
+          },
+        );
         const code = urls.map((url) => `import "${url}";\n`).join("");
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
@@ -157,7 +171,7 @@ export function vitePluginServerAssets({
   ];
 }
 
-export function serverAssertsPluginServer({
+export function serverAssetsPluginServer({
   manager,
 }: { manager: PluginStateManager }): Plugin[] {
   // 0. track server assets during server build (this plugin)
@@ -172,7 +186,7 @@ export function serverAssertsPluginServer({
 
   return [
     {
-      name: serverAssertsPluginServer.name + ":build",
+      name: serverAssetsPluginServer.name + ":build",
       apply: "build",
       generateBundle(_options, bundle) {
         if (manager.buildType !== "server") {

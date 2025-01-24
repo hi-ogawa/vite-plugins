@@ -1,7 +1,7 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
-import type { ModuleNode, ViteDevServer } from "vite";
+import type { DevEnvironment, EnvironmentModuleNode } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
 import {
@@ -79,7 +79,7 @@ export async function prerender(request: Request) {
 
 export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
-    return $__global.dev.reactServer.ssrLoadModule(ENTRY_SERVER_WRAPPER) as any;
+    return $__global.dev.reactServerRunner.import(ENTRY_SERVER_WRAPPER);
   } else {
     return import("virtual:react-server-build" as string);
   }
@@ -264,21 +264,24 @@ async function devInspectHandler(request: Request) {
   tinyassert(request.method === "POST");
   const data = await request.json();
   if (data.type === "module") {
-    let mod: ModuleNode | undefined;
+    let mod: EnvironmentModuleNode | undefined;
     if (data.environment === "ssr") {
-      mod = await getModuleNode($__global.dev.server, data.url, true);
+      mod = await getModuleNode(
+        $__global.dev.server.environments.ssr,
+        data.url,
+      );
     }
-    if (data.environment === "react-server") {
-      mod = await getModuleNode($__global.dev.reactServer, data.url, true);
+    if (data.environment === "rsc") {
+      mod = await getModuleNode(
+        $__global.dev.server.environments["rsc"]!,
+        data.url,
+      );
     }
     const result = mod && {
       id: mod.id,
       lastInvalidationTimestamp: mod.lastInvalidationTimestamp,
       importers: [...(mod.importers ?? [])].map((m) => m.id),
-      ssrImportedModules: [...(mod.ssrImportedModules ?? [])].map((m) => m.id),
-      clientImportedModules: [...(mod.clientImportedModules ?? [])].map(
-        (m) => m.id,
-      ),
+      importedModules: [...(mod.importedModules ?? [])].map((m) => m.id),
     };
     return new Response(JSON.stringify(result || false, null, 2), {
       headers: { "content-type": "application/json" },
@@ -287,8 +290,8 @@ async function devInspectHandler(request: Request) {
   tinyassert(false);
 }
 
-async function getModuleNode(server: ViteDevServer, url: string, ssr: boolean) {
-  const resolved = await server.moduleGraph.resolveUrl(url, ssr);
+async function getModuleNode(server: DevEnvironment, url: string) {
+  const resolved = await server.moduleGraph.resolveUrl(url);
   return server.moduleGraph.getModuleById(resolved[1]);
 }
 

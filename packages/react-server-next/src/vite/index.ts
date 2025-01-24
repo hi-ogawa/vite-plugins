@@ -4,6 +4,7 @@ import path from "node:path";
 import {
   type ReactServerPluginOptions,
   vitePluginReactServer,
+  wrapServerPlugin,
 } from "@hiogawa/react-server/plugin";
 import {
   vitePluginFetchUrlImportMetaUrl,
@@ -32,10 +33,6 @@ export default function vitePluginReactServerNext(
 ): PluginOption {
   const outDir = options?.outDir ?? "dist";
   const adapter = options?.adapter ?? autoSelectAdapter();
-  const adapterPlugins = adapterPlugin({
-    adapter,
-    outDir,
-  });
 
   return [
     react(),
@@ -45,34 +42,33 @@ export default function vitePluginReactServerNext(
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
-      plugins: [
-        nextJsxPlugin(),
-        tsconfigPaths(),
-        nextOgPlugin(),
-        vitePluginWasmModule({
-          buildMode:
-            adapter === "cloudflare" || adapter === "vercel-edge"
-              ? "import"
-              : "fs",
-        }),
-        vitePluginFetchUrlImportMetaUrl({
-          buildMode:
-            adapter === "cloudflare"
-              ? "import"
-              : adapter === "vercel-edge"
-                ? "inline"
-                : "fs",
-        }),
-        adapterPlugins.server,
-        options?.plugins,
-      ],
     }),
+    nextOgPlugin(),
+    wrapServerPlugin([
+      vitePluginWasmModule({
+        buildMode:
+          adapter === "cloudflare" || adapter === "vercel-edge"
+            ? "import"
+            : "fs",
+      }),
+      vitePluginFetchUrlImportMetaUrl({
+        buildMode:
+          adapter === "cloudflare"
+            ? "import"
+            : adapter === "vercel-edge"
+              ? "inline"
+              : "fs",
+      }),
+    ]),
     vitePluginLogger(),
     vitePluginSsrMiddleware({
       entry: "next/vite/entry-ssr",
       preview: path.resolve(outDir, "server", "index.js"),
     }),
-    adapterPlugins.client,
+    adapterPlugin({
+      adapter,
+      outDir,
+    }),
     appFaviconPlugin(),
     {
       name: "next-exclude-optimize",
@@ -115,10 +111,19 @@ function nextOgPlugin(): Plugin[] {
   ];
 }
 
+// workaround https://github.com/vitejs/vite/issues/17689
+(globalThis as any).__next_vite_last_env__ ??= [];
+declare let __next_vite_last_env__: string[];
+
 function nextConfigPlugin(): Plugin {
   return {
     name: nextConfigPlugin.name,
     config() {
+      // remove last loaded env so that Vite reloads a new value
+      for (const key of __next_vite_last_env__) {
+        delete process.env[key];
+      }
+
       // TODO
       // this is only for import.meta.env.NEXT_PUBLIC_xxx replacement.
       // we might want to define process.env.NEXT_PUBLIC_xxx for better compatibility.
@@ -128,24 +133,13 @@ function nextConfigPlugin(): Plugin {
       };
     },
     configResolved(config) {
-      updateEnv(() => loadEnv(config.mode, config.envDir, ""));
+      const loadedEnv = loadEnv(config.mode, config.envDir, "");
+      __next_vite_last_env__ = Object.keys(loadedEnv).filter(
+        (key) => !(key in process.env),
+      );
+      Object.assign(process.env, loadedEnv);
     },
   };
-}
-
-// workaround https://github.com/vitejs/vite/issues/17689
-(globalThis as any).__next_vite_last_env__ ??= [];
-declare let __next_vite_last_env__: string[];
-
-function updateEnv(loadEnv: () => Record<string, string>) {
-  for (const key of __next_vite_last_env__) {
-    delete process.env[key];
-  }
-  const loadedEnv = loadEnv();
-  __next_vite_last_env__ = Object.keys(loadedEnv).filter(
-    (key) => !(key in process.env),
-  );
-  Object.assign(process.env, loadedEnv);
 }
 
 function nextJsxPlugin(): Plugin {

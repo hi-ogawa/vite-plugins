@@ -5,17 +5,14 @@ import {
   transformDirectiveProxyExport,
 } from "@hiogawa/transforms";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import {
-  type Plugin,
-  type PluginOption,
-  type ViteDevServer,
-  parseAstAsync,
-} from "vite";
+import { type Plugin, type ViteDevServer, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
   type CustomModuleMeta,
   USE_CLIENT,
   USE_CLIENT_RE,
+  applyPluginToClient,
+  applyPluginToServer,
   createVirtualPlugin,
 } from "../../plugin/utils";
 
@@ -38,7 +35,7 @@ export function vitePluginServerUseClient({
 }: {
   manager: PluginStateManager;
   runtimePath: string;
-}): PluginOption {
+}): Plugin[] {
   // TODO:
   // eventually we should try entirely virtual module approach for client reference (not only node_modules)
   // so that we can delegate precise resolution (e.g. `?v=` deps optimization hash, `?t=` hmr timestamp)
@@ -49,6 +46,7 @@ export function vitePluginServerUseClient({
     name: "server-virtual-use-client-node-modules",
     enforce: "pre", // "pre" to steal Vite's node resolve
     apply: "serve",
+    applyToEnvironment: applyPluginToServer,
     resolveId: memoize(async function (this, source, importer) {
       if (
         source[0] !== "." &&
@@ -130,6 +128,7 @@ export function vitePluginServerUseClient({
 
   const useClientPlugin: Plugin = {
     name: vitePluginServerUseClient.name,
+    applyToEnvironment: applyPluginToServer,
     async transform(code, id, _options) {
       // when using external library's server component includes client reference,
       // it will end up here with deps optimization hash `?v=` resolved by server module graph.
@@ -181,6 +180,7 @@ export function vitePluginServerUseClient({
     name: vitePluginServerUseClient + ":strip-strip",
     apply: "build",
     enforce: "post",
+    applyToEnvironment: applyPluginToServer,
     async buildStart() {
       if (manager.buildType !== "scan") return;
 
@@ -254,6 +254,7 @@ export function vitePluginClientUseClient({
   const devExternalPlugin: Plugin = {
     name: vitePluginClientUseClient.name + ":dev-external",
     apply: "serve",
+    applyToEnvironment: applyPluginToClient,
     resolveId(source, _importer, _options) {
       if (source.startsWith(VIRTUAL_PREFIX)) {
         return "\0" + source;
