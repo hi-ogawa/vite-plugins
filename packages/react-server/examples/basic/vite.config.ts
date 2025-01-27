@@ -56,6 +56,22 @@ export default defineConfig({
         buildMode: process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
       }),
     ]),
+    {
+      // external require polyfill prevents adapter-level bundling,
+      // but since rolldown is fast, we can simply go `noExternal: true`.
+      // cf. https://github.com/hi-ogawa/reproductions/tree/main/rolldown-vite-require-react-polyfill
+      name: "avoid-require-polyfill",
+      apply: "build",
+      configEnvironment(name) {
+        if (name === "ssr") {
+          return {
+            resolve: {
+              noExternal: true,
+            },
+          };
+        }
+      },
+    },
   ],
   build: {
     ssrEmitAssets: true,

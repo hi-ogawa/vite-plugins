@@ -149,6 +149,7 @@ function nextJsxPlugin(): Plugin {
     config: () => ({
       esbuild: { jsx: "automatic" },
       optimizeDeps: {
+        // TODO: what's the equivalent on oxc?
         esbuildOptions: { jsx: "automatic", loader: { ".js": "jsx" } },
       },
     }),
