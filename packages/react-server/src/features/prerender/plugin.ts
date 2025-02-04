@@ -33,7 +33,7 @@ export function prerenderPlugin({
 }): Plugin[] {
   return [
     {
-      name: prerenderPlugin + ":build",
+      name: prerenderPlugin.name + ":build",
       enforce: "post",
       apply: () => manager.buildType === "ssr",
       writeBundle: {
@@ -44,7 +44,7 @@ export function prerenderPlugin({
       },
     },
     {
-      name: prerenderPlugin + ":preview",
+      name: prerenderPlugin.name + ":preview",
       apply: (_config, env) => !!env.isPreview,
       configurePreviewServer(server) {
         const outDir = server.config.build.outDir;

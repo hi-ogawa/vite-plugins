@@ -8,13 +8,17 @@ export class ImageResponse extends Response {
   constructor(...args: ConstructorParameters<typeof OgType.ImageResponse>) {
     const body = new ReadableStream({
       async start(controller) {
-        const ogModule = await import("@vercel/og");
-        const response = new ogModule.ImageResponse(...args);
-        tinyassert(response.body);
-        for await (const chunk of response.body) {
-          controller.enqueue(chunk);
+        try {
+          const ogModule = await import("@vercel/og");
+          const response = new ogModule.ImageResponse(...args);
+          tinyassert(response.body);
+          for await (const chunk of response.body) {
+            controller.enqueue(chunk);
+          }
+          controller.close();
+        } catch (e) {
+          console.error("[ERROR:ImageResponse]", e);
         }
-        controller.close();
       },
     });
     const headers = new Headers(args[1]?.headers);

@@ -439,13 +439,22 @@ export function vitePluginReactServer(
       }),
     ),
     {
+      // externalize `dist/rsc/index.js` import as relative path in ssr build
       name: "virtual:react-server-build",
       resolveId(source) {
         if (source === "virtual:react-server-build") {
-          // externalize as relative path
-          // from: dist/server/index.js  (ssr build)
-          // to:   dist/rsc/index.js     (rsc build)
-          return { id: "../rsc/index.js", external: true };
+          return { id: "__VIRTUAL_REACT_SERVER_BUILD__", external: true };
+        }
+        return;
+      },
+      renderChunk(code, chunk) {
+        if (code.includes("__VIRTUAL_REACT_SERVER_BUILD__")) {
+          const replacement = path.relative(
+            path.join(outDir, "server", chunk.fileName, ".."),
+            path.join(outDir, "rsc", "index.js"),
+          );
+          code = code.replace("__VIRTUAL_REACT_SERVER_BUILD__", replacement);
+          return { code };
         }
         return;
       },
