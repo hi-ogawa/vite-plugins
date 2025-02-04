@@ -1,6 +1,7 @@
 {
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "skipLibCheck": true,
     "strict": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
