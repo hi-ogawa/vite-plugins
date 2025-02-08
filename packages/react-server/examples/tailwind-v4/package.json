@@ -11,9 +11,9 @@
   "dependencies": {
     "@hiogawa/react-server": "workspace:*",
     "next": "link:../../../react-server-next",
-    "react": "rc",
-    "react-dom": "rc",
-    "react-server-dom-webpack": "rc"
+    "react": "latest",
+    "react-dom": "latest",
+    "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
     "@tailwindcss/vite": "0.0.0-insiders.d684733",
