@@ -19,7 +19,7 @@
     "@tailwindcss/vite": "^4.0.4",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "tailwindcss": "^3.4.10",
+    "tailwindcss": "^4.0.4",
     "vite": "latest"
   }
 }
