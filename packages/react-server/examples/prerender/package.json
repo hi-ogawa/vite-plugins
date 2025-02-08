@@ -26,8 +26,8 @@
     "@hiogawa/utils-node": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@playwright/test": "^1.45.1",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "vite": "latest"
   }

@@ -16,8 +16,8 @@
     "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
     "vite": "latest"
   }
 }
