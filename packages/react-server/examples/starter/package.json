@@ -13,15 +13,15 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
-    "react": "rc",
-    "react-dom": "rc",
-    "react-server-dom-webpack": "rc"
+    "react": "latest",
+    "react-dom": "latest",
+    "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
     "@hiogawa/utils-node": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "latest",
     "vite": "latest"
   }

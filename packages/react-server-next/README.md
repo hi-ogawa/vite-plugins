@@ -11,9 +11,9 @@ Add following dependencies on Next.js project
   "dependencies": {
     "@hiogawa/react-server": "latest",
     "next": "npm:@hiogawa/react-server-next@latest",
-    "react": "rc",
-    "react-dom": "rc",
-    "react-server-dom-webpack": "rc"
+    "react": "latest",
+    "react-dom": "latest",
+    "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
     "vite": "latest"
