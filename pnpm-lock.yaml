@@ -18,6 +18,9 @@ patchedDependencies:
   '@remix-run/dev':
     hash: wbbigiu2gugv4awqyovmoo6rc4
     path: patches/@remix-run__dev.patch
+  '@tailwindcss/vite':
+    hash: h3fn444ieru7iffnbbcwb56cuy
+    path: patches/@tailwindcss__vite.patch
 
 importers:
 
@@ -545,7 +548,7 @@ importers:
     devDependencies:
       '@tailwindcss/vite':
         specifier: 4.0.6
-        version: 4.0.6(vite@6.0.11(@types/node@20.14.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.31.2)(tsx@4.16.2))
+        version: 4.0.6(patch_hash=h3fn444ieru7iffnbbcwb56cuy)(vite@6.0.11(@types/node@20.14.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.31.2)(tsx@4.16.2))
       '@types/react':
         specifier: ^19.0.8
         version: 19.0.8
@@ -7005,7 +7008,7 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.0.6
       '@tailwindcss/oxide-win32-x64-msvc': 4.0.6
 
-  '@tailwindcss/vite@4.0.6(vite@6.0.11(@types/node@20.14.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.31.2)(tsx@4.16.2))':
+  '@tailwindcss/vite@4.0.6(patch_hash=h3fn444ieru7iffnbbcwb56cuy)(vite@6.0.11(@types/node@20.14.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.31.2)(tsx@4.16.2))':
     dependencies:
       '@tailwindcss/node': 4.0.6
       '@tailwindcss/oxide': 4.0.6
