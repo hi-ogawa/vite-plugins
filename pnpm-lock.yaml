@@ -185,6 +185,9 @@ importers:
       esbuild:
         specifier: ^0.24.2
         version: 0.24.2
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
       magic-string:
         specifier: ^0.30.17
         version: 0.30.17

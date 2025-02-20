@@ -47,6 +47,7 @@
     "@vercel/og": "^0.6.4",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "esbuild": "^0.24.2",
+    "fast-glob": "^3.3.3",
     "magic-string": "^0.30.17",
     "vite-tsconfig-paths": "^5.1.4"
   },

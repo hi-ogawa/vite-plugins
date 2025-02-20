@@ -2,8 +2,12 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
+import FastGlob from "fast-glob";
 
-export async function build({ outDir }: { outDir: string }) {
+export async function build({
+  outDir,
+  publicDir,
+}: { outDir: string; publicDir: string }) {
   const buildDir = join(process.cwd(), outDir);
   const adapterOutDir = join(process.cwd(), outDir, "cloudflare");
 
@@ -29,6 +33,9 @@ export async function build({ outDir }: { outDir: string }) {
           "/favicon.ico",
           "/assets/*",
           ...(await getPrerenderPaths(buildDir)),
+          ...(await FastGlob("**/*", { cwd: publicDir })).map(
+            (file) => `/${file}`,
+          ),
         ],
       },
       null,

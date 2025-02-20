@@ -81,6 +81,12 @@ test("favicon.ico", async ({ request }) => {
   );
 });
 
+test("public files", async ({ request }) => {
+  const res = await request.get("/next.svg");
+  expect(res.status()).toBe(200);
+  expect(res.headers()["content-type"]).toBe("image/svg+xml");
+});
+
 test("viewport", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(`meta[name="viewport"]`)).toHaveAttribute(
