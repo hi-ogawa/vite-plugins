@@ -21,9 +21,9 @@
     "@hiogawa/react-server": "latest",
     "@hiogawa/test-deps-jsx-in-js": "file:./deps/test-jsx-in-js",
     "next": "link:../../../react-server-next",
-    "react": "rc",
-    "react-dom": "rc",
-    "react-server-dom-webpack": "rc"
+    "react": "latest",
+    "react-dom": "latest",
+    "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
     "@playwright/test": "^1.45.1",
