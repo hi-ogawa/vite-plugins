@@ -91,12 +91,14 @@ test("viewport", async ({ page }) => {
 
 testNoJs("image preload", async ({ page }) => {
   await page.goto("/");
-  await expect(
-    page.locator('link[href="https://nextjs.org/icons/next.svg"]'),
-  ).toHaveAttribute("fetchPriority", "high");
-  await expect(
-    page.locator('link[href="https://nextjs.org/icons/vercel.svg"]'),
-  ).not.toHaveAttribute("fetchPriority", "high");
+  await expect(page.locator('link[href="/next.svg"]')).toHaveAttribute(
+    "fetchPriority",
+    "high",
+  );
+  await expect(page.locator('link[href="/vercel.svg"]')).not.toHaveAttribute(
+    "fetchPriority",
+    "high",
+  );
 });
 
 test("middleware basic", async ({ request }) => {
