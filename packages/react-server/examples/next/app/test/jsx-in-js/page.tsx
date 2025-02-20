@@ -5,6 +5,7 @@ import JsxInJsServer from "./_jsx-in.js";
 export default function Page() {
   return (
     <div
+      data-testid="jsx-in-js"
       style={{
         margin: "1rem",
         display: "flex",
@@ -12,7 +13,7 @@ export default function Page() {
         gap: "0.5rem",
       }}
     >
-      <h4>Test Jsx in .js</h4>
+      <h4>Test JSX in .js</h4>
       <div>
         [server (node_modules): <JsxInJsInDep />]
       </div>

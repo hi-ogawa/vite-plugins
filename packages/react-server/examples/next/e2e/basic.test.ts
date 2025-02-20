@@ -201,3 +201,16 @@ test("dotenv", async ({ page }) => {
     );
   }
 });
+
+test("JSX in .js", async ({ page }) => {
+  await page.goto("/test/jsx-in-js");
+  await expect(page.getByTestId("jsx-in-js")).toContainText(
+    "[server (node_modules): JsxInJs]",
+  );
+  await expect(page.getByTestId("jsx-in-js")).toContainText(
+    "[server (user code): JsxInJs]",
+  );
+  await expect(page.getByTestId("jsx-in-js")).toContainText(
+    "[client (user code): JsxInJs]",
+  );
+});
