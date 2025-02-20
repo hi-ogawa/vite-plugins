@@ -365,6 +365,9 @@ export function vitePluginReactServer(
     }),
     createVirtualPlugin(
       ENTRY_SERVER_WRAPPER.slice("virtual:".length),
+      // the first import doesn't necessarily guarantee the execution order depending on chunk.
+      // so, we also have it on packages/react-server/src/features/request-context/utils.ts.
+      // TODO: this might not be enough for React.cache
       () => `
         import "virtual:inject-async-local-storage";
         export { handler } from "${entryServer}";
@@ -373,8 +376,8 @@ export function vitePluginReactServer(
     ),
     // make `AsyncLocalStorage` available globally for React.cache from edge build
     // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
-    createVirtualPlugin("inject-async-local-storage", () => {
-      if (options?.noAsyncLocalStorage) {
+    createVirtualPlugin("inject-async-local-storage", function () {
+      if (this.environment.name !== "rsc" || options?.noAsyncLocalStorage) {
         return "export {}";
       }
       return `

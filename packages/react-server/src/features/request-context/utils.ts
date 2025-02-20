@@ -1,3 +1,5 @@
+import "virtual:inject-async-local-storage";
+
 // we don't require async hooks and fallbacks to sync context
 // (see virtual:inject-async-local-storage)
 
