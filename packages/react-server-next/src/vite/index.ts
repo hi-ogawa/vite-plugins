@@ -145,6 +145,13 @@ function nextConfigPlugin(): Plugin {
 function nextJsxPlugin(): Plugin {
   return {
     name: nextJsxPlugin.name,
+    // need to override next.js's default tsconfig `jsx: preserve`
+    config: () => ({
+      esbuild: { jsx: "automatic" },
+      optimizeDeps: {
+        esbuildOptions: { jsx: "automatic", loader: { ".js": "jsx" } },
+      },
+    }),
     // manually use esbuild transform to support jsx in js
     // TODO: try using vite-plugin-react-swc and parserConfig to support HMR
     // https://github.com/vitejs/vite-plugin-react-swc?tab=readme-ov-file#parserconfig
