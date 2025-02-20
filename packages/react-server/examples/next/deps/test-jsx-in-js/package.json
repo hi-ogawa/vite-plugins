@@ -1,0 +1,12 @@
+{
+  "name": "@hiogawa/test-deps-jsx-in-js",
+  "private": true,
+  "type": "module",
+  "exports": "./index.js",
+  "dependencies": {
+    "react": "*"
+  },
+  "peerDependencies": {
+    "react": "*"
+  }
+}

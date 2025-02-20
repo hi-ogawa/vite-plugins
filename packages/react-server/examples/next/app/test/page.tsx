@@ -30,4 +30,5 @@ const links = [
   "/navigation/not-found/servercomponent",
   "/test/middleware/redirect",
   "/test/env",
+  "/test/jsx-in-js",
 ];
