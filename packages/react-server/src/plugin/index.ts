@@ -365,7 +365,7 @@ export function vitePluginReactServer(
     }),
     createVirtualPlugin(
       ENTRY_SERVER_WRAPPER.slice("virtual:".length),
-      // the first import doesn't necessarily guarantee the execution order depending on chunk.
+      // the first import doesn't necessarily guarantee the execution order depending on chunking.
       // so, we also have it on packages/react-server/src/features/request-context/utils.ts.
       // TODO: this might not be enough for React.cache
       () => `
