@@ -1,5 +1,5 @@
 import JsxInJsInDep from "@hiogawa/test-deps-jsx-in-js";
-import JsxInJsClient from "./_client.js";
+import JsxInJsClient from "./_jsx-in-client.js";
 import JsxInJsServer from "./_jsx-in.js";
 
 export default function Page() {
