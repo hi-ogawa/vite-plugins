@@ -33,7 +33,10 @@ export function adapterPlugin(options: {
         console.log(`▶▶▶ ADAPTER: ${adapter}`);
         if (adapter === "cloudflare") {
           const { build } = await import("./cloudflare/build");
-          await build({ outDir: options.outDir });
+          await build({
+            outDir: options.outDir,
+            publicDir: this.environment.config.publicDir,
+          });
         }
         if (adapter === "vercel") {
           const { build } = await import("./vercel/build");

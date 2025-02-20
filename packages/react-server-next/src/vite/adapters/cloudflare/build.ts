@@ -2,8 +2,12 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PrerenderManifest } from "@hiogawa/react-server/plugin";
+import FastGlob from "fast-glob";
 
-export async function build({ outDir }: { outDir: string }) {
+export async function build({
+  outDir,
+  publicDir,
+}: { outDir: string; publicDir: string }) {
   const buildDir = join(process.cwd(), outDir);
   const adapterOutDir = join(process.cwd(), outDir, "cloudflare");
 
@@ -29,6 +33,9 @@ export async function build({ outDir }: { outDir: string }) {
           "/favicon.ico",
           "/assets/*",
           ...(await getPrerenderPaths(buildDir)),
+          ...(await FastGlob("**/*", { cwd: publicDir })).map(
+            (file) => `/${file}`,
+          ),
         ],
       },
       null,
@@ -88,3 +95,18 @@ async function getPrerenderPaths(buildDir: string) {
   const manifest: PrerenderManifest = JSON.parse(await readFile(file, "utf-8"));
   return manifest.entries.flatMap((e) => [e.route, e.data]);
 }
+
+// async function getPublicFilePaths(publicDir: string) {
+//   const routeFiles = await FastGlob(
+//     path.posix.join(
+//       routeDir,
+//       "**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx|md|mdx)",
+//     ),
+//   );
+
+//   const files = [];
+//   for await (const entry of Deno.readDir(publicDir)) {
+//     files.push(entry.name);
+//   }
+//   return files;
+// }
