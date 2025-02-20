@@ -95,18 +95,3 @@ async function getPrerenderPaths(buildDir: string) {
   const manifest: PrerenderManifest = JSON.parse(await readFile(file, "utf-8"));
   return manifest.entries.flatMap((e) => [e.route, e.data]);
 }
-
-// async function getPublicFilePaths(publicDir: string) {
-//   const routeFiles = await FastGlob(
-//     path.posix.join(
-//       routeDir,
-//       "**/(page|layout|error|not-found|loading|template).(js|jsx|ts|tsx|md|mdx)",
-//     ),
-//   );
-
-//   const files = [];
-//   for await (const entry of Deno.readDir(publicDir)) {
-//     files.push(entry.name);
-//   }
-//   return files;
-// }
