@@ -156,7 +156,9 @@ function nextJsxPlugin(): Plugin {
     // TODO: try using vite-plugin-react-swc and parserConfig to support HMR
     // https://github.com/vitejs/vite-plugin-react-swc?tab=readme-ov-file#parserconfig
     async transform(code, id, _options) {
-      if (!id.includes("/node_modules/") && id.endsWith(".js")) {
+      // strip ?v=xxx for inlined dep
+      id = id.replace(/\?v=.*$/, "");
+      if (!id.includes("/node_modules/.vite/") && id.endsWith(".js")) {
         return transformWithEsbuild(code, id, {
           loader: "jsx",
           jsx: "automatic",

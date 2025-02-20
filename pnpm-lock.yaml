@@ -397,6 +397,9 @@ importers:
       '@hiogawa/react-server':
         specifier: workspace:*
         version: link:../..
+      '@hiogawa/test-deps-jsx-in-js':
+        specifier: file:./deps/test-jsx-in-js
+        version: file:packages/react-server/examples/next/deps/test-jsx-in-js(react@19.0.0)
       next:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
@@ -1936,6 +1939,11 @@ packages:
 
   '@hiogawa/test-dep-context@file:packages/react-server/examples/basic/deps/context':
     resolution: {directory: packages/react-server/examples/basic/deps/context, type: directory}
+    peerDependencies:
+      react: ^19.0.0
+
+  '@hiogawa/test-deps-jsx-in-js@file:packages/react-server/examples/next/deps/test-jsx-in-js':
+    resolution: {directory: packages/react-server/examples/next/deps/test-jsx-in-js, type: directory}
     peerDependencies:
       react: ^19.0.0
 
@@ -6264,6 +6272,10 @@ snapshots:
       react: 19.0.0
 
   '@hiogawa/test-dep-context@file:packages/react-server/examples/basic/deps/context(react@19.0.0)':
+    dependencies:
+      react: 19.0.0
+
+  '@hiogawa/test-deps-jsx-in-js@file:packages/react-server/examples/next/deps/test-jsx-in-js(react@19.0.0)':
     dependencies:
       react: 19.0.0
 

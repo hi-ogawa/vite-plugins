@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@hiogawa/react-server": "latest",
+    "@hiogawa/test-deps-jsx-in-js": "file:./deps/test-jsx-in-js",
     "next": "link:../../../react-server-next",
     "react": "latest",
     "react-dom": "latest",
