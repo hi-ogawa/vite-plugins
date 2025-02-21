@@ -28,7 +28,7 @@
     "tsup": "^8.1.0",
     "tsx": "^4.16.2",
     "typescript": "^5.5.4",
-    "vite": "^6.1.0",
+    "vite": "https://pkg.pr.new/rolldown/vite@7e5a8b6",
     "vitest": "^3.0.3",
     "wrangler": "^3.79.0"
   },
