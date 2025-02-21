@@ -1,6 +1,7 @@
 import type { PageProps } from "@hiogawa/react-server/server";
 import { once } from "@hiogawa/utils";
 import { createHighlighterCore } from "shiki/core";
+import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import js from "shiki/langs/javascript.mjs";
 import nord from "shiki/themes/nord.mjs";
 
@@ -8,7 +9,7 @@ const getHighlither = once(async () => {
   return createHighlighterCore({
     themes: [nord],
     langs: [js],
-    loadWasm: import("shiki/onig.wasm?module" as string),
+    engine: createOnigurumaEngine(import("shiki/onig.wasm?module" as string)),
   });
 });
 
