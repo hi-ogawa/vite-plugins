@@ -1,3 +1,4 @@
+import type { PageProps } from "@hiogawa/react-server/server";
 import { once } from "@hiogawa/utils";
 import { createHighlighterCore } from "shiki/core";
 import js from "shiki/langs/javascript.mjs";
@@ -11,9 +12,9 @@ const getHighlither = once(async () => {
   });
 });
 
-export default async function Page() {
+export default async function Page(props: PageProps) {
   const highligher = await getHighlither();
-  const code = `export default "ok"`;
+  const code = props.searchParams["code"] || `export default "ok"`;
   const html = highligher.codeToHtml(code, {
     lang: "js",
     theme: "nord",
@@ -29,6 +30,9 @@ export default async function Page() {
           padding: 0.5rem 1rem;
         }
       `}</style>
+      <form method="GET" action="/test/wasm">
+        <input className="antd-input px-2" name="code" defaultValue={code} />
+      </form>
       <div dangerouslySetInnerHTML={{ __html: html }}></div>
     </div>
   );
