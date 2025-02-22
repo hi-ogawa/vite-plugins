@@ -35,11 +35,7 @@
   "bin": {
     "next": "./bin/cli.js"
   },
-  "files": [
-    "bin",
-    "dist",
-    "types"
-  ],
+  "files": ["bin", "dist", "types"],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",

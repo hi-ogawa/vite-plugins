@@ -9,7 +9,9 @@ declare module "react-server-dom-webpack/server.edge" {
     node: T,
     bundlerConfig: import("./react").BundlerConfig,
     opitons?: {
-      onError: import("react-dom/server").RenderToReadableStreamOptions["onError"];
+      onError: import(
+        "react-dom/server",
+      ).RenderToReadableStreamOptions["onError"];
     },
   ): ReadableStream<Uint8Array>;
 
