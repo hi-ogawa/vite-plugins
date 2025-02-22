@@ -4,6 +4,8 @@ dist
 .vite-node
 .wrangler
 .netlify
+.tsup
 *.log
 *.tgz
 test-results
+*.tsbuildinfo

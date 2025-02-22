@@ -33,7 +33,7 @@
     "react-dom": "latest",
     "react-server-dom-webpack": "latest",
     "react-tweet": "^3.2.1",
-    "react-wrap-balancer": "^1.1.0",
+    "react-wrap-balancer": "^1.1.1",
     "shiki": "^3.0.0",
     "styled-jsx": "^5.1.6"
   },
@@ -44,15 +44,15 @@
     "@hiogawa/vite-plugin-error-overlay": "latest",
     "@hiogawa/vite-plugin-server-asset": "latest",
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
-    "@iconify-json/ri": "^1.1.20",
-    "@mdx-js/rollup": "^3.0.1",
-    "@playwright/test": "^1.45.1",
+    "@iconify-json/ri": "^1.2.5",
+    "@mdx-js/rollup": "^3.1.0",
+    "@playwright/test": "^1.50.1",
     "@types/mdx": "^2.0.13",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "magic-string": "^0.30.17",
-    "unocss": "^0.58.6",
+    "unocss": "^0.58.9",
     "vite": "latest"
   }
 }

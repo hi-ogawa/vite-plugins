@@ -24,12 +24,11 @@
     "build": "tsup",
     "prepack": "tsup --clean"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240821.1",
+    "@cloudflare/workers-types": "^4.20250214.0",
     "@hiogawa/utils-node": "^0.0.2",
-    "miniflare": "^3.20240821.0",
-    "wrangler": "^3.76.0"
+    "miniflare": "^3.20250214.0",
+    "wrangler": "^3.109.2"
   },
   "peerDependencies": {
     "miniflare": "*",
