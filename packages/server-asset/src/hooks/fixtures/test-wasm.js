@@ -1,10 +1,5 @@
 // @ts-nocheck
 
-import { register } from "node:module";
-import path from "node:path";
-
-register(path.join(import.meta.dirname, "../wasm.ts"), import.meta.url);
-
 const mod = await import("./test-wasm.wasm");
 const instance = await WebAssembly.instantiate(mod.default);
 console.log(instance.exports.addTwo(1, 2));
