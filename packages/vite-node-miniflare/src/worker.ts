@@ -44,10 +44,12 @@ export class RunnerObject extends DurableObject implements RunnerRpc {
     tinyassert(handler.fetch);
 
     const env = objectPickBy(this.#env, (_v, k) => !k.startsWith("__vite"));
-    return handler.fetch(request, env, {
+    return handler.fetch(request as any, env, {
       waitUntil(_promise: Promise<any>) {},
       passThroughOnException() {},
       abort(_reason?: any) {},
+      exports: undefined,
+      props: undefined,
     });
   }
 
