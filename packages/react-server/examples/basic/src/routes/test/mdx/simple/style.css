@@ -76,12 +76,7 @@
   font-size: 32px;
 }
 
-.vp-doc h1,
-.vp-doc h2,
-.vp-doc h3,
-.vp-doc h4,
-.vp-doc h5,
-.vp-doc h6 {
+.vp-doc h1, .vp-doc h2, .vp-doc h3, .vp-doc h4, .vp-doc h5, .vp-doc h6 {
   position: relative;
   font-weight: 600;
   outline: none;
@@ -100,8 +95,7 @@
   list-style: disc;
 }
 
-.vp-doc ul,
-.vp-doc ol {
+.vp-doc ul, .vp-doc ol {
   padding-left: 1.25rem;
   margin: 16px 0;
 }
@@ -111,5 +105,7 @@
   color: var(--vp-c-brand-1);
   text-decoration: underline;
   text-underline-offset: 2px;
-  transition: color 0.25s, opacity 0.25s;
+  transition:
+    color 0.25s,
+    opacity 0.25s;
 }
