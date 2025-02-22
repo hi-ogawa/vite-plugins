@@ -16,7 +16,7 @@
     "@hiogawa/utils": "^1.7.0",
     "@playwright/test": "^1.50.1",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^20.17.19",
+    "@types/node": "^22.13.5",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
