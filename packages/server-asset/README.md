@@ -58,12 +58,16 @@ import __wasm_B7t_kJnM from "./resvg-Cjh1zH0p.wasm"
 Custom hooks are provided to run `.bin` and `.wasm` on Node.
 
 ```ts
+// to import "xxx.bin"
+//   node --import '@hiogawa/vite-plugin-server-asset/hooks/register-data'
+// or programatically
 import { register } from "node:module"
-
-// import "xxx.bin"
 register("@hiogawa/vite-plugin-server-asset/hooks/data", import.meta.url);
 
-// import "xxx.wasm"
+// to import "xxx.wasm"
+//   node --import '@hiogawa/vite-plugin-server-asset/hooks/register-wasm'
+// or programatically
+import { register } from "node:module"
 register("@hiogawa/vite-plugin-server-asset/hooks/wasm", import.meta.url);
 ```
 
