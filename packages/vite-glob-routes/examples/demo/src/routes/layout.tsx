@@ -44,7 +44,7 @@ export function ErrorBoundary() {
           className="text-sm overflow-auto border p-2 text-colorErrorText bg-colorErrorBg border-colorErrorBorder"
         >
           {error instanceof Error
-            ? error.stack ?? error.message
+            ? (error.stack ?? error.message)
             : JSON.stringify(error, null, 2)}
         </pre>
       </div>

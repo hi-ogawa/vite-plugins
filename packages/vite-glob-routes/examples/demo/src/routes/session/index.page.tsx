@@ -13,7 +13,7 @@ export function Component() {
           <div>
             login name ={" "}
             {!meQuery.isFetching && meQuery.isSuccess
-              ? meQuery.data?.name ?? "(undefined)"
+              ? (meQuery.data?.name ?? "(undefined)")
               : "..."}
           </div>
           <div className="flex gap-2">
