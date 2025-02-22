@@ -31,7 +31,9 @@
       "default": "./dist/entry/*.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
@@ -48,7 +50,7 @@
   },
   "devDependencies": {
     "@edge-runtime/cookies": "^6.0.0",
-    "@tanstack/history": "^1.97.8",
+    "@tanstack/history": "^1.99.13",
     "@types/estree": "^1.0.6"
   },
   "peerDependencies": {

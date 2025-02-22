@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "tailwindcss": "^3.4.10",
+    "tailwindcss": "^3.4.17",
     "vite": "latest"
   }
 }

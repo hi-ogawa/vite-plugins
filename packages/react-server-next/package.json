@@ -35,7 +35,11 @@
   "bin": {
     "next": "./bin/cli.js"
   },
-  "files": ["bin", "dist", "types"],
+  "files": [
+    "bin",
+    "dist",
+    "types"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
@@ -44,8 +48,8 @@
   "dependencies": {
     "@hiogawa/vite-plugin-server-asset": "workspace:*",
     "@hiogawa/vite-plugin-ssr-middleware": "workspace:*",
-    "@vercel/og": "^0.6.4",
-    "@vitejs/plugin-react-swc": "^3.7.2",
+    "@vercel/og": "^0.6.5",
+    "@vitejs/plugin-react-swc": "^3.8.0",
     "esbuild": "^0.24.2",
     "fast-glob": "^3.3.3",
     "magic-string": "^0.30.17",
@@ -54,7 +58,7 @@
   "devDependencies": {
     "@hiogawa/react-server": "workspace:*",
     "@hiogawa/utils-node": "^0.0.2",
-    "wrangler": "^3.79.0"
+    "wrangler": "^3.109.2"
   },
   "peerDependencies": {
     "@hiogawa/react-server": "*",
