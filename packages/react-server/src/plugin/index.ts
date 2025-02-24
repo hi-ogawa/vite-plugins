@@ -303,10 +303,12 @@ export function vitePluginReactServer(
         console.log("▶▶▶ REACT SERVER BUILD (scan) [1/4]");
         manager.buildType = "scan";
         const builder = await createBuilder();
+        builder.environments["rsc"]!.config.build.write = false;
         await builder.build(builder.environments["rsc"]!);
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "server";
         manager.clientReferenceMap.clear();
+        builder.environments["rsc"]!.config.build.write = true;
         await builder.build(builder.environments["rsc"]!);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
         manager.buildType = "browser";
