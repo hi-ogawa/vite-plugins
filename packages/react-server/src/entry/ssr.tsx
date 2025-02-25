@@ -63,7 +63,11 @@ export async function handler(request: Request): Promise<Response> {
 }
 
 // return stream and ssr at once for prerender
-export async function prerender(request: Request) {
+export async function prerender(request: Request): Promise<{
+  stream: ReadableStream<Uint8Array<ArrayBufferLike>>;
+  response: Response;
+  html: string;
+}> {
   const reactServer = await importReactServer();
 
   const result = await reactServer.handler({ request });
@@ -89,7 +93,7 @@ export async function renderHtml(
   request: Request,
   result: ReactServerHandlerStreamResult,
   opitons?: { prerender?: boolean },
-) {
+): Promise<Response> {
   initializeReactClientSsr();
 
   const { default: ReactClient } = await import(

@@ -15,7 +15,7 @@ const debug = createDebug("react-server:ssr-import");
 // Note that memoize cache invalidation doesn't need to be so precise at all
 // since vite's ssrLoadModule has cache already
 // and memoize cache is used only to make `ssrLoadModule`'s promise stable.
-export const ssrImportPromiseCache = new Map<string, Promise<unknown>>();
+export const ssrImportPromiseCache: Map<string, Promise<unknown>> = new Map();
 
 const ssrWebpackRequire: WebpackRequire = memoize(ssrImport, {
   cache: ssrImportPromiseCache,
@@ -38,7 +38,7 @@ async function ssrImport(id: string) {
   }
 }
 
-export function initializeReactClientSsr() {
+export function initializeReactClientSsr(): void {
   Object.assign(globalThis, {
     __webpack_require__: ssrWebpackRequire,
     __webpack_chunk_load__: () => {

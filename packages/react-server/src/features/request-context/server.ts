@@ -1,3 +1,4 @@
+import type { ResponseCookies } from "@edge-runtime/cookies";
 import { createNextCookies } from "../next/cookie";
 import type { RevalidationType } from "../server-component/utils";
 import { createContextStorage } from "./utils";
@@ -13,14 +14,14 @@ export class RequestContext {
     this.nextCookies = createNextCookies(requestHeaders);
   }
 
-  getResponseHeaders() {
+  getResponseHeaders(): Record<string, string> {
     return {
       ...Object.fromEntries(this.responseHeaders.entries()),
       "set-cookie": this.nextCookies.toSetCookie(),
     };
   }
 
-  mergeResponseHeaders(headers: Headers) {
+  mergeResponseHeaders(headers: Headers): void {
     // TODO: not sure which should overwrite
     for (const [k, v] of headers) {
       this.responseHeaders.set(k, v);
@@ -52,14 +53,14 @@ function getRequestContext() {
   return context;
 }
 
-export function headers() {
+export function headers(): Headers {
   return getRequestContext().requestHeaders;
 }
 
-export function cookies() {
+export function cookies(): ResponseCookies {
   return getRequestContext().nextCookies.cookies;
 }
 
-export function revalidatePath(path: string) {
+export function revalidatePath(path: string): void {
   getRequestContext().revalidate = path;
 }

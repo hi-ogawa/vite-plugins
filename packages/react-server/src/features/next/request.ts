@@ -22,14 +22,14 @@ export class NextResponse extends Response {
   }
 
   /** @todo */
-  static rewrite(..._args: unknown[]) {}
+  static rewrite(..._args: unknown[]): void {}
 
   static next(_options?: {
     request?: {
       /** @todo */
       headers?: Headers;
     };
-  }) {
+  }): NextResponse {
     return new NextResponse(null, {
       headers: {
         [MIDDLEWARE_NEXT_KEY]: "1",
@@ -41,7 +41,7 @@ export class NextResponse extends Response {
 export const MIDDLEWARE_NEXT_KEY = "x-middleware-next";
 
 class NextURL extends URL {
-  clone() {
+  clone(): NextURL {
     return new NextURL(this);
   }
 }

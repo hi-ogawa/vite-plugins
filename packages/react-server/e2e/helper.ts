@@ -4,17 +4,24 @@ import { readFileSync, writeFileSync } from "fs";
 export function createEditor(filepath: string) {
   const init = readFileSync(filepath, "utf-8");
   return {
-    edit(editFn: (data: string) => string) {
+    edit(editFn: (data: string) => string): void {
       const next = editFn(init);
       writeFileSync(filepath, next);
     },
-    [Symbol.dispose]() {
+    [Symbol.dispose](): void {
       writeFileSync(filepath, init);
     },
   };
 }
 
-export async function runCommand(command: string, ...args: string[]) {
+export async function runCommand(
+  command: string,
+  ...args: string[]
+): Promise<{
+  code: number;
+  stdout: string;
+  stderr: string;
+}> {
   const proc = spawn(command, args, {
     stdio: "pipe",
     env: {

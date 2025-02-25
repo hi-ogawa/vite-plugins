@@ -1,5 +1,5 @@
 // https://github.com/remix-run/remix/blob/7f30f0bc976f0b97a020e81be33f90f68d4e527a/packages/remix-server-runtime/markup.ts#L7-L16
-export function escpaeScriptString(s: string) {
+export function escpaeScriptString(s: string): string {
   return s.replace(ESCAPE_REGEX, (s) => ESCAPE_LOOKUP[s as "&"]);
 }
 

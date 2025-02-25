@@ -1,5 +1,6 @@
 import { objectMapValues } from "@hiogawa/utils";
 import React from "react";
+import type { JSX } from "react/jsx-runtime";
 import { routerRevalidate } from "../../../client";
 import type { RevalidationType } from "../../server-component/utils";
 import { usePreloadHandlers } from "../client";
@@ -32,7 +33,9 @@ export function Link({
   activeProps,
   preload,
   ...props
-}: React.JSX.IntrinsicElements["a"] & { href: string } & LinkProps) {
+}: React.JSX.IntrinsicElements["a"] & {
+  href: string;
+} & LinkProps): JSX.Element {
   const history = useRouter((s) => s.history);
   const pathname = useRouter((s) => s.location.pathname);
   const href = encodeHref(props.href);
@@ -71,7 +74,9 @@ export function LinkForm({
   activeProps,
   preload: _preload,
   ...props
-}: React.JSX.IntrinsicElements["form"] & { action: string } & LinkProps) {
+}: React.JSX.IntrinsicElements["form"] & {
+  action: string;
+} & LinkProps): JSX.Element {
   const history = useRouter((s) => s.history);
 
   // cf. react-router's getFormSubmissionInfo and normalizeNavigateOptions

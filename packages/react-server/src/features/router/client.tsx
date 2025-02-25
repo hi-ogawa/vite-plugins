@@ -2,6 +2,7 @@ import { tinyassert } from "@hiogawa/utils";
 import type { HistoryState } from "@tanstack/history";
 import React from "react";
 import ReactDom from "react-dom";
+import type { JSX } from "react/jsx-runtime";
 import { useRouter } from "../../client";
 import type { RevalidationType } from "../server-component/utils";
 import {
@@ -9,25 +10,29 @@ import {
   type RouteManifest,
   getRouteAssetDeps,
 } from "./manifest";
-import { type MatchSegment, toMatchParams, toMatchValues } from "./tree";
+import {
+  type MatchParams,
+  type MatchSegment,
+  toMatchParams,
+  toMatchValues,
+} from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
 
-export const FlightDataContext = React.createContext<Promise<FlightData>>(
-  undefined!,
-);
+export const FlightDataContext: React.Context<Promise<FlightData>> =
+  React.createContext<Promise<FlightData>>(undefined!);
 
-export function useFlightData() {
+export function useFlightData(): FlightData {
   return React.use(React.useContext(FlightDataContext));
 }
 
-export function LayoutContent(props: { name: string }) {
+export function LayoutContent(props: { name: string }): React.ReactNode {
   const data = useFlightData();
   const routeId = data.layoutContentMap[props.name];
   tinyassert(routeId, `Unexpected layout content map`);
   return data.nodeMap[routeId];
 }
 
-export function LayoutRoot() {
+export function LayoutRoot(): JSX.Element {
   return (
     <>
       <LayoutContent name={LAYOUT_ROOT_NAME} />
@@ -42,7 +47,7 @@ function MetadataRenderer() {
 }
 
 // TODO: should we remove confusing `useRouter(s => s.location)`?
-export function useLocation() {
+export function useLocation(): URL {
   const data = useFlightData();
   return React.useMemo(() => new URL(data.url), [data.url]);
 }
@@ -52,7 +57,7 @@ function useMatchSegments() {
   return data.segments;
 }
 
-export function useParams() {
+export function useParams(): MatchParams {
   const entries = useMatchSegments();
   return React.useMemo(() => toMatchParams(entries), [entries]);
 }
@@ -61,11 +66,12 @@ type LayoutMatchType = {
   segments: MatchSegment[];
 };
 
-const LayoutMatchContext = React.createContext<LayoutMatchType>(undefined!);
+const LayoutMatchContext: React.Context<LayoutMatchType> =
+  React.createContext<LayoutMatchType>(undefined!);
 
 export function LayoutMatchProvider(
   props: React.ComponentProps<typeof LayoutMatchContext.Provider>,
-) {
+): JSX.Element {
   return <LayoutMatchContext.Provider {...props} />;
 }
 
@@ -75,7 +81,7 @@ export function useSelectedLayoutSegments(): string[] {
   return React.useMemo(() => toMatchValues(all.slice(sub.length)), [all, sub]);
 }
 
-export function RemountRoute(props: React.PropsWithChildren) {
+export function RemountRoute(props: React.PropsWithChildren): JSX.Element {
   const key = useSelectedLayoutSegments()[0];
   return <React.Fragment key={key}>{props.children}</React.Fragment>;
 }
@@ -101,7 +107,7 @@ function preloadAssetDeps(deps: AssetDeps) {
   }
 }
 
-export function RouteAssetLinks() {
+export function RouteAssetLinks(): JSX.Element {
   const pathname = useRouter((s) => s.location.pathname);
   const routeManifest = React.useContext(RouteManifestContext);
   const deps = React.useMemo(
@@ -122,14 +128,17 @@ export function RouteAssetLinks() {
   );
 }
 
-export const RouteManifestContext = React.createContext<RouteManifest>(
-  undefined!,
-);
+export const RouteManifestContext: React.Context<RouteManifest> =
+  React.createContext<RouteManifest>(undefined!);
 
 export function usePreloadHandlers({
   href,
   preload,
-}: { href: string; preload?: boolean }) {
+}: { href: string; preload?: boolean }): {
+  onMouseEnter: () => void;
+  onTouchStart: () => void;
+  onFocus: () => void;
+} {
   const routeManifest = React.useContext(RouteManifestContext);
   const callback = React.useCallback(() => {
     if (!preload) return;

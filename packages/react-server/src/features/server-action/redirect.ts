@@ -49,7 +49,7 @@ export function createActionRedirectResponse({
 export function createFlightRedirectResponse(
   response: Response,
   requestContext: RequestContext,
-) {
+): Response {
   const headers = new Headers(response.headers);
   const location = headers.get("location");
   tinyassert(typeof location === "string");
@@ -67,7 +67,9 @@ export function createFlightRedirectResponse(
   });
 }
 
-export function parseFlightRedirectResponse(response: Response) {
+export function parseFlightRedirectResponse(
+  response: Response,
+): FlightRedirectMeta | undefined {
   const raw = response.headers.get(FLIGHT_REDIRECT_KEY);
   if (raw) {
     return JSON.parse(raw) as FlightRedirectMeta;
