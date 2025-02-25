@@ -11,7 +11,10 @@ export type StreamRequestParam = {
   revalidate?: RevalidationType;
 };
 
-export function createStreamRequest(href: string, param: StreamRequestParam) {
+export function createStreamRequest(
+  href: string,
+  param: StreamRequestParam,
+): Request {
   const url = new URL(href, window.location.href);
   url.pathname += RSC_PATH;
   return new Request(url, {
@@ -21,7 +24,19 @@ export function createStreamRequest(href: string, param: StreamRequestParam) {
   });
 }
 
-export function unwrapStreamRequest(request: Request) {
+export function unwrapStreamRequest(request: Request):
+  | {
+      url: URL;
+      request: Request;
+      isStream: false;
+      streamParam?: undefined;
+    }
+  | {
+      request: Request;
+      isStream: true;
+      streamParam: StreamRequestParam | undefined;
+      url?: undefined;
+    } {
   const url = new URL(request.url);
   const isStream = url.pathname.endsWith(RSC_PATH);
   if (!isStream) {

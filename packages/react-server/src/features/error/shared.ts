@@ -10,7 +10,9 @@ export class ReactServerDigestError extends Error {
   }
 }
 
-export function createError(ctx: ReactServerErrorContext) {
+export function createError(
+  ctx: ReactServerErrorContext,
+): ReactServerDigestError {
   const digest = `__REACT_SERVER_ERROR__:${JSON.stringify(ctx)}`;
   return new ReactServerDigestError(digest);
 }
@@ -18,7 +20,7 @@ export function createError(ctx: ReactServerErrorContext) {
 export function redirect(
   location: string,
   options?: { status?: number; headers?: Record<string, string> },
-) {
+): ReactServerDigestError {
   return createError({
     status: options?.status ?? 302,
     headers: {
@@ -28,7 +30,11 @@ export function redirect(
   });
 }
 
-export function isRedirectError(ctx: ReactServerErrorContext) {
+export function isRedirectError(ctx: ReactServerErrorContext):
+  | false
+  | {
+      location: string;
+    } {
   const location = ctx.headers?.["location"];
   if (300 <= ctx.status && ctx.status <= 399 && typeof location === "string") {
     return { location };
@@ -36,11 +42,11 @@ export function isRedirectError(ctx: ReactServerErrorContext) {
   return false;
 }
 
-export function isRedirectStatus(status: number) {
+export function isRedirectStatus(status: number): boolean {
   return 300 <= status && status <= 399;
 }
 
-export function isNotFoundError(ctx: ReactServerErrorContext) {
+export function isNotFoundError(ctx: ReactServerErrorContext): boolean {
   return ctx.status === 404;
 }
 
@@ -73,6 +79,6 @@ const STATUS_TEXT_MAP = new Map([
   [500, "Internal Server Error"],
 ]);
 
-export function getStatusText(status: number) {
+export function getStatusText(status: number): string {
   return STATUS_TEXT_MAP.get(status) ?? "Unknown Server Error";
 }

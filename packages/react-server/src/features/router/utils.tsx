@@ -13,7 +13,7 @@ export type FlightData = {
 export const LAYOUT_ROOT_NAME = "__root";
 
 // enforce no trailing slash for simplicity
-export function handleTrailingSlash(url: URL) {
+export function handleTrailingSlash(url: URL): Response | undefined {
   const normalized = url.pathname.replaceAll(/\/*$/g, "") || "/";
   if (normalized !== url.pathname) {
     return new Response(null, {
@@ -33,7 +33,7 @@ export function handleTrailingSlash(url: URL) {
  * isAncestorPath("/x", "/x/y") === true
  * isAncestorPath("/x", "/xx/y") === false
  */
-export function isAncestorPath(p1: string, p2: string) {
+export function isAncestorPath(p1: string, p2: string): boolean {
   // check prefix after trailing slash
   return p2.replace(/\/*$/, "/").startsWith(p1.replace(/\/*$/, "/"));
 }

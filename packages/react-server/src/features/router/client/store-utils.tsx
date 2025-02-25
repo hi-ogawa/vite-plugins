@@ -29,16 +29,16 @@ export class TinyStore<T> implements ReadableStore<T> {
 
   constructor(private value: T) {}
 
-  get = () => this.value;
+  get = (): T => this.value;
 
-  set = (action: (v: T) => T) => {
+  set = (action: (v: T) => T): void => {
     this.value = action(this.value);
     this.notify();
   };
 
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
-    return () => {
+    return (): void => {
       this.listeners.delete(listener);
     };
   };

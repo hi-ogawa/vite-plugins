@@ -22,7 +22,7 @@ export function wrapClientPlugin<T extends Plugin | Plugin[]>(p: T): T {
   return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
 }
 
-export function invalidateModule(server: ViteDevServer, id: string) {
+export function invalidateModule(server: ViteDevServer, id: string): void {
   const mod = server.moduleGraph.getModuleById(id);
   if (mod) {
     server.moduleGraph.invalidateModule(mod);
@@ -39,11 +39,11 @@ export type CustomModuleMeta = {
 export const ENTRY_BROWSER_WRAPPER = "virtual:entry-client-wrapper";
 export const ENTRY_SERVER_WRAPPER = "virtual:entry-server-wrapper";
 
-export const USE_CLIENT_RE = /^("use client"|'use client')/;
+export const USE_CLIENT_RE: RegExp = /^("use client"|'use client')/;
 export const USE_CLIENT = "use client";
 export const USE_SERVER = "use server";
 
-export function hashString(v: string) {
+export function hashString(v: string): string {
   return nodeCrypto
     .createHash("sha256")
     .update(v)

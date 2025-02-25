@@ -12,4 +12,4 @@ export default defineConfig({
     fileParallelism: false,
     watch: false,
   },
-});
+}) as any;

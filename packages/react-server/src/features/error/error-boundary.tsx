@@ -23,7 +23,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
     this.state = { error: null };
   }
 
-  static getDerivedStateFromError(error: Error) {
+  static getDerivedStateFromError(error: Error): {
+    error: Error;
+  } {
     const ctx = getErrorContext(error);
     if (ctx && (isNotFoundError(ctx) || isRedirectError(ctx))) {
       throw error;
@@ -31,13 +33,32 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return { error };
   }
 
-  reset = () => {
+  reset = (): void => {
     React.startTransition(() => {
       this.setState({ error: null });
     });
   };
 
-  override render() {
+  override render():
+    | string
+    | number
+    | bigint
+    | boolean
+    | Iterable<React.ReactNode>
+    | Promise<
+        | string
+        | number
+        | bigint
+        | boolean
+        | React.ReactPortal
+        | React.ReactElement<unknown, string | React.JSXElementConstructor<any>>
+        | Iterable<React.ReactNode>
+        | null
+        | undefined
+      >
+    | import("react/jsx-runtime").JSX.Element
+    | null
+    | undefined {
     const error = this.state.error;
     if (error) {
       return (
@@ -70,7 +91,10 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
   override state: { error: null } | { error: Error; redirectLocation: string } =
     { error: null };
 
-  static getDerivedStateFromError(error: Error) {
+  static getDerivedStateFromError(error: Error): {
+    error: Error;
+    redirectLocation: string;
+  } {
     const ctx = getErrorContext(error);
     const redirect = ctx && isRedirectError(ctx);
     if (redirect) {
@@ -82,7 +106,26 @@ export class RedirectBoundary extends React.Component<React.PropsWithChildren> {
     throw error;
   }
 
-  override render() {
+  override render():
+    | string
+    | number
+    | bigint
+    | boolean
+    | Iterable<React.ReactNode>
+    | Promise<
+        | string
+        | number
+        | bigint
+        | boolean
+        | React.ReactPortal
+        | React.ReactElement<unknown, string | React.JSXElementConstructor<any>>
+        | Iterable<React.ReactNode>
+        | null
+        | undefined
+      >
+    | import("react/jsx-runtime").JSX.Element
+    | null
+    | undefined {
     if (this.state.error) {
       return (
         <RedirectHandler
@@ -101,7 +144,7 @@ const redirectSuspensionMap = new WeakMap<object, Promise<null>>();
 export function RedirectHandler(props: {
   suspensionKey: object;
   redirectLocation: string;
-}) {
+}): null {
   tinyassert(!import.meta.env.SSR);
 
   // trigger browser full-reload for simplicity until we figure out the mystery of react transition.
@@ -122,7 +165,9 @@ export class NotFoundBoundary extends React.Component<{
 }> {
   override state: { error?: Error } = {};
 
-  static getDerivedStateFromError(error: Error) {
+  static getDerivedStateFromError(error: Error): {
+    error: Error;
+  } {
     const ctx = getErrorContext(error);
     if (ctx && isNotFoundError(ctx)) {
       return { error };
@@ -130,7 +175,7 @@ export class NotFoundBoundary extends React.Component<{
     throw error;
   }
 
-  override render() {
+  override render(): React.ReactNode {
     if (this.state.error) {
       return (
         <>

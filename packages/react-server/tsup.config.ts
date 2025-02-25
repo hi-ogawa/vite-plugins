@@ -19,4 +19,4 @@ export default defineConfig([
     dts: !process.env["NO_DTS"],
     external: [/^virtual:/, /^@hiogawa\/react-server\//, /^\/dist\//],
   },
-]);
+]) as any;

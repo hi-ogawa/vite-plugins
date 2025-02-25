@@ -1,7 +1,8 @@
 import { objectHas } from "@hiogawa/utils";
+import type { JSX } from "react/jsx-runtime";
 import { type Metadata, normalizeMetadata } from "./utils";
 
-export function renderMetadata(m: Metadata) {
+export function renderMetadata(m: Metadata): JSX.Element {
   normalizeMetadata(m);
 
   const title =

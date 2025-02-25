@@ -25,7 +25,7 @@ export class Router {
     });
   }
 
-  setup() {
+  setup(): () => void {
     return this.history.subscribe(() => {
       this.store.set((s) => ({
         ...s,
@@ -35,14 +35,16 @@ export class Router {
   }
 }
 
-export const RouterContext = React.createContext<Router>(undefined!);
+export const RouterContext: React.Context<Router> = React.createContext<Router>(
+  undefined!,
+);
 
-export function useRouter<U = RouterState>(select?: (v: RouterState) => U) {
+export function useRouter<U = RouterState>(select?: (v: RouterState) => U): U {
   const router = React.useContext(RouterContext);
   return useStore(router.store, select);
 }
 
-export function createEncodedBrowserHistory() {
+export function createEncodedBrowserHistory(): RouterHistory {
   // patch push/replace so that location object consistently includes encoded url
   // (i.e. history.push("/✅") should set { pathname: "/%E2%9C%85" } as state)
   // cf.

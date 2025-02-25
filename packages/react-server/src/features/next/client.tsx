@@ -6,11 +6,10 @@ export type SsrContextType = {
 
 type ServerInsertedHTMLFn = () => React.ReactNode;
 
-export const SsrContext = React.createContext<SsrContextType | undefined>(
-  undefined,
-);
+export const SsrContext: React.Context<SsrContextType | undefined> =
+  React.createContext<SsrContextType | undefined>(undefined);
 
-export function useServerInsertedHTML(callback: ServerInsertedHTMLFn) {
+export function useServerInsertedHTML(callback: ServerInsertedHTMLFn): void {
   const context = React.useContext(SsrContext);
   if (context) {
     // not sure if this is sound when ssr suspends

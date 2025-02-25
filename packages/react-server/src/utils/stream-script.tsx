@@ -13,7 +13,9 @@ self.__flightStream = new ReadableStream({
 }).pipeThrough(new TextEncoderStream());
 `;
 
-export function injectFlightStream(stream: ReadableStream<Uint8Array>) {
+export function injectFlightStream(
+  stream: ReadableStream<Uint8Array>,
+): TransformStream<string, string> {
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
       if (chunk.includes("</head>")) {
@@ -52,7 +54,10 @@ export function getFlightStreamBrowser(): ReadableStream<Uint8Array> {
 // it seems buffering is necessary to ensure tag marker (e.g. `</body>`) is not split into multiple chunks.
 // Without this, above `injectFlightStream` breaks when receiving two chunks separately for "...<" and "/body>...".
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
-export function createBufferedTransformStream() {
+export function createBufferedTransformStream(): TransformStream<
+  string,
+  string
+> {
   let timeout: ReturnType<typeof setTimeout> | undefined;
   let buffer = "";
   return new TransformStream<string, string>({

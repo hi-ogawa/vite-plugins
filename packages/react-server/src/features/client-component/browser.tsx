@@ -20,7 +20,7 @@ async function importWrapper(id: string) {
   }
 }
 
-export function initializeReactClientBrowser() {
+export function initializeReactClientBrowser(): void {
   Object.assign(globalThis, {
     __webpack_require__: memoize(importWrapper),
     __webpack_chunk_load__: () => {

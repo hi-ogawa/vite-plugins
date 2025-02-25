@@ -4,7 +4,11 @@ import { RequestCookies, ResponseCookies } from "@edge-runtime/cookies";
 // so that mutable `cookies()` allows reading current cookies at the same time.
 // https://github.com/vercel/next.js/blob/6795597a50112c4f83bf61caf3681e95816da4c9/packages/next/src/server/web/spec-extension/adapters/request-cookies.ts#L25-L33
 // for now, we just diff two cookies at the end to decide final set-cookie header
-export function createNextCookies(requestHeaders: Headers) {
+export function createNextCookies(requestHeaders: Headers): {
+  cookies: ResponseCookies;
+  mergeSetCookie: (headers: Headers) => void;
+  toSetCookie: () => string;
+} {
   const requestCookies = new RequestCookies(requestHeaders);
   const cookies = new ResponseCookies(new Headers());
   for (const cookie of requestCookies.getAll()) {

@@ -13,7 +13,7 @@ export function registerServerReference(
   action: Function,
   id: string,
   name: string,
-) {
+): Function {
   if (typeof action !== "function") {
     return action;
   }
@@ -47,16 +47,16 @@ export function createActionBundlerConfig(): BundlerConfig {
 }
 
 // same as packages/react-server/src/features/use-client/server.tsx
-export const serverReferenceImportPromiseCache = new Map<
+export const serverReferenceImportPromiseCache: Map<
   string,
   Promise<unknown>
->();
+> = new Map();
 
 const serverReferenceWebpackRequire = memoize(importServerReference, {
   cache: serverReferenceImportPromiseCache,
 });
 
-export function initializeReactServer() {
+export function initializeReactServer(): void {
   Object.assign(globalThis, {
     __vite_react_server_webpack_require__: serverReferenceWebpackRequire,
     __vite_react_server_webpack_chunk_load__: () => {

@@ -4,4 +4,4 @@ export default defineConfig({
   test: {
     dir: "src",
   },
-});
+}) as any;

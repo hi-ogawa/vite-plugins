@@ -10,7 +10,7 @@ import type { BundlerConfig, ImportManifestEntry } from "../../types/react";
 // name: Counter
 
 /* @__NO_SIDE_EFFECTS__ */
-export function registerClientReference(id: string, name: string) {
+export function registerClientReference(id: string, name: string): unknown {
   // reuse everything but { $$async: true }.
   // `$$async` is not strictly necessary if we use `__webpack_chunk_load__` trick
   // but for now, we go with async `__webpack_require__` for simplicity.

@@ -111,7 +111,7 @@ function createPrerenderPresets(manifest: RouteModuleManifest) {
   const entries = manifest.entries;
 
   return {
-    static: async () => {
+    static: async (): Promise<string[]> => {
       const result: string[] = [];
       for (const entry of entries) {
         const page = entry.module?.page;
@@ -122,7 +122,7 @@ function createPrerenderPresets(manifest: RouteModuleManifest) {
       return result;
     },
 
-    generateStaticParams: async () => {
+    generateStaticParams: async (): Promise<string[]> => {
       const result: string[] = [];
       for (const entry of entries) {
         const page = entry.module?.page;
