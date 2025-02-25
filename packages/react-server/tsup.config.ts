@@ -17,7 +17,13 @@ export default defineConfig([
       "src/plugin/index.ts",
     ],
     format: ["esm"],
-    esbuildPlugins: [IsolatedDecl.esbuild()],
+    esbuildPlugins: [
+      IsolatedDecl.esbuild({
+        transformer: "oxc",
+        // TODO: not working?
+        sourceMap: true,
+      }),
+    ],
     external: [/^virtual:/, /^@hiogawa\/react-server\//, /^\/dist\//],
   },
 ]) as any;
