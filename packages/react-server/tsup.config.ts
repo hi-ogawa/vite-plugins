@@ -18,7 +18,6 @@ export default defineConfig([
     ],
     format: ["esm"],
     esbuildPlugins: [IsolatedDecl.esbuild()],
-    // dts: !process.env["NO_DTS"],
     external: [/^virtual:/, /^@hiogawa\/react-server\//, /^\/dist\//],
   },
 ]) as any;
