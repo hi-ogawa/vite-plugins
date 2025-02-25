@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+import { IsolatedDecl } from "unplugin-isolated-decl";
 
 export default defineConfig([
   {
@@ -16,7 +17,8 @@ export default defineConfig([
       "src/plugin/index.ts",
     ],
     format: ["esm"],
-    dts: !process.env["NO_DTS"],
+    esbuildPlugins: [IsolatedDecl.esbuild()],
+    // dts: !process.env["NO_DTS"],
     external: [/^virtual:/, /^@hiogawa\/react-server\//, /^\/dist\//],
   },
 ]) as any;
