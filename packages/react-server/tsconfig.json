@@ -4,6 +4,7 @@
   "compilerOptions": {
     "checkJs": false,
     "declaration": true,
+    "declarationMap": true,
     "isolatedDeclarations": true,
     "types": ["vite/client"],
     "jsx": "react-jsx"

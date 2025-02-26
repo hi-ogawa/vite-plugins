@@ -4,7 +4,6 @@ import React from "react";
 import ReactDom from "react-dom";
 import type { JSX } from "react/jsx-runtime";
 import { useRouter } from "../../client";
-import type { RevalidationType } from "../server-component/utils";
 import {
   type AssetDeps,
   type RouteManifest,
@@ -87,12 +86,6 @@ export function RemountRoute(props: React.PropsWithChildren): JSX.Element {
 }
 
 export const ROUTER_REVALIDATE_KEY = "__REVALIDATE";
-
-declare module "@tanstack/history" {
-  interface HistoryState {
-    [ROUTER_REVALIDATE_KEY]?: RevalidationType;
-  }
-}
 
 export function routerRevalidate(v: string): HistoryState {
   return { [ROUTER_REVALIDATE_KEY]: v };
