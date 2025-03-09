@@ -1,8 +1,0 @@
-name = "test-next-vite-platform"
-pages_build_output_dir = "./dist/cloudflare"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat_v2"]
-
-[[kv_namespaces]]
-binding = "kv"
-id = "bfd39a86427241b9b46e2156045a3538"
