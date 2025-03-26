@@ -2,7 +2,7 @@ import ReactDOMServer from "react-dom/server.edge";
 import { SsrContext, type SsrContextType } from "./client";
 
 // inject default meta viewport
-export function injectDefaultMetaViewport() {
+export function injectDefaultMetaViewport(): TransformStream<string, string> {
   const HEAD_END = "</head>";
   const META_VIEWPORT_PATTERN = `<meta name="viewport"`;
   const META_VIEWPORT_DEFAULT = `<meta name="viewport" content="width=device-width, initial-scale=1">`;
@@ -28,7 +28,12 @@ export function injectDefaultMetaViewport() {
   });
 }
 
-export function createSsrContext() {
+export function createSsrContext(): {
+  Provider: (
+    props: React.PropsWithChildren,
+  ) => import("react/jsx-runtime").JSX.Element;
+  render: () => string;
+} {
   const context: SsrContextType = {
     callbacks: new Set(),
   };

@@ -222,7 +222,7 @@ export function vitePluginServerUseClient({
 export async function noramlizeClientReferenceId(
   id: string,
   parentServer: ViteDevServer,
-) {
+): Promise<string> {
   const root = parentServer.config.root;
   if (id.startsWith(root)) {
     id = id.slice(root.length);

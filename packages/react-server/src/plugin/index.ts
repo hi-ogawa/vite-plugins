@@ -86,27 +86,35 @@ class PluginStateManager {
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
-  nodeModules = {
-    useClient: new Map<string, { id: string; exportNames: Set<string> }>(),
+  nodeModules: {
+    useClient: Map<
+      string,
+      {
+        id: string;
+        exportNames: Set<string>;
+      }
+    >;
+  } = {
+    useClient: new Map(),
   };
 
   // all files in parent server
-  parentIds = new Set<string>();
+  parentIds: Set<string> = new Set();
   // all files in rsc server
-  serverIds = new Set<string>();
+  serverIds: Set<string> = new Set();
   // "use client" files
-  clientReferenceMap = new Map<string, string>();
+  clientReferenceMap: Map<string, string> = new Map();
 
   // "use server" files
-  serverReferenceMap = new Map<string, string>();
+  serverReferenceMap: Map<string, string> = new Map();
 
-  shouldReloadRsc(id: string) {
+  shouldReloadRsc(id: string): boolean {
     const ok = this.serverIds.has(id) && !this.clientReferenceMap.has(id);
     debug("[RscManager.shouldReloadRsc]", { ok, id });
     return ok;
   }
 
-  normalizeReferenceId(id: string) {
+  normalizeReferenceId(id: string): string {
     id = path.relative(this.config.root, id);
     return this.buildType ? hashString(id) : id;
   }

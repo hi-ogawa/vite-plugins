@@ -49,7 +49,10 @@ export type AnyRouteModule = { [k in RouteModuleKey]?: unknown };
 
 export type RouteModuleTree = TreeNode<RouteModule>;
 
-export function generateRouteModuleTree(globEntries: Record<string, any>) {
+export function generateRouteModuleTree(globEntries: Record<string, any>): {
+  tree: TreeNode<RouteModule>;
+  manifest: RouteModuleManifest;
+} {
   const { tree, entries } = createFsRouteTree<RouteModule>(globEntries);
   const manifest = getRouteModuleManifest(entries);
   return { tree, manifest };
@@ -126,7 +129,13 @@ async function renderLayout(
 export async function renderRouteMap(
   tree: RouteModuleTree,
   request: Pick<Request, "url" | "headers">,
-) {
+): Promise<{
+  layoutContentMap: Record<string, string>;
+  nodeMap: Record<string, React.ReactNode>;
+  metadata: import("react/jsx-runtime").JSX.Element;
+  segments: MatchSegment[];
+  notFound: boolean;
+}> {
   const url = new URL(request.url);
   const baseProps: Omit<BaseProps, "params"> = {
     url: serializeUrl(url),
@@ -176,7 +185,7 @@ export function getCachedRoutes(
   tree: RouteModuleTree,
   lastPathname: string,
   revalidations: (RevalidationType | undefined)[],
-) {
+): string[] {
   const routeIds: string[] = [];
   const result = matchPageRoute(tree, lastPathname);
   for (const m of result.matches) {

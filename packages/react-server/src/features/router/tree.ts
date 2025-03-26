@@ -310,7 +310,10 @@ const CATCH_ALL_RE = /^\[\.\.\.(\w*)\]$/;
 const CATCH_ALL_OPTIONAL_RE = /^\[\[\.\.\.(\w*)\]\]$/;
 const GROUP_RE = /^\((\w+)\)$/;
 
-export function parseRoutePath(pathname: string) {
+export function parseRoutePath(pathname: string): {
+  dynamic: boolean;
+  format: (params: Record<string, string>) => string;
+} {
   const dynamicMap: Record<string, string> = {};
 
   for (const segment of pathname.split("/")) {
