@@ -155,7 +155,7 @@ export default function vitePluginRsc(rscOptions: {
     createVirtualPlugin("ssr-entry", function () {
       return `
         import "/src/lib/features/client-component/ssr-init.ts";
-        export * from "/src/lib/ssr.ts";
+        export * from "/src/lib/ssr.tsx";
       `;
     }),
     {
