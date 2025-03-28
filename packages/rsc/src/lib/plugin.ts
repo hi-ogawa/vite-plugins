@@ -157,10 +157,11 @@ export default function vitePluginRsc(rscOptions: {
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          await import("/src/entry.client.tsx");
+          window.__webpack_require__ = () => {}; // TODO
+          await import(${JSON.stringify(rscOptions.client)});
         `;
       } else {
-        return `import "/src/entry.client.tsx";`;
+        return `import ${JSON.stringify(rscOptions.client)};`;
       }
     }),
     {
@@ -197,7 +198,6 @@ export default function vitePluginRsc(rscOptions: {
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     vitePluginSilenceDirectiveBuildWarning(),
-    // ...react(),
   ];
 }
 

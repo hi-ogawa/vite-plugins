@@ -43,5 +43,5 @@ export function injectRscScript(
 }
 
 export function getRscScript(): ReadableStream<Uint8Array> {
-  return (self as any).__f_stream;
+  return (self as any).__rsc_stream;
 }

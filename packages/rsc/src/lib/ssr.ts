@@ -21,7 +21,7 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
   const htmlStream = await ReactDomServer.renderToReadableStream(payload.root, {
     // TODO:
     // bootstrapModules: ssrAssets.bootstrapModules,
-    bootstrapModules: ["/src/app/client.tsx"],
+    bootstrapModules: ["/@id/__x00__virtual:browser-entry"],
     // @ts-expect-error TODO: declare
     formState: payload.formState,
   });
