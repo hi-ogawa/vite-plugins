@@ -1,3 +1,4 @@
+import React from "react";
 import ReactDomClient from "react-dom/client";
 import ReactClient from "react-server-dom-webpack/client.browser";
 import type { RscPayload } from "./server";
@@ -18,7 +19,7 @@ export async function hydrate(options?: {
       }),
       { callServer },
     );
-    // setPayload(payload);
+    setPayload(payload);
     return payload.returnValue;
   };
   (self as any).__callServer = callServer;
@@ -34,8 +35,16 @@ export async function hydrate(options?: {
     },
   );
 
+  let setPayload: (v: RscPayload) => void;
+
   function BrowserRoot() {
-    return initialPayload.root;
+    const [payload, setPayload_] = React.useState(initialPayload);
+
+    React.useEffect(() => {
+      setPayload = (v) => React.startTransition(() => setPayload_(v));
+    }, [setPayload_]);
+
+    return payload.root;
   }
 
   ReactDomClient.hydrateRoot(document, <BrowserRoot />, {

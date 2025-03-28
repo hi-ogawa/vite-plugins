@@ -68,9 +68,9 @@ export default function vitePluginRsc(rscOptions: {
             // TODO: use globalThis to share state instead of sharedPlugins
             sharedPlugins: true,
             async buildApp(builder) {
-              // buildScan = true;
-              // await builder.build(builder.environments.rsc);
-              // buildScan = false;
+              buildScan = true;
+              await builder.build(builder.environments.rsc!);
+              buildScan = false;
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
@@ -83,7 +83,7 @@ export default function vitePluginRsc(rscOptions: {
       name: "ssr-middleware",
       configureServer(server) {
         const ssrRunner = createServerModuleRunner(server.environments.ssr);
-        // patch virtual module full reload https://github.com/vitejs/vite/issues/19283
+        // patch virtual module full reload bug https://github.com/vitejs/vite/issues/19283
         const loggerError = ssrRunner.hmrClient!.logger.error;
         ssrRunner.hmrClient!.logger.error = (e) => {
           if (

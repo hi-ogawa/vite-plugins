@@ -1,5 +1,7 @@
 "use server";
 
-export async function testAction(formData: FormData): Promise<void> {
-  console.log("[testAction]", formData);
+export let serverCounter = 0;
+
+export async function changeServerCounter(formData: FormData): Promise<void> {
+  serverCounter += Number(formData.get("change"));
 }

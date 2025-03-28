@@ -2,7 +2,11 @@
 
 import React from "react";
 
-export function Counter(): React.ReactElement {
+export function ClientCounter(): React.ReactElement {
   const [count, setCount] = React.useState(0);
-  return <button onClick={() => setCount((c) => c + 1)}>Count: {count}</button>;
+  return (
+    <button onClick={() => setCount((c) => c + 1)}>
+      Client Counter: {count}
+    </button>
+  );
 }

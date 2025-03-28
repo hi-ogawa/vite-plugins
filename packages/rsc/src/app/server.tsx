@@ -1,6 +1,6 @@
 import { renderRequest } from "../lib/server";
-import { testAction } from "./action";
-import { Counter } from "./counter";
+import { changeServerCounter, serverCounter } from "./action";
+import { ClientCounter } from "./counter";
 
 function Document() {
   return (
@@ -10,10 +10,11 @@ function Document() {
       </head>
       <body>
         <h4>hello server</h4>
-        <form action={testAction}>
-          <button>TestAction</button>
+        <form action={changeServerCounter}>
+          <input type="hidden" name="change" value="1" />
+          <button>Server Counter: {serverCounter}</button>
         </form>
-        <Counter />
+        <ClientCounter />
       </body>
     </html>
   );
