@@ -17,7 +17,7 @@ export function initializeReactClientBrowser(): void {
   Object.assign(globalThis, {
     __webpack_require__: memoize(importClientRefrence),
     __webpack_chunk_load__: () => {
-      throw new Error("todo: __webpack_chunk_load__");
+      throw new Error("__webpack_chunk_load__");
     },
   });
 }

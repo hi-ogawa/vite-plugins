@@ -221,6 +221,7 @@ function vitePluginUseClient(): Plugin[] {
     {
       name: vitePluginUseClient.name,
       transform(code, id) {
+        // TODO: use packages/transforms
         if (this.environment.name === "rsc") {
           if (/^(("use client")|('use client'))/.test(code)) {
             // pass through client code to find server reference used only by client
