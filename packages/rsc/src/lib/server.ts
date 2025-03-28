@@ -37,13 +37,13 @@ export async function renderRequest(
     });
   }
 
-  const ssrRuntime = await importSsrRuntime();
-  return ssrRuntime.renderHtml(stream);
+  const ssrEntry = await importSsrEntry();
+  return ssrEntry.renderHtml(stream);
 }
 
-async function importSsrRuntime(): Promise<typeof import("./ssr")> {
+async function importSsrEntry(): Promise<typeof import("./ssr")> {
   if (import.meta.env.DEV) {
-    return await __viteSsrRunner.import("/src/lib/ssr.ts");
+    return await __viteSsrRunner.import("virtual:ssr-entry");
   } else {
     return await import("virtual:build-ssr-entry" as any);
   }

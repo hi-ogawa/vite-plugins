@@ -44,7 +44,7 @@ export default function vitePluginRsc(rscOptions: {
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: "/src/lib/ssr.ts" },
+                  input: { index: "virtual:ssr-entry" },
                 },
               },
             },
@@ -124,27 +124,6 @@ export default function vitePluginRsc(rscOptions: {
         };
       },
     },
-    {
-      // externalize `dist/ssr/index.js` import as relative path in rsc build
-      name: "virtual:build-ssr-entry",
-      resolveId(source) {
-        if (source === "virtual:build-ssr-entry") {
-          return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
-        }
-        return;
-      },
-      renderChunk(code, chunk) {
-        if (code.includes("__VIRTUAL_BUILD_SSR_ENTRY__")) {
-          const replacement = path.relative(
-            "dist/rsc",
-            path.join("dist/ssr", chunk.fileName),
-          );
-          code = code.replace("__VIRTUAL_BUILD_SSR_ENTRY__", replacement);
-          return { code };
-        }
-        return;
-      },
-    },
     createVirtualPlugin("ssr-assets", function () {
       assert(this.environment.name === "ssr");
       let bootstrapModules: string[] = [];
@@ -174,6 +153,30 @@ export default function vitePluginRsc(rscOptions: {
         `;
       }
     }),
+    createVirtualPlugin("ssr-entry", function () {
+      return `export * from "/src/lib/ssr.ts";`;
+    }),
+    {
+      // externalize `dist/ssr/index.js` import as relative path in rsc build
+      name: "virtual:build-ssr-entry",
+      resolveId(source) {
+        if (source === "virtual:build-ssr-entry") {
+          return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
+        }
+        return;
+      },
+      renderChunk(code, chunk) {
+        if (code.includes("__VIRTUAL_BUILD_SSR_ENTRY__")) {
+          const replacement = path.relative(
+            "dist/rsc",
+            path.join("dist/ssr", chunk.fileName),
+          );
+          code = code.replace("__VIRTUAL_BUILD_SSR_ENTRY__", replacement);
+          return { code };
+        }
+        return;
+      },
+    },
     {
       name: "misc",
       hotUpdate(ctx) {
