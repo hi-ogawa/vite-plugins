@@ -1,17 +1,15 @@
-// import assert from "node:assert";
+import assert from "node:assert";
 import path from "node:path";
-// import react from "@vitejs/plugin-react";
 import {
-  // type Manifest,
+  type Manifest,
   type Plugin,
   type RunnableDevEnvironment,
   createRunnableDevEnvironment,
-  // defineConfig,
 } from "vite";
-import { createRequest, sendResponse } from "./utils/fetch";
+import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
-// let browserManifest: Manifest;
+let browserManifest: Manifest;
 let clientReferences: Record<string, string> = {}; // TODO: normalize id
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -79,15 +77,15 @@ export default function vitePluginRsc(rscOptions: {
             },
           },
           builder: {
-            // sharedPlugins: true,
-            // async buildApp(builder) {
-            //   buildScan = true;
-            //   await builder.build(builder.environments.rsc);
-            //   buildScan = false;
-            //   await builder.build(builder.environments.rsc);
-            //   await builder.build(builder.environments.client);
-            //   await builder.build(builder.environments.ssr);
-            // },
+            sharedPlugins: true,
+            async buildApp(builder) {
+              // buildScan = true;
+              // await builder.build(builder.environments.rsc);
+              // buildScan = false;
+              await builder.build(builder.environments.rsc!);
+              await builder.build(builder.environments.client!);
+              await builder.build(builder.environments.ssr!);
+            },
           },
         };
       },
@@ -106,9 +104,7 @@ export default function vitePluginRsc(rscOptions: {
           server.middlewares.use(async (req, res, next) => {
             try {
               const mod = await rscRunner.import(rscOptions.server);
-              const request = createRequest(req, res);
-              const response = await mod.default(request);
-              sendResponse(response, res);
+              await toNodeHandler(mod.default)(req, res);
             } catch (e) {
               next(e);
             }
@@ -116,11 +112,11 @@ export default function vitePluginRsc(rscOptions: {
         };
       },
       async configurePreviewServer(server) {
-        const mod = await import(path.resolve("dist/ssr/index.js"));
+        const mod = await import(path.resolve("dist/rsc/index.js"));
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              await mod.default(req, res);
+              await toNodeHandler(mod.default)(req, res);
             } catch (e) {
               next(e);
             }
@@ -129,25 +125,37 @@ export default function vitePluginRsc(rscOptions: {
       },
     },
     {
+      // externalize `dist/ssr/index.js` import as relative path in rsc build
       name: "virtual:build-ssr-entry",
       resolveId(source) {
         if (source === "virtual:build-ssr-entry") {
-          // externalize rsc entry in ssr entry as relative path
-          return { id: "../rsc/index.js", external: true };
+          return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
         }
+        return;
+      },
+      renderChunk(code, chunk) {
+        if (code.includes("__VIRTUAL_BUILD_SSR_ENTRY__")) {
+          const replacement = path.relative(
+            "dist/rsc",
+            path.join("dist/ssr", chunk.fileName),
+          );
+          code = code.replace("__VIRTUAL_BUILD_SSR_ENTRY__", replacement);
+          return { code };
+        }
+        return;
       },
     },
-    // createVirtualPlugin("ssr-assets", function () {
-    //   assert(this.environment.name === "ssr");
-    //   let bootstrapModules: string[] = [];
-    //   if (this.environment.mode === "dev") {
-    //     bootstrapModules = ["/@id/__x00__virtual:browser-entry"];
-    //   }
-    //   if (this.environment.mode === "build") {
-    //     bootstrapModules = [browserManifest["virtual:browser-entry"].file];
-    //   }
-    //   return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
-    // }),
+    createVirtualPlugin("ssr-assets", function () {
+      assert(this.environment.name === "ssr");
+      let bootstrapModules: string[] = [];
+      if (this.environment.mode === "dev") {
+        bootstrapModules = ["/@id/__x00__virtual:browser-entry"];
+      }
+      if (this.environment.mode === "build") {
+        bootstrapModules = [browserManifest["virtual:browser-entry"]!.file];
+      }
+      return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
+    }),
     createVirtualPlugin("browser-entry", function () {
       if (this.environment.mode === "dev") {
         return `
@@ -160,7 +168,10 @@ export default function vitePluginRsc(rscOptions: {
           await import(${JSON.stringify(rscOptions.client)});
         `;
       } else {
-        return `import ${JSON.stringify(rscOptions.client)};`;
+        return `
+          import "/src/lib/features/client-component/browser.ts";
+          import ${JSON.stringify(rscOptions.client)};
+        `;
       }
     }),
     {
@@ -185,14 +196,14 @@ export default function vitePluginRsc(rscOptions: {
           }
         }
       },
-      // writeBundle(_options, bundle) {
-      // 	if (this.environment.name === "client") {
-      // 		const output = bundle[".vite/manifest.json"];
-      // 		assert(output.type === "asset");
-      // 		assert(typeof output.source === "string");
-      // 		browserManifest = JSON.parse(output.source);
-      // 	}
-      // },
+      writeBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          const output = bundle[".vite/manifest.json"];
+          assert(output && output.type === "asset");
+          assert(typeof output.source === "string");
+          browserManifest = JSON.parse(output.source);
+        }
+      },
     },
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
@@ -230,24 +241,16 @@ function vitePluginUseClient(): Plugin[] {
       },
     },
     createVirtualPlugin("client-references", function () {
-      // tinyassert(this.environment?.name !== "rsc");
-      // tinyassert(this.environment?.mode === "build");
-
+      assert(this.environment?.name !== "rsc");
+      assert(this.environment?.mode === "build");
       return [
         `export default {`,
         ...[...Object.keys(clientReferences)].map(
-          ([id, runtimeId]) => `"${runtimeId}": () => import("${id}"),\n`,
+          (id) =>
+            `${JSON.stringify(id)}: () => import(${JSON.stringify(id)}),\n`,
         ),
         `}`,
       ].join("\n");
-    }),
-    createVirtualPlugin("build-client-references", () => {
-      const code = Object.keys(clientReferences)
-        .map(
-          (id) => `${JSON.stringify(id)}: () => import(${JSON.stringify(id)}),`,
-        )
-        .join("\n");
-      return `export default {${code}}`;
     }),
   ];
 }

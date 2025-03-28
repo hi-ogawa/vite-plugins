@@ -1,10 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 
-export function createRequest(
-  req: IncomingMessage,
-  res: ServerResponse,
-): Request {
+function createRequest(req: IncomingMessage, res: ServerResponse): Request {
   const abortController = new AbortController();
   res.once("close", () => {
     if (req.destroyed) {
@@ -45,7 +42,7 @@ export function createRequest(
   );
 }
 
-export function sendResponse(response: Response, res: ServerResponse): void {
+function sendResponse(response: Response, res: ServerResponse): void {
   const headers = Object.fromEntries(response.headers);
   if (headers["set-cookie"]) {
     delete headers["set-cookie"];
@@ -63,4 +60,14 @@ export function sendResponse(response: Response, res: ServerResponse): void {
   } else {
     res.end();
   }
+}
+
+export function toNodeHandler(
+  handler: (request: Request) => Promise<Response>,
+): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
+  return async (req: IncomingMessage, res: ServerResponse) => {
+    const request = createRequest(req, res);
+    const response = await handler(request);
+    sendResponse(response, res);
+  };
 }

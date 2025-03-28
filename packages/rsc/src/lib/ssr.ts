@@ -21,13 +21,10 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
     },
   );
 
-  // TODO: css
-  // const ssrAssets = await import("virtual:ssr-assets");
+  const ssrAssets = await import("virtual:ssr-assets");
 
   const htmlStream = await ReactDomServer.renderToReadableStream(payload.root, {
-    // TODO:
-    // bootstrapModules: ssrAssets.bootstrapModules,
-    bootstrapModules: ["/@id/__x00__virtual:browser-entry"],
+    bootstrapModules: ssrAssets.bootstrapModules,
     // @ts-expect-error TODO: declare
     formState: payload.formState,
   });
