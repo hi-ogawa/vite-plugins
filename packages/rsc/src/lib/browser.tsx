@@ -24,6 +24,15 @@ export async function hydrate(options?: {
   };
   (self as any).__callServer = callServer;
 
+  async function onNavigation() {
+    const url = new URL(window.location.href);
+    url.searchParams.set("__rsc", "");
+    const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url), {
+      callServer,
+    });
+    setPayload(payload);
+  }
+
   if (window.location.search.includes("no-hydrate")) {
     return;
   }
@@ -44,6 +53,10 @@ export async function hydrate(options?: {
       setPayload = (v) => React.startTransition(() => setPayload_(v));
     }, [setPayload_]);
 
+    React.useEffect(() => {
+      return listenNavigation(() => onNavigation());
+    }, []);
+
     return payload.root;
   }
 
@@ -51,11 +64,61 @@ export async function hydrate(options?: {
     formState: initialPayload.formState,
   });
 
-  if (import.meta.hot && options?.onHmrReload) {
-    const onHmrReload = options?.onHmrReload;
-    import.meta.hot.on("rsc:update", () => onHmrReload());
+  if (import.meta.hot) {
+    import.meta.hot.on("rsc:update", () => {
+      window.history.replaceState({}, "", window.location.href);
+      options?.onHmrReload?.();
+    });
   }
 }
 
-// TODO
-export function fetchRSC(): void {}
+export async function fetchRSC(): Promise<void> {
+  // TODO
+}
+
+function listenNavigation(onNavigation: () => void) {
+  window.addEventListener("popstate", onNavigation);
+
+  const oldPushState = window.history.pushState;
+  window.history.pushState = function (...args) {
+    const res = oldPushState.apply(this, args);
+    onNavigation();
+    return res;
+  };
+
+  const oldReplaceState = window.history.replaceState;
+  window.history.replaceState = function (...args) {
+    const res = oldReplaceState.apply(this, args);
+    onNavigation();
+    return res;
+  };
+
+  function onClick(e: MouseEvent) {
+    let link = (e.target as Element).closest("a");
+    if (
+      link &&
+      link instanceof HTMLAnchorElement &&
+      link.href &&
+      (!link.target || link.target === "_self") &&
+      link.origin === location.origin &&
+      !link.hasAttribute("download") &&
+      e.button === 0 && // left clicks only
+      !e.metaKey && // open in new tab (mac)
+      !e.ctrlKey && // open in new tab (windows)
+      !e.altKey && // download
+      !e.shiftKey &&
+      !e.defaultPrevented
+    ) {
+      e.preventDefault();
+      history.pushState(null, "", link.href);
+    }
+  }
+  document.addEventListener("click", onClick);
+
+  return () => {
+    document.removeEventListener("click", onClick);
+    window.removeEventListener("popstate", onNavigation);
+    window.history.pushState = oldPushState;
+    window.history.replaceState = oldReplaceState;
+  };
+}

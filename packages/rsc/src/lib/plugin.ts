@@ -94,7 +94,9 @@ export default function vitePluginRsc(rscOptions: {
           }
           loggerError(e);
         };
-        const rscRunner = createServerModuleRunner(server.environments.rsc!);
+        const rscRunner = createServerModuleRunner(server.environments.rsc!, {
+          hmr: false,
+        });
         Object.assign(globalThis, {
           __viteSsrRunner: ssrRunner,
         });
