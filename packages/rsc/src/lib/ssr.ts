@@ -2,7 +2,10 @@ import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import { createModuleMap } from "./features/client-component/ssr";
 import type { RscPayload } from "./server";
-import { injectRscScript } from "./utils/rsc-script";
+import {
+  createBufferedTransformStream,
+  injectRscScript,
+} from "./utils/rsc-script";
 
 export async function renderHtml(stream: ReadableStream): Promise<Response> {
   const [stream1, stream2] = stream.tee();
@@ -26,6 +29,7 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
 
   const responseStream = htmlStream
     .pipeThrough(new TextDecoderStream())
+    .pipeThrough(createBufferedTransformStream())
     .pipeThrough(injectRscScript(stream2))
     .pipeThrough(new TextEncoderStream());
 

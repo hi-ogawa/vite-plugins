@@ -13,7 +13,6 @@ export function injectRscScript(
 ): TransformStream<string, string> {
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
-      // TODO: chunk is not guaranteed to include entire end tag `</...>`
       if (chunk.includes("</head>")) {
         chunk = chunk.replace(
           "</head>",
@@ -38,6 +37,36 @@ export function injectRscScript(
         controller.enqueue(chunk.slice(i));
       } else {
         controller.enqueue(chunk);
+      }
+    },
+  });
+}
+
+// it seems buffering is necessary to ensure tag marker (e.g. `</body>`) is not split into multiple chunks.
+// Without this, above `injectFlightStream` breaks when receiving two chunks separately for "...<" and "/body>...".
+// see https://github.com/hi-ogawa/vite-plugins/pull/457
+export function createBufferedTransformStream(): TransformStream<
+  string,
+  string
+> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let buffer = "";
+  return new TransformStream<string, string>({
+    transform(chunk, controller) {
+      buffer += chunk;
+      if (typeof timeout !== "undefined") {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => {
+        controller.enqueue(buffer);
+        buffer = "";
+        timeout = undefined;
+      }, 0);
+    },
+    async flush(controller) {
+      if (typeof timeout !== "undefined") {
+        clearTimeout(timeout);
+        controller.enqueue(buffer);
       }
     },
   });
