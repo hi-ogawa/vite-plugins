@@ -9,7 +9,7 @@ function Document() {
       </head>
       <body>
         <h4>hello server</h4>
-        {/* <Counter /> */}
+        <Counter />
       </body>
     </html>
   );

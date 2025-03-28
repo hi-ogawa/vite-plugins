@@ -31,7 +31,7 @@ export default function vitePluginRsc(rscOptions: {
               optimizeDeps: {
                 include: [
                   "react-dom/client",
-                  "react-server-dom-webpack/client",
+                  "react-server-dom-webpack/client.browser",
                 ],
               },
               build: {
@@ -128,7 +128,8 @@ export default function vitePluginRsc(rscOptions: {
         };
       },
     },
-    // {
+    // {import { initializeReactClientBrowser } from "./features/client-component/browser";
+
     //   name: "virtual:build-rsc-entry",
     //   resolveId(source) {
     //     if (source === "virtual:build-rsc-entry") {
@@ -151,13 +152,12 @@ export default function vitePluginRsc(rscOptions: {
     createVirtualPlugin("browser-entry", function () {
       if (this.environment.mode === "dev") {
         return `
-          import "/@vite/client";
           import RefreshRuntime from "/@react-refresh";
           RefreshRuntime.injectIntoGlobalHook(window);
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          window.__webpack_require__ = () => {}; // TODO
+          await import("/src/lib/features/client-component/browser.ts");
           await import(${JSON.stringify(rscOptions.client)});
         `;
       } else {
@@ -218,7 +218,7 @@ function vitePluginUseClient(): Plugin[] {
               ...code.matchAll(/export (default) (function|class) /g),
             ];
             const result = [
-              `import $$ReactServer from "react-server-dom-webpack/server.edge"`,
+              `import * as $$ReactServer from "/src/lib/features/client-component/server.ts"`,
               ...[...matches].map(
                 ([, name]) =>
                   `export ${name === "default" ? "default" : `const ${name} =`} $$ReactServer.registerClientReference({}, ${JSON.stringify(id)}, ${JSON.stringify(name)})`,
@@ -230,6 +230,18 @@ function vitePluginUseClient(): Plugin[] {
         return;
       },
     },
+    createVirtualPlugin("client-references", function () {
+      // tinyassert(this.environment?.name !== "rsc");
+      // tinyassert(this.environment?.mode === "build");
+
+      return [
+        `export default {`,
+        ...[...Object.keys(clientReferences)].map(
+          ([id, runtimeId]) => `"${runtimeId}": () => import("${id}"),\n`,
+        ),
+        `}`,
+      ].join("\n");
+    }),
     createVirtualPlugin("build-client-references", () => {
       const code = Object.keys(clientReferences)
         .map(

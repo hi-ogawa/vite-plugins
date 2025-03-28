@@ -1,5 +1,6 @@
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
+import { createBundlerConfig } from "./features/client-component/server";
 
 export type RscPayload = {
   root: React.ReactNode;
@@ -23,7 +24,10 @@ export async function renderRequest(
     request.body!;
   }
 
-  const stream = ReactServer.renderToReadableStream<RscPayload>({ root }, {});
+  const stream = ReactServer.renderToReadableStream<RscPayload>(
+    { root },
+    createBundlerConfig(),
+  );
 
   if (isRscRequest) {
     return new Response(stream, {
