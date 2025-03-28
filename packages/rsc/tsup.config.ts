@@ -4,7 +4,7 @@ import IsolatedDecl from "unplugin-isolated-decl/esbuild";
 export default defineConfig([
   {
     entry: [
-      "src/index.ts",
+      // "src/lib/plugin.ts",
       // "src/server.ts",
       // "src/client.tsx"
     ],
