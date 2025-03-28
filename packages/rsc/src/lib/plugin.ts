@@ -180,7 +180,26 @@ export default function vitePluginRsc(rscOptions: {
       },
     },
     {
-      name: "misc",
+      name: "rsc-misc",
+      transform(code, id, _options) {
+        if (
+          this.environment?.name === "rsc" &&
+          id.includes("react-server-dom-webpack")
+        ) {
+          // rename webpack markers in rsc runtime
+          // to avoid conflict with ssr runtime which shares same globals
+          code = code.replaceAll(
+            "__webpack_require__",
+            "__vite_react_server_webpack_require__",
+          );
+          code = code.replaceAll(
+            "__webpack_chunk_load__",
+            "__vite_react_server_webpack_chunk_load__",
+          );
+          return { code, map: null };
+        }
+        return;
+      },
       hotUpdate(ctx) {
         if (this.environment.name === "rsc") {
           const ids = ctx.modules
@@ -210,6 +229,7 @@ export default function vitePluginRsc(rscOptions: {
         }
       },
     },
+
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     vitePluginSilenceDirectiveBuildWarning(),
@@ -266,6 +286,7 @@ function vitePluginUseServer(): Plugin[] {
     {
       name: vitePluginUseServer.name,
       transform(code, id) {
+        // TODO: use packages/transforms
         if (/^(("use server")|('use server'))/.test(code)) {
           serverReferences[id] = id;
           if (this.environment.name === "rsc") {
@@ -281,8 +302,10 @@ function vitePluginUseServer(): Plugin[] {
             return { code: result, map: null };
           } else {
             const matches = code.matchAll(/export async function (\w+)\(/g);
+            const name =
+              this.environment.name === "client" ? "browser" : "edge";
             const result = [
-              `import $$ReactClient from "react-server-dom-webpack/client"`,
+              `import $$ReactClient from "react-server-dom-webpack/client.${name}"`,
               ...[...matches].map(
                 ([, name]) =>
                   `export const ${name} = $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __callServer(...args))`,
@@ -294,13 +317,17 @@ function vitePluginUseServer(): Plugin[] {
         return;
       },
     },
-    createVirtualPlugin("build-server-references", () => {
-      const code = Object.keys(serverReferences)
-        .map(
-          (id) => `${JSON.stringify(id)}: () => import(${JSON.stringify(id)}),`,
-        )
-        .join("\n");
-      return `export default {${code}}`;
+    createVirtualPlugin("server-references", function () {
+      assert(this.environment?.name === "rsc");
+      assert(this.environment?.mode === "build");
+      return [
+        `export default {`,
+        ...[...Object.keys(serverReferences)].map(
+          (id) =>
+            `${JSON.stringify(id)}: () => import(${JSON.stringify(id)}),\n`,
+        ),
+        `}`,
+      ].join("\n");
     }),
   ];
 }

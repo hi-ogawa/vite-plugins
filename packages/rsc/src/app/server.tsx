@@ -1,4 +1,5 @@
 import { renderRequest } from "../lib/server";
+import { testAction } from "./action";
 import { Counter } from "./counter";
 
 function Document() {
@@ -9,6 +10,9 @@ function Document() {
       </head>
       <body>
         <h4>hello server</h4>
+        <form action={testAction}>
+          <button>TestAction</button>
+        </form>
         <Counter />
       </body>
     </html>

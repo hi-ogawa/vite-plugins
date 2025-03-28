@@ -1,6 +1,13 @@
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "./features/client-component/server";
+import {
+  createActionBundlerConfig,
+  importServerAction,
+  initializeReactServer,
+} from "./features/server-function/server";
+
+initializeReactServer();
 
 export type RscPayload = {
   root: React.ReactNode;
@@ -8,7 +15,7 @@ export type RscPayload = {
   returnValue?: unknown;
 };
 
-// TODO: split helpers (callAction, renderRsc, renderHtml)
+// TODO: split helpers like parcel (callAction, renderRsc, renderHtml)
 export async function renderRequest(
   request: Request,
   root: React.ReactNode,
@@ -17,15 +24,34 @@ export async function renderRequest(
   const isAction = request.method === "POST";
   const isRscRequest = url.searchParams.has("__rsc");
 
-  // TODO: action
+  // callAction
+  let returnValue: unknown | undefined;
+  let formState: ReactFormState | undefined;
   if (isAction) {
-    // TODO: progressive enhancement
-    isRscRequest;
-    request.body!;
+    const actionId = url.searchParams.get("__rsc");
+    if (actionId) {
+      // client stream request
+      const contentType = request.headers.get("content-type");
+      const body = contentType?.startsWith("multipart/form-data")
+        ? await request.formData()
+        : await request.text();
+      const args = await ReactServer.decodeReply(body);
+      const action = await importServerAction(actionId);
+      returnValue = await action.apply(null, args);
+    } else {
+      // progressive enhancement
+      const formData = await request.formData();
+      const decodedAction = await ReactServer.decodeAction(
+        formData,
+        createActionBundlerConfig(),
+      );
+      const result = await decodedAction();
+      formState = await ReactServer.decodeFormState(result, formData);
+    }
   }
 
   const stream = ReactServer.renderToReadableStream<RscPayload>(
-    { root },
+    { root, formState, returnValue },
     createBundlerConfig(),
   );
 
