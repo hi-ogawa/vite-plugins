@@ -46,7 +46,7 @@ export default function vitePluginRsc(rscOptions: {
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: "/src/entry.ssr.tsx" },
+                  input: { index: "/src/lib/ssr.ts" },
                 },
               },
             },
@@ -128,16 +128,15 @@ export default function vitePluginRsc(rscOptions: {
         };
       },
     },
-    // {import { initializeReactClientBrowser } from "./features/client-component/browser";
-
-    //   name: "virtual:build-rsc-entry",
-    //   resolveId(source) {
-    //     if (source === "virtual:build-rsc-entry") {
-    //       // externalize rsc entry in ssr entry as relative path
-    //       return { id: "../rsc/index.js", external: true };
-    //     }
-    //   },
-    // },
+    {
+      name: "virtual:build-ssr-entry",
+      resolveId(source) {
+        if (source === "virtual:build-ssr-entry") {
+          // externalize rsc entry in ssr entry as relative path
+          return { id: "../rsc/index.js", external: true };
+        }
+      },
+    },
     // createVirtualPlugin("ssr-assets", function () {
     //   assert(this.environment.name === "ssr");
     //   let bootstrapModules: string[] = [];
