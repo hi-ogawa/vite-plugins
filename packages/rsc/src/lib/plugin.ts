@@ -1,11 +1,6 @@
 import assert from "node:assert";
 import path from "node:path";
-import {
-  type Manifest,
-  type Plugin,
-  type RunnableDevEnvironment,
-  createRunnableDevEnvironment,
-} from "vite";
+import { type Manifest, type Plugin, createServerModuleRunner } from "vite";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
@@ -61,13 +56,6 @@ export default function vitePluginRsc(rscOptions: {
                 conditions: ["react-server"],
                 noExternal: true,
               },
-              dev: {
-                createEnvironment(name, config) {
-                  return createRunnableDevEnvironment(name, config, {
-                    hot: false,
-                  });
-                },
-              },
               build: {
                 outDir: "dist/rsc",
                 rollupOptions: {
@@ -77,6 +65,7 @@ export default function vitePluginRsc(rscOptions: {
             },
           },
           builder: {
+            // TODO: use globalThis to share state instead of sharedPlugins
             sharedPlugins: true,
             async buildApp(builder) {
               // buildScan = true;
@@ -93,10 +82,19 @@ export default function vitePluginRsc(rscOptions: {
     {
       name: "ssr-middleware",
       configureServer(server) {
-        const ssrRunner = (server.environments.ssr as RunnableDevEnvironment)
-          .runner;
-        const rscRunner = (server.environments.rsc as RunnableDevEnvironment)
-          .runner;
+        const ssrRunner = createServerModuleRunner(server.environments.ssr);
+        // patch virtual module full reload https://github.com/vitejs/vite/issues/19283
+        const loggerError = ssrRunner.hmrClient!.logger.error;
+        ssrRunner.hmrClient!.logger.error = (e) => {
+          if (
+            typeof e === "string" &&
+            e.includes("cannot find entry point module")
+          ) {
+            return;
+          }
+          loggerError(e);
+        };
+        const rscRunner = createServerModuleRunner(server.environments.rsc!);
         Object.assign(globalThis, {
           __viteSsrRunner: ssrRunner,
         });
@@ -126,6 +124,7 @@ export default function vitePluginRsc(rscOptions: {
     },
     createVirtualPlugin("ssr-assets", function () {
       assert(this.environment.name === "ssr");
+
       let bootstrapModules: string[] = [];
       if (this.environment.mode === "dev") {
         bootstrapModules = ["/@id/__x00__virtual:browser-entry"];
@@ -143,18 +142,21 @@ export default function vitePluginRsc(rscOptions: {
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          await import("/src/lib/features/client-component/browser.ts");
+          await import("/src/lib/features/client-component/browser-init.ts");
           await import(${JSON.stringify(rscOptions.client)});
         `;
       } else {
         return `
-          import "/src/lib/features/client-component/browser.ts";
+          import "/src/lib/features/client-component/browser-init.ts";
           import ${JSON.stringify(rscOptions.client)};
         `;
       }
     }),
     createVirtualPlugin("ssr-entry", function () {
-      return `export * from "/src/lib/ssr.ts";`;
+      return `
+        import "/src/lib/features/client-component/ssr-init.ts";
+        export * from "/src/lib/ssr.ts";
+      `;
     }),
     {
       // externalize `dist/ssr/index.js` import as relative path in rsc build
