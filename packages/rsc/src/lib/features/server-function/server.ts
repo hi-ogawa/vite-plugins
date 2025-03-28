@@ -31,7 +31,7 @@ export function createActionBundlerConfig(): BundlerConfig {
           id,
           name,
           chunks: [],
-          async: true, // TODO
+          async: true,
         } satisfies ImportManifestEntry;
       },
     },
@@ -42,7 +42,7 @@ export function initializeReactServer(): void {
   Object.assign(globalThis, {
     __vite_react_server_webpack_require__: memoize(importServerReference),
     __vite_react_server_webpack_chunk_load__: () => {
-      throw new Error("todo: __webpack_chunk_load__");
+      throw new Error("__webpack_chunk_load__");
     },
   });
 }
