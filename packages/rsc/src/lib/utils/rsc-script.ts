@@ -1,4 +1,5 @@
 const INIT_SCRIPT = `
+self.__raw_import = (id) => import(id);
 self.__rsc_stream = new ReadableStream({
 	start(controller) {
 		self.__rsc_push = (c) => controller.enqueue(c);

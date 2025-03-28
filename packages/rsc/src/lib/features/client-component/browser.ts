@@ -2,7 +2,8 @@ import { memoize, tinyassert } from "@hiogawa/utils";
 
 async function importClientRefrence(id: string) {
   if (import.meta.env.DEV) {
-    return import(/* @vite-ignore */ id);
+    // use raw import (inject in head script) to avoid `?import` added by vite import analysis
+    return (self as any).__raw_import(id);
   } else {
     const clientReferences = await import(
       "virtual:client-references" as string
