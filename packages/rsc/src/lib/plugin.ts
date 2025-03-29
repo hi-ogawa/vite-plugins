@@ -2,11 +2,16 @@ import assert from "node:assert";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import {
+  transformDirectiveProxyExport,
+  transformServerActionServer,
+} from "@hiogawa/transforms";
+import {
   type Manifest,
   type Plugin,
   type ResolvedConfig,
   type ViteDevServer,
   createServerModuleRunner,
+  parseAstAsync,
 } from "vite";
 import { toNodeHandler } from "./utils/fetch";
 
@@ -300,30 +305,24 @@ function vitePluginUseClient(): Plugin[] {
     {
       name: vitePluginUseClient.name,
       async transform(code, id) {
-        // TODO: use packages/transforms
-        if (this.environment.name === "rsc") {
-          if (/^(("use client")|('use client'))/.test(code)) {
-            // pass through client code to find server reference used only by client
-            if (buildScan) {
-              return;
-            }
-            const normalizedId = await normalizeReferenceId(id, "client");
-            clientReferences[normalizedId] = id;
-            const matches = [
-              ...code.matchAll(/export function (\w+)\(/g),
-              ...code.matchAll(/export (default) (function|class) /g),
-            ];
-            const result = [
-              `import * as $$ReactServer from "/src/lib/features/client-component/server.ts"`,
-              ...[...matches].map(
-                ([, name]) =>
-                  `export ${name === "default" ? "default" : `const ${name} =`} $$ReactServer.registerClientReference({}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
-              ),
-            ].join(";\n");
-            return { code: result, map: null };
-          }
-        }
-        return;
+        if (this.environment.name !== "rsc") return;
+        if (!code.includes("use client")) return;
+        if (buildScan) return;
+
+        const ast = await parseAstAsync(code);
+        const normalizedId = await normalizeReferenceId(id, "client");
+        let output = await transformDirectiveProxyExport(ast, {
+          directive: "use client",
+          id: normalizedId,
+          runtime: "$$register",
+        });
+        if (!output) return;
+        clientReferences[normalizedId] = id;
+        output.prepend(`
+          import $$ReactServer from "react-server-dom-webpack/server.edge";
+          const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
+        `);
+        return { code: output.toString(), map: "" };
       },
     },
     createVirtualPlugin("client-references", function () {
