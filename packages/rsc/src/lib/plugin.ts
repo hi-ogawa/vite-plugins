@@ -277,7 +277,14 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
     /(?:__vite_ssr_dynamic_import__|import)\("(.*)"\)/,
   );
   const newId = m?.[1];
-  assert(newId);
+  if (!newId) {
+    console.error("[normalizeReferenceId]", {
+      name,
+      id,
+      code: transformed.code,
+    });
+    throw new Error("normalizeReferenceId");
+  }
   return newId;
 }
 
@@ -322,7 +329,7 @@ function vitePluginUseClient(): Plugin[] {
           import $$ReactServer from "react-server-dom-webpack/server.edge";
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
         `);
-        return { code: output.toString(), map: "" };
+        return { code: output.toString(), map: { mappings: "" } };
       },
     },
     createVirtualPlugin("client-references", function () {
@@ -345,36 +352,43 @@ function vitePluginUseServer(): Plugin[] {
     {
       name: vitePluginUseServer.name,
       async transform(code, id) {
-        // TODO: use packages/transforms
-        if (/^(("use server")|('use server'))/.test(code)) {
-          const normalizedId = await normalizeReferenceId(id, "rsc");
+        if (id.includes("/.vite/")) return;
+        if (!code.includes("use server")) return;
+        const ast = await parseAstAsync(code);
+        const normalizedId = await normalizeReferenceId(id, "rsc");
+        if (this.environment.name === "rsc") {
+          const { output } = await transformServerActionServer(code, ast, {
+            id: normalizedId,
+            runtime: "$$register",
+          });
+          if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
-          if (this.environment.name === "rsc") {
-            const matches = code.matchAll(/export async function (\w+)\(/g);
-            const result = [
-              code,
-              `import $$ReactServer from "react-server-dom-webpack/server.edge"`,
-              ...[...matches].map(
-                ([, name]) =>
-                  `${name} = $$ReactServer.registerServerReference(${name}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
-              ),
-            ].join(";\n");
-            return { code: result, map: null };
-          } else {
-            const matches = code.matchAll(/export async function (\w+)\(/g);
-            const name =
-              this.environment.name === "client" ? "browser" : "edge";
-            const result = [
-              `import $$ReactClient from "react-server-dom-webpack/client.${name}"`,
-              ...[...matches].map(
-                ([, name]) =>
-                  `export const ${name} = $$ReactClient.createServerReference(${JSON.stringify(normalizedId + "#" + name)}, (...args) => __callServer(...args))`,
-              ),
-            ].join(";\n");
-            return { code: result, map: null };
-          }
+          output.prepend(`
+            import $$ReactServer from "react-server-dom-webpack/server.edge";
+            const $$register = (value, id, name) => {
+              if (typeof value !== 'function') return value;
+              return $$ReactServer.registerServerReference(value, id, name);
+            }
+          `);
+          return {
+            code: output.toString(),
+            map: output.generateMap({ hires: "boundary" }),
+          };
+        } else {
+          const output = await transformDirectiveProxyExport(ast, {
+            id: normalizedId,
+            runtime: "$$proxy",
+            directive: "use server",
+          });
+          if (!output?.hasChanged()) return;
+          serverReferences[normalizedId] = id;
+          const name = this.environment.name === "client" ? "browser" : "edge";
+          output.prepend(`
+            import $$ReactClient from "react-server-dom-webpack/client.${name}";
+            const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __callServer(...args))
+          `);
+          return { code: output.toString(), map: { mappings: "" } };
         }
-        return;
       },
     },
     createVirtualPlugin("server-references", function () {
