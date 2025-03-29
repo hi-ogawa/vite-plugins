@@ -1,14 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import ReactServer from "react-server-dom-webpack/server.edge";
 import type { BundlerConfig, ImportManifestEntry } from "../../types";
-
-export function registerClientReference(
-  proxy: {},
-  id: string,
-  name: string,
-): unknown {
-  return ReactServer.registerClientReference(proxy, id, name);
-}
 
 export function createBundlerConfig(): BundlerConfig {
   return new Proxy(
