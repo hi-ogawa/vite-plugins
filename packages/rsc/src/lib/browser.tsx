@@ -22,7 +22,7 @@ export async function hydrate(options?: {
     setPayload(payload);
     return payload.returnValue;
   };
-  (self as any).__callServer = callServer;
+  globalThis.__viteRscCallServer = callServer;
 
   async function onNavigation() {
     const url = new URL(window.location.href);

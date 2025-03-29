@@ -115,9 +115,7 @@ export default function vitePluginRsc(rscOptions: {
         const rscRunner = createServerModuleRunner(server.environments.rsc!, {
           hmr: false,
         });
-        Object.assign(globalThis, {
-          __viteSsrRunner: ssrRunner,
-        });
+        globalThis.__viteRscSsrRunner = ssrRunner;
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
@@ -385,7 +383,7 @@ function vitePluginUseServer(): Plugin[] {
           const name = this.environment.name === "client" ? "browser" : "edge";
           output.prepend(`
             import $$ReactClient from "react-server-dom-webpack/client.${name}";
-            const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __callServer(...args))
+            const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __viteRscCallServer(...args))
           `);
           return { code: output.toString(), map: { mappings: "" } };
         }

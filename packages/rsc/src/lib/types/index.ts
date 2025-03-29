@@ -24,5 +24,6 @@ export interface ServerConsumerManifest {
 export type CallServerCallback = (id: string, args: unknown[]) => unknown;
 
 declare global {
-  let __viteSsrRunner: import("vite/module-runner").ModuleRunner;
+  var __viteRscSsrRunner: import("vite/module-runner").ModuleRunner;
+  var __viteRscCallServer: CallServerCallback;
 }

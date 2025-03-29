@@ -69,7 +69,7 @@ export async function renderRequest(
 
 async function importSsrEntry(): Promise<typeof import("./ssr")> {
   if (import.meta.env.DEV) {
-    return await __viteSsrRunner.import("virtual:ssr-entry");
+    return await __viteRscSsrRunner.import("virtual:ssr-entry");
   } else {
     return await import("virtual:build-ssr-entry" as any);
   }
