@@ -58,6 +58,7 @@ export default function vitePluginRsc(rscOptions: {
               },
             },
             rsc: {
+              // TODO: vitefu crawlFrameworkPkgs
               optimizeDeps: {
                 include: [
                   "react",
