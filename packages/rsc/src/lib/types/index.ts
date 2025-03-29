@@ -17,8 +17,11 @@ export type ModuleMap = {
 
 export interface ServerConsumerManifest {
   moduleMap: ModuleMap;
-  serverModuleMap?: unknown;
-  moduleLoading?: unknown;
+  serverModuleMap?: BundlerConfig;
+  moduleLoading?: {
+    prefix: string;
+    crossOriign?: string;
+  };
 }
 
 export type CallServerCallback = (id: string, args: unknown[]) => unknown;

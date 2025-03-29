@@ -15,6 +15,7 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
     {
       serverConsumerManifest: {
         moduleMap: createModuleMap(),
+        moduleLoading: { prefix: "" },
       },
     },
   );

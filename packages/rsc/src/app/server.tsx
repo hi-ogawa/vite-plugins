@@ -1,3 +1,5 @@
+import {} from "./server-init";
+
 import { renderRequest } from "../lib/server";
 import { changeServerCounter, serverCounter } from "./action";
 import { ClientCounter } from "./counter";

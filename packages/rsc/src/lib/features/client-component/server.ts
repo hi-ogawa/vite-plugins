@@ -22,7 +22,9 @@ export function createBundlerConfig(): BundlerConfig {
         return {
           id,
           name,
-          chunks: [],
+          // TODO: preinit not working?
+          // `ReactDOMSharedInternals.d.X` seems no-op due to null request context?
+          chunks: [id, id],
           async: true,
         } satisfies ImportManifestEntry;
       },
