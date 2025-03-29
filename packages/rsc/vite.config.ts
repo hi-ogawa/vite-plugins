@@ -11,4 +11,7 @@ export default defineConfig({
       client: "/src/app/client.tsx",
     }),
   ],
+  build: {
+    minify: false,
+  },
 }) as any;

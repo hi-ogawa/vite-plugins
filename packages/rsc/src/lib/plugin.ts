@@ -1,13 +1,22 @@
 import assert from "node:assert";
+import { createHash } from "node:crypto";
 import path from "node:path";
-import { type Manifest, type Plugin, createServerModuleRunner } from "vite";
+import {
+  type Manifest,
+  type Plugin,
+  type ResolvedConfig,
+  type ViteDevServer,
+  createServerModuleRunner,
+} from "vite";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
 let browserManifest: Manifest;
-let clientReferences: Record<string, string> = {}; // TODO: normalize id
+let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
+let server: ViteDevServer;
+let config: ResolvedConfig;
 
 export default function vitePluginRsc(rscOptions: {
   client: string;
@@ -78,10 +87,14 @@ export default function vitePluginRsc(rscOptions: {
           },
         };
       },
+      configResolved(config_) {
+        config = config_;
+      },
     },
     {
       name: "ssr-middleware",
-      configureServer(server) {
+      configureServer(server_) {
+        server = server_;
         const ssrRunner = createServerModuleRunner(server.environments.ssr);
         // patch virtual module full reload bug https://github.com/vitejs/vite/issues/19283
         const loggerError = ssrRunner.hmrClient!.logger.error;
@@ -234,15 +247,59 @@ export default function vitePluginRsc(rscOptions: {
 
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
+    virtualNormalizeReferenceIdPlugin(),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
+}
+
+function hashString(v: string) {
+  return createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
+}
+
+async function normalizeReferenceId(id: string, name: "client" | "rsc") {
+  if (!server) {
+    return hashString(path.relative(config.root, id));
+  }
+
+  // align with how Vite import analysis would rewrite id
+  // to avoid double modules on browser and ssr.
+  const environment = server.environments[name]!;
+  const transformed = await environment.transformRequest(
+    "virtual:normalize-reference-id/" + encodeURIComponent(id),
+  );
+  assert(transformed);
+  const m = transformed.code.match(
+    /(?:__vite_ssr_dynamic_import__|import)\("(.*)"\)/,
+  );
+  const newId = m?.[1];
+  assert(newId);
+  return newId;
+}
+
+function virtualNormalizeReferenceIdPlugin(): Plugin {
+  const prefix = "virtual:normalize-reference-id/";
+  return {
+    name: virtualNormalizeReferenceIdPlugin.name,
+    apply: "serve",
+    resolveId(source, _importer, _options) {
+      if (source.startsWith(prefix)) {
+        return "\0" + source;
+      }
+    },
+    load(id, _options) {
+      if (id.startsWith("\0" + prefix)) {
+        id = decodeURIComponent(id.slice(prefix.length + 1));
+        return `export default () => import("${id}")`;
+      }
+    },
+  };
 }
 
 function vitePluginUseClient(): Plugin[] {
   return [
     {
       name: vitePluginUseClient.name,
-      transform(code, id) {
+      async transform(code, id) {
         // TODO: use packages/transforms
         if (this.environment.name === "rsc") {
           if (/^(("use client")|('use client'))/.test(code)) {
@@ -250,7 +307,8 @@ function vitePluginUseClient(): Plugin[] {
             if (buildScan) {
               return;
             }
-            clientReferences[id] = id; // TODO: normalize
+            const normalizedId = await normalizeReferenceId(id, "client");
+            clientReferences[normalizedId] = id;
             const matches = [
               ...code.matchAll(/export function (\w+)\(/g),
               ...code.matchAll(/export (default) (function|class) /g),
@@ -259,7 +317,7 @@ function vitePluginUseClient(): Plugin[] {
               `import * as $$ReactServer from "/src/lib/features/client-component/server.ts"`,
               ...[...matches].map(
                 ([, name]) =>
-                  `export ${name === "default" ? "default" : `const ${name} =`} $$ReactServer.registerClientReference({}, ${JSON.stringify(id)}, ${JSON.stringify(name)})`,
+                  `export ${name === "default" ? "default" : `const ${name} =`} $$ReactServer.registerClientReference({}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
               ),
             ].join(";\n");
             return { code: result, map: null };
@@ -273,9 +331,9 @@ function vitePluginUseClient(): Plugin[] {
       assert(this.environment?.mode === "build");
       return [
         `export default {`,
-        ...[...Object.keys(clientReferences)].map(
-          (id) =>
-            `${JSON.stringify(id)}: () => import(${JSON.stringify(id)}),\n`,
+        ...Object.entries(clientReferences).map(
+          ([normalizedId, id]) =>
+            `${JSON.stringify(normalizedId)}: () => import(${JSON.stringify(id)}),\n`,
         ),
         `}`,
       ].join("\n");
@@ -287,10 +345,11 @@ function vitePluginUseServer(): Plugin[] {
   return [
     {
       name: vitePluginUseServer.name,
-      transform(code, id) {
+      async transform(code, id) {
         // TODO: use packages/transforms
         if (/^(("use server")|('use server'))/.test(code)) {
-          serverReferences[id] = id;
+          const normalizedId = await normalizeReferenceId(id, "rsc");
+          serverReferences[normalizedId] = id;
           if (this.environment.name === "rsc") {
             const matches = code.matchAll(/export async function (\w+)\(/g);
             const result = [
@@ -298,7 +357,7 @@ function vitePluginUseServer(): Plugin[] {
               `import $$ReactServer from "react-server-dom-webpack/server.edge"`,
               ...[...matches].map(
                 ([, name]) =>
-                  `${name} = $$ReactServer.registerServerReference(${name}, ${JSON.stringify(id)}, ${JSON.stringify(name)})`,
+                  `${name} = $$ReactServer.registerServerReference(${name}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
               ),
             ].join(";\n");
             return { code: result, map: null };
@@ -310,7 +369,7 @@ function vitePluginUseServer(): Plugin[] {
               `import $$ReactClient from "react-server-dom-webpack/client.${name}"`,
               ...[...matches].map(
                 ([, name]) =>
-                  `export const ${name} = $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __callServer(...args))`,
+                  `export const ${name} = $$ReactClient.createServerReference(${JSON.stringify(normalizedId + "#" + name)}, (...args) => __callServer(...args))`,
               ),
             ].join(";\n");
             return { code: result, map: null };
@@ -324,9 +383,9 @@ function vitePluginUseServer(): Plugin[] {
       assert(this.environment?.mode === "build");
       return [
         `export default {`,
-        ...[...Object.keys(serverReferences)].map(
-          (id) =>
-            `${JSON.stringify(id)}: () => import(${JSON.stringify(id)}),\n`,
+        ...Object.entries(serverReferences).map(
+          ([normalizedId, id]) =>
+            `${JSON.stringify(normalizedId)}: () => import(${JSON.stringify(id)}),\n`,
         ),
         `}`,
       ].join("\n");
