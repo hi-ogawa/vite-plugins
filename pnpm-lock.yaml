@@ -551,6 +551,9 @@ importers:
       vite:
         specifier: ^6.1.0
         version: 6.1.1(@types/node@22.13.5)(jiti@1.21.7)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vitefu:
+        specifier: ^1.0.5
+        version: 1.0.5(vite@6.1.1(@types/node@22.13.5)(jiti@1.21.7)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
     devDependencies:
       '@types/estree':
         specifier: ^1.0.6

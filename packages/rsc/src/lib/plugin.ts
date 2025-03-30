@@ -13,6 +13,7 @@ import {
   createServerModuleRunner,
   parseAstAsync,
 } from "vite";
+import { crawlFrameworkPkgs } from "vitefu";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
@@ -58,18 +59,8 @@ export default function vitePluginRsc(rscOptions: {
               },
             },
             rsc: {
-              // TODO: vitefu crawlFrameworkPkgs
-              optimizeDeps: {
-                include: [
-                  "react",
-                  "react/jsx-runtime",
-                  "react/jsx-dev-runtime",
-                  "react-server-dom-webpack/server.edge",
-                ],
-              },
               resolve: {
                 conditions: ["react-server"],
-                noExternal: true,
               },
               build: {
                 outDir: "dist/rsc",
@@ -90,6 +81,41 @@ export default function vitePluginRsc(rscOptions: {
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
             },
+          },
+        };
+      },
+      async configEnvironment(name, _config, env) {
+        if (name !== "rsc") return;
+
+        // bundle deps with react-server condition
+
+        // crawl packages with "react" or "next" in "peerDependencies"
+        // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
+        const result = await crawlFrameworkPkgs({
+          root: process.cwd(),
+          isBuild: env.command === "build",
+          isFrameworkPkgByJson(pkgJson) {
+            const deps = pkgJson["peerDependencies"];
+            return deps && ("react" in deps || "next" in deps);
+          },
+        });
+
+        return {
+          resolve: {
+            noExternal: [
+              "react",
+              "react-dom",
+              "react-server-dom-webpack",
+              ...result.ssr.noExternal,
+            ].sort(),
+          },
+          optimizeDeps: {
+            include: [
+              "react",
+              "react/jsx-runtime",
+              "react/jsx-dev-runtime",
+              "react-server-dom-webpack/server.edge",
+            ],
           },
         };
       },
