@@ -41,6 +41,7 @@ export default function vitePluginRsc(rscOptions: {
                   "react-dom/client",
                   "react-server-dom-webpack/client.browser",
                 ],
+                exclude: ["@hiogawa/vite-rsc"],
               },
               build: {
                 manifest: true,
@@ -51,6 +52,12 @@ export default function vitePluginRsc(rscOptions: {
               },
             },
             ssr: {
+              optimizeDeps: {
+                exclude: ["@hiogawa/vite-rsc"],
+              },
+              resolve: {
+                noExternal: ["@hiogawa/vite-rsc"],
+              },
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
@@ -59,7 +66,11 @@ export default function vitePluginRsc(rscOptions: {
               },
             },
             rsc: {
+              optimizeDeps: {
+                exclude: ["@hiogawa/vite-rsc"],
+              },
               resolve: {
+                noExternal: ["@hiogawa/vite-rsc"],
                 conditions: ["react-server"],
               },
               build: {
