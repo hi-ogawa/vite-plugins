@@ -1,3 +1,3 @@
-import { hydrate } from "@hiogawa/vite-rsc/browser.tsx";
+import { hydrate } from "@hiogawa/vite-rsc/browser";
 
 hydrate();

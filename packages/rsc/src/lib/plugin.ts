@@ -189,20 +189,17 @@ export default function vitePluginRsc(rscOptions: {
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          await import("/src/lib/features/client-component/browser-init.ts");
           await import(${JSON.stringify(rscOptions.client)});
         `;
       } else {
         return `
-          import "/src/lib/features/client-component/browser-init.ts";
           import ${JSON.stringify(rscOptions.client)};
         `;
       }
     }),
     createVirtualPlugin("ssr-entry", function () {
       return `
-        import "/src/lib/features/client-component/ssr-init.ts";
-        export * from "/src/lib/ssr.tsx";
+        export * from "@hiogawa/vite-rsc/ssr";
       `;
     }),
     {

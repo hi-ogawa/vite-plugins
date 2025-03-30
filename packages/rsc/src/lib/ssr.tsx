@@ -1,3 +1,4 @@
+import "./features/client-component/ssr-init.ts";
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import { createModuleMap } from "./features/client-component/ssr";

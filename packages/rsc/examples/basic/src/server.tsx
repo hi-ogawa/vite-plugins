@@ -1,4 +1,4 @@
-import { renderRequest } from "@hiogawa/vite-rsc/server.tsx";
+import { renderRequest } from "@hiogawa/vite-rsc/server";
 import { changeServerCounter, serverCounter } from "./action";
 import { ClientCounter } from "./counter";
 

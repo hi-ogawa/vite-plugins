@@ -1,13 +1,11 @@
+import "./features/server-function/server-init";
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "./features/client-component/server";
 import {
   createActionBundlerConfig,
   importServerAction,
-  initializeReactServer,
 } from "./features/server-function/server";
-
-initializeReactServer();
 
 export type RscPayload = {
   root: React.ReactNode;

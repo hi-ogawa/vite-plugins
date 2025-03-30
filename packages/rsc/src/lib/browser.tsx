@@ -1,6 +1,6 @@
+import "./features/client-component/browser-init";
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import ReactClient from "react-server-dom-webpack/client.browser";
 import type { RscPayload } from "./server";
 import type { CallServerCallback } from "./types";
 import { getRscScript } from "./utils/rsc-script";
@@ -9,6 +9,11 @@ export async function hydrate(options?: {
   serverCallback?: () => void;
   onHmrReload?: () => void;
 }): Promise<void> {
+  // delay import to ensure __webpack_require__ is defined
+  const { default: ReactClient } = await import(
+    "react-server-dom-webpack/client.browser"
+  );
+
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
     url.searchParams.set("__rsc", id);
