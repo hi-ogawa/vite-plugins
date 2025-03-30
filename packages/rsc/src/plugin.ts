@@ -24,6 +24,8 @@ let buildScan = false;
 let server: ViteDevServer;
 let config: ResolvedConfig;
 
+const PKG_NAME = "@hiogawa/vite-rsc";
+
 export default function vitePluginRsc(rscOptions: {
   client: string;
   server: string;
@@ -362,7 +364,7 @@ function vitePluginUseClient(): Plugin[] {
         if (!output) return;
         clientReferences[normalizedId] = id;
         output.prepend(`
-          import $$ReactServer from "react-server-dom-webpack/server.edge";
+          import * as $$ReactServer from "${PKG_NAME}/server-runtime";
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
         `);
         return { code: output.toString(), map: { mappings: "" } };
@@ -400,7 +402,7 @@ function vitePluginUseServer(): Plugin[] {
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
           output.prepend(`
-            import $$ReactServer from "react-server-dom-webpack/server.edge";
+            import * as $$ReactServer from "${PKG_NAME}/server-runtime";
             const $$register = (value, id, name) => {
               if (typeof value !== 'function') return value;
               return $$ReactServer.registerServerReference(value, id, name);
@@ -418,9 +420,9 @@ function vitePluginUseServer(): Plugin[] {
           });
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
-          const name = this.environment.name === "client" ? "browser" : "edge";
+          const name = this.environment.name === "client" ? "browser" : "ssr";
           output.prepend(`
-            import $$ReactClient from "react-server-dom-webpack/client.${name}";
+            import * as $$ReactClient from "${PKG_NAME}/${name}-runtime";
             const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __viteRscCallServer(...args))
           `);
           return { code: output.toString(), map: { mappings: "" } };
