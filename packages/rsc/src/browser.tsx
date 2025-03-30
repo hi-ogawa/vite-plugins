@@ -77,8 +77,17 @@ export async function hydrate(options?: {
   }
 }
 
-export async function fetchRSC(): Promise<void> {
-  // TODO
+export async function fetchRSC(
+  request: string | URL | Request,
+): Promise<RscPayload> {
+  const { default: ReactClient } = await import(
+    "react-server-dom-webpack/client.browser"
+  );
+  const payload = await ReactClient.createFromFetch<RscPayload>(
+    fetch(request),
+    {},
+  );
+  return payload;
 }
 
 function listenNavigation(onNavigation: () => void) {
