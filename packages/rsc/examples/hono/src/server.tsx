@@ -1,6 +1,5 @@
 import { renderRequest } from "@hiogawa/vite-rsc/server";
 import { Hono } from "hono";
-import React from "react";
 
 const app = new Hono();
 
@@ -9,9 +8,9 @@ app.get("/api/rsc", (c) => {
     <div>
       <div>Hono!</div>
       <div>random: ${Math.random().toString(36).slice(2)}</div>
-      <React.Suspense></React.Suspense>
     </div>
   );
+  // TODO: request is irrelevant
   return renderRequest(c.req.raw, el);
 });
 
