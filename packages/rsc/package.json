@@ -1,0 +1,31 @@
+{
+  "name": "@hiogawa/vite-rsc",
+  "version": "0.0.0-pre.1",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/rsc",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/rsc"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./*": "./dist/*.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "prepack": "tsup --clean"
+  },
+  "dependencies": {
+    "@hiogawa/transforms": "workspace:*",
+    "react-server-dom-webpack": "^19.0.1",
+    "vitefu": "^1.0.5"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*",
+    "vite": "*"
+  }
+}
