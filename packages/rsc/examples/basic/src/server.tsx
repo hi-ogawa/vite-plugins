@@ -16,6 +16,12 @@ function Document() {
         </form>
         <ClientCounter />
         <div className="test-css">test-css</div>
+        {/*
+          // expose API as virtual (separate plugin)?
+          // await import("virtual:collect-css/src/styles.css")
+          // await import("virtual:collect-css/src/styles.css?recurse")
+        */}
+        <link rel="stylesheet" href="/src/styles.css" precedence="high" />
       </body>
     </html>
   );
