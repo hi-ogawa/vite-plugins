@@ -41,9 +41,9 @@ export default function vitePluginRsc(rscOptions: {
               optimizeDeps: {
                 include: [
                   "react-dom/client",
-                  "react-server-dom-webpack/client.browser",
+                  `${PKG_NAME} > react-server-dom-webpack/client.browser`,
                 ],
-                exclude: ["@hiogawa/vite-rsc"],
+                exclude: [PKG_NAME],
               },
               build: {
                 manifest: true,
@@ -55,10 +55,10 @@ export default function vitePluginRsc(rscOptions: {
             },
             ssr: {
               optimizeDeps: {
-                exclude: ["@hiogawa/vite-rsc"],
+                exclude: [PKG_NAME],
               },
               resolve: {
-                noExternal: ["@hiogawa/vite-rsc"],
+                noExternal: [PKG_NAME],
               },
               build: {
                 outDir: "dist/ssr",
@@ -69,10 +69,10 @@ export default function vitePluginRsc(rscOptions: {
             },
             rsc: {
               optimizeDeps: {
-                exclude: ["@hiogawa/vite-rsc"],
+                exclude: [PKG_NAME],
               },
               resolve: {
-                noExternal: ["@hiogawa/vite-rsc"],
+                noExternal: [PKG_NAME],
                 conditions: ["react-server"],
               },
               build: {
@@ -127,7 +127,7 @@ export default function vitePluginRsc(rscOptions: {
               "react",
               "react/jsx-runtime",
               "react/jsx-dev-runtime",
-              "react-server-dom-webpack/server.edge",
+              `${PKG_NAME} > react-server-dom-webpack/server.edge`,
             ],
           },
         };
@@ -212,7 +212,7 @@ export default function vitePluginRsc(rscOptions: {
     }),
     createVirtualPlugin("ssr-entry", function () {
       return `
-        export * from "@hiogawa/vite-rsc/ssr";
+        export * from "${PKG_NAME}/ssr";
       `;
     }),
     {
