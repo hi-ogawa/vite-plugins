@@ -14,9 +14,9 @@
   },
   "files": ["dist"],
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "prepack": "tsup --clean"
+    "dev": "tsdown --watch --sourcemap",
+    "build": "tsdown",
+    "prepack": "tsdown --clean"
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
