@@ -20,13 +20,18 @@ export async function renderRequest(
 ): Promise<Response> {
   const url = new URL(request.url);
   const isAction = request.method === "POST";
-  const isRscRequest = url.searchParams.has("__rsc");
+
+  // use ?__rsc and ?__html for quick debugging
+  const isRscRequest =
+    (!request.headers.get("accept")?.includes("text/html") &&
+      !url.searchParams.has("__html")) ||
+    url.searchParams.has("__rsc");
 
   // callAction
   let returnValue: unknown | undefined;
   let formState: ReactFormState | undefined;
   if (isAction) {
-    const actionId = url.searchParams.get("__rsc");
+    const actionId = request.headers.get("x-rsc-action");
     if (actionId) {
       // client stream request
       const contentType = request.headers.get("content-type");
