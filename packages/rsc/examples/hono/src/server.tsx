@@ -12,7 +12,6 @@ app.get("/api/rsc", (c) => {
       <React.Suspense></React.Suspense>
     </div>
   );
-  // TODO: renderRsc to just stream rsc
   return renderRequest(c.req.raw, el);
 });
 

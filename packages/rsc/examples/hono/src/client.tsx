@@ -23,10 +23,7 @@ function FetchRsc() {
     <div>
       <button
         onClick={async () => {
-          // TODO: how to hide `?__rsc`
-          // TODO: hide .root
-          const result = await fetchRSC("/api/rsc?__rsc");
-          setRsc(result.root);
+          setRsc(await fetchRSC("/api/rsc"));
         }}
       >
         fetchRsc

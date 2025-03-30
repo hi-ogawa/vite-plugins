@@ -16,11 +16,13 @@ export async function hydrate(options?: {
 
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
-    url.searchParams.set("__rsc", id);
     const payload = await ReactClient.createFromFetch<RscPayload>(
       fetch(url, {
         method: "POST",
         body: await ReactClient.encodeReply(args),
+        headers: {
+          "x-rsc-action": id,
+        },
       }),
       { callServer },
     );
@@ -31,7 +33,6 @@ export async function hydrate(options?: {
 
   async function onNavigation() {
     const url = new URL(window.location.href);
-    url.searchParams.set("__rsc", "");
     const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url), {
       callServer,
     });
@@ -79,7 +80,7 @@ export async function hydrate(options?: {
 
 export async function fetchRSC(
   request: string | URL | Request,
-): Promise<RscPayload> {
+): Promise<RscPayload["root"]> {
   const { default: ReactClient } = await import(
     "react-server-dom-webpack/client.browser"
   );
@@ -87,7 +88,7 @@ export async function fetchRSC(
     fetch(request),
     {},
   );
-  return payload;
+  return payload.root;
 }
 
 function listenNavigation(onNavigation: () => void) {
