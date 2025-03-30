@@ -155,7 +155,9 @@ export default function vitePluginRsc(rscOptions: {
         };
       },
       async configurePreviewServer(server) {
-        const mod = await import(path.resolve("dist/rsc/index.js"));
+        const mod = await import(
+          /* @vite-ignore */ path.resolve("dist/rsc/index.js")
+        );
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {

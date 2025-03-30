@@ -11,7 +11,7 @@
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
-    "./*": "./dist/*"
+    "./*": "./src/lib/*"
   },
   "files": ["dist"],
   "scripts": {
@@ -25,9 +25,6 @@
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
     "vitefu": "^1.0.5"
-  },
-  "devDependencies": {
-    "@types/estree": "^1.0.6"
   },
   "peerDependencies": {
     "react": "*",

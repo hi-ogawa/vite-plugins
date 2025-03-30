@@ -554,10 +554,12 @@ importers:
       vitefu:
         specifier: ^1.0.5
         version: 1.0.5(vite@6.1.1(@types/node@22.13.5)(jiti@1.21.7)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
-    devDependencies:
-      '@types/estree':
-        specifier: ^1.0.6
-        version: 1.0.6
+
+  packages/rsc/examples/basic:
+    dependencies:
+      '@hiogawa/vite-rsc':
+        specifier: workspace:*
+        version: link:../..
 
   packages/server-asset:
     dependencies:
