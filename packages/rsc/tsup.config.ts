@@ -4,10 +4,10 @@ import IsolatedDecl from "unplugin-isolated-decl/esbuild";
 export default defineConfig([
   {
     entry: [
-      "src/lib/plugin.ts",
-      "src/lib/server.tsx",
-      "src/lib/ssr.tsx",
-      "src/lib/browser.tsx",
+      "src/plugin.ts",
+      "src/server.tsx",
+      "src/ssr.tsx",
+      "src/browser.tsx",
     ],
     format: ["esm"],
     esbuildPlugins: [IsolatedDecl()],
