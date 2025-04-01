@@ -20,12 +20,12 @@
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
-    "react-server-dom-webpack": "^19.0.1",
     "vitefu": "^1.0.5"
   },
   "peerDependencies": {
     "react": "*",
     "react-dom": "*",
+    "react-server-dom-webpack": "*",
     "vite": "*"
   }
 }
