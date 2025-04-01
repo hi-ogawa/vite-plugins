@@ -1,4 +1,4 @@
-import "./features/server-function/server-init";
+import "./features/server-function/server-init"; // TODO: avoid side effect
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "./features/client-component/server";

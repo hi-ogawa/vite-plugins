@@ -241,7 +241,8 @@ export default function vitePluginRsc(rscOptions: {
       transform(code, id, _options) {
         if (
           this.environment?.name === "rsc" &&
-          id.includes("react-server-dom-webpack")
+          id.includes("react-server-dom-webpack") &&
+          code.includes("__webpack_require__")
         ) {
           // rename webpack markers in rsc runtime
           // to avoid conflict with ssr runtime which shares same globals
@@ -253,6 +254,14 @@ export default function vitePluginRsc(rscOptions: {
             "__webpack_chunk_load__",
             "__vite_react_server_webpack_chunk_load__",
           );
+          return { code, map: null };
+        }
+        if (
+          this.environment?.name === "client" &&
+          id.includes("react-server-dom-webpack") &&
+          code.includes("__webpack_require__")
+        ) {
+          code = code.replaceAll("__webpack_require__.u", "({}).u");
           return { code, map: null };
         }
         return;

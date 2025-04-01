@@ -1,4 +1,4 @@
-import "./features/client-component/ssr-init.ts";
+import "./features/client-component/ssr-init.ts"; // TODO: avoid side effect
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import { createModuleMap } from "./features/client-component/ssr";
