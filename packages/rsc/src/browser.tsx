@@ -79,9 +79,6 @@ export async function hydrate(options?: {
 export async function fetchRSC(
   request: string | URL | Request,
 ): Promise<RscPayload["root"]> {
-  const { default: ReactClient } = await import(
-    "react-server-dom-webpack/client.browser"
-  );
   const payload = await ReactClient.createFromFetch<RscPayload>(
     fetch(request),
     {},
