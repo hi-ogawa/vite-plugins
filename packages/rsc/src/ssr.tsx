@@ -62,7 +62,7 @@ async function importClientReference(id: string) {
 }
 
 let init = false;
-export function initializeReactClientSsr(): void {
+function initializeReactClientSsr(): void {
   if (init) return;
   init = true;
 
@@ -72,7 +72,7 @@ export function initializeReactClientSsr(): void {
   });
 }
 
-export function createModuleMap(): ModuleMap {
+function createModuleMap(): ModuleMap {
   return new Proxy(
     {},
     {
