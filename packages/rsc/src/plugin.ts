@@ -261,6 +261,8 @@ export default function vitePluginRsc(rscOptions: {
           id.includes("react-server-dom-webpack") &&
           code.includes("__webpack_require__")
         ) {
+          // avoid accessing `__webpack_require__` on import side effect
+          // https://github.com/facebook/react/blob/a9bbe34622885ef5667d33236d580fe7321c0d8b/packages/react-server-dom-webpack/src/client/ReactFlightClientConfigBundlerWebpackBrowser.js#L16-L17
           code = code.replaceAll("__webpack_require__.u", "({}).u");
           return { code, map: null };
         }
