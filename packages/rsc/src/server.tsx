@@ -123,7 +123,7 @@ async function importServerReference(id: string): Promise<unknown> {
   }
 }
 
-export function createActionBundlerConfig(): BundlerConfig {
+function createActionBundlerConfig(): BundlerConfig {
   return new Proxy(
     {},
     {
