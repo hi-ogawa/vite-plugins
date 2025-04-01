@@ -140,18 +140,9 @@ export default function vitePluginRsc(rscOptions: {
       name: "ssr-middleware",
       configureServer(server_) {
         server = server_;
-        const ssrRunner = createServerModuleRunner(server.environments.ssr);
-        // patch virtual module full reload bug https://github.com/vitejs/vite/issues/19283
-        const loggerError = ssrRunner.hmrClient!.logger.error;
-        ssrRunner.hmrClient!.logger.error = (e) => {
-          if (
-            typeof e === "string" &&
-            e.includes("cannot find entry point module")
-          ) {
-            return;
-          }
-          loggerError(e);
-        };
+        const ssrRunner = createServerModuleRunner(server.environments.ssr, {
+          hmr: false,
+        });
         const rscRunner = createServerModuleRunner(server.environments.rsc!, {
           hmr: false,
         });

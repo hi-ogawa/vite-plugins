@@ -14,7 +14,7 @@
   },
   "files": ["dist"],
   "scripts": {
-    "dev": "tsdown --watch --sourcemap",
+    "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
     "prepack": "tsdown --clean"
   },
