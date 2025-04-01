@@ -227,8 +227,11 @@ export default function vitePluginRsc(rscOptions: {
       renderChunk(code, chunk) {
         if (code.includes("__VIRTUAL_BUILD_SSR_ENTRY__")) {
           const replacement = path.relative(
-            "dist/rsc",
-            path.join("dist/ssr", chunk.fileName),
+            path.join("dist/rsc", chunk.fileName, ".."),
+            // needs to hard-code exact ssr environment output since "ssr" is built after "rsc".
+            // this is not flexible, but hopefully this doesn't matter since
+            // main server logic should mostly live in "rsc" instead of "ssr".
+            "dist/ssr/index.js",
           );
           code = code.replace("__VIRTUAL_BUILD_SSR_ENTRY__", replacement);
           return { code };
