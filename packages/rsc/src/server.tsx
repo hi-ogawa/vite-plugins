@@ -1,10 +1,10 @@
-import "./features/server-function/server-init"; // TODO: avoid side effect
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import { createBundlerConfig } from "./features/client-component/server";
 import {
   createActionBundlerConfig,
   importServerAction,
+  initializeReactServer,
 } from "./features/server-function/server";
 
 export type RscPayload = {
@@ -18,6 +18,8 @@ export async function renderRequest(
   request: Request,
   root: React.ReactNode,
 ): Promise<Response> {
+  initializeReactServer();
+
   const url = new URL(request.url);
   const isAction = request.method === "POST";
 

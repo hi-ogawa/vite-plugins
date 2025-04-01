@@ -1,7 +1,9 @@
-import "./features/client-component/ssr-init.ts"; // TODO: avoid side effect
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
-import { createModuleMap } from "./features/client-component/ssr";
+import {
+  createModuleMap,
+  initializeReactClientSsr,
+} from "./features/client-component/ssr";
 import type { RscPayload } from "./server";
 import {
   createBufferedTransformStream,
@@ -9,6 +11,8 @@ import {
 } from "./utils/rsc-script";
 
 export async function renderHtml(stream: ReadableStream): Promise<Response> {
+  initializeReactClientSsr();
+
   const [stream1, stream2] = stream.tee();
 
   const payload = await ReactClient.createFromReadableStream<RscPayload>(
