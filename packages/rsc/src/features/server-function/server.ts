@@ -38,7 +38,11 @@ export function createActionBundlerConfig(): BundlerConfig {
   );
 }
 
+let init = false;
 export function initializeReactServer(): void {
+  if (init) return;
+  init = true;
+
   Object.assign(globalThis, {
     __vite_react_server_webpack_require__: memoize(importServerReference),
     __vite_react_server_webpack_chunk_load__: () => {

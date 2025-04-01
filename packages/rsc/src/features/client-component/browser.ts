@@ -14,7 +14,11 @@ async function importClientRefrence(id: string) {
   }
 }
 
+let init = false;
 export function initializeReactClientBrowser(): void {
+  if (init) return;
+  init = true;
+
   Object.assign(globalThis, {
     __webpack_require__: memoize(importClientRefrence),
     __webpack_chunk_load__: async () => {},

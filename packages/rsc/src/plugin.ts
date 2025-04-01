@@ -140,18 +140,9 @@ export default function vitePluginRsc(rscOptions: {
       name: "ssr-middleware",
       configureServer(server_) {
         server = server_;
-        const ssrRunner = createServerModuleRunner(server.environments.ssr);
-        // patch virtual module full reload bug https://github.com/vitejs/vite/issues/19283
-        const loggerError = ssrRunner.hmrClient!.logger.error;
-        ssrRunner.hmrClient!.logger.error = (e) => {
-          if (
-            typeof e === "string" &&
-            e.includes("cannot find entry point module")
-          ) {
-            return;
-          }
-          loggerError(e);
-        };
+        const ssrRunner = createServerModuleRunner(server.environments.ssr, {
+          hmr: false,
+        });
         const rscRunner = createServerModuleRunner(server.environments.rsc!, {
           hmr: false,
         });
@@ -241,7 +232,8 @@ export default function vitePluginRsc(rscOptions: {
       transform(code, id, _options) {
         if (
           this.environment?.name === "rsc" &&
-          id.includes("react-server-dom-webpack")
+          id.includes("react-server-dom-webpack") &&
+          code.includes("__webpack_require__")
         ) {
           // rename webpack markers in rsc runtime
           // to avoid conflict with ssr runtime which shares same globals
@@ -253,6 +245,16 @@ export default function vitePluginRsc(rscOptions: {
             "__webpack_chunk_load__",
             "__vite_react_server_webpack_chunk_load__",
           );
+          return { code, map: null };
+        }
+        if (
+          this.environment?.name === "client" &&
+          id.includes("react-server-dom-webpack") &&
+          code.includes("__webpack_require__")
+        ) {
+          // avoid accessing `__webpack_require__` on import side effect
+          // https://github.com/facebook/react/blob/a9bbe34622885ef5667d33236d580fe7321c0d8b/packages/react-server-dom-webpack/src/client/ReactFlightClientConfigBundlerWebpackBrowser.js#L16-L17
+          code = code.replaceAll("__webpack_require__.u", "({}).u");
           return { code, map: null };
         }
         return;

@@ -14,7 +14,11 @@ async function importClientReference(id: string) {
   }
 }
 
+let init = false;
 export function initializeReactClientSsr(): void {
+  if (init) return;
+  init = true;
+
   Object.assign(globalThis, {
     __webpack_require__: memoize(importClientReference),
     __webpack_chunk_load__: async () => {},
