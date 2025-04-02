@@ -93,7 +93,8 @@ function createBundlerConfig(): BundlerConfig {
           id,
           name,
           // TODO: preinit not working?
-          // `ReactDOMSharedInternals.d.X` seems no-op due to null request context?
+          // `ReactDOMSharedInternals.d.X` seems no-op due to null request context
+          // even if we inject AsyncLocalStorage global for edge build?
           chunks: [id, id],
           async: true,
         } satisfies ImportManifestEntry;
