@@ -70,9 +70,9 @@ export async function renderRequest(
 
 async function importSsrEntry(): Promise<typeof import("./ssr")> {
   if (import.meta.env.DEV) {
-    return await __viteRscSsrRunner.import("virtual:ssr-entry");
+    return await __viteRscSsrRunner.import("virtual:vite-rsc/ssr-entry");
   } else {
-    return await import("virtual:build-ssr-entry" as any);
+    return await import("virtual:vite-rsc/build-ssr-entry" as any);
   }
 }
 
@@ -117,7 +117,9 @@ async function importServerReference(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
   } else {
-    const references = await import("virtual:server-references" as string);
+    const references = await import(
+      "virtual:vite-rsc/server-references" as string
+    );
     const dynImport = references.default[id];
     tinyassert(dynImport, `server reference not found '${id}'`);
     return dynImport();

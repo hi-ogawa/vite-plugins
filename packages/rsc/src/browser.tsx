@@ -143,7 +143,7 @@ async function importClientRefrence(id: string) {
     return (self as any).__raw_import(id);
   } else {
     const clientReferences = await import(
-      "virtual:client-references" as string
+      "virtual:vite-rsc/client-references" as string
     );
     const dynImport = clientReferences.default[id];
     tinyassert(dynImport, `client reference not found '${id}'`);

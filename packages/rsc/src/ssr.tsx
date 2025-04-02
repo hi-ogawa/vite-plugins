@@ -23,7 +23,7 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
     },
   );
 
-  const ssrAssets = await import("virtual:ssr-assets");
+  const ssrAssets = await import("virtual:vite-rsc/ssr-assets");
 
   const htmlStream = await ReactDomServer.renderToReadableStream(payload.root, {
     bootstrapModules: ssrAssets.bootstrapModules,
@@ -53,7 +53,7 @@ async function importClientReference(id: string) {
     return import(/* @vite-ignore */ id);
   } else {
     const clientReferences = await import(
-      "virtual:client-references" as string
+      "virtual:vite-rsc/client-references" as string
     );
     const dynImport = clientReferences.default[id];
     tinyassert(dynImport, `client reference not found '${id}'`);
