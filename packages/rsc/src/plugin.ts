@@ -49,7 +49,7 @@ export default function vitePluginRsc(rscOptions: {
                 manifest: true,
                 outDir: "dist/client",
                 rollupOptions: {
-                  input: { index: "virtual:browser-entry" },
+                  input: { index: "virtual:vite-rsc/browser-entry" },
                 },
               },
             },
@@ -63,7 +63,7 @@ export default function vitePluginRsc(rscOptions: {
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: "virtual:ssr-entry" },
+                  input: { index: "virtual:vite-rsc/ssr-entry" },
                 },
               },
             },
@@ -173,19 +173,21 @@ export default function vitePluginRsc(rscOptions: {
         };
       },
     },
-    createVirtualPlugin("ssr-assets", function () {
+    createVirtualPlugin("vite-rsc/ssr-assets", function () {
       assert(this.environment.name === "ssr");
 
       let bootstrapModules: string[] = [];
       if (this.environment.mode === "dev") {
-        bootstrapModules = ["/@id/__x00__virtual:browser-entry"];
+        bootstrapModules = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
       }
       if (this.environment.mode === "build") {
-        bootstrapModules = [browserManifest["virtual:browser-entry"]!.file];
+        bootstrapModules = [
+          browserManifest["virtual:vite-rsc/browser-entry"]!.file,
+        ];
       }
       return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
     }),
-    createVirtualPlugin("browser-entry", function () {
+    createVirtualPlugin("vite-rsc/browser-entry", function () {
       if (this.environment.mode === "dev") {
         return `
           import RefreshRuntime from "/@react-refresh";
@@ -201,16 +203,16 @@ export default function vitePluginRsc(rscOptions: {
         `;
       }
     }),
-    createVirtualPlugin("ssr-entry", function () {
+    createVirtualPlugin("vite-rsc/ssr-entry", function () {
       return `
         export * from "${PKG_NAME}/ssr";
       `;
     }),
     {
       // externalize `dist/ssr/index.js` import as relative path in rsc build
-      name: "virtual:build-ssr-entry",
+      name: "virtual:vite-rsc/build-ssr-entry",
       resolveId(source) {
-        if (source === "virtual:build-ssr-entry") {
+        if (source === "virtual:vite-rsc/build-ssr-entry") {
           return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
         }
         return;
@@ -310,7 +312,7 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
   // to avoid double modules on browser and ssr.
   const environment = server.environments[name]!;
   const transformed = await environment.transformRequest(
-    "virtual:normalize-reference-id/" + encodeURIComponent(id),
+    "virtual:vite-rsc/normalize-reference-id/" + encodeURIComponent(id),
   );
   assert(transformed);
   const m = transformed.code.match(
@@ -329,7 +331,7 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
 }
 
 function virtualNormalizeReferenceIdPlugin(): Plugin {
-  const prefix = "virtual:normalize-reference-id/";
+  const prefix = "virtual:vite-rsc/normalize-reference-id/";
   return {
     name: virtualNormalizeReferenceIdPlugin.name,
     apply: "serve",
@@ -372,7 +374,7 @@ function vitePluginUseClient(): Plugin[] {
         return { code: output.toString(), map: { mappings: "" } };
       },
     },
-    createVirtualPlugin("client-references", function () {
+    createVirtualPlugin("vite-rsc/client-references", function () {
       assert(this.environment?.name !== "rsc");
       assert(this.environment?.mode === "build");
       return [
@@ -431,7 +433,7 @@ function vitePluginUseServer(): Plugin[] {
         }
       },
     },
-    createVirtualPlugin("server-references", function () {
+    createVirtualPlugin("vite-rsc/server-references", function () {
       assert(this.environment?.name === "rsc");
       assert(this.environment?.mode === "build");
       return [
