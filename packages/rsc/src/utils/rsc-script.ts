@@ -1,5 +1,4 @@
 const INIT_SCRIPT = `
-self.__raw_import = (id) => import(id);
 self.__rsc_stream = new ReadableStream({
 	start(controller) {
 		self.__rsc_push = (c) => controller.enqueue(c);
@@ -10,13 +9,14 @@ self.__rsc_stream = new ReadableStream({
 
 export function injectRscScript(
   stream: ReadableStream<Uint8Array>,
+  extraScript?: string,
 ): TransformStream<string, string> {
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
       if (chunk.includes("</head>")) {
         chunk = chunk.replace(
           "</head>",
-          () => `<script>${INIT_SCRIPT}</script></head>`,
+          () => `<script>${extraScript};${INIT_SCRIPT}</script></head>`,
         );
       }
       if (chunk.includes("</body>")) {

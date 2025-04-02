@@ -14,6 +14,7 @@ import {
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
+import { vitePluginRscCore } from "./core/plugin";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
@@ -231,36 +232,6 @@ export default function vitePluginRsc(rscOptions: {
     },
     {
       name: "rsc-misc",
-      transform(code, id, _options) {
-        if (
-          this.environment?.name === "rsc" &&
-          id.includes("react-server-dom-webpack") &&
-          code.includes("__webpack_require__")
-        ) {
-          // rename webpack markers in rsc runtime
-          // to avoid conflict with ssr runtime which shares same globals
-          code = code.replaceAll(
-            "__webpack_require__",
-            "__vite_react_server_webpack_require__",
-          );
-          code = code.replaceAll(
-            "__webpack_chunk_load__",
-            "__vite_react_server_webpack_chunk_load__",
-          );
-          return { code, map: null };
-        }
-        if (
-          this.environment?.name === "client" &&
-          id.includes("react-server-dom-webpack") &&
-          code.includes("__webpack_require__")
-        ) {
-          // avoid accessing `__webpack_require__` on import side effect
-          // https://github.com/facebook/react/blob/a9bbe34622885ef5667d33236d580fe7321c0d8b/packages/react-server-dom-webpack/src/client/ReactFlightClientConfigBundlerWebpackBrowser.js#L16-L17
-          code = code.replaceAll("__webpack_require__.u", "({}).u");
-          return { code, map: null };
-        }
-        return;
-      },
       hotUpdate(ctx) {
         if (this.environment.name === "rsc") {
           const cliendIds = new Set(Object.values(clientReferences));
@@ -296,6 +267,10 @@ export default function vitePluginRsc(rscOptions: {
     ...vitePluginUseServer(),
     virtualNormalizeReferenceIdPlugin(),
     vitePluginSilenceDirectiveBuildWarning(),
+    ...vitePluginRscCore({
+      getClientReferences: () => clientReferences,
+      getServerReferences: () => serverReferences,
+    }),
   ];
 }
 
@@ -374,18 +349,6 @@ function vitePluginUseClient(): Plugin[] {
         return { code: output.toString(), map: { mappings: "" } };
       },
     },
-    createVirtualPlugin("vite-rsc/client-references", function () {
-      assert(this.environment?.name !== "rsc");
-      assert(this.environment?.mode === "build");
-      return [
-        `export default {`,
-        ...Object.entries(clientReferences).map(
-          ([normalizedId, id]) =>
-            `${JSON.stringify(normalizedId)}: () => import(${JSON.stringify(id)}),\n`,
-        ),
-        `}`,
-      ].join("\n");
-    }),
   ];
 }
 
@@ -433,18 +396,6 @@ function vitePluginUseServer(): Plugin[] {
         }
       },
     },
-    createVirtualPlugin("vite-rsc/server-references", function () {
-      assert(this.environment?.name === "rsc");
-      assert(this.environment?.mode === "build");
-      return [
-        `export default {`,
-        ...Object.entries(serverReferences).map(
-          ([normalizedId, id]) =>
-            `${JSON.stringify(normalizedId)}: () => import(${JSON.stringify(id)}),\n`,
-        ),
-        `}`,
-      ].join("\n");
-    }),
   ];
 }
 
