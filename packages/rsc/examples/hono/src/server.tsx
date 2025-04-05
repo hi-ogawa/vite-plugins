@@ -15,6 +15,7 @@ app.get("/api/rsc", (c) => {
 });
 
 app.all("/", (c) => {
+  // TODO: don't need full rsc ssr to render spa shell
   return renderRequest(c.req.raw, <Document />);
 });
 
