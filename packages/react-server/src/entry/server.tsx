@@ -35,7 +35,12 @@ import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
 
-export const router = generateRouteModuleTree({
+export const router: {
+  tree: import("../features/router/tree").TreeNode<
+    import("../features/router/server").RouteModule
+  >;
+  manifest: import("../features/router/server").RouteModuleManifest;
+} = generateRouteModuleTree({
   "/not-found.js": { default: DefaultNotFoundPage },
   ...serverRoutes.default,
 });

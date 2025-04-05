@@ -1,8 +1,9 @@
+import type { JSX } from "react/jsx-runtime";
 import type { ErrorPageProps } from "../../server";
 
 // https://github.com/vercel/next.js/blob/677c9b372faef680d17e9ba224743f44e1107661/packages/next/src/build/webpack/loaders/next-app-loader.ts#L73
 // https://github.com/vercel/next.js/blob/677c9b372faef680d17e9ba224743f44e1107661/packages/next/src/client/components/error-boundary.tsx#L145
-export function DefaultGlobalErrorPage(props: ErrorPageProps) {
+export function DefaultGlobalErrorPage(props: ErrorPageProps): JSX.Element {
   const message = props.serverError
     ? `Unknown Server Error (see server logs for the details)`
     : `Unknown Client Error (see browser console for the details)`;

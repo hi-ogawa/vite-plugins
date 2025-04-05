@@ -11,7 +11,7 @@ import {
 export async function transformStyleUrls(
   server: DevEnvironment,
   urls: string[],
-) {
+): Promise<string> {
   const styles = await Promise.all(
     urls.map(async (url) => {
       const res = await server.transformRequest(url + "?direct");
@@ -24,7 +24,7 @@ export async function transformStyleUrls(
 export async function collectStyleUrls(
   server: DevEnvironment,
   { entries }: { entries: string[] },
-) {
+): Promise<string[]> {
   const visited = new Set<EnvironmentModuleNode>();
 
   async function traverse(url: string) {
