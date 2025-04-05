@@ -14,7 +14,6 @@ import {
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
-import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
 let browserManifest: Manifest;
@@ -25,6 +24,48 @@ let server: ViteDevServer;
 let config: ResolvedConfig;
 
 const PKG_NAME = "@hiogawa/vite-rsc";
+
+export function vitePluginRscCore(rscOptions: {
+  ssrEntry?: string,
+}): Plugin[] {
+  return [
+    {
+      name: "rsc-core",
+      config() {
+        return {
+          environments: {
+            ssr: {
+              optimizeDeps: {
+                exclude: [PKG_NAME],
+              },
+              resolve: {
+                noExternal: [PKG_NAME],
+              },
+              build: {
+                outDir: "dist/ssr",
+                rollupOptions: {
+                  input: { index: "virtual:ssr-entry" },
+                },
+              },
+            },
+            rsc: {
+              optimizeDeps: {
+                exclude: [PKG_NAME],
+              },
+              resolve: {
+                noExternal: [PKG_NAME],
+                conditions: ["react-server"],
+              },
+            },
+          },
+        };
+      },
+      configResolved(config) {
+        config.appType;
+      },
+    },
+  ];
+}
 
 export default function vitePluginRsc(rscOptions: {
   client: string;
@@ -136,167 +177,91 @@ export default function vitePluginRsc(rscOptions: {
         config = config_;
       },
     },
-    {
-      name: "ssr-middleware",
-      configureServer(server_) {
-        server = server_;
-        const ssrRunner = createServerModuleRunner(server.environments.ssr, {
-          hmr: false,
-        });
-        const rscRunner = createServerModuleRunner(server.environments.rsc!, {
-          hmr: false,
-        });
-        globalThis.__viteRscSsrRunner = ssrRunner;
-        return () => {
-          server.middlewares.use(async (req, res, next) => {
-            try {
-              const mod = await rscRunner.import(rscOptions.server);
-              await toNodeHandler(mod.default)(req, res);
-            } catch (e) {
-              next(e);
-            }
-          });
-        };
-      },
-      async configurePreviewServer(server) {
-        const mod = await import(
-          /* @vite-ignore */ path.resolve("dist/rsc/index.js")
-        );
-        return () => {
-          server.middlewares.use(async (req, res, next) => {
-            try {
-              await toNodeHandler(mod.default)(req, res);
-            } catch (e) {
-              next(e);
-            }
-          });
-        };
-      },
-    },
-    createVirtualPlugin("ssr-assets", function () {
-      assert(this.environment.name === "ssr");
+    // createVirtualPlugin("ssr-entry", function () {
+    //   return `
+    //     export * from "${PKG_NAME}/ssr";
+    //   `;
+    // }),
+    // {
+    //   // externalize `dist/ssr/index.js` import as relative path in rsc build
+    //   name: "virtual:build-ssr-entry",
+    //   resolveId(source) {
+    //     if (source === "virtual:build-ssr-entry") {
+    //       return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
+    //     }
+    //     return;
+    //   },
+    //   renderChunk(code, chunk) {
+    //     if (code.includes("__VIRTUAL_BUILD_SSR_ENTRY__")) {
+    //       const replacement = path.relative(
+    //         path.join("dist/rsc", chunk.fileName, ".."),
+    //         // needs to hard-code exact ssr environment output since "ssr" is built after "rsc".
+    //         // this is not flexible, but hopefully this doesn't matter since
+    //         // main server logic should mostly live in "rsc" instead of "ssr".
+    //         "dist/ssr/index.js",
+    //       );
+    //       code = code.replace("__VIRTUAL_BUILD_SSR_ENTRY__", replacement);
+    //       return { code };
+    //     }
+    //     return;
+    //   },
+    // },
+    // {
+    //   name: "rsc-misc",
+    //   transform(code, id, _options) {
+    //     if (
+    //       this.environment?.name === "rsc" &&
+    //       id.includes("react-server-dom-webpack")
+    //     ) {
+    //       // rename webpack markers in rsc runtime
+    //       // to avoid conflict with ssr runtime which shares same globals
+    //       code = code.replaceAll(
+    //         "__webpack_require__",
+    //         "__vite_react_server_webpack_require__",
+    //       );
+    //       code = code.replaceAll(
+    //         "__webpack_chunk_load__",
+    //         "__vite_react_server_webpack_chunk_load__",
+    //       );
+    //       return { code, map: null };
+    //     }
+    //     return;
+    //   },
+    //   hotUpdate(ctx) {
+    //     if (this.environment.name === "rsc") {
+    //       const cliendIds = new Set(Object.values(clientReferences));
+    //       const ids = ctx.modules
+    //         .map((mod) => mod.id)
+    //         .filter((v) => v !== null);
+    //       if (ids.length > 0) {
+    //         // client reference id is also in react server module graph,
+    //         // but we skip RSC HMR for this case since Client HMR handles it.
+    //         if (!ids.some((id) => cliendIds.has(id))) {
+    //           ctx.server.environments.client.hot.send({
+    //             type: "custom",
+    //             event: "rsc:update",
+    //             data: {
+    //               file: ctx.file,
+    //             },
+    //           });
+    //         }
+    //       }
+    //     }
+    //   },
+    //   writeBundle(_options, bundle) {
+    //     if (this.environment.name === "client") {
+    //       const output = bundle[".vite/manifest.json"];
+    //       assert(output && output.type === "asset");
+    //       assert(typeof output.source === "string");
+    //       browserManifest = JSON.parse(output.source);
+    //     }
+    //   },
+    // },
 
-      let bootstrapModules: string[] = [];
-      if (this.environment.mode === "dev") {
-        bootstrapModules = ["/@id/__x00__virtual:browser-entry"];
-      }
-      if (this.environment.mode === "build") {
-        bootstrapModules = [browserManifest["virtual:browser-entry"]!.file];
-      }
-      return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
-    }),
-    createVirtualPlugin("browser-entry", function () {
-      if (this.environment.mode === "dev") {
-        return `
-          import RefreshRuntime from "/@react-refresh";
-          RefreshRuntime.injectIntoGlobalHook(window);
-          window.$RefreshReg$ = () => {};
-          window.$RefreshSig$ = () => (type) => type;
-          window.__vite_plugin_react_preamble_installed__ = true;
-          await import(${JSON.stringify(rscOptions.client)});
-        `;
-      } else {
-        return `
-          import ${JSON.stringify(rscOptions.client)};
-        `;
-      }
-    }),
-    createVirtualPlugin("ssr-entry", function () {
-      return `
-        export * from "${PKG_NAME}/ssr";
-      `;
-    }),
-    {
-      // externalize `dist/ssr/index.js` import as relative path in rsc build
-      name: "virtual:build-ssr-entry",
-      resolveId(source) {
-        if (source === "virtual:build-ssr-entry") {
-          return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
-        }
-        return;
-      },
-      renderChunk(code, chunk) {
-        if (code.includes("__VIRTUAL_BUILD_SSR_ENTRY__")) {
-          const replacement = path.relative(
-            path.join("dist/rsc", chunk.fileName, ".."),
-            // needs to hard-code exact ssr environment output since "ssr" is built after "rsc".
-            // this is not flexible, but hopefully this doesn't matter since
-            // main server logic should mostly live in "rsc" instead of "ssr".
-            "dist/ssr/index.js",
-          );
-          code = code.replace("__VIRTUAL_BUILD_SSR_ENTRY__", replacement);
-          return { code };
-        }
-        return;
-      },
-    },
-    {
-      name: "rsc-misc",
-      transform(code, id, _options) {
-        if (
-          this.environment?.name === "rsc" &&
-          id.includes("react-server-dom-webpack") &&
-          code.includes("__webpack_require__")
-        ) {
-          // rename webpack markers in rsc runtime
-          // to avoid conflict with ssr runtime which shares same globals
-          code = code.replaceAll(
-            "__webpack_require__",
-            "__vite_react_server_webpack_require__",
-          );
-          code = code.replaceAll(
-            "__webpack_chunk_load__",
-            "__vite_react_server_webpack_chunk_load__",
-          );
-          return { code, map: null };
-        }
-        if (
-          this.environment?.name === "client" &&
-          id.includes("react-server-dom-webpack") &&
-          code.includes("__webpack_require__")
-        ) {
-          // avoid accessing `__webpack_require__` on import side effect
-          // https://github.com/facebook/react/blob/a9bbe34622885ef5667d33236d580fe7321c0d8b/packages/react-server-dom-webpack/src/client/ReactFlightClientConfigBundlerWebpackBrowser.js#L16-L17
-          code = code.replaceAll("__webpack_require__.u", "({}).u");
-          return { code, map: null };
-        }
-        return;
-      },
-      hotUpdate(ctx) {
-        if (this.environment.name === "rsc") {
-          const cliendIds = new Set(Object.values(clientReferences));
-          const ids = ctx.modules
-            .map((mod) => mod.id)
-            .filter((v) => v !== null);
-          if (ids.length > 0) {
-            // client reference id is also in react server module graph,
-            // but we skip RSC HMR for this case since Client HMR handles it.
-            if (!ids.some((id) => cliendIds.has(id))) {
-              ctx.server.environments.client.hot.send({
-                type: "custom",
-                event: "rsc:update",
-                data: {
-                  file: ctx.file,
-                },
-              });
-            }
-          }
-        }
-      },
-      writeBundle(_options, bundle) {
-        if (this.environment.name === "client") {
-          const output = bundle[".vite/manifest.json"];
-          assert(output && output.type === "asset");
-          assert(typeof output.source === "string");
-          browserManifest = JSON.parse(output.source);
-        }
-      },
-    },
-
-    ...vitePluginUseClient(),
-    ...vitePluginUseServer(),
-    virtualNormalizeReferenceIdPlugin(),
-    vitePluginSilenceDirectiveBuildWarning(),
+    // ...vitePluginUseClient(),
+    // ...vitePluginUseServer(),
+    // virtualNormalizeReferenceIdPlugin(),
+    // vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
 
