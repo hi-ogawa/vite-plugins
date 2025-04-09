@@ -37,6 +37,16 @@ export default defineConfig({
     ssr: {
       resolve: {
         conditions: ["react-server", ...defaultServerConditions],
+        noExternal: true,
+      },
+      optimizeDeps: {
+        include: [
+          "react",
+          "react/jsx-runtime",
+          "react/jsx-dev-runtime",
+          `react-server-dom-webpack/server`,
+        ],
+        exclude: ["util"],
       },
     },
   },
