@@ -4,7 +4,7 @@ import {
   createSsrModuleMap,
   initializeReactClientSsr,
 } from "./core/client-ssr";
-import { getBrowserPreamble } from "./core/server";
+import { getBrowserPreamble } from "./core/shared";
 import type { RscPayload } from "./server";
 import {
   createBufferedTransformStream,

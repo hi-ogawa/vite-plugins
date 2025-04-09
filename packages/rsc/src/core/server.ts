@@ -75,7 +75,3 @@ export function createClientReferenceConfig(): BundlerConfig {
     },
   );
 }
-
-export function getBrowserPreamble(): string {
-  return `self.__viteRscImport = (id) => import(id);`;
-}
