@@ -16,6 +16,7 @@ export function initializeReactClientSsr(): void {
 async function importClientReferenceModule(id: string) {
   if (import.meta.env.DEV) {
     // TODO: move this out of memoized __webpack_require__
+    // TODO: how to do this on build?
     ReactDOM.preloadModule(id);
 
     return import(/* @vite-ignore */ id);

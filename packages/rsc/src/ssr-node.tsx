@@ -1,6 +1,5 @@
 import { PassThrough, Readable } from "node:stream";
 import React from "react";
-import ReactDOM from "react-dom";
 import ReactDomServer from "react-dom/server";
 import ReactClient from "react-server-dom-webpack/client.node";
 import {
