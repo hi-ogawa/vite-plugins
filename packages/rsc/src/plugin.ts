@@ -11,6 +11,7 @@ import {
   type ResolvedConfig,
   type ViteDevServer,
   createServerModuleRunner,
+  defaultServerConditions,
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
@@ -74,7 +75,7 @@ export default function vitePluginRsc(rscOptions: {
               },
               resolve: {
                 noExternal: [PKG_NAME],
-                conditions: ["react-server"],
+                conditions: ["react-server", ...defaultServerConditions],
               },
               build: {
                 outDir: "dist/rsc",
@@ -206,7 +207,7 @@ export default function vitePluginRsc(rscOptions: {
     }),
     createVirtualPlugin("vite-rsc/ssr-entry", function () {
       return `
-        export * from "${PKG_NAME}/ssr";
+        export * from "${PKG_NAME}/ssr-node";
       `;
     }),
     {
