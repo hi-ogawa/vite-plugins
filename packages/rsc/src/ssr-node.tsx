@@ -1,4 +1,6 @@
 import { PassThrough, Readable } from "node:stream";
+import React from "react";
+import ReactDOM from "react-dom";
 import ReactDomServer from "react-dom/server";
 import ReactClient from "react-server-dom-webpack/client.node";
 import {
@@ -17,20 +19,31 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
 
   const [stream1, stream2] = stream.tee();
 
-  const payload = await ReactClient.createFromNodeStream<RscPayload>(
-    Readable.fromWeb(stream1 as any),
-    {
-      moduleMap: createSsrModuleMap(),
-      moduleLoading: { prefix: "" },
-    },
-  );
+  // flight deserialization needs to be kicked in inside SSR context
+  // for ReactDomServer preinit/preloading to work
+  const getPayload = () => {
+    return ReactClient.createFromNodeStream<RscPayload>(
+      Readable.fromWeb(stream1 as any),
+      {
+        moduleMap: createSsrModuleMap(),
+        moduleLoading: { prefix: "" },
+      },
+    );
+  };
+
+  let payload: Promise<RscPayload>;
+  function SsrRoot() {
+    ReactDOM.preloadModule("/src/counter.tsx");
+    payload ??= getPayload();
+    return React.use(payload).root;
+  }
 
   const ssrAssets = await import("virtual:vite-rsc/ssr-assets");
 
-  const htmlNodeStream = ReactDomServer.renderToPipeableStream(payload.root, {
+  const htmlNodeStream = ReactDomServer.renderToPipeableStream(<SsrRoot />, {
     bootstrapModules: ssrAssets.bootstrapModules,
-    // @ts-expect-error TODO: declare
-    formState: payload.formState,
+    // TODO: how to pass formState here if we createFromNodeStream inside SsrRoot?
+    // formState
   });
 
   const htmlStream = Readable.toWeb(

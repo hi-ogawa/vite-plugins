@@ -65,10 +65,12 @@ export function createClientReferenceConfig(): BundlerConfig {
         return {
           id,
           name,
-          // TODO: preinit not working?
-          // `ReactDOMSharedInternals.d.X` seems no-op due to null request context
-          // even if we inject AsyncLocalStorage global for edge build?
-          chunks: [id, id],
+          // TODO: support prepareDestinationWithChunks
+          // - should it be ReactDOM.preloadModule or preinitModule?
+          //   - react-server-dom-webpack uses preinitScript, but the code is ESM, which causes an error on browser.
+          //   - patch to replace ReactDOMSharedInternals.d.X with ReactDOMSharedInternals.d.m
+          // - for build, reference id needs to be mapped to client chunks.
+          chunks: ["x", id],
           async: true,
         } satisfies ImportManifestEntry;
       },

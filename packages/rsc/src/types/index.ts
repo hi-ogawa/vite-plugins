@@ -16,7 +16,7 @@ export type ModuleMap = {
 };
 
 export interface ServerConsumerManifest {
-  moduleMap: ModuleMap;
+  moduleMap?: ModuleMap;
   serverModuleMap?: BundlerConfig;
   moduleLoading?: {
     prefix: string;
