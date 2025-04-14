@@ -20,9 +20,7 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
   const payload = await ReactClient.createFromNodeStream<RscPayload>(
     Readable.fromWeb(stream1 as any),
     {
-      serverConsumerManifest: {
-        moduleMap: createSsrModuleMap(),
-      },
+      moduleMap: createSsrModuleMap(),
       moduleLoading: { prefix: "" },
     },
   );

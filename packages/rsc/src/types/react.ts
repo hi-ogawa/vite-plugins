@@ -61,13 +61,7 @@ declare module "react-server-dom-webpack/client.node" {
 
   export function createFromNodeStream<T>(
     stream: import("node:stream").Readable,
-    options: {
-      serverConsumerManifest: import(".").ServerConsumerManifest;
-      moduleLoading?: {
-        prefix: string;
-        crossOrigin?: string;
-      };
-    },
+    options: import(".").ServerConsumerManifest,
   ): Promise<T>;
 }
 
