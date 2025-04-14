@@ -1,3 +1,5 @@
+import React from "react";
+import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import {
@@ -11,27 +13,33 @@ import {
   injectRscScript,
 } from "./utils/rsc-script";
 
-export async function renderHtml(stream: ReadableStream): Promise<Response> {
+export async function renderHtml({
+  stream,
+  formState,
+}: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
   initializeReactClientSsr();
 
   const [stream1, stream2] = stream.tee();
 
-  const payload = await ReactClient.createFromReadableStream<RscPayload>(
-    stream1,
-    {
+  // flight deserialization needs to be kicked in inside SSR context
+  // for ReactDomServer preinit/preloading to work
+  let payload: Promise<RscPayload>;
+  function SsrRoot() {
+    payload ??= ReactClient.createFromReadableStream<RscPayload>(stream1, {
       serverConsumerManifest: {
         moduleMap: createSsrModuleMap(),
         moduleLoading: { prefix: "" },
       },
-    },
-  );
+    });
+    return React.use(payload).root;
+  }
 
   const ssrAssets = await import("virtual:vite-rsc/ssr-assets");
 
-  const htmlStream = await ReactDomServer.renderToReadableStream(payload.root, {
+  const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
     bootstrapModules: ssrAssets.bootstrapModules,
-    // @ts-expect-error TODO: declare
-    formState: payload.formState,
+    // @ts-expect-error no types
+    formState,
   });
 
   const responseStream = htmlStream
