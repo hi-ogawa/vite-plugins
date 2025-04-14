@@ -33,7 +33,6 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
 
   let payload: Promise<RscPayload>;
   function SsrRoot() {
-    ReactDOM.preloadModule("/src/counter.tsx");
     payload ??= getPayload();
     return React.use(payload).root;
   }
