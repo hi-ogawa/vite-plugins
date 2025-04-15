@@ -6,8 +6,8 @@
 export interface ImportManifestEntry {
   id: string;
   name: string;
-  // TODO
   chunks: string[];
+  async: boolean;
 }
 
 export interface BundlerConfig {
@@ -22,14 +22,13 @@ export type ModuleMap = {
 
 export interface SsrManifest {
   moduleMap: ModuleMap;
-  // TODO
   serverModuleMap?: unknown;
+  // TODO: preload on ssr https://github.com/hi-ogawa/experiments/pull/83
   moduleLoading?: unknown;
 }
 
 export type WebpackRequire = (id: string) => Promise<unknown>;
 
-// TODO
 export type WebpackChunkLoad = (id: string) => Promise<unknown>;
 
 export type CallServerCallback = (id: any, args: any) => Promise<unknown>;
