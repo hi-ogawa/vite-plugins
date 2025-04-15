@@ -65,12 +65,8 @@ export function createClientReferenceConfig(): BundlerConfig {
         return {
           id,
           name,
-          // TODO: support prepareDestinationWithChunks
-          // - should it be ReactDOM.preloadModule or preinitModule?
-          //   - react-server-dom-webpack uses preinitScript, but the code is ESM, which causes an error on browser.
-          //   - patch to replace ReactDOMSharedInternals.d.X with ReactDOMSharedInternals.d.m
-          // - for build, reference id needs to be mapped to client chunks.
-          // chunks: ["x", id],
+          // support of prepareDestination preloading is done manually inside __webpack_require__
+          // (see packages/rsc/src/core/client-ssr.ts)
           chunks: [],
           async: true,
         } satisfies ImportManifestEntry;
