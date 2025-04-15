@@ -4,7 +4,7 @@ import type { Plugin, Rollup } from "vite";
 export function vitePluginRscCore(rscOptions: {
   getClientReferences: () => Record<string, string>;
   getServerReferences: () => Record<string, string>;
-  getBrowserBundle: () => Rollup.OutputBundle | undefined;
+  getBrowserBundle?: () => Rollup.OutputBundle | undefined;
 }): Plugin[] {
   return [
     {
@@ -30,7 +30,7 @@ export function vitePluginRscCore(rscOptions: {
           }
           const clientReferences = rscOptions.getClientReferences();
           let code = generateDynamicImportCode(clientReferences);
-          const browserBundle = rscOptions.getBrowserBundle();
+          const browserBundle = rscOptions.getBrowserBundle?.();
           if (browserBundle) {
             const assetDeps = collectAssetDeps(browserBundle);
             const keyAssetDeps: Record<string, AssetDeps> = {};
