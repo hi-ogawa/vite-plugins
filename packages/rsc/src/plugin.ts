@@ -9,6 +9,7 @@ import {
   type Manifest,
   type Plugin,
   type ResolvedConfig,
+  type Rollup,
   type ViteDevServer,
   createServerModuleRunner,
   defaultServerConditions,
@@ -20,6 +21,7 @@ import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
 let browserManifest: Manifest;
+let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -260,6 +262,7 @@ export default function vitePluginRsc(rscOptions: {
           assert(output && output.type === "asset");
           assert(typeof output.source === "string");
           browserManifest = JSON.parse(output.source);
+          browserBundle = bundle;
         }
       },
     },
@@ -271,6 +274,7 @@ export default function vitePluginRsc(rscOptions: {
     ...vitePluginRscCore({
       getClientReferences: () => clientReferences,
       getServerReferences: () => serverReferences,
+      getBrowserBundle: () => browserBundle,
     }),
   ];
 }
