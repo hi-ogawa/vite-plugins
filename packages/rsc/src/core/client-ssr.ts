@@ -16,7 +16,7 @@ export function initializeReactClientSsr(): void {
 
 function requireModule(id: string) {
   prepareDestination(id);
-  return requireModuleInner(id)
+  return requireModuleInner(id);
 }
 
 // we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestinationWithChunks (see packages/rsc/src/core/server.ts)

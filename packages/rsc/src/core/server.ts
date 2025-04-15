@@ -7,7 +7,7 @@ export function initializeReactServer(): void {
   init = true;
 
   Object.assign(globalThis, {
-    __vite_rsc_webpack_require__: memoize(importServerReferenceModule),
+    __vite_rsc_webpack_require__: memoize(requireModule),
     __vite_rsc_webpack_chunk_load__: () => {
       throw new Error("__webpack_chunk_load__");
     },
@@ -16,11 +16,11 @@ export function initializeReactServer(): void {
 
 export async function importServerReference(id: string): Promise<Function> {
   const [file, name] = id.split("#") as [string, string];
-  const mod: any = await importServerReferenceModule(file);
+  const mod: any = await requireModule(file);
   return mod[name];
 }
 
-async function importServerReferenceModule(id: string): Promise<unknown> {
+async function requireModule(id: string) {
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
   } else {
