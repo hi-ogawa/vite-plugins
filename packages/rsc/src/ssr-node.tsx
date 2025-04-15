@@ -20,19 +20,15 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
 
   // flight deserialization needs to be kicked in inside SSR context
   // for ReactDomServer preinit/preloading to work
-  const getPayload = () => {
-    return ReactClient.createFromNodeStream<RscPayload>(
+  let payload: Promise<RscPayload>;
+  function SsrRoot() {
+    payload ??= ReactClient.createFromNodeStream<RscPayload>(
       Readable.fromWeb(stream1 as any),
       {
         moduleMap: createSsrModuleMap(),
         moduleLoading: { prefix: "" },
       },
     );
-  };
-
-  let payload: Promise<RscPayload>;
-  function SsrRoot() {
-    payload ??= getPayload();
     return React.use(payload).root;
   }
 
