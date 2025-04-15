@@ -73,9 +73,6 @@ export async function renderRequest(
 }
 
 async function importSsrEntry(): Promise<typeof import("./ssr")> {
-  // const { AsyncLocalStorage } = await import("node:async_hooks");
-  // Object.assign(globalThis, { AsyncLocalStorage });
-
   if (import.meta.env.DEV) {
     return await __viteRscSsrRunner.import("virtual:vite-rsc/ssr-entry");
   } else {
