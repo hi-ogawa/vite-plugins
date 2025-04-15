@@ -1,5 +1,6 @@
 import { PassThrough, Readable } from "node:stream";
 import React from "react";
+import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server";
 import ReactClient from "react-server-dom-webpack/client.node";
 import {
@@ -13,7 +14,10 @@ import {
   injectRscScript,
 } from "./utils/rsc-script";
 
-export async function renderHtml(stream: ReadableStream): Promise<Response> {
+export async function renderHtml({
+  stream,
+  formState,
+}: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
   initializeReactClientSsr();
 
   const [stream1, stream2] = stream.tee();
@@ -36,8 +40,8 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
 
   const htmlNodeStream = ReactDomServer.renderToPipeableStream(<SsrRoot />, {
     bootstrapModules: ssrAssets.bootstrapModules,
-    // TODO: how to pass formState here if we createFromNodeStream inside SsrRoot?
-    // formState
+    // @ts-expect-error no types
+    formState,
   });
 
   const htmlStream = Readable.toWeb(

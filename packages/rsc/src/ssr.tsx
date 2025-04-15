@@ -1,3 +1,4 @@
+import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import {
@@ -11,7 +12,10 @@ import {
   injectRscScript,
 } from "./utils/rsc-script";
 
-export async function renderHtml(stream: ReadableStream): Promise<Response> {
+export async function renderHtml({
+  stream,
+  formState,
+}: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
   initializeReactClientSsr();
 
   const [stream1, stream2] = stream.tee();
@@ -30,8 +34,8 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
 
   const htmlStream = await ReactDomServer.renderToReadableStream(payload.root, {
     bootstrapModules: ssrAssets.bootstrapModules,
-    // @ts-expect-error TODO: declare
-    formState: payload.formState,
+    // @ts-expect-error no types
+    formState,
   });
 
   const responseStream = htmlStream
