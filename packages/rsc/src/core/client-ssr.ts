@@ -25,10 +25,12 @@ async function importClientReferenceModule(id: string) {
     const clientReferences = await import(
       "virtual:vite-rsc/client-references" as string
     );
-    const deps = clientReferences.assetDeps[id];
-    if (deps) {
-      for (const js of deps.js) {
-        ReactDOM.preloadModule(js);
+    if (clientReferences.assetDeps) {
+      const deps = clientReferences.assetDeps[id];
+      if (deps) {
+        for (const js of deps.js) {
+          ReactDOM.preloadModule(js);
+        }
       }
     }
     const dynImport = clientReferences.default[id];

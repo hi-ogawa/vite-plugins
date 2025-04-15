@@ -15,26 +15,20 @@ export function vitePluginRscCore(rscOptions: {
         }
       },
       load(id) {
-        const references =
-          id === "\0virtual:vite-rsc/client-references"
-            ? rscOptions.getClientReferences()
-            : id === "\0virtual:vite-rsc/server-references"
-              ? rscOptions.getServerReferences()
-              : undefined;
-        if (references) {
-          let code = Object.entries(references)
-            .map(
-              ([key, id]) =>
-                `${JSON.stringify(key)}: () => import(${JSON.stringify(id)}),`,
-            )
-            .join("\n");
-          code = `export default {${code}};\n`;
-
+        if (id === "\0virtual:vite-rsc/server-references") {
+          const code = generateDynamicImportCode(
+            rscOptions.getServerReferences(),
+          );
+          return { code, map: null };
+        }
+        if (id === "\0virtual:vite-rsc/client-references") {
+          const clientReferences = rscOptions.getClientReferences();
+          let code = generateDynamicImportCode(clientReferences);
           const browserBundle = rscOptions.getBrowserBundle();
           if (browserBundle) {
             const assetDeps = collectAssetDeps(browserBundle);
             const keyAssetDeps: Record<string, AssetDeps> = {};
-            for (const [key, id] of Object.entries(references)) {
+            for (const [key, id] of Object.entries(clientReferences)) {
               const deps = assetDeps[id];
               if (deps) {
                 keyAssetDeps[key] = deps;
@@ -42,7 +36,6 @@ export function vitePluginRscCore(rscOptions: {
             }
             code += `export const assetDeps = ${JSON.stringify(keyAssetDeps)};\n`;
           }
-
           return { code, map: null };
         }
       },
@@ -81,6 +74,16 @@ export function vitePluginRscCore(rscOptions: {
       },
     },
   ];
+}
+
+function generateDynamicImportCode(map: Record<string, string>) {
+  let code = Object.entries(map)
+    .map(
+      ([key, id]) =>
+        `${JSON.stringify(key)}: () => import(${JSON.stringify(id)}),`,
+    )
+    .join("\n");
+  return `export default {${code}};\n`;
 }
 
 type AssetDeps = {
