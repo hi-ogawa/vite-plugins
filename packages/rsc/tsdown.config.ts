@@ -6,7 +6,6 @@ export default defineConfig({
     "src/server.tsx",
     "src/server-runtime.tsx",
     "src/ssr.tsx",
-    "src/ssr-node.tsx",
     "src/ssr-runtime.tsx",
     "src/browser.tsx",
     "src/browser-runtime.tsx",
