@@ -1,3 +1,4 @@
+import * as clientReferences from "virtual:vite-rsc/client-references";
 import { memoize, tinyassert } from "@hiogawa/utils";
 import ReactDOM from "react-dom";
 import type { ImportManifestEntry, ModuleMap } from "../types";
@@ -8,23 +9,22 @@ export function initializeReactClientSsr(): void {
   init = true;
 
   Object.assign(globalThis, {
-    __webpack_require__: memoize(importClientReferenceModule),
+    __webpack_require__: requireModule,
     __webpack_chunk_load__: async () => {},
   });
 }
 
-// we manually run `preloadModule` instead of builtin prepareDestinationWithChunks (see packages/rsc/src/core/server.ts)
-// TODO: write entire `__webpack_require__` as virtual module?
-// TODO: move this out of memoized __webpack_require__
-async function importClientReferenceModule(id: string) {
+function requireModule(id: string) {
+  prepareDestination(id);
+  return requireModuleInner(id)
+}
+
+// we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestinationWithChunks (see packages/rsc/src/core/server.ts)
+// maybe we can have this logic baked in react-server-dom-vite
+function prepareDestination(id: string) {
   if (import.meta.env.DEV) {
     ReactDOM.preloadModule(id);
-
-    return import(/* @vite-ignore */ id);
   } else {
-    const clientReferences = await import(
-      "virtual:vite-rsc/client-references" as string
-    );
     if (clientReferences.assetDeps) {
       const deps = clientReferences.assetDeps[id];
       if (deps) {
@@ -33,11 +33,19 @@ async function importClientReferenceModule(id: string) {
         }
       }
     }
+  }
+}
+
+// async part is memoized to have stable promise returned from `__webpack_require__`
+const requireModuleInner = memoize((id: string) => {
+  if (import.meta.env.DEV) {
+    return import(/* @vite-ignore */ id);
+  } else {
     const dynImport = clientReferences.default[id];
     tinyassert(dynImport, `client reference not found '${id}'`);
     return dynImport();
   }
-}
+});
 
 export function createSsrModuleMap(): ModuleMap {
   return new Proxy(

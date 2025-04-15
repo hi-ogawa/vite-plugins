@@ -16,12 +16,18 @@ export function vitePluginRscCore(rscOptions: {
       },
       load(id) {
         if (id === "\0virtual:vite-rsc/server-references") {
+          if (this.environment.mode === "dev") {
+            return { code: `export {}`, map: null };
+          }
           const code = generateDynamicImportCode(
             rscOptions.getServerReferences(),
           );
           return { code, map: null };
         }
         if (id === "\0virtual:vite-rsc/client-references") {
+          if (this.environment.mode === "dev") {
+            return { code: `export {}`, map: null };
+          }
           const clientReferences = rscOptions.getClientReferences();
           let code = generateDynamicImportCode(clientReferences);
           const browserBundle = rscOptions.getBrowserBundle();
@@ -86,7 +92,7 @@ function generateDynamicImportCode(map: Record<string, string>) {
   return `export default {${code}};\n`;
 }
 
-type AssetDeps = {
+export type AssetDeps = {
   js: string[];
   css: string[];
 };
