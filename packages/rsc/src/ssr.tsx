@@ -1,4 +1,7 @@
+import * as clientReferences from "virtual:vite-rsc/client-references";
+import { tinyassert } from "@hiogawa/utils";
 import React from "react";
+import ReactDOM from "react-dom";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
@@ -17,7 +20,33 @@ export async function renderHtml({
   stream,
   formState,
 }: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
-  initializeReactClientSsr();
+  initializeReactClientSsr({
+    load: async (id) => {
+      if (import.meta.env.DEV) {
+        return import(/* @vite-ignore */ id);
+      } else {
+        const import_ = clientReferences.default[id];
+        tinyassert(import_, `client reference not found '${id}'`);
+        return import_();
+      }
+    },
+    prepareDestination(id) {
+      // we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestinationWithChunks
+      // maybe we can have this logic baked in react-server-dom-vite
+      if (import.meta.env.DEV) {
+        ReactDOM.preloadModule(id);
+      } else {
+        if (clientReferences.assetDeps) {
+          const deps = clientReferences.assetDeps[id];
+          if (deps) {
+            for (const js of deps.js) {
+              ReactDOM.preloadModule(js);
+            }
+          }
+        }
+      }
+    },
+  });
 
   const [stream1, stream2] = stream.tee();
 

@@ -1,51 +1,24 @@
-import * as clientReferences from "virtual:vite-rsc/client-references";
 import { memoize, tinyassert } from "@hiogawa/utils";
-import ReactDOM from "react-dom";
 import type { ImportManifestEntry, ModuleMap } from "../types";
 import { removeReferenceCacheTag } from "./shared";
 
 let init = false;
-export function initializeReactClientSsr(): void {
+export function initializeReactClientSsr(options: {
+  load: (id: string) => unknown;
+  prepareDestination?: (id: string) => void;
+}): void {
   if (init) return;
   init = true;
 
+  const load = memoize((id: string) => {
+    return options.load(removeReferenceCacheTag(id));
+  });
+
   (globalThis as any).__vite_rsc_client_require__ = (id: string) => {
-    prepareDestination(id);
-    return requireModuleInner(id);
+    options.prepareDestination?.(removeReferenceCacheTag(id));
+    return load(id);
   };
 }
-
-// we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestinationWithChunks (see packages/rsc/src/core/server.ts)
-// maybe we can have this logic baked in react-server-dom-vite
-function prepareDestination(id: string) {
-  id = removeReferenceCacheTag(id);
-
-  if (import.meta.env.DEV) {
-    ReactDOM.preloadModule(id);
-  } else {
-    if (clientReferences.assetDeps) {
-      const deps = clientReferences.assetDeps[id];
-      if (deps) {
-        for (const js of deps.js) {
-          ReactDOM.preloadModule(js);
-        }
-      }
-    }
-  }
-}
-
-// async part is memoized to have stable promise returned from `__webpack_require__`
-const requireModuleInner = memoize((id: string) => {
-  id = removeReferenceCacheTag(id);
-
-  if (import.meta.env.DEV) {
-    return import(/* @vite-ignore */ id);
-  } else {
-    const dynImport = clientReferences.default[id];
-    tinyassert(dynImport, `client reference not found '${id}'`);
-    return dynImport();
-  }
-});
 
 export function createSsrModuleMap(): ModuleMap {
   return new Proxy(

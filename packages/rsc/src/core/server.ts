@@ -74,8 +74,6 @@ export function createClientReferenceConfig(): BundlerConfig {
         return {
           id: id + cacheTag,
           name,
-          // support of prepareDestination preloading is done manually inside __webpack_require__
-          // (see packages/rsc/src/core/client-ssr.ts)
           chunks: [],
           async: true,
         } satisfies ImportManifestEntry;
