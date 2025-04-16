@@ -1,11 +1,11 @@
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
-import { createBundlerConfig } from "./features/client-component/server";
 import {
-  createActionBundlerConfig,
-  importServerAction,
+  createClientReferenceConfig,
+  createServerReferenceConfig,
+  importServerReference,
   initializeReactServer,
-} from "./features/server-function/server";
+} from "./core/server";
 
 export type RscPayload = {
   root: React.ReactNode;
@@ -41,14 +41,14 @@ export async function renderRequest(
         ? await request.formData()
         : await request.text();
       const args = await ReactServer.decodeReply(body);
-      const action = await importServerAction(actionId);
+      const action = await importServerReference(actionId);
       returnValue = await action.apply(null, args);
     } else {
       // progressive enhancement
       const formData = await request.formData();
       const decodedAction = await ReactServer.decodeAction(
         formData,
-        createActionBundlerConfig(),
+        createServerReferenceConfig(),
       );
       const result = await decodedAction();
       formState = await ReactServer.decodeFormState(result, formData);
@@ -57,7 +57,7 @@ export async function renderRequest(
 
   const stream = ReactServer.renderToReadableStream<RscPayload>(
     { root, formState, returnValue },
-    createBundlerConfig(),
+    createClientReferenceConfig(),
   );
 
   if (isRscRequest) {
@@ -74,8 +74,8 @@ export async function renderRequest(
 
 async function importSsrEntry(): Promise<typeof import("./ssr")> {
   if (import.meta.env.DEV) {
-    return await __viteRscSsrRunner.import("virtual:ssr-entry");
+    return await __viteRscSsrRunner.import("virtual:vite-rsc/ssr-entry");
   } else {
-    return await import("virtual:build-ssr-entry" as any);
+    return await import("virtual:vite-rsc/build-ssr-entry" as any);
   }
 }

@@ -1,6 +1,10 @@
 import { renderRequest } from "@hiogawa/vite-rsc/server";
-import { changeServerCounter, serverCounter } from "./action";
-import { ClientCounter } from "./counter";
+import {
+  changeServerCounter,
+  resetServerCounter,
+  serverCounter,
+} from "./action";
+import { ClientCounter, Hydrated } from "./counter";
 
 function Document() {
   return (
@@ -9,12 +13,14 @@ function Document() {
         <title>vite-rsc</title>
       </head>
       <body>
-        <h4>hello server</h4>
+        <h4>Test</h4>
+        <Hydrated />
+        <ClientCounter />
         <form action={changeServerCounter}>
           <input type="hidden" name="change" value="1" />
           <button>Server Counter: {serverCounter}</button>
+          <button formAction={resetServerCounter}>Server Reset</button>
         </form>
-        <ClientCounter />
       </body>
     </html>
   );

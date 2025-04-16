@@ -14,6 +14,8 @@ import {
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
+import { vitePluginRscCore } from "./core/plugin";
+import { SERVER_REFERENCE_PREFIX } from "./core/shared";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
@@ -41,7 +43,7 @@ export default function vitePluginRsc(rscOptions: {
               optimizeDeps: {
                 include: [
                   "react-dom/client",
-                  `${PKG_NAME} > react-server-dom-webpack/client.browser`,
+                  `react-server-dom-webpack/client.browser`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -49,7 +51,7 @@ export default function vitePluginRsc(rscOptions: {
                 manifest: true,
                 outDir: "dist/client",
                 rollupOptions: {
-                  input: { index: "virtual:browser-entry" },
+                  input: { index: "virtual:vite-rsc/browser-entry" },
                 },
               },
             },
@@ -63,7 +65,7 @@ export default function vitePluginRsc(rscOptions: {
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: "virtual:ssr-entry" },
+                  input: { index: "virtual:vite-rsc/ssr-entry" },
                 },
               },
             },
@@ -127,7 +129,7 @@ export default function vitePluginRsc(rscOptions: {
               "react",
               "react/jsx-runtime",
               "react/jsx-dev-runtime",
-              `${PKG_NAME} > react-server-dom-webpack/server.edge`,
+              `react-server-dom-webpack/server.edge`,
             ],
           },
         };
@@ -173,19 +175,21 @@ export default function vitePluginRsc(rscOptions: {
         };
       },
     },
-    createVirtualPlugin("ssr-assets", function () {
+    createVirtualPlugin("vite-rsc/ssr-assets", function () {
       assert(this.environment.name === "ssr");
 
       let bootstrapModules: string[] = [];
       if (this.environment.mode === "dev") {
-        bootstrapModules = ["/@id/__x00__virtual:browser-entry"];
+        bootstrapModules = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
       }
       if (this.environment.mode === "build") {
-        bootstrapModules = [browserManifest["virtual:browser-entry"]!.file];
+        bootstrapModules = [
+          browserManifest["virtual:vite-rsc/browser-entry"]!.file,
+        ];
       }
       return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
     }),
-    createVirtualPlugin("browser-entry", function () {
+    createVirtualPlugin("vite-rsc/browser-entry", function () {
       if (this.environment.mode === "dev") {
         return `
           import RefreshRuntime from "/@react-refresh";
@@ -201,16 +205,16 @@ export default function vitePluginRsc(rscOptions: {
         `;
       }
     }),
-    createVirtualPlugin("ssr-entry", function () {
+    createVirtualPlugin("vite-rsc/ssr-entry", function () {
       return `
         export * from "${PKG_NAME}/ssr";
       `;
     }),
     {
       // externalize `dist/ssr/index.js` import as relative path in rsc build
-      name: "virtual:build-ssr-entry",
+      name: "virtual:vite-rsc/build-ssr-entry",
       resolveId(source) {
-        if (source === "virtual:build-ssr-entry") {
+        if (source === "virtual:vite-rsc/build-ssr-entry") {
           return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
         }
         return;
@@ -229,36 +233,6 @@ export default function vitePluginRsc(rscOptions: {
     },
     {
       name: "rsc-misc",
-      transform(code, id, _options) {
-        if (
-          this.environment?.name === "rsc" &&
-          id.includes("react-server-dom-webpack") &&
-          code.includes("__webpack_require__")
-        ) {
-          // rename webpack markers in rsc runtime
-          // to avoid conflict with ssr runtime which shares same globals
-          code = code.replaceAll(
-            "__webpack_require__",
-            "__vite_react_server_webpack_require__",
-          );
-          code = code.replaceAll(
-            "__webpack_chunk_load__",
-            "__vite_react_server_webpack_chunk_load__",
-          );
-          return { code, map: null };
-        }
-        if (
-          this.environment?.name === "client" &&
-          id.includes("react-server-dom-webpack") &&
-          code.includes("__webpack_require__")
-        ) {
-          // avoid accessing `__webpack_require__` on import side effect
-          // https://github.com/facebook/react/blob/a9bbe34622885ef5667d33236d580fe7321c0d8b/packages/react-server-dom-webpack/src/client/ReactFlightClientConfigBundlerWebpackBrowser.js#L16-L17
-          code = code.replaceAll("__webpack_require__.u", "({}).u");
-          return { code, map: null };
-        }
-        return;
-      },
       hotUpdate(ctx) {
         if (this.environment.name === "rsc") {
           const cliendIds = new Set(Object.values(clientReferences));
@@ -294,6 +268,10 @@ export default function vitePluginRsc(rscOptions: {
     ...vitePluginUseServer(),
     virtualNormalizeReferenceIdPlugin(),
     vitePluginSilenceDirectiveBuildWarning(),
+    ...vitePluginRscCore({
+      getClientReferences: () => clientReferences,
+      getServerReferences: () => serverReferences,
+    }),
   ];
 }
 
@@ -310,7 +288,7 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
   // to avoid double modules on browser and ssr.
   const environment = server.environments[name]!;
   const transformed = await environment.transformRequest(
-    "virtual:normalize-reference-id/" + encodeURIComponent(id),
+    "virtual:vite-rsc/normalize-reference-id/" + encodeURIComponent(id),
   );
   assert(transformed);
   const m = transformed.code.match(
@@ -329,7 +307,7 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
 }
 
 function virtualNormalizeReferenceIdPlugin(): Plugin {
-  const prefix = "virtual:normalize-reference-id/";
+  const prefix = "virtual:vite-rsc/normalize-reference-id/";
   return {
     name: virtualNormalizeReferenceIdPlugin.name,
     apply: "serve",
@@ -366,24 +344,12 @@ function vitePluginUseClient(): Plugin[] {
         if (!output) return;
         clientReferences[normalizedId] = id;
         output.prepend(`
-          import * as $$ReactServer from "${PKG_NAME}/server-runtime";
+          import * as $$ReactServer from "react-server-dom-webpack/server.edge";
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
         `);
         return { code: output.toString(), map: { mappings: "" } };
       },
     },
-    createVirtualPlugin("client-references", function () {
-      assert(this.environment?.name !== "rsc");
-      assert(this.environment?.mode === "build");
-      return [
-        `export default {`,
-        ...Object.entries(clientReferences).map(
-          ([normalizedId, id]) =>
-            `${JSON.stringify(normalizedId)}: () => import(${JSON.stringify(id)}),\n`,
-        ),
-        `}`,
-      ].join("\n");
-    }),
   ];
 }
 
@@ -398,13 +364,13 @@ function vitePluginUseServer(): Plugin[] {
         const normalizedId = await normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
           const { output } = await transformServerActionServer(code, ast, {
-            id: normalizedId,
+            id: SERVER_REFERENCE_PREFIX + normalizedId,
             runtime: "$$register",
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
           output.prepend(`
-            import * as $$ReactServer from "${PKG_NAME}/server-runtime";
+            import * as $$ReactServer from "react-server-dom-webpack/server.edge";
             const $$register = (value, id, name) => {
               if (typeof value !== 'function') return value;
               return $$ReactServer.registerServerReference(value, id, name);
@@ -416,33 +382,21 @@ function vitePluginUseServer(): Plugin[] {
           };
         } else {
           const output = await transformDirectiveProxyExport(ast, {
-            id: normalizedId,
+            id: SERVER_REFERENCE_PREFIX + normalizedId,
             runtime: "$$proxy",
             directive: "use server",
           });
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
-          const name = this.environment.name === "client" ? "browser" : "ssr";
+          const name = this.environment.name === "client" ? "browser" : "edge";
           output.prepend(`
-            import * as $$ReactClient from "${PKG_NAME}/${name}-runtime";
+            import * as $$ReactClient from "react-server-dom-webpack/server.${name}";
             const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __viteRscCallServer(...args))
           `);
           return { code: output.toString(), map: { mappings: "" } };
         }
       },
     },
-    createVirtualPlugin("server-references", function () {
-      assert(this.environment?.name === "rsc");
-      assert(this.environment?.mode === "build");
-      return [
-        `export default {`,
-        ...Object.entries(serverReferences).map(
-          ([normalizedId, id]) =>
-            `${JSON.stringify(normalizedId)}: () => import(${JSON.stringify(id)}),\n`,
-        ),
-        `}`,
-      ].join("\n");
-    }),
   ];
 }
 

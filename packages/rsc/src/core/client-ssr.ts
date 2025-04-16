@@ -1,12 +1,20 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
-import type { ImportManifestEntry, ModuleMap } from "../../types";
+import type { ImportManifestEntry, ModuleMap } from "../types";
 
-async function importClientReference(id: string) {
+let init = false;
+export function initializeReactClientSsr(): void {
+  if (init) return;
+  init = true;
+
+  (globalThis as any).__vite_rsc_client_require__ = memoize(requireModule);
+}
+
+async function requireModule(id: string) {
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
   } else {
     const clientReferences = await import(
-      "virtual:client-references" as string
+      "virtual:vite-rsc/client-references" as string
     );
     const dynImport = clientReferences.default[id];
     tinyassert(dynImport, `client reference not found '${id}'`);
@@ -14,18 +22,7 @@ async function importClientReference(id: string) {
   }
 }
 
-let init = false;
-export function initializeReactClientSsr(): void {
-  if (init) return;
-  init = true;
-
-  Object.assign(globalThis, {
-    __webpack_require__: memoize(importClientReference),
-    __webpack_chunk_load__: async () => {},
-  });
-}
-
-export function createModuleMap(): ModuleMap {
+export function createSsrModuleMap(): ModuleMap {
   return new Proxy(
     {},
     {

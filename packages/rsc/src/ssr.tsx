@@ -1,9 +1,10 @@
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import {
-  createModuleMap,
+  createSsrModuleMap,
   initializeReactClientSsr,
-} from "./features/client-component/ssr";
+} from "./core/client-ssr";
+import { getBrowserPreamble } from "./core/shared";
 import type { RscPayload } from "./server";
 import {
   createBufferedTransformStream,
@@ -19,13 +20,13 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
     stream1,
     {
       serverConsumerManifest: {
-        moduleMap: createModuleMap(),
+        moduleMap: createSsrModuleMap(),
         moduleLoading: { prefix: "" },
       },
     },
   );
 
-  const ssrAssets = await import("virtual:ssr-assets");
+  const ssrAssets = await import("virtual:vite-rsc/ssr-assets");
 
   const htmlStream = await ReactDomServer.renderToReadableStream(payload.root, {
     bootstrapModules: ssrAssets.bootstrapModules,
@@ -36,7 +37,7 @@ export async function renderHtml(stream: ReadableStream): Promise<Response> {
   const responseStream = htmlStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(createBufferedTransformStream())
-    .pipeThrough(injectRscScript(stream2))
+    .pipeThrough(injectRscScript(stream2, getBrowserPreamble()))
     .pipeThrough(new TextEncoderStream());
 
   return new Response(responseStream, {
