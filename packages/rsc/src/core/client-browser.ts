@@ -1,4 +1,5 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
+import { removeReferenceCacheTag } from "./shared";
 
 let init = false;
 export function initializeReactClientBrowser(): void {
@@ -12,6 +13,8 @@ export function initializeReactClientBrowser(): void {
 }
 
 async function requireModule(id: string): Promise<unknown> {
+  id = removeReferenceCacheTag(id);
+
   if (import.meta.env.DEV) {
     // use raw import (inject via getBrowserPreamble)
     // to avoid `?import` added by vite import analysis

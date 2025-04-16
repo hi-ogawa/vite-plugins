@@ -52,6 +52,8 @@ testNoJs("module preload on ssr", async ({ page }) => {
     const file = "/" + viteManifest["src/counter.tsx"].file;
     expect(srcs).toContain(file);
   } else {
-    expect(srcs).toContain(`/src/counter.tsx`);
+    expect(srcs).toEqual(
+      expect.arrayContaining([expect.stringContaining("/src/counter.tsx")]),
+    );
   }
 });

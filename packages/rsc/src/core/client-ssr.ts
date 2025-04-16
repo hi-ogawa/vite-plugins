@@ -2,6 +2,7 @@ import * as clientReferences from "virtual:vite-rsc/client-references";
 import { memoize, tinyassert } from "@hiogawa/utils";
 import ReactDOM from "react-dom";
 import type { ImportManifestEntry, ModuleMap } from "../types";
+import { removeReferenceCacheTag } from "./shared";
 
 let init = false;
 export function initializeReactClientSsr(): void {
@@ -33,6 +34,8 @@ function prepareDestination(id: string) {
 
 // async part is memoized to have stable promise returned from `__webpack_require__`
 const requireModuleInner = memoize((id: string) => {
+  id = removeReferenceCacheTag(id);
+
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
   } else {

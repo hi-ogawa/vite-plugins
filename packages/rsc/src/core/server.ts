@@ -1,6 +1,10 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
 import type { BundlerConfig, ImportManifestEntry } from "../types";
-import { SERVER_REFERENCE_PREFIX } from "./shared";
+import {
+  SERVER_REFERENCE_PREFIX,
+  createReferenceCacheTag,
+  removeReferenceCacheTag,
+} from "./shared";
 
 let init = false;
 export function initializeReactServer(): void {
@@ -26,6 +30,8 @@ export async function importServerReference(id: string): Promise<Function> {
 }
 
 async function requireModule(id: string): Promise<unknown> {
+  id = removeReferenceCacheTag(id);
+
   tinyassert(
     id.startsWith(SERVER_REFERENCE_PREFIX),
     `invalid server reference '${id}'`,
@@ -45,6 +51,8 @@ async function requireModule(id: string): Promise<unknown> {
 }
 
 export function createServerReferenceConfig(): BundlerConfig {
+  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
+
   return new Proxy(
     {},
     {
@@ -54,7 +62,7 @@ export function createServerReferenceConfig(): BundlerConfig {
         tinyassert(id);
         tinyassert(name);
         return {
-          id,
+          id: id + cacheTag,
           name,
           chunks: [],
           async: true,
@@ -65,6 +73,8 @@ export function createServerReferenceConfig(): BundlerConfig {
 }
 
 export function createClientReferenceConfig(): BundlerConfig {
+  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
+
   return new Proxy(
     {},
     {
@@ -74,7 +84,7 @@ export function createClientReferenceConfig(): BundlerConfig {
         tinyassert(id);
         tinyassert(name);
         return {
-          id,
+          id: id + cacheTag,
           name,
           // support of prepareDestination preloading is done manually inside __webpack_require__
           // (see packages/rsc/src/core/client-ssr.ts)
