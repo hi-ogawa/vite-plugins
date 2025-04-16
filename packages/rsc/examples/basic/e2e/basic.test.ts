@@ -1,6 +1,11 @@
 import fs from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
-import { createReloadChecker, testNoJs, waitForHydration } from "./helper";
+import {
+  createEditor,
+  createReloadChecker,
+  testNoJs,
+  waitForHydration,
+} from "./helper";
 
 test("basic", async ({ page }) => {
   await page.goto("/");
@@ -52,6 +57,53 @@ testNoJs("module preload on ssr", async ({ page }) => {
     const file = "/" + viteManifest["src/counter.tsx"].file;
     expect(srcs).toContain(file);
   } else {
-    expect(srcs).toContain(`/src/counter.tsx`);
+    expect(srcs).toEqual(
+      expect.arrayContaining([expect.stringContaining("/src/counter.tsx")]),
+    );
   }
 });
+
+test("server reference update @dev @js", async ({ page }) => {
+  await page.goto("/");
+  await waitForHydration(page);
+  await testServerActionUpdate(page, { js: true });
+});
+
+test("server reference update @dev @nojs", async ({ page }) => {
+  await page.goto("/");
+  await testServerActionUpdate(page, { js: false });
+});
+
+async function testServerActionUpdate(page: Page, options: { js: boolean }) {
+  await page.getByRole("button", { name: "Server Counter: 0" }).click();
+  await expect(
+    page.getByRole("button", { name: "Server Counter: 1" }),
+  ).toBeVisible();
+
+  // update server code
+  using editor = createEditor("src/action.tsx");
+  editor.edit((s) =>
+    s.replace("const TEST_UPDATE = 1;", "const TEST_UPDATE = 10;"),
+  );
+  if (!options.js) {
+    await expect(async () => {
+      await page.goto("/");
+      await expect(
+        page.getByRole("button", { name: "Server Counter: 0" }),
+      ).toBeVisible({ timeout: 10 });
+    }).toPass();
+  }
+
+  await page.getByRole("button", { name: "Server Counter: 0" }).click();
+  await expect(
+    page.getByRole("button", { name: "Server Counter: 10" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Server Reset" }).click();
+  await expect(
+    page.getByRole("button", { name: "Server Counter: 0" }),
+  ).toBeVisible();
+}
+
+// TODO
+test.skip("client reference update", () => {});
