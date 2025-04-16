@@ -1,30 +1,15 @@
-import { memoize, tinyassert } from "@hiogawa/utils";
+import { memoize } from "@hiogawa/utils";
 import { removeReferenceCacheTag } from "./shared";
 
 let init = false;
-export function initializeReactClientBrowser(): void {
+export function initializeReactClientBrowser(options: {
+  load: (id: string) => Promise<unknown>;
+}): void {
   if (init) return;
   init = true;
 
-  Object.assign(globalThis, {
-    __webpack_require__: memoize(requireModule),
-    __webpack_chunk_load__: async () => {},
+  (globalThis as any).__webpack_require__ = memoize((id: string) => {
+    id = removeReferenceCacheTag(id);
+    return options.load(id);
   });
-}
-
-async function requireModule(id: string): Promise<unknown> {
-  id = removeReferenceCacheTag(id);
-
-  if (import.meta.env.DEV) {
-    // use raw import (inject via getBrowserPreamble)
-    // to avoid `?import` added by vite import analysis
-    return (self as any).__viteRscImport(id);
-  } else {
-    const clientReferences = await import(
-      "virtual:vite-rsc/client-references" as string
-    );
-    const dynImport = clientReferences.default[id];
-    tinyassert(dynImport, `client reference not found '${id}'`);
-    return dynImport();
-  }
 }

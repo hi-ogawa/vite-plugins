@@ -23,6 +23,12 @@ export function initializeReactServer(): void {
   (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
 }
 
+let requireFn: (id: string) => unknown;
+
+export function setRequireModule(fn: (id: string) => unknown): void {
+  requireFn = fn;
+}
+
 export async function importServerReference(id: string): Promise<Function> {
   const [file, name] = id.split("#") as [string, string];
   const mod: any = await requireModule(file);
