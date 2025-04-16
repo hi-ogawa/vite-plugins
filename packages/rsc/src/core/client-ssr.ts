@@ -15,12 +15,6 @@ export function initializeReactClientSsr(): void {
   };
 }
 
-let requireFn: (id: string) => unknown;
-
-export function setRequireModule(fn: (id: string) => unknown): void {
-  requireFn = fn;
-}
-
 // we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestinationWithChunks (see packages/rsc/src/core/server.ts)
 // maybe we can have this logic baked in react-server-dom-vite
 function prepareDestination(id: string) {
