@@ -7,41 +7,35 @@ import {
 } from "./shared";
 
 let init = false;
-export function initializeReactServer(): void {
+let requireModule!: (id: string) => unknown;
+
+export function initializeReactServer(options: {
+  load: (id: string) => unknown;
+}): void {
   if (init) return;
   init = true;
+
+  requireModule = (id) => {
+    id = removeReferenceCacheTag(id);
+    return options.load(id);
+  };
+
+  // need memoize to return stable promise from __webpack_require__
+  const requireModuleMemoized = memoize(requireModule);
 
   (globalThis as any).__webpack_require__ = (id: string) => {
     if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
       id = id.slice(SERVER_REFERENCE_PREFIX.length);
-      return (globalThis as any).__vite_rsc_server_require__(id);
+      return requireModuleMemoized(id);
     }
     return (globalThis as any).__vite_rsc_client_require__(id);
   };
-
-  // need memoize to return stable promise from __webpack_require__
-  (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
 }
 
 export async function importServerReference(id: string): Promise<Function> {
   const [file, name] = id.split("#") as [string, string];
   const mod: any = await requireModule(file);
   return mod[name];
-}
-
-async function requireModule(id: string): Promise<unknown> {
-  id = removeReferenceCacheTag(id);
-
-  if (import.meta.env.DEV) {
-    return import(/* @vite-ignore */ id);
-  } else {
-    const references = await import(
-      "virtual:vite-rsc/server-references" as string
-    );
-    const dynImport = references.default[id];
-    tinyassert(dynImport, `server reference not found '${id}'`);
-    return dynImport();
-  }
 }
 
 export function createServerReferenceConfig(): BundlerConfig {

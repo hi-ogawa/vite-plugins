@@ -1,3 +1,4 @@
+import { tinyassert } from "@hiogawa/utils";
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
@@ -18,7 +19,20 @@ export async function renderRequest(
   request: Request,
   root: React.ReactNode,
 ): Promise<Response> {
-  initializeReactServer();
+  initializeReactServer({
+    load: async (id) => {
+      if (import.meta.env.DEV) {
+        return import(/* @vite-ignore */ id);
+      } else {
+        const references = await import(
+          "virtual:vite-rsc/server-references" as string
+        );
+        const dynImport = references.default[id];
+        tinyassert(dynImport, `server reference not found '${id}'`);
+        return dynImport();
+      }
+    },
+  });
 
   const url = new URL(request.url);
   const isAction = request.method === "POST";
