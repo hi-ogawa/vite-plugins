@@ -46,29 +46,6 @@ export function vitePluginRscCore(rscOptions: {
         }
       },
     },
-    {
-      name: "rsc-patch-webpack",
-      transform(code, id, _options) {
-        if (
-          this.environment?.name === "rsc" &&
-          id.includes("react-server-dom-webpack") &&
-          code.includes("__webpack_require__")
-        ) {
-          // rename webpack markers in rsc runtime
-          // to avoid conflict with ssr runtime which shares same globals
-          code = code.replaceAll(
-            "__webpack_require__",
-            "__vite_rsc_webpack_require__",
-          );
-          code = code.replaceAll(
-            "__webpack_chunk_load__",
-            "__vite_rsc_webpack_chunk_load__",
-          );
-          return { code, map: null };
-        }
-        return;
-      },
-    },
   ];
 }
 

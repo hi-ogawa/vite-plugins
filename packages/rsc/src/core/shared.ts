@@ -8,3 +8,5 @@ export function getBrowserPreamble(): string {
   code += `self.__viteRscImport = (id) => import(id);\n`;
   return code;
 }
+
+export const SERVER_REF_PREFIX = "$$server:";

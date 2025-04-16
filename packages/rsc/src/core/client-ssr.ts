@@ -2,6 +2,7 @@ import * as clientReferences from "virtual:vite-rsc/client-references";
 import { memoize, tinyassert } from "@hiogawa/utils";
 import ReactDOM from "react-dom";
 import type { ImportManifestEntry, ModuleMap } from "../types";
+import { SERVER_REF_PREFIX } from "./shared";
 
 let init = false;
 export function initializeReactClientSsr(): void {
@@ -15,6 +16,9 @@ export function initializeReactClientSsr(): void {
 }
 
 function requireModule(id: string) {
+  if (id.startsWith(SERVER_REF_PREFIX)) {
+    return (globalThis as any).__vite_rsc_server_require__(id);
+  }
   prepareDestination(id);
   return requireModuleInner(id);
 }
