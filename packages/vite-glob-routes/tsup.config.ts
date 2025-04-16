@@ -2,12 +2,8 @@ import { defineConfig } from "tsup";
 
 export default defineConfig([
   {
-    entry: ["src/index.ts"],
-    format: ["esm", "cjs"],
-    dts: true,
-  },
-  {
     entry: [
+      "src/index.ts",
       "src/react-router/client.ts",
       "src/react-router/client-eager.ts",
       "src/react-router/server.ts",
