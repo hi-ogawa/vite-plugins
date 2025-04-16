@@ -10,3 +10,12 @@ export function ClientCounter(): React.ReactElement {
     </button>
   );
 }
+
+export function Hydrated() {
+  const hydrated = React.useSyncExternalStore(
+    React.useCallback(() => () => {}, []),
+    () => true,
+    () => false,
+  );
+  return <div data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</div>;
+}
