@@ -13,6 +13,7 @@ export function initializeReactServer(): void {
 
   (globalThis as any).__webpack_require__ = (id: string) => {
     if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
+      id = id.slice(SERVER_REFERENCE_PREFIX.length);
       return (globalThis as any).__vite_rsc_server_require__(id);
     }
     return (globalThis as any).__vite_rsc_client_require__(id);
@@ -30,12 +31,6 @@ export async function importServerReference(id: string): Promise<Function> {
 
 async function requireModule(id: string): Promise<unknown> {
   id = removeReferenceCacheTag(id);
-
-  tinyassert(
-    id.startsWith(SERVER_REFERENCE_PREFIX),
-    `invalid server reference '${id}'`,
-  );
-  id = id.slice(SERVER_REFERENCE_PREFIX.length);
 
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
@@ -61,7 +56,7 @@ export function createServerReferenceConfig(): BundlerConfig {
         tinyassert(id);
         tinyassert(name);
         return {
-          id: id + cacheTag,
+          id: SERVER_REFERENCE_PREFIX + id + cacheTag,
           name,
           chunks: [],
           async: true,
