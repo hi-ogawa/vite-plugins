@@ -63,8 +63,8 @@ importers:
         specifier: ^19.0.0
         version: 19.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(webpack@5.93.0(@swc/core@1.10.18(@swc/helpers@0.5.15))(esbuild@0.24.2))
       tsdown:
-        specifier: ^0.8.0-beta.1
-        version: 0.8.0-beta.1(@swc/core@1.10.18(@swc/helpers@0.5.15))(typescript@5.7.3)
+        specifier: 0.7.3
+        version: 0.7.3(@swc/core@1.10.18(@swc/helpers@0.5.15))(typescript@5.7.3)
       tsup:
         specifier: ^8.3.6
         version: 8.3.6(@swc/core@1.10.18(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.7.3)(yaml@2.7.0)
@@ -5451,8 +5451,9 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rolldown-plugin-dts@0.1.0:
-    resolution: {integrity: sha512-kmXQzvRJVQ+bWtZXX345S4H6tNtrqIdBsZX7mmL+M4tLj2YsgCNXuS/XKAzUKD8BCqSwK/dEkzIxZ+BjiaHLeQ==}
+  rolldown-plugin-dts@https://pkg.pr.new/sxzz/rolldown-plugin-dts@ad37673:
+    resolution: {tarball: https://pkg.pr.new/sxzz/rolldown-plugin-dts@ad37673}
+    version: 0.0.0
     engines: {node: '>=20.18.0'}
 
   rolldown@1.0.0-beta.7:
@@ -5879,8 +5880,8 @@ packages:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
 
-  tsdown@0.8.0-beta.1:
-    resolution: {integrity: sha512-Wy9KlLegfgkmz5RyLrL2XX9CVLpvubLFFUkb1FM1cdx6HplRBc356o8UhjVQhcAEGVlkxJRc6wMj8ChcsWtDHA==}
+  tsdown@0.7.3:
+    resolution: {integrity: sha512-s4FLCkPixBnxmRfolsKyMY7q9mxE2jX+JPpVA0OmwMSaTjrKnhtR4GPzDQ4OfuhB4I2B5QbydTA5HJgaHBh2SA==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -7675,7 +7676,7 @@ snapshots:
 
   '@rolldown/binding-wasm32-wasi@1.0.0-beta.7':
     dependencies:
-      '@napi-rs/wasm-runtime': 0.2.7
+      '@napi-rs/wasm-runtime': 0.2.8
     optional: true
 
   '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.7':
@@ -11074,7 +11075,7 @@ snapshots:
 
   reusify@1.0.4: {}
 
-  rolldown-plugin-dts@0.1.0:
+  rolldown-plugin-dts@https://pkg.pr.new/sxzz/rolldown-plugin-dts@ad37673:
     dependencies:
       magic-string-ast: 0.9.1
       oxc-parser: 0.62.0
@@ -11633,7 +11634,7 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tsdown@0.8.0-beta.1(@swc/core@1.10.18(@swc/helpers@0.5.15))(typescript@5.7.3):
+  tsdown@0.7.3(@swc/core@1.10.18(@swc/helpers@0.5.15))(typescript@5.7.3):
     dependencies:
       ansis: 3.17.0
       cac: 6.7.14
@@ -11644,7 +11645,7 @@ snapshots:
       find-up-simple: 1.0.1
       oxc-resolver: 5.2.0
       rolldown: 1.0.0-beta.7(typescript@5.7.3)
-      rolldown-plugin-dts: 0.1.0
+      rolldown-plugin-dts: https://pkg.pr.new/sxzz/rolldown-plugin-dts@ad37673
       tinyglobby: 0.2.12
       unconfig: 7.3.1
       unplugin-isolated-decl: 0.13.6(@swc/core@1.10.18(@swc/helpers@0.5.15))(typescript@5.7.3)
