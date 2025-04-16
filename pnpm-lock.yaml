@@ -564,15 +564,6 @@ importers:
         specifier: workspace:*
         version: link:../..
 
-  packages/rsc/examples/core:
-    dependencies:
-      '@hiogawa/vite-rsc':
-        specifier: workspace:*
-        version: link:../..
-      react-server-dom-webpack:
-        specifier: ^19.0.0
-        version: 19.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(webpack@5.93.0(@swc/core@1.10.18(@swc/helpers@0.5.15))(esbuild@0.24.2))
-
   packages/rsc/examples/hono:
     dependencies:
       '@hiogawa/vite-rsc':
