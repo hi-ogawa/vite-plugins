@@ -76,10 +76,9 @@ export function createClientReferenceConfig(): BundlerConfig {
         return {
           id,
           name,
-          // TODO: preinit not working?
-          // `ReactDOMSharedInternals.d.X` seems no-op due to null request context
-          // even if we inject AsyncLocalStorage global for edge build?
-          chunks: [id, id],
+          // support of prepareDestination preloading is done manually inside __webpack_require__
+          // (see packages/rsc/src/core/client-ssr.ts)
+          chunks: [],
           async: true,
         } satisfies ImportManifestEntry;
       },

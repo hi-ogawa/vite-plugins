@@ -9,8 +9,10 @@ import {
   type Manifest,
   type Plugin,
   type ResolvedConfig,
+  type Rollup,
   type ViteDevServer,
   createServerModuleRunner,
+  defaultServerConditions,
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
@@ -20,6 +22,7 @@ import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
 let browserManifest: Manifest;
+let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -75,7 +78,7 @@ export default function vitePluginRsc(rscOptions: {
               },
               resolve: {
                 noExternal: [PKG_NAME],
-                conditions: ["react-server"],
+                conditions: ["react-server", ...defaultServerConditions],
               },
               build: {
                 outDir: "dist/rsc",
@@ -260,7 +263,31 @@ export default function vitePluginRsc(rscOptions: {
           assert(output && output.type === "asset");
           assert(typeof output.source === "string");
           browserManifest = JSON.parse(output.source);
+          browserBundle = bundle;
         }
+      },
+    },
+    {
+      // make `AsyncLocalStorage` available globally for React request context on edge build (e.g. React.cache, ssr preload)
+      // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
+      name: "inject-async-local-storage",
+      async configureServer() {
+        const __viteRscAyncHooks = await import("node:async_hooks");
+        (globalThis as any).AsyncLocalStorage =
+          __viteRscAyncHooks.AsyncLocalStorage;
+      },
+      banner(chunk) {
+        if (
+          this.environment.name === "rsc" &&
+          this.environment.mode === "build" &&
+          chunk.isEntry
+        ) {
+          return `\
+            import * as __viteRscAyncHooks from "node:async_hooks";
+            globalThis.AsyncLocalStorage = __viteRscAyncHooks.AsyncLocalStorage;
+          `;
+        }
+        return "";
       },
     },
 
@@ -271,6 +298,7 @@ export default function vitePluginRsc(rscOptions: {
     ...vitePluginRscCore({
       getClientReferences: () => clientReferences,
       getServerReferences: () => serverReferences,
+      getBrowserBundle: () => browserBundle,
     }),
   ];
 }

@@ -69,7 +69,7 @@ export async function renderRequest(
   }
 
   const ssrEntry = await importSsrEntry();
-  return ssrEntry.renderHtml(stream);
+  return ssrEntry.renderHtml({ stream, formState });
 }
 
 async function importSsrEntry(): Promise<typeof import("./ssr")> {
