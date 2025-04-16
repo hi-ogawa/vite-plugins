@@ -38,7 +38,7 @@ async function testAction(page: Page) {
   ).toBeVisible();
 }
 
-testNoJs.only("module preload on ssr", async ({ page }) => {
+testNoJs("module preload on ssr", async ({ page }) => {
   await page.goto("/");
   const srcs = await Promise.all(
     (await page.locator(`head >> link[rel="modulepreload"]`).all()).map((s) =>
