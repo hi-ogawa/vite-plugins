@@ -1,17 +1,15 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
 import type { BundlerConfig, ImportManifestEntry } from "../types";
+import { SERVER_REFERENCE_PREFIX } from "./shared";
 
 let init = false;
 export function initializeReactServer(): void {
   if (init) return;
   init = true;
 
-  Object.assign(globalThis, {
-    __vite_rsc_webpack_require__: memoize(importServerReferenceModule),
-    __vite_rsc_webpack_chunk_load__: () => {
-      throw new Error("__webpack_chunk_load__");
-    },
-  });
+  (globalThis as any).__vite_rsc_server_require__ = memoize(
+    importServerReferenceModule,
+  );
 }
 
 export async function importServerReference(id: string): Promise<Function> {
@@ -21,6 +19,12 @@ export async function importServerReference(id: string): Promise<Function> {
 }
 
 async function importServerReferenceModule(id: string): Promise<unknown> {
+  tinyassert(
+    id.startsWith(SERVER_REFERENCE_PREFIX),
+    `invalid server reference '${id}'`,
+  );
+  id = id.slice(SERVER_REFERENCE_PREFIX.length);
+
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
   } else {

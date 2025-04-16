@@ -15,6 +15,7 @@ import {
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
 import { vitePluginRscCore } from "./core/plugin";
+import { SERVER_REFERENCE_PREFIX } from "./core/shared";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
@@ -363,7 +364,7 @@ function vitePluginUseServer(): Plugin[] {
         const normalizedId = await normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
           const { output } = await transformServerActionServer(code, ast, {
-            id: normalizedId,
+            id: SERVER_REFERENCE_PREFIX + normalizedId,
             runtime: "$$register",
           });
           if (!output.hasChanged()) return;
@@ -381,7 +382,7 @@ function vitePluginUseServer(): Plugin[] {
           };
         } else {
           const output = await transformDirectiveProxyExport(ast, {
-            id: normalizedId,
+            id: SERVER_REFERENCE_PREFIX + normalizedId,
             runtime: "$$proxy",
             directive: "use server",
           });
