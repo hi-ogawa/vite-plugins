@@ -1,23 +1,15 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
 import type { ImportManifestEntry, ModuleMap } from "../types";
-import { SERVER_REFERENCE_PREFIX } from "./shared";
 
 let init = false;
 export function initializeReactClientSsr(): void {
   if (init) return;
   init = true;
 
-  Object.assign(globalThis, {
-    __webpack_require__: memoize(importClientReferenceModule),
-    __webpack_chunk_load__: async () => {},
-  });
+  (globalThis as any).__vite_rsc_client_require__ = memoize(requireModule);
 }
 
-async function importClientReferenceModule(id: string) {
-  if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
-    return (globalThis as any).__vite_rsc_server_require__(id);
-  }
-
+async function requireModule(id: string) {
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
   } else {

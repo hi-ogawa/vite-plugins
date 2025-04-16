@@ -7,18 +7,22 @@ export function initializeReactServer(): void {
   if (init) return;
   init = true;
 
-  (globalThis as any).__vite_rsc_server_require__ = memoize(
-    importServerReferenceModule,
-  );
+  (globalThis as any).__webpack_require__ = (id: string) => {
+    if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
+      return (globalThis as any).__vite_rsc_server_require__(id);
+    }
+    return (globalThis as any).__vite_rsc_client_require__(id);
+  };
+  (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
 }
 
 export async function importServerReference(id: string): Promise<Function> {
   const [file, name] = id.split("#") as [string, string];
-  const mod: any = await importServerReferenceModule(file);
+  const mod: any = await requireModule(file);
   return mod[name];
 }
 
-async function importServerReferenceModule(id: string): Promise<unknown> {
+async function requireModule(id: string): Promise<unknown> {
   tinyassert(
     id.startsWith(SERVER_REFERENCE_PREFIX),
     `invalid server reference '${id}'`,

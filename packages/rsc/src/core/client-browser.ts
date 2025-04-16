@@ -6,12 +6,12 @@ export function initializeReactClientBrowser(): void {
   init = true;
 
   Object.assign(globalThis, {
-    __webpack_require__: memoize(importClientRefrenceModule),
+    __webpack_require__: memoize(requireModule),
     __webpack_chunk_load__: async () => {},
   });
 }
 
-async function importClientRefrenceModule(id: string): Promise<unknown> {
+async function requireModule(id: string): Promise<unknown> {
   if (import.meta.env.DEV) {
     // use raw import (inject via getBrowserPreamble)
     // to avoid `?import` added by vite import analysis
