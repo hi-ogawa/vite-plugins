@@ -16,8 +16,7 @@ export function initializeReactServer(options: {
   init = true;
 
   requireModule = (id) => {
-    id = removeReferenceCacheTag(id);
-    return options.load(id);
+    return options.load(removeReferenceCacheTag(id));
   };
 
   // need memoize to return stable promise from __webpack_require__

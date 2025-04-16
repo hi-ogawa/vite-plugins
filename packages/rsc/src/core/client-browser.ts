@@ -8,8 +8,9 @@ export function initializeReactClientBrowser(options: {
   if (init) return;
   init = true;
 
-  (globalThis as any).__webpack_require__ = memoize((id: string) => {
-    id = removeReferenceCacheTag(id);
-    return options.load(id);
+  const requireModule = memoize((id: string) => {
+    return options.load(removeReferenceCacheTag(id));
   });
+
+  (globalThis as any).__webpack_require__ = requireModule;
 }

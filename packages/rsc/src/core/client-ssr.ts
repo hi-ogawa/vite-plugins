@@ -10,13 +10,13 @@ export function initializeReactClientSsr(options: {
   if (init) return;
   init = true;
 
-  const load = memoize((id: string) => {
+  const requireModule = memoize((id: string) => {
     return options.load(removeReferenceCacheTag(id));
   });
 
   (globalThis as any).__vite_rsc_client_require__ = (id: string) => {
     options.prepareDestination?.(removeReferenceCacheTag(id));
-    return load(id);
+    return requireModule(id);
   };
 }
 
