@@ -10,11 +10,7 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    }
+    ".": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
