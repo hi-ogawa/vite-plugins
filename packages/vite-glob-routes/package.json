@@ -11,30 +11,15 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/index.js"
     },
-    "./dist/react-router/client": {
-      "import": "./dist/react-router/client.js",
-      "types": "./dist/react-router/client.d.ts"
-    },
-    "./dist/react-router/client-eager": {
-      "import": "./dist/react-router/client-eager.js",
-      "types": "./dist/react-router/client-eager.d.ts"
-    },
-    "./dist/react-router/server": {
-      "import": "./dist/react-router/server.js",
-      "types": "./dist/react-router/server.d.ts"
-    },
-    "./dist/react-router/shared": {
-      "import": "./dist/react-router/shared.js",
-      "types": "./dist/react-router/shared.d.ts"
-    },
-    "./dist/hattip": {
-      "import": "./dist/hattip.js",
-      "types": "./dist/hattip.d.ts"
-    }
+    "./dist/react-router/client": "./dist/react-router/client.js",
+    "./dist/react-router/client-eager": "./dist/react-router/client-eager.js",
+    "./dist/react-router/server": "./dist/react-router/server.js",
+    "./dist/react-router/shared": "./dist/react-router/shared.js",
+    "./dist/hattip": "./dist/hattip.js"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
