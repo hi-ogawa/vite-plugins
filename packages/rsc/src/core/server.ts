@@ -19,7 +19,6 @@ export function initializeReactServer(): void {
   };
 
   // need memoize to return stable promise from __webpack_require__
-  // TODO: however this causes stale unless cache is invalidated properly
   (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
 }
 
