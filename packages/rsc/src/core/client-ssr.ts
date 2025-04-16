@@ -18,6 +18,8 @@ export function initializeReactClientSsr(): void {
 // we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestinationWithChunks (see packages/rsc/src/core/server.ts)
 // maybe we can have this logic baked in react-server-dom-vite
 function prepareDestination(id: string) {
+  id = removeReferenceCacheTag(id);
+
   if (import.meta.env.DEV) {
     ReactDOM.preloadModule(id);
   } else {
