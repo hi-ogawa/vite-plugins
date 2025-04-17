@@ -5,10 +5,7 @@ import ReactDOM from "react-dom";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
-import {
-  createSsrModuleMap,
-  setRequireModule,
-} from "./core/client-ssr";
+import { setRequireModule } from "./core/client-ssr";
 import { getBrowserPreamble } from "./core/shared";
 import type { RscPayload } from "./server";
 import {
@@ -55,10 +52,7 @@ export async function renderHtml({
   let payload: Promise<RscPayload>;
   function SsrRoot() {
     payload ??= ReactClient.createFromReadableStream<RscPayload>(stream1, {
-      serverConsumerManifest: {
-        moduleMap: createSsrModuleMap(),
-        moduleLoading: { prefix: "" },
-      },
+      serverConsumerManifest: {},
     });
     return React.use(payload).root;
   }
