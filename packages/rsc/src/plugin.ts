@@ -16,7 +16,6 @@ import {
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
-import { vitePluginRscCore } from "./core/plugin";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
@@ -294,11 +293,6 @@ export default function vitePluginRsc(rscOptions: {
     ...vitePluginUseServer(),
     virtualNormalizeReferenceIdPlugin(),
     vitePluginSilenceDirectiveBuildWarning(),
-    ...vitePluginRscCore({
-      getClientReferences: () => clientReferences,
-      getServerReferences: () => serverReferences,
-      getBrowserBundle: () => browserBundle,
-    }),
   ];
 }
 
@@ -377,6 +371,24 @@ function vitePluginUseClient(): Plugin[] {
         return { code: output.toString(), map: { mappings: "" } };
       },
     },
+    createVirtualPlugin("vite-rsc/client-references", function () {
+      if (this.environment.mode === "dev") {
+        return { code: `export {}`, map: null };
+      }
+      let code = generateDynamicImportCode(clientReferences);
+      if (browserBundle) {
+        const assetDeps = collectAssetDeps(browserBundle);
+        const keyAssetDeps: Record<string, AssetDeps> = {};
+        for (const [key, id] of Object.entries(clientReferences)) {
+          const deps = assetDeps[id];
+          if (deps) {
+            keyAssetDeps[key] = deps;
+          }
+        }
+        code += `export const assetDeps = ${JSON.stringify(keyAssetDeps)};\n`;
+      }
+      return { code, map: null };
+    }),
   ];
 }
 
@@ -424,6 +436,13 @@ function vitePluginUseServer(): Plugin[] {
         }
       },
     },
+    createVirtualPlugin("vite-rsc/server-references", function () {
+      if (this.environment.mode === "dev") {
+        return { code: `export {}`, map: null };
+      }
+      const code = generateDynamicImportCode(serverReferences);
+      return { code, map: null };
+    }),
   ];
 }
 
@@ -478,5 +497,63 @@ function vitePluginSilenceDirectiveBuildWarning(): Plugin {
         },
       };
     },
+  };
+}
+
+function generateDynamicImportCode(map: Record<string, string>) {
+  let code = Object.entries(map)
+    .map(
+      ([key, id]) =>
+        `${JSON.stringify(key)}: () => import(${JSON.stringify(id)}),`,
+    )
+    .join("\n");
+  return `export default {${code}};\n`;
+}
+
+//
+// collect client reference dependency chunk for modulepreload
+//
+
+export type AssetDeps = {
+  js: string[];
+  css: string[];
+};
+
+function collectAssetDeps(
+  bundle: Rollup.OutputBundle,
+): Record<string, AssetDeps> {
+  const map: Record<string, AssetDeps> = {};
+  for (const chunk of Object.values(bundle)) {
+    if (chunk.type === "chunk" && chunk.facadeModuleId) {
+      map[chunk.facadeModuleId] = collectAssetDepsInner(chunk.fileName, bundle);
+    }
+  }
+  return map;
+}
+
+function collectAssetDepsInner(
+  fileName: string,
+  bundle: Rollup.OutputBundle,
+): AssetDeps {
+  const visited = new Set<string>();
+  const css: string[] = [];
+
+  function recurse(k: string) {
+    if (visited.has(k)) return;
+    visited.add(k);
+    const v = bundle[k];
+    assert(v);
+    if (v.type === "chunk") {
+      css.push(...(v.viteMetadata?.importedAssets ?? []));
+      for (const k2 of v.imports) {
+        recurse(k2);
+      }
+    }
+  }
+
+  recurse(fileName);
+  return {
+    js: [...visited].map((file) => `/${file}`),
+    css: [...new Set(css)].map((file) => `/${file}`),
   };
 }
