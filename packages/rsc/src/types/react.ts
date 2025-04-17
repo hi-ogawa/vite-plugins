@@ -3,7 +3,7 @@ declare module "react-dom/server.edge" {
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMServerEdge.js
-declare module "react-server-dom-webpack/server.edge" {
+declare module "react-server-dom-turbopack/server.edge" {
   export function renderToReadableStream<T>(
     data: T,
     bundlerConfig: import(".").BundlerConfig,
@@ -39,7 +39,7 @@ declare module "react-server-dom-webpack/server.edge" {
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMClientEdge.js
-declare module "react-server-dom-webpack/client.edge" {
+declare module "react-server-dom-turbopack/client.edge" {
   export function createServerReference(
     id: string,
     callServer: import(".").CallServerCallback,
@@ -54,7 +54,7 @@ declare module "react-server-dom-webpack/client.edge" {
 }
 
 // https://github.com/facebook/react/blob/89021fb4ec9aa82194b0788566e736a4cedfc0e4/packages/react-server-dom-webpack/src/ReactFlightDOMClientBrowser.js
-declare module "react-server-dom-webpack/client.browser" {
+declare module "react-server-dom-turbopack/client.browser" {
   export function createServerReference(
     id: string,
     callServer: import(".").CallServerCallback,

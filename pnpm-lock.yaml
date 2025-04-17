@@ -548,15 +548,16 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.10.18(@swc/helpers@0.5.15))(esbuild@0.24.2))
       vite:
         specifier: ^6.1.0
         version: 6.1.1(@types/node@22.13.5)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
       vitefu:
         specifier: ^1.0.5
         version: 1.0.5(vite@6.1.1(@types/node@22.13.5)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+    devDependencies:
+      react-server-dom-turbopack:
+        specifier: ^19.0.1
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
   packages/rsc/examples/basic:
     dependencies:
@@ -5313,6 +5314,13 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: ^19.1.0
+
+  react-server-dom-turbopack@19.1.0:
+    resolution: {integrity: sha512-Cqm8pKuj389JInLjqbg1Vxy+DGAxNIcMbi/zfimrqW1EIha3w7veuetsJ7DnMtBWaY6eKhDox4WpRQ7oXnNNNg==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^19.1.0
+      react-dom: ^19.1.0
 
   react-server-dom-webpack@19.1.0:
     resolution: {integrity: sha512-GUbawkNSN0oj8GnuNhMzsvyIHpXqqpAmyOY5NRqNNQ/M8wvUUN8YBoGjDUj9lbmBrmAHS65BByp6325CcWA0eg==}
@@ -10881,6 +10889,13 @@ snapshots:
     dependencies:
       '@remix-run/router': 1.22.0
       react: 19.1.0
+
+  react-server-dom-turbopack@19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      acorn-loose: 8.4.0
+      neo-async: 2.6.2
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-server-dom-webpack@19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.10.18(@swc/helpers@0.5.15))(esbuild@0.24.2)):
     dependencies:

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import ReactClient from "react-server-dom-webpack/client.browser";
+import ReactClient from "react-server-dom-turbopack/client.browser";
 import { initializeReactClientBrowser } from "./core/client-browser";
 import type { RscPayload } from "./server";
 import type { CallServerCallback } from "./types";

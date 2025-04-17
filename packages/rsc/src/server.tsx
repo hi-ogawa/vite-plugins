@@ -1,5 +1,5 @@
 import type { ReactFormState } from "react-dom/client";
-import ReactServer from "react-server-dom-webpack/server.edge";
+import ReactServer from "react-server-dom-turbopack/server.edge";
 import {
   createClientReferenceConfig,
   createServerReferenceConfig,

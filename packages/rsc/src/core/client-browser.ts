@@ -7,8 +7,7 @@ export function initializeReactClientBrowser(): void {
   init = true;
 
   Object.assign(globalThis, {
-    __webpack_require__: memoize(requireModule),
-    __webpack_chunk_load__: async () => {},
+    __turbopack_require__: memoize(requireModule),
   });
 }
 

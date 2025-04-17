@@ -11,7 +11,7 @@ export function initializeReactServer(): void {
   if (init) return;
   init = true;
 
-  (globalThis as any).__webpack_require__ = (id: string) => {
+  (globalThis as any).__turbopack_require__ = (id: string) => {
     if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
       id = id.slice(SERVER_REFERENCE_PREFIX.length);
       return (globalThis as any).__vite_rsc_server_require__(id);
