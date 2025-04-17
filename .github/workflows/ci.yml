@@ -30,9 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: pnpm -C packages/react-server/examples/basic test-e2e
-      - run: pnpm -C packages/react-server/examples/basic build
-      - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
+      - run: pnpm -C packages/rsc/examples/basic test-e2e
+      - run: pnpm -C packages/rsc/examples/basic build
+      - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
 
   test-react-server-basic:
     runs-on: ubuntu-latest
