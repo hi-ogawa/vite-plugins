@@ -20,12 +20,13 @@ export function initializeReactServer(options: {
   };
 
   // need memoize to return stable promise from __webpack_require__
-  const requireModuleMemoized = memoize(requireModule);
+  const viteRscServerRequire = memoize(requireModule);
 
+  // branch client and server require when ssr and rsc share same global
   (globalThis as any).__webpack_require__ = (id: string) => {
     if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
       id = id.slice(SERVER_REFERENCE_PREFIX.length);
-      return requireModuleMemoized(id);
+      return viteRscServerRequire(id);
     }
     return (globalThis as any).__vite_rsc_client_require__(id);
   };

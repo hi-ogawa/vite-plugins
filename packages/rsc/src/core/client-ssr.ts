@@ -14,10 +14,14 @@ export function initializeReactClientSsr(options: {
     return options.load(removeReferenceCacheTag(id));
   });
 
-  (globalThis as any).__vite_rsc_client_require__ = (id: string) => {
+  const clientRequire = (id: string) => {
     options.prepareDestination?.(removeReferenceCacheTag(id));
     return requireModule(id);
   };
+
+  // define __webpack_require__ in case ssr and rsc don't shared the same global
+  (globalThis as any).__webpack_require__ ??= clientRequire;
+  (globalThis as any).__vite_rsc_client_require__ = clientRequire;
 }
 
 export function createSsrModuleMap(): ModuleMap {

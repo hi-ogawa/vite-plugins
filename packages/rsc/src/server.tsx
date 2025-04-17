@@ -24,9 +24,7 @@ export async function renderRequest(
       if (import.meta.env.DEV) {
         return import(/* @vite-ignore */ id);
       } else {
-        const references = await import(
-          "virtual:vite-rsc/server-references" as string
-        );
+        const references = await import("virtual:vite-rsc/server-references");
         const dynImport = references.default[id];
         tinyassert(dynImport, `server reference not found '${id}'`);
         return dynImport();
