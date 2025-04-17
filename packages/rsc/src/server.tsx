@@ -4,8 +4,8 @@ import ReactServer from "react-server-dom-webpack/server.edge";
 import {
   createClientReferenceConfig,
   createServerReferenceConfig,
-  importServerReference,
-  initializeReactServer,
+  loadServerAction,
+  setRequireModule,
 } from "./core/server";
 
 export type RscPayload = {
@@ -19,7 +19,7 @@ export async function renderRequest(
   request: Request,
   root: React.ReactNode,
 ): Promise<Response> {
-  initializeReactServer({
+  setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
         return import(/* @vite-ignore */ id);
@@ -53,7 +53,7 @@ export async function renderRequest(
         ? await request.formData()
         : await request.text();
       const args = await ReactServer.decodeReply(body);
-      const action = await importServerReference(actionId);
+      const action = await loadServerAction(actionId);
       returnValue = await action.apply(null, args);
     } else {
       // progressive enhancement

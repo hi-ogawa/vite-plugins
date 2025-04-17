@@ -3,7 +3,8 @@ import type { ImportManifestEntry, ModuleMap } from "../types";
 import { removeReferenceCacheTag } from "./shared";
 
 let init = false;
-export function initializeReactClientSsr(options: {
+
+export function setRequireModule(options: {
   load: (id: string) => unknown;
   prepareDestination?: (id: string) => void;
 }): void {

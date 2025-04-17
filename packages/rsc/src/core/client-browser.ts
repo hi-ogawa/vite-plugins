@@ -2,7 +2,8 @@ import { memoize } from "@hiogawa/utils";
 import { removeReferenceCacheTag } from "./shared";
 
 let init = false;
-export function initializeReactClientBrowser(options: {
+
+export function setRequireModule(options: {
   load: (id: string) => Promise<unknown>;
 }): void {
   if (init) return;

@@ -7,7 +7,7 @@ import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import {
   createSsrModuleMap,
-  initializeReactClientSsr,
+  setRequireModule,
 } from "./core/client-ssr";
 import { getBrowserPreamble } from "./core/shared";
 import type { RscPayload } from "./server";
@@ -20,7 +20,7 @@ export async function renderHtml({
   stream,
   formState,
 }: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
-  initializeReactClientSsr({
+  setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
         return import(/* @vite-ignore */ id);

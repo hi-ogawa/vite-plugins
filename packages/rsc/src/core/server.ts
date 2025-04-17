@@ -9,7 +9,7 @@ import {
 let init = false;
 let requireModule!: (id: string) => unknown;
 
-export function initializeReactServer(options: {
+export function setRequireModule(options: {
   load: (id: string) => unknown;
 }): void {
   if (init) return;
@@ -32,7 +32,7 @@ export function initializeReactServer(options: {
   };
 }
 
-export async function importServerReference(id: string): Promise<Function> {
+export async function loadServerAction(id: string): Promise<Function> {
   const [file, name] = id.split("#") as [string, string];
   const mod: any = await requireModule(file);
   return mod[name];
