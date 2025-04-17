@@ -1,10 +1,11 @@
+import { tinyassert } from "@hiogawa/utils";
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
   createClientReferenceConfig,
   createServerReferenceConfig,
-  importServerReference,
-  initializeReactServer,
+  loadServerAction,
+  setRequireModule,
 } from "./core/server";
 
 export type RscPayload = {
@@ -18,7 +19,18 @@ export async function renderRequest(
   request: Request,
   root: React.ReactNode,
 ): Promise<Response> {
-  initializeReactServer();
+  setRequireModule({
+    load: async (id) => {
+      if (import.meta.env.DEV) {
+        return import(/* @vite-ignore */ id);
+      } else {
+        const references = await import("virtual:vite-rsc/server-references");
+        const dynImport = references.default[id];
+        tinyassert(dynImport, `server reference not found '${id}'`);
+        return dynImport();
+      }
+    },
+  });
 
   const url = new URL(request.url);
   const isAction = request.method === "POST";
@@ -41,7 +53,7 @@ export async function renderRequest(
         ? await request.formData()
         : await request.text();
       const args = await ReactServer.decodeReply(body);
-      const action = await importServerReference(actionId);
+      const action = await loadServerAction(actionId);
       returnValue = await action.apply(null, args);
     } else {
       // progressive enhancement

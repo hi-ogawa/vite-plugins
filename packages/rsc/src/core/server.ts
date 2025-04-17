@@ -7,41 +7,35 @@ import {
 } from "./shared";
 
 let init = false;
-export function initializeReactServer(): void {
+let requireModule!: (id: string) => unknown;
+
+export function setRequireModule(options: {
+  load: (id: string) => unknown;
+}): void {
   if (init) return;
   init = true;
 
-  (globalThis as any).__webpack_require__ = (id: string) => {
-    if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
-      id = id.slice(SERVER_REFERENCE_PREFIX.length);
-      return (globalThis as any).__vite_rsc_server_require__(id);
-    }
-    return (globalThis as any).__vite_rsc_client_require__(id);
+  requireModule = (id) => {
+    return options.load(removeReferenceCacheTag(id));
   };
 
   // need memoize to return stable promise from __webpack_require__
-  (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
+  const viteRscServerRequire = memoize(requireModule);
+
+  // branch client and server require when ssr and rsc share same global
+  (globalThis as any).__webpack_require__ = (id: string) => {
+    if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
+      id = id.slice(SERVER_REFERENCE_PREFIX.length);
+      return viteRscServerRequire(id);
+    }
+    return (globalThis as any).__vite_rsc_client_require__(id);
+  };
 }
 
-export async function importServerReference(id: string): Promise<Function> {
+export async function loadServerAction(id: string): Promise<Function> {
   const [file, name] = id.split("#") as [string, string];
   const mod: any = await requireModule(file);
   return mod[name];
-}
-
-async function requireModule(id: string): Promise<unknown> {
-  id = removeReferenceCacheTag(id);
-
-  if (import.meta.env.DEV) {
-    return import(/* @vite-ignore */ id);
-  } else {
-    const references = await import(
-      "virtual:vite-rsc/server-references" as string
-    );
-    const dynImport = references.default[id];
-    tinyassert(dynImport, `server reference not found '${id}'`);
-    return dynImport();
-  }
 }
 
 export function createServerReferenceConfig(): BundlerConfig {
@@ -80,8 +74,6 @@ export function createClientReferenceConfig(): BundlerConfig {
         return {
           id: id + cacheTag,
           name,
-          // support of prepareDestination preloading is done manually inside __webpack_require__
-          // (see packages/rsc/src/core/client-ssr.ts)
           chunks: [],
           async: true,
         } satisfies ImportManifestEntry;

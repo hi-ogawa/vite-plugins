@@ -11,7 +11,6 @@ export default defineConfig({
     "src/browser-runtime.tsx",
     "src/core/client-browser.ts",
     "src/core/client-ssr.ts",
-    "src/core/plugin.ts",
     "src/core/server.ts",
     "src/core/shared.ts",
   ],
