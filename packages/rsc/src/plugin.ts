@@ -45,7 +45,7 @@ export default function vitePluginRsc(rscOptions: {
               optimizeDeps: {
                 include: [
                   "react-dom/client",
-                  `react-server-dom-webpack/client.browser`,
+                  `react-server-dom-turbopack/client.browser`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -122,7 +122,7 @@ export default function vitePluginRsc(rscOptions: {
             noExternal: [
               "react",
               "react-dom",
-              "react-server-dom-webpack",
+              "react-server-dom-turbopack",
               ...result.ssr.noExternal,
             ].sort(),
           },
@@ -131,7 +131,7 @@ export default function vitePluginRsc(rscOptions: {
               "react",
               "react/jsx-runtime",
               "react/jsx-dev-runtime",
-              `react-server-dom-webpack/server.edge`,
+              `react-server-dom-turbopack/server.edge`,
             ],
           },
         };
@@ -371,7 +371,7 @@ function vitePluginUseClient(): Plugin[] {
         if (!output) return;
         clientReferences[normalizedId] = id;
         output.prepend(`
-          import * as $$ReactServer from "react-server-dom-webpack/server.edge";
+          import * as $$ReactServer from "react-server-dom-turbopack/server.edge";
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
         `);
         return { code: output.toString(), map: { mappings: "" } };
@@ -397,7 +397,7 @@ function vitePluginUseServer(): Plugin[] {
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
           output.prepend(`
-            import * as $$ReactServer from "react-server-dom-webpack/server.edge";
+            import * as $$ReactServer from "react-server-dom-turbopack/server.edge";
             const $$register = (value, id, name) => {
               if (typeof value !== 'function') return value;
               return $$ReactServer.registerServerReference(value, id, name);
@@ -417,7 +417,7 @@ function vitePluginUseServer(): Plugin[] {
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "edge";
           output.prepend(`
-            import * as $$ReactClient from "react-server-dom-webpack/server.${name}";
+            import * as $$ReactClient from "react-server-dom-turbopack/server.${name}";
             const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __viteRscCallServer(...args))
           `);
           return { code: output.toString(), map: { mappings: "" } };

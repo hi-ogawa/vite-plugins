@@ -22,10 +22,13 @@
     "@hiogawa/transforms": "workspace:*",
     "vitefu": "^1.0.5"
   },
+  "devDependencies": {
+    "react-server-dom-turbopack": "^19.0.1"
+  },
   "peerDependencies": {
     "react": "*",
     "react-dom": "*",
-    "react-server-dom-webpack": "*",
+    "react-server-dom-turbopack": "*",
     "vite": "*"
   }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
-import ReactClient from "react-server-dom-webpack/client.edge";
+import ReactClient from "react-server-dom-turbopack/client.edge";
 import {
   createSsrModuleMap,
   initializeReactClientSsr,
