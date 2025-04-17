@@ -573,6 +573,21 @@ importers:
         specifier: ^4.7.5
         version: 4.7.5
 
+  packages/rsc/examples/hono-core:
+    dependencies:
+      '@hiogawa/vite-rsc':
+        specifier: workspace:*
+        version: link:../..
+      '@hono/node-server':
+        specifier: ^1.14.1
+        version: 1.14.1(hono@4.7.5)
+      hono:
+        specifier: ^4.7.5
+        version: 4.7.5
+      react-server-dom-webpack:
+        specifier: ^19.1.0
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.10.18(@swc/helpers@0.5.15))(esbuild@0.24.2))
+
   packages/server-asset:
     dependencies:
       magic-string:
@@ -2002,6 +2017,12 @@ packages:
 
   '@hiogawa/utils@1.7.0':
     resolution: {integrity: sha512-ghiEFWBR1NENoHn+lSuW7liicTIzVPN+8Srm5UedCTw43gus0mlse6Wp2lz6GmbOXJ/CalMPp/0Tz2X8tajkAg==}
+
+  '@hono/node-server@1.14.1':
+    resolution: {integrity: sha512-vmbuM+HPinjWzPe7FFPWMMQMsbKE9gDPhaH0FFdqbGpkT5lp++tcWDTxwBl5EgS5y6JVgIaCdjeHRfQ4XRBRjQ==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@iconify-json/ri@1.2.5':
     resolution: {integrity: sha512-kWGimOXMZrlYusjBKKXYOWcKhbOHusFsmrmRGmjS7rH0BpML5A9/fy8KHZqFOwZfC4M6amObQYbh8BqO5cMC3w==}
@@ -7047,6 +7068,10 @@ snapshots:
   '@hiogawa/utils-node@0.0.2': {}
 
   '@hiogawa/utils@1.7.0': {}
+
+  '@hono/node-server@1.14.1(hono@4.7.5)':
+    dependencies:
+      hono: 4.7.5
 
   '@iconify-json/ri@1.2.5':
     dependencies:

@@ -1,0 +1,17 @@
+{
+  "name": "@hiogawa/vite-rsc-examples-hono-core",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --app",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@hiogawa/vite-rsc": "workspace:*",
+    "@hono/node-server": "^1.14.1",
+    "hono": "^4.7.5",
+    "react-server-dom-webpack": "latest"
+  }
+}
