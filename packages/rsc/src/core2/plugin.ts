@@ -27,6 +27,8 @@ let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 
+const PKG_NAME = "@hiogawa/vite-rsc";
+
 export default function vitePluginRsc({
   entries,
 }: {
@@ -51,6 +53,9 @@ export default function vitePluginRsc({
                   input: { index: "virtual:vite-rsc/browser-entry" },
                 },
               },
+              optimizeDeps: {
+                exclude: [PKG_NAME],
+              },
             },
             ssr: {
               build: {
@@ -59,11 +64,19 @@ export default function vitePluginRsc({
                   input: { index: entries.ssr },
                 },
               },
+              optimizeDeps: {
+                exclude: [PKG_NAME],
+              },
             },
             rsc: {
               resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
-                noExternal: ["react", "react-dom", "react-server-dom-webpack"],
+                noExternal: [
+                  "react",
+                  "react-dom",
+                  "react-server-dom-webpack",
+                  PKG_NAME,
+                ],
               },
               optimizeDeps: {
                 include: [
@@ -72,6 +85,7 @@ export default function vitePluginRsc({
                   "react/jsx-dev-runtime",
                   "react-server-dom-webpack/server.edge",
                 ],
+                exclude: [PKG_NAME],
               },
               build: {
                 outDir: "dist/rsc",
@@ -104,16 +118,6 @@ export default function vitePluginRsc({
         viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
           .runner;
         (globalThis as any).__viteRscRunner = viteRscRunner;
-
-        server.middlewares.use((req, res, next) => {
-          const url = new URL(req.originalUrl ?? "/", "http://localhost");
-          if (url.pathname === "/__vite_rsc_script") {
-            res.setHeader("Content-Type", "text/javascript");
-            res.end(`export const rawImport = (id) => import(id)`);
-            return;
-          }
-          next();
-        });
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
@@ -148,6 +152,18 @@ export default function vitePluginRsc({
           assert(typeof output.source === "string");
           browserManifest = JSON.parse(output.source);
         }
+      },
+    },
+    {
+      name: "patch-browser-raw-import",
+      transform: {
+        order: "post",
+        handler(code) {
+          if (code.includes("__vite_rsc_raw_import__")) {
+            // inject dynamic import last to avoid Vite adding `?import` query to client references
+            return code.replace("__vite_rsc_raw_import__", "import");
+          }
+        },
       },
     },
     {

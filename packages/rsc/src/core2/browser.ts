@@ -6,10 +6,8 @@ export function initialize(options?: {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
-        const { rawImport } = await import(
-          /* @vite-ignore */ String("/__vite_rsc_script")
-        );
-        return rawImport(/* @vite-ignore */ id);
+        // @ts-ignore
+        return __vite_rsc_raw_import__(id);
       } else {
         const clientReferences = await import(
           "virtual:vite-rsc/client-references" as any
