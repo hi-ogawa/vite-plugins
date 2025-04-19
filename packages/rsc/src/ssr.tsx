@@ -16,10 +16,9 @@ import {
   injectRscScript,
 } from "./utils/rsc-script";
 
-export async function renderHtml({
-  stream,
-  formState,
-}: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
+export { createServerConsumerManifest };
+
+export function initialize(): void {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
@@ -47,6 +46,29 @@ export async function renderHtml({
       }
     },
   });
+}
+
+// export async function importRsc<T>(): Promise<T> {
+//   const mod = await import("virtual:vite-rsc/import-rsc" as any);
+//   if (import.meta.env.DEV) {
+//     return mod.default();
+//   } else {
+//     return mod;
+//   }
+// }
+
+export async function importAssets(): Promise<{
+  bootstrapModules: string[];
+}> {
+  const mod = await import("virtual:vite-rsc/ssr-assets" as any);
+  return mod;
+}
+
+export async function renderHtml({
+  stream,
+  formState,
+}: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
+  initialize();
 
   const [stream1, stream2] = stream.tee();
 
@@ -60,7 +82,7 @@ export async function renderHtml({
     return React.use(payload).root;
   }
 
-  const ssrAssets = await import("virtual:vite-rsc/ssr-assets");
+  const ssrAssets = await importAssets();
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
     bootstrapModules: ssrAssets.bootstrapModules,

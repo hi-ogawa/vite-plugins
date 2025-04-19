@@ -32,6 +32,7 @@ const PKG_NAME = "@hiogawa/vite-rsc";
 export default function vitePluginRsc(rscOptions: {
   client: string;
   server: string;
+  ssr?: string;
 }): Plugin[] {
   return [
     {
@@ -143,12 +144,14 @@ export default function vitePluginRsc(rscOptions: {
       name: "ssr-middleware",
       configureServer(server_) {
         server = server_;
-        const ssrRunner = createServerModuleRunner(server.environments.ssr, {
-          hmr: false,
-        });
-        const rscRunner = createServerModuleRunner(server.environments.rsc!, {
-          hmr: false,
-        });
+        // const ssrRunner = createServerModuleRunner(server.environments.ssr, {
+        //   hmr: false,
+        // });
+        // const rscRunner = createServerModuleRunner(server.environments.rsc!, {
+        //   hmr: false,
+        // });
+        const ssrRunner = (server.environments.ssr as any).runner;
+        const rscRunner = (server.environments.rsc as any).runner;
         globalThis.__viteRscSsrRunner = ssrRunner;
         return () => {
           server.middlewares.use(async (req, res, next) => {
@@ -198,6 +201,7 @@ export default function vitePluginRsc(rscOptions: {
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
+          window.__webpack_require__ = () => {}
           await import(${JSON.stringify(rscOptions.client)});
         `;
       } else {
@@ -207,8 +211,11 @@ export default function vitePluginRsc(rscOptions: {
       }
     }),
     createVirtualPlugin("vite-rsc/ssr-entry", function () {
+      const entry = rscOptions.ssr ?? `${PKG_NAME}/ssr`;
       return `
-        export * from "${PKG_NAME}/ssr";
+        export * from ${JSON.stringify(entry)};
+        import * as entry from ${JSON.stringify(entry)};
+        export default entry.default;
       `;
     }),
     {

@@ -1,4 +1,3 @@
-import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import ReactDomClient from "react-dom/client";
 import ReactClient from "react-server-dom-webpack/client.browser";
@@ -7,22 +6,49 @@ import type { RscPayload } from "./server";
 import type { CallServerCallback } from "./types";
 import { getRscScript } from "./utils/rsc-script";
 
+export function initialize(options?: {
+  onHmrReload: () => void;
+}): void {
+  setRequireModule({
+    load: async (id) => {
+      if (import.meta.env.DEV) {
+        // TODO
+        if ((self as any).__viteRscRawImport) {
+          return (self as any).__viteRscRawImport(id);
+        }
+        return import(/* @vite-ignore */ id);
+      } else {
+        const clientReferences = await import(
+          "virtual:vite-rsc/client-references" as any
+        );
+        const import_ = clientReferences.default[id];
+        if (!import_) {
+          throw new Error(`client reference not found '${id}'`);
+        }
+        return import_();
+      }
+    },
+  });
+
+  if (import.meta.hot) {
+    import.meta.hot.on("rsc:update", () => {
+      options?.onHmrReload?.();
+    });
+  }
+}
+
+export function setServerCallback(fn: any): void {
+  globalThis.__viteRscCallServer = fn;
+}
+
 export async function hydrate(options?: {
   serverCallback?: () => void;
   onHmrReload?: () => void;
 }): Promise<void> {
-  setRequireModule({
-    load: async (id) => {
-      if (import.meta.env.DEV) {
-        return (self as any).__viteRscBrowserImport(/* @vite-ignore */ id);
-      } else {
-        const clientReferences = await import(
-          "virtual:vite-rsc/client-references"
-        );
-        const import_ = clientReferences.default[id];
-        tinyassert(import_, `client reference not found '${id}'`);
-        return import_();
-      }
+  initialize({
+    onHmrReload() {
+      window.history.replaceState({}, "", window.location.href);
+      options?.onHmrReload?.();
     },
   });
 
@@ -41,7 +67,7 @@ export async function hydrate(options?: {
     setPayload(payload);
     return payload.returnValue;
   };
-  globalThis.__viteRscCallServer = callServer;
+  setServerCallback(callServer);
 
   async function onNavigation() {
     const url = new URL(window.location.href);
@@ -81,13 +107,6 @@ export async function hydrate(options?: {
   ReactDomClient.hydrateRoot(document, <BrowserRoot />, {
     formState: initialPayload.formState,
   });
-
-  if (import.meta.hot) {
-    import.meta.hot.on("rsc:update", () => {
-      window.history.replaceState({}, "", window.location.href);
-      options?.onHmrReload?.();
-    });
-  }
 }
 
 export async function fetchRSC(

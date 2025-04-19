@@ -5,6 +5,7 @@ import {
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
+import rsc from "@hiogawa/vite-rsc/plugin";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import react from "@vitejs/plugin-react";
 import {
@@ -38,161 +39,166 @@ const SSR_ENTRY = "/src/entry.ssr.tsx";
 const RSC_ENTRY = "/src/entry.rsc.tsx";
 
 export default defineConfig({
-  appType: "custom",
+  // appType: "custom",
   clearScreen: false,
   build: {
     minify: false,
   },
   plugins: [
     react(),
-    {
-      name: "misc",
-      configResolved(config_) {
-        config = config_;
-      },
-      configureServer(server_) {
-        server = server_;
-        viteSsrRunner = (server.environments.ssr as RunnableDevEnvironment)
-          .runner;
-        viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
-          .runner;
-        (globalThis as any).__viteRscRunner = viteRscRunner;
-        return () => {
-          server.middlewares.use(async (req, res, next) => {
-            try {
-              const mod = await viteSsrRunner.import(SSR_ENTRY);
-              createRequestListener(mod.default)(req, res);
-            } catch (e) {
-              next(e);
-            }
-          });
-        };
-      },
-      async configurePreviewServer(server) {
-        const mod = await import(
-          /* @vite-ignore */ path.resolve("dist/ssr/index.js")
-        );
-        const handler = createRequestListener(mod.default);
-        return () => {
-          server.middlewares.use(async (req, res, next) => {
-            try {
-              handler(req, res);
-            } catch (e) {
-              next(e);
-            }
-          });
-        };
-      },
-      writeBundle(_options, bundle) {
-        if (this.environment.name === "client") {
-          const output = bundle[".vite/manifest.json"];
-          assert(output && output.type === "asset");
-          assert(typeof output.source === "string");
-          browserManifest = JSON.parse(output.source);
-          browserBundle = bundle;
-        }
-      },
-    },
-    {
-      // externalize `dist/rsc/...` import as relative path in ssr build
-      name: "virtual:import-rsc",
-      resolveId(source) {
-        if (source === "virtual:vite-rsc/import-rsc") {
-          return {
-            id: `\0` + source,
-            external: this.environment.mode === "build",
-          };
-        }
-      },
-      load(id) {
-        if (id === "\0virtual:vite-rsc/import-rsc") {
-          return `export default () => __viteRscRunner.import(${JSON.stringify(RSC_ENTRY)})`;
-        }
-      },
-      renderChunk(code, chunk) {
-        if (code.includes("__VIRTUAL_IMPORT_RSC__")) {
-          const replacement = path.relative(
-            path.join("dist/ssr", chunk.fileName, ".."),
-            path.join("dist/rsc", "index.js"),
-          );
-          code = code.replace("__VIRTUAL_VITE_RSC_IMPORT_RSC__", replacement);
-          return { code };
-        }
-        return;
-      },
-    },
-    createVirtualPlugin("vite-rsc/ssr-assets", function () {
-      assert(this.environment.name === "ssr");
+    rsc({
+      client: "/src/entry.browser.tsx",
+      server: "/src/entry.rsc.tsx",
+      ssr: "/src/entry.ssr.tsx",
+    }),
+    // {
+    //   name: "misc",
+    //   configResolved(config_) {
+    //     config = config_;
+    //   },
+    //   configureServer(server_) {
+    //     server = server_;
+    //     viteSsrRunner = (server.environments.ssr as RunnableDevEnvironment)
+    //       .runner;
+    //     viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
+    //       .runner;
+    //     (globalThis as any).__viteRscRunner = viteRscRunner;
+    //     return () => {
+    //       server.middlewares.use(async (req, res, next) => {
+    //         try {
+    //           const mod = await viteSsrRunner.import(SSR_ENTRY);
+    //           createRequestListener(mod.default)(req, res);
+    //         } catch (e) {
+    //           next(e);
+    //         }
+    //       });
+    //     };
+    //   },
+    //   async configurePreviewServer(server) {
+    //     const mod = await import(
+    //       /* @vite-ignore */ path.resolve("dist/ssr/index.js")
+    //     );
+    //     const handler = createRequestListener(mod.default);
+    //     return () => {
+    //       server.middlewares.use(async (req, res, next) => {
+    //         try {
+    //           handler(req, res);
+    //         } catch (e) {
+    //           next(e);
+    //         }
+    //       });
+    //     };
+    //   },
+    //   writeBundle(_options, bundle) {
+    //     if (this.environment.name === "client") {
+    //       const output = bundle[".vite/manifest.json"];
+    //       assert(output && output.type === "asset");
+    //       assert(typeof output.source === "string");
+    //       browserManifest = JSON.parse(output.source);
+    //       browserBundle = bundle;
+    //     }
+    //   },
+    // },
+    // {
+    //   // externalize `dist/rsc/...` import as relative path in ssr build
+    //   name: "virtual:import-rsc",
+    //   resolveId(source) {
+    //     if (source === "virtual:vite-rsc/import-rsc") {
+    //       return {
+    //         id: `\0` + source,
+    //         external: this.environment.mode === "build",
+    //       };
+    //     }
+    //   },
+    //   load(id) {
+    //     if (id === "\0virtual:vite-rsc/import-rsc") {
+    //       return `export default () => __viteRscRunner.import(${JSON.stringify(RSC_ENTRY)})`;
+    //     }
+    //   },
+    //   renderChunk(code, chunk) {
+    //     if (code.includes("__VIRTUAL_IMPORT_RSC__")) {
+    //       const replacement = path.relative(
+    //         path.join("dist/ssr", chunk.fileName, ".."),
+    //         path.join("dist/rsc", "index.js"),
+    //       );
+    //       code = code.replace("__VIRTUAL_VITE_RSC_IMPORT_RSC__", replacement);
+    //       return { code };
+    //     }
+    //     return;
+    //   },
+    // },
+    // createVirtualPlugin("vite-rsc/ssr-assets", function () {
+    //   assert(this.environment.name === "ssr");
 
-      let bootstrapModules: string[] = [];
-      if (this.environment.mode === "dev") {
-        bootstrapModules = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
-      }
-      if (this.environment.mode === "build") {
-        bootstrapModules = [
-          browserManifest["virtual:vite-rsc/browser-entry"]!.file,
-        ];
-      }
-      return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
-    }),
-    createVirtualPlugin("vite-rsc/browser-entry", function () {
-      if (this.environment.mode === "dev") {
-        return `
-          import RefreshRuntime from "/@react-refresh";
-          RefreshRuntime.injectIntoGlobalHook(window);
-          window.$RefreshReg$ = () => {};
-          window.$RefreshSig$ = () => (type) => type;
-          window.__vite_plugin_react_preamble_installed__ = true;
-          window.__webpack_require__ = () => {};
-          await import(${JSON.stringify(CLIENT_ENTRY)});
-        `;
-      } else {
-        return `
-          import ${JSON.stringify(CLIENT_ENTRY)};
-        `;
-      }
-    }),
-    vitePluginUseClient(),
-    vitePluginUseServer(),
-    virtualNormalizeReferenceIdPlugin(),
-    vitePluginSilenceDirectiveBuildWarning(),
+    //   let bootstrapModules: string[] = [];
+    //   if (this.environment.mode === "dev") {
+    //     bootstrapModules = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
+    //   }
+    //   if (this.environment.mode === "build") {
+    //     bootstrapModules = [
+    //       browserManifest["virtual:vite-rsc/browser-entry"]!.file,
+    //     ];
+    //   }
+    //   return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
+    // }),
+    // createVirtualPlugin("vite-rsc/browser-entry", function () {
+    //   if (this.environment.mode === "dev") {
+    //     return `
+    //       import RefreshRuntime from "/@react-refresh";
+    //       RefreshRuntime.injectIntoGlobalHook(window);
+    //       window.$RefreshReg$ = () => {};
+    //       window.$RefreshSig$ = () => (type) => type;
+    //       window.__vite_plugin_react_preamble_installed__ = true;
+    //       window.__webpack_require__ = () => {};
+    //       await import(${JSON.stringify(CLIENT_ENTRY)});
+    //     `;
+    //   } else {
+    //     return `
+    //       import ${JSON.stringify(CLIENT_ENTRY)};
+    //     `;
+    //   }
+    // }),
+    // vitePluginUseClient(),
+    // vitePluginUseServer(),
+    // virtualNormalizeReferenceIdPlugin(),
+    // vitePluginSilenceDirectiveBuildWarning(),
   ],
-  environments: {
-    client: {},
-    ssr: {
-      build: {
-        outDir: "dist/ssr",
-        rollupOptions: {
-          input: { index: "/src/entry.ssr.ts" },
-        },
-      },
-    },
-    rsc: {
-      resolve: {
-        conditions: ["react-server", ...defaultServerConditions],
-        noExternal: ["react", "react-dom", "react-server-dom-webpack"],
-      },
-      optimizeDeps: {
-        include: [
-          "react",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime",
-          "react-server-dom-webpack/server.edge",
-        ],
-      },
-      build: {
-        outDir: "dist/rsc",
-        rollupOptions: {
-          input: { index: "/src/entry.rsc.ts" },
-        },
-      },
-    },
-  },
-  builder: {
-    async buildApp(builder) {
-      builder;
-    },
-  },
+  // environments: {
+  //   client: {},
+  //   ssr: {
+  //     build: {
+  //       outDir: "dist/ssr",
+  //       rollupOptions: {
+  //         input: { index: "/src/entry.ssr.ts" },
+  //       },
+  //     },
+  //   },
+  //   rsc: {
+  //     resolve: {
+  //       conditions: ["react-server", ...defaultServerConditions],
+  //       noExternal: ["react", "react-dom", "react-server-dom-webpack"],
+  //     },
+  //     optimizeDeps: {
+  //       include: [
+  //         "react",
+  //         "react/jsx-runtime",
+  //         "react/jsx-dev-runtime",
+  //         "react-server-dom-webpack/server.edge",
+  //       ],
+  //     },
+  //     build: {
+  //       outDir: "dist/rsc",
+  //       rollupOptions: {
+  //         input: { index: "/src/entry.rsc.ts" },
+  //       },
+  //     },
+  //   },
+  // },
+  // builder: {
+  //   async buildApp(builder) {
+  //     builder;
+  //   },
+  // },
 }) as any;
 
 function hashString(v: string) {
