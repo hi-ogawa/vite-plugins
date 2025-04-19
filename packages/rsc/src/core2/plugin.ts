@@ -104,6 +104,17 @@ export default function vitePluginRsc({
         viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
           .runner;
         (globalThis as any).__viteRscRunner = viteRscRunner;
+
+        server.middlewares.use((req, res, next) => {
+          const url = new URL(req.originalUrl ?? "/", "http://localhost");
+          if (url.pathname === "/__vite_rsc_script") {
+            res.setHeader("Content-Type", "text/javascript");
+            res.end(`export const rawImport = (id) => import(id)`);
+            return;
+          }
+          next();
+        });
+
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
@@ -189,7 +200,6 @@ export default function vitePluginRsc({
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          window.__webpack_require__ = () => {};
           await import(${JSON.stringify(entries.browser)});
         `;
       } else {
@@ -198,6 +208,21 @@ export default function vitePluginRsc({
         `;
       }
     }),
+    {
+      name: "patch-webpack",
+      transform(code, id, _options) {
+        if (
+          this.environment?.name === "client" &&
+          id.includes("react-server-dom-webpack") &&
+          code.includes("__webpack_require__")
+        ) {
+          // avoid accessing `__webpack_require__` on import side effect
+          // https://github.com/facebook/react/blob/a9bbe34622885ef5667d33236d580fe7321c0d8b/packages/react-server-dom-webpack/src/client/ReactFlightClientConfigBundlerWebpackBrowser.js#L16-L17
+          code = code.replaceAll("__webpack_require__.u", "({}).u");
+          return { code, map: null };
+        }
+      },
+    },
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     virtualNormalizeReferenceIdPlugin(),
