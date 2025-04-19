@@ -38,6 +38,7 @@ export async function loadServerAction(id: string): Promise<Function> {
   return mod[name];
 }
 
+// TODO: rename createServerManfifest
 export function createServerReferenceConfig(): BundlerConfig {
   const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
 
@@ -60,6 +61,7 @@ export function createServerReferenceConfig(): BundlerConfig {
   );
 }
 
+// TODO: rename createClientManfifest
 export function createClientReferenceConfig(): BundlerConfig {
   const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
 
