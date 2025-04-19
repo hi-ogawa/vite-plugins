@@ -12,6 +12,8 @@ import {
   defineConfig,
 } from "vite";
 
+// TODO: move to `@hiogawa/vite-rsc`
+
 // state for build orchestration
 let browserManifest: Manifest;
 let browserBundle: Rollup.OutputBundle;
