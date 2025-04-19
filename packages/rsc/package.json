@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
+    "@mjackson/node-fetch-server": "^0.6.1",
     "vitefu": "^1.0.5"
   },
   "peerDependencies": {

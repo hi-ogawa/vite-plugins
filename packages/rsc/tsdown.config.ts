@@ -13,7 +13,7 @@ export default defineConfig({
     "src/core/client-ssr.ts",
     "src/core/server.ts",
     "src/core/shared.ts",
-    // "src/core2/plugin.ts",
+    "src/core2/plugin.ts",
     "src/core2/browser.ts",
     "src/core2/ssr.ts",
     "src/core2/rsc.ts",

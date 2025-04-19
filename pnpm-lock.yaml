@@ -542,6 +542,9 @@ importers:
       '@hiogawa/transforms':
         specifier: workspace:*
         version: link:../transforms
+      '@mjackson/node-fetch-server':
+        specifier: ^0.6.1
+        version: 0.6.1
       react:
         specifier: ^19.1.0
         version: 19.1.0
