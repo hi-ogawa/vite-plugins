@@ -23,14 +23,12 @@ ReactClient.createFromReadableStream(getServerStream(), {
   React.startTransition(() => {
     hydrateRoot(
       document,
-      React.createElement(
-        React.StrictMode,
-        null,
-        React.createElement(RSCHydratedRouter, {
-          decode: (body) => ReactClient.createFromReadableStream(body),
-          payload: payload as any,
-        }),
-      ),
+      <React.StrictMode>
+        <RSCHydratedRouter
+          decode={(body) => ReactClient.createFromReadableStream(body)}
+          payload={payload as any}
+        />
+      </React.StrictMode>,
     );
   });
 });
