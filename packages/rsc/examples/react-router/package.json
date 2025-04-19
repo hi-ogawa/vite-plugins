@@ -12,8 +12,6 @@
   },
   "dependencies": {
     "@hiogawa/vite-rsc": "workspace:*",
-    "@mjackson/node-fetch-server": "^0.6.1",
-    "@react-router/dev": "0.0.0-experimental-3b3f4b74e",
     "react-router": "0.0.0-experimental-3b3f4b74e"
   }
 }
