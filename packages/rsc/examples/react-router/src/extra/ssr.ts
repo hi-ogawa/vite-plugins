@@ -6,3 +6,7 @@ export async function importRsc<T>(): Promise<T> {
     return mod;
   }
 }
+
+export async function importSsrAssets() {
+  // TODO
+}

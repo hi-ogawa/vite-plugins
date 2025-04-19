@@ -5,15 +5,28 @@ import {
 import {
   type DecodeCallServerFunction,
   type DecodeFormActionFunction,
+  type ServerRouteObject,
   matchRSCServerRequest,
 } from "react-router/rsc";
 // @ts-ignore
 import * as ReactServer from "react-server-dom-webpack/server.edge";
 
-const routes = [
+const routes: ServerRouteObject[] = [
   {
     id: "root",
-    children: [],
+    // lazy: () => import("./routes/root"),
+    children: [
+      {
+        id: "home",
+        index: true,
+        lazy: () => import("./routes/home"),
+      },
+      {
+        id: "about",
+        path: "about",
+        // lazy: () => import("./routes/about"),
+      },
+    ],
   },
 ];
 
