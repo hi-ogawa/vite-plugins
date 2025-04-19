@@ -46,7 +46,7 @@ export default function vitePluginRsc({
             client: {
               build: {
                 manifest: true,
-                outDir: "dist/ssr",
+                outDir: "dist/client",
                 rollupOptions: {
                   input: { index: "virtual:vite-rsc/browser-entry" },
                 },
@@ -79,6 +79,17 @@ export default function vitePluginRsc({
                   input: { index: entries.rsc },
                 },
               },
+            },
+          },
+          builder: {
+            sharedPlugins: true,
+            async buildApp(builder) {
+              buildScan = true;
+              await builder.build(builder.environments.rsc!);
+              buildScan = false;
+              await builder.build(builder.environments.rsc!);
+              await builder.build(builder.environments.client!);
+              await builder.build(builder.environments.ssr!);
             },
           },
         };
