@@ -17,7 +17,7 @@ initialize();
 const routes: ServerRouteObject[] = [
   {
     id: "root",
-    // lazy: () => import("./routes/root"),
+    lazy: () => import("./routes/root"),
     children: [
       {
         id: "home",
@@ -52,7 +52,7 @@ export async function callServer(request: Request) {
   });
 
   return new Response(
-    ReactServer.renderToReadableStream(match.payload, createClientManifest),
+    ReactServer.renderToReadableStream(match.payload, createClientManifest()),
     {
       status: match.statusCode,
       headers: match.headers,
