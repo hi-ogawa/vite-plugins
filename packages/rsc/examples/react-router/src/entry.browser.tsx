@@ -1,3 +1,4 @@
+import { initialize, setServerCallback } from "@hiogawa/vite-rsc/core2/browser";
 import * as React from "react";
 import { hydrateRoot } from "react-dom/client";
 import {
@@ -8,7 +9,6 @@ import {
 import type { ServerPayload } from "react-router/rsc";
 // @ts-ignore
 import * as ReactClient from "react-server-dom-webpack/client";
-import { initialize, setServerCallback } from "./extra/browser";
 
 initialize();
 
@@ -20,14 +20,16 @@ const callServer = createCallServer({
 setServerCallback(callServer);
 
 ReactClient.createFromReadableStream(getServerStream(), {
-  assets: "manifest",
+  callServer,
 }).then((payload: ServerPayload) => {
   React.startTransition(() => {
     hydrateRoot(
       document,
       <React.StrictMode>
         <RSCHydratedRouter
-          decode={(body) => ReactClient.createFromReadableStream(body)}
+          decode={(body) =>
+            ReactClient.createFromReadableStream(body, { callServer })
+          }
           payload={payload as any}
         />
       </React.StrictMode>,

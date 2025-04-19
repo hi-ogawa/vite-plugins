@@ -1,10 +1,14 @@
-import { createServerConsumerManifest } from "@hiogawa/vite-rsc/core/client-ssr";
+import {
+  createServerConsumerManifest,
+  importAssets,
+  importRsc,
+  initialize,
+} from "@hiogawa/vite-rsc/core2/ssr";
 // @ts-ignore
 import * as ReactDomServer from "react-dom/server.edge";
 import { RSCStaticRouter, routeRSCServerRequest } from "react-router";
 // @ts-ignore
 import * as ReactClient from "react-server-dom-webpack/client.edge";
-import { importAssets, importRsc, initialize } from "./extra/ssr";
 
 initialize();
 
