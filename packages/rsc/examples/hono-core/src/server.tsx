@@ -1,4 +1,4 @@
-import { createClientReferenceConfig } from "@hiogawa/vite-rsc/core/server";
+import { createClientManifest } from "@hiogawa/vite-rsc/core/server";
 import { Hono } from "hono";
 // @ts-ignore
 import ReactServer from "react-server-dom-webpack/server.edge";
@@ -18,7 +18,7 @@ app.get("/api/rsc", () => {
 function renderRsc(value: unknown) {
   const stream = ReactServer.renderToReadableStream(
     value,
-    createClientReferenceConfig(),
+    createClientManifest(),
   );
   return new Response(stream, {
     headers: {

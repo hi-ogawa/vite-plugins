@@ -542,6 +542,9 @@ importers:
       '@hiogawa/transforms':
         specifier: workspace:*
         version: link:../transforms
+      '@mjackson/node-fetch-server':
+        specifier: ^0.6.1
+        version: 0.6.1
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -587,6 +590,15 @@ importers:
       react-server-dom-webpack:
         specifier: ^19.1.0
         version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.10.18(@swc/helpers@0.5.15))(esbuild@0.24.2))
+
+  packages/rsc/examples/react-router:
+    dependencies:
+      '@hiogawa/vite-rsc':
+        specifier: workspace:*
+        version: link:../..
+      react-router:
+        specifier: 0.0.0-experimental-3b3f4b74e
+        version: 0.0.0-experimental-3b3f4b74e(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
   packages/server-asset:
     dependencies:
@@ -2183,6 +2195,9 @@ packages:
     peerDependencies:
       rollup: '>=2'
 
+  '@mjackson/node-fetch-server@0.6.1':
+    resolution: {integrity: sha512-9ZJnk/DJjt805uv5PPv11haJIW+HHf3YEEyVXv+8iLQxLD/iXA68FH220XoiTPBC4gCg5q+IMadDw8qPqlA5wg==}
+
   '@napi-rs/wasm-runtime@0.2.7':
     resolution: {integrity: sha512-5yximcFK5FNompXfJFoWanu5l8v1hNGqNHh9du1xETp9HWk/B/PzvchX55WYOPaIeNglG8++68AAiauBAtbnzw==}
 
@@ -3683,6 +3698,10 @@ packages:
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
     engines: {node: '>= 0.6'}
+
+  cookie@1.0.2:
+    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+    engines: {node: '>=18'}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -5323,6 +5342,16 @@ packages:
       react: ^19.1.0
       react-dom: ^19.1.0
 
+  react-router@0.0.0-experimental-3b3f4b74e:
+    resolution: {integrity: sha512-skeblUYvhRDdjv9m41XzEB+bV86SVoUBYt2aZRMo5oSQDu72gV2ZA2urJoSD6MsLGTSDu8KCSejvOWrISbzfbw==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      react: ^19.1.0
+      react-dom: ^19.1.0
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+
   react-router@6.22.3:
     resolution: {integrity: sha512-dr2eb3Mj5zK2YISHK++foM9w4eBnO23eKnZEDs7c880P6oKbrjz/Svg9+nxqtHQK+oMW4OtjZca0RqPglXxguQ==}
     engines: {node: '>=14.0.0'}
@@ -5931,6 +5960,9 @@ packages:
     resolution: {integrity: sha512-4H8vUNGNjQ4V2EOoGw005+c+dGuPSnhpPBPHBtsZdGZBk/iJb4kguGlPWaZTZ3q5nMtFOEsY0nRDlh9PJyd6SQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
+
+  turbo-stream@2.4.0:
+    resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
@@ -7269,6 +7301,8 @@ snapshots:
     transitivePeerDependencies:
       - acorn
       - supports-color
+
+  '@mjackson/node-fetch-server@0.6.1': {}
 
   '@napi-rs/wasm-runtime@0.2.7':
     dependencies:
@@ -8772,6 +8806,8 @@ snapshots:
   cookie@0.6.0: {}
 
   cookie@0.7.1: {}
+
+  cookie@1.0.2: {}
 
   core-util-is@1.0.3: {}
 
@@ -10897,6 +10933,15 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-router: 6.29.0(react@19.1.0)
 
+  react-router@0.0.0-experimental-3b3f4b74e(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      cookie: 1.0.2
+      react: 19.1.0
+      set-cookie-parser: 2.7.1
+      turbo-stream: 2.4.0
+    optionalDependencies:
+      react-dom: 19.1.0(react@19.1.0)
+
   react-router@6.22.3(react@19.1.0):
     dependencies:
       '@remix-run/router': 1.15.3
@@ -11707,6 +11752,8 @@ snapshots:
       get-tsconfig: 4.10.0
     optionalDependencies:
       fsevents: 2.3.3
+
+  turbo-stream@2.4.0: {}
 
   type-is@1.6.18:
     dependencies:

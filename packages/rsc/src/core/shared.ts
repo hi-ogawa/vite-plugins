@@ -7,7 +7,7 @@ export function getBrowserPreamble(): string {
   code += `self.__webpack_require__ = () => {};\n`;
 
   // use __viteRscImport to avoid Vite adding `?import` query, which causes duplicate modules on browser.
-  code += `self.__viteRscImport = (id) => import(id);\n`;
+  code += `self.__viteRscBrowserImport = (id) => import(id);\n`;
 
   return code;
 }

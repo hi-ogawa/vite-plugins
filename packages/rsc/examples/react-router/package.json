@@ -1,0 +1,17 @@
+{
+  "name": "@hiogawa/vite-rsc-examples-react-router",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --app",
+    "preview": "vite preview",
+    "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
+  },
+  "dependencies": {
+    "@hiogawa/vite-rsc": "workspace:*",
+    "react-router": "0.0.0-experimental-3b3f4b74e"
+  }
+}

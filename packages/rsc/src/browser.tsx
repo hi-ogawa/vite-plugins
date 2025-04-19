@@ -14,7 +14,7 @@ export async function hydrate(options?: {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
-        return (self as any).__viteRscImport(/* @vite-ignore */ id);
+        return (self as any).__viteRscBrowserImport(/* @vite-ignore */ id);
       } else {
         const clientReferences = await import(
           "virtual:vite-rsc/client-references"

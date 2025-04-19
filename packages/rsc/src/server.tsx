@@ -2,8 +2,8 @@ import { tinyassert } from "@hiogawa/utils";
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
-  createClientReferenceConfig,
-  createServerReferenceConfig,
+  createClientManifest,
+  createServerManifest,
   loadServerAction,
   setRequireModule,
 } from "./core/server";
@@ -60,7 +60,7 @@ export async function renderRequest(
       const formData = await request.formData();
       const decodedAction = await ReactServer.decodeAction(
         formData,
-        createServerReferenceConfig(),
+        createServerManifest(),
       );
       const result = await decodedAction();
       formState = await ReactServer.decodeFormState(result, formData);
@@ -69,7 +69,7 @@ export async function renderRequest(
 
   const stream = ReactServer.renderToReadableStream<RscPayload>(
     { root, formState, returnValue },
-    createClientReferenceConfig(),
+    createClientManifest(),
   );
 
   if (isRscRequest) {

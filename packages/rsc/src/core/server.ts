@@ -38,7 +38,7 @@ export async function loadServerAction(id: string): Promise<Function> {
   return mod[name];
 }
 
-export function createServerReferenceConfig(): BundlerConfig {
+export function createServerManifest(): BundlerConfig {
   const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
 
   return new Proxy(
@@ -60,7 +60,7 @@ export function createServerReferenceConfig(): BundlerConfig {
   );
 }
 
-export function createClientReferenceConfig(): BundlerConfig {
+export function createClientManifest(): BundlerConfig {
   const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
 
   return new Proxy(
