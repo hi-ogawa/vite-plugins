@@ -21,14 +21,12 @@ let buildScan = false;
 let server: ViteDevServer;
 let config: ResolvedConfig;
 
-type ViteGlobals = {
+let vite: {
   server: ViteDevServer;
   client: DevEnvironment;
   ssr: RunnableDevEnvironment;
   rsc: RunnableDevEnvironment;
 };
-
-let vite: ViteGlobals;
 
 const CLIENT_ENTRY = "/src/entry.browser.tsx";
 const SSR_ENTRY = "/src/entry.ssr.tsx";
@@ -50,7 +48,7 @@ export default defineConfig({
           ssr: server.environments.ssr as RunnableDevEnvironment,
           rsc: server.environments.rsc as RunnableDevEnvironment,
         };
-        (globalThis as any).__viteRsc = vite;
+        (globalThis as any).__viteRscRunner = vite.rsc.runner;
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
@@ -90,7 +88,7 @@ export default defineConfig({
       },
       load(id) {
         if (id === "\0virtual:vite-rsc/import-rsc") {
-          return `export default () => __viteRsc.rsc.runner.import(${JSON.stringify(RSC_ENTRY)})`;
+          return `export default () => __viteRscRunner.import(${JSON.stringify(RSC_ENTRY)})`;
         }
       },
       renderChunk(code, chunk) {

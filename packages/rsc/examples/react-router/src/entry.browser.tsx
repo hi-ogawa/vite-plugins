@@ -7,13 +7,14 @@ import {
 } from "react-router";
 import type { ServerPayload } from "react-router/rsc";
 import * as ReactClient from "react-server-dom-webpack/client";
+import { setServerCallback } from "./extra/browser";
 
 const callServer = createCallServer({
   decode: (body) => ReactClient.createFromReadableStream(body, { callServer }),
   encodeAction: (args) => ReactClient.encodeReply(args),
 });
 
-// setServerCallback(callServer);
+setServerCallback(callServer);
 
 ReactClient.createFromReadableStream(getServerStream(), {
   assets: "manifest",
