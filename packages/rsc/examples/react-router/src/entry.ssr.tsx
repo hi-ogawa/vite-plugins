@@ -4,12 +4,13 @@ import * as ReactDomServer from "react-dom/server.edge";
 import { RSCStaticRouter, routeRSCServerRequest } from "react-router";
 // @ts-ignore
 import * as ReactClient from "react-server-dom-webpack/client.edge";
-import { importRsc, initialize } from "./extra/ssr";
+import { importAssets, importRsc, initialize } from "./extra/ssr";
 
 initialize();
 
 export default async function handler(request: Request) {
   const { callServer } = await importRsc<typeof import("./entry.rsc")>();
+  const assets = await importAssets();
 
   return routeRSCServerRequest(
     request,
@@ -22,7 +23,7 @@ export default async function handler(request: Request) {
       ReactDomServer.renderToReadableStream(
         <RSCStaticRouter payload={payload} />,
         {
-          botstrapModules: [],
+          bootstrapModules: assets.bootstrapModules,
         },
       ),
   );

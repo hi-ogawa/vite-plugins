@@ -7,8 +7,7 @@ export function initialize(): void {
         return import(/* @vite-ignore */ id);
       } else {
         const clientReferences = await import(
-          // @ts-ignore
-          "virtual:vite-rsc/client-references"
+          "virtual:vite-rsc/client-references" as any
         );
         const import_ = clientReferences.default[id];
         if (!import_) {
@@ -29,6 +28,9 @@ export async function importRsc<T>(): Promise<T> {
   }
 }
 
-export async function importSsrAssets() {
-  // TODO
+export async function importAssets(): Promise<{
+  bootstrapModules: string[];
+}> {
+  const mod = await import("virtual:vite-rsc/ssr-assets" as any);
+  return mod;
 }

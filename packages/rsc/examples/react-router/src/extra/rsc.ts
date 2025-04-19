@@ -6,8 +6,9 @@ export function initialize(): void {
       if (import.meta.env.DEV) {
         return import(/* @vite-ignore */ id);
       } else {
-        // @ts-ignore
-        const references = await import("virtual:vite-rsc/server-references");
+        const references = await import(
+          "virtual:vite-rsc/server-references" as any
+        );
         const import_ = references.default[id];
         if (!import_) {
           throw new Error(`server reference not found '${id}'`);

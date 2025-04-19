@@ -8,7 +8,9 @@ import {
 import type { ServerPayload } from "react-router/rsc";
 // @ts-ignore
 import * as ReactClient from "react-server-dom-webpack/client";
-import { setServerCallback } from "./extra/browser";
+import { initialize, setServerCallback } from "./extra/browser";
+
+initialize();
 
 const callServer = createCallServer({
   decode: (body) => ReactClient.createFromReadableStream(body, { callServer }),

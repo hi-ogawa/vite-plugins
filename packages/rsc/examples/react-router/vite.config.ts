@@ -8,10 +8,10 @@ import {
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import react from "@vitejs/plugin-react";
 import {
-  // type Manifest,
+  type Manifest,
   type Plugin,
   type ResolvedConfig,
-  // Rollup,
+  Rollup,
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
@@ -23,8 +23,8 @@ import type { ModuleRunner } from "vite/module-runner";
 // TODO: move to `@hiogawa/vite-rsc`
 
 // state for build orchestration
-// let browserManifest: Manifest;
-// let browserBundle: Rollup.OutputBundle;
+let browserManifest: Manifest;
+let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -33,7 +33,7 @@ let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 
-// const CLIENT_ENTRY = "/src/entry.browser.tsx";
+const CLIENT_ENTRY = "/src/entry.browser.tsx";
 const SSR_ENTRY = "/src/entry.ssr.tsx";
 const RSC_ENTRY = "/src/entry.rsc.tsx";
 
@@ -83,6 +83,15 @@ export default defineConfig({
           });
         };
       },
+      writeBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          const output = bundle[".vite/manifest.json"];
+          assert(output && output.type === "asset");
+          assert(typeof output.source === "string");
+          browserManifest = JSON.parse(output.source);
+          browserBundle = bundle;
+        }
+      },
     },
     {
       // externalize `dist/rsc/...` import as relative path in ssr build
@@ -112,6 +121,37 @@ export default defineConfig({
         return;
       },
     },
+    createVirtualPlugin("vite-rsc/ssr-assets", function () {
+      assert(this.environment.name === "ssr");
+
+      let bootstrapModules: string[] = [];
+      if (this.environment.mode === "dev") {
+        bootstrapModules = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
+      }
+      if (this.environment.mode === "build") {
+        bootstrapModules = [
+          browserManifest["virtual:vite-rsc/browser-entry"]!.file,
+        ];
+      }
+      return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
+    }),
+    createVirtualPlugin("vite-rsc/browser-entry", function () {
+      if (this.environment.mode === "dev") {
+        return `
+          import RefreshRuntime from "/@react-refresh";
+          RefreshRuntime.injectIntoGlobalHook(window);
+          window.$RefreshReg$ = () => {};
+          window.$RefreshSig$ = () => (type) => type;
+          window.__vite_plugin_react_preamble_installed__ = true;
+          window.__webpack_require__ = () => {};
+          await import(${JSON.stringify(CLIENT_ENTRY)});
+        `;
+      } else {
+        return `
+          import ${JSON.stringify(CLIENT_ENTRY)};
+        `;
+      }
+    }),
     vitePluginUseClient(),
     vitePluginUseServer(),
     virtualNormalizeReferenceIdPlugin(),
