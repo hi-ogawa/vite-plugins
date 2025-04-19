@@ -8,11 +8,10 @@ import {
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import react from "@vitejs/plugin-react";
 import {
-  DevEnvironment,
-  type Manifest,
+  // type Manifest,
   type Plugin,
   type ResolvedConfig,
-  Rollup,
+  // Rollup,
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
@@ -24,8 +23,8 @@ import type { ModuleRunner } from "vite/module-runner";
 // TODO: move to `@hiogawa/vite-rsc`
 
 // state for build orchestration
-let browserManifest: Manifest;
-let browserBundle: Rollup.OutputBundle;
+// let browserManifest: Manifest;
+// let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -34,7 +33,7 @@ let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 
-const CLIENT_ENTRY = "/src/entry.browser.tsx";
+// const CLIENT_ENTRY = "/src/entry.browser.tsx";
 const SSR_ENTRY = "/src/entry.ssr.tsx";
 const RSC_ENTRY = "/src/entry.rsc.tsx";
 

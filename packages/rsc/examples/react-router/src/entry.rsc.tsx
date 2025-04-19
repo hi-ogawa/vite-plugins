@@ -10,6 +10,9 @@ import {
 } from "react-router/rsc";
 // @ts-ignore
 import * as ReactServer from "react-server-dom-webpack/server.edge";
+import { initialize } from "./extra/rsc";
+
+initialize();
 
 const routes: ServerRouteObject[] = [
   {
@@ -24,7 +27,7 @@ const routes: ServerRouteObject[] = [
       {
         id: "about",
         path: "about",
-        // lazy: () => import("./routes/about"),
+        lazy: () => import("./routes/about"),
       },
     ],
   },
