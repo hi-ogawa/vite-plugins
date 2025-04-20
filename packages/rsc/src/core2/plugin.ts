@@ -71,6 +71,9 @@ export default function vitePluginRsc({
                   input: { index: entries.ssr },
                 },
               },
+              resolve: {
+                noExternal: [PKG_NAME],
+              },
               optimizeDeps: {
                 exclude: [PKG_NAME],
               },

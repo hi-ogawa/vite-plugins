@@ -10,6 +10,7 @@ overrides:
   react-dom: ^19.1.0
   react-server-dom-webpack: ^19.1.0
   '@hiogawa/react-server': workspace:*
+  '@hiogawa/vite-rsc': workspace:*
   '@types/react': ^19.1.2
   '@types/react-dom': ^19.1.2
   '@vitejs/plugin-react': ^4.3.4
@@ -596,9 +597,31 @@ importers:
       '@hiogawa/vite-rsc':
         specifier: workspace:*
         version: link:../..
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
       react-router:
         specifier: 0.0.0-experimental-3b3f4b74e
         version: 0.0.0-experimental-3b3f4b74e(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-server-dom-webpack:
+        specifier: ^19.1.0
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.10.18(@swc/helpers@0.5.15))(esbuild@0.24.2))
+    devDependencies:
+      '@types/react':
+        specifier: ^19.1.2
+        version: 19.1.2
+      '@types/react-dom':
+        specifier: ^19.1.2
+        version: 19.1.2(@types/react@19.1.2)
+      '@vitejs/plugin-react':
+        specifier: ^4.3.4
+        version: 4.3.4(vite@6.1.1(@types/node@22.13.5)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+      vite:
+        specifier: ^6.1.0
+        version: 6.1.1(@types/node@22.13.5)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
 
   packages/server-asset:
     dependencies:

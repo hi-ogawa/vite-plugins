@@ -45,6 +45,7 @@
       "react-dom": "$react-dom",
       "react-server-dom-webpack": "$react-server-dom-webpack",
       "@hiogawa/react-server": "workspace:*",
+      "@hiogawa/vite-rsc": "workspace:*",
       "@types/react": "$@types/react",
       "@types/react-dom": "$@types/react-dom",
       "@vitejs/plugin-react": "$@vitejs/plugin-react"
