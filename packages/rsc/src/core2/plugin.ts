@@ -31,12 +31,16 @@ const PKG_NAME = "@hiogawa/vite-rsc";
 
 export default function vitePluginRsc({
   entries,
+  clientPackages,
 }: {
   entries: {
     browser: string;
     ssr: string;
     rsc: string;
   };
+  // dev-only workaround for client boundary in `node_modules`
+  // TODO: this can be heuristically cralwed from package.json.
+  clientPackages?: string[];
 }): Plugin[] {
   return [
     {
@@ -76,6 +80,7 @@ export default function vitePluginRsc({
                   "react-dom",
                   "react-server-dom-webpack",
                   PKG_NAME,
+                  ...(clientPackages ?? []),
                 ],
               },
               optimizeDeps: {
@@ -239,7 +244,7 @@ export default function vitePluginRsc({
         }
       },
     },
-    ...vitePluginUseClient(),
+    ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     virtualNormalizeReferenceIdPlugin(),
     vitePluginSilenceDirectiveBuildWarning(),
@@ -296,7 +301,12 @@ function virtualNormalizeReferenceIdPlugin(): Plugin {
   };
 }
 
-function vitePluginUseClient(): Plugin[] {
+function vitePluginUseClient({
+  clientPackages = [],
+}: { clientPackages?: string[] }): Plugin[] {
+  // re-export client package on client via virtual module
+  const clientPackageMeta: Record<string, string> = {};
+
   return [
     {
       name: vitePluginUseClient.name,
@@ -306,7 +316,8 @@ function vitePluginUseClient(): Plugin[] {
         if (buildScan) return;
 
         const ast = await parseAstAsync(code);
-        const normalizedId = await normalizeReferenceId(id, "client");
+        const normalizedId =
+          clientPackageMeta[id] ?? (await normalizeReferenceId(id, "client"));
         let output = await transformDirectiveProxyExport(ast, {
           directive: "use client",
           id: normalizedId,
@@ -328,6 +339,36 @@ function vitePluginUseClient(): Plugin[] {
       let code = generateDynamicImportCode(clientReferences);
       return { code, map: null };
     }),
+    {
+      name: "vite-rsc:virtual-client-package",
+      apply: "serve",
+      resolveId: {
+        order: "pre",
+        async handler(source, importer, options) {
+          if (this.environment.name !== "rsc") return;
+          if (clientPackages.includes(source)) {
+            const resolved = await this.resolve(source, importer, options);
+            if (resolved) {
+              clientPackageMeta[resolved.id] =
+                `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
+              return resolved;
+            }
+          }
+        },
+      },
+      async load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
+          const source = id.slice(
+            "\0virtual:vite-rsc/client-package-proxy/".length,
+          );
+          return `
+            export * from ${JSON.stringify(source)};
+            import * as __source from ${JSON.stringify(source)};
+            export default __source.default;
+          `;
+        }
+      },
+    },
   ];
 }
 
