@@ -209,7 +209,7 @@ export default function vitePluginRsc(rscOptions: {
     }),
     createVirtualPlugin("vite-rsc/ssr-entry", function () {
       return `
-        export * from "${PKG_NAME}/ssr";
+        export * from "${PKG_NAME}/extra/ssr";
       `;
     }),
     {
