@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import {
+  getExportNames,
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
@@ -38,8 +39,8 @@ export default function vitePluginRsc({
     ssr: string;
     rsc: string;
   };
-  // dev-only workaround for client boundary in `node_modules`
   // TODO: this can be heuristically cralwed from package.json.
+  // TODO: this cannot tree shake unused exports.
   clientPackages?: string[];
 }): Plugin[] {
   return [
@@ -304,8 +305,10 @@ function virtualNormalizeReferenceIdPlugin(): Plugin {
 function vitePluginUseClient({
   clientPackages = [],
 }: { clientPackages?: string[] }): Plugin[] {
-  // re-export client package on client via virtual module
-  const clientPackageMeta: Record<string, string> = {};
+  const clientPackageMeta: Record<
+    string,
+    { source: string; exportNames: string[] }
+  > = {};
 
   return [
     {
@@ -316,15 +319,47 @@ function vitePluginUseClient({
         if (buildScan) return;
 
         const ast = await parseAstAsync(code);
-        const normalizedId =
-          clientPackageMeta[id] ?? (await normalizeReferenceId(id, "client"));
+
+        // [during dev]
+        // key = normalized import id
+        // value = (not used)
+
+        // [during build]
+        // key = hashed id
+        // value = id
+
+        // ++++ client package +++
+        // [during dev]
+        // key = virtual id
+        // value = (not used)
+
+        // [during build]
+        // key = hashed id
+        // value = virtual id
+
+        let referenceKey: string;
+        let referenceValue = id;
+        const clientPackage = clientPackageMeta[id];
+        if (clientPackage) {
+          const source = clientPackage.source;
+          if (this.environment.mode === "build") {
+            referenceKey = hashString(source);
+            referenceValue = `virtual:vite-rsc/client-package-proxy/${source}`;
+          } else {
+            referenceKey = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
+          }
+          clientPackage.exportNames = getExportNames(ast, {}).exportNames;
+        } else {
+          referenceKey = await normalizeReferenceId(id, "client");
+        }
+
         let output = await transformDirectiveProxyExport(ast, {
           directive: "use client",
-          id: normalizedId,
+          id: referenceKey,
           runtime: "$$register",
         });
         if (!output) return;
-        clientReferences[normalizedId] = id;
+        clientReferences[referenceKey] = referenceValue;
         output.prepend(`
           import * as $$ReactServer from "react-server-dom-webpack/server.edge";
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
@@ -341,18 +376,21 @@ function vitePluginUseClient({
     }),
     {
       name: "vite-rsc:virtual-client-package",
-      apply: "serve",
       resolveId: {
         order: "pre",
         async handler(source, importer, options) {
-          if (this.environment.name !== "rsc") return;
-          if (clientPackages.includes(source)) {
+          if (
+            this.environment.name === "rsc" &&
+            clientPackages.includes(source)
+          ) {
             const resolved = await this.resolve(source, importer, options);
             if (resolved) {
-              clientPackageMeta[resolved.id] =
-                `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
+              clientPackageMeta[resolved.id] = { source, exportNames: [] };
               return resolved;
             }
+          }
+          if (source.startsWith("virtual:vite-rsc/client-package-proxy/")) {
+            return "\0" + source;
           }
         },
       },
@@ -361,11 +399,10 @@ function vitePluginUseClient({
           const source = id.slice(
             "\0virtual:vite-rsc/client-package-proxy/".length,
           );
-          return `
-            export * from ${JSON.stringify(source)};
-            import * as __source from ${JSON.stringify(source)};
-            export default __source.default;
-          `;
+          const { exportNames } = Object.values(clientPackageMeta).find(
+            (v) => v.source === source,
+          )!;
+          return `export {${exportNames.join(",")}} from ${JSON.stringify(source)};\n`;
         }
       },
     },
