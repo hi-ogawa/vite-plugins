@@ -16,7 +16,7 @@ import {
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
-import { normalizeViteImportAnalysisUrl } from "./core2/vite-utils";
+import { normalizeViteImportAnalysisUrl } from "../core2/vite-utils";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
@@ -209,7 +209,7 @@ export default function vitePluginRsc(rscOptions: {
     }),
     createVirtualPlugin("vite-rsc/ssr-entry", function () {
       return `
-        export * from "${PKG_NAME}/ssr";
+        export * from "${PKG_NAME}/extra/ssr";
       `;
     }),
     {
