@@ -9,7 +9,6 @@ import {
   createServerConsumerManifest,
   setRequireModule,
 } from "../core/client-ssr";
-import { getBrowserPreamble } from "../core/shared";
 import type { RscPayload } from "./server";
 import {
   createBufferedTransformStream,
@@ -71,7 +70,7 @@ export async function renderHtml({
   const responseStream = htmlStream
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(createBufferedTransformStream())
-    .pipeThrough(injectRscScript(stream2, getBrowserPreamble()))
+    .pipeThrough(injectRscScript(stream2))
     .pipeThrough(new TextEncoderStream());
 
   return new Response(responseStream, {

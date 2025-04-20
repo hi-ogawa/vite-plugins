@@ -9,14 +9,13 @@ self.__rsc_stream = new ReadableStream({
 
 export function injectRscScript(
   stream: ReadableStream<Uint8Array>,
-  extraScript?: string,
 ): TransformStream<string, string> {
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
       if (chunk.includes("</head>")) {
         chunk = chunk.replace(
           "</head>",
-          () => `<script>${extraScript};${INIT_SCRIPT}</script></head>`,
+          () => `<script>${INIT_SCRIPT}</script></head>`,
         );
       }
       if (chunk.includes("</body>")) {
