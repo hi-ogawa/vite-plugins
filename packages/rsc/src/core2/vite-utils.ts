@@ -1,4 +1,4 @@
-// copied from vite
+// import analysis logic copied from vite
 
 import fs from "node:fs";
 import path from "node:path";
@@ -32,6 +32,41 @@ export function withTrailingSlash(path: string): string {
 const postfixRE = /[?#].*$/;
 export function cleanUrl(url: string): string {
   return url.replace(postfixRE, "");
+}
+
+export function splitFileAndPostfix(path: string): {
+  file: string;
+  postfix: string;
+} {
+  const file = cleanUrl(path);
+  return { file, postfix: path.slice(file.length) };
+}
+
+const windowsSlashRE = /\\/g;
+export function slash(p: string): string {
+  return p.replace(windowsSlashRE, "/");
+}
+
+const isWindows =
+  typeof process !== "undefined" && process.platform === "win32";
+
+export function injectQuery(url: string, queryToInject: string): string {
+  const { file, postfix } = splitFileAndPostfix(url);
+  const normalizedFile = isWindows ? slash(file) : file;
+  return `${normalizedFile}?${queryToInject}${postfix[0] === "?" ? `&${postfix.slice(1)}` : /* hash only */ postfix}`;
+}
+
+export function joinUrlSegments(a: string, b: string): string {
+  if (!a || !b) {
+    return a || b || "";
+  }
+  if (a.endsWith("/")) {
+    a = a.substring(0, a.length - 1);
+  }
+  if (b[0] !== "/") {
+    b = "/" + b;
+  }
+  return a + b;
 }
 
 export function normalizeResolvedIdToUrl(
@@ -68,6 +103,24 @@ export function normalizeResolvedIdToUrl(
   // back into the transform pipeline
   if (url[0] !== "." && url[0] !== "/") {
     url = wrapId(resolved.id);
+  }
+
+  return url;
+}
+
+export function normalizeUrl(
+  environment: DevEnvironment,
+  url: string,
+  resolved: Rollup.PartialResolvedId,
+): string {
+  url = normalizeResolvedIdToUrl(environment, url, resolved);
+
+  // https://github.com/vitejs/vite/blob/c18ce868c4d70873406e9f7d1b2d0a03264d2168/packages/vite/src/node/plugins/importAnalysis.ts#L416
+  if (environment.config.consumer === "client") {
+    const mod = environment.moduleGraph.getModuleById(resolved.id);
+    if (mod && mod.lastHMRTimestamp > 0) {
+      url = injectQuery(url, `t=${mod.lastHMRTimestamp}`);
+    }
   }
 
   return url;
