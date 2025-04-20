@@ -17,6 +17,7 @@ import {
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
+import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
 let browserManifest: Manifest;
@@ -41,6 +42,7 @@ export default function vitePluginRsc({
   };
   // TODO: this can be heuristically cralwed from package.json.
   // TODO: this cannot tree shake unused exports.
+  // TODO: in principle, same trick is needed from `"use server"` package.
   clientPackages?: string[];
 }): Plugin[] {
   return [
@@ -247,7 +249,6 @@ export default function vitePluginRsc({
     },
     ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
-    virtualNormalizeReferenceIdPlugin(),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
@@ -264,42 +265,7 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
   // align with how Vite import analysis would rewrite id
   // to avoid double modules on browser and ssr.
   const environment = server.environments[name]!;
-  const transformed = await environment.transformRequest(
-    "virtual:vite-rsc/normalize-reference-id/" + encodeURIComponent(id),
-  );
-  assert(transformed);
-  const m = transformed.code.match(
-    /(?:__vite_ssr_dynamic_import__|import)\("(.*)"\)/,
-  );
-  const newId = m?.[1];
-  if (!newId) {
-    console.error("[normalizeReferenceId]", {
-      name,
-      id,
-      code: transformed.code,
-    });
-    throw new Error("normalizeReferenceId");
-  }
-  return newId;
-}
-
-function virtualNormalizeReferenceIdPlugin(): Plugin {
-  const prefix = "virtual:vite-rsc/normalize-reference-id/";
-  return {
-    name: virtualNormalizeReferenceIdPlugin.name,
-    apply: "serve",
-    resolveId(source, _importer, _options) {
-      if (source.startsWith(prefix)) {
-        return "\0" + source;
-      }
-    },
-    load(id, _options) {
-      if (id.startsWith("\0" + prefix)) {
-        id = decodeURIComponent(id.slice(prefix.length + 1));
-        return `export default () => import("${id}")`;
-      }
-    },
-  };
+  return normalizeViteImportAnalysisUrl(environment, id);
 }
 
 function vitePluginUseClient({
