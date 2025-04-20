@@ -168,7 +168,7 @@ export default function vitePluginRsc({
       },
     },
     {
-      name: "patch-browser-raw-import",
+      name: "rsc:patch-browser-raw-import",
       transform: {
         order: "post",
         handler(code) {
@@ -181,7 +181,7 @@ export default function vitePluginRsc({
     },
     {
       // externalize `dist/rsc/...` import as relative path in ssr build
-      name: "virtual:import-rsc",
+      name: "rsc:virtual:vite-rsc/import-rsc",
       resolveId(source) {
         if (source === "virtual:vite-rsc/import-rsc") {
           return {
@@ -252,6 +252,30 @@ export default function vitePluginRsc({
         }
       },
     },
+    {
+      // make `AsyncLocalStorage` available globally for React request context on edge build (e.g. React.cache, ssr preload)
+      // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
+      name: "inject-async-local-storage",
+      async configureServer() {
+        const __viteRscAyncHooks = await import("node:async_hooks");
+        (globalThis as any).AsyncLocalStorage =
+          __viteRscAyncHooks.AsyncLocalStorage;
+      },
+      banner(chunk) {
+        if (
+          (this.environment.name === "ssr" ||
+            this.environment.name === "rsc") &&
+          this.environment.mode === "build" &&
+          chunk.isEntry
+        ) {
+          return `\
+            import * as __viteRscAyncHooks from "node:async_hooks";
+            globalThis.AsyncLocalStorage = __viteRscAyncHooks.AsyncLocalStorage;
+          `;
+        }
+        return "";
+      },
+    },
     ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     vitePluginSilenceDirectiveBuildWarning(),
@@ -283,7 +307,7 @@ function vitePluginUseClient({
 
   return [
     {
-      name: vitePluginUseClient.name,
+      name: "rsc:use-client",
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
         if (!code.includes("use client")) return;
@@ -346,7 +370,7 @@ function vitePluginUseClient({
       return { code, map: null };
     }),
     {
-      name: "vite-rsc:virtual-client-package",
+      name: "rsc:virtual-client-package",
       resolveId: {
         order: "pre",
         async handler(source, importer, options) {
@@ -383,7 +407,7 @@ function vitePluginUseClient({
 function vitePluginUseServer(): Plugin[] {
   return [
     {
-      name: vitePluginUseServer.name,
+      name: "rsc:use-server",
       async transform(code, id) {
         if (id.includes("/.vite/")) return;
         if (!code.includes("use server")) return;
@@ -437,7 +461,7 @@ function vitePluginUseServer(): Plugin[] {
 function createVirtualPlugin(name: string, load: Plugin["load"]) {
   name = "virtual:" + name;
   return {
-    name: `virtual-${name}`,
+    name: `rsc:virtual-${name}`,
     resolveId(source, _importer, _options) {
       return source === name ? "\0" + name : undefined;
     },
@@ -453,7 +477,7 @@ function createVirtualPlugin(name: string, load: Plugin["load"]) {
 // https://github.com/vitejs/vite-plugin-react/blob/814ed8043d321f4b4679a9f4a781d1ed14f185e4/packages/plugin-react/src/index.ts#L303
 function vitePluginSilenceDirectiveBuildWarning(): Plugin {
   return {
-    name: vitePluginSilenceDirectiveBuildWarning.name,
+    name: "rsc:silence-directive-build-warning",
     enforce: "post",
     config(config, _env) {
       return {
