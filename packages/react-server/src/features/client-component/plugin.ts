@@ -213,7 +213,12 @@ export function vitePluginServerUseClient({
     },
   };
 
-  return [useClientExternalPlugin, useClientPlugin, scanStripPlugin];
+  return [
+    useClientExternalPlugin,
+    useClientPlugin,
+    scanStripPlugin,
+    patchBrowserRawImport(),
+  ];
 }
 
 // Apply same noramlizaion as Vite's dev import analysis
@@ -298,4 +303,20 @@ export function vitePluginClientUseClient({
       return { code: result, map: null };
     }),
   ];
+}
+
+export function patchBrowserRawImport(): Plugin {
+  return {
+    name: "patch-browser-raw-import",
+    transform: {
+      order: "post",
+      handler(code) {
+        if (code.includes("__vite_rsc_raw_import__")) {
+          // inject dynamic import last to avoid Vite adding `?import` query to client references
+          return code.replace("__vite_rsc_raw_import__", "import");
+        }
+        return;
+      },
+    },
+  };
 }

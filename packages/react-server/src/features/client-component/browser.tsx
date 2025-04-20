@@ -8,8 +8,8 @@ import { memoize, tinyassert } from "@hiogawa/utils";
 
 async function importWrapper(id: string) {
   if (import.meta.env.DEV) {
-    // `__raw_import` injected via inline script
-    return (globalThis as any).__raw_import(id);
+    // @ts-ignore see patch-browser-raw-import plugin
+    return __vite_rsc_raw_import__(id);
   } else {
     const clientReferences = await import(
       "virtual:client-references" as string
