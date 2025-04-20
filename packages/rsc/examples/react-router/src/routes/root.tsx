@@ -1,4 +1,5 @@
 import { Link, Outlet } from "react-router";
+import { TestClientState, TestHydrated } from "./client";
 import { DumpError } from "./root.error";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -23,6 +24,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </ul>
           </nav>
         </header>
+        <TestHydrated />
+        <TestClientState />
         {children}
       </body>
     </html>
