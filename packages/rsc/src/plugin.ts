@@ -64,6 +64,7 @@ export default function vitePluginRsc({
                 },
               },
               optimizeDeps: {
+                include: ["react-server-dom-webpack/client.browser"],
                 exclude: [PKG_NAME],
               },
             },
