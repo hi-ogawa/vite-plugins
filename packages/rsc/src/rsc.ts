@@ -24,3 +24,12 @@ export function initialize(): void {
     },
   });
 }
+
+export async function importSsr<T>(): Promise<T> {
+  const mod = await import("virtual:vite-rsc/import-ssr" as any);
+  if (import.meta.env.DEV) {
+    return mod.default();
+  } else {
+    return mod;
+  }
+}

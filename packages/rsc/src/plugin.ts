@@ -17,6 +17,7 @@ import {
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
+import { crawlFrameworkPkgs } from "vitefu";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
@@ -121,6 +122,41 @@ export default function vitePluginRsc({
           },
         };
       },
+      async configEnvironment(name, _config, env) {
+        if (name !== "rsc") return;
+
+        // bundle deps with react-server condition
+
+        // crawl packages with "react" or "next" in "peerDependencies"
+        // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
+        const result = await crawlFrameworkPkgs({
+          root: process.cwd(),
+          isBuild: env.command === "build",
+          isFrameworkPkgByJson(pkgJson) {
+            const deps = pkgJson["peerDependencies"];
+            return deps && ("react" in deps || "next" in deps);
+          },
+        });
+
+        return {
+          resolve: {
+            noExternal: [
+              "react",
+              "react-dom",
+              "react-server-dom-webpack",
+              ...result.ssr.noExternal,
+            ].sort(),
+          },
+          optimizeDeps: {
+            include: [
+              "react",
+              "react/jsx-runtime",
+              "react/jsx-dev-runtime",
+              `react-server-dom-webpack/server.edge`,
+            ],
+          },
+        };
+      },
       configResolved(config_) {
         config = config_;
       },
@@ -130,6 +166,7 @@ export default function vitePluginRsc({
           .runner;
         viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
           .runner;
+        (globalThis as any).__viteSsrRunner = viteSsrRunner;
         (globalThis as any).__viteRscRunner = viteRscRunner;
 
         return () => {
@@ -180,10 +217,13 @@ export default function vitePluginRsc({
       },
     },
     {
-      // externalize `dist/rsc/...` import as relative path in ssr build
-      name: "rsc:virtual:vite-rsc/import-rsc",
+      // externalize `dist/rsc/...` import as relative path in ssr build (and vice versa)
+      name: "rsc:virtual:vite-rsc/import-entry",
       resolveId(source) {
-        if (source === "virtual:vite-rsc/import-rsc") {
+        if (
+          source === "virtual:vite-rsc/import-rsc" ||
+          source === "virtual:vite-rsc/import-ssr"
+        ) {
           return {
             id: `\0` + source,
             external: this.environment.mode === "build",
@@ -194,6 +234,9 @@ export default function vitePluginRsc({
         if (id === "\0virtual:vite-rsc/import-rsc") {
           return `export default () => __viteRscRunner.import(${JSON.stringify(entries.rsc)})`;
         }
+        if (id === "\0virtual:vite-rsc/import-ssr") {
+          return `export default () => __viteSsrRunner.import(${JSON.stringify(entries.ssr)})`;
+        }
       },
       renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/import-rsc")) {
@@ -202,6 +245,14 @@ export default function vitePluginRsc({
             path.join("dist/rsc", "index.js"),
           );
           code = code.replace("\0virtual:vite-rsc/import-rsc", replacement);
+          return { code };
+        }
+        if (code.includes("\0virtual:vite-rsc/import-ssr")) {
+          const replacement = path.relative(
+            path.join("dist/rsc", chunk.fileName, ".."),
+            path.join("dist/ssr", "index.js"),
+          );
+          code = code.replace("\0virtual:vite-rsc/import-ssr", replacement);
           return { code };
         }
         return;
