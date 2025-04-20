@@ -40,8 +40,8 @@ export default function vitePluginRsc({
 }: {
   entries: {
     browser: string;
-    ssr: string;
     rsc: string;
+    ssr: string;
   };
   // TODO: this can be heuristically cralwed from package.json.
   // TODO: this cannot tree shake unused exports.
