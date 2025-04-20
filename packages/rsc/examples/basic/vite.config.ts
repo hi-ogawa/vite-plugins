@@ -10,7 +10,6 @@ export default defineConfig({
       entries: {
         browser: "/src/client.tsx",
         rsc: "/src/server.tsx",
-        ssr: "@hiogawa/vite-rsc/extra/ssr",
       },
     }),
   ],
