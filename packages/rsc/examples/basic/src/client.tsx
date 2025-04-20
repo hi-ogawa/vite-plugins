@@ -1,3 +1,3 @@
-import { hydrate } from "@hiogawa/vite-rsc/browser";
+import { hydrate } from "@hiogawa/rsc/extra/browser";
 
 hydrate();

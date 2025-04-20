@@ -2,37 +2,48 @@ import assert from "node:assert";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import {
+  getExportNames,
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
+import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
   type Manifest,
   type Plugin,
   type ResolvedConfig,
-  type Rollup,
+  RunnableDevEnvironment,
   type ViteDevServer,
-  createServerModuleRunner,
   defaultServerConditions,
   parseAstAsync,
 } from "vite";
-import { crawlFrameworkPkgs } from "vitefu";
-import { normalizeViteImportAnalysisUrl } from "./core2/vite-utils";
-import { toNodeHandler } from "./utils/fetch";
+import type { ModuleRunner } from "vite/module-runner";
+import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
 let browserManifest: Manifest;
-let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
 let server: ViteDevServer;
 let config: ResolvedConfig;
+let viteSsrRunner: ModuleRunner;
+let viteRscRunner: ModuleRunner;
 
 const PKG_NAME = "@hiogawa/vite-rsc";
 
-export default function vitePluginRsc(rscOptions: {
-  client: string;
-  server: string;
+export default function vitePluginRsc({
+  entries,
+  clientPackages,
+}: {
+  entries: {
+    browser: string;
+    ssr: string;
+    rsc: string;
+  };
+  // TODO: this can be heuristically cralwed from package.json.
+  // TODO: this cannot tree shake unused exports.
+  // TODO: in principle, same trick is needed from `"use server"` package.
+  clientPackages?: string[];
 }): Plugin[] {
   return [
     {
@@ -42,13 +53,6 @@ export default function vitePluginRsc(rscOptions: {
           appType: "custom",
           environments: {
             client: {
-              optimizeDeps: {
-                include: [
-                  "react-dom/client",
-                  `react-server-dom-webpack/client.browser`,
-                ],
-                exclude: [PKG_NAME],
-              },
               build: {
                 manifest: true,
                 outDir: "dist/client",
@@ -56,42 +60,57 @@ export default function vitePluginRsc(rscOptions: {
                   input: { index: "virtual:vite-rsc/browser-entry" },
                 },
               },
-            },
-            ssr: {
               optimizeDeps: {
                 exclude: [PKG_NAME],
               },
-              resolve: {
-                noExternal: [PKG_NAME],
-              },
+            },
+            ssr: {
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: "virtual:vite-rsc/ssr-entry" },
+                  input: { index: entries.ssr },
                 },
-              },
-            },
-            rsc: {
-              optimizeDeps: {
-                exclude: [PKG_NAME],
               },
               resolve: {
                 noExternal: [PKG_NAME],
+              },
+              optimizeDeps: {
+                exclude: [PKG_NAME],
+              },
+            },
+            rsc: {
+              resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
+                noExternal: [
+                  "react",
+                  "react-dom",
+                  "react-server-dom-webpack",
+                  PKG_NAME,
+                  ...(clientPackages ?? []),
+                ],
+              },
+              optimizeDeps: {
+                include: [
+                  "react",
+                  "react/jsx-runtime",
+                  "react/jsx-dev-runtime",
+                  "react-server-dom-webpack/server.edge",
+                ],
+                exclude: [PKG_NAME],
               },
               build: {
                 outDir: "dist/rsc",
                 rollupOptions: {
-                  input: { index: rscOptions.server },
+                  input: { index: entries.rsc },
                 },
               },
             },
           },
           builder: {
-            // TODO: use globalThis to share state instead of sharedPlugins
             sharedPlugins: true,
             async buildApp(builder) {
               buildScan = true;
+              builder.environments.rsc!.config.build.write = false;
               await builder.build(builder.environments.rsc!);
               buildScan = false;
               await builder.build(builder.environments.rsc!);
@@ -101,61 +120,22 @@ export default function vitePluginRsc(rscOptions: {
           },
         };
       },
-      async configEnvironment(name, _config, env) {
-        if (name !== "rsc") return;
-
-        // bundle deps with react-server condition
-
-        // crawl packages with "react" or "next" in "peerDependencies"
-        // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
-        const result = await crawlFrameworkPkgs({
-          root: process.cwd(),
-          isBuild: env.command === "build",
-          isFrameworkPkgByJson(pkgJson) {
-            const deps = pkgJson["peerDependencies"];
-            return deps && ("react" in deps || "next" in deps);
-          },
-        });
-
-        return {
-          resolve: {
-            noExternal: [
-              "react",
-              "react-dom",
-              "react-server-dom-webpack",
-              ...result.ssr.noExternal,
-            ].sort(),
-          },
-          optimizeDeps: {
-            include: [
-              "react",
-              "react/jsx-runtime",
-              "react/jsx-dev-runtime",
-              `react-server-dom-webpack/server.edge`,
-            ],
-          },
-        };
-      },
       configResolved(config_) {
         config = config_;
       },
-    },
-    {
-      name: "ssr-middleware",
       configureServer(server_) {
         server = server_;
-        const ssrRunner = createServerModuleRunner(server.environments.ssr, {
-          hmr: false,
-        });
-        const rscRunner = createServerModuleRunner(server.environments.rsc!, {
-          hmr: false,
-        });
-        globalThis.__viteRscSsrRunner = ssrRunner;
+        viteSsrRunner = (server.environments.ssr as RunnableDevEnvironment)
+          .runner;
+        viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
+          .runner;
+        (globalThis as any).__viteRscRunner = viteRscRunner;
+
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              const mod = await rscRunner.import(rscOptions.server);
-              await toNodeHandler(mod.default)(req, res);
+              const mod = await viteSsrRunner.import(entries.ssr);
+              createRequestListener(mod.default)(req, res);
             } catch (e) {
               next(e);
             }
@@ -164,17 +144,66 @@ export default function vitePluginRsc(rscOptions: {
       },
       async configurePreviewServer(server) {
         const mod = await import(
-          /* @vite-ignore */ path.resolve("dist/rsc/index.js")
+          /* @vite-ignore */ path.resolve("dist/ssr/index.js")
         );
+        const handler = createRequestListener(mod.default);
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              await toNodeHandler(mod.default)(req, res);
+              handler(req, res);
             } catch (e) {
               next(e);
             }
           });
         };
+      },
+      writeBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          const output = bundle[".vite/manifest.json"];
+          assert(output && output.type === "asset");
+          assert(typeof output.source === "string");
+          browserManifest = JSON.parse(output.source);
+        }
+      },
+    },
+    {
+      name: "patch-browser-raw-import",
+      transform: {
+        order: "post",
+        handler(code) {
+          if (code.includes("__vite_rsc_raw_import__")) {
+            // inject dynamic import last to avoid Vite adding `?import` query to client references
+            return code.replace("__vite_rsc_raw_import__", "import");
+          }
+        },
+      },
+    },
+    {
+      // externalize `dist/rsc/...` import as relative path in ssr build
+      name: "virtual:import-rsc",
+      resolveId(source) {
+        if (source === "virtual:vite-rsc/import-rsc") {
+          return {
+            id: `\0` + source,
+            external: this.environment.mode === "build",
+          };
+        }
+      },
+      load(id) {
+        if (id === "\0virtual:vite-rsc/import-rsc") {
+          return `export default () => __viteRscRunner.import(${JSON.stringify(entries.rsc)})`;
+        }
+      },
+      renderChunk(code, chunk) {
+        if (code.includes("\0virtual:vite-rsc/import-rsc")) {
+          const replacement = path.relative(
+            path.join("dist/ssr", chunk.fileName, ".."),
+            path.join("dist/rsc", "index.js"),
+          );
+          code = code.replace("\0virtual:vite-rsc/import-rsc", replacement);
+          return { code };
+        }
+        return;
       },
     },
     createVirtualPlugin("vite-rsc/ssr-assets", function () {
@@ -199,98 +228,30 @@ export default function vitePluginRsc(rscOptions: {
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          await import(${JSON.stringify(rscOptions.client)});
+          await import(${JSON.stringify(entries.browser)});
         `;
       } else {
         return `
-          import ${JSON.stringify(rscOptions.client)};
+          import ${JSON.stringify(entries.browser)};
         `;
       }
     }),
-    createVirtualPlugin("vite-rsc/ssr-entry", function () {
-      return `
-        export * from "${PKG_NAME}/ssr";
-      `;
-    }),
     {
-      // externalize `dist/ssr/index.js` import as relative path in rsc build
-      name: "virtual:vite-rsc/build-ssr-entry",
-      resolveId(source) {
-        if (source === "virtual:vite-rsc/build-ssr-entry") {
-          return { id: "__VIRTUAL_BUILD_SSR_ENTRY__", external: true };
-        }
-        return;
-      },
-      renderChunk(code, chunk) {
-        if (code.includes("__VIRTUAL_BUILD_SSR_ENTRY__")) {
-          const replacement = path.relative(
-            "dist/rsc",
-            path.join("dist/ssr", chunk.fileName),
-          );
-          code = code.replace("__VIRTUAL_BUILD_SSR_ENTRY__", replacement);
-          return { code };
-        }
-        return;
-      },
-    },
-    {
-      name: "rsc-misc",
-      hotUpdate(ctx) {
-        if (this.environment.name === "rsc") {
-          const cliendIds = new Set(Object.values(clientReferences));
-          const ids = ctx.modules
-            .map((mod) => mod.id)
-            .filter((v) => v !== null);
-          if (ids.length > 0) {
-            // client reference id is also in react server module graph,
-            // but we skip RSC HMR for this case since Client HMR handles it.
-            if (!ids.some((id) => cliendIds.has(id))) {
-              ctx.server.environments.client.hot.send({
-                type: "custom",
-                event: "rsc:update",
-                data: {
-                  file: ctx.file,
-                },
-              });
-            }
-          }
-        }
-      },
-      writeBundle(_options, bundle) {
-        if (this.environment.name === "client") {
-          const output = bundle[".vite/manifest.json"];
-          assert(output && output.type === "asset");
-          assert(typeof output.source === "string");
-          browserManifest = JSON.parse(output.source);
-          browserBundle = bundle;
-        }
-      },
-    },
-    {
-      // make `AsyncLocalStorage` available globally for React request context on edge build (e.g. React.cache, ssr preload)
-      // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
-      name: "inject-async-local-storage",
-      async configureServer() {
-        const __viteRscAyncHooks = await import("node:async_hooks");
-        (globalThis as any).AsyncLocalStorage =
-          __viteRscAyncHooks.AsyncLocalStorage;
-      },
-      banner(chunk) {
+      name: "patch-webpack",
+      transform(code, id, _options) {
         if (
-          this.environment.name === "rsc" &&
-          this.environment.mode === "build" &&
-          chunk.isEntry
+          this.environment?.name === "client" &&
+          id.includes("react-server-dom-webpack") &&
+          code.includes("__webpack_require__")
         ) {
-          return `\
-            import * as __viteRscAyncHooks from "node:async_hooks";
-            globalThis.AsyncLocalStorage = __viteRscAyncHooks.AsyncLocalStorage;
-          `;
+          // avoid accessing `__webpack_require__` on import side effect
+          // https://github.com/facebook/react/blob/a9bbe34622885ef5667d33236d580fe7321c0d8b/packages/react-server-dom-webpack/src/client/ReactFlightClientConfigBundlerWebpackBrowser.js#L16-L17
+          code = code.replaceAll("__webpack_require__.u", "({}).u");
+          return { code, map: null };
         }
-        return "";
       },
     },
-
-    ...vitePluginUseClient(),
+    ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
@@ -311,7 +272,14 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
-function vitePluginUseClient(): Plugin[] {
+function vitePluginUseClient({
+  clientPackages = [],
+}: { clientPackages?: string[] }): Plugin[] {
+  const clientPackageMeta: Record<
+    string,
+    { source: string; exportNames: string[] }
+  > = {};
+
   return [
     {
       name: vitePluginUseClient.name,
@@ -321,14 +289,47 @@ function vitePluginUseClient(): Plugin[] {
         if (buildScan) return;
 
         const ast = await parseAstAsync(code);
-        const normalizedId = await normalizeReferenceId(id, "client");
+
+        // [during dev]
+        // key = normalized import id
+        // value = (not used)
+
+        // [during build]
+        // key = hashed id
+        // value = id
+
+        // ++++ client package +++
+        // [during dev]
+        // key = virtual id
+        // value = (not used)
+
+        // [during build]
+        // key = hashed id
+        // value = virtual id
+
+        let referenceKey: string;
+        let referenceValue = id;
+        const clientPackage = clientPackageMeta[id];
+        if (clientPackage) {
+          const source = clientPackage.source;
+          if (this.environment.mode === "build") {
+            referenceKey = hashString(source);
+            referenceValue = `virtual:vite-rsc/client-package-proxy/${source}`;
+          } else {
+            referenceKey = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
+          }
+          clientPackage.exportNames = getExportNames(ast, {}).exportNames;
+        } else {
+          referenceKey = await normalizeReferenceId(id, "client");
+        }
+
         let output = await transformDirectiveProxyExport(ast, {
           directive: "use client",
-          id: normalizedId,
+          id: referenceKey,
           runtime: "$$register",
         });
         if (!output) return;
-        clientReferences[normalizedId] = id;
+        clientReferences[referenceKey] = referenceValue;
         output.prepend(`
           import * as $$ReactServer from "react-server-dom-webpack/server.edge";
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
@@ -341,19 +342,40 @@ function vitePluginUseClient(): Plugin[] {
         return { code: `export {}`, map: null };
       }
       let code = generateDynamicImportCode(clientReferences);
-      if (browserBundle) {
-        const assetDeps = collectAssetDeps(browserBundle);
-        const keyAssetDeps: Record<string, AssetDeps> = {};
-        for (const [key, id] of Object.entries(clientReferences)) {
-          const deps = assetDeps[id];
-          if (deps) {
-            keyAssetDeps[key] = deps;
-          }
-        }
-        code += `export const assetDeps = ${JSON.stringify(keyAssetDeps)};\n`;
-      }
       return { code, map: null };
     }),
+    {
+      name: "vite-rsc:virtual-client-package",
+      resolveId: {
+        order: "pre",
+        async handler(source, importer, options) {
+          if (
+            this.environment.name === "rsc" &&
+            clientPackages.includes(source)
+          ) {
+            const resolved = await this.resolve(source, importer, options);
+            if (resolved) {
+              clientPackageMeta[resolved.id] = { source, exportNames: [] };
+              return resolved;
+            }
+          }
+          if (source.startsWith("virtual:vite-rsc/client-package-proxy/")) {
+            return "\0" + source;
+          }
+        },
+      },
+      async load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
+          const source = id.slice(
+            "\0virtual:vite-rsc/client-package-proxy/".length,
+          );
+          const { exportNames } = Object.values(clientPackageMeta).find(
+            (v) => v.source === source,
+          )!;
+          return `export {${exportNames.join(",")}} from ${JSON.stringify(source)};\n`;
+        }
+      },
+    },
   ];
 }
 
@@ -473,52 +495,4 @@ function generateDynamicImportCode(map: Record<string, string>) {
     )
     .join("\n");
   return `export default {${code}};\n`;
-}
-
-//
-// collect client reference dependency chunk for modulepreload
-//
-
-export type AssetDeps = {
-  js: string[];
-  css: string[];
-};
-
-function collectAssetDeps(
-  bundle: Rollup.OutputBundle,
-): Record<string, AssetDeps> {
-  const map: Record<string, AssetDeps> = {};
-  for (const chunk of Object.values(bundle)) {
-    if (chunk.type === "chunk" && chunk.facadeModuleId) {
-      map[chunk.facadeModuleId] = collectAssetDepsInner(chunk.fileName, bundle);
-    }
-  }
-  return map;
-}
-
-function collectAssetDepsInner(
-  fileName: string,
-  bundle: Rollup.OutputBundle,
-): AssetDeps {
-  const visited = new Set<string>();
-  const css: string[] = [];
-
-  function recurse(k: string) {
-    if (visited.has(k)) return;
-    visited.add(k);
-    const v = bundle[k];
-    assert(v);
-    if (v.type === "chunk") {
-      css.push(...(v.viteMetadata?.importedAssets ?? []));
-      for (const k2 of v.imports) {
-        recurse(k2);
-      }
-    }
-  }
-
-  recurse(fileName);
-  return {
-    js: [...visited].map((file) => `/${file}`),
-    css: [...new Set(css)].map((file) => `/${file}`),
-  };
 }

@@ -1,10 +1,4 @@
 import {
-  createClientManifest,
-  createServerManifest,
-  initialize,
-  loadServerAction,
-} from "@hiogawa/vite-rsc/core2/rsc";
-import {
   type DecodeCallServerFunction,
   type DecodeFormActionFunction,
   type ServerRouteObject,
@@ -12,6 +6,12 @@ import {
 } from "react-router/rsc";
 // @ts-ignore
 import * as ReactServer from "react-server-dom-webpack/server.edge";
+import {
+  createClientManifest,
+  createServerManifest,
+  initialize,
+  loadServerAction,
+} from "../../../dist/rsc";
 
 initialize();
 

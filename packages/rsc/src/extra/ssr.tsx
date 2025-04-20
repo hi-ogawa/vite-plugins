@@ -8,8 +8,8 @@ import ReactClient from "react-server-dom-webpack/client.edge";
 import {
   createServerConsumerManifest,
   setRequireModule,
-} from "./core/client-ssr";
-import { getBrowserPreamble } from "./core/shared";
+} from "../core/client-ssr";
+import { getBrowserPreamble } from "../core/shared";
 import type { RscPayload } from "./server";
 import {
   createBufferedTransformStream,

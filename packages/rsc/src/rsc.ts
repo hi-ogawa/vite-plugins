@@ -4,7 +4,7 @@ export {
   createClientManifest,
   createServerManifest,
   loadServerAction,
-} from "../core/server";
+} from "./core/server";
 
 export function initialize(): void {
   setRequireModule({

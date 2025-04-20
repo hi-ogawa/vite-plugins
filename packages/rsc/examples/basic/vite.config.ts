@@ -1,4 +1,4 @@
-import rsc from "@hiogawa/vite-rsc/plugin";
+import rsc from "@hiogawa/vite-rsc/extra/plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
