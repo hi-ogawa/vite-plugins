@@ -1,6 +1,6 @@
 import { setRequireModule } from "@hiogawa/vite-rsc/core/client-ssr";
 
-export { createServerConsumerManifest } from "../core/client-ssr";
+export { createServerConsumerManifest } from "./core/client-ssr";
 
 export function initialize(): void {
   setRequireModule({

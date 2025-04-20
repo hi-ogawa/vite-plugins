@@ -16,7 +16,7 @@ import {
   parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
-import { normalizeViteImportAnalysisUrl } from "../core2/vite-utils";
+import { normalizeViteImportAnalysisUrl } from "../vite-utils";
 import { toNodeHandler } from "./utils/fetch";
 
 // state for build orchestration
