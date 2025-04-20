@@ -1,7 +1,8 @@
 # @hiogawa/vite-rsc
 
-[`@parcel/rsc`](https://parceljs.org/recipes/rsc)-like RSC API for Vite.
+Vite RSC plugin without framework
 
 ## examples
 
-- https://stackblitz.com/edit/github-mukrxxaq?file=README.md
+- [`./examples/basic`](./examples/basic)
+- [`./examples/react-router`](./examples/react-router)
