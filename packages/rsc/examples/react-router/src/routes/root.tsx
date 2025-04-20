@@ -1,4 +1,5 @@
 import { Link, Outlet } from "react-router";
+import { DumpError } from "./root.error";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   console.log("Layout");
@@ -7,7 +8,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>React Router Parcel</title>
+        <title>React Router Vite</title>
       </head>
       <body>
         <header>
@@ -38,5 +39,5 @@ export default function ServerComponent() {
 }
 
 export function ErrorBoundary() {
-  return <h1>Oooops</h1>;
+  return <DumpError />;
 }
