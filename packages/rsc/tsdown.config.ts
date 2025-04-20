@@ -10,7 +10,6 @@ export default defineConfig({
     "src/core/client-ssr.ts",
     "src/core/server.ts",
     "src/core/shared.ts",
-    "src/extra/plugin.ts",
     "src/extra/server.tsx",
     "src/extra/ssr.tsx",
     "src/extra/browser.tsx",
