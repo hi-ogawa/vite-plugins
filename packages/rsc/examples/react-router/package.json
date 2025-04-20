@@ -11,7 +11,14 @@
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
   },
   "dependencies": {
-    "@hiogawa/vite-rsc": "workspace:*",
+    "@hiogawa/vite-rsc": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-server-dom-webpack": "latest",
     "react-router": "0.0.0-experimental-3b3f4b74e"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest"
   }
 }
