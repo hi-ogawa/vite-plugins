@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import {
+  getExportNames,
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
@@ -31,12 +32,16 @@ const PKG_NAME = "@hiogawa/vite-rsc";
 
 export default function vitePluginRsc({
   entries,
+  clientPackages,
 }: {
   entries: {
     browser: string;
     ssr: string;
     rsc: string;
   };
+  // TODO: this can be heuristically cralwed from package.json.
+  // TODO: this cannot tree shake unused exports.
+  clientPackages?: string[];
 }): Plugin[] {
   return [
     {
@@ -76,6 +81,7 @@ export default function vitePluginRsc({
                   "react-dom",
                   "react-server-dom-webpack",
                   PKG_NAME,
+                  ...(clientPackages ?? []),
                 ],
               },
               optimizeDeps: {
@@ -239,7 +245,7 @@ export default function vitePluginRsc({
         }
       },
     },
-    ...vitePluginUseClient(),
+    ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     virtualNormalizeReferenceIdPlugin(),
     vitePluginSilenceDirectiveBuildWarning(),
@@ -296,7 +302,14 @@ function virtualNormalizeReferenceIdPlugin(): Plugin {
   };
 }
 
-function vitePluginUseClient(): Plugin[] {
+function vitePluginUseClient({
+  clientPackages = [],
+}: { clientPackages?: string[] }): Plugin[] {
+  const clientPackageMeta: Record<
+    string,
+    { source: string; exportNames: string[] }
+  > = {};
+
   return [
     {
       name: vitePluginUseClient.name,
@@ -306,14 +319,47 @@ function vitePluginUseClient(): Plugin[] {
         if (buildScan) return;
 
         const ast = await parseAstAsync(code);
-        const normalizedId = await normalizeReferenceId(id, "client");
+
+        // [during dev]
+        // key = normalized import id
+        // value = (not used)
+
+        // [during build]
+        // key = hashed id
+        // value = id
+
+        // ++++ client package +++
+        // [during dev]
+        // key = virtual id
+        // value = (not used)
+
+        // [during build]
+        // key = hashed id
+        // value = virtual id
+
+        let referenceKey: string;
+        let referenceValue = id;
+        const clientPackage = clientPackageMeta[id];
+        if (clientPackage) {
+          const source = clientPackage.source;
+          if (this.environment.mode === "build") {
+            referenceKey = hashString(source);
+            referenceValue = `virtual:vite-rsc/client-package-proxy/${source}`;
+          } else {
+            referenceKey = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
+          }
+          clientPackage.exportNames = getExportNames(ast, {}).exportNames;
+        } else {
+          referenceKey = await normalizeReferenceId(id, "client");
+        }
+
         let output = await transformDirectiveProxyExport(ast, {
           directive: "use client",
-          id: normalizedId,
+          id: referenceKey,
           runtime: "$$register",
         });
         if (!output) return;
-        clientReferences[normalizedId] = id;
+        clientReferences[referenceKey] = referenceValue;
         output.prepend(`
           import * as $$ReactServer from "react-server-dom-webpack/server.edge";
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
@@ -328,6 +374,38 @@ function vitePluginUseClient(): Plugin[] {
       let code = generateDynamicImportCode(clientReferences);
       return { code, map: null };
     }),
+    {
+      name: "vite-rsc:virtual-client-package",
+      resolveId: {
+        order: "pre",
+        async handler(source, importer, options) {
+          if (
+            this.environment.name === "rsc" &&
+            clientPackages.includes(source)
+          ) {
+            const resolved = await this.resolve(source, importer, options);
+            if (resolved) {
+              clientPackageMeta[resolved.id] = { source, exportNames: [] };
+              return resolved;
+            }
+          }
+          if (source.startsWith("virtual:vite-rsc/client-package-proxy/")) {
+            return "\0" + source;
+          }
+        },
+      },
+      async load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
+          const source = id.slice(
+            "\0virtual:vite-rsc/client-package-proxy/".length,
+          );
+          const { exportNames } = Object.values(clientPackageMeta).find(
+            (v) => v.source === source,
+          )!;
+          return `export {${exportNames.join(",")}} from ${JSON.stringify(source)};\n`;
+        }
+      },
+    },
   ];
 }
 

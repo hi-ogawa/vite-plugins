@@ -1,4 +1,4 @@
-import { Link, Outlet } from "../react-router-client";
+import { Link, Outlet } from "react-router";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   console.log("Layout");
