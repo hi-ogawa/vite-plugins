@@ -7,6 +7,7 @@ import {
   loadServerAction,
   setRequireModule,
 } from "../core/server";
+import { importSsr } from "../rsc";
 
 export type RscPayload = {
   root: React.ReactNode;
@@ -80,14 +81,6 @@ export async function renderRequest(
     });
   }
 
-  const ssrEntry = await importSsrEntry();
+  const ssrEntry = await importSsr<typeof import("./ssr")>();
   return ssrEntry.renderHtml({ stream, formState });
-}
-
-async function importSsrEntry(): Promise<typeof import("./ssr")> {
-  if (import.meta.env.DEV) {
-    return await __viteRscSsrRunner.import("virtual:vite-rsc/ssr-entry");
-  } else {
-    return await import("virtual:vite-rsc/build-ssr-entry" as any);
-  }
 }
