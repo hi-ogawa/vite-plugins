@@ -34,23 +34,20 @@ let viteRscRunner: ModuleRunner;
 
 const PKG_NAME = "@hiogawa/vite-rsc";
 
-export default function vitePluginRsc(rscOptions: {
+export default function vitePluginRsc({
+  entries,
+  clientPackages,
+}: {
   entries: {
     browser: string;
     rsc: string;
-    /**
-     * @default {"@hiogawa/vite-rsc/extra/ssr"}
-     */
-    ssr?: string;
+    ssr: string;
   };
   // TODO: this can be heuristically cralwed from package.json.
   // TODO: this cannot tree shake unused exports.
   // TODO: in principle, same trick is needed from `"use server"` package.
   clientPackages?: string[];
 }): Plugin[] {
-  const { entries, clientPackages = [] } = rscOptions;
-  const entriesSsr = entries.ssr ?? `${PKG_NAME}/extra/ssr`;
-
   return [
     {
       name: "rsc",
@@ -74,7 +71,7 @@ export default function vitePluginRsc(rscOptions: {
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: entriesSsr },
+                  input: { index: entries.ssr },
                 },
               },
               resolve: {
@@ -262,7 +259,7 @@ export default function vitePluginRsc(rscOptions: {
           return `export default () => __viteRscRunner.import(${JSON.stringify(entries.rsc)})`;
         }
         if (id === "\0virtual:vite-rsc/import-ssr") {
-          return `export default () => __viteSsrRunner.import(${JSON.stringify(entriesSsr)})`;
+          return `export default () => __viteSsrRunner.import(${JSON.stringify(entries.ssr)})`;
         }
       },
       renderChunk(code, chunk) {
