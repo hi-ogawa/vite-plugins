@@ -1,6 +1,7 @@
 import {
   createClientManifest,
   createServerManifest,
+  importSsr,
   initialize,
   loadServerAction,
 } from "@hiogawa/vite-rsc/rsc";
@@ -44,7 +45,7 @@ const decodeFormAction: DecodeFormActionFunction = async (formData) => {
   return await ReactServer.decodeAction(formData, createServerManifest());
 };
 
-export async function callServer(request: Request) {
+async function callServer(request: Request) {
   const match = await matchRSCServerRequest({
     decodeCallServer,
     decodeFormAction,
@@ -59,4 +60,9 @@ export async function callServer(request: Request) {
       headers: match.headers,
     },
   );
+}
+
+export default async function handler(requrest: Request) {
+  const ssr = await importSsr<typeof import("./entry.ssr")>();
+  return ssr.default(requrest, callServer);
 }
