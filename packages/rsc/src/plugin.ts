@@ -34,6 +34,7 @@ const PKG_NAME = "@hiogawa/vite-rsc";
 
 export default function vitePluginRsc({
   entries,
+  handlerEntry = "rsc",
   clientPackages,
 }: {
   entries: {
@@ -41,6 +42,7 @@ export default function vitePluginRsc({
     ssr: string;
     rsc: string;
   };
+  handlerEntry?: "rsc" | "ssr";
   // TODO: this can be heuristically cralwed from package.json.
   // TODO: this cannot tree shake unused exports.
   // TODO: in principle, same trick is needed from `"use server"` package.
@@ -172,7 +174,9 @@ export default function vitePluginRsc({
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              const mod = await viteRscRunner.import(entries.rsc);
+              const runner =
+                handlerEntry === "rsc" ? viteRscRunner : viteSsrRunner;
+              const mod = await runner.import(entries[handlerEntry]);
               createRequestListener(mod.default)(req, res);
             } catch (e) {
               next(e);
@@ -182,7 +186,7 @@ export default function vitePluginRsc({
       },
       async configurePreviewServer(server) {
         const mod = await import(
-          /* @vite-ignore */ path.resolve(`dist/rsc/index.js`)
+          /* @vite-ignore */ path.resolve(`dist/${handlerEntry}/index.js`)
         );
         const handler = createRequestListener(mod.default);
         return () => {
