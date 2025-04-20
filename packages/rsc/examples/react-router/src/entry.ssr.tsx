@@ -1,7 +1,6 @@
 import {
   createServerConsumerManifest,
   importAssets,
-  importRsc,
   initialize,
 } from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
@@ -12,8 +11,10 @@ import * as ReactClient from "react-server-dom-webpack/client.edge";
 
 initialize();
 
-export default async function handler(request: Request) {
-  const { callServer } = await importRsc<typeof import("./entry.rsc")>();
+export default async function handler(
+  request: Request,
+  callServer: (request: Request) => Promise<Response>,
+) {
   const assets = await importAssets();
 
   return routeRSCServerRequest(
