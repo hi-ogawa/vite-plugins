@@ -1,5 +1,4 @@
 import path from "node:path";
-import { getBrowserPreamble } from "@hiogawa/vite-rsc/core/shared";
 import { getRequestListener } from "@hono/node-server";
 import react from "@vitejs/plugin-react";
 import { defaultServerConditions, defineConfig } from "vite";
@@ -44,14 +43,6 @@ export default defineConfig({
           }
           next();
         });
-      },
-      transformIndexHtml() {
-        return [
-          {
-            tag: "script",
-            children: getBrowserPreamble(),
-          },
-        ];
       },
     },
   ],
