@@ -1,8 +1,7 @@
-import { tinyassert } from "@hiogawa/utils";
 import React from "react";
 import ReactDomClient from "react-dom/client";
 import ReactClient from "react-server-dom-webpack/client.browser";
-import { setRequireModule } from "../core/client-browser";
+import { initialize } from "../browser";
 import type { CallServerCallback } from "../types";
 import type { RscPayload } from "./server";
 import { getRscScript } from "./utils/rsc-script";
@@ -11,18 +10,10 @@ export async function hydrate(options?: {
   serverCallback?: () => void;
   onHmrReload?: () => void;
 }): Promise<void> {
-  setRequireModule({
-    load: async (id) => {
-      if (import.meta.env.DEV) {
-        return (self as any).__viteRscBrowserImport(/* @vite-ignore */ id);
-      } else {
-        const clientReferences = await import(
-          "virtual:vite-rsc/client-references"
-        );
-        const import_ = clientReferences.default[id];
-        tinyassert(import_, `client reference not found '${id}'`);
-        return import_();
-      }
+  initialize({
+    onHmrReload() {
+      window.history.replaceState({}, "", window.location.href);
+      options?.onHmrReload?.();
     },
   });
 
@@ -81,13 +72,6 @@ export async function hydrate(options?: {
   ReactDomClient.hydrateRoot(document, <BrowserRoot />, {
     formState: initialPayload.formState,
   });
-
-  if (import.meta.hot) {
-    import.meta.hot.on("rsc:update", () => {
-      window.history.replaceState({}, "", window.location.href);
-      options?.onHmrReload?.();
-    });
-  }
 }
 
 export async function fetchRSC(

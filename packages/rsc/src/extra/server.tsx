@@ -1,12 +1,11 @@
-import { tinyassert } from "@hiogawa/utils";
 import type { ReactFormState } from "react-dom/client";
 import ReactServer from "react-server-dom-webpack/server.edge";
 import {
   createClientManifest,
   createServerManifest,
   loadServerAction,
-  setRequireModule,
 } from "../core/server";
+import { importSsr, initialize } from "../rsc";
 
 export type RscPayload = {
   root: React.ReactNode;
@@ -14,23 +13,11 @@ export type RscPayload = {
   returnValue?: unknown;
 };
 
-// TODO: split helpers like parcel (callAction, renderRsc, renderHtml)
 export async function renderRequest(
   request: Request,
   root: React.ReactNode,
 ): Promise<Response> {
-  setRequireModule({
-    load: async (id) => {
-      if (import.meta.env.DEV) {
-        return import(/* @vite-ignore */ id);
-      } else {
-        const references = await import("virtual:vite-rsc/server-references");
-        const dynImport = references.default[id];
-        tinyassert(dynImport, `server reference not found '${id}'`);
-        return dynImport();
-      }
-    },
-  });
+  initialize();
 
   const url = new URL(request.url);
   const isAction = request.method === "POST";
@@ -80,14 +67,6 @@ export async function renderRequest(
     });
   }
 
-  const ssrEntry = await importSsrEntry();
+  const ssrEntry = await importSsr<typeof import("./ssr")>();
   return ssrEntry.renderHtml({ stream, formState });
-}
-
-async function importSsrEntry(): Promise<typeof import("./ssr")> {
-  if (import.meta.env.DEV) {
-    return await __viteRscSsrRunner.import("virtual:vite-rsc/ssr-entry");
-  } else {
-    return await import("virtual:vite-rsc/build-ssr-entry" as any);
-  }
 }

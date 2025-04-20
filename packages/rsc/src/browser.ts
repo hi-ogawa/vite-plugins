@@ -1,4 +1,4 @@
-import { setRequireModule } from "@hiogawa/vite-rsc/core/client-browser";
+import { setRequireModule } from "./core/client-browser";
 
 export function initialize(options?: {
   onHmrReload?: () => void;

@@ -3,7 +3,7 @@ import {
   createServerManifest,
   initialize,
   loadServerAction,
-} from "@hiogawa/vite-rsc/core2/rsc";
+} from "@hiogawa/vite-rsc/rsc";
 import {
   type DecodeCallServerFunction,
   type DecodeFormActionFunction,

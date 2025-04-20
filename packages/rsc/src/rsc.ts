@@ -1,10 +1,10 @@
-import { setRequireModule } from "@hiogawa/vite-rsc/core/server";
+import { setRequireModule } from "./core/server";
 
 export {
   createClientManifest,
   createServerManifest,
   loadServerAction,
-} from "../core/server";
+} from "./core/server";
 
 export function initialize(): void {
   setRequireModule({
@@ -23,4 +23,13 @@ export function initialize(): void {
       }
     },
   });
+}
+
+export async function importSsr<T>(): Promise<T> {
+  const mod = await import("virtual:vite-rsc/import-ssr" as any);
+  if (import.meta.env.DEV) {
+    return mod.default();
+  } else {
+    return mod;
+  }
 }

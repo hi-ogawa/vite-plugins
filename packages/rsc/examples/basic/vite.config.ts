@@ -1,4 +1,4 @@
-import rsc from "@hiogawa/vite-rsc/extra/plugin";
+import rsc from "@hiogawa/vite-rsc/plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -7,8 +7,11 @@ export default defineConfig({
   plugins: [
     react(),
     rsc({
-      server: "/src/server.tsx",
-      client: "/src/client.tsx",
+      entries: {
+        browser: "/src/client.tsx",
+        rsc: "/src/server.tsx",
+        ssr: "@hiogawa/vite-rsc/extra/ssr",
+      },
     }),
   ],
   build: {
