@@ -8,9 +8,11 @@ import {
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
+  DevEnvironment,
   type Manifest,
   type Plugin,
   type ResolvedConfig,
+  Rollup,
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
