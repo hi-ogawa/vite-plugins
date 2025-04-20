@@ -1,4 +1,4 @@
-import { renderRequest } from "../../../dist/extra/server";
+import { renderRequest } from "@hiogawa/vite-rsc/extra/server";
 import {
   changeServerCounter,
   resetServerCounter,
