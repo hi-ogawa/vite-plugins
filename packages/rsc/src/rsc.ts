@@ -1,4 +1,4 @@
-import { setRequireModule } from "@hiogawa/vite-rsc/core/server";
+import { setRequireModule } from "./core/server";
 
 export {
   createClientManifest,

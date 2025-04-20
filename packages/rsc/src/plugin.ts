@@ -11,6 +11,7 @@ import {
   type Manifest,
   type Plugin,
   type ResolvedConfig,
+  Rollup,
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
@@ -22,6 +23,7 @@ import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
 let browserManifest: Manifest;
+let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -226,6 +228,7 @@ export default function vitePluginRsc({
           assert(output && output.type === "asset");
           assert(typeof output.source === "string");
           browserManifest = JSON.parse(output.source);
+          browserBundle = bundle;
         }
       },
     },
@@ -443,6 +446,17 @@ function vitePluginUseClient({
         return { code: `export {}`, map: null };
       }
       let code = generateDynamicImportCode(clientReferences);
+      if (browserBundle) {
+        const assetDeps = collectAssetDeps(browserBundle);
+        const keyAssetDeps: Record<string, AssetDeps> = {};
+        for (const [key, id] of Object.entries(clientReferences)) {
+          const deps = assetDeps[id];
+          if (deps) {
+            keyAssetDeps[key] = deps;
+          }
+        }
+        code += `export const assetDeps = ${JSON.stringify(keyAssetDeps)};\n`;
+      }
       return { code, map: null };
     }),
     {
@@ -596,4 +610,52 @@ function generateDynamicImportCode(map: Record<string, string>) {
     )
     .join("\n");
   return `export default {${code}};\n`;
+}
+
+//
+// collect client reference dependency chunk for modulepreload
+//
+
+export type AssetDeps = {
+  js: string[];
+  css: string[];
+};
+
+function collectAssetDeps(
+  bundle: Rollup.OutputBundle,
+): Record<string, AssetDeps> {
+  const map: Record<string, AssetDeps> = {};
+  for (const chunk of Object.values(bundle)) {
+    if (chunk.type === "chunk" && chunk.facadeModuleId) {
+      map[chunk.facadeModuleId] = collectAssetDepsInner(chunk.fileName, bundle);
+    }
+  }
+  return map;
+}
+
+function collectAssetDepsInner(
+  fileName: string,
+  bundle: Rollup.OutputBundle,
+): AssetDeps {
+  const visited = new Set<string>();
+  const css: string[] = [];
+
+  function recurse(k: string) {
+    if (visited.has(k)) return;
+    visited.add(k);
+    const v = bundle[k];
+    assert(v);
+    if (v.type === "chunk") {
+      css.push(...(v.viteMetadata?.importedAssets ?? []));
+      for (const k2 of v.imports) {
+        recurse(k2);
+      }
+    }
+  }
+
+  recurse(fileName);
+  return {
+    js: [...visited].map((file) => `/${file}`),
+    css: [...new Set(css)].map((file) => `/${file}`),
+  };
 }
