@@ -3,7 +3,7 @@ import {
   importAssets,
   importRsc,
   initialize,
-} from "@hiogawa/vite-rsc/core2/ssr";
+} from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
 import * as ReactDomServer from "react-dom/server.edge";
 import { RSCStaticRouter, routeRSCServerRequest } from "react-router";

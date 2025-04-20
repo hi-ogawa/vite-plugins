@@ -1,4 +1,4 @@
-import { initialize, setServerCallback } from "@hiogawa/vite-rsc/core2/browser";
+import { initialize, setServerCallback } from "@hiogawa/vite-rsc/browser";
 import * as React from "react";
 import { hydrateRoot } from "react-dom/client";
 import {
