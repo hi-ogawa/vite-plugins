@@ -43,6 +43,7 @@ export default function vitePluginRsc({
   };
   // TODO: this can be heuristically cralwed from package.json.
   // TODO: this cannot tree shake unused exports.
+  // TODO: in principle, same trick is needed from `"use server"` package.
   clientPackages?: string[];
 }): Plugin[] {
   return [
