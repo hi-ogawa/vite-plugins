@@ -199,6 +199,27 @@ export default function vitePluginRsc({
           });
         };
       },
+      hotUpdate(ctx) {
+        if (this.environment.name === "rsc") {
+          const cliendIds = new Set(Object.values(clientReferences));
+          const ids = ctx.modules
+            .map((mod) => mod.id)
+            .filter((v) => v !== null);
+          if (ids.length > 0) {
+            // client reference id is also in react server module graph,
+            // but we skip RSC HMR for this case since Client HMR handles it.
+            if (!ids.some((id) => cliendIds.has(id))) {
+              ctx.server.environments.client.hot.send({
+                type: "custom",
+                event: "rsc:update",
+                data: {
+                  file: ctx.file,
+                },
+              });
+            }
+          }
+        }
+      },
       writeBundle(_options, bundle) {
         if (this.environment.name === "client") {
           const output = bundle[".vite/manifest.json"];
