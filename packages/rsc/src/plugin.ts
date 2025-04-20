@@ -136,7 +136,7 @@ export default function vitePluginRsc({
           isBuild: env.command === "build",
           isFrameworkPkgByJson(pkgJson) {
             const deps = pkgJson["peerDependencies"];
-            return deps && ("react" in deps || "next" in deps);
+            return deps && "react" in deps;
           },
         });
 
