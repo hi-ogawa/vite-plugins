@@ -112,6 +112,7 @@ export default function vitePluginRsc({
               buildScan = true;
               builder.environments.rsc!.config.build.write = false;
               await builder.build(builder.environments.rsc!);
+              builder.environments.rsc!.config.build.write = true;
               buildScan = false;
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.client!);
