@@ -108,16 +108,15 @@ export function normalizeResolvedIdToUrl(
   return url;
 }
 
-export function normalizeUrl(
+export function normalizeViteImportAnalysisUrl(
   environment: DevEnvironment,
-  url: string,
-  resolved: Rollup.PartialResolvedId,
+  id: string,
 ): string {
-  url = normalizeResolvedIdToUrl(environment, url, resolved);
+  let url = normalizeResolvedIdToUrl(environment, id, { id });
 
   // https://github.com/vitejs/vite/blob/c18ce868c4d70873406e9f7d1b2d0a03264d2168/packages/vite/src/node/plugins/importAnalysis.ts#L416
   if (environment.config.consumer === "client") {
-    const mod = environment.moduleGraph.getModuleById(resolved.id);
+    const mod = environment.moduleGraph.getModuleById(id);
     if (mod && mod.lastHMRTimestamp > 0) {
       url = injectQuery(url, `t=${mod.lastHMRTimestamp}`);
     }

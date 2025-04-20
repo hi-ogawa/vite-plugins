@@ -17,7 +17,7 @@ import {
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
-import { normalizeUrl } from "./vite-utils";
+import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
 let browserManifest: Manifest;
@@ -265,7 +265,7 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
   // align with how Vite import analysis would rewrite id
   // to avoid double modules on browser and ssr.
   const environment = server.environments[name]!;
-  return normalizeUrl(environment, id, { id });
+  return normalizeViteImportAnalysisUrl(environment, id);
 }
 
 function vitePluginUseClient({
