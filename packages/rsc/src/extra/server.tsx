@@ -6,7 +6,7 @@ import {
   createServerManifest,
   loadServerAction,
   setRequireModule,
-} from "./core/server";
+} from "../core/server";
 
 export type RscPayload = {
   root: React.ReactNode;

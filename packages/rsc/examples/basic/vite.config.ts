@@ -1,6 +1,6 @@
-import rsc from "@hiogawa/vite-rsc/plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import rsc from "../../dist/extra/plugin";
 
 export default defineConfig({
   clearScreen: false,

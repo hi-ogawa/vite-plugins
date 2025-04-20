@@ -2,13 +2,10 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: [
-    "src/plugin.ts",
-    "src/server.tsx",
-    "src/server-runtime.tsx",
-    "src/ssr.tsx",
-    "src/ssr-runtime.tsx",
-    "src/browser.tsx",
-    "src/browser-runtime.tsx",
+    "src/extra/plugin.ts",
+    "src/extra/server.tsx",
+    "src/extra/ssr.tsx",
+    "src/extra/browser.tsx",
     "src/core/client-browser.ts",
     "src/core/client-ssr.ts",
     "src/core/server.ts",
