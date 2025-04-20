@@ -29,12 +29,6 @@ export function vitePluginServerAssets({
         // extract <head> injected by plugins
         let { head } = await getIndexHtmlTransform($__global.dev.server);
 
-        // expose raw dynamic `import` which doesn't go through vite's transform
-        // since it would inject `<id>?import` and cause dual packages when
-        // client code is both imported at the boundary (as `<id>?import`)
-        // and not at the boundary (as `<id>`).
-        head += `<script>globalThis.__raw_import = (id) => import(id)</script>\n`;
-
         // serve dev css as ?direct so that ssr html won't get too huge.
         // then remove this injected style on first hot update.
         head += `\

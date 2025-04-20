@@ -21,7 +21,7 @@ export default async function handler(request: Request) {
     callServer,
     (body) =>
       ReactClient.createFromReadableStream(body, {
-        serverConsumerManifest: createServerConsumerManifest,
+        serverConsumerManifest: createServerConsumerManifest(),
       }),
     (payload) =>
       ReactDomServer.renderToReadableStream(
