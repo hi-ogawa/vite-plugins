@@ -17,7 +17,7 @@ export function Hydrated() {
     () => true,
     () => false,
   );
-  return <div data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</div>;
+  return <span data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</span>;
 }
 
 export function TestStyleClient() {
