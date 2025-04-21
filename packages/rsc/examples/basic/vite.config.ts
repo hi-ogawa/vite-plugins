@@ -15,7 +15,7 @@ export default defineConfig({
         ssr: "@hiogawa/vite-rsc/extra/ssr",
         css: "/src/styles.css",
       },
-    }) as any,
+    }),
   ],
   build: {
     minify: false,
