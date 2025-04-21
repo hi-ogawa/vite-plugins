@@ -105,3 +105,31 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
 
 // TODO
 test.skip("client reference update", () => {});
+
+test("css @js", async ({ page }) => {
+  await page.goto("/");
+  await waitForHydration(page);
+  await testCss(page);
+});
+
+testNoJs("css @nojs", async ({ page }) => {
+  await page.goto("/");
+  await testCss(page);
+});
+
+async function testCss(page: Page) {
+  await expect(page.locator(".test-style-client")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+  await expect(page.locator(".test-style-server")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+}
+
+test("css hmr", async ({ page }) => {
+  await page.goto("/");
+  await waitForHydration(page);
+  // TODO
+});
