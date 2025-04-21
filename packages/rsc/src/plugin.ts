@@ -312,10 +312,6 @@ export default function vitePluginRsc({
     createVirtualPlugin("vite-rsc/browser-entry", function () {
       let code = "";
       if (entries.css) {
-        // TODO:
-        // ssr <link rel="stylesheet" href="/src/styles.css" precendence="high" />
-        // to avoid FOUC.
-        // client import is stil needed for HMR.
         code += `import ${JSON.stringify(entries.css)};\n`;
       }
       if (this.environment.mode === "dev") {

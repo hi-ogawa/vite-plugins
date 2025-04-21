@@ -11,8 +11,6 @@ function Document() {
     <html>
       <head>
         <title>vite-rsc</title>
-        {/* TODO: automatic */}
-        {/* <link rel="stylesheet" href="/src/styles.css" /> */}
       </head>
       <body>
         <h4>Test</h4>
