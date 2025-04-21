@@ -14,7 +14,7 @@ export default defineConfig({
     "src/extra/rsc.tsx",
   ],
   format: ["esm"],
-  external: [/^virtual:/, /^@hiogawa\/vite-rsc\//],
+  external: [/^virtual:/],
   dts: {
     sourceMap: process.argv.slice(2).includes("--sourcemap"),
   },
