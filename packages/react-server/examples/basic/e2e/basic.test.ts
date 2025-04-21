@@ -1161,7 +1161,7 @@ test("dynamic routes", async ({ page }) => {
   // - param is always decoded
   await page.getByRole("link", { name: "/test/dynamic/✅" }).click();
   await page.getByText('params: {"id":"✅"}').click();
-  await page.waitForURL("/test/dynamic/✅");
+  await page.waitForURL(encodeURI("/test/dynamic/✅"));
   await expect(
     page.getByRole("link", { name: "/test/dynamic/✅" }),
   ).toHaveAttribute("aria-current", "page");
@@ -1171,7 +1171,7 @@ test("dynamic routes", async ({ page }) => {
 
   await page.getByRole("link", { name: "/test/dynamic/%E2%9C%85" }).click();
   await page.getByText('params: {"id":"✅"}').click();
-  await page.waitForURL("/test/dynamic/✅");
+  await page.waitForURL(encodeURI("/test/dynamic/✅"));
   await expect(
     page.getByRole("link", { name: "/test/dynamic/✅" }),
   ).toHaveAttribute("aria-current", "page");
@@ -1193,7 +1193,7 @@ test("remount on dynamic segment change", async ({ page }) => {
 
   // remount on new segment
   await page.getByRole("link", { name: "• /test/dynamic/✅" }).click();
-  await page.waitForURL("/test/dynamic/✅");
+  await page.waitForURL(encodeURI("/test/dynamic/✅"));
   await expect(page.getByPlaceholder("dynamic-test")).toHaveValue("");
 });
 
