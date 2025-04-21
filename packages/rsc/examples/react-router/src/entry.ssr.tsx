@@ -16,6 +16,9 @@ export default async function handler(
   callServer: (request: Request) => Promise<Response>,
 ) {
   const assets = await importAssets();
+  const css = assets.css.map((href) => (
+    <link key={href} rel="stylesheet" href={href} precedence="high" />
+  ));
 
   return routeRSCServerRequest(
     request,
@@ -26,7 +29,10 @@ export default async function handler(
       }),
     (payload) =>
       ReactDomServer.renderToReadableStream(
-        <RSCStaticRouter payload={payload} />,
+        <>
+          <RSCStaticRouter payload={payload} />
+          {css}
+        </>,
         {
           bootstrapModules: assets.js,
         },
