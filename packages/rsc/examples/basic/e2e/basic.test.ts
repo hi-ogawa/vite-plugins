@@ -116,6 +116,10 @@ test("client hmr @dev", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Client [edit] Counter: 1" }),
   ).toBeVisible();
+
+  // check next ssr is also updated
+  const res = await page.goto("/");
+  expect(await res?.text()).toContain("Client [edit] Counter");
 });
 
 test("server hmr @dev", async ({ page }) => {
