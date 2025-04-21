@@ -26,8 +26,5 @@
     "estree-walker": "^3.0.3",
     "magic-string": "^0.30.17",
     "periscopic": "^4.0.2"
-  },
-  "devDependencies": {
-    "@types/estree": "^1.0.6"
   }
 }

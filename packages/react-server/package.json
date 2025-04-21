@@ -48,8 +48,7 @@
   },
   "devDependencies": {
     "@edge-runtime/cookies": "^6.0.0",
-    "@tanstack/history": "^1.99.13",
-    "@types/estree": "^1.0.6"
+    "@tanstack/history": "^1.99.13"
   },
   "peerDependencies": {
     "react": "*",
