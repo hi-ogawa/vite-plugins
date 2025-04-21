@@ -1,8 +1,6 @@
 import * as ReactClient from "react-server-dom-webpack/client.browser";
 import type { CallServerCallback } from "../types";
 
-export const __client = ReactClient as any;
-
 export function createFromReadableStream<T>(
   stream: ReadableStream<Uint8Array>,
   options: unknown = {},
@@ -28,8 +26,13 @@ export function encodeReply(v: unknown[]): Promise<string | FormData> {
 }
 
 export function createServerReference(id: string): any {
-  return ReactClient.createServerReference(id, callServer);
+  return ReactClient.createServerReference(id, (...args) =>
+    callServer(...args),
+  );
 }
 
-const callServer: CallServerCallback = (...args) =>
-  __viteRscCallServer(...args);
+let callServer!: CallServerCallback;
+
+export function setServerCallback(fn: CallServerCallback): void {
+  callServer = fn;
+}

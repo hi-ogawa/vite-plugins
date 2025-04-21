@@ -1,5 +1,7 @@
 import { setRequireModule } from "./core/browser";
 
+export * from "./react/browser";
+
 export function initialize(options?: {
   onHmrReload?: () => void;
 }): void {

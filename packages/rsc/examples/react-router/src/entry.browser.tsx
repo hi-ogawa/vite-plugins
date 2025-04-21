@@ -1,4 +1,9 @@
-import { initialize, setServerCallback } from "@hiogawa/vite-rsc/browser";
+import {
+  createFromReadableStream,
+  encodeReply,
+  initialize,
+  setServerCallback,
+} from "@hiogawa/vite-rsc/browser";
 import * as React from "react";
 import { hydrateRoot } from "react-dom/client";
 import {
@@ -7,8 +12,6 @@ import {
   getServerStream,
 } from "react-router";
 import type { ServerPayload } from "react-router/rsc";
-// @ts-ignore
-import * as ReactClient from "react-server-dom-webpack/client.browser";
 
 initialize({
   onHmrReload() {
@@ -18,13 +21,13 @@ initialize({
 });
 
 const callServer = createCallServer({
-  decode: (body) => ReactClient.createFromReadableStream(body, { callServer }),
-  encodeAction: (args) => ReactClient.encodeReply(args),
+  decode: (body) => createFromReadableStream(body),
+  encodeAction: (args) => encodeReply(args),
 });
 
 setServerCallback(callServer);
 
-ReactClient.createFromReadableStream(getServerStream(), {
+createFromReadableStream<ServerPayload>(getServerStream(), {
   callServer,
 }).then((payload: ServerPayload) => {
   React.startTransition(() => {
@@ -32,9 +35,7 @@ ReactClient.createFromReadableStream(getServerStream(), {
       document,
       <React.StrictMode>
         <RSCHydratedRouter
-          decode={(body) =>
-            ReactClient.createFromReadableStream(body, { callServer })
-          }
+          decode={(body) => createFromReadableStream(body)}
           payload={payload as any}
         />
       </React.StrictMode>,
