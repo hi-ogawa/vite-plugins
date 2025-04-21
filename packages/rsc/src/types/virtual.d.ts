@@ -1,6 +1,6 @@
-declare module "virtual:vite-rsc/ssr-assets" {
-  const bootstrapModules: string[];
-  export { bootstrapModules };
+declare module "virtual:vite-rsc/server-assets" {
+  const default_: import(".").ServerAssets;
+  export default default_;
 }
 
 declare module "virtual:vite-rsc/client-references" {

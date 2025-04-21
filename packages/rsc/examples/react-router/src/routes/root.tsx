@@ -26,6 +26,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </header>
         <TestHydrated />
         <TestClientState />
+        <div className="test-style">test-style</div>
         {children}
       </body>
     </html>

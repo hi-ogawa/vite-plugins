@@ -19,6 +19,7 @@ import {
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
+import type { ServerAssets } from "./types";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
@@ -42,10 +43,11 @@ export default function vitePluginRsc({
     browser: string;
     rsc: string;
     ssr: string;
+    css?: string;
   };
   // TODO: this can be heuristically cralwed from package.json.
-  // TODO: this cannot tree shake unused exports.
-  // TODO: in principle, same trick is needed from `"use server"` package.
+  // TODO: in principle, same trick is needed for `"use server"` package imported directly from client component.
+  // TODO: tree shake unused exports.
   clientPackages?: string[];
 }): Plugin[] {
   return [
@@ -286,23 +288,34 @@ export default function vitePluginRsc({
         return;
       },
     },
-    createVirtualPlugin("vite-rsc/ssr-assets", function () {
+    // TODO: this is available only for ssr and not rsc since rsc is built before client.
+    // (should be possible by externalizing browser manifest on build like import-entry virtual)
+    createVirtualPlugin("vite-rsc/server-assets", function () {
       assert(this.environment.name === "ssr");
 
-      let bootstrapModules: string[] = [];
+      const assets: ServerAssets = { js: [], css: [] };
       if (this.environment.mode === "dev") {
-        bootstrapModules = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
+        assets.js = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
+        if (entries.css) {
+          assets.css.push(entries.css);
+        }
       }
       if (this.environment.mode === "build") {
-        bootstrapModules = [
-          browserManifest["virtual:vite-rsc/browser-entry"]!.file,
-        ];
+        const entry = browserManifest["virtual:vite-rsc/browser-entry"]!;
+        assets.js = [`/${entry.file}`];
+        if (entry.css) {
+          assets.css = entry.css.map((file) => `/${file}`);
+        }
       }
-      return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
+      return `export default ${JSON.stringify(assets)};`;
     }),
     createVirtualPlugin("vite-rsc/browser-entry", function () {
+      let code = "";
+      if (entries.css) {
+        code += `import ${JSON.stringify(entries.css)};\n`;
+      }
       if (this.environment.mode === "dev") {
-        return `
+        code += `
           import RefreshRuntime from "/@react-refresh";
           RefreshRuntime.injectIntoGlobalHook(window);
           window.$RefreshReg$ = () => {};
@@ -311,10 +324,9 @@ export default function vitePluginRsc({
           await import(${JSON.stringify(entries.browser)});
         `;
       } else {
-        return `
-          import ${JSON.stringify(entries.browser)};
-        `;
+        code += `import ${JSON.stringify(entries.browser)};\n`;
       }
+      return code;
     }),
     {
       name: "patch-webpack",

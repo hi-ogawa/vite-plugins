@@ -9,6 +9,7 @@ import {
   createServerConsumerManifest,
   setRequireModule,
 } from "../core/client-ssr";
+import { importAssets } from "../ssr";
 import type { RscPayload } from "./server";
 import {
   createBufferedTransformStream,
@@ -49,6 +50,8 @@ export async function renderHtml({
 
   const [stream1, stream2] = stream.tee();
 
+  const assets = await importAssets();
+
   // flight deserialization needs to be kicked in inside SSR context
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
@@ -56,13 +59,20 @@ export async function renderHtml({
     payload ??= ReactClient.createFromReadableStream<RscPayload>(stream1, {
       serverConsumerManifest: createServerConsumerManifest(),
     });
-    return React.use(payload).root;
+    const root = React.use(payload).root;
+    const css = assets.css.map((href) => (
+      <link key={href} rel="stylesheet" href={href} precedence="high" />
+    ));
+    return (
+      <>
+        {root}
+        {css}
+      </>
+    );
   }
 
-  const ssrAssets = await import("virtual:vite-rsc/ssr-assets");
-
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: ssrAssets.bootstrapModules,
+    bootstrapModules: assets.js,
     // @ts-expect-error no types
     formState,
   });
