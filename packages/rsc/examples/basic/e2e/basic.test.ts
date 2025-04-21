@@ -103,8 +103,38 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
   ).toBeVisible();
 }
 
-// TODO
-test.skip("client reference update", () => {});
+test("client hmr @dev", async ({ page }) => {
+  await page.goto("/");
+  await waitForHydration(page);
+  await page.getByRole("button", { name: "Client Counter: 0" }).click();
+  await expect(
+    page.getByRole("button", { name: "Client Counter: 1" }),
+  ).toBeVisible();
+
+  using editor = createEditor("src/counter.tsx");
+  editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
+  await expect(
+    page.getByRole("button", { name: "Client [edit] Counter: 1" }),
+  ).toBeVisible();
+});
+
+test("server hmr @dev", async ({ page }) => {
+  await page.goto("/");
+  await waitForHydration(page);
+  await page.getByRole("button", { name: "Client Counter: 0" }).click();
+  await expect(
+    page.getByRole("button", { name: "Client Counter: 1" }),
+  ).toBeVisible();
+
+  using editor = createEditor("src/server.tsx");
+  editor.edit((s) => s.replace("Server Counter", "Server [edit] Counter"));
+  await expect(
+    page.getByRole("button", { name: "Server [edit] Counter: 0" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Client Counter: 1" }),
+  ).toBeVisible();
+});
 
 test("css @js", async ({ page }) => {
   await page.goto("/");

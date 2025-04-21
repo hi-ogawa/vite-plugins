@@ -14,7 +14,10 @@ function Document() {
       </head>
       <body>
         <h4>Test</h4>
-        <Hydrated />
+        <div>
+          <Hydrated />
+          <input data-testid="client-state" placeholder="client-state" />
+        </div>
         <ClientCounter />
         <form action={changeServerCounter}>
           <input type="hidden" name="change" value="1" />
