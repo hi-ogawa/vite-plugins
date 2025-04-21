@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import ReactClient from "react-server-dom-webpack/client.browser";
-import { initialize } from "../browser";
+import { initialize, setServerCallback } from "../browser";
+import * as ReactClient from "../react/browser";
 import type { CallServerCallback } from "../types";
 import type { RscPayload } from "./rsc";
 import { getRscScript } from "./utils/rsc-script";
@@ -32,13 +32,11 @@ export async function hydrate(options?: {
     setPayload(payload);
     return payload.returnValue;
   };
-  globalThis.__viteRscCallServer = callServer;
+  setServerCallback(callServer);
 
   async function onNavigation() {
     const url = new URL(window.location.href);
-    const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url), {
-      callServer,
-    });
+    const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url));
     setPayload(payload);
   }
 
@@ -48,9 +46,6 @@ export async function hydrate(options?: {
 
   const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(
     getRscScript(),
-    {
-      callServer,
-    },
   );
 
   let setPayload: (v: RscPayload) => void;
