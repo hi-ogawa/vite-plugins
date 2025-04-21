@@ -117,19 +117,18 @@ testNoJs("css @nojs", async ({ page }) => {
   await testCss(page);
 });
 
-async function testCss(page: Page) {
-  await expect(page.locator(".test-style-client")).toHaveCSS(
-    "color",
-    "rgb(255, 165, 0)",
-  );
-  await expect(page.locator(".test-style-server")).toHaveCSS(
-    "color",
-    "rgb(255, 165, 0)",
-  );
+async function testCss(page: Page, color = "rgb(255, 165, 0)") {
+  await expect(page.locator(".test-style-client")).toHaveCSS("color", color);
+  await expect(page.locator(".test-style-server")).toHaveCSS("color", color);
 }
 
-test("css hmr", async ({ page }) => {
+test("css hmr @dev", async ({ page }) => {
   await page.goto("/");
   await waitForHydration(page);
-  // TODO
+  await testCss(page);
+
+  await using _ = await createReloadChecker(page);
+  using editor = createEditor("src/styles.css");
+  editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
+  await testCss(page, "rgb(0, 165, 255)");
 });
