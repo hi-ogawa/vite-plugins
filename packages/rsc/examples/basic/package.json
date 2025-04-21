@@ -17,9 +17,11 @@
     "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.4",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
+    "tailwindcss": "^3.4.17",
     "vite": "latest"
   }
 }
