@@ -287,7 +287,8 @@ export default function vitePluginRsc({
         return;
       },
     },
-    createVirtualPlugin("vite-rsc/ssr-assets", function () {
+    // TODO: this is available only for ssr and not rsc since rsc is built before client.
+    createVirtualPlugin("vite-rsc/server-assets", function () {
       assert(this.environment.name === "ssr");
 
       let bootstrapModules: string[] = [];
@@ -302,8 +303,16 @@ export default function vitePluginRsc({
       return `export const bootstrapModules = ${JSON.stringify(bootstrapModules)}`;
     }),
     createVirtualPlugin("vite-rsc/browser-entry", function () {
+      let code = "";
+      if (entries.css) {
+        // TODO:
+        // ssr <link rel="stylesheet" href="/src/styles.css" precendence="high" />
+        // to avoid FOUC.
+        // client import is stil needed for HMR.
+        code += `import ${JSON.stringify(entries.css)};\n`;
+      }
       if (this.environment.mode === "dev") {
-        return `
+        code += `
           import RefreshRuntime from "/@react-refresh";
           RefreshRuntime.injectIntoGlobalHook(window);
           window.$RefreshReg$ = () => {};
@@ -312,10 +321,9 @@ export default function vitePluginRsc({
           await import(${JSON.stringify(entries.browser)});
         `;
       } else {
-        return `
-          import ${JSON.stringify(entries.browser)};
-        `;
+        code += `import ${JSON.stringify(entries.browser)};\n`;
       }
+      return code;
     }),
     {
       name: "patch-webpack",

@@ -9,6 +9,7 @@ import {
   createServerConsumerManifest,
   setRequireModule,
 } from "../core/client-ssr";
+import { importAssets } from "../ssr";
 import type { RscPayload } from "./server";
 import {
   createBufferedTransformStream,
@@ -59,10 +60,10 @@ export async function renderHtml({
     return React.use(payload).root;
   }
 
-  const ssrAssets = await import("virtual:vite-rsc/ssr-assets");
+  const assets = await importAssets();
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: ssrAssets.bootstrapModules,
+    bootstrapModules: assets.bootstrapModules,
     // @ts-expect-error no types
     formState,
   });

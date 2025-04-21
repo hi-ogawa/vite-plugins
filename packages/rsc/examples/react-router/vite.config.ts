@@ -15,6 +15,7 @@ export default defineConfig({
         browser: "/src/entry.browser.tsx",
         ssr: "/src/entry.ssr.tsx",
         rsc: "/src/entry.rsc.tsx",
+        css: "/src/styles.css",
       },
       clientPackages: ["react-router"],
     }),

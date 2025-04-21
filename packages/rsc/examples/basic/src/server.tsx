@@ -4,13 +4,15 @@ import {
   resetServerCounter,
   serverCounter,
 } from "./action";
-import { ClientCounter, Hydrated } from "./counter";
+import { ClientCounter, Hydrated, TestStyleClient } from "./counter";
 
 function Document() {
   return (
     <html>
       <head>
         <title>vite-rsc</title>
+        {/* TODO: automatic */}
+        {/* <link rel="stylesheet" href="/src/styles.css" /> */}
       </head>
       <body>
         <h4>Test</h4>
@@ -21,9 +23,15 @@ function Document() {
           <button>Server Counter: {serverCounter}</button>
           <button formAction={resetServerCounter}>Server Reset</button>
         </form>
+        <TestStyleClient />
+        <TestStyleServer />
       </body>
     </html>
   );
+}
+
+function TestStyleServer() {
+  return <div className="test-style-server">test-style-server</div>;
 }
 
 export default async function handler(request: Request): Promise<Response> {

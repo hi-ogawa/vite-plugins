@@ -1,4 +1,4 @@
-declare module "virtual:vite-rsc/ssr-assets" {
+declare module "virtual:vite-rsc/server-assets" {
   const bootstrapModules: string[];
   export { bootstrapModules };
 }

@@ -19,3 +19,7 @@ export function Hydrated() {
   );
   return <div data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</div>;
 }
+
+export function TestStyleClient() {
+  return <div className="test-style-client">test-style-client</div>;
+}
