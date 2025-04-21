@@ -26,7 +26,6 @@
     "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "vite": "latest"
