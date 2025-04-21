@@ -560,8 +560,8 @@ function vitePluginUseServer(): Plugin[] {
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "edge";
           output.prepend(`
-            import * as $$ReactClient from "react-server-dom-webpack/server.${name}";
-            const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)}, (...args) => __viteRscCallServer(...args))
+            import * as $$ReactClient from "${PKG_NAME}/${name}";
+            const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)})
           `);
           return { code: output.toString(), map: { mappings: "" } };
         }

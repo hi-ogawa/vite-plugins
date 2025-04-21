@@ -25,7 +25,7 @@ export function encodeReply(v: unknown[]): Promise<string | FormData> {
   return ReactClient.encodeReply(v);
 }
 
-export function createServerReference(id: string): any {
+export function createServerReference(id: string): unknown {
   return ReactClient.createServerReference(id, (...args) =>
     callServer(...args),
   );
