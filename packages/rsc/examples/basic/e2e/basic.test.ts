@@ -103,7 +103,7 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
   ).toBeVisible();
 }
 
-test.only("client hmr @dev", async ({ page }) => {
+test("client hmr @dev", async ({ page }) => {
   await page.goto("/");
   await waitForHydration(page);
   await page.getByRole("button", { name: "Client Counter: 0" }).click();
