@@ -7,7 +7,7 @@ import ReactDomServer from "react-dom/server.edge";
 import ReactClient from "react-server-dom-webpack/client.edge";
 import { createServerConsumerManifest, setRequireModule } from "../core/ssr";
 import { importAssets } from "../ssr";
-import type { RscPayload } from "./server";
+import type { RscPayload } from "./rsc";
 import {
   createBufferedTransformStream,
   injectRscScript,
