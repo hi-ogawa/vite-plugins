@@ -15,7 +15,6 @@ import {
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
-  isCSSRequest,
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
