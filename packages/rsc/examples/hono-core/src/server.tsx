@@ -1,4 +1,4 @@
-import { createClientManifest } from "@hiogawa/vite-rsc/core/server";
+import { createClientManifest } from "@hiogawa/vite-rsc/core/rsc";
 import { Hono } from "hono";
 // @ts-ignore
 import ReactServer from "react-server-dom-webpack/server.edge";
