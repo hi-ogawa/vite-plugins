@@ -21,7 +21,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^4.1.4",
     "vite": "latest"
   }
 }
