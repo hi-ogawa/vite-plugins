@@ -19,6 +19,7 @@ initialize();
 const routes: ServerRouteObject[] = [
   {
     id: "root",
+    path: "",
     lazy: () => import("./routes/root"),
     children: [
       {
