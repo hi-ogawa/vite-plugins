@@ -4,7 +4,12 @@ import {
   resetServerCounter,
   serverCounter,
 } from "./action";
-import { ClientCounter, Hydrated, TestStyleClient } from "./counter";
+import {
+  ClientCounter,
+  Hydrated,
+  TestStyleClient,
+  TestTailwindClient,
+} from "./counter";
 
 function Document() {
   return (
@@ -25,14 +30,12 @@ function Document() {
           <button formAction={resetServerCounter}>Server Reset</button>
         </form>
         <TestStyleClient />
-        <TestStyleServer />
+        <div className="test-style-server">test-style-server</div>
+        <TestTailwindClient />
+        <div className="test-tw-server text-red-500">test-tw-server</div>
       </body>
     </html>
   );
-}
-
-function TestStyleServer() {
-  return <div className="test-style-server">test-style-server</div>;
 }
 
 export default async function handler(request: Request): Promise<Response> {
