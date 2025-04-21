@@ -12,8 +12,8 @@ function Document() {
       <head>
         <title>vite-rsc</title>
       </head>
-      <body>
-        <h4>Test</h4>
+      <body className="flex flex-col gap-2 items-start p-2">
+        <h4 className="text-xl">Test</h4>
         <div>
           <Hydrated />
           <input data-testid="client-state" placeholder="client-state" />

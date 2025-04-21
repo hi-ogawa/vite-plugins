@@ -15,6 +15,7 @@ import {
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
+  isCSSRequest,
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
@@ -203,7 +204,7 @@ export default function vitePluginRsc({
           });
         };
       },
-      hotUpdate(ctx) {
+      async hotUpdate(ctx) {
         const ids = ctx.modules.map((mod) => mod.id).filter((v) => v !== null);
         if (ids.length === 0) return;
 
@@ -225,11 +226,15 @@ export default function vitePluginRsc({
             // Server files can be included in client module graph, for example,
             // when `addWatchFile` is used to track js files as style dependency (e.g. tailwind)
             // In this case, reload all importers (for css hmr), and return empty modules to avoid full-reload.
-            const rscEnv = ctx.server.environments["rsc"]!;
-            const mod = rscEnv.moduleGraph.getModuleById(ctx.file);
+            const env = ctx.server.environments.rsc!;
+            const mod = env.moduleGraph.getModuleById(ctx.file);
             if (mod) {
-              for (const m of mod.importers) {
-                this.environment.reloadModule(m);
+              for (const clientMod of ctx.modules) {
+                for (const importer of clientMod.importers) {
+                  if (importer.id && isCSSRequest(importer.id)) {
+                    await this.environment.reloadModule(importer);
+                  }
+                }
               }
               return [];
             }

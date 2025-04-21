@@ -7,3 +7,11 @@
 .test-style-client {
   color: rgb(255, 165, 0);
 }
+
+button {
+  @apply bg-gray-200 mx-1 px-2 border;
+}
+
+input {
+  @apply mx-1 px-2 border;
+}

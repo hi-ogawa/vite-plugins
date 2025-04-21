@@ -166,3 +166,11 @@ test("css hmr @dev", async ({ page }) => {
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await testCss(page, "rgb(0, 165, 255)");
 });
+
+test("tailwind", async ({ page }) => {
+  page;
+});
+
+test("tailwind hmr @dev", async ({ page }) => {
+  page;
+});
