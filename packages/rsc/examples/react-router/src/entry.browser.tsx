@@ -13,6 +13,7 @@ import * as ReactClient from "react-server-dom-webpack/client.browser";
 initialize({
   onHmrReload() {
     // TODO: refetch on server change?
+    window.location.reload();
   },
 });
 
