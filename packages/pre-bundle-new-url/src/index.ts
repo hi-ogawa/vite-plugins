@@ -15,7 +15,7 @@ export function vitePluginPreBundleNewUrl(options?: {
       return {
         optimizeDeps: {
           esbuildOptions: {
-            plugins: [esbuildPluginPreBundleNewUrl({ ...options })],
+            plugins: [esbuildPluginPreBundleNewUrl({ ...options }) as any],
           },
         },
       };
@@ -113,7 +113,7 @@ export function esbuildPluginPreBundleNewUrl({
                           debug,
                           buildChain: [...buildChain, absUrl],
                           buildPromiseMap: buildPromiseMap,
-                        }),
+                        }) as any,
                       ],
                     });
                     buildPromiseMap.set(absUrl, bundlePromise);
