@@ -19,7 +19,7 @@ export default function ServerComponent({ loaderData }: Route.ComponentProps) {
         <h1>Home</h1>
         <p>This is the home page.</p>
         <pre>
-          <code>{JSON.stringify(loaderData)}</code>
+          <code>loaderData: {JSON.stringify(loaderData)}</code>
         </pre>
         <h2>Server Action</h2>
         <form
