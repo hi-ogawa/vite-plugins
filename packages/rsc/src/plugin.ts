@@ -42,10 +42,11 @@ export default function vitePluginRsc({
     browser: string;
     rsc: string;
     ssr: string;
+    css?: string;
   };
   // TODO: this can be heuristically cralwed from package.json.
-  // TODO: this cannot tree shake unused exports.
-  // TODO: in principle, same trick is needed from `"use server"` package.
+  // TODO: in principle, same trick is needed for `"use server"` package imported directly from client component.
+  // TODO: tree shake unused exports.
   clientPackages?: string[];
 }): Plugin[] {
   return [
