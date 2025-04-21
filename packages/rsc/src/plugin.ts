@@ -15,6 +15,7 @@ import {
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
+  isCSSRequest,
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
@@ -203,23 +204,39 @@ export default function vitePluginRsc({
           });
         };
       },
-      hotUpdate(ctx) {
-        if (this.environment.name === "rsc") {
-          const cliendIds = new Set(Object.values(clientReferences));
-          const ids = ctx.modules
-            .map((mod) => mod.id)
-            .filter((v) => v !== null);
-          if (ids.length > 0) {
-            // client reference id is also in react server module graph,
-            // but we skip RSC HMR for this case since Client HMR handles it.
-            if (!ids.some((id) => cliendIds.has(id))) {
-              ctx.server.environments.client.hot.send({
-                type: "custom",
-                event: "rsc:update",
-                data: {
-                  file: ctx.file,
-                },
-              });
+      async hotUpdate(ctx) {
+        const ids = ctx.modules.map((mod) => mod.id).filter((v) => v !== null);
+        if (ids.length === 0) return;
+
+        const cliendIds = new Set(Object.values(clientReferences));
+        const isClientReference = ids.some((id) => cliendIds.has(id));
+        if (!isClientReference) {
+          if (this.environment.name === "rsc") {
+            // server hmr
+            ctx.server.environments.client.hot.send({
+              type: "custom",
+              event: "rsc:update",
+              data: {
+                file: ctx.file,
+              },
+            });
+          }
+
+          if (this.environment.name === "client") {
+            // Server files can be included in client module graph, for example,
+            // when `addWatchFile` is used to track js files as style dependency (e.g. tailwind)
+            // In this case, reload all importers (for css hmr), and return empty modules to avoid full-reload.
+            const env = ctx.server.environments.rsc!;
+            const mod = env.moduleGraph.getModuleById(ctx.file);
+            if (mod) {
+              for (const clientMod of ctx.modules) {
+                for (const importer of clientMod.importers) {
+                  if (importer.id && isCSSRequest(importer.id)) {
+                    await this.environment.reloadModule(importer);
+                  }
+                }
+              }
+              return [];
             }
           }
         }

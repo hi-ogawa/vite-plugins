@@ -14,13 +14,16 @@
     "@hiogawa/vite-rsc": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-server-dom-webpack": "latest",
-    "react-router": "0.0.0-experimental-3b3f4b74e"
+    "react-router": "0.0.0-experimental-3b3f4b74e",
+    "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.1.4",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
+    "tailwindcss": "^4.1.4",
     "vite": "latest"
   }
 }

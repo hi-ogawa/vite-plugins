@@ -1,6 +1,6 @@
 import { Link, Outlet } from "react-router";
 import { TestClientState, TestHydrated } from "./client";
-import { DumpError } from "./root.error";
+import { DumpError, GlobalNavigationLoadingBar } from "./root.client";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   console.log("Layout");
@@ -12,21 +12,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <title>React Router Vite</title>
       </head>
       <body>
-        <header>
-          <nav>
-            <ul>
-              <li>
+        <header className="container px-8 my-8 mx-auto">
+          <nav className="paper paper-border">
+            <ul className="flex gap-4 flex-wrap">
+              <li className="flex gap-4 not-last:after:block not-last:after:content-['|']">
                 <Link to="/">Home</Link>
               </li>
-              <li>
+              <li className="flex gap-4 not-last:after:block">
                 <Link to="/about">About</Link>
+              </li>
+              <li className="flex-1"></li>
+              <li className="flex items-center gap-2 text-gray-500">
+                <TestHydrated />
+                <TestClientState />
               </li>
             </ul>
           </nav>
         </header>
-        <TestHydrated />
-        <TestClientState />
-        <div className="test-style">test-style</div>
+        <GlobalNavigationLoadingBar />
         {children}
       </body>
     </html>

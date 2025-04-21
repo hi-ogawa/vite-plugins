@@ -116,6 +116,10 @@ test("client hmr @dev", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Client [edit] Counter: 1" }),
   ).toBeVisible();
+
+  // check next ssr is also updated
+  const res = await page.goto("/");
+  expect(await res?.text()).toContain("Client [edit] Counter");
 });
 
 test("server hmr @dev", async ({ page }) => {
@@ -161,4 +165,50 @@ test("css hmr @dev", async ({ page }) => {
   using editor = createEditor("src/styles.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await testCss(page, "rgb(0, 165, 255)");
+});
+
+test("tailwind @js", async ({ page }) => {
+  await page.goto("/");
+  await waitForHydration(page);
+  await testTailwind(page);
+});
+
+testNoJs("tailwind @nojs", async ({ page }) => {
+  await page.goto("/");
+  await testTailwind(page);
+});
+
+async function testTailwind(page: Page) {
+  await expect(page.locator(".test-tw-client")).toHaveCSS(
+    "color",
+    // blue-500
+    "oklch(0.623 0.214 259.815)",
+  );
+  await expect(page.locator(".test-tw-server")).toHaveCSS(
+    "color",
+    // red-500
+    "oklch(0.637 0.237 25.331)",
+  );
+}
+
+test("tailwind hmr @dev", async ({ page }) => {
+  await page.goto("/");
+  await waitForHydration(page);
+  await testTailwind(page);
+
+  await using _ = await createReloadChecker(page);
+
+  using clientFile = createEditor("src/counter.tsx");
+  clientFile.edit((s) => s.replaceAll("text-blue-500", "text-blue-600"));
+  await expect(page.locator(".test-tw-client")).toHaveCSS(
+    "color",
+    "oklch(0.546 0.245 262.881)",
+  );
+
+  using serverFile = createEditor("src/server.tsx");
+  serverFile.edit((s) => s.replaceAll("text-red-500", "text-red-600"));
+  await expect(page.locator(".test-tw-server")).toHaveCSS(
+    "color",
+    "oklch(0.577 0.245 27.325)",
+  );
 });

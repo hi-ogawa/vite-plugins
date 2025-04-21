@@ -1,10 +1,13 @@
 import rsc from "@hiogawa/vite-rsc/plugin";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import Inspect from "vite-plugin-inspect";
 
 export default defineConfig({
   clearScreen: false,
   plugins: [
+    tailwindcss(),
     react(),
     rsc({
       entries: {
@@ -14,6 +17,7 @@ export default defineConfig({
         css: "/src/styles.css",
       },
     }),
+    Inspect(),
   ],
   build: {
     minify: false,

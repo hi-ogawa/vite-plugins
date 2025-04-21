@@ -23,3 +23,7 @@ export function Hydrated() {
 export function TestStyleClient() {
   return <div className="test-style-client">test-style-client</div>;
 }
+
+export function TestTailwindClient() {
+  return <div className="test-tw-client text-blue-500">test-tw-client</div>;
+}

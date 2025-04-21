@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("loader", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText("loaderData: hello, world")).toBeVisible();
+  await expect(page.getByText(`loaderData: {"name":"Unknown"}`)).toBeVisible();
 });
 
 test("client", async ({ page }) => {

@@ -4,7 +4,12 @@ import {
   resetServerCounter,
   serverCounter,
 } from "./action";
-import { ClientCounter, Hydrated, TestStyleClient } from "./counter";
+import {
+  ClientCounter,
+  Hydrated,
+  TestStyleClient,
+  TestTailwindClient,
+} from "./counter";
 
 function Document() {
   return (
@@ -12,8 +17,8 @@ function Document() {
       <head>
         <title>vite-rsc</title>
       </head>
-      <body>
-        <h4>Test</h4>
+      <body className="flex flex-col gap-2 items-start p-2">
+        <h4 className="text-xl">Test</h4>
         <div>
           <Hydrated />
           <input data-testid="client-state" placeholder="client-state" />
@@ -25,14 +30,12 @@ function Document() {
           <button formAction={resetServerCounter}>Server Reset</button>
         </form>
         <TestStyleClient />
-        <TestStyleServer />
+        <div className="test-style-server">test-style-server</div>
+        <TestTailwindClient />
+        <div className="test-tw-server text-red-500">test-tw-server</div>
       </body>
     </html>
   );
-}
-
-function TestStyleServer() {
-  return <div className="test-style-server">test-style-server</div>;
 }
 
 export default async function handler(request: Request): Promise<Response> {

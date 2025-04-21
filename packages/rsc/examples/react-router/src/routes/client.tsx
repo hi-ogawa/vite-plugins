@@ -8,13 +8,15 @@ export function TestHydrated() {
     () => true,
     () => false,
   );
-  return <div data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</div>;
+  return <span data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</span>;
 }
 
 export function TestClientState() {
   return (
-    <div>
-      <input data-testid="client-state" placeholder="client-state" />
-    </div>
+    <input
+      className="input py-0"
+      data-testid="client-state"
+      placeholder="client-state"
+    />
   );
 }
