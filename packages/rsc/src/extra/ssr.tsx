@@ -50,6 +50,8 @@ export async function renderHtml({
 
   const [stream1, stream2] = stream.tee();
 
+  const assets = await importAssets();
+
   // flight deserialization needs to be kicked in inside SSR context
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
@@ -57,13 +59,20 @@ export async function renderHtml({
     payload ??= ReactClient.createFromReadableStream<RscPayload>(stream1, {
       serverConsumerManifest: createServerConsumerManifest(),
     });
-    return React.use(payload).root;
+    const root = React.use(payload).root;
+    const css = assets.css.map((href) => (
+      <link key={href} rel="stylesheet" href={href} precedence="high" />
+    ));
+    return (
+      <>
+        {root}
+        {css}
+      </>
+    );
   }
 
-  const assets = await importAssets();
-
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: assets.bootstrapModules,
+    bootstrapModules: assets.js,
     // @ts-expect-error no types
     formState,
   });

@@ -1,4 +1,5 @@
 import { setRequireModule } from "./core/client-ssr";
+import type { ServerAssets } from "./types";
 
 export { createServerConsumerManifest } from "./core/client-ssr";
 
@@ -30,9 +31,7 @@ export async function importRsc<T>(): Promise<T> {
   }
 }
 
-export async function importAssets(): Promise<{
-  bootstrapModules: string[];
-}> {
+export async function importAssets(): Promise<ServerAssets> {
   const mod = await import("virtual:vite-rsc/server-assets");
-  return mod;
+  return mod.default;
 }

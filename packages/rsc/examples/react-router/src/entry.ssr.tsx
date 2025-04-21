@@ -28,7 +28,7 @@ export default async function handler(
       ReactDomServer.renderToReadableStream(
         <RSCStaticRouter payload={payload} />,
         {
-          bootstrapModules: assets.bootstrapModules,
+          bootstrapModules: assets.js,
         },
       ),
   );

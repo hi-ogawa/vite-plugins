@@ -30,3 +30,8 @@ declare global {
   var __viteRscSsrRunner: import("vite/module-runner").ModuleRunner;
   var __viteRscCallServer: CallServerCallback;
 }
+
+export type ServerAssets = {
+  js: string[];
+  css: string[];
+};
