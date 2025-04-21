@@ -4,7 +4,7 @@ import {
   createClientManifest,
   createServerManifest,
   loadServerAction,
-} from "../core/server";
+} from "../core/rsc";
 import { importSsr, initialize } from "../rsc";
 
 export type RscPayload = {
