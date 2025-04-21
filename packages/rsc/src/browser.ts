@@ -1,4 +1,4 @@
-import { setRequireModule } from "./core/client-browser";
+import { setRequireModule } from "./core/browser";
 
 export function initialize(options?: {
   onHmrReload?: () => void;

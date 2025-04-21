@@ -1,10 +1,10 @@
-import { setRequireModule } from "./core/server";
+import { setRequireModule } from "./core/rsc";
 
 export {
   createClientManifest,
   createServerManifest,
   loadServerAction,
-} from "./core/server";
+} from "./core/rsc";
 
 export function initialize(): void {
   setRequireModule({

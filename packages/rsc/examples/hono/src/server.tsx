@@ -1,4 +1,4 @@
-import { renderRequest } from "@hiogawa/vite-rsc/extra/server";
+import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Hono } from "hono";
 
 const app = new Hono();

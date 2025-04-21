@@ -3,7 +3,7 @@ import ReactDomClient from "react-dom/client";
 import ReactClient from "react-server-dom-webpack/client.browser";
 import { initialize } from "../browser";
 import type { CallServerCallback } from "../types";
-import type { RscPayload } from "./server";
+import type { RscPayload } from "./rsc";
 import { getRscScript } from "./utils/rsc-script";
 
 export async function hydrate(options?: {

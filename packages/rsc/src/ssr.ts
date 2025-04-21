@@ -1,7 +1,7 @@
-import { setRequireModule } from "./core/client-ssr";
+import { setRequireModule } from "./core/ssr";
 import type { ServerAssets } from "./types";
 
-export { createServerConsumerManifest } from "./core/client-ssr";
+export { createServerConsumerManifest } from "./core/ssr";
 
 export function initialize(): void {
   setRequireModule({
