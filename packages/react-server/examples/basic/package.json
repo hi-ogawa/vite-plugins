@@ -46,7 +46,7 @@
     "@hiogawa/vite-plugin-ssr-middleware": "latest",
     "@iconify-json/ri": "^1.2.5",
     "@mdx-js/rollup": "^3.1.0",
-    "@playwright/test": "^1.50.1",
+    "@playwright/test": "latest",
     "@types/mdx": "^2.0.13",
     "@types/react": "latest",
     "@types/react-dom": "latest",
