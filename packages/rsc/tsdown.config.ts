@@ -6,6 +6,7 @@ export default defineConfig({
     "src/browser.ts",
     "src/ssr.ts",
     "src/rsc.ts",
+    "src/vite-utils.ts",
     "src/core/browser.ts",
     "src/core/ssr.ts",
     "src/core/rsc.ts",

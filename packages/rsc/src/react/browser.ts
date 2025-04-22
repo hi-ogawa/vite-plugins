@@ -2,6 +2,8 @@
 import * as ReactClient from "react-server-dom-webpack/client.browser";
 import type { CallServerCallback } from "../types";
 
+export { setRequireModule } from "../core/browser";
+
 export function createFromReadableStream<T>(
   stream: ReadableStream<Uint8Array>,
   options: object = {},

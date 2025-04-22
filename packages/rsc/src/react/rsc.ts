@@ -3,6 +3,8 @@ import type { ReactFormState } from "react-dom/client";
 import * as ReactServer from "react-server-dom-webpack/server.edge";
 import { createClientManifest, createServerManifest } from "../core/rsc";
 
+export { loadServerAction, setRequireModule } from "../core/rsc";
+
 export function renderToReadableStream<T>(
   data: T,
   options?: object,
@@ -31,7 +33,7 @@ export function registerServerReference<T>(
 }
 
 export function decodeReply(body: string | FormData): Promise<unknown[]> {
-  return ReactServer.decodeReply(body);
+  return ReactServer.decodeReply(body, createServerManifest());
 }
 
 export function decodeAction(body: FormData): Promise<() => Promise<void>> {
