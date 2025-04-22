@@ -4,6 +4,7 @@ import {
   SERVER_REFERENCE_PREFIX,
   createReferenceCacheTag,
   removeReferenceCacheTag,
+  setServerWebpackRequire,
 } from "./shared";
 
 let init = false;
@@ -20,16 +21,9 @@ export function setRequireModule(options: {
   };
 
   // need memoize to return stable promise from __webpack_require__
-  const viteRscServerRequire = memoize(requireModule);
+  (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
 
-  // branch client and server require when ssr and rsc share same global
-  (globalThis as any).__webpack_require__ = (id: string) => {
-    if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
-      id = id.slice(SERVER_REFERENCE_PREFIX.length);
-      return viteRscServerRequire(id);
-    }
-    return (globalThis as any).__vite_rsc_client_require__(id);
-  };
+  setServerWebpackRequire();
 }
 
 export async function loadServerAction(id: string): Promise<Function> {
