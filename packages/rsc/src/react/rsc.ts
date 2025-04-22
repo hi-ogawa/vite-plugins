@@ -1,7 +1,7 @@
 import type { ReactFormState } from "react-dom/client";
 // @ts-ignore
 import * as ReactServer from "react-server-dom-webpack/server.edge";
-import { createClientManifest, createServerManifest } from "../rsc";
+import { createClientManifest, createServerManifest } from "../core/rsc";
 
 export function renderToReadableStream<T>(
   data: T,
