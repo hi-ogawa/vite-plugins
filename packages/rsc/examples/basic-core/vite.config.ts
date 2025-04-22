@@ -1,5 +1,4 @@
 import rscCore from "@hiogawa/vite-rsc/core/plugin";
-import { normalizeViteImportAnalysisUrl } from "@hiogawa/vite-rsc/vite-utils";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
   type RunnableDevEnvironment,
@@ -53,7 +52,6 @@ export default defineConfig({
               ...code.matchAll(/export function (\w+)\(/g),
               ...code.matchAll(/export (default) (function|class) /g),
             ];
-            id = normalizeViteImportAnalysisUrl(server.environments.client, id);
             const result = [
               `import * as $$ReactServer from "@hiogawa/vite-rsc/react/rsc"`,
               ...[...matches].map(

@@ -7,7 +7,6 @@ import { injectRSCPayload } from "rsc-html-stream/server";
 export async function renderHtml({ stream }: { stream: ReadableStream }) {
   ReactClient.setRequireModule({
     load(id) {
-      // console.log("[ReactClient.load]", id);
       return import(/* @vite-ignore */ id);
     },
   });
