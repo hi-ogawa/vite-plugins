@@ -20,6 +20,7 @@ import {
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
+import vitePluginRscCore from "./core/plugin";
 import type { ServerAssets } from "./types";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
@@ -384,6 +385,7 @@ export default function vitePluginRsc({
         return "";
       },
     },
+    ...vitePluginRscCore(),
     ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     vitePluginSilenceDirectiveBuildWarning(),
