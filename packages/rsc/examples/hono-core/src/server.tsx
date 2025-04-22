@@ -1,7 +1,5 @@
-import { createClientManifest } from "@hiogawa/vite-rsc/core/rsc";
+import { renderToReadableStream } from "@hiogawa/vite-rsc/react/rsc";
 import { Hono } from "hono";
-// @ts-ignore
-import ReactServer from "react-server-dom-webpack/server.edge";
 
 const app = new Hono();
 
@@ -16,10 +14,7 @@ app.get("/api/rsc", () => {
 });
 
 function renderRsc(value: unknown) {
-  const stream = ReactServer.renderToReadableStream(
-    value,
-    createClientManifest(),
-  );
+  const stream = renderToReadableStream(value);
   return new Response(stream, {
     headers: {
       "content-type": "text/x-component;charset=utf-8",

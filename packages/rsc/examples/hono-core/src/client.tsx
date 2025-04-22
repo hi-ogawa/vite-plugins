@@ -1,7 +1,6 @@
+import { createFromFetch } from "@hiogawa/vite-rsc/react/browser";
 import React from "react";
 import ReactDOM from "react-dom/client";
-// @ts-ignore
-import ReactClient from "react-server-dom-webpack/client.browser";
 
 function main() {
   const dom = document.getElementById("root")!;
@@ -24,7 +23,7 @@ function FetchRsc() {
     <div>
       <button
         onClick={async () => {
-          const rsc = await ReactClient.createFromFetch(fetch("/api/rsc"));
+          const rsc = await createFromFetch<React.ReactNode>(fetch("/api/rsc"));
           setRsc(rsc);
         }}
       >
