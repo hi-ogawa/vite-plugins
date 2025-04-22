@@ -10,6 +10,11 @@ function main() {
     },
   });
 
+  ReactClient.setServerCallback((id, args) => {
+    id;
+    args;
+  });
+
   let payload: Promise<React.ReactNode>;
   function BrowserRoot() {
     payload ??= ReactClient.createFromReadableStream(rscStream);

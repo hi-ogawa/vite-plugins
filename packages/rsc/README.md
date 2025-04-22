@@ -5,6 +5,7 @@ Vite RSC plugin without framework. See https://github.com/hi-ogawa/vite-plugins/
 ## examples
 
 - [`./examples/basic`](./examples/basic)
+- [`./examples/basic-core`](./examples/basic-core)
 - [`./examples/react-router`](./examples/react-router)
 
 ## high level API
@@ -25,4 +26,4 @@ Low level API is mostly consumed internally by high level API, but they can be u
 - `@hiogawa/vite-rsc/core/{plugin,browser,ssr,rsc}`
   - workaround to make async module loading with dev invalidation work with `react-server-dom-webpack`
 
-See https://github.com/hi-ogawa/vite-plugins/pull/751 for the example of migrating from direct `react-server-dom-webpack` usage.
+See [`./examples/basic-core`](./examples/basic-core) for the usage. See https://github.com/hi-ogawa/vite-plugins/pull/751 for the example of migrating from direct `react-server-dom-webpack` usage.

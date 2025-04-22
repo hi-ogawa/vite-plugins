@@ -64,6 +64,36 @@ export default defineConfig({
         }
       },
     },
+    {
+      name: "use-server-transform",
+      transform(code, id) {
+        if (/^(("use server")|('use server'))/.test(code)) {
+          if (this.environment.name === "rsc") {
+            const matches = code.matchAll(/export async function (\w+)\(/g);
+            const result = [
+              code,
+              `import * as $$ReactServer from "@hiogawa/vite-rsc/react/rsc"`,
+              ...[...matches].map(
+                ([, name]) =>
+                  `${name} = $$ReactServer.registerServerReference(${name}, ${JSON.stringify(id)}, ${JSON.stringify(name)})`,
+              ),
+            ].join(";\n");
+            return { code: result, map: null };
+          } else {
+            const matches = code.matchAll(/export async function (\w+)\(/g);
+            const name = this.environment.name === "client" ? "browser" : "ssr";
+            const result = [
+              `import $$ReactClient from "@hiogawa/vite-rsc/react/${name}"`,
+              ...[...matches].map(
+                ([, name]) =>
+                  `export const ${name} = $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)})`,
+              ),
+            ].join(";\n");
+            return { code: result, map: null };
+          }
+        }
+      },
+    },
   ],
   environments: {
     rsc: {
