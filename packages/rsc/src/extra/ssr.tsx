@@ -4,9 +4,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
-import ReactClient from "react-server-dom-webpack/client.edge";
-import { createServerConsumerManifest, setRequireModule } from "../core/ssr";
-import { importAssets } from "../ssr";
+import { setRequireModule } from "../core/ssr";
+import { createFromReadableStream, importAssets } from "../ssr";
 import type { RscPayload } from "./rsc";
 import {
   createBufferedTransformStream,
@@ -53,9 +52,7 @@ export async function renderHtml({
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
   function SsrRoot() {
-    payload ??= ReactClient.createFromReadableStream<RscPayload>(stream1, {
-      serverConsumerManifest: createServerConsumerManifest(),
-    });
+    payload ??= createFromReadableStream<RscPayload>(stream1);
     const root = React.use(payload).root;
     const css = assets.css.map((href) => (
       <link key={href} rel="stylesheet" href={href} precedence="high" />

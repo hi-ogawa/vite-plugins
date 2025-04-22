@@ -1,0 +1,17 @@
+// @ts-ignore
+import * as ReactClient from "react-server-dom-webpack/client.edge";
+import { createServerConsumerManifest } from "../core/ssr";
+
+export function createFromReadableStream<T>(
+  stream: ReadableStream<Uint8Array>,
+  options: object = {},
+): Promise<T> {
+  return ReactClient.createFromReadableStream(stream, {
+    serverConsumerManifest: createServerConsumerManifest(),
+    ...options,
+  });
+}
+
+export function createServerReference(id: string): unknown {
+  return ReactClient.createServerReference(id);
+}

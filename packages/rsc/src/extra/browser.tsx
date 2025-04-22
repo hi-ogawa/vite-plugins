@@ -1,8 +1,13 @@
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import ReactClient from "react-server-dom-webpack/client.browser";
-import { initialize } from "../browser";
-import type { CallServerCallback } from "../types";
+import {
+  type CallServerCallback,
+  createFromFetch,
+  createFromReadableStream,
+  encodeReply,
+  initialize,
+  setServerCallback,
+} from "../browser";
 import type { RscPayload } from "./rsc";
 import { getRscScript } from "./utils/rsc-script";
 
@@ -19,26 +24,23 @@ export async function hydrate(options?: {
 
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
-    const payload = await ReactClient.createFromFetch<RscPayload>(
+    const payload = await createFromFetch<RscPayload>(
       fetch(url, {
         method: "POST",
-        body: await ReactClient.encodeReply(args),
+        body: await encodeReply(args),
         headers: {
           "x-rsc-action": id,
         },
       }),
-      { callServer },
     );
     setPayload(payload);
     return payload.returnValue;
   };
-  globalThis.__viteRscCallServer = callServer;
+  setServerCallback(callServer);
 
   async function onNavigation() {
     const url = new URL(window.location.href);
-    const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url), {
-      callServer,
-    });
+    const payload = await createFromFetch<RscPayload>(fetch(url));
     setPayload(payload);
   }
 
@@ -46,11 +48,8 @@ export async function hydrate(options?: {
     return;
   }
 
-  const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(
+  const initialPayload = await createFromReadableStream<RscPayload>(
     getRscScript(),
-    {
-      callServer,
-    },
   );
 
   let setPayload: (v: RscPayload) => void;
@@ -77,10 +76,7 @@ export async function hydrate(options?: {
 export async function fetchRSC(
   request: string | URL | Request,
 ): Promise<RscPayload["root"]> {
-  const payload = await ReactClient.createFromFetch<RscPayload>(
-    fetch(request),
-    {},
-  );
+  const payload = await createFromFetch<RscPayload>(fetch(request));
   return payload.root;
 }
 

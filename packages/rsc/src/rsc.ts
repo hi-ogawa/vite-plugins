@@ -6,6 +6,8 @@ export {
   loadServerAction,
 } from "./core/rsc";
 
+export * from "./react/rsc";
+
 export function initialize(): void {
   setRequireModule({
     load: async (id) => {

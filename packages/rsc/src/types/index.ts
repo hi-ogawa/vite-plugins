@@ -1,3 +1,5 @@
+import type { ModuleRunner } from "vite/module-runner";
+
 export interface ImportManifestEntry {
   id: string;
   name: string;
@@ -27,7 +29,7 @@ export interface ServerConsumerManifest {
 export type CallServerCallback = (id: string, args: unknown[]) => unknown;
 
 declare global {
-  var __viteRscSsrRunner: import("vite/module-runner").ModuleRunner;
+  var __viteRscSsrRunner: ModuleRunner;
   var __viteRscCallServer: CallServerCallback;
 }
 

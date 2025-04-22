@@ -1,5 +1,7 @@
 import { setRequireModule } from "./core/browser";
 
+export * from "./react/browser";
+
 export function initialize(options?: {
   onHmrReload?: () => void;
 }): void {
@@ -26,8 +28,4 @@ export function initialize(options?: {
       options?.onHmrReload?.();
     });
   }
-}
-
-export function setServerCallback(fn: any): void {
-  globalThis.__viteRscCallServer = fn;
 }

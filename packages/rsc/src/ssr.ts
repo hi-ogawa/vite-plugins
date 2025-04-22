@@ -3,6 +3,8 @@ import type { ServerAssets } from "./types";
 
 export { createServerConsumerManifest } from "./core/ssr";
 
+export * from "./react/ssr";
+
 export function initialize(): void {
   setRequireModule({
     load: async (id) => {

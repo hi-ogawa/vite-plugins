@@ -1,9 +1,10 @@
 import {
-  createClientManifest,
-  createServerManifest,
+  decodeAction,
+  decodeReply,
   importSsr,
   initialize,
   loadServerAction,
+  renderToReadableStream,
 } from "@hiogawa/vite-rsc/rsc";
 import {
   type DecodeCallServerFunction,
@@ -11,8 +12,6 @@ import {
   type ServerRouteObject,
   matchRSCServerRequest,
 } from "react-router/rsc";
-// @ts-ignore
-import * as ReactServer from "react-server-dom-webpack/server.edge";
 
 initialize();
 
@@ -36,13 +35,13 @@ const routes: ServerRouteObject[] = [
 ];
 
 const decodeCallServer: DecodeCallServerFunction = async (actionId, reply) => {
-  const args = await ReactServer.decodeReply(reply);
+  const args = await decodeReply(reply);
   const action = await loadServerAction(actionId);
   return action.bind(null, ...args);
 };
 
 const decodeFormAction: DecodeFormActionFunction = async (formData) => {
-  return await ReactServer.decodeAction(formData, createServerManifest());
+  return await decodeAction(formData);
 };
 
 async function callServer(request: Request) {
@@ -53,13 +52,10 @@ async function callServer(request: Request) {
     routes,
   });
 
-  return new Response(
-    ReactServer.renderToReadableStream(match.payload, createClientManifest()),
-    {
-      status: match.statusCode,
-      headers: match.headers,
-    },
-  );
+  return new Response(renderToReadableStream(match.payload), {
+    status: match.statusCode,
+    headers: match.headers,
+  });
 }
 
 export default async function handler(requrest: Request) {

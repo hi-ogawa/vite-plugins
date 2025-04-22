@@ -1,11 +1,13 @@
 import type { ReactFormState } from "react-dom/client";
-import ReactServer from "react-server-dom-webpack/server.edge";
 import {
-  createClientManifest,
-  createServerManifest,
+  decodeAction,
+  decodeFormState,
+  decodeReply,
+  importSsr,
+  initialize,
   loadServerAction,
-} from "../core/rsc";
-import { importSsr, initialize } from "../rsc";
+  renderToReadableStream,
+} from "../rsc";
 
 export type RscPayload = {
   root: React.ReactNode;
@@ -39,25 +41,23 @@ export async function renderRequest(
       const body = contentType?.startsWith("multipart/form-data")
         ? await request.formData()
         : await request.text();
-      const args = await ReactServer.decodeReply(body);
+      const args = await decodeReply(body);
       const action = await loadServerAction(actionId);
       returnValue = await action.apply(null, args);
     } else {
       // progressive enhancement
       const formData = await request.formData();
-      const decodedAction = await ReactServer.decodeAction(
-        formData,
-        createServerManifest(),
-      );
+      const decodedAction = await decodeAction(formData);
       const result = await decodedAction();
-      formState = await ReactServer.decodeFormState(result, formData);
+      formState = await decodeFormState(result, formData);
     }
   }
 
-  const stream = ReactServer.renderToReadableStream<RscPayload>(
-    { root, formState, returnValue },
-    createClientManifest(),
-  );
+  const stream = renderToReadableStream<RscPayload>({
+    root,
+    formState,
+    returnValue,
+  });
 
   if (isRscRequest) {
     return new Response(stream, {
