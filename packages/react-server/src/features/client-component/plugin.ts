@@ -1,11 +1,11 @@
 import fs from "node:fs";
-import nodePath from "node:path";
 import {
   getExportNames,
   transformDirectiveProxyExport,
 } from "@hiogawa/transforms";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { type Plugin, type ViteDevServer, parseAstAsync } from "vite";
+import { normalizeViteImportAnalysisUrl } from "@hiogawa/vite-rsc/vite-utils";
+import { type Plugin, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
   type CustomModuleMeta,
@@ -114,12 +114,15 @@ export function vitePluginServerUseClient({
     },
   };
 
-  async function normalizeId(id: string) {
+  function normalizeId(id: string) {
     if (!manager.buildType) {
       // normalize client reference during dev
       // to align with Vite's import analysis
       tinyassert(manager.server);
-      return await noramlizeClientReferenceId(id, manager.server);
+      return normalizeViteImportAnalysisUrl(
+        manager.server.environments.client,
+        id,
+      );
     } else {
       // obfuscate reference
       return manager.normalizeReferenceId(id);
@@ -143,7 +146,7 @@ export function vitePluginServerUseClient({
       if (!code.includes(USE_CLIENT)) {
         return;
       }
-      const clientId = await normalizeId(id);
+      const clientId = normalizeId(id);
       const ast = await parseAstAsync(code);
       const output = await transformDirectiveProxyExport(ast, {
         directive: USE_CLIENT,
@@ -219,30 +222,6 @@ export function vitePluginServerUseClient({
     scanStripPlugin,
     patchBrowserRawImport(),
   ];
-}
-
-// Apply same noramlizaion as Vite's dev import analysis
-// to avoid dual package with "/xyz" and "/@fs/xyz" for example.
-// https://github.com/vitejs/vite/blob/0c0aeaeb3f12d2cdc3c47557da209416c8d48fb7/packages/vite/src/node/plugins/importAnalysis.ts#L327-L399
-export async function noramlizeClientReferenceId(
-  id: string,
-  parentServer: ViteDevServer,
-) {
-  const root = parentServer.config.root;
-  if (id.startsWith(root)) {
-    id = id.slice(root.length);
-  } else if (nodePath.isAbsolute(id)) {
-    id = "/@fs" + id;
-  } else {
-    id = wrapId(id);
-  }
-  // this is needed only for browser, so we'll strip it off
-  // during ssr client reference import
-  const mod = await parentServer.moduleGraph.getModuleByUrl(id);
-  if (mod && mod.lastHMRTimestamp > 0) {
-    id += `?t=${mod.lastHMRTimestamp}`;
-  }
-  return id;
 }
 
 function wrapId(id: string) {
