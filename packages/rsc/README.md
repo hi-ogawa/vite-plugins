@@ -20,7 +20,9 @@ Vite RSC plugin without framework. See https://github.com/hi-ogawa/vite-plugins/
 
 Low level API is mostly consumed internally by high level API, but they can be used when writing own plugins. My plan is to propose `react-server-dom-vite` with mostly same runtime API without the need of plugin.
 
-- `@hiogawa/vite-rsc/core/{plugin,browser,ssr,rsc}`
-  - workaround to make async module loading with dev invalidation work on top of `react-server-dom-webpack`
 - `@hiogawa/vite-rsc/react/{browser,ssr,rsc}`
-  - re-export of `react-server-dom-webpack` API with pre-defined options (e.g. manifest and call server) to work with `core`
+  - re-export of react-server-dom-webpack API with prescribed options (e.g. manifest, call server)
+- `@hiogawa/vite-rsc/core/{plugin,browser,ssr,rsc}`
+  - workaround to make async module loading with dev invalidation work with `react-server-dom-webpack`
+
+See https://github.com/hi-ogawa/vite-plugins/pull/751 for the example of migrating from direct `react-server-dom-webpack` usage.
