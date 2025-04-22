@@ -1,8 +1,13 @@
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import { initialize, setServerCallback } from "../browser";
-import * as ReactClient from "../react/browser";
-import type { CallServerCallback } from "../types";
+import {
+  type CallServerCallback,
+  createFromFetch,
+  createFromReadableStream,
+  encodeReply,
+  initialize,
+  setServerCallback,
+} from "../browser";
 import type { RscPayload } from "./rsc";
 import { getRscScript } from "./utils/rsc-script";
 
@@ -19,15 +24,14 @@ export async function hydrate(options?: {
 
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
-    const payload = await ReactClient.createFromFetch<RscPayload>(
+    const payload = await createFromFetch<RscPayload>(
       fetch(url, {
         method: "POST",
-        body: await ReactClient.encodeReply(args),
+        body: await encodeReply(args),
         headers: {
           "x-rsc-action": id,
         },
       }),
-      { callServer },
     );
     setPayload(payload);
     return payload.returnValue;
@@ -36,7 +40,7 @@ export async function hydrate(options?: {
 
   async function onNavigation() {
     const url = new URL(window.location.href);
-    const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url));
+    const payload = await createFromFetch<RscPayload>(fetch(url));
     setPayload(payload);
   }
 
@@ -44,7 +48,7 @@ export async function hydrate(options?: {
     return;
   }
 
-  const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(
+  const initialPayload = await createFromReadableStream<RscPayload>(
     getRscScript(),
   );
 
@@ -72,10 +76,7 @@ export async function hydrate(options?: {
 export async function fetchRSC(
   request: string | URL | Request,
 ): Promise<RscPayload["root"]> {
-  const payload = await ReactClient.createFromFetch<RscPayload>(
-    fetch(request),
-    {},
-  );
+  const payload = await createFromFetch<RscPayload>(fetch(request));
   return payload.root;
 }
 

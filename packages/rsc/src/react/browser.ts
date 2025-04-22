@@ -37,3 +37,5 @@ let callServer!: CallServerCallback;
 export function setServerCallback(fn: CallServerCallback): void {
   callServer = fn;
 }
+
+export type { CallServerCallback };
