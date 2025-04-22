@@ -23,4 +23,4 @@ Low level API is mostly consumed internally by high level API, but they can be u
 - `@hiogawa/vite-rsc/core/{plugin,browser,ssr,rsc}`
   - workaround to make async module loading with dev invalidation work on top of `react-server-dom-webpack`
 - `@hiogawa/vite-rsc/react/{browser,ssr,rsc}`
-  - re-export of react-server-dom API with pre-defined manifest for `react-server-dom-webpack`
+  - re-export of `react-server-dom-webpack` API with pre-defined options (e.g. manifest and call server) to work with `core`
