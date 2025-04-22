@@ -20,25 +20,25 @@ initialize({
   },
 });
 
-const callServer = createCallServer({
-  decode: (body) => createFromReadableStream(body),
-  encodeAction: (args) => encodeReply(args),
-});
+setServerCallback(
+  createCallServer({
+    decode: (body) => createFromReadableStream(body),
+    encodeAction: (args) => encodeReply(args),
+  }),
+);
 
-setServerCallback(callServer);
-
-createFromReadableStream<ServerPayload>(getServerStream(), {
-  callServer,
-}).then((payload: ServerPayload) => {
-  React.startTransition(() => {
-    hydrateRoot(
-      document,
-      <React.StrictMode>
-        <RSCHydratedRouter
-          decode={(body) => createFromReadableStream(body)}
-          payload={payload as any}
-        />
-      </React.StrictMode>,
-    );
-  });
-});
+createFromReadableStream<ServerPayload>(getServerStream()).then(
+  (payload: ServerPayload) => {
+    React.startTransition(() => {
+      hydrateRoot(
+        document,
+        <React.StrictMode>
+          <RSCHydratedRouter
+            decode={(body) => createFromReadableStream(body)}
+            payload={payload as any}
+          />
+        </React.StrictMode>,
+      );
+    });
+  },
+);
