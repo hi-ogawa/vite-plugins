@@ -9,6 +9,7 @@ export default defineConfig({
     "src/core/browser.ts",
     "src/core/ssr.ts",
     "src/core/rsc.ts",
+    "src/core/plugin.ts",
     "src/react/browser.ts",
     "src/react/ssr.ts",
     "src/react/rsc.ts",
