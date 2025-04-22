@@ -1,23 +1,24 @@
+// @ts-ignore
 import * as ReactClient from "react-server-dom-webpack/client.browser";
 import type { CallServerCallback } from "../types";
 
 export function createFromReadableStream<T>(
   stream: ReadableStream<Uint8Array>,
-  options: unknown = {},
+  options: object = {},
 ): Promise<T> {
   return ReactClient.createFromReadableStream(stream, {
     callServer,
-    ...(options as any),
+    ...options,
   });
 }
 
 export function createFromFetch<T>(
   promiseForResponse: Promise<Response>,
-  options: unknown = {},
+  options: object = {},
 ): Promise<T> {
   return ReactClient.createFromFetch(promiseForResponse, {
     callServer,
-    ...(options as any),
+    ...options,
   });
 }
 
@@ -26,8 +27,8 @@ export function encodeReply(v: unknown[]): Promise<string | FormData> {
 }
 
 export function createServerReference(id: string): unknown {
-  return ReactClient.createServerReference(id, (...args) =>
-    callServer(...args),
+  return ReactClient.createServerReference(id, (...args: any[]) =>
+    (callServer as any)(...args),
   );
 }
 
