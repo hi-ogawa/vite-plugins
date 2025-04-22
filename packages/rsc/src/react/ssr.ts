@@ -2,6 +2,8 @@
 import * as ReactClient from "react-server-dom-webpack/client.edge";
 import { createServerConsumerManifest } from "../core/ssr";
 
+export { setRequireModule } from "../core/ssr";
+
 export function createFromReadableStream<T>(
   stream: ReadableStream<Uint8Array>,
   options: object = {},
