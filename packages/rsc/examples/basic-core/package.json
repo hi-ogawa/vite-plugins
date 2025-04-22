@@ -1,0 +1,24 @@
+{
+  "name": "@hiogawa/vite-rsc-examples-basic-core",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@hiogawa/vite-rsc": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-server-dom-webpack": "latest",
+    "rsc-html-stream": "^0.0.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "tailwindcss": "^4.1.4",
+    "vite": "latest"
+  }
+}

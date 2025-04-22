@@ -21,7 +21,9 @@ export function setRequireModule(options: {
   };
 
   // define __webpack_require__ in case ssr and rsc don't shared the same global
-  (globalThis as any).__webpack_require__ ??= clientRequire;
+  (globalThis as any).__webpack_require__ ??= (id: string) => {
+    return (globalThis as any).__vite_rsc_client_require__(id);
+  };
   (globalThis as any).__vite_rsc_client_require__ = clientRequire;
 }
 
