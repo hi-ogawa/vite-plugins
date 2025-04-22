@@ -1,6 +1,6 @@
 # @hiogawa/vite-rsc
 
-Vite RSC plugin without framework
+Vite RSC plugin without framework. See https://github.com/hi-ogawa/vite-plugins/issues/748 for how this package relates to future `react-server-dom-vite`.
 
 ## examples
 
@@ -13,7 +13,7 @@ Vite RSC plugin without framework
   - Framework-less rsc plugin, runtime, and re-export of react-server-dom API with types. The plugin is "opinionated" in the sense that it's not necessary compose-able with existing frameworks or plugins, but the implementation is minimal.
   - See [`examples/react-router`](./examples/react-router) for the usage
 - `@hiogawa/vite-rsc/extra/{browser,ssr,rsc}`
-  - Rsc helper API similar to [`@parcel/rsc`](https://parceljs.org/recipes/rsc). less flexible but easier to play with.
+  - Rsc helper API similar to [`@parcel/rsc`](https://parceljs.org/recipes/rsc). Less flexible but easier to play with.
   - See [`examples/basic`](./examples/basic) for the usage
 
 ## low level API
