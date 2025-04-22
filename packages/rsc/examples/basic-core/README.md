@@ -1,3 +1,3 @@
 # rsc basic core
 
-Minimal example of how to use `@hiogawa/vite-rsc/core` (and eventually future `react-server-dom-vite`).
+Minimal (dev only) example of how to use `@hiogawa/vite-rsc/core` (and eventually future `react-server-dom-vite`).
