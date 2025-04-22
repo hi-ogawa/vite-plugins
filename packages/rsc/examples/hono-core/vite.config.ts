@@ -1,4 +1,5 @@
 import path from "node:path";
+import rsc from "@hiogawa/vite-rsc/core/plugin";
 import { getRequestListener } from "@hono/node-server";
 import react from "@vitejs/plugin-react";
 import { defaultServerConditions, defineConfig } from "vite";
@@ -12,6 +13,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    rsc(),
     {
       name: "ssr-middleware",
       configureServer(server) {
