@@ -1,5 +1,6 @@
 import * as virtualClientRoutes from "virtual:client-routes";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import * as ReactClient from "@hiogawa/vite-rsc/react/browser";
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
@@ -27,19 +28,13 @@ import {
 import type { FlightData } from "../features/router/utils";
 import { parseFlightRedirectResponse } from "../features/server-action/redirect";
 import { createStreamRequest } from "../features/server-component/utils";
-import { $__global } from "../global";
 import { createError } from "../server";
-import type { CallServerCallback } from "../types/react";
 import { getFlightStreamBrowser } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
 
 async function start() {
   initializeReactClientBrowser();
-
-  const { default: ReactClient } = await import(
-    "react-server-dom-webpack/client.browser"
-  );
 
   const history = createEncodedBrowserHistory();
   const router = new Router(history);
@@ -50,7 +45,7 @@ async function start() {
   //
   // server action callback
   //
-  const callServer: CallServerCallback = async (id, args) => {
+  const callServer: ReactClient.CallServerCallback = async (id, args) => {
     debug("callServer", { id, args });
     const { url, headers } = createStreamRequest(history.location.href, {
       lastPathname: history.location.pathname,
@@ -70,7 +65,6 @@ async function start() {
           }
           const result = ReactClient.createFromFetch<FlightData>(
             Promise.resolve(response),
-            { callServer },
           );
           // TODO: similar to redirection, we could also skip flight stream
           // and return serialized error only.
@@ -84,15 +78,12 @@ async function start() {
       });
     });
   };
-
-  // expose as global to be used for createServerReference
-  $__global.callServer = callServer;
+  ReactClient.setServerCallback(callServer);
 
   // prepare initial layout data from inline <script>
   // TODO: needs to await for hydration formState. does it affect startup perf?
   const initialFlight = ReactClient.createFromReadableStream<FlightData>(
     getFlightStreamBrowser(),
-    { callServer },
   );
 
   //
@@ -167,9 +158,7 @@ async function start() {
           return;
         }
         $__setFlight(
-          ReactClient.createFromFetch<FlightData>(Promise.resolve(response), {
-            callServer,
-          }),
+          ReactClient.createFromFetch<FlightData>(Promise.resolve(response)),
         );
       });
     }, [location]);

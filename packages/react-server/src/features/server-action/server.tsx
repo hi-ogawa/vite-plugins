@@ -1,9 +1,8 @@
-import { memoize, tinyassert } from "@hiogawa/utils";
+import { tinyassert } from "@hiogawa/utils";
+import * as ReactServer from "@hiogawa/vite-rsc/react/rsc";
 import type { ReactFormState } from "react-dom/client";
-import ReactServer from "react-server-dom-webpack/server.edge";
 import { $__global } from "../../global";
 import type { ReactServerErrorContext } from "../../server";
-import type { BundlerConfig, ImportManifestEntry } from "../../types/react";
 import { findMapInverse } from "../../utils/misc";
 
 // https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
@@ -25,44 +24,9 @@ export type ActionResult = {
   data?: ReactFormState | null;
 };
 
-const REFERENCE_SEP = "#";
-
-export function createActionBundlerConfig(): BundlerConfig {
-  return new Proxy(
-    {},
-    {
-      get(_target, $$id, _receiver) {
-        tinyassert(typeof $$id === "string");
-        let [id, name] = $$id.split(REFERENCE_SEP);
-        tinyassert(id);
-        tinyassert(name);
-        return {
-          id,
-          name,
-          chunks: [],
-          async: true,
-        } satisfies ImportManifestEntry;
-      },
-    },
-  );
-}
-
-// same as packages/react-server/src/features/use-client/server.tsx
-export const serverReferenceImportPromiseCache = new Map<
-  string,
-  Promise<unknown>
->();
-
-const serverReferenceWebpackRequire = memoize(importServerReference, {
-  cache: serverReferenceImportPromiseCache,
-});
-
 export function initializeReactServer() {
-  Object.assign(globalThis, {
-    __vite_react_server_webpack_require__: serverReferenceWebpackRequire,
-    __vite_react_server_webpack_chunk_load__: () => {
-      throw new Error("todo: __webpack_chunk_load__");
-    },
+  ReactServer.setRequireModule({
+    load: importServerReference,
   });
 }
 
@@ -77,10 +41,4 @@ async function importServerReference(id: string): Promise<unknown> {
     tinyassert(dynImport, `server reference not found '${id}'`);
     return dynImport();
   }
-}
-
-export async function importServerAction(id: string): Promise<Function> {
-  const [file, name] = id.split(REFERENCE_SEP) as [string, string];
-  const mod: any = await importServerReference(file);
-  return mod[name];
 }
