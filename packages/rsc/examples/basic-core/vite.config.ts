@@ -1,12 +1,15 @@
 import rscCore from "@hiogawa/vite-rsc/core/plugin";
+import { normalizeViteImportAnalysisUrl } from "@hiogawa/vite-rsc/vite-utils";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
   type RunnableDevEnvironment,
+  type ViteDevServer,
   defaultServerConditions,
   defineConfig,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
 
+let server: ViteDevServer;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 
@@ -22,13 +25,13 @@ export default defineConfig({
     rscCore(),
     {
       name: "main",
-      configureServer(server) {
+      configureServer(server_) {
+        server = server_;
         viteSsrRunner = (server.environments.ssr as RunnableDevEnvironment)
           .runner;
         viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
           .runner;
         (globalThis as any).__viteSsrRunner = viteSsrRunner;
-        (globalThis as any).__viteRscRunner = viteRscRunner;
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
@@ -50,6 +53,7 @@ export default defineConfig({
               ...code.matchAll(/export function (\w+)\(/g),
               ...code.matchAll(/export (default) (function|class) /g),
             ];
+            id = normalizeViteImportAnalysisUrl(server.environments.client, id);
             const result = [
               `import * as $$ReactServer from "@hiogawa/vite-rsc/react/rsc"`,
               ...[...matches].map(

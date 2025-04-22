@@ -41,5 +41,6 @@ export default async function handler(request: Request): Promise<Response> {
 }
 
 async function importSsr(): Promise<typeof import("./ssr")> {
+  // console.log("[viteSsrRunner.import]");
   return (globalThis as any).__viteSsrRunner.import("/src/ssr.tsx");
 }
