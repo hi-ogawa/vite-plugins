@@ -1,3 +1,4 @@
+import { changeServerCounter, serverCounter } from "./action";
 import { ClientCounter, Hydrated } from "./client";
 
 export function Root() {
@@ -12,7 +13,16 @@ export function Root() {
           <Hydrated />
         </div>
         <ClientCounter />
+        <ServerCounter />
       </body>
     </html>
+  );
+}
+
+function ServerCounter() {
+  return (
+    <form action={changeServerCounter.bind(null, 1)}>
+      <button>Server Counter: {serverCounter}</button>
+    </form>
   );
 }
