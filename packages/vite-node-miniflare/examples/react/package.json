@@ -11,7 +11,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
-    "miniflare": "^3.20250214.0",
+    "miniflare": "^4.20250422.0",
     "react": "latest",
     "react-dom": "latest",
     "vite": "latest"

@@ -15,11 +15,11 @@
     "react-dom": "latest"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250214.0",
+    "@cloudflare/workers-types": "^4.20250423.0",
     "@hiogawa/vite-node-miniflare": "workspace:*",
     "@remix-run/dev": "2.8.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "wrangler": "^3.109.2"
+    "wrangler": "^4.13.0"
   }
 }

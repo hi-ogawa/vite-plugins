@@ -20,7 +20,7 @@
     "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250214.0",
+    "@cloudflare/workers-types": "^4.20250423.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "vite": "latest"
