@@ -269,8 +269,7 @@ export default function vitePluginRsc({
       resolveId(source) {
         if (
           source === "virtual:vite-rsc/import-rsc" ||
-          source === "virtual:vite-rsc/import-ssr" ||
-          source === "virtual:vite-rsc/import-assets"
+          source === "virtual:vite-rsc/import-ssr"
         ) {
           return {
             id: `\0` + source,
@@ -284,10 +283,6 @@ export default function vitePluginRsc({
         }
         if (id === "\0virtual:vite-rsc/import-ssr") {
           return `export default () => __viteSsrRunner.import(${JSON.stringify(entries.ssr)})`;
-        }
-        if (id === "\0virtual:vite-rsc/import-assets") {
-          // TODO
-          return `export default {}`;
         }
       },
       renderChunk(code, chunk) {
@@ -312,9 +307,60 @@ export default function vitePluginRsc({
           code = code.replace("\0virtual:vite-rsc/import-ssr", replacement);
           return { code };
         }
+        return;
+      },
+    },
+    {
+      name: "rsc:virtual:vite-rsc/import-assets",
+      resolveId(source) {
+        if (source === "virtual:vite-rsc/import-assets") {
+          return {
+            id: `\0` + source,
+            external: this.environment.mode === "build",
+          };
+        }
+      },
+      load(id) {
+        if (id === "\0virtual:vite-rsc/import-assets") {
+          assert(this.environment.name !== "client");
+          const assets: ServerAssets = { js: [], css: [] };
+          if (this.environment.mode === "dev") {
+            assets.js = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
+            if (entries.css) {
+              assets.css.push(entries.css);
+            }
+          }
+          return `export default ${JSON.stringify(assets)}`;
+        }
+      },
+      // client build
+      generateBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          const entry = Object.values(bundle).find(
+            (b) => b.type === "chunk" && b.isEntry,
+          );
+          assert(entry && entry.type === "chunk");
+          const assets: ServerAssets = {
+            js: [`/${entry.fileName}`],
+            css: [...(entry.viteMetadata?.importedCss ?? [])],
+          };
+          this.emitFile({
+            type: "asset",
+            fileName: "__vite_rsc_assets.js",
+            source: `export default ${JSON.stringify(assets, null, 2)}`,
+          });
+        }
+      },
+      // non-client build load assets manifest as external
+      renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/import-assets")) {
+          assert(this.environment.name !== "client");
           const replacement = path.relative(
-            relativeFrom,
+            path.join(
+              this.environment.config.build.outDir,
+              chunk.fileName,
+              "..",
+            ),
             path.join(
               config.environments.client!.build.outDir,
               "__vite_rsc_assets.js",
@@ -484,6 +530,7 @@ function vitePluginUseClient({
         return { code: `export {}`, map: null };
       }
       let code = generateDynamicImportCode(clientReferences);
+      // TODO(refactor): use import-assets virtual
       if (browserBundle) {
         const assetDeps = collectAssetDeps(browserBundle);
         const keyAssetDeps: Record<string, AssetDeps> = {};
@@ -710,7 +757,7 @@ function collectAssetDepsInner(
     const v = bundle[k];
     assert(v);
     if (v.type === "chunk") {
-      css.push(...(v.viteMetadata?.importedAssets ?? []));
+      css.push(...(v.viteMetadata?.importedCss ?? []));
       for (const k2 of v.imports) {
         recurse(k2);
       }

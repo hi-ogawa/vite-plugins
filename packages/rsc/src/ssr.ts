@@ -49,6 +49,6 @@ export async function importRsc<T>(): Promise<T> {
 }
 
 export async function importAssets(): Promise<ServerAssets> {
-  const mod = await import("virtual:vite-rsc/server-assets");
+  const mod = await import("virtual:vite-rsc/import-assets" as any);
   return mod.default;
 }
