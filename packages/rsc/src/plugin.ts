@@ -292,6 +292,7 @@ export default function vitePluginRsc({
         return;
       },
     },
+    // TODO: helper for this virtual module pattern `createVirtualPluginBuildExternal`?
     {
       name: "rsc:virtual:vite-rsc/assets-manifest",
       resolveId(source) {
@@ -698,7 +699,6 @@ function generateDynamicImportCode(map: Record<string, string>) {
 //
 
 export type AssetsManifest = {
-  // entryAssets: AssetDeps;
   entry: { bootstrapModules: string[]; deps: AssetDeps };
   clientReferenceDeps: Record<string, AssetDeps>;
 };
