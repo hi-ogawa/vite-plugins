@@ -23,7 +23,6 @@ import vitePluginRscCore from "./core/plugin";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
-let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -346,10 +345,9 @@ export default function vitePluginRsc({
               export const clientReferenceDeps = ${JSON.stringify(clientReferenceDeps, null, 2)};
             `,
           });
-          browserBundle = bundle;
         }
       },
-      // non-client build load assets manifest as external
+      // non-client builds can load assets manifest as external
       renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
@@ -510,18 +508,6 @@ function vitePluginUseClient({
         return { code: `export {}`, map: null };
       }
       let code = generateDynamicImportCode(clientReferences);
-      // TODO(refactor): use import-assets virtual
-      if (browserBundle) {
-        const assetDeps = collectAssetDeps(browserBundle);
-        const keyAssetDeps: Record<string, AssetDeps> = {};
-        for (const [key, id] of Object.entries(clientReferences)) {
-          const deps = assetDeps[id];
-          if (deps) {
-            keyAssetDeps[key] = deps;
-          }
-        }
-        code += `export const assetDeps = ${JSON.stringify(keyAssetDeps)};\n`;
-      }
       return { code, map: null };
     }),
     {
