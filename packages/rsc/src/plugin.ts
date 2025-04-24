@@ -264,7 +264,7 @@ export default function vitePluginRsc({
       },
     },
     {
-      // virtual module to externalize import to build artifact.
+      // externalize `dist/rsc/...` import as relative path in ssr build (and vice versa)
       name: "rsc:virtual:vite-rsc/import-entry",
       resolveId(source) {
         if (
@@ -286,23 +286,18 @@ export default function vitePluginRsc({
         }
       },
       renderChunk(code, chunk) {
-        const relativeFrom = path.join(
-          this.environment.config.build.outDir,
-          chunk.fileName,
-          "..",
-        );
         if (code.includes("\0virtual:vite-rsc/import-rsc")) {
           const replacement = path.relative(
-            relativeFrom,
-            path.join(config.environments.rsc!.build.outDir, "index.js"),
+            path.join("dist/ssr", chunk.fileName, ".."),
+            path.join("dist/rsc", "index.js"),
           );
           code = code.replace("\0virtual:vite-rsc/import-rsc", replacement);
           return { code };
         }
         if (code.includes("\0virtual:vite-rsc/import-ssr")) {
           const replacement = path.relative(
-            relativeFrom,
-            path.join(config.environments.ssr!.build.outDir, "index.js"),
+            path.join("dist/rsc", chunk.fileName, ".."),
+            path.join("dist/ssr", "index.js"),
           );
           code = code.replace("\0virtual:vite-rsc/import-ssr", replacement);
           return { code };
