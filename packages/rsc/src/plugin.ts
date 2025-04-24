@@ -292,7 +292,6 @@ export default function vitePluginRsc({
         return;
       },
     },
-    // TODO: helper for this virtual module pattern `createVirtualPluginBuildExternal`?
     {
       name: "rsc:virtual:vite-rsc/assets-manifest",
       resolveId(source) {
