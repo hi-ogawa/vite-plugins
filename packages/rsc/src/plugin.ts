@@ -8,7 +8,6 @@ import {
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
-  type Manifest,
   type Plugin,
   type ResolvedConfig,
   Rollup,
@@ -25,7 +24,6 @@ import type { ServerAssets } from "./types";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
-let browserManifest: Manifest;
 let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
@@ -241,15 +239,6 @@ export default function vitePluginRsc({
           }
         }
       },
-      writeBundle(_options, bundle) {
-        if (this.environment.name === "client") {
-          const output = bundle[".vite/manifest.json"];
-          assert(output && output.type === "asset");
-          assert(typeof output.source === "string");
-          browserManifest = JSON.parse(output.source);
-          browserBundle = bundle;
-        }
-      },
     },
     {
       name: "rsc:patch-browser-raw-import",
@@ -306,6 +295,7 @@ export default function vitePluginRsc({
       },
     },
     {
+      // TODO: rename to `import-assets-manifest`
       name: "rsc:virtual:vite-rsc/import-assets",
       resolveId(source) {
         if (source === "virtual:vite-rsc/import-assets") {
@@ -344,6 +334,7 @@ export default function vitePluginRsc({
             fileName: "__vite_rsc_assets.js",
             source: `export default ${JSON.stringify(assets, null, 2)}`,
           });
+          browserBundle = bundle;
         }
       },
       // non-client build load assets manifest as external
@@ -367,27 +358,6 @@ export default function vitePluginRsc({
         return;
       },
     },
-    // TODO: this is available only for ssr and not rsc since rsc is built before client.
-    // (should be possible by externalizing browser manifest on build like import-entry virtual)
-    createVirtualPlugin("vite-rsc/server-assets", function () {
-      assert(this.environment.name === "ssr");
-
-      const assets: ServerAssets = { js: [], css: [] };
-      if (this.environment.mode === "dev") {
-        assets.js = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
-        if (entries.css) {
-          assets.css.push(entries.css);
-        }
-      }
-      if (this.environment.mode === "build") {
-        const entry = browserManifest["virtual:vite-rsc/browser-entry"]!;
-        assets.js = [`/${entry.file}`];
-        if (entry.css) {
-          assets.css = entry.css.map((file) => `/${file}`);
-        }
-      }
-      return `export default ${JSON.stringify(assets)};`;
-    }),
     createVirtualPlugin("vite-rsc/browser-entry", function () {
       let code = "";
       if (entries.css) {
