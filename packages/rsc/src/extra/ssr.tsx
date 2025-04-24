@@ -1,7 +1,11 @@
 import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
-import { assetsManifest, createFromReadableStream, initialize } from "../ssr";
+import {
+  createFromReadableStream,
+  getAssetsManifest,
+  initialize,
+} from "../ssr";
 import type { RscPayload } from "./rsc";
 import {
   createBufferedTransformStream,
@@ -16,7 +20,7 @@ export async function renderHtml({
 
   const [stream1, stream2] = stream.tee();
 
-  const assets = assetsManifest.entryAssets;
+  const assets = getAssetsManifest().entryAssets;
 
   // flight deserialization needs to be kicked in inside SSR context
   // for ReactDomServer preinit/preloading to work
@@ -36,7 +40,7 @@ export async function renderHtml({
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: assetsManifest.entryAssets.js,
+    bootstrapModules: assets.js,
     // @ts-expect-error no types
     formState,
   });

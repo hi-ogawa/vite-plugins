@@ -1,6 +1,6 @@
 import {
   createFromReadableStream,
-  importAssets,
+  getAssetsManifest,
   initialize,
 } from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
@@ -13,7 +13,7 @@ export default async function handler(
   request: Request,
   callServer: (request: Request) => Promise<Response>,
 ) {
-  const assets = await importAssets();
+  const assets = getAssetsManifest().entryAssets;
   const css = assets.css.map((href) => (
     <link key={href} rel="stylesheet" href={href} precedence="high" />
   ));

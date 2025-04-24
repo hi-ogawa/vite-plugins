@@ -693,6 +693,11 @@ function generateDynamicImportCode(map: Record<string, string>) {
 // collect client reference dependency chunk for modulepreload
 //
 
+export type AssetsManifest = {
+  entryAssets: AssetDeps;
+  clientReferenceDeps: Record<string, AssetDeps>;
+};
+
 export type AssetDeps = {
   js: string[];
   css: string[];
