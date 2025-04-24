@@ -313,7 +313,13 @@ export default function vitePluginRsc({
             }
           }
           const manifest: AssetsManifest = {
-            entryAssets,
+            entry: {
+              bootstrapModules: ["/@id/__x00__virtual:vite-rsc/browser-entry"],
+              deps: {
+                js: [],
+                css: entries.css ? [entries.css] : [],
+              },
+            },
             clientReferenceDeps: {},
           };
           return `export default ${JSON.stringify(manifest, null, 2)}`;
@@ -322,27 +328,20 @@ export default function vitePluginRsc({
       // client build
       generateBundle(_options, bundle) {
         if (this.environment.name === "client") {
-          // TODO: entry dependency chunks should be also modulepreload'ed
-          const entry = Object.values(bundle).find(
-            (b) =>
-              b.type === "chunk" &&
-              b.facadeModuleId === "\0virtual:vite-rsc/browser-entry",
-          );
-          assert(entry && entry.type === "chunk");
-          const entryAssets: AssetDeps = {
-            js: [`/${entry.fileName}`],
-            css: [...(entry.viteMetadata?.importedCss ?? [])],
-          };
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [key, id] of Object.entries(clientReferences)) {
-            const deps = assetDeps[id];
+            const deps = assetDeps[id]?.deps;
             if (deps) {
               clientReferenceDeps[key] = deps;
             }
           }
+          const entry = assetDeps["\0virtual:vite-rsc/browser-entry"]!;
           const manifest: AssetsManifest = {
-            entryAssets,
+            entry: {
+              bootstrapModules: [`/${entry.chunk.fileName}`],
+              deps: entry.deps,
+            },
             clientReferenceDeps,
           };
           this.emitFile({
@@ -699,22 +698,25 @@ function generateDynamicImportCode(map: Record<string, string>) {
 //
 
 export type AssetsManifest = {
-  entryAssets: AssetDeps;
+  // entryAssets: AssetDeps;
+  entry: { bootstrapModules: string[]; deps: AssetDeps };
   clientReferenceDeps: Record<string, AssetDeps>;
 };
 
-export type AssetDeps = {
+type AssetDeps = {
   js: string[];
   css: string[];
 };
 
-function collectAssetDeps(
-  bundle: Rollup.OutputBundle,
-): Record<string, AssetDeps> {
-  const map: Record<string, AssetDeps> = {};
+function collectAssetDeps(bundle: Rollup.OutputBundle) {
+  const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
+    {};
   for (const chunk of Object.values(bundle)) {
     if (chunk.type === "chunk" && chunk.facadeModuleId) {
-      map[chunk.facadeModuleId] = collectAssetDepsInner(chunk.fileName, bundle);
+      map[chunk.facadeModuleId] = {
+        chunk,
+        deps: collectAssetDepsInner(chunk.fileName, bundle),
+      };
     }
   }
   return map;
