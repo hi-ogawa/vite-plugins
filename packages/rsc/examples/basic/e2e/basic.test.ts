@@ -43,22 +43,18 @@ async function testAction(page: Page) {
   ).toBeVisible();
 }
 
-testNoJs("module preload on ssr", async ({ page }) => {
+testNoJs("module preload on ssr @build", async ({ page }) => {
   await page.goto("/");
   const srcs = await Promise.all(
     (await page.locator(`head >> link[rel="modulepreload"]`).all()).map((s) =>
       s.getAttribute("href"),
     ),
   );
-  if (process.env.E2E_PREVIEW) {
-    const viteManifest = JSON.parse(
-      fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
-    );
-    const file = "/" + viteManifest["src/counter.tsx"].file;
-    expect(srcs).toContain(file);
-  } else {
-    expect(srcs).toContain("/src/counter.tsx");
-  }
+  const viteManifest = JSON.parse(
+    fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
+  );
+  const file = "/" + viteManifest["src/counter.tsx"].file;
+  expect(srcs).toContain(file);
 });
 
 test("server reference update @dev @js", async ({ page }) => {

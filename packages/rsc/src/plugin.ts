@@ -49,7 +49,6 @@ export default function vitePluginRsc({
   };
   // TODO: this can be heuristically cralwed from package.json.
   // TODO: in principle, same trick is needed for `"use server"` package imported directly from client component.
-  // TODO: tree shake unused exports.
   clientPackages?: string[];
 }): Plugin[] {
   return [
@@ -395,9 +394,10 @@ async function normalizeReferenceId(id: string, name: "client" | "rsc") {
 function vitePluginUseClient({
   clientPackages = [],
 }: { clientPackages?: string[] }): Plugin[] {
+  // TODO: tree shaking can be done for non client package too.
   const clientPackageMeta: Record<
     string,
-    { source: string; exportNames: string[] }
+    { source: string; exportNames: string[]; renderedExports: string[] }
   > = {};
 
   return [
@@ -452,6 +452,7 @@ function vitePluginUseClient({
         clientReferences[referenceKey] = referenceValue;
         output.prepend(`
           import * as $$ReactServer from "${PKG_NAME}/rsc";
+          /* @__NO_SIDE_EFFECTS__ */
           const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
         `);
         return { code: output.toString(), map: { mappings: "" } };
@@ -486,7 +487,11 @@ function vitePluginUseClient({
           ) {
             const resolved = await this.resolve(source, importer, options);
             if (resolved) {
-              clientPackageMeta[resolved.id] = { source, exportNames: [] };
+              clientPackageMeta[resolved.id] = {
+                source,
+                exportNames: [],
+                renderedExports: [],
+              };
               return resolved;
             }
           }
@@ -500,10 +505,30 @@ function vitePluginUseClient({
           const source = id.slice(
             "\0virtual:vite-rsc/client-package-proxy/".length,
           );
-          const { exportNames } = Object.values(clientPackageMeta).find(
+          const meta = Object.values(clientPackageMeta).find(
             (v) => v.source === source,
           )!;
+          const exportNames =
+            this.environment.mode === "build"
+              ? meta.renderedExports
+              : meta.exportNames;
           return `export {${exportNames.join(",")}} from ${JSON.stringify(source)};\n`;
+        }
+      },
+      generateBundle(_options, bundle) {
+        if (this.environment.name !== "rsc") return;
+
+        // track used exports of client references in rsc build
+        // to tree shake unused exports in browser and ssr build
+        for (const chunk of Object.values(bundle)) {
+          if (chunk.type === "chunk") {
+            for (const [id, mod] of Object.entries(chunk.modules)) {
+              const meta = clientPackageMeta[id];
+              if (meta) {
+                meta.renderedExports = mod.renderedExports;
+              }
+            }
+          }
         }
       },
     },
@@ -528,6 +553,7 @@ function vitePluginUseServer(): Plugin[] {
           serverReferences[normalizedId] = id;
           output.prepend(`
             import * as $$ReactServer from "${PKG_NAME}/rsc";
+            /* @__NO_SIDE_EFFECTS__ */
             const $$register = (value, id, name) => {
               if (typeof value !== 'function') return value;
               return $$ReactServer.registerServerReference(value, id, name);
@@ -548,6 +574,7 @@ function vitePluginUseServer(): Plugin[] {
           const name = this.environment.name === "client" ? "browser" : "ssr";
           output.prepend(`
             import * as $$ReactClient from "${PKG_NAME}/${name}";
+            /* @__NO_SIDE_EFFECTS__ */
             const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)})
           `);
           return { code: output.toString(), map: { mappings: "" } };
