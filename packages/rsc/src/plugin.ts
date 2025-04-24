@@ -264,12 +264,13 @@ export default function vitePluginRsc({
       },
     },
     {
-      // externalize `dist/rsc/...` import as relative path in ssr build (and vice versa)
+      // virtual module to externalize import to build artifact.
       name: "rsc:virtual:vite-rsc/import-entry",
       resolveId(source) {
         if (
           source === "virtual:vite-rsc/import-rsc" ||
-          source === "virtual:vite-rsc/import-ssr"
+          source === "virtual:vite-rsc/import-ssr" ||
+          source === "virtual:vite-rsc/import-assets"
         ) {
           return {
             id: `\0` + source,
@@ -284,22 +285,42 @@ export default function vitePluginRsc({
         if (id === "\0virtual:vite-rsc/import-ssr") {
           return `export default () => __viteSsrRunner.import(${JSON.stringify(entries.ssr)})`;
         }
+        if (id === "\0virtual:vite-rsc/import-assets") {
+          // TODO
+          return `export default {}`;
+        }
       },
       renderChunk(code, chunk) {
+        const relativeFrom = path.join(
+          this.environment.config.build.outDir,
+          chunk.fileName,
+          "..",
+        );
         if (code.includes("\0virtual:vite-rsc/import-rsc")) {
           const replacement = path.relative(
-            path.join("dist/ssr", chunk.fileName, ".."),
-            path.join("dist/rsc", "index.js"),
+            relativeFrom,
+            path.join(config.environments.rsc!.build.outDir, "index.js"),
           );
           code = code.replace("\0virtual:vite-rsc/import-rsc", replacement);
           return { code };
         }
         if (code.includes("\0virtual:vite-rsc/import-ssr")) {
           const replacement = path.relative(
-            path.join("dist/rsc", chunk.fileName, ".."),
-            path.join("dist/ssr", "index.js"),
+            relativeFrom,
+            path.join(config.environments.ssr!.build.outDir, "index.js"),
           );
           code = code.replace("\0virtual:vite-rsc/import-ssr", replacement);
+          return { code };
+        }
+        if (code.includes("\0virtual:vite-rsc/import-assets")) {
+          const replacement = path.relative(
+            relativeFrom,
+            path.join(
+              config.environments.client!.build.outDir,
+              "__vite_rsc_assets.js",
+            ),
+          );
+          code = code.replace("\0virtual:vite-rsc/import-assets", replacement);
           return { code };
         }
         return;
