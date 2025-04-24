@@ -305,13 +305,6 @@ export default function vitePluginRsc({
       load(id) {
         if (id === "\0virtual:vite-rsc/assets-manifest") {
           assert(this.environment.name !== "client");
-          const entryAssets: AssetDeps = { js: [], css: [] };
-          if (this.environment.mode === "dev") {
-            entryAssets.js = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
-            if (entries.css) {
-              entryAssets.css.push(entries.css);
-            }
-          }
           const manifest: AssetsManifest = {
             entry: {
               bootstrapModules: ["/@id/__x00__virtual:vite-rsc/browser-entry"],
