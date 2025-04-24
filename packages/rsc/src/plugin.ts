@@ -312,7 +312,11 @@ export default function vitePluginRsc({
               entryAssets.css.push(entries.css);
             }
           }
-          return `export const entryAssets = ${JSON.stringify(entryAssets)}`;
+          const manifest: AssetsManifest = {
+            entryAssets,
+            clientReferenceDeps: {},
+          };
+          return `export default ${JSON.stringify(manifest, null, 2)}`;
         }
       },
       // client build
@@ -337,13 +341,14 @@ export default function vitePluginRsc({
               clientReferenceDeps[key] = deps;
             }
           }
+          const manifest: AssetsManifest = {
+            entryAssets,
+            clientReferenceDeps,
+          };
           this.emitFile({
             type: "asset",
             fileName: "__vite_rsc_assets_manifest.js",
-            source: `
-              export const entryAssets = ${JSON.stringify(entryAssets, null, 2)};
-              export const clientReferenceDeps = ${JSON.stringify(clientReferenceDeps, null, 2)};
-            `,
+            source: `export default ${JSON.stringify(manifest, null, 2)}`,
           });
         }
       },

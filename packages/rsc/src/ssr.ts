@@ -48,5 +48,5 @@ export async function importRsc<T>(): Promise<T> {
 }
 
 export function getAssetsManifest(): AssetsManifest {
-  return assetsManifest as any;
+  return (assetsManifest as any).default;
 }
