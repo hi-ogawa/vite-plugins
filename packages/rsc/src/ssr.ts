@@ -1,9 +1,11 @@
+import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as clientReferences from "virtual:vite-rsc/client-references";
 import * as ReactDOM from "react-dom";
 import { setRequireModule } from "./core/ssr";
-import type { ServerAssets } from "./types";
 
 export { createServerConsumerManifest } from "./core/ssr";
+
+export { assetsManifest };
 
 export * from "./react/ssr";
 
@@ -26,12 +28,10 @@ export function initialize(): void {
       // for unbundled dev, preventing waterfall is not practical so this is build only
       // (need to traverse entire module graph and add entire import chains to modulepreload).
       if (!import.meta.env.DEV) {
-        if (clientReferences.assetDeps) {
-          const deps = clientReferences.assetDeps[id];
-          if (deps) {
-            for (const js of deps.js) {
-              ReactDOM.preloadModule(js);
-            }
+        const deps = assetsManifest.clientReferenceDeps[id];
+        if (deps) {
+          for (const js of deps.js) {
+            ReactDOM.preloadModule(js);
           }
         }
       }
@@ -46,9 +46,4 @@ export async function importRsc<T>(): Promise<T> {
   } else {
     return mod;
   }
-}
-
-export async function importAssets(): Promise<ServerAssets> {
-  const mod = await import("virtual:vite-rsc/import-assets" as any);
-  return mod.default;
 }

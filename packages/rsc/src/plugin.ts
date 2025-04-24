@@ -20,7 +20,6 @@ import {
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
-import type { ServerAssets } from "./types";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
@@ -295,10 +294,9 @@ export default function vitePluginRsc({
       },
     },
     {
-      // TODO: rename to `import-assets-manifest`
-      name: "rsc:virtual:vite-rsc/import-assets",
+      name: "rsc:virtual:vite-rsc/assets-manifest",
       resolveId(source) {
-        if (source === "virtual:vite-rsc/import-assets") {
+        if (source === "virtual:vite-rsc/assets-manifest") {
           return {
             id: `\0` + source,
             external: this.environment.mode === "build",
@@ -306,40 +304,54 @@ export default function vitePluginRsc({
         }
       },
       load(id) {
-        if (id === "\0virtual:vite-rsc/import-assets") {
+        if (id === "\0virtual:vite-rsc/assets-manifest") {
           assert(this.environment.name !== "client");
-          const assets: ServerAssets = { js: [], css: [] };
+          const entryAssets: AssetDeps = { js: [], css: [] };
           if (this.environment.mode === "dev") {
-            assets.js = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
+            entryAssets.js = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
             if (entries.css) {
-              assets.css.push(entries.css);
+              entryAssets.css.push(entries.css);
             }
           }
-          return `export default ${JSON.stringify(assets)}`;
+          return `export const entryAssets = ${JSON.stringify(entryAssets)}`;
         }
       },
       // client build
       generateBundle(_options, bundle) {
         if (this.environment.name === "client") {
+          // TODO: entry dependency chunks should be also modulepreload'ed
           const entry = Object.values(bundle).find(
-            (b) => b.type === "chunk" && b.isEntry,
+            (b) =>
+              b.type === "chunk" &&
+              b.facadeModuleId === "\0virtual:vite-rsc/browser-entry",
           );
           assert(entry && entry.type === "chunk");
-          const assets: ServerAssets = {
+          const entryAssets: AssetDeps = {
             js: [`/${entry.fileName}`],
             css: [...(entry.viteMetadata?.importedCss ?? [])],
           };
+          const assetDeps = collectAssetDeps(bundle);
+          const clientReferenceDeps: Record<string, AssetDeps> = {};
+          for (const [key, id] of Object.entries(clientReferences)) {
+            const deps = assetDeps[id];
+            if (deps) {
+              clientReferenceDeps[key] = deps;
+            }
+          }
           this.emitFile({
             type: "asset",
-            fileName: "__vite_rsc_assets.js",
-            source: `export default ${JSON.stringify(assets, null, 2)}`,
+            fileName: "__vite_rsc_assets_manifest.js",
+            source: `
+              export const entryAssets = ${JSON.stringify(entryAssets, null, 2)};
+              export const clientReferenceDeps = ${JSON.stringify(clientReferenceDeps, null, 2)};
+            `,
           });
           browserBundle = bundle;
         }
       },
       // non-client build load assets manifest as external
       renderChunk(code, chunk) {
-        if (code.includes("\0virtual:vite-rsc/import-assets")) {
+        if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
           const replacement = path.relative(
             path.join(
@@ -349,10 +361,13 @@ export default function vitePluginRsc({
             ),
             path.join(
               config.environments.client!.build.outDir,
-              "__vite_rsc_assets.js",
+              "__vite_rsc_assets_manifest.js",
             ),
           );
-          code = code.replace("\0virtual:vite-rsc/import-assets", replacement);
+          code = code.replace(
+            "\0virtual:vite-rsc/assets-manifest",
+            replacement,
+          );
           return { code };
         }
         return;
