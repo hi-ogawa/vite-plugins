@@ -1,7 +1,6 @@
 import type { ReactFormState } from "react-dom/client";
 // @ts-ignore
-import * as ReactServer from "react-server-dom-webpack/server.edge";
-import { createClientManifest, createServerManifest } from "../core/rsc";
+import * as ReactServer from "react-server-dom-vite/server.edge";
 
 export { loadServerAction, setRequireModule } from "../core/rsc";
 
@@ -9,11 +8,7 @@ export function renderToReadableStream<T>(
   data: T,
   options?: object,
 ): ReadableStream<Uint8Array> {
-  return ReactServer.renderToReadableStream(
-    data,
-    createClientManifest(),
-    options,
-  );
+  return ReactServer.renderToReadableStream(data, options);
 }
 
 export function registerClientReference<T>(
@@ -34,22 +29,18 @@ export function decodeReply(
   body: string | FormData,
   options?: unknown,
 ): Promise<unknown[]> {
-  return ReactServer.decodeReply(body, createServerManifest(), options);
+  return ReactServer.decodeReply(body, options);
 }
 
 export function decodeAction(body: FormData): Promise<() => Promise<void>> {
-  return ReactServer.decodeAction(body, createServerManifest());
+  return ReactServer.decodeAction(body);
 }
 
 export function decodeFormState(
   actionResult: unknown,
   body: FormData,
 ): Promise<ReactFormState | undefined> {
-  return ReactServer.decodeFormState(
-    actionResult,
-    body,
-    createServerManifest(),
-  );
+  return ReactServer.decodeFormState(actionResult, body);
 }
 
 export const createTemporaryReferenceSet: () => unknown =

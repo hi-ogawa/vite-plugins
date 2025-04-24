@@ -99,14 +99,14 @@ export default defineConfig({
     rsc: {
       resolve: {
         conditions: ["react-server", ...defaultServerConditions],
-        noExternal: ["react", "react-dom", "react-server-dom-webpack"],
+        noExternal: ["react", "react-dom", "react-server-dom-vite"],
       },
       optimizeDeps: {
         include: [
           "react",
           "react/jsx-runtime",
           "react/jsx-dev-runtime",
-          "react-server-dom-webpack/server.edge",
+          "react-server-dom-vite/server.edge",
         ],
       },
     },

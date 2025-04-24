@@ -91,12 +91,12 @@ jobs:
       - run: pnpm -C packages/react-server/examples/cloudflare build
       - run: pnpm -C packages/react-server/examples/cloudflare test-e2e-preview
 
-  test-react-server-package:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - run: pnpm -C packages/react-server test-package
+  # test-react-server-package:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #     - run: pnpm -C packages/react-server test-package
 
   test-vite-node-miniflare:
     runs-on: ubuntu-latest

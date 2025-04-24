@@ -3,11 +3,7 @@ import { setRequireModule } from "./core/rsc";
 import type { AssetsManifest } from "./plugin";
 import { withBase } from "./utils/base";
 
-export {
-  createClientManifest,
-  createServerManifest,
-  loadServerAction,
-} from "./core/rsc";
+export { loadServerAction } from "./core/rsc";
 
 export * from "./react/rsc";
 

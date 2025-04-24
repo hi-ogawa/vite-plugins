@@ -85,7 +85,7 @@ export default function vitePluginRsc({
                 entries: [entries.browser],
                 include: [
                   "react-dom/client",
-                  "react-server-dom-webpack/client.browser",
+                  "react-server-dom-vite/client.browser",
                 ],
                 exclude: [PKG_NAME],
               },
@@ -111,7 +111,7 @@ export default function vitePluginRsc({
                 noExternal: [
                   "react",
                   "react-dom",
-                  "react-server-dom-webpack",
+                  "react-server-dom-vite",
                   PKG_NAME,
                 ],
               },
@@ -120,7 +120,7 @@ export default function vitePluginRsc({
                   "react",
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
-                  "react-server-dom-webpack/server.edge",
+                  "react-server-dom-vite/server.edge",
                 ],
                 exclude: [PKG_NAME],
               },
@@ -348,10 +348,11 @@ export default function vitePluginRsc({
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps;
-            if (deps) {
-              clientReferenceDeps[meta.referenceKey] = deps;
-            }
+            // client reference chunk might be included in main bundle
+            clientReferenceDeps[meta.referenceKey] = assetDeps[id]?.deps ?? {
+              js: [],
+              css: [],
+            };
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
           const manifest: AssetsManifest = {
