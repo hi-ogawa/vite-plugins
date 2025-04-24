@@ -7,6 +7,7 @@ dist
 .tsup
 *.log
 *.tgz
+!react-server-dom-vite-19.1.0.tgz
 test-results
 *.tsbuildinfo
 .debug

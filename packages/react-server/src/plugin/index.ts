@@ -162,7 +162,7 @@ export function vitePluginReactServer(
             "react/jsx-dev-runtime",
             "react-dom",
             "react-dom/client",
-            "react-server-dom-webpack/client.browser",
+            "react-server-dom-vite/client.browser",
           ],
         },
         ssr: {
@@ -547,7 +547,7 @@ function serverDepsConfigPlugin(): Plugin {
           noExternal: uniq([
             "react",
             "react-dom",
-            "react-server-dom-webpack",
+            "react-server-dom-vite",
             "server-only",
             "client-only",
             ...result.ssr.noExternal,
@@ -559,7 +559,7 @@ function serverDepsConfigPlugin(): Plugin {
             "react",
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
-            "react-server-dom-webpack/server.edge",
+            "react-server-dom-vite/server.edge",
           ],
         },
       };
