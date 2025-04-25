@@ -11,7 +11,7 @@ export function removeReferenceCacheTag(id: string): string {
   return id.split("$$cache=")[0]!;
 }
 
-export function setReferenceRequire(): void {
+export function setInternalRequire(): void {
   // branch client and server require to support the case when ssr and rsc share the same global
   (globalThis as any).__webpack_require__ = (id: string) => {
     if (id.startsWith(SERVER_REFERENCE_PREFIX)) {
