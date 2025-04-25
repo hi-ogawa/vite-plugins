@@ -264,7 +264,7 @@ importers:
         version: 3.0.0
       styled-jsx:
         specifier: ^5.1.6
-        version: 5.1.6(@babel/core@7.26.9)(react@0.0.0-experimental-197d6a04-20250424)
+        version: 5.1.6(@babel/core@7.26.10)(react@0.0.0-experimental-197d6a04-20250424)
     devDependencies:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
@@ -11328,12 +11328,12 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.1.6(@babel/core@7.26.9)(react@0.0.0-experimental-197d6a04-20250424):
+  styled-jsx@5.1.6(@babel/core@7.26.10)(react@0.0.0-experimental-197d6a04-20250424):
     dependencies:
       client-only: 0.0.1
       react: 0.0.0-experimental-197d6a04-20250424
     optionalDependencies:
-      '@babel/core': 7.26.9
+      '@babel/core': 7.26.10
 
   sucrase@3.35.0:
     dependencies:
