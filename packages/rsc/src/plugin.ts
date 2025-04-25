@@ -85,6 +85,7 @@ export default function vitePluginRsc({
               },
             },
             rsc: {
+              // `configEnvironment` below adds more `noExternal`
               resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
                 noExternal: [
@@ -92,7 +93,6 @@ export default function vitePluginRsc({
                   "react-dom",
                   "react-server-dom-webpack",
                   PKG_NAME,
-                  ...(clientPackages ?? []),
                 ],
               },
               optimizeDeps: {
@@ -145,20 +145,7 @@ export default function vitePluginRsc({
 
         return {
           resolve: {
-            noExternal: [
-              "react",
-              "react-dom",
-              "react-server-dom-webpack",
-              ...result.ssr.noExternal,
-            ].sort(),
-          },
-          optimizeDeps: {
-            include: [
-              "react",
-              "react/jsx-runtime",
-              "react/jsx-dev-runtime",
-              `react-server-dom-webpack/server.edge`,
-            ],
+            noExternal: result.ssr.noExternal.sort(),
           },
         };
       },

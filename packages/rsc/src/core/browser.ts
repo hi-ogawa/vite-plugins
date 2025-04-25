@@ -13,5 +13,5 @@ export function setRequireModule(options: {
     return options.load(removeReferenceCacheTag(id));
   });
 
-  (globalThis as any).__webpack_require__ = requireModule;
+  (globalThis as any).__vite_rsc_client_require__ = requireModule;
 }

@@ -4,7 +4,7 @@ import {
   SERVER_REFERENCE_PREFIX,
   createReferenceCacheTag,
   removeReferenceCacheTag,
-  setServerWebpackRequire,
+  setWebpackRequire,
 } from "./shared";
 
 let init = false;
@@ -23,7 +23,7 @@ export function setRequireModule(options: {
   // need memoize to return stable promise from __webpack_require__
   (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
 
-  setServerWebpackRequire();
+  setWebpackRequire();
 }
 
 export async function loadServerAction(id: string): Promise<Function> {
