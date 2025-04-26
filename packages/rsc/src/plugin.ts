@@ -8,7 +8,6 @@ import {
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
-  type Manifest,
   type Plugin,
   type ResolvedConfig,
   Rollup,
@@ -21,12 +20,9 @@ import {
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
-import type { ServerAssets } from "./types";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
-let browserManifest: Manifest;
-let browserBundle: Rollup.OutputBundle;
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let buildScan = false;
@@ -89,6 +85,7 @@ export default function vitePluginRsc({
               },
             },
             rsc: {
+              // `configEnvironment` below adds more `noExternal`
               resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
                 noExternal: [
@@ -96,7 +93,6 @@ export default function vitePluginRsc({
                   "react-dom",
                   "react-server-dom-webpack",
                   PKG_NAME,
-                  ...(clientPackages ?? []),
                 ],
               },
               optimizeDeps: {
@@ -149,20 +145,7 @@ export default function vitePluginRsc({
 
         return {
           resolve: {
-            noExternal: [
-              "react",
-              "react-dom",
-              "react-server-dom-webpack",
-              ...result.ssr.noExternal,
-            ].sort(),
-          },
-          optimizeDeps: {
-            include: [
-              "react",
-              "react/jsx-runtime",
-              "react/jsx-dev-runtime",
-              `react-server-dom-webpack/server.edge`,
-            ],
+            noExternal: result.ssr.noExternal.sort(),
           },
         };
       },
@@ -241,15 +224,6 @@ export default function vitePluginRsc({
           }
         }
       },
-      writeBundle(_options, bundle) {
-        if (this.environment.name === "client") {
-          const output = bundle[".vite/manifest.json"];
-          assert(output && output.type === "asset");
-          assert(typeof output.source === "string");
-          browserManifest = JSON.parse(output.source);
-          browserBundle = bundle;
-        }
-      },
     },
     {
       name: "rsc:patch-browser-raw-import",
@@ -305,27 +279,82 @@ export default function vitePluginRsc({
         return;
       },
     },
-    // TODO: this is available only for ssr and not rsc since rsc is built before client.
-    // (should be possible by externalizing browser manifest on build like import-entry virtual)
-    createVirtualPlugin("vite-rsc/server-assets", function () {
-      assert(this.environment.name === "ssr");
-
-      const assets: ServerAssets = { js: [], css: [] };
-      if (this.environment.mode === "dev") {
-        assets.js = ["/@id/__x00__virtual:vite-rsc/browser-entry"];
-        if (entries.css) {
-          assets.css.push(entries.css);
+    {
+      name: "rsc:virtual:vite-rsc/assets-manifest",
+      resolveId(source) {
+        if (source === "virtual:vite-rsc/assets-manifest") {
+          return {
+            id: `\0` + source,
+            external: this.environment.mode === "build",
+          };
         }
-      }
-      if (this.environment.mode === "build") {
-        const entry = browserManifest["virtual:vite-rsc/browser-entry"]!;
-        assets.js = [`/${entry.file}`];
-        if (entry.css) {
-          assets.css = entry.css.map((file) => `/${file}`);
+      },
+      load(id) {
+        if (id === "\0virtual:vite-rsc/assets-manifest") {
+          assert(this.environment.name !== "client");
+          const manifest: AssetsManifest = {
+            entry: {
+              bootstrapModules: ["/@id/__x00__virtual:vite-rsc/browser-entry"],
+              deps: {
+                js: [],
+                css: entries.css ? [entries.css] : [],
+              },
+            },
+            clientReferenceDeps: {},
+          };
+          return `export default ${JSON.stringify(manifest, null, 2)}`;
         }
-      }
-      return `export default ${JSON.stringify(assets)};`;
-    }),
+      },
+      // client build
+      generateBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          const assetDeps = collectAssetDeps(bundle);
+          const clientReferenceDeps: Record<string, AssetDeps> = {};
+          for (const [key, id] of Object.entries(clientReferences)) {
+            const deps = assetDeps[id]?.deps;
+            if (deps) {
+              clientReferenceDeps[key] = deps;
+            }
+          }
+          const entry = assetDeps["\0virtual:vite-rsc/browser-entry"]!;
+          const manifest: AssetsManifest = {
+            entry: {
+              bootstrapModules: [`/${entry.chunk.fileName}`],
+              deps: entry.deps,
+            },
+            clientReferenceDeps,
+          };
+          this.emitFile({
+            type: "asset",
+            fileName: "__vite_rsc_assets_manifest.js",
+            source: `export default ${JSON.stringify(manifest, null, 2)}`,
+          });
+        }
+      },
+      // non-client builds can load assets manifest as external
+      renderChunk(code, chunk) {
+        if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
+          assert(this.environment.name !== "client");
+          const replacement = path.relative(
+            path.join(
+              this.environment.config.build.outDir,
+              chunk.fileName,
+              "..",
+            ),
+            path.join(
+              config.environments.client!.build.outDir,
+              "__vite_rsc_assets_manifest.js",
+            ),
+          );
+          code = code.replace(
+            "\0virtual:vite-rsc/assets-manifest",
+            replacement,
+          );
+          return { code };
+        }
+        return;
+      },
+    },
     createVirtualPlugin("vite-rsc/browser-entry", function () {
       let code = "";
       if (entries.css) {
@@ -463,17 +492,6 @@ function vitePluginUseClient({
         return { code: `export {}`, map: null };
       }
       let code = generateDynamicImportCode(clientReferences);
-      if (browserBundle) {
-        const assetDeps = collectAssetDeps(browserBundle);
-        const keyAssetDeps: Record<string, AssetDeps> = {};
-        for (const [key, id] of Object.entries(clientReferences)) {
-          const deps = assetDeps[id];
-          if (deps) {
-            keyAssetDeps[key] = deps;
-          }
-        }
-        code += `export const assetDeps = ${JSON.stringify(keyAssetDeps)};\n`;
-      }
       return { code, map: null };
     }),
     {
@@ -659,18 +677,25 @@ function generateDynamicImportCode(map: Record<string, string>) {
 // collect client reference dependency chunk for modulepreload
 //
 
-export type AssetDeps = {
+export type AssetsManifest = {
+  entry: { bootstrapModules: string[]; deps: AssetDeps };
+  clientReferenceDeps: Record<string, AssetDeps>;
+};
+
+type AssetDeps = {
   js: string[];
   css: string[];
 };
 
-function collectAssetDeps(
-  bundle: Rollup.OutputBundle,
-): Record<string, AssetDeps> {
-  const map: Record<string, AssetDeps> = {};
+function collectAssetDeps(bundle: Rollup.OutputBundle) {
+  const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
+    {};
   for (const chunk of Object.values(bundle)) {
     if (chunk.type === "chunk" && chunk.facadeModuleId) {
-      map[chunk.facadeModuleId] = collectAssetDepsInner(chunk.fileName, bundle);
+      map[chunk.facadeModuleId] = {
+        chunk,
+        deps: collectAssetDepsInner(chunk.fileName, bundle),
+      };
     }
   }
   return map;
@@ -689,7 +714,7 @@ function collectAssetDepsInner(
     const v = bundle[k];
     assert(v);
     if (v.type === "chunk") {
-      css.push(...(v.viteMetadata?.importedAssets ?? []));
+      css.push(...(v.viteMetadata?.importedCss ?? []));
       for (const k2 of v.imports) {
         recurse(k2);
       }

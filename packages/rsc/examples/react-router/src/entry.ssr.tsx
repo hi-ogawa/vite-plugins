@@ -1,6 +1,6 @@
 import {
   createFromReadableStream,
-  importAssets,
+  getAssetsManifest,
   initialize,
 } from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
@@ -13,9 +13,12 @@ export default async function handler(
   request: Request,
   callServer: (request: Request) => Promise<Response>,
 ) {
-  const assets = await importAssets();
-  const css = assets.css.map((href) => (
+  const assets = getAssetsManifest().entry;
+  const css = assets.deps.css.map((href) => (
     <link key={href} rel="stylesheet" href={href} precedence="high" />
+  ));
+  const js = assets.deps.js.map((href) => (
+    <link key={href} rel="modulepreload" href={href} />
   ));
 
   return routeRSCServerRequest(
@@ -27,9 +30,10 @@ export default async function handler(
         <>
           <RSCStaticRouter payload={payload} />
           {css}
+          {js}
         </>,
         {
-          bootstrapModules: assets.js,
+          bootstrapModules: assets.bootstrapModules,
         },
       ),
   );

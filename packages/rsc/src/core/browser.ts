@@ -1,5 +1,5 @@
 import { memoize } from "@hiogawa/utils";
-import { removeReferenceCacheTag } from "./shared";
+import { removeReferenceCacheTag, setInternalRequire } from "./shared";
 
 let init = false;
 
@@ -13,5 +13,7 @@ export function setRequireModule(options: {
     return options.load(removeReferenceCacheTag(id));
   });
 
-  (globalThis as any).__webpack_require__ = requireModule;
+  (globalThis as any).__vite_rsc_client_require__ = requireModule;
+
+  setInternalRequire();
 }

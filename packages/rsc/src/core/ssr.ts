@@ -1,6 +1,6 @@
 import { memoize } from "@hiogawa/utils";
 import type { ServerConsumerManifest } from "../types";
-import { removeReferenceCacheTag, setServerWebpackRequire } from "./shared";
+import { removeReferenceCacheTag, setInternalRequire } from "./shared";
 
 let init = false;
 
@@ -21,7 +21,7 @@ export function setRequireModule(options: {
   };
   (globalThis as any).__vite_rsc_client_require__ = clientRequire;
 
-  setServerWebpackRequire();
+  setInternalRequire();
 }
 
 export function createServerConsumerManifest(): ServerConsumerManifest {

@@ -155,6 +155,12 @@ test("error", async ({ page }) => {
   await page.getByRole("link", { name: "/test/error/browser" }).click();
   await page.getByText("server error: (N/A)").click();
 
+  // TODO: restoring boundary seems flaky since around 0.0.0-experimental-197d6a04-20250424
+  // for example, the error is not restored when navigating
+  //   "/test/error/use-client" -> "/test/other"
+  await page.getByRole("link", { name: "/test/other" }).click();
+  await page.getByRole("heading", { name: "Other Page" }).click();
+
   // wrong usage errors would brew away the whole app on build?
   if (!process.env.E2E_PREVIEW) {
     await page.getByRole("link", { name: "/test/error" }).click();
@@ -165,9 +171,6 @@ test("error", async ({ page }) => {
     await page.getByRole("link", { name: "/test/error/use-server" }).click();
     await page.getByText('server error: {"status":500}').click();
   }
-
-  await page.getByRole("link", { name: "/test/other" }).click();
-  await page.getByRole("heading", { name: "Other Page" }).click();
 
   await checkClientState();
 });

@@ -1,4 +1,6 @@
+import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import { setRequireModule } from "./core/rsc";
+import type { AssetsManifest } from "./plugin";
 
 export {
   createClientManifest,
@@ -34,4 +36,8 @@ export async function importSsr<T>(): Promise<T> {
   } else {
     return mod;
   }
+}
+
+export function getAssetsManifest(): AssetsManifest {
+  return (assetsManifest as any).default;
 }
