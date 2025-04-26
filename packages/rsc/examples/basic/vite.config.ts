@@ -5,6 +5,7 @@ import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
 
 export default defineConfig({
+  base: "/custom-base/",
   clearScreen: false,
   plugins: [
     tailwindcss(),
