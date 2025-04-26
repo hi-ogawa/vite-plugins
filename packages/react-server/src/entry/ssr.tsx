@@ -1,14 +1,11 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
+import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
 import type { DevEnvironment, EnvironmentModuleNode } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
-import {
-  createModuleMap,
-  initializeReactClientSsr,
-  ssrImportPromiseCache,
-} from "../features/client-component/ssr";
+import { initializeReactClientSsr } from "../features/client-component/ssr";
 import {
   DEFAULT_ERROR_CONTEXT,
   getErrorContext,
@@ -92,28 +89,14 @@ export async function renderHtml(
 ) {
   initializeReactClientSsr();
 
-  const { default: ReactClient } = await import(
-    "react-server-dom-webpack/client.edge"
-  );
-
   //
   // ssr root
   //
 
-  if (import.meta.env.DEV) {
-    ssrImportPromiseCache.clear();
-  }
-
   const [stream1, stream2] = result.stream.tee();
 
-  const flightDataPromise = ReactClient.createFromReadableStream<FlightData>(
-    stream1,
-    {
-      serverConsumerManifest: {
-        moduleMap: createModuleMap(),
-      },
-    },
-  );
+  const flightDataPromise =
+    ReactClient.createFromReadableStream<FlightData>(stream1);
 
   const url = new URL(request.url);
   const history = createMemoryHistory({

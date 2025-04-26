@@ -43,7 +43,6 @@ import { $__global } from "../global";
 import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
-  applyPluginToServer,
   createVirtualPlugin,
   hashString,
   vitePluginSilenceDirectiveBuildWarning,
@@ -51,6 +50,7 @@ import {
   wrapServerPlugin,
 } from "./utils";
 export { wrapClientPlugin, wrapServerPlugin } from "./utils";
+import rscCore from "@hiogawa/vite-rsc/core/plugin";
 
 const debug = createDebug("react-server:plugin");
 
@@ -333,6 +333,7 @@ export function vitePluginReactServer(
 
   // plugins for main vite dev server (browser / ssr)
   return [
+    ...rscCore(),
     rscParentPlugin,
     buildOrchestrationPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
@@ -395,26 +396,6 @@ export function vitePluginReactServer(
     ),
     ...serverAssetsPluginServer({ manager }),
     serverDepsConfigPlugin(),
-    {
-      name: "patch-react-server-dom-webpack",
-      applyToEnvironment: applyPluginToServer,
-      transform(code, id, _options) {
-        if (id.includes("react-server-dom-webpack")) {
-          // rename webpack markers in react server runtime
-          // to avoid conflict with ssr runtime which shares same globals
-          code = code.replaceAll(
-            "__webpack_require__",
-            "__vite_react_server_webpack_require__",
-          );
-          code = code.replaceAll(
-            "__webpack_chunk_load__",
-            "__vite_react_server_webpack_chunk_load__",
-          );
-          return { code, map: null };
-        }
-        return;
-      },
-    },
 
     //
     // react client

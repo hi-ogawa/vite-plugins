@@ -1,8 +1,7 @@
 import * as serverRoutes from "virtual:server-routes";
 import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
+import * as ReactServer from "@hiogawa/vite-rsc/react/rsc";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
-import ReactServer from "react-server-dom-webpack/server.edge";
-import { createBundlerConfig } from "../features/client-component/server";
 import { DefaultNotFoundPage } from "../features/error/not-found";
 import {
   DEFAULT_ERROR_CONTEXT,
@@ -26,10 +25,7 @@ import {
 } from "../features/server-action/redirect";
 import {
   type ActionResult,
-  createActionBundlerConfig,
-  importServerAction,
   initializeReactServer,
-  serverReferenceImportPromiseCache,
 } from "../features/server-action/server";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 
@@ -62,10 +58,6 @@ export type ReactServerHandlerResult =
 
 export const handler: ReactServerHandler = async (ctx) => {
   initializeReactServer();
-
-  if (import.meta.env.DEV) {
-    serverReferenceImportPromiseCache.clear();
-  }
 
   const handled = handleTrailingSlash(new URL(ctx.request.url));
   if (handled) return handled;
@@ -138,13 +130,9 @@ export const handler: ReactServerHandler = async (ctx) => {
       : undefined,
   };
   const stream = requestContext.run(() =>
-    ReactServer.renderToReadableStream<FlightData>(
-      flightData,
-      createBundlerConfig(),
-      {
-        onError: reactServerOnError,
-      },
-    ),
+    ReactServer.renderToReadableStream<FlightData>(flightData, {
+      onError: reactServerOnError,
+    }),
   );
 
   if (isStream) {
@@ -202,18 +190,12 @@ async function actionHandler({
     const body = contentType?.startsWith("multipart/form-data")
       ? await request.formData()
       : await request.text();
-    const args = await ReactServer.decodeReply(
-      body,
-      createActionBundlerConfig(),
-    );
-    const action = await importServerAction(streamActionId);
+    const args = await ReactServer.decodeReply(body);
+    const action = await ReactServer.loadServerAction(streamActionId);
     boundAction = () => action.apply(null, args);
   } else {
     const formData = await request.formData();
-    const decodedAction = await ReactServer.decodeAction(
-      formData,
-      createActionBundlerConfig(),
-    );
+    const decodedAction = await ReactServer.decodeAction(formData);
     boundAction = async () => {
       const result = await decodedAction();
       const formState = await ReactServer.decodeFormState(result, formData);

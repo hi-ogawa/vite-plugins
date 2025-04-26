@@ -1,9 +1,6 @@
-import ReactClient from "react-server-dom-webpack/client.edge";
+import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
 
 /* @__NO_SIDE_EFFECTS__ */
 export function createServerReference(id: string) {
-  return ReactClient.createServerReference(id, (...args) => {
-    console.error(args);
-    throw new Error("unexpected callServer during SSR");
-  });
+  return ReactClient.createServerReference(id);
 }

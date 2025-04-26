@@ -47,6 +47,7 @@
     "vitefu": "^1.0.5"
   },
   "devDependencies": {
+    "@hiogawa/vite-rsc": "workspace:*",
     "@edge-runtime/cookies": "^6.0.0",
     "@tanstack/history": "^1.99.13"
   },
