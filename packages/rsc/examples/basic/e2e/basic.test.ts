@@ -8,26 +8,26 @@ import {
 } from "./helper";
 
 test("basic", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
 });
 
 test("client component", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await page.getByRole("button", { name: "Client Counter: 0" }).click();
   await page.getByRole("button", { name: "Client Counter: 1" }).click();
 });
 
 test("server action @js", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await using _ = await createReloadChecker(page);
   await testAction(page);
 });
 
 testNoJs("server action @nojs", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await testAction(page);
 });
 
@@ -44,7 +44,7 @@ async function testAction(page: Page) {
 }
 
 testNoJs("module preload on ssr @build", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   const srcs = await Promise.all(
     (await page.locator(`head >> link[rel="modulepreload"]`).all()).map((s) =>
       s.getAttribute("href"),
@@ -58,13 +58,13 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
 });
 
 test("server reference update @dev @js", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await testServerActionUpdate(page, { js: true });
 });
 
 test("server reference update @dev @nojs", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await testServerActionUpdate(page, { js: false });
 });
 
@@ -81,7 +81,7 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
   );
   if (!options.js) {
     await expect(async () => {
-      await page.goto("/");
+      await page.goto("./");
       await expect(
         page.getByRole("button", { name: "Server Counter: 0" }),
       ).toBeVisible({ timeout: 10 });
@@ -100,7 +100,7 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
 }
 
 test("client hmr @dev", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await page.getByRole("button", { name: "Client Counter: 0" }).click();
   await expect(
@@ -114,12 +114,12 @@ test("client hmr @dev", async ({ page }) => {
   ).toBeVisible();
 
   // check next ssr is also updated
-  const res = await page.goto("/");
+  const res = await page.goto("./");
   expect(await res?.text()).toContain("Client [edit] Counter");
 });
 
 test("server hmr @dev", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await page.getByRole("button", { name: "Client Counter: 0" }).click();
   await expect(
@@ -137,13 +137,13 @@ test("server hmr @dev", async ({ page }) => {
 });
 
 test("css @js", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await testCss(page);
 });
 
 testNoJs("css @nojs", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await testCss(page);
 });
 
@@ -153,7 +153,7 @@ async function testCss(page: Page, color = "rgb(255, 165, 0)") {
 }
 
 test("css hmr @dev", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await testCss(page);
 
@@ -164,13 +164,13 @@ test("css hmr @dev", async ({ page }) => {
 });
 
 test("tailwind @js", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await testTailwind(page);
 });
 
 testNoJs("tailwind @nojs", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await testTailwind(page);
 });
 
@@ -188,7 +188,7 @@ async function testTailwind(page: Page) {
 }
 
 test("tailwind hmr @dev", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await waitForHydration(page);
   await testTailwind(page);
 
