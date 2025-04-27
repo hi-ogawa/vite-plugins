@@ -319,7 +319,7 @@ export default function vitePluginRsc({
           const entry = assetDeps["\0virtual:vite-rsc/browser-entry"]!;
           const manifest: AssetsManifest = {
             entry: {
-              bootstrapModules: [entry.chunk.fileName],
+              bootstrapModules: [`/${entry.chunk.fileName}`],
               deps: entry.deps,
             },
             clientReferenceDeps,
@@ -723,7 +723,7 @@ function collectAssetDepsInner(
 
   recurse(fileName);
   return {
-    js: [...visited],
-    css: [...new Set(css)],
+    js: [...visited].map((file) => `/${file}`),
+    css: [...new Set(css)].map((file) => `/${file}`),
   };
 }
