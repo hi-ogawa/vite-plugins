@@ -32,8 +32,11 @@ export function registerServerReference<T>(
   return ReactServer.registerServerReference(ref, id, name);
 }
 
-export function decodeReply(body: string | FormData): Promise<unknown[]> {
-  return ReactServer.decodeReply(body, createServerManifest());
+export function decodeReply(
+  body: string | FormData,
+  options?: unknown,
+): Promise<unknown[]> {
+  return ReactServer.decodeReply(body, createServerManifest(), options);
 }
 
 export function decodeAction(body: FormData): Promise<() => Promise<void>> {
@@ -50,3 +53,6 @@ export function decodeFormState(
     createServerManifest(),
   );
 }
+
+export const createTemporaryReferenceSet: () => unknown =
+  ReactServer.createTemporaryReferenceSet;
