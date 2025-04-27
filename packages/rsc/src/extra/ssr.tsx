@@ -22,7 +22,7 @@ export async function renderHtml({
 
   const assets = getAssetsManifest().entry;
 
-  // flight deserialization needs to be kicked in inside SSR context
+  // flight deserialization needs to be kicked off inside SSR context
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
   function SsrRoot() {

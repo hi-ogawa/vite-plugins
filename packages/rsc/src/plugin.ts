@@ -294,10 +294,15 @@ export default function vitePluginRsc({
           assert(this.environment.name !== "client");
           const manifest: AssetsManifest = {
             entry: {
-              bootstrapModules: ["/@id/__x00__virtual:vite-rsc/browser-entry"],
+              bootstrapModules: [
+                config.base.slice(0, -1) +
+                  "/@id/__x00__virtual:vite-rsc/browser-entry",
+              ],
               deps: {
                 js: [],
-                css: entries.css ? [entries.css] : [],
+                css: entries.css
+                  ? [config.base.slice(0, -1) + entries.css]
+                  : [],
               },
             },
             clientReferenceDeps: {},

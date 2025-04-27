@@ -9,7 +9,9 @@ export function initialize(options?: {
     load: async (id) => {
       if (import.meta.env.DEV) {
         // @ts-ignore
-        return __vite_rsc_raw_import__(id);
+        return __vite_rsc_raw_import__(
+          import.meta.env.BASE_URL.slice(0, -1) + id,
+        );
       } else {
         const clientReferences = await import(
           "virtual:vite-rsc/client-references" as any
