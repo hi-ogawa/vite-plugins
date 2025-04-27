@@ -3,6 +3,7 @@ import * as clientReferences from "virtual:vite-rsc/client-references";
 import * as ReactDOM from "react-dom";
 import { setRequireModule } from "./core/ssr";
 import type { AssetsManifest } from "./plugin";
+import { withBase } from "./utils/base";
 
 export { createServerConsumerManifest } from "./core/ssr";
 
@@ -30,7 +31,7 @@ export function initialize(): void {
         const deps = getAssetsManifest().clientReferenceDeps[id];
         if (deps) {
           for (const js of deps.js) {
-            ReactDOM.preloadModule(js);
+            ReactDOM.preloadModule(withBase(js));
           }
         }
       }
