@@ -33,6 +33,9 @@ jobs:
       - run: pnpm -C packages/rsc/examples/basic test-e2e
       - run: pnpm -C packages/rsc/examples/basic build
       - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
+      - run: TEST_BASE=1 pnpm -C packages/rsc/examples/basic test-e2e
+      - run: TEST_BASE=1 pnpm -C packages/rsc/examples/basic build
+      - run: TEST_BASE=1 pnpm -C packages/rsc/examples/basic test-e2e-preview
       - run: pnpm -C packages/rsc/examples/react-router test-e2e
       - run: pnpm -C packages/rsc/examples/react-router build
       - run: pnpm -C packages/rsc/examples/react-router test-e2e-preview

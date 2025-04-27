@@ -6,6 +6,7 @@ import {
   getAssetsManifest,
   initialize,
 } from "../ssr";
+import { withBase } from "../utils/base";
 import type { RscPayload } from "./rsc";
 import {
   createBufferedTransformStream,
@@ -22,17 +23,22 @@ export async function renderHtml({
 
   const assets = getAssetsManifest().entry;
 
-  // flight deserialization needs to be kicked in inside SSR context
+  // flight deserialization needs to be kicked off inside SSR context
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
   function SsrRoot() {
     payload ??= createFromReadableStream<RscPayload>(stream1);
     const root = React.use(payload).root;
     const css = assets.deps.css.map((href) => (
-      <link key={href} rel="stylesheet" href={href} precedence="high" />
+      <link
+        key={href}
+        rel="stylesheet"
+        href={withBase(href)}
+        precedence="high"
+      />
     ));
     const js = assets.deps.js.map((href) => (
-      <link key={href} rel="modulepreload" href={href} />
+      <link key={href} rel="modulepreload" href={withBase(href)} />
     ));
     return (
       <>
@@ -44,7 +50,7 @@ export async function renderHtml({
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: assets.bootstrapModules,
+    bootstrapModules: assets.bootstrapModules.map((href) => withBase(href)),
     // @ts-expect-error no types
     formState,
   });

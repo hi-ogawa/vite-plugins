@@ -1,4 +1,5 @@
 import { setRequireModule } from "./core/browser";
+import { withBase } from "./utils/base";
 
 export * from "./react/browser";
 
@@ -9,7 +10,7 @@ export function initialize(options?: {
     load: async (id) => {
       if (import.meta.env.DEV) {
         // @ts-ignore
-        return __vite_rsc_raw_import__(id);
+        return __vite_rsc_raw_import__(withBase(id));
       } else {
         const clientReferences = await import(
           "virtual:vite-rsc/client-references" as any
