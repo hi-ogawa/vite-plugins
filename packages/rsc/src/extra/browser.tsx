@@ -23,17 +23,6 @@ export async function hydrate(options?: {
     },
   });
 
-  function findSourceMapURL(filename: string, environmentName: string) {
-    if (!import.meta.env.DEV) return null;
-    // TODO: respect config.server.origin and config.base?
-    const url = new URL("/__vite_rsc_findSourceMapURL", window.location.origin);
-    url.searchParams.set("filename", filename);
-    url.searchParams.set("environmentName", environmentName);
-    return url.toString();
-  }
-
-  const rscOptions = { findSourceMapURL };
-
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
     const temporaryReferences = createTemporaryReferenceSet();
@@ -45,7 +34,7 @@ export async function hydrate(options?: {
           "x-rsc-action": id,
         },
       }),
-      { temporaryReferences, ...rscOptions },
+      { temporaryReferences },
     );
     setPayload(payload);
     return payload.returnValue;
@@ -54,7 +43,7 @@ export async function hydrate(options?: {
 
   async function onNavigation() {
     const url = new URL(window.location.href);
-    const payload = await createFromFetch<RscPayload>(fetch(url), rscOptions);
+    const payload = await createFromFetch<RscPayload>(fetch(url));
     setPayload(payload);
   }
 
@@ -64,7 +53,6 @@ export async function hydrate(options?: {
 
   const initialPayload = await createFromReadableStream<RscPayload>(
     getRscScript(),
-    rscOptions,
   );
 
   let setPayload: (v: RscPayload) => void;

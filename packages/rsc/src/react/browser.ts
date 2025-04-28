@@ -10,6 +10,7 @@ export function createFromReadableStream<T>(
 ): Promise<T> {
   return ReactClient.createFromReadableStream(stream, {
     callServer: getCallServer(),
+    findSourceMapURL,
     ...options,
   });
 }
@@ -20,6 +21,7 @@ export function createFromFetch<T>(
 ): Promise<T> {
   return ReactClient.createFromFetch(promiseForResponse, {
     callServer: getCallServer(),
+    findSourceMapURL,
     ...options,
   });
 }
@@ -52,3 +54,12 @@ export type { CallServerCallback };
 
 export const createTemporaryReferenceSet: () => unknown =
   ReactClient.createTemporaryReferenceSet;
+
+function findSourceMapURL(filename: string, environmentName: string) {
+  if (!import.meta.env.DEV) return null;
+  // TODO: respect config.server.origin and config.base?
+  const url = new URL("/__vite_rsc_findSourceMapURL", window.location.origin);
+  url.searchParams.set("filename", filename);
+  url.searchParams.set("environmentName", environmentName);
+  return url.toString();
+}
