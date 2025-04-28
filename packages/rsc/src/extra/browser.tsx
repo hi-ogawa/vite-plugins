@@ -71,7 +71,13 @@ export async function hydrate(options?: {
     return payload.root;
   }
 
-  ReactDomClient.hydrateRoot(document, <BrowserRoot />, {
+  const browserRoot = (
+    <React.StrictMode>
+      <BrowserRoot />
+    </React.StrictMode>
+  );
+
+  ReactDomClient.hydrateRoot(document, browserRoot, {
     formState: initialPayload.formState,
   });
 }
