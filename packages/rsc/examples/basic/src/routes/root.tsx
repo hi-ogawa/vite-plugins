@@ -54,20 +54,14 @@ export function Root() {
 function TestServerActionError() {
   return (
     <ErrorBoundary>
-      <TestServerActionError2 />
+      <form
+        action={async () => {
+          "use server";
+          throw new Error("boom!");
+        }}
+      >
+        <button>test-findSourceMapURL</button>
+      </form>
     </ErrorBoundary>
-  );
-}
-
-function TestServerActionError2() {
-  return (
-    <form
-      action={async () => {
-        "use server";
-        throw new Error("boom!");
-      }}
-    >
-      <button>test-findSourceMapURL</button>
-    </form>
   );
 }

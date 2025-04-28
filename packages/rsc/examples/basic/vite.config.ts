@@ -25,16 +25,16 @@ export default defineConfig({
         server.middlewares.use((req, res, next) => {
           const url = new URL(req.url!, `http://localhost`);
           if (url.pathname === "/__findSourceMapURL") {
+            res.setHeader("content-type", "application/json");
             const filename = url.searchParams.get("filename")!;
             const mod =
               server.environments.rsc.moduleGraph.getModuleById(filename);
             const map = mod?.transformResult?.map;
             if (!map) {
               res.statusCode = 404;
-              res.end();
+              res.end("{}");
               return;
             }
-            res.setHeader("content-type", "application/json");
             res.end(JSON.stringify(map));
             return;
           }
