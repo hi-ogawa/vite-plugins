@@ -10,7 +10,3 @@ export async function changeServerCounter(formData: FormData): Promise<void> {
 export async function resetServerCounter(): Promise<void> {
   serverCounter = 0;
 }
-
-export async function testServerActionError() {
-  throw new Error("testServerActionError");
-}

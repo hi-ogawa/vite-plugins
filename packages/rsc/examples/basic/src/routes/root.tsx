@@ -3,7 +3,6 @@ import {
   changeServerCounter,
   resetServerCounter,
   serverCounter,
-  testServerActionError,
 } from "./action";
 import {
   ClientCounter,
@@ -62,7 +61,12 @@ function TestServerActionError() {
 
 function TestServerActionError2() {
   return (
-    <form action={testServerActionError}>
+    <form
+      action={async () => {
+        "use server";
+        throw new Error("boom!");
+      }}
+    >
       <button>test-findSourceMapURL</button>
     </form>
   );
