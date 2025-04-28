@@ -1,5 +1,6 @@
 import type { ReactFormState } from "react-dom/client";
 import {
+  createTemporaryReferenceSet,
   decodeAction,
   decodeFormState,
   decodeReply,
@@ -33,6 +34,7 @@ export async function renderRequest(
   // callAction
   let returnValue: unknown | undefined;
   let formState: ReactFormState | undefined;
+  let temporaryReferences: unknown | undefined;
   if (isAction) {
     const actionId = request.headers.get("x-rsc-action");
     if (actionId) {
@@ -41,7 +43,8 @@ export async function renderRequest(
       const body = contentType?.startsWith("multipart/form-data")
         ? await request.formData()
         : await request.text();
-      const args = await decodeReply(body);
+      temporaryReferences = createTemporaryReferenceSet();
+      const args = await decodeReply(body, { temporaryReferences });
       const action = await loadServerAction(actionId);
       returnValue = await action.apply(null, args);
     } else {
@@ -53,11 +56,9 @@ export async function renderRequest(
     }
   }
 
-  const stream = renderToReadableStream<RscPayload>({
-    root,
-    formState,
-    returnValue,
-  });
+  const rscPayload: RscPayload = { root, formState, returnValue };
+  const rscOptions = { temporaryReferences };
+  const stream = renderToReadableStream<RscPayload>(rscPayload, rscOptions);
 
   if (isRscRequest) {
     return new Response(stream, {

@@ -17,6 +17,3 @@ export function createFromReadableStream<T>(
 export function createServerReference(id: string): unknown {
   return ReactClient.createServerReference(id);
 }
-
-export const createTemporaryReferenceSet: () => unknown =
-  ReactClient.createTemporaryReferenceSet;
