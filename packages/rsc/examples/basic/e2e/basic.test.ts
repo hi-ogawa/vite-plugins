@@ -55,7 +55,7 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
   );
   const file =
     (process.env.TEST_BASE ? "/custom-base/" : "/") +
-    viteManifest["src/counter.tsx"].file;
+    viteManifest["src/routes/counter.tsx"].file;
   expect(srcs).toContain(file);
 });
 
