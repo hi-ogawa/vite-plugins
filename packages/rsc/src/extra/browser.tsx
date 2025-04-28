@@ -24,7 +24,9 @@ export async function hydrate(options?: {
   });
 
   function findSourceMapURL(filename: string, environmentName: string) {
-    const url = new URL("/__findSourceMapURL", window.location.href);
+    if (!import.meta.env.DEV) return null;
+    // TODO: respect config.server.origin and config.base?
+    const url = new URL("/__vite_rsc_findSourceMapURL", window.location.origin);
     url.searchParams.set("filename", filename);
     url.searchParams.set("environmentName", environmentName);
     return url.toString();

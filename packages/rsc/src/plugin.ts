@@ -742,10 +742,11 @@ export function vitePluginFindSourceMapURL(): Plugin[] {
   return [
     {
       name: "rsc:findSourceMapURL",
+      apply: "serve",
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           const url = new URL(req.url!, `http://localhost`);
-          if (url.pathname === "/__findSourceMapURL") {
+          if (url.pathname === "/__vite_rsc_findSourceMapURL") {
             res.setHeader("content-type", "application/json");
             let filename = url.searchParams.get("filename")!;
             if (filename.startsWith("file://")) {
