@@ -9,7 +9,7 @@ export function createFromReadableStream<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromReadableStream(stream, {
-    callServer: getCallServer(),
+    callServer,
     findSourceMapURL,
     ...options,
   });
@@ -20,7 +20,7 @@ export function createFromFetch<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromFetch(promiseForResponse, {
-    callServer: getCallServer(),
+    callServer,
     findSourceMapURL,
     ...options,
   });
@@ -34,16 +34,19 @@ export function encodeReply(
 }
 
 export function createServerReference(id: string): unknown {
-  return ReactClient.createServerReference(id, (...args: any[]) =>
-    getCallServer()(...args),
+  return ReactClient.createServerReference(
+    id,
+    callServer,
+    undefined,
+    findSourceMapURL,
   );
 }
 
 // use global instead of local variable  to tolerate duplicate modules
 // e.g. when `setServerCallback` is pre-bundled but `createServerReference` is not
 
-function getCallServer(): any {
-  return (globalThis as any).__viteRscCallServer;
+function callServer(...args: any[]): any {
+  return (globalThis as any).__viteRscCallServer(...args);
 }
 
 export function setServerCallback(fn: CallServerCallback): void {
