@@ -219,3 +219,16 @@ test("temporary references @js", async ({ page }) => {
     "result: [server [client]]",
   );
 });
+
+test("findSourceMapURL @js", async ({ page }) => {
+  // it doesn't seem possible to assert react error stack mapping on playwright.
+  // this need to be verified manually on browser devtools console.
+  await page.goto("./");
+  await waitForHydration(page);
+  await page.getByRole("button", { name: "test-findSourceMapURL" }).click();
+  await expect(page.getByText("ErrorBoundary caught")).toBeVisible();
+  await page.getByRole("button", { name: "Reset Error" }).click();
+  await expect(
+    page.getByRole("button", { name: "test-findSourceMapURL" }),
+  ).toBeVisible();
+});

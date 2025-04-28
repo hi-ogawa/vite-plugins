@@ -31,6 +31,7 @@ export async function renderRequest(
       !url.searchParams.has("__html")) ||
     url.searchParams.has("__rsc");
 
+  // TODO: error handling
   // callAction
   let returnValue: unknown | undefined;
   let formState: ReactFormState | undefined;

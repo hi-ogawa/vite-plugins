@@ -401,6 +401,7 @@ export default function vitePluginRsc({
     ...vitePluginRscCore(),
     ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
+    ...vitePluginFindSourceMapURL(),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
@@ -726,4 +727,56 @@ function collectAssetDepsInner(
     js: [...visited].map((file) => `/${file}`),
     css: [...new Set(css)].map((file) => `/${file}`),
   };
+}
+
+//
+// support findSourceMapURL
+// https://github.com/facebook/react/pull/29708
+// https://github.com/facebook/react/pull/30741
+//
+
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
+
+export function vitePluginFindSourceMapURL(): Plugin[] {
+  return [
+    {
+      name: "rsc:findSourceMapURL",
+      apply: "serve",
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = new URL(req.url!, `http://localhost`);
+          if (url.pathname === "/__vite_rsc_findSourceMapURL") {
+            res.setHeader("content-type", "application/json");
+            let filename = url.searchParams.get("filename")!;
+            if (filename.startsWith("file://")) {
+              filename = fileURLToPath(filename);
+            }
+            const mod =
+              server.environments.rsc!.moduleGraph.getModuleById(filename);
+            const map = mod?.transformResult?.map;
+            if (map) {
+              res.end(JSON.stringify(map));
+            } else if (fs.existsSync(filename)) {
+              // line-by-line identity source map
+              const content = fs.readFileSync(filename, "utf-8");
+              res.end(
+                JSON.stringify({
+                  version: 3,
+                  sources: [filename],
+                  sourcesContent: [content],
+                  mappings: "AAAA" + ";AACA".repeat(content.split("\n").length),
+                }),
+              );
+            } else {
+              res.statusCode = 404;
+              res.end("{}");
+            }
+            return;
+          }
+          next();
+        });
+      },
+    },
+  ];
 }

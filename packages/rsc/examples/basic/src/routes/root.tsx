@@ -11,8 +11,9 @@ import {
   TestTailwindClient,
   TestTemporaryReference,
 } from "./counter";
+import ErrorBoundary from "./error-boundary";
 
-export function Root() {
+export function Root(props: { url: URL }) {
   return (
     <html>
       <head>
@@ -44,7 +45,32 @@ export function Root() {
             );
           }}
         />
+        <TestServerActionError />
+        <TestReplayConsoleLogs url={props.url} />
       </body>
     </html>
   );
+}
+
+function TestServerActionError() {
+  return (
+    <ErrorBoundary>
+      <form
+        action={async () => {
+          "use server";
+          throw new Error("boom!");
+        }}
+      >
+        <button>test-findSourceMapURL</button>
+      </form>
+    </ErrorBoundary>
+  );
+}
+
+function TestReplayConsoleLogs(props: { url: URL }) {
+  if (props.url.search.includes("test-replay-console-logs")) {
+    // TODO: line posiiton of replay log seems a bit off
+    console.log("[test-replay-console-logs]");
+  }
+  return <a href="?test-replay-console-logs">test-replayConsoleLogs</a>;
 }
