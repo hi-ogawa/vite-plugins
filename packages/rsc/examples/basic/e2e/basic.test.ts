@@ -77,7 +77,7 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
   ).toBeVisible();
 
   // update server code
-  using editor = createEditor("src/action.tsx");
+  using editor = createEditor("src/routes/action.tsx");
   editor.edit((s) =>
     s.replace("const TEST_UPDATE = 1;", "const TEST_UPDATE = 10;"),
   );
@@ -109,7 +109,7 @@ test("client hmr @dev", async ({ page }) => {
     page.getByRole("button", { name: "Client Counter: 1" }),
   ).toBeVisible();
 
-  using editor = createEditor("src/counter.tsx");
+  using editor = createEditor("src/routes/counter.tsx");
   editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
   await expect(
     page.getByRole("button", { name: "Client [edit] Counter: 1" }),
@@ -128,7 +128,7 @@ test("server hmr @dev", async ({ page }) => {
     page.getByRole("button", { name: "Client Counter: 1" }),
   ).toBeVisible();
 
-  using editor = createEditor("src/server.tsx");
+  using editor = createEditor("src/routes/root.tsx");
   editor.edit((s) => s.replace("Server Counter", "Server [edit] Counter"));
   await expect(
     page.getByRole("button", { name: "Server [edit] Counter: 0" }),
@@ -196,14 +196,14 @@ test("tailwind hmr @dev", async ({ page }) => {
 
   await using _ = await createReloadChecker(page);
 
-  using clientFile = createEditor("src/counter.tsx");
+  using clientFile = createEditor("src/routes/counter.tsx");
   clientFile.edit((s) => s.replaceAll("text-blue-500", "text-blue-600"));
   await expect(page.locator(".test-tw-client")).toHaveCSS(
     "color",
     "oklch(0.546 0.245 262.881)",
   );
 
-  using serverFile = createEditor("src/server.tsx");
+  using serverFile = createEditor("src/routes/root.tsx");
   serverFile.edit((s) => s.replaceAll("text-red-500", "text-red-600"));
   await expect(page.locator(".test-tw-server")).toHaveCSS(
     "color",
