@@ -1,4 +1,5 @@
 import {
+  createTemporaryReferenceSet,
   decodeAction,
   decodeReply,
   importSsr,
@@ -34,6 +35,7 @@ const routes: ServerRouteObject[] = [
   },
 ];
 
+// @ts-ignore
 const decodeCallServer: DecodeCallServerFunction = async (actionId, reply) => {
   const args = await decodeReply(reply);
   const action = await loadServerAction(actionId);
@@ -45,17 +47,26 @@ const decodeFormAction: DecodeFormActionFunction = async (formData) => {
 };
 
 async function callServer(request: Request) {
+  const temporaryReferences = createTemporaryReferenceSet();
+
   const match = await matchRSCServerRequest({
-    decodeCallServer,
+    decodeCallServer: async (actionId, reply) => {
+      const args = await decodeReply(reply, { temporaryReferences });
+      const action = await loadServerAction(actionId);
+      return action.bind(null, ...args);
+    },
     decodeFormAction,
     request,
     routes,
   });
 
-  return new Response(renderToReadableStream(match.payload), {
-    status: match.statusCode,
-    headers: match.headers,
-  });
+  return new Response(
+    renderToReadableStream(match.payload, { temporaryReferences }),
+    {
+      status: match.statusCode,
+      headers: match.headers,
+    },
+  );
 }
 
 export default async function handler(requrest: Request) {

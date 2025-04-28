@@ -1,5 +1,6 @@
 import {
   createFromReadableStream,
+  createTemporaryReferenceSet,
   encodeReply,
   initialize,
   setServerCallback,
@@ -20,10 +21,13 @@ initialize({
   },
 });
 
+// TODO: this should be alive only during single action lifecycle? (encodeReply + createFromReadableStream)
+const temporaryReferences = createTemporaryReferenceSet();
+
 setServerCallback(
   createCallServer({
-    decode: (body) => createFromReadableStream(body),
-    encodeAction: (args) => encodeReply(args),
+    decode: (body) => createFromReadableStream(body, { temporaryReferences }),
+    encodeAction: (args) => encodeReply(args, { temporaryReferences }),
   }),
 );
 
