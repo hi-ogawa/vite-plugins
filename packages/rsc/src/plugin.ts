@@ -566,17 +566,12 @@ function vitePluginUseServer(): Plugin[] {
         if (this.environment.name === "rsc") {
           const { output } = await transformServerActionServer(code, ast, {
             id: normalizedId,
-            runtime: "$$register",
+            runtime: "$$ReactServer.registerServerReference",
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
           output.prepend(`
             import * as $$ReactServer from "${PKG_NAME}/rsc";
-            /* @__NO_SIDE_EFFECTS__ */
-            const $$register = (value, id, name) => {
-              if (typeof value !== 'function') return value;
-              return $$ReactServer.registerServerReference(value, id, name);
-            }
           `);
           return {
             code: output.toString(),

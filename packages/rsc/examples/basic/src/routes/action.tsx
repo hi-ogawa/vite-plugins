@@ -1,6 +1,10 @@
 "use server";
 
-export let serverCounter = 0;
+let serverCounter = 0;
+
+export function getServerCounter() {
+  return serverCounter;
+}
 
 export async function changeServerCounter(formData: FormData): Promise<void> {
   const TEST_UPDATE = 1;
