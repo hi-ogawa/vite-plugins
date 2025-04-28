@@ -3,6 +3,7 @@ import {
   changeServerCounter,
   resetServerCounter,
   serverCounter,
+  testServerActionStack,
 } from "./action";
 import {
   ClientCounter,
@@ -11,6 +12,7 @@ import {
   TestTailwindClient,
   TestTemporaryReference,
 } from "./counter";
+import ErrorBoundary from "./error-boundary";
 
 export function Root() {
   return (
@@ -44,6 +46,11 @@ export function Root() {
             );
           }}
         />
+        <ErrorBoundary>
+          <form action={testServerActionStack}>
+            <button>test-findSourceMapURL</button>
+          </form>
+        </ErrorBoundary>
       </body>
     </html>
   );

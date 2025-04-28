@@ -23,6 +23,13 @@ export async function hydrate(options?: {
     },
   });
 
+  function findSourceMapURL(...args: any[]) {
+    console.log("[findSourceMapURL]", args);
+    return null;
+  }
+
+  const rscOptions = { findSourceMapURL };
+
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
     const temporaryReferences = createTemporaryReferenceSet();
@@ -34,7 +41,7 @@ export async function hydrate(options?: {
           "x-rsc-action": id,
         },
       }),
-      { temporaryReferences },
+      { temporaryReferences, ...rscOptions },
     );
     setPayload(payload);
     return payload.returnValue;
@@ -43,7 +50,7 @@ export async function hydrate(options?: {
 
   async function onNavigation() {
     const url = new URL(window.location.href);
-    const payload = await createFromFetch<RscPayload>(fetch(url));
+    const payload = await createFromFetch<RscPayload>(fetch(url), rscOptions);
     setPayload(payload);
   }
 
@@ -53,6 +60,7 @@ export async function hydrate(options?: {
 
   const initialPayload = await createFromReadableStream<RscPayload>(
     getRscScript(),
+    rscOptions,
   );
 
   let setPayload: (v: RscPayload) => void;
