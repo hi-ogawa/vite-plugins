@@ -24,8 +24,11 @@ export function createFromFetch<T>(
   });
 }
 
-export function encodeReply(v: unknown[]): Promise<string | FormData> {
-  return ReactClient.encodeReply(v);
+export function encodeReply(
+  v: unknown[],
+  options?: unknown,
+): Promise<string | FormData> {
+  return ReactClient.encodeReply(v, options);
 }
 
 export function createServerReference(id: string): unknown {
@@ -46,3 +49,6 @@ export function setServerCallback(fn: CallServerCallback): void {
 }
 
 export type { CallServerCallback };
+
+export const createTemporaryReferenceSet: () => unknown =
+  ReactClient.createTemporaryReferenceSet;

@@ -210,3 +210,12 @@ test("tailwind hmr @dev", async ({ page }) => {
     "oklch(0.577 0.245 27.325)",
   );
 });
+
+test("temporary references @js", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await page.getByRole("button", { name: "test-temporary-reference" }).click();
+  await expect(page.getByTestId("temporary-reference")).toContainText(
+    "result: [server [client]]",
+  );
+});

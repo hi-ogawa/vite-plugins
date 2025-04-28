@@ -4,6 +4,7 @@ import {
   type CallServerCallback,
   createFromFetch,
   createFromReadableStream,
+  createTemporaryReferenceSet,
   encodeReply,
   initialize,
   setServerCallback,
@@ -24,14 +25,16 @@ export async function hydrate(options?: {
 
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
+    const temporaryReferences = createTemporaryReferenceSet();
     const payload = await createFromFetch<RscPayload>(
       fetch(url, {
         method: "POST",
-        body: await encodeReply(args),
+        body: await encodeReply(args, { temporaryReferences }),
         headers: {
           "x-rsc-action": id,
         },
       }),
+      { temporaryReferences },
     );
     setPayload(payload);
     return payload.returnValue;
