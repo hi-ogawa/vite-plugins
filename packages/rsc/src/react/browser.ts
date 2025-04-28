@@ -33,6 +33,13 @@ export function encodeReply(
   return ReactClient.encodeReply(v, options);
 }
 
+// TODO: this likely means we cannot have automatic `callServer` wrapper...?
+// https://github.com/facebook/react/pull/30741
+// The compiled output must call these directly without a wrapper function
+// because the wrapper adds a stack frame. I decided against complicated
+// and fragile dev-only options to skip n number of frames that would just
+// end up in prod code. The implementation just skips one frame - our own.
+// Otherwise it'll just point all source mapping to the wrapper.
 export function createServerReference(id: string): unknown {
   return ReactClient.createServerReference(
     id,
