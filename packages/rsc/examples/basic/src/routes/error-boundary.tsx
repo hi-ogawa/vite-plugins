@@ -30,7 +30,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
               this.setState({ error: null });
             }}
           >
-            Reset
+            Reset Error
           </button>
         </div>
       );
