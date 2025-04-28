@@ -24,17 +24,17 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           const url = new URL(req.url!, `http://localhost`);
-          if (url.pathname === "/__vite_rsc_findSourceMapUrl") {
+          if (url.pathname === "/__findSourceMapURL") {
             const filename = url.searchParams.get("filename")!;
             const mod =
               server.environments.rsc.moduleGraph.getModuleById(filename);
             const map = mod?.transformResult?.map;
             if (!map) {
               res.statusCode = 404;
-              res.end("Not found");
+              res.end();
               return;
             }
-            res.setHeader("Content-Type", "application/json");
+            res.setHeader("content-type", "application/json");
             res.end(JSON.stringify(map));
             return;
           }

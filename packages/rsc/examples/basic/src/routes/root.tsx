@@ -46,13 +46,24 @@ export function Root() {
             );
           }}
         />
-        <ErrorBoundary>
-          {/* TODO: not working for inline server action? */}
-          <form action={testServerActionError}>
-            <button>test-findSourceMapURL</button>
-          </form>
-        </ErrorBoundary>
+        <TestServerActionError />
       </body>
     </html>
+  );
+}
+
+function TestServerActionError() {
+  return (
+    <ErrorBoundary>
+      <TestServerActionError2 />
+    </ErrorBoundary>
+  );
+}
+
+function TestServerActionError2() {
+  return (
+    <form action={testServerActionError}>
+      <button>test-findSourceMapURL</button>
+    </form>
   );
 }
