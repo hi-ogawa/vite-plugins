@@ -19,6 +19,29 @@ export default defineConfig({
       },
     }),
     Inspect(),
+    {
+      name: "rsc:middleware-findSourceMapURL",
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = new URL(req.url!, `http://localhost`);
+          if (url.pathname === "/__vite_rsc_findSourceMapUrl") {
+            const filename = url.searchParams.get("filename")!;
+            const mod =
+              server.environments.rsc.moduleGraph.getModuleById(filename);
+            const map = mod?.transformResult?.map;
+            if (!map) {
+              res.statusCode = 404;
+              res.end("Not found");
+              return;
+            }
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify(map));
+            return;
+          }
+          next();
+        });
+      },
+    },
   ],
   build: {
     minify: false,
