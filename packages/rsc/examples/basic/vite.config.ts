@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -26,16 +28,30 @@ export default defineConfig({
           const url = new URL(req.url!, `http://localhost`);
           if (url.pathname === "/__findSourceMapURL") {
             res.setHeader("content-type", "application/json");
-            const filename = url.searchParams.get("filename")!;
+            let filename = url.searchParams.get("filename")!;
+            if (filename.startsWith("file://")) {
+              filename = fileURLToPath(filename);
+            }
             const mod =
               server.environments.rsc.moduleGraph.getModuleById(filename);
             const map = mod?.transformResult?.map;
-            if (!map) {
+            if (map) {
+              res.end(JSON.stringify(map));
+            } else if (fs.existsSync(filename)) {
+              // line-by-line identity source map
+              const content = fs.readFileSync(filename, "utf-8");
+              res.end(
+                JSON.stringify({
+                  version: 3,
+                  sources: [filename],
+                  sourcesContent: [content],
+                  mappings: "AAAA" + ";AACA".repeat(content.split("\n").length),
+                }),
+              );
+            } else {
               res.statusCode = 404;
               res.end("{}");
-              return;
             }
-            res.end(JSON.stringify(map));
             return;
           }
           next();
