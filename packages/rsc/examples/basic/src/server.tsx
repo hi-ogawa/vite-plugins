@@ -1,4 +1,5 @@
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
+import type React from "react";
 import {
   changeServerCounter,
   resetServerCounter,
@@ -9,6 +10,7 @@ import {
   Hydrated,
   TestStyleClient,
   TestTailwindClient,
+  TestTemporaryReference,
 } from "./counter";
 
 function Document() {
@@ -33,6 +35,16 @@ function Document() {
         <div className="test-style-server">test-style-server</div>
         <TestTailwindClient />
         <div className="test-tw-server text-red-500">test-tw-server</div>
+        <TestTemporaryReference
+          action={async (node: React.ReactNode) => {
+            "use server";
+            return (
+              <span>
+                [server <span>{node}</span>]
+              </span>
+            );
+          }}
+        />
       </body>
     </html>
   );

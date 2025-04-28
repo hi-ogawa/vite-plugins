@@ -27,3 +27,22 @@ export function TestStyleClient() {
 export function TestTailwindClient() {
   return <div className="test-tw-client text-blue-500">test-tw-client</div>;
 }
+
+export function TestTemporaryReference(props: {
+  action: (node: React.ReactNode) => Promise<React.ReactNode>;
+}) {
+  const [result, setResult] = React.useState<React.ReactNode>("(none)");
+
+  return (
+    <div style={{ display: "flex" }}>
+      <form
+        action={async () => {
+          setResult(await props.action(<span>[client]</span>));
+        }}
+      >
+        <button>test-temporary-reference</button>
+      </form>
+      <div data-testid="temporary-reference">result: {result}</div>
+    </div>
+  );
+}
