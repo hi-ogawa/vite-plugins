@@ -591,10 +591,17 @@ function vitePluginUseServer(): Plugin[] {
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
+          // TODO: need to directly call createServerReference
           output.prepend(`
             import * as $$ReactClient from "${PKG_NAME}/${name}";
             /* @__NO_SIDE_EFFECTS__ */
-            const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)})
+            const $$proxy = (id, name) => $$ReactClient.createServerReference(
+              ${JSON.stringify(id + "#" + name)},
+              $$ReactClient.callServer,
+              undefined,
+              $$ReactClient.findSourceMapURL,
+              undefined,
+            )
           `);
           return { code: output.toString(), map: { mappings: "" } };
         }
