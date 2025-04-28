@@ -11,14 +11,6 @@ export async function resetServerCounter(): Promise<void> {
   serverCounter = 0;
 }
 
-export async function testServerActionStack() {
-  await testServerActionStackInner1();
-}
-
-async function testServerActionStackInner1() {
-  await testServerActionStackInner2();
-}
-
-async function testServerActionStackInner2() {
-  throw new Error("testServerActionStack");
+export async function testServerActionError() {
+  throw new Error("testServerActionError");
 }

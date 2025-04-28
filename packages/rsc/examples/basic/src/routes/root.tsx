@@ -3,7 +3,7 @@ import {
   changeServerCounter,
   resetServerCounter,
   serverCounter,
-  testServerActionStack,
+  testServerActionError,
 } from "./action";
 import {
   ClientCounter,
@@ -47,7 +47,8 @@ export function Root() {
           }}
         />
         <ErrorBoundary>
-          <form action={testServerActionStack}>
+          {/* TODO: not working for inline server action? */}
+          <form action={testServerActionError}>
             <button>test-findSourceMapURL</button>
           </form>
         </ErrorBoundary>

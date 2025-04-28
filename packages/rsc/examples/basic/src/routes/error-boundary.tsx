@@ -22,7 +22,18 @@ export default class ErrorBoundary extends React.Component<Props, State> {
 
   render() {
     if (this.state.error) {
-      return <div>Caught an error: {this.state.error.message}</div>;
+      return (
+        <div>
+          ErrorBoundary caught '{this.state.error.message}'
+          <button
+            onClick={() => {
+              this.setState({ error: null });
+            }}
+          >
+            Reset
+          </button>
+        </div>
+      );
     }
     return this.props.children;
   }
