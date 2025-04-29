@@ -7,10 +7,22 @@ self.__rsc_stream = new ReadableStream({
 }).pipeThrough(new TextEncoderStream());
 `;
 
+export function injectRscScript(
+  stream: ReadableStream<Uint8Array>,
+): TransformStream<Uint8Array, Uint8Array> {
+  return combineTransform(
+    new TextDecoderStream(),
+    combineTransform(
+      createBufferedTransformStream(),
+      combineTransform(injectRscScriptString(stream), new TextEncoderStream()),
+    ),
+  );
+}
+
 // TODO: handle binary (non utf-8) payload
 // https://github.com/devongovett/rsc-html-stream
 
-export function injectRscScript(
+function injectRscScriptString(
   stream: ReadableStream<Uint8Array>,
 ): TransformStream<string, string> {
   let rscPromise: Promise<void>;
@@ -84,4 +96,11 @@ export function createBufferedTransformStream(): TransformStream<
 
 export function getRscScript(): ReadableStream<Uint8Array> {
   return (self as any).__rsc_stream;
+}
+
+function combineTransform<T1, T2, T3>(
+  t1: TransformStream<T1, T2>,
+  t2: TransformStream<T2, T3>,
+): TransformStream<T1, T3> {
+  return { writable: t1.writable, readable: t1.readable.pipeThrough(t2) };
 }
