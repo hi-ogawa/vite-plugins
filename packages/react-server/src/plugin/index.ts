@@ -453,10 +453,6 @@ export function vitePluginReactServer(
         // wrapper entry to ensure client entry runs after vite/react inititialization
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
-          // for (let i = 0; !window.$RefreshReg$; i++) {
-          //   console.log("[wait window.$RefreshReg$]", { i })
-          //   await new Promise(resolve => setTimeout(resolve, 10 * (2 ** i)));
-          // }
           import RefreshRuntime from "/@react-refresh";
           RefreshRuntime.injectIntoGlobalHook(window);
           window.$RefreshReg$ = () => {};
