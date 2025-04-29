@@ -5,11 +5,11 @@ import { transformWrapExport } from "./wrap-export";
 
 async function testTransform(input: string) {
   const ast = await parseAstAsync(input);
-  const output = transformProxyExport(ast, {
+  const result = transformProxyExport(ast, {
     id: "<id>",
     runtime: "$$proxy",
   });
-  return output.toString();
+  return { ...result, output: result.output.toString() };
 }
 
 describe(transformWrapExport, () => {
@@ -22,12 +22,21 @@ export async function AsyncFn() {};
 export class Cls {};
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const Arrow = $$proxy("<id>", "Arrow");
+      {
+        "exportNames": [
+          "Arrow",
+          "default",
+          "Fn",
+          "AsyncFn",
+          "Cls",
+        ],
+        "output": "export const Arrow = $$proxy("<id>", "Arrow");
       export default $$proxy("<id>", "default");
       export const Fn = $$proxy("<id>", "Fn");
       export const AsyncFn = $$proxy("<id>", "AsyncFn");
       export const Cls = $$proxy("<id>", "Cls");
-      "
+      ",
+      }
     `);
   });
 
@@ -36,9 +45,15 @@ export class Cls {};
 export const { x, y: [z] } = { x: 0, y: [1] };
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const x = $$proxy("<id>", "x");
+      {
+        "exportNames": [
+          "x",
+          "z",
+        ],
+        "output": "export const x = $$proxy("<id>", "x");
       export const z = $$proxy("<id>", "z");
-      "
+      ",
+      }
     `);
   });
 
@@ -46,8 +61,13 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     const input = `export default function Fn() {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
-      "export default $$proxy("<id>", "default");
-      "
+      {
+        "exportNames": [
+          "default",
+        ],
+        "output": "export default $$proxy("<id>", "default");
+      ",
+      }
     `,
     );
   });
@@ -56,8 +76,13 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     const input = `export default function () {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
-      "export default $$proxy("<id>", "default");
-      "
+      {
+        "exportNames": [
+          "default",
+        ],
+        "output": "export default $$proxy("<id>", "default");
+      ",
+      }
     `,
     );
   });
@@ -66,8 +91,13 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     const input = `export default class Cls {}`;
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
-      "export default $$proxy("<id>", "default");
-      "
+      {
+        "exportNames": [
+          "default",
+        ],
+        "output": "export default $$proxy("<id>", "default");
+      ",
+      }
     `,
     );
   });
@@ -78,8 +108,13 @@ const x = 0;
 export { x }
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const x = $$proxy("<id>", "x");
-      "
+      {
+        "exportNames": [
+          "x",
+        ],
+        "output": "export const x = $$proxy("<id>", "x");
+      ",
+      }
     `);
   });
 
@@ -89,24 +124,39 @@ const x = 0;
 export { x as y }
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const y = $$proxy("<id>", "y");
-      "
+      {
+        "exportNames": [
+          "y",
+        ],
+        "output": "export const y = $$proxy("<id>", "y");
+      ",
+      }
     `);
   });
 
   test("re-export simple", async () => {
     const input = `export { x } from "./dep"`;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const x = $$proxy("<id>", "x");
-      "
+      {
+        "exportNames": [
+          "x",
+        ],
+        "output": "export const x = $$proxy("<id>", "x");
+      ",
+      }
     `);
   });
 
   test("re-export rename", async () => {
     const input = `export { x as y } from "./dep"`;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const y = $$proxy("<id>", "y");
-      "
+      {
+        "exportNames": [
+          "y",
+        ],
+        "output": "export const y = $$proxy("<id>", "y");
+      ",
+      }
     `);
   });
 });
