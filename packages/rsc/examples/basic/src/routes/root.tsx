@@ -81,12 +81,14 @@ function TestSuspense(props: { url: URL }) {
     const ms = Number(props.url.searchParams.get("test-suspense")) || 1000;
     async function Inner() {
       await new Promise((resolve) => setTimeout(resolve, ms));
-      return <span>suspense-resolved</span>;
+      return <div>suspense-resolved</div>;
     }
     return (
-      <React.Suspense fallback={<div>suspense-fallback</div>}>
-        <Inner />
-      </React.Suspense>
+      <div data-testid="suspense">
+        <React.Suspense fallback={<div>suspense-fallback</div>}>
+          <Inner />
+        </React.Suspense>
+      </div>
     );
   }
   return <a href="?test-suspense=1000">test-suspense</a>;
