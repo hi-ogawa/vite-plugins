@@ -5,7 +5,7 @@ import MagicString from "magic-string";
 import { analyze } from "periscopic";
 import { hasDirective } from "./utils";
 
-export async function transformHoistInlineDirective(
+export function transformHoistInlineDirective(
   input: string,
   ast: Program,
   {
