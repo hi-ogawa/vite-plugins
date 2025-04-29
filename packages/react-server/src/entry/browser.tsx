@@ -1,5 +1,6 @@
 import * as virtualClientRoutes from "virtual:client-routes";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { getRscScript } from "@hiogawa/vite-rsc/extra/utils/rsc-script";
 import * as ReactClient from "@hiogawa/vite-rsc/react/browser";
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
@@ -29,7 +30,6 @@ import type { FlightData } from "../features/router/utils";
 import { parseFlightRedirectResponse } from "../features/server-action/redirect";
 import { createStreamRequest } from "../features/server-component/utils";
 import { createError } from "../server";
-import { getFlightStreamBrowser } from "../utils/stream-script";
 
 const debug = createDebug("react-server:browser");
 
@@ -81,9 +81,8 @@ async function start() {
   ReactClient.setServerCallback(callServer);
 
   // prepare initial layout data from inline <script>
-  // TODO: needs to await for hydration formState. does it affect startup perf?
   const initialFlight = ReactClient.createFromReadableStream<FlightData>(
-    getFlightStreamBrowser(),
+    getRscScript(),
   );
 
   //
