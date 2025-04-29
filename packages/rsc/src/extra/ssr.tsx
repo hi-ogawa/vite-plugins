@@ -8,10 +8,7 @@ import {
 } from "../ssr";
 import { withBase } from "../utils/base";
 import type { RscPayload } from "./rsc";
-import {
-  createBufferedTransformStream,
-  injectRscScript,
-} from "./utils/rsc-script";
+import { injectRscScript } from "./utils/rsc-script";
 
 export async function renderHtml({
   stream,
@@ -55,11 +52,7 @@ export async function renderHtml({
     formState,
   });
 
-  const responseStream = htmlStream
-    .pipeThrough(new TextDecoderStream())
-    .pipeThrough(createBufferedTransformStream())
-    .pipeThrough(injectRscScript(stream2))
-    .pipeThrough(new TextEncoderStream());
+  const responseStream = htmlStream.pipeThrough(injectRscScript(stream2));
 
   return new Response(responseStream, {
     headers: {
