@@ -25,7 +25,7 @@ export function injectRscScript(
 export function injectRscScriptString(
   stream: ReadableStream<Uint8Array>,
 ): TransformStream<string, string> {
-  let rscPromise: Promise<void>;
+  let rscPromise: Promise<void> | undefined;
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
       // inject head script
@@ -42,15 +42,23 @@ export function injectRscScriptString(
       // start injecting rsc after body start
       if (chunk.includes("</head><body")) {
         controller.enqueue(chunk);
+        if (rscPromise) {
+          throw new Error("Invalid html chunk", { cause: chunk });
+        }
+        let safeEnqueue = (chunk: string) => {
+          try {
+            controller.enqueue(chunk);
+          } catch (e) {}
+        };
         rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
           new WritableStream({
             write(chunk) {
-              controller.enqueue(
+              safeEnqueue(
                 `<script>__rsc_push(${JSON.stringify(chunk)})</script>`,
               );
             },
             close() {
-              controller.enqueue(`<script>__rsc_close()</script>`);
+              safeEnqueue(`<script>__rsc_close()</script>`);
             },
           }),
         );
@@ -80,7 +88,9 @@ export function createBufferedTransformStream(): TransformStream<
         clearTimeout(timeout);
       }
       timeout = setTimeout(() => {
-        controller.enqueue(buffer);
+        try {
+          controller.enqueue(buffer);
+        } catch (e) {}
         buffer = "";
         timeout = undefined;
       }, 0);
