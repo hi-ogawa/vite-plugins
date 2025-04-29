@@ -153,7 +153,6 @@ export async function renderHtml(
       bootstrapModules: url.search.includes("__nojs")
         ? []
         : assets.bootstrapModules,
-      // bootstrapScriptContent: `import(${JSON.stringify(assets.bootstrapModules[0])})`,
       onError(error, errorInfo) {
         debug("renderToReadableStream", { error, errorInfo });
         if (!getErrorContext(error)) {
@@ -191,7 +190,6 @@ export async function renderHtml(
       </html>
     );
     ssrStream = await ReactDOMServer.renderToReadableStream(errorRoot, {
-      // TODO
       bootstrapModules: assets.bootstrapModules,
     });
   }

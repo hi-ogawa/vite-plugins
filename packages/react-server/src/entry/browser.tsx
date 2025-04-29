@@ -199,12 +199,10 @@ async function start() {
   if (document.documentElement.dataset["noHydrate"]) {
     ReactDOMClient.createRoot(document).render(reactRootEl);
   } else {
-    console.log("[hydrateRoot:start]");
-    // const formState = (await initialFlight).action?.data;
-    ReactDOMClient.hydrateRoot(document.body, reactRootEl, {
-      // formState,
+    const formState = (await initialFlight).action?.data;
+    ReactDOMClient.hydrateRoot(document, reactRootEl, {
+      formState,
     });
-    console.log("[hydrateRoot:done]");
   }
 
   // custom event for RSC reload
