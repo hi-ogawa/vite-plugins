@@ -22,7 +22,7 @@ export function injectRscScript(
 // TODO: handle binary (non utf-8) payload
 // https://github.com/devongovett/rsc-html-stream
 
-function injectRscScriptString(
+export function injectRscScriptString(
   stream: ReadableStream<Uint8Array>,
 ): TransformStream<string, string> {
   let rscPromise: Promise<void>;
