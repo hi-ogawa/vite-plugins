@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import {
   changeServerCounter,
   resetServerCounter,
@@ -47,6 +47,7 @@ export function Root(props: { url: URL }) {
         />
         <TestServerActionError />
         <TestReplayConsoleLogs url={props.url} />
+        <TestSuspense url={props.url} />
       </body>
     </html>
   );
@@ -73,4 +74,20 @@ function TestReplayConsoleLogs(props: { url: URL }) {
     console.log("[test-replay-console-logs]");
   }
   return <a href="?test-replay-console-logs">test-replayConsoleLogs</a>;
+}
+
+function TestSuspense(props: { url: URL }) {
+  if (props.url.search.includes("test-suspense")) {
+    const ms = Number(props.url.searchParams.get("test-suspense")) || 1000;
+    async function Inner() {
+      await new Promise((resolve) => setTimeout(resolve, ms));
+      return <span>suspense-resolved</span>;
+    }
+    return (
+      <React.Suspense fallback={<div>suspense-fallback</div>}>
+        <Inner />
+      </React.Suspense>
+    );
+  }
+  return <a href="?test-suspense=1000">test-suspense</a>;
 }
