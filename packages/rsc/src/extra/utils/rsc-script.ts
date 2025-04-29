@@ -45,7 +45,7 @@ export function injectRscScriptString(
         if (rscPromise) {
           throw new Error("Invalid html chunk", { cause: chunk });
         }
-        let safeEnqueue = (chunk: string) => {
+        let enqueue = (chunk: string) => {
           try {
             controller.enqueue(chunk);
           } catch (e) {}
@@ -53,12 +53,10 @@ export function injectRscScriptString(
         rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
           new WritableStream({
             write(chunk) {
-              safeEnqueue(
-                `<script>__rsc_push(${JSON.stringify(chunk)})</script>`,
-              );
+              enqueue(`<script>__rsc_push(${JSON.stringify(chunk)})</script>`);
             },
             close() {
-              safeEnqueue(`<script>__rsc_close()</script>`);
+              enqueue(`<script>__rsc_close()</script>`);
             },
           }),
         );

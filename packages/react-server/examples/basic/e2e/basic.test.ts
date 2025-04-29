@@ -1398,6 +1398,13 @@ test("loading @js", async ({ page }) => {
   await page.getByText('params {"id":"1"}').click();
 });
 
+test("hydrate while streaming @js", async ({ page }) => {
+  await page.goto("/test/loading/1", { waitUntil: "commit" });
+  await waitForHydration(page);
+  await expect(page.getByTestId("/test/loading")).toBeVisible();
+  await expect(page.getByText('params {"id":"1"}')).toBeVisible();
+});
+
 test("template @js", async ({ page }) => {
   await page.goto("/test/template");
   await page.getByText("template.tsx [mount: 1]").click();
