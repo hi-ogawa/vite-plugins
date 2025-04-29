@@ -32,9 +32,9 @@ export function injectRscScript(
         controller.enqueue(chunk);
         rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
           new WritableStream({
-            write(rscChunk) {
+            write(chunk) {
               controller.enqueue(
-                `<script>__rsc_push(${JSON.stringify(rscChunk)})</script>`,
+                `<script>__rsc_push(${JSON.stringify(chunk)})</script>`,
               );
             },
             close() {
