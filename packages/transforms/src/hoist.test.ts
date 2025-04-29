@@ -6,7 +6,7 @@ import { debugSourceMap } from "./test-utils";
 describe(transformHoistInlineDirective, () => {
   async function testTransform(input: string) {
     const ast = await parseAstAsync(input);
-    const { output } = await transformHoistInlineDirective(input, ast, {
+    const { output } = transformHoistInlineDirective(input, ast, {
       id: "<id>",
       runtime: "$$register",
       directive: "use server",

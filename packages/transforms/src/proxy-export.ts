@@ -25,15 +25,16 @@ export function transformProxyExport(
     ignoreExportAllDeclaration?: boolean;
   },
 ) {
+  // TODO: preserve `name` location
   const { exportNames } = getExportNames(ast, options);
-  let output = "";
+  const output = new MagicString("")
   for (const name of exportNames) {
     const expr = `${options.runtime}("${options.id}", "${name}")`;
     if (name === "default") {
-      output += `export default ${expr};\n`;
+      output.append(`export default ${expr};\n`);
     } else {
-      output += `export const ${name} = ${expr};\n`;
+      output.append(`export const ${name} = ${expr};\n`);
     }
   }
-  return new MagicString(output);
+  return { exportNames, output };
 }

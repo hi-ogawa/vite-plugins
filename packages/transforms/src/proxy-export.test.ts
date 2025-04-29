@@ -5,7 +5,7 @@ import { transformWrapExport } from "./wrap-export";
 
 async function testTransform(input: string) {
   const ast = await parseAstAsync(input);
-  const output = await transformProxyExport(ast, {
+  const output = transformProxyExport(ast, {
     id: "<id>",
     runtime: "$$proxy",
   });
