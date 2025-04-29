@@ -1,4 +1,8 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
+import {
+  createBufferedTransformStream,
+  injectRscScriptString,
+} from "@hiogawa/vite-rsc/extra/utils/rsc-script";
 import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
@@ -30,10 +34,6 @@ import {
 import type { FlightData } from "../features/router/utils";
 import { $__global } from "../global";
 import { ENTRY_SERVER_WRAPPER, invalidateModule } from "../plugin/utils";
-import {
-  createBufferedTransformStream,
-  injectFlightStream,
-} from "../utils/stream-script";
 import type { ReactServerHandlerStreamResult } from "./server";
 
 const debug = createDebug("react-server:ssr");
@@ -199,7 +199,7 @@ export async function renderHtml(
     .pipeThrough(createBufferedTransformStream())
     .pipeThrough(injectToHead(() => head + ssrContext.render()))
     .pipeThrough(injectDefaultMetaViewport())
-    .pipeThrough(injectFlightStream(stream2))
+    .pipeThrough(injectRscScriptString(stream2))
     .pipeThrough(new TextEncoderStream());
 
   return new Response(htmlStream, {
