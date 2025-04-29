@@ -232,3 +232,11 @@ test("findSourceMapURL @js", async ({ page }) => {
     page.getByRole("button", { name: "test-findSourceMapURL" }),
   ).toBeVisible();
 });
+
+test("hydrate while streaming @js", async ({ page }) => {
+  // client is interactive before suspense is resolved
+  await page.goto("./?test-suspense=1000", { waitUntil: "commit" });
+  await waitForHydration(page);
+  await expect(page.getByTestId("suspense")).toContainText("suspense-fallback");
+  await expect(page.getByTestId("suspense")).toContainText("suspense-resolved");
+});

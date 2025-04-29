@@ -7,21 +7,30 @@ self.__rsc_stream = new ReadableStream({
 }).pipeThrough(new TextEncoderStream());
 `;
 
+// TODO: handle binary (non utf-8) payload
+// https://github.com/devongovett/rsc-html-stream
+
 export function injectRscScript(
   stream: ReadableStream<Uint8Array>,
 ): TransformStream<string, string> {
+  let rscPromise: Promise<void>;
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
+      // inject head script
       if (chunk.includes("</head>")) {
         chunk = chunk.replace(
           "</head>",
           () => `<script>${INIT_SCRIPT}</script></head>`,
         );
       }
-      if (chunk.includes("</body>")) {
-        const i = chunk.indexOf("</body>");
-        controller.enqueue(chunk.slice(0, i));
-        await stream.pipeThrough(new TextDecoderStream()).pipeTo(
+      // delay html end
+      if (chunk.includes("</body></html>")) {
+        chunk = chunk.slice(0, -"</body></html>".length);
+      }
+      // start injecting rsc after body start
+      if (chunk.includes("</head><body")) {
+        controller.enqueue(chunk);
+        rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
           new WritableStream({
             write(chunk) {
               controller.enqueue(
@@ -33,16 +42,18 @@ export function injectRscScript(
             },
           }),
         );
-        controller.enqueue(chunk.slice(i));
       } else {
         controller.enqueue(chunk);
       }
     },
+    async flush(controller) {
+      await rscPromise;
+      controller.enqueue("</body></html>");
+    },
   });
 }
 
-// it seems buffering is necessary to ensure tag marker (e.g. `</body>`) is not split into multiple chunks.
-// Without this, above `injectFlightStream` breaks when receiving two chunks separately for "...<" and "/body>...".
+// Ensure html tag is not split into multiple chunks, which is necessary for `injectRscScript`.
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
 export function createBufferedTransformStream(): TransformStream<
   string,
