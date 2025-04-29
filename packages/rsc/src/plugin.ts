@@ -177,6 +177,14 @@ export default function vitePluginRsc({
           /* @vite-ignore */ path.resolve(`dist/rsc/index.js`)
         );
         const handler = createRequestListener(mod.default);
+
+        // disable compressions since it breaks html streaming
+        // https://github.com/vitejs/vite/blob/9f5c59f07aefb1756a37bcb1c0aff24d54288950/packages/vite/src/node/preview.ts#L178
+        server.middlewares.use((req, _res, next) => {
+          delete req.headers["accept-encoding"];
+          next();
+        });
+
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
