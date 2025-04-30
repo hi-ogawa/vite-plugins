@@ -482,7 +482,8 @@ function vitePluginUseClient({
         const result = transformDirectiveProxyExport(ast, {
           directive: "use client",
           id: referenceKey,
-          runtime: (id, name) => `$$register(${id}, ${name})`,
+          runtime: (id, name) =>
+            `$$ReactServer.registerClientReference({}, ${id}, ${name})`,
         });
         if (!result) return;
         const { output, exportNames } = result;
@@ -490,11 +491,7 @@ function vitePluginUseClient({
           clientPackage.exportNames = exportNames;
         }
         clientReferences[referenceKey] = referenceValue;
-        output.prepend(`
-          import * as $$ReactServer from "${PKG_NAME}/rsc";
-          /* @__NO_SIDE_EFFECTS__ */
-          const $$register = (id, name) => $$ReactServer.registerClientReference({}, id, name);
-        `);
+        output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
         return { code: output.toString(), map: { mappings: "" } };
       },
     },
@@ -595,18 +592,18 @@ function vitePluginUseServer(): Plugin[] {
         } else {
           const result = transformDirectiveProxyExport(ast, {
             id: normalizedId,
-            runtime: (id, name) => `$$proxy(${id}, ${name})`,
+            runtime: (id, name) =>
+              `$$ReactClient.createServerReference(${id} + "#" + ${name}, $$ReactClient.callServer, undefined, undefined, undefined)`,
             directive: "use server",
           });
           const output = result?.output;
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
-          output.prepend(`
-            import * as $$ReactClient from "${PKG_NAME}/${name}";
-            /* @__NO_SIDE_EFFECTS__ */
-            const $$proxy = (id, name) => $$ReactClient.createServerReference(${JSON.stringify(id + "#" + name)})
-          `);
+          output.prepend(
+            `import * as $$ReactClient from "${PKG_NAME}/${name}";\n`,
+          );
+          console.log(normalizedId + "\n", output.toString());
           return { code: output.toString(), map: { mappings: "" } };
         }
       },
