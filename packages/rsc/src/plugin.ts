@@ -593,7 +593,7 @@ function vitePluginUseServer(): Plugin[] {
           const result = transformDirectiveProxyExport(ast, {
             id: normalizedId,
             runtime: (id, name) =>
-              `$$ReactClient.createServerReference(${id} + "#" + ${name}, $$ReactClient.callServer, undefined, undefined, undefined)`,
+              `$$ReactClient.createServerReference(${id} + "#" + ${name}, $$ReactClient.callServer, undefined, $$ReactClient.findSourceMapURL, ${name})`,
             directive: "use server",
           });
           const output = result?.output;
@@ -603,7 +603,6 @@ function vitePluginUseServer(): Plugin[] {
           output.prepend(
             `import * as $$ReactClient from "${PKG_NAME}/${name}";\n`,
           );
-          console.log(normalizedId + "\n", output.toString());
           return { code: output.toString(), map: { mappings: "" } };
         }
       },
