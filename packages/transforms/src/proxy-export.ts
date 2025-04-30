@@ -7,7 +7,7 @@ export function transformDirectiveProxyExport(
   options: {
     directive: string;
     id: string;
-    runtime: string;
+    runtime: (id: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
   },
 ) {
@@ -21,7 +21,7 @@ export function transformProxyExport(
   ast: Program,
   options: {
     id: string;
-    runtime: string;
+    runtime: (id: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
   },
 ) {
@@ -29,12 +29,11 @@ export function transformProxyExport(
   const { exportNames } = getExportNames(ast, options);
   const output = new MagicString("");
   for (const name of exportNames) {
-    const expr = `/* #__PURE__ */ ${options.runtime}("${options.id}", "${name}")`;
-    if (name === "default") {
-      output.append(`export default ${expr};\n`);
-    } else {
-      output.append(`export const ${name} = ${expr};\n`);
-    }
+    const decl =
+      (name === "default" ? `export default` : `export const ${name} =`) +
+      ` /* #__PURE__ */ ` +
+      options.runtime(JSON.stringify(options.id), JSON.stringify(name));
+    output.append(decl + ";\n");
   }
   return { exportNames, output };
 }

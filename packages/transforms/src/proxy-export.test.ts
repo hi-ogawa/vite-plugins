@@ -7,7 +7,7 @@ async function testTransform(input: string) {
   const ast = await parseAstAsync(input);
   const result = transformProxyExport(ast, {
     id: "<id>",
-    runtime: "$$proxy",
+    runtime: (id, name) => `$$proxy(${id}, ${name})`,
   });
   return { ...result, output: result.output.toString() };
 }

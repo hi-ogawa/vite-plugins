@@ -46,7 +46,7 @@ export function vitePluginClientUseServer({
       const result = transformDirectiveProxyExport(ast, {
         directive: USE_SERVER,
         id: serverId,
-        runtime: "$$proxy",
+        runtime: (id, name) => `$$proxy(${id}, ${name})`,
         ignoreExportAllDeclaration: true,
       });
       const output = result?.output;

@@ -482,7 +482,7 @@ function vitePluginUseClient({
         const result = transformDirectiveProxyExport(ast, {
           directive: "use client",
           id: referenceKey,
-          runtime: "$$register",
+          runtime: (id, name) => `$$register(${id}, ${name})`,
         });
         if (!result) return;
         const { output, exportNames } = result;
@@ -595,7 +595,7 @@ function vitePluginUseServer(): Plugin[] {
         } else {
           const result = transformDirectiveProxyExport(ast, {
             id: normalizedId,
-            runtime: "$$proxy",
+            runtime: (id, name) => `$$proxy(${id}, ${name})`,
             directive: "use server",
           });
           const output = result?.output;
