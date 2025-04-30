@@ -821,7 +821,6 @@ export async function findSourceMapURL(
     try {
       const url = new URL(filename).pathname;
       mod = server.environments.client.moduleGraph.urlToModuleMap.get(url);
-      console.log(mod?.transformResult?.map);
     } catch (e) {}
   }
 
