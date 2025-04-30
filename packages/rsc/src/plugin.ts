@@ -764,7 +764,7 @@ export function vitePluginFindSourceMapURL(): Plugin[] {
               server.environments.rsc!.moduleGraph.getModuleById(filename);
             const map = mod?.transformResult?.map;
             if (map) {
-              res.end(JSON.stringify(map));
+              res.end(JSON.stringify({ ...map, sources: [mod.url] }));
             } else if (fs.existsSync(filename)) {
               // line-by-line identity source map
               const content = fs.readFileSync(filename, "utf-8");
