@@ -8,6 +8,7 @@ export function transformServerActionServer(
   ast: Program,
   options: { id: string; runtime: string },
 ) {
+  // TODO: unify
   if (hasDirective(ast.body, "use server")) {
     return transformWrapExport(input, ast, options);
   }
