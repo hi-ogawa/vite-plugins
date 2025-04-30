@@ -6,6 +6,7 @@ import { transformWrapExport } from "./wrap-export";
 async function testTransform(input: string) {
   const ast = await parseAstAsync(input);
   const result = transformProxyExport(ast, {
+    code: input,
     runtime: (name) => `$$proxy("<id>", ${JSON.stringify(name)})`,
   });
   return { ...result, output: result.output.toString() };
@@ -29,11 +30,17 @@ export class Cls {};
           "AsyncFn",
           "Cls",
         ],
-        "output": "export const Arrow = /* #__PURE__ */ $$proxy("<id>", "Arrow");
+        "output": "
+      export const Arrow = /* #__PURE__ */ $$proxy("<id>", "Arrow");
+
       export default /* #__PURE__ */ $$proxy("<id>", "default");
+
       export const Fn = /* #__PURE__ */ $$proxy("<id>", "Fn");
+
       export const AsyncFn = /* #__PURE__ */ $$proxy("<id>", "AsyncFn");
+
       export const Cls = /* #__PURE__ */ $$proxy("<id>", "Cls");
+
       ",
       }
     `);
@@ -49,8 +56,10 @@ export const { x, y: [z] } = { x: 0, y: [1] };
           "x",
           "z",
         ],
-        "output": "export const x = /* #__PURE__ */ $$proxy("<id>", "x");
+        "output": "
+      export const x = /* #__PURE__ */ $$proxy("<id>", "x");
       export const z = /* #__PURE__ */ $$proxy("<id>", "z");
+
       ",
       }
     `);
@@ -111,7 +120,10 @@ export { x }
         "exportNames": [
           "x",
         ],
-        "output": "export const x = /* #__PURE__ */ $$proxy("<id>", "x");
+        "output": "
+
+      export const x = /* #__PURE__ */ $$proxy("<id>", "x");
+
       ",
       }
     `);
@@ -127,7 +139,10 @@ export { x as y }
         "exportNames": [
           "y",
         ],
-        "output": "export const y = /* #__PURE__ */ $$proxy("<id>", "y");
+        "output": "
+
+      export const y = /* #__PURE__ */ $$proxy("<id>", "y");
+
       ",
       }
     `);

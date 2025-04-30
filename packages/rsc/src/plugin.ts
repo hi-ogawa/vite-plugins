@@ -481,7 +481,6 @@ function vitePluginUseClient({
         }
 
         const result = transformDirectiveProxyExport(ast, {
-          code,
           directive: "use client",
           runtime: (name) =>
             `$$ReactServer.registerClientReference({}, ${JSON.stringify(referenceKey)}, ${JSON.stringify(name)})`,
@@ -563,6 +562,7 @@ function vitePluginUseClient({
 }
 
 function vitePluginUseServer(): Plugin[] {
+  // TODO: reject non async function export
   return [
     {
       name: "rsc:use-server",
