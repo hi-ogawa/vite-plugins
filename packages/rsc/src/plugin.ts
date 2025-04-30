@@ -481,10 +481,10 @@ function vitePluginUseClient({
         }
 
         const result = transformDirectiveProxyExport(ast, {
+          code,
           directive: "use client",
-          id: referenceKey,
-          runtime: (id, name) =>
-            `$$ReactServer.registerClientReference({}, ${id}, ${name})`,
+          runtime: (name) =>
+            `$$ReactServer.registerClientReference({}, ${JSON.stringify(referenceKey)}, ${JSON.stringify(name)})`,
         });
         if (!result) return;
         const { output, exportNames } = result;
@@ -592,9 +592,14 @@ function vitePluginUseServer(): Plugin[] {
           };
         } else {
           const result = transformDirectiveProxyExport(ast, {
-            id: normalizedId,
-            runtime: (id, name) =>
-              `$$ReactClient.createServerReference(${id} + "#" + ${name}, $$ReactClient.callServer, undefined, $$ReactClient.findSourceMapURL, ${name})`,
+            code,
+            runtime: (name) =>
+              `$$ReactClient.createServerReference(` +
+              `${JSON.stringify(normalizedId + "#" + name)},` +
+              `$$ReactClient.callServer, ` +
+              `undefined, ` +
+              `$$ReactClient.findSourceMapURL, ` +
+              `${JSON.stringify(name)})`,
             directive: "use server",
           });
           const output = result?.output;
@@ -604,7 +609,13 @@ function vitePluginUseServer(): Plugin[] {
           output.prepend(
             `import * as $$ReactClient from "${PKG_NAME}/${name}";\n`,
           );
-          return { code: output.toString(), map: { mappings: "" } };
+          return {
+            code: output.toString(),
+            map: output.generateMap({
+              hires: "boundary",
+              includeContent: true,
+            }),
+          };
         }
       },
     },
@@ -788,7 +799,6 @@ export async function findSourceMapURL(
     filename = fileURLToPath(filename);
     if (fs.existsSync(filename)) {
       // line-by-line identity source map
-      // TODO: check prebuilt source map
       const content = fs.readFileSync(filename, "utf-8");
       return {
         version: 3,
@@ -811,6 +821,7 @@ export async function findSourceMapURL(
     try {
       const url = new URL(filename).pathname;
       mod = server.environments.client.moduleGraph.urlToModuleMap.get(url);
+      console.log(mod?.transformResult?.map);
     } catch (e) {}
   }
 

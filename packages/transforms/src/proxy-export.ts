@@ -6,8 +6,8 @@ export function transformDirectiveProxyExport(
   ast: Program,
   options: {
     directive: string;
-    id: string;
-    runtime: (id: string, name: string) => string;
+    code?: string;
+    runtime: (name: string) => string;
     ignoreExportAllDeclaration?: boolean;
   },
 ) {
@@ -20,19 +20,19 @@ export function transformDirectiveProxyExport(
 export function transformProxyExport(
   ast: Program,
   options: {
-    id: string;
-    runtime: (id: string, name: string) => string;
+    code?: string;
+    runtime: (name: string) => string;
     ignoreExportAllDeclaration?: boolean;
   },
 ) {
-  // TODO: preserve `name` location
+  // TODO: preserve `export` location
   const { exportNames } = getExportNames(ast, options);
   const output = new MagicString("");
   for (const name of exportNames) {
     const decl =
       (name === "default" ? `export default` : `export const ${name} =`) +
       ` /* #__PURE__ */ ` +
-      options.runtime(JSON.stringify(options.id), JSON.stringify(name));
+      options.runtime(name);
     output.append(decl + ";\n");
   }
   return { exportNames, output };
