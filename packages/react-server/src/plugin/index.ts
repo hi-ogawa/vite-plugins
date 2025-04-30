@@ -51,6 +51,7 @@ import {
 } from "./utils";
 export { wrapClientPlugin, wrapServerPlugin } from "./utils";
 import rscCore from "@hiogawa/vite-rsc/core/plugin";
+import { vitePluginFindSourceMapURL } from "@hiogawa/vite-rsc/plugin";
 
 const debug = createDebug("react-server:plugin");
 
@@ -334,6 +335,7 @@ export function vitePluginReactServer(
   // plugins for main vite dev server (browser / ssr)
   return [
     ...rscCore(),
+    ...vitePluginFindSourceMapURL(),
     rscParentPlugin,
     buildOrchestrationPlugin,
     vitePluginSilenceDirectiveBuildWarning(),
