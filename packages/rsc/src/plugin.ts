@@ -7,6 +7,7 @@ import {
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
+  type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
   Rollup,
@@ -751,33 +752,22 @@ export function vitePluginFindSourceMapURL(): Plugin[] {
       name: "rsc:findSourceMapURL",
       apply: "serve",
       configureServer(server) {
-        server.middlewares.use((req, res, next) => {
+        server.middlewares.use(async (req, res, next) => {
           const url = new URL(req.url!, `http://localhost`);
           if (url.pathname === "/__vite_rsc_findSourceMapURL") {
-            res.setHeader("content-type", "application/json");
             let filename = url.searchParams.get("filename")!;
-            if (filename.startsWith("file://")) {
-              filename = fileURLToPath(filename);
-            }
-            const mod =
-              server.environments.rsc!.moduleGraph.getModuleById(filename);
-            const map = mod?.transformResult?.map;
-            if (map) {
-              res.end(JSON.stringify({ ...map, sources: [mod.url] }));
-            } else if (fs.existsSync(filename)) {
-              // line-by-line identity source map
-              const content = fs.readFileSync(filename, "utf-8");
-              res.end(
-                JSON.stringify({
-                  version: 3,
-                  sources: [filename],
-                  sourcesContent: [content],
-                  mappings: "AAAA" + ";AACA".repeat(content.split("\n").length),
-                }),
+            let environmentName = url.searchParams.get("environmentName")!;
+            try {
+              const map = await findSourceMapURL(
+                server,
+                filename,
+                environmentName,
               );
-            } else {
-              res.statusCode = 404;
-              res.end("{}");
+              res.setHeader("content-type", "application/json");
+              if (!map) res.statusCode = 404;
+              res.end(JSON.stringify(map ?? {}));
+            } catch (e) {
+              next(e);
             }
             return;
           }
@@ -786,4 +776,47 @@ export function vitePluginFindSourceMapURL(): Plugin[] {
       },
     },
   ];
+}
+
+export async function findSourceMapURL(
+  server: ViteDevServer,
+  filename: string,
+  environmentName: string,
+): Promise<object | undefined> {
+  // this is likely server external (i.e. outside of Vite processing)
+  if (filename.startsWith("file://")) {
+    filename = fileURLToPath(filename);
+    if (fs.existsSync(filename)) {
+      // line-by-line identity source map
+      // TODO: check prebuilt source map
+      const content = fs.readFileSync(filename, "utf-8");
+      return {
+        version: 3,
+        sources: [filename],
+        sourcesContent: [content],
+        mappings: "AAAA" + ";AACA".repeat(content.split("\n").length),
+      };
+    }
+    return;
+  }
+
+  // server component or `registerServerReference`
+  let mod: EnvironmentModuleNode | undefined;
+  if (environmentName === "Server") {
+    mod = server.environments.rsc!.moduleGraph.getModuleById(filename);
+  }
+
+  // `createServerReference(... findSourceMapURL ...)` called on browser
+  if (environmentName === "Client") {
+    try {
+      const url = new URL(filename).pathname;
+      mod = server.environments.client.moduleGraph.urlToModuleMap.get(url);
+    } catch (e) {}
+  }
+
+  const map = mod?.transformResult?.map;
+  if (mod && map) {
+    // fix sources to match Vite module url
+    return { ...map, sources: [mod.url] };
+  }
 }
