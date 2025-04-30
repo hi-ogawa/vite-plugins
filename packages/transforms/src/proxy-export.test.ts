@@ -1,6 +1,7 @@
 import { parseAstAsync } from "vite";
 import { describe, expect, test } from "vitest";
 import { transformProxyExport } from "./proxy-export";
+import { debugSourceMap } from "./test-utils";
 import { transformWrapExport } from "./wrap-export";
 
 async function testTransform(input: string) {
@@ -9,16 +10,27 @@ async function testTransform(input: string) {
     code: input,
     runtime: (name) => `$$proxy("<id>", ${JSON.stringify(name)})`,
   });
+  if (process.env["DEBUG_SOURCEMAP"]) {
+    await debugSourceMap(result.output);
+  }
   return { ...result, output: result.output.toString() };
 }
 
 describe(transformWrapExport, () => {
   test("basic", async () => {
     const input = `
-export const Arrow = () => {};
+export const Arrow = () => {
+
+};
 export default "hi";
-export function Fn() {};
-export async function AsyncFn() {};
+export function Fn() {
+};
+
+export async function AsyncFn() {
+
+
+};
+
 export class Cls {};
 `;
     expect(await testTransform(input)).toMatchInlineSnapshot(`
@@ -37,7 +49,9 @@ export class Cls {};
 
       export const Fn = /* #__PURE__ */ $$proxy("<id>", "Fn");
 
+
       export const AsyncFn = /* #__PURE__ */ $$proxy("<id>", "AsyncFn");
+
 
       export const Cls = /* #__PURE__ */ $$proxy("<id>", "Cls");
 
