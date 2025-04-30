@@ -30,11 +30,11 @@ export class Cls {};
           "AsyncFn",
           "Cls",
         ],
-        "output": "export const Arrow = $$proxy("<id>", "Arrow");
-      export default $$proxy("<id>", "default");
-      export const Fn = $$proxy("<id>", "Fn");
-      export const AsyncFn = $$proxy("<id>", "AsyncFn");
-      export const Cls = $$proxy("<id>", "Cls");
+        "output": "export const Arrow = /* #__PURE__ */ $$proxy("<id>", "Arrow");
+      export default /* #__PURE__ */ $$proxy("<id>", "default");
+      export const Fn = /* #__PURE__ */ $$proxy("<id>", "Fn");
+      export const AsyncFn = /* #__PURE__ */ $$proxy("<id>", "AsyncFn");
+      export const Cls = /* #__PURE__ */ $$proxy("<id>", "Cls");
       ",
       }
     `);
@@ -50,8 +50,8 @@ export const { x, y: [z] } = { x: 0, y: [1] };
           "x",
           "z",
         ],
-        "output": "export const x = $$proxy("<id>", "x");
-      export const z = $$proxy("<id>", "z");
+        "output": "export const x = /* #__PURE__ */ $$proxy("<id>", "x");
+      export const z = /* #__PURE__ */ $$proxy("<id>", "z");
       ",
       }
     `);
@@ -65,7 +65,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
         "exportNames": [
           "default",
         ],
-        "output": "export default $$proxy("<id>", "default");
+        "output": "export default /* #__PURE__ */ $$proxy("<id>", "default");
       ",
       }
     `,
@@ -80,7 +80,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
         "exportNames": [
           "default",
         ],
-        "output": "export default $$proxy("<id>", "default");
+        "output": "export default /* #__PURE__ */ $$proxy("<id>", "default");
       ",
       }
     `,
@@ -95,7 +95,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
         "exportNames": [
           "default",
         ],
-        "output": "export default $$proxy("<id>", "default");
+        "output": "export default /* #__PURE__ */ $$proxy("<id>", "default");
       ",
       }
     `,
@@ -112,7 +112,7 @@ export { x }
         "exportNames": [
           "x",
         ],
-        "output": "export const x = $$proxy("<id>", "x");
+        "output": "export const x = /* #__PURE__ */ $$proxy("<id>", "x");
       ",
       }
     `);
@@ -128,7 +128,7 @@ export { x as y }
         "exportNames": [
           "y",
         ],
-        "output": "export const y = $$proxy("<id>", "y");
+        "output": "export const y = /* #__PURE__ */ $$proxy("<id>", "y");
       ",
       }
     `);
@@ -141,7 +141,7 @@ export { x as y }
         "exportNames": [
           "x",
         ],
-        "output": "export const x = $$proxy("<id>", "x");
+        "output": "export const x = /* #__PURE__ */ $$proxy("<id>", "x");
       ",
       }
     `);
@@ -154,7 +154,7 @@ export { x as y }
         "exportNames": [
           "y",
         ],
-        "output": "export const y = $$proxy("<id>", "y");
+        "output": "export const y = /* #__PURE__ */ $$proxy("<id>", "y");
       ",
       }
     `);
