@@ -2,7 +2,6 @@ import assert from "node:assert";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import {
-  getExportNames,
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
@@ -476,17 +475,20 @@ function vitePluginUseClient({
           } else {
             referenceKey = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
           }
-          clientPackage.exportNames = getExportNames(ast, {}).exportNames;
         } else {
           referenceKey = await normalizeReferenceId(id, "client");
         }
 
-        let output = await transformDirectiveProxyExport(ast, {
+        const result = transformDirectiveProxyExport(ast, {
           directive: "use client",
           id: referenceKey,
           runtime: "$$register",
         });
-        if (!output) return;
+        if (!result) return;
+        const { output, exportNames } = result;
+        if (clientPackage) {
+          clientPackage.exportNames = exportNames;
+        }
         clientReferences[referenceKey] = referenceValue;
         output.prepend(`
           import * as $$ReactServer from "${PKG_NAME}/rsc";
@@ -572,7 +574,7 @@ function vitePluginUseServer(): Plugin[] {
         const ast = await parseAstAsync(code);
         const normalizedId = await normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
-          const { output } = await transformServerActionServer(code, ast, {
+          const { output } = transformServerActionServer(code, ast, {
             id: normalizedId,
             runtime: "$$register",
           });
@@ -591,11 +593,12 @@ function vitePluginUseServer(): Plugin[] {
             map: output.generateMap({ hires: "boundary" }),
           };
         } else {
-          const output = await transformDirectiveProxyExport(ast, {
+          const result = transformDirectiveProxyExport(ast, {
             id: normalizedId,
             runtime: "$$proxy",
             directive: "use server",
           });
+          const output = result?.output;
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
