@@ -45,8 +45,14 @@ export function vitePluginClientUseServer({
       const ast = await parseAstAsync(code);
       const result = transformDirectiveProxyExport(ast, {
         directive: USE_SERVER,
+        code,
         runtime: (name) =>
-          `$$proxy(${JSON.stringify(serverId)}, ${JSON.stringify(name)})`,
+          `$$ReactClient.createServerReference(` +
+          `${JSON.stringify(serverId + "#" + name)}, ` +
+          `$$ReactClient.callServer, ` +
+          `undefined, ` +
+          `$$ReactClient.findSourceMapURL, ` +
+          `${JSON.stringify(name)})`,
         ignoreExportAllDeclaration: true,
       });
       const output = result?.output;
@@ -62,10 +68,7 @@ export function vitePluginClientUseServer({
       }
       manager.serverReferenceMap.set(id, serverId);
       const importPath = options?.ssr ? ssrRuntimePath : runtimePath;
-      output.prepend(`\
-import { createServerReference } from "${importPath}";
-const $$proxy = (id, name) => createServerReference(id + "#" + name);
-`);
+      output.prepend(`import * as $$ReactClient from "${importPath}";\n`);
       debug(`[${vitePluginClientUseServer.name}:transform]`, {
         id,
         outCode: output.toString(),
