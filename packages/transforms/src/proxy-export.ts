@@ -29,7 +29,7 @@ export function transformProxyExport(
   const { exportNames } = getExportNames(ast, options);
   const output = new MagicString("");
   for (const name of exportNames) {
-    const expr = `${options.runtime}("${options.id}", "${name}")`;
+    const expr = `/* #__PURE__ */ ${options.runtime}("${options.id}", "${name}")`;
     if (name === "default") {
       output.append(`export default ${expr};\n`);
     } else {
