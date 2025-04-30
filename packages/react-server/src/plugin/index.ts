@@ -453,11 +453,11 @@ export function vitePluginReactServer(
         // wrapper entry to ensure client entry runs after vite/react inititialization
         return /* js */ `
           import "${SERVER_CSS_PROXY}";
-          import RefreshRuntime from "/@react-refresh";
-          RefreshRuntime.injectIntoGlobalHook(window);
-          window.$RefreshReg$ = () => {};
-          window.$RefreshSig$ = () => (type) => type;
-          window.__vite_plugin_react_preamble_installed__ = true;
+          // import RefreshRuntime from "/@react-refresh";
+          // RefreshRuntime.injectIntoGlobalHook(window);
+          // window.$RefreshReg$ = () => {};
+          // window.$RefreshSig$ = () => (type) => type;
+          // window.__vite_plugin_react_preamble_installed__ = true;
           await import("${entryBrowser}");
         `;
       }
