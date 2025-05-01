@@ -108,9 +108,9 @@ export function vitePluginServerUseServer({
       const ast = await parseAstAsync(code);
       const { output } = transformServerActionServer(code, ast, {
         runtime: (value, name) =>
-          `(typeof ${value} === "function"` +
+          `(() => (typeof ${value} === "function"` +
           ` ? $$ReactServer.registerServerReference(${value}, ${JSON.stringify(serverId)}, ${JSON.stringify(name)})` +
-          ` : ${value})`,
+          ` : ${value}))()`,
       });
       if (output.hasChanged()) {
         manager.serverReferenceMap.set(id, serverId);
