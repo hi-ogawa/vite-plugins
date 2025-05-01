@@ -124,7 +124,7 @@ function Counter5() {
     <form
       className="flex items-center gap-2"
       data-testid="counter5"
-      action={(formData: FormData) => {
+      action={async (formData: FormData) => {
         "use server";
         count5 += Number(formData.get(name));
       }}

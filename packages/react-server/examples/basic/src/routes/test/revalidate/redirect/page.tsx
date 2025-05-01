@@ -4,7 +4,7 @@ export default function Page() {
   return (
     <div>
       <form
-        action={() => {
+        action={async () => {
           "use server";
           revalidatePath("/test/revalidate");
           throw redirect("/test/revalidate");
