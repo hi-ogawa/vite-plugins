@@ -1,8 +1,8 @@
 import React from "react";
 import {
   changeServerCounter,
+  getServerCounter,
   resetServerCounter,
-  serverCounter,
 } from "./action";
 import { TestActionFromClient } from "./action-from-client/client";
 import {
@@ -29,7 +29,7 @@ export function Root(props: { url: URL }) {
         <ClientCounter />
         <form action={changeServerCounter}>
           <input type="hidden" name="change" value="1" />
-          <button>Server Counter: {serverCounter}</button>
+          <button>Server Counter: {getServerCounter()}</button>
           <button formAction={resetServerCounter}>Server Reset</button>
         </form>
         <TestStyleClient />
