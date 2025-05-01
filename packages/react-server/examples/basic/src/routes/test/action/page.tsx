@@ -21,7 +21,7 @@ export default async function Page() {
       <div className="flex flex-col gap-2">
         <Counter />
       </div>
-      <Chat messages={getMessages()} />
+      <Chat messages={await getMessages()} />
       <ActionDataTest />
       <NonFormActionTest />
       <div className="flex flex-col gap-2">

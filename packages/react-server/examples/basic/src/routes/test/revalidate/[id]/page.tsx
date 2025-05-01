@@ -7,7 +7,7 @@ export default function Page(props: PageProps) {
     <div className="flex flex-col gap-2">
       <pre>params = {JSON.stringify(props.params)}</pre>
       <form
-        action={() => {
+        action={async () => {
           "use server";
           revalidatePath("/test/revalidate");
         }}

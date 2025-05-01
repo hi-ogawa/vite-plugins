@@ -20,7 +20,7 @@ export async function signout() {
 
 let counter = 0;
 
-export function getCounter() {
+export async function getCounter() {
   return counter;
 }
 

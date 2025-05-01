@@ -4,18 +4,18 @@ import { sleep, tinyassert } from "@hiogawa/utils";
 
 let counter = 0;
 
-export function getCounter() {
+export async function getCounter() {
   return counter;
 }
 
-export function changeCounter(formData: FormData) {
+export async function changeCounter(formData: FormData) {
   counter += Number(formData.get("delta"));
 }
 
 let messageId = 1;
 let messages: { id: number; data: string }[] = [];
 
-export let getMessages = () => {
+export let getMessages = async () => {
   return messages;
 };
 
@@ -26,7 +26,7 @@ export const addMessage = async (formData: FormData) => {
   messages.push({ id: messageId++, data: message });
 };
 
-export function clearMessages() {
+export async function clearMessages() {
   messageId = 1;
   messages = [];
 }
@@ -53,7 +53,7 @@ export async function actionCheckAnswer(
 
 let actionBindResult = "(none)";
 
-export function getActionBindResult() {
+export async function getActionBindResult() {
   return actionBindResult;
 }
 

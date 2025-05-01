@@ -1,5 +1,5 @@
 import { tinyassert } from "@hiogawa/utils";
-import type { Program } from "estree";
+import type { Node, Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 
@@ -9,6 +9,7 @@ export function transformWrapExport(
   options: {
     runtime: (value: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
+    rejectNonAsyncFunction?: boolean;
   },
 ) {
   const output = new MagicString(input);
@@ -30,6 +31,14 @@ export function transformWrapExport(
     );
   }
 
+  function validateNonAsyncFunction(node: Node, ok?: boolean) {
+    if (options.rejectNonAsyncFunction && !ok) {
+      throw Object.assign(new Error(`unsupported non async function`), {
+        pos: node.start,
+      });
+    }
+  }
+
   for (const node of ast.body) {
     // named exports
     if (node.type === "ExportNamedDeclaration") {
@@ -41,6 +50,11 @@ export function transformWrapExport(
           /**
            * export function foo() {}
            */
+          validateNonAsyncFunction(
+            node,
+            node.declaration.type === "FunctionDeclaration" &&
+              node.declaration.async,
+          );
           // strip export
           output.remove(node.start, node.declaration.start);
           wrapSimple(node.declaration.id.name);
@@ -48,6 +62,14 @@ export function transformWrapExport(
           /**
            * export const foo = 1, bar = 2
            */
+          validateNonAsyncFunction(
+            node,
+            node.declaration.declarations.every(
+              (decl) =>
+                decl.init?.type === "ArrowFunctionExpression" &&
+                decl.init.async,
+            ),
+          );
           // strip export
           output.remove(node.start, node.declaration.start);
           // rewrite from "const" to "let"
@@ -105,7 +127,9 @@ export function transformWrapExport(
       !options.ignoreExportAllDeclaration &&
       node.type === "ExportAllDeclaration"
     ) {
-      throw new Error("unsupported ExportAllDeclaration");
+      throw Object.assign(new Error("unsupported ExportAllDeclaration"), {
+        pos: node.start,
+      });
     }
 
     /**
@@ -114,6 +138,14 @@ export function transformWrapExport(
      * export default () => {}
      */
     if (node.type === "ExportDefaultDeclaration") {
+      validateNonAsyncFunction(
+        node,
+        // TODO: somehow identifier is allowed in next.js?
+        // (see packages/react-server/examples/next/app/actions/server/actions.ts)
+        node.declaration.type === "Identifier" ||
+          (node.declaration.type === "FunctionDeclaration" &&
+            node.declaration.async),
+      );
       let localName: string;
       if (
         (node.declaration.type === "FunctionDeclaration" ||

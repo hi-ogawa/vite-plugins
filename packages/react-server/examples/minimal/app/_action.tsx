@@ -6,6 +6,6 @@ export async function changeCount() {
   count++;
 }
 
-export function getCount() {
+export async function getCount() {
   return count;
 }

@@ -31,7 +31,7 @@ export default function Page() {
       <form>
         <button
           id="redirect-pages"
-          formAction={() => {
+          formAction={async () => {
             "use server";
             redirect("/");
           }}

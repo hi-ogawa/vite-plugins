@@ -3,10 +3,16 @@ import { transformHoistInlineDirective } from "./hoist";
 import { hasDirective } from "./utils";
 import { transformWrapExport } from "./wrap-export";
 
+// TODO
+// source map for `options.runtime` (registerServerReference) call
+// needs to match original position.
 export function transformServerActionServer(
   input: string,
   ast: Program,
-  options: { runtime: (value: string, name: string) => string },
+  options: {
+    runtime: (value: string, name: string) => string;
+    rejectNonAsyncFunction?: boolean;
+  },
 ) {
   // TODO: unify
   if (hasDirective(ast.body, "use server")) {

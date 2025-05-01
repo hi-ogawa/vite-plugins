@@ -14,7 +14,9 @@ import {
 } from "./_action";
 import { actionReturnComponent } from "./_action2";
 
-export function Chat(props: { messages: ReturnType<typeof getMessages> }) {
+export function Chat(props: {
+  messages: Awaited<ReturnType<typeof getMessages>>;
+}) {
   // cf. https://react.dev/reference/react/useOptimistic#optimistically-updating-with-forms
   const [optMessages, addOptMessage] = React.useOptimistic(
     props.messages,

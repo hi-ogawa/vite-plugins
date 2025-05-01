@@ -11,9 +11,11 @@ export function transformHoistInlineDirective(
   {
     runtime,
     directive,
+    rejectNonAsyncFunction,
   }: {
     runtime: (value: string, name: string) => string;
     directive: string;
+    rejectNonAsyncFunction?: boolean;
   },
 ) {
   const output = new MagicString(input);
@@ -29,6 +31,15 @@ export function transformHoistInlineDirective(
         node.body.type === "BlockStatement" &&
         hasDirective(node.body.body, directive)
       ) {
+        if (!node.async && rejectNonAsyncFunction) {
+          throw Object.assign(
+            new Error(`"${directive}" doesn't allow non async function`),
+            {
+              pos: node.start,
+            },
+          );
+        }
+
         const scope = analyzed.map.get(node);
         tinyassert(scope);
         const declName = node.type === "FunctionDeclaration" && node.id.name;

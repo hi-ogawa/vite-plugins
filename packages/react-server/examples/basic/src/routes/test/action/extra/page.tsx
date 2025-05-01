@@ -1,4 +1,4 @@
-import { changeCount1, count1 } from "./_action";
+import { changeCount1, getCount1 } from "./_action";
 import { Counter3 } from "./_client";
 
 export default function Page() {
@@ -26,7 +26,7 @@ export default function Page() {
           >
             +1
           </button>
-          <div>Count: {count1}</div>
+          <div>Count: {getCount1()}</div>
         </form>
       </div>
       <div className="border-t"></div>
@@ -124,7 +124,7 @@ function Counter5() {
     <form
       className="flex items-center gap-2"
       data-testid="counter5"
-      action={(formData: FormData) => {
+      action={async (formData: FormData) => {
         "use server";
         count5 += Number(formData.get(name));
       }}

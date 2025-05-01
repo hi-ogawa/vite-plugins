@@ -574,9 +574,8 @@ function vitePluginUseServer(): Plugin[] {
         if (this.environment.name === "rsc") {
           const { output } = transformServerActionServer(code, ast, {
             runtime: (value, name) =>
-              `(() => (typeof ${value} === "function"` +
-              ` ? $$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})` +
-              ` : ${value}))()`,
+              `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
+            rejectNonAsyncFunction: true,
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
@@ -596,6 +595,7 @@ function vitePluginUseServer(): Plugin[] {
               `$$ReactClient.findSourceMapURL, ` +
               `${JSON.stringify(name)})`,
             directive: "use server",
+            rejectNonAsyncFunction: true,
           });
           const output = result?.output;
           if (!output?.hasChanged()) return;

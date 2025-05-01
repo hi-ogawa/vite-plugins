@@ -14,7 +14,7 @@ let serverCount = 0;
 function TestServer() {
   return (
     <form
-      action={() => {
+      action={async () => {
         "use server";
         serverCount += 1;
       }}
