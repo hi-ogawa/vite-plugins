@@ -32,6 +32,8 @@ export class Cls {};
       function Fn() {};
       async function AsyncFn() {};
       class Cls {};
+      Arrow = /* #__PURE__ */ $$wrap(Arrow, "<id>", "Arrow");
+      export { Arrow };
       Fn = /* #__PURE__ */ $$wrap(Fn, "<id>", "Fn");
       export { Fn };
       AsyncFn = /* #__PURE__ */ $$wrap(AsyncFn, "<id>", "AsyncFn");
@@ -39,8 +41,6 @@ export class Cls {};
       Cls = /* #__PURE__ */ $$wrap(Cls, "<id>", "Cls");
       export { Cls };
       ;
-      Arrow = /* #__PURE__ */ $$wrap(Arrow, "<id>", "Arrow");
-      export { Arrow };
       const $$wrap_$$default = /* #__PURE__ */ $$wrap($$default, "<id>", "default");
       export { $$wrap_$$default as default };
       "
@@ -60,11 +60,10 @@ export function changeCount() {
       function changeCount() {
         count += 1;
       }
-      changeCount = /* #__PURE__ */ $$wrap(changeCount, "<id>", "changeCount");
-      export { changeCount };
-      ;
       count = /* #__PURE__ */ $$wrap(count, "<id>", "count");
       export { count };
+      changeCount = /* #__PURE__ */ $$wrap(changeCount, "<id>", "changeCount");
+      export { changeCount };
       "
     `);
   });
@@ -76,7 +75,6 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       "
       let { x, y: [z] } = { x: 0, y: [1] };
-      ;
       x = /* #__PURE__ */ $$wrap(x, "<id>", "x");
       export { x };
       z = /* #__PURE__ */ $$wrap(z, "<id>", "z");
