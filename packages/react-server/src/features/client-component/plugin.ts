@@ -91,24 +91,25 @@ export function vitePluginServerUseClient({
         // we need to transform to client reference directly
         // otherwise `soruce` will be resolved infinitely by recursion
         id = wrapId(id);
-        const output = await transformDirectiveProxyExport(ast, {
+        const result = transformDirectiveProxyExport(ast, {
           directive: USE_CLIENT,
           id,
           runtime: "$$proxy",
           ignoreExportAllDeclaration: true,
         });
+        const output = result?.output;
         tinyassert(output);
         output.prepend(
           `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
         );
-        const result = output.toString();
+        const outputCode = output.toString();
         debug("[rsc.use-client-node-modules.load]", {
           source,
           meta,
           id,
-          result,
+          outputCode,
         });
-        return output.toString();
+        return outputCode;
       }
       return;
     },
@@ -148,12 +149,13 @@ export function vitePluginServerUseClient({
       }
       const clientId = normalizeId(id);
       const ast = await parseAstAsync(code);
-      const output = await transformDirectiveProxyExport(ast, {
+      const result = transformDirectiveProxyExport(ast, {
         directive: USE_CLIENT,
         id: clientId,
         runtime: "$$proxy",
         ignoreExportAllDeclaration: true,
       });
+      const output = result?.output;
       if (!output) {
         return;
       }

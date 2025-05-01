@@ -3,7 +3,7 @@ import { transformHoistInlineDirective } from "./hoist";
 import { hasDirective } from "./utils";
 import { transformWrapExport } from "./wrap-export";
 
-export async function transformServerActionServer(
+export function transformServerActionServer(
   input: string,
   ast: Program,
   options: { id: string; runtime: string },

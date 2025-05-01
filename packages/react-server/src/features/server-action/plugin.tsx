@@ -43,12 +43,13 @@ export function vitePluginClientUseServer({
       }
       const serverId = manager.normalizeReferenceId(id);
       const ast = await parseAstAsync(code);
-      const output = await transformDirectiveProxyExport(ast, {
+      const result = transformDirectiveProxyExport(ast, {
         directive: USE_SERVER,
         id: serverId,
         runtime: "$$proxy",
         ignoreExportAllDeclaration: true,
       });
+      const output = result?.output;
       if (!output) {
         manager.serverReferenceMap.delete(id);
         return;
@@ -102,7 +103,7 @@ export function vitePluginServerUseServer({
       }
       const serverId = manager.normalizeReferenceId(id);
       const ast = await parseAstAsync(code);
-      const { output } = await transformServerActionServer(code, ast, {
+      const { output } = transformServerActionServer(code, ast, {
         id: serverId,
         runtime: "$$register",
       });
