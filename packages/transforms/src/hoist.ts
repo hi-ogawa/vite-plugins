@@ -43,6 +43,12 @@ export function transformHoistInlineDirective(
         const scope = analyzed.map.get(node);
         tinyassert(scope);
         const declName = node.type === "FunctionDeclaration" && node.id.name;
+        const originalName =
+          declName ||
+          (parent?.type === "VariableDeclarator" &&
+            parent.id.type === "Identifier" &&
+            parent.id.name) ||
+          "anonymous_server_function";
 
         // bind variables which are neither global nor in own scope
         const bindVars = [...scope.references].filter((ref) => {
@@ -59,16 +65,18 @@ export function transformHoistInlineDirective(
         ].join(", ");
 
         // append a new `FunctionDeclaration` at the end
-        const newName = `$$hoist_${names.length}`;
+        const newName =
+          `$$hoist_${names.length}` + (originalName ? `_${originalName}` : "");
         names.push(newName);
         output.update(
           node.start,
           node.body.start,
-          `\n;export ${
-            node.async ? "async " : ""
-          }function ${newName}(${newParams}) `,
+          `\n;export ${node.async ? "async " : ""}function ${newName}(${newParams}) `,
         );
-        output.appendLeft(node.end, ";\n");
+        output.appendLeft(
+          node.end,
+          `;\n/* #__PURE__ */ Object.defineProperty(${newName}, "name", { value: ${JSON.stringify(originalName)} });\n`,
+        );
         output.move(node.start, node.end, input.length);
 
         // replace original declartion with action register + bind

@@ -89,6 +89,10 @@ function Counter4() {
     "use server";
     count4 += Number(formData.get(name));
   }
+  // const changeCount4 = async (formData: FormData) => {
+  //   "use server";
+  //   count4 += Number(formData.get(name));
+  // };
 
   return (
     <form
