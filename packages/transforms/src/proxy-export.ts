@@ -120,8 +120,9 @@ export function transformProxyExport(
     if (node.type === "ExportDefaultDeclaration") {
       validateNonAsyncFunction(
         node,
-        node.declaration.type === "FunctionDeclaration" &&
-          node.declaration.async,
+        node.declaration.type === "Identifier" ||
+          (node.declaration.type === "FunctionDeclaration" &&
+            node.declaration.async),
       );
       createExport(node, ["default"]);
       continue;

@@ -140,8 +140,11 @@ export function transformWrapExport(
     if (node.type === "ExportDefaultDeclaration") {
       validateNonAsyncFunction(
         node,
-        node.declaration.type === "FunctionDeclaration" &&
-          node.declaration.async,
+        // TODO: somehow identifier is allowed in next.js?
+        // (see packages/react-server/examples/next/app/actions/server/actions.ts)
+        node.declaration.type === "Identifier" ||
+          (node.declaration.type === "FunctionDeclaration" &&
+            node.declaration.async),
       );
       let localName: string;
       if (
