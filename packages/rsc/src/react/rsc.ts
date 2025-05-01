@@ -24,13 +24,11 @@ export function registerClientReference<T>(
   return ReactServer.registerClientReference(proxy, id, name);
 }
 
-export function registerServerReference<T>(
+export const registerServerReference: <T>(
   ref: T,
   id: string,
   name: string,
-): T {
-  return ReactServer.registerServerReference(ref, id, name);
-}
+) => T = ReactServer.registerServerReference;
 
 export function decodeReply(
   body: string | FormData,

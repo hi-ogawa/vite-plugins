@@ -93,8 +93,8 @@ export function vitePluginServerUseClient({
         id = wrapId(id);
         const result = transformDirectiveProxyExport(ast, {
           directive: USE_CLIENT,
-          id,
-          runtime: "$$proxy",
+          runtime: (name) =>
+            `$$proxy(${JSON.stringify(id)}, ${JSON.stringify(name)})`,
           ignoreExportAllDeclaration: true,
         });
         const output = result?.output;
@@ -151,8 +151,8 @@ export function vitePluginServerUseClient({
       const ast = await parseAstAsync(code);
       const result = transformDirectiveProxyExport(ast, {
         directive: USE_CLIENT,
-        id: clientId,
-        runtime: "$$proxy",
+        runtime: (name) =>
+          `$$proxy(${JSON.stringify(clientId)}, ${JSON.stringify(name)})`,
         ignoreExportAllDeclaration: true,
       });
       const output = result?.output;

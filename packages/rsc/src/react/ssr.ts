@@ -17,3 +17,6 @@ export function createFromReadableStream<T>(
 export function createServerReference(id: string): unknown {
   return ReactClient.createServerReference(id);
 }
+
+export const callServer = null;
+export const findSourceMapURL = null;

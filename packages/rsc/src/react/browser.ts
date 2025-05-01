@@ -9,7 +9,7 @@ export function createFromReadableStream<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromReadableStream(stream, {
-    callServer: getCallServer(),
+    callServer,
     findSourceMapURL,
     ...options,
   });
@@ -20,7 +20,7 @@ export function createFromFetch<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromFetch(promiseForResponse, {
-    callServer: getCallServer(),
+    callServer,
     findSourceMapURL,
     ...options,
   });
@@ -33,17 +33,14 @@ export function encodeReply(
   return ReactClient.encodeReply(v, options);
 }
 
-export function createServerReference(id: string): unknown {
-  return ReactClient.createServerReference(id, (...args: any[]) =>
-    getCallServer()(...args),
-  );
-}
+export const createServerReference: (...args: any[]) => unknown =
+  ReactClient.createServerReference;
 
 // use global instead of local variable  to tolerate duplicate modules
 // e.g. when `setServerCallback` is pre-bundled but `createServerReference` is not
 
-function getCallServer(): any {
-  return (globalThis as any).__viteRscCallServer;
+export function callServer(...args: any[]): any {
+  return (globalThis as any).__viteRscCallServer(...args);
 }
 
 export function setServerCallback(fn: CallServerCallback): void {
@@ -55,7 +52,10 @@ export type { CallServerCallback };
 export const createTemporaryReferenceSet: () => unknown =
   ReactClient.createTemporaryReferenceSet;
 
-function findSourceMapURL(filename: string, environmentName: string) {
+export function findSourceMapURL(
+  filename: string,
+  environmentName: string,
+): string | null {
   if (!import.meta.env.DEV) return null;
   // TODO: respect config.server.origin and config.base?
   const url = new URL("/__vite_rsc_findSourceMapURL", window.location.origin);
