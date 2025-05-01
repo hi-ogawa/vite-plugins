@@ -11,6 +11,7 @@ export function transformDirectiveProxyExport(
     code?: string;
     runtime: (name: string) => string;
     ignoreExportAllDeclaration?: boolean;
+    rejectNonAsyncFunction?: boolean;
   },
 ) {
   if (!hasDirective(ast.body, options.directive)) {
@@ -25,6 +26,7 @@ export function transformProxyExport(
     code?: string;
     runtime: (name: string) => string;
     ignoreExportAllDeclaration?: boolean;
+    rejectNonAsyncFunction?: boolean;
   },
 ) {
   const output = new MagicString(options.code ?? " ".repeat(ast.end));

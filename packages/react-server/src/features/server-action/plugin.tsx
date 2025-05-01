@@ -54,6 +54,7 @@ export function vitePluginClientUseServer({
           `$$ReactClient.findSourceMapURL, ` +
           `${JSON.stringify(name)})`,
         ignoreExportAllDeclaration: true,
+        rejectNonAsyncFunction: true,
       });
       const output = result?.output;
       if (!output) {
@@ -111,6 +112,7 @@ export function vitePluginServerUseServer({
           `(() => (typeof ${value} === "function"` +
           ` ? $$ReactServer.registerServerReference(${value}, ${JSON.stringify(serverId)}, ${JSON.stringify(name)})` +
           ` : ${value}))()`,
+        rejectNonAsyncFunction: true,
       });
       if (output.hasChanged()) {
         manager.serverReferenceMap.set(id, serverId);

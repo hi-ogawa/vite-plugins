@@ -577,6 +577,7 @@ function vitePluginUseServer(): Plugin[] {
               `(() => (typeof ${value} === "function"` +
               ` ? $$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})` +
               ` : ${value}))()`,
+            rejectNonAsyncFunction: true,
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
@@ -596,6 +597,7 @@ function vitePluginUseServer(): Plugin[] {
               `$$ReactClient.findSourceMapURL, ` +
               `${JSON.stringify(name)})`,
             directive: "use server",
+            rejectNonAsyncFunction: true,
           });
           const output = result?.output;
           if (!output?.hasChanged()) return;

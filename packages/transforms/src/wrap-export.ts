@@ -9,6 +9,7 @@ export function transformWrapExport(
   options: {
     runtime: (value: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
+    rejectNonAsyncFunction?: boolean;
   },
 ) {
   const output = new MagicString(input);
@@ -105,7 +106,9 @@ export function transformWrapExport(
       !options.ignoreExportAllDeclaration &&
       node.type === "ExportAllDeclaration"
     ) {
-      throw new Error("unsupported ExportAllDeclaration");
+      throw Object.assign(new Error("unsupported ExportAllDeclaration"), {
+        pos: node.start,
+      });
     }
 
     /**
