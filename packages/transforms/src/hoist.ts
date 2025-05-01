@@ -9,10 +9,12 @@ export function transformHoistInlineDirective(
   input: string,
   ast: Program,
   {
-    id,
     runtime,
     directive,
-  }: { id: string; runtime: string; directive: string },
+  }: {
+    runtime: (value: string, name: string) => string;
+    directive: string;
+  },
 ) {
   const output = new MagicString(input);
   const analyzed = analyze(ast);
@@ -59,7 +61,7 @@ export function transformHoistInlineDirective(
         output.move(node.start, node.end, input.length);
 
         // replace original declartion with action register + bind
-        let newCode = `${runtime}(${newName}, "${id}", "${newName}")`;
+        let newCode = `/* #__PURE__ */ ${runtime(newName, newName)}`;
         if (bindVars.length > 0) {
           newCode = `${newCode}.bind(${["null", ...bindVars].join(", ")})`;
         }

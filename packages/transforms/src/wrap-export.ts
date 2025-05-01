@@ -7,8 +7,7 @@ export function transformWrapExport(
   input: string,
   ast: Program,
   options: {
-    id: string;
-    runtime: string;
+    runtime: (value: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
   },
 ) {
@@ -19,14 +18,14 @@ export function transformWrapExport(
   function wrapSimple(name: string) {
     // preserve reference export
     toAppend.push(
-      `${name} = ${options.runtime}(${name}, "${options.id}", "${name}")`,
+      `${name} = /* #__PURE__ */ ${options.runtime(name, name)}`,
       `export { ${name} }`,
     );
   }
 
   function wrapExport(name: string, exportName: string) {
     toAppend.push(
-      `const $$wrap_${name} = ${options.runtime}(${name}, "${options.id}", "${exportName}")`,
+      `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName)}`,
       `export { $$wrap_${name} as ${exportName} }`,
     );
   }

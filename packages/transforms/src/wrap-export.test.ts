@@ -5,8 +5,8 @@ import { transformWrapExport } from "./wrap-export";
 async function testTransform(input: string) {
   const ast = await parseAstAsync(input);
   const { output } = transformWrapExport(input, ast, {
-    id: "<id>",
-    runtime: "$$wrap",
+    runtime: (value, name) =>
+      `$$wrap(${value}, "<id>", ${JSON.stringify(name)})`,
     ignoreExportAllDeclaration: true,
   });
   return output.hasChanged() && output.toString();
@@ -29,15 +29,15 @@ export class Cls {};
       async function AsyncFn() {};
       class Cls {};
       ;
-      Arrow = $$wrap(Arrow, "<id>", "Arrow");
+      Arrow = /* #__PURE__ */ $$wrap(Arrow, "<id>", "Arrow");
       export { Arrow };
-      const $$wrap_$$default = $$wrap($$default, "<id>", "default");
+      const $$wrap_$$default = /* #__PURE__ */ $$wrap($$default, "<id>", "default");
       export { $$wrap_$$default as default };
-      Fn = $$wrap(Fn, "<id>", "Fn");
+      Fn = /* #__PURE__ */ $$wrap(Fn, "<id>", "Fn");
       export { Fn };
-      AsyncFn = $$wrap(AsyncFn, "<id>", "AsyncFn");
+      AsyncFn = /* #__PURE__ */ $$wrap(AsyncFn, "<id>", "AsyncFn");
       export { AsyncFn };
-      Cls = $$wrap(Cls, "<id>", "Cls");
+      Cls = /* #__PURE__ */ $$wrap(Cls, "<id>", "Cls");
       export { Cls };
       "
     `);
@@ -57,9 +57,9 @@ export function changeCount() {
         count += 1;
       }
       ;
-      count = $$wrap(count, "<id>", "count");
+      count = /* #__PURE__ */ $$wrap(count, "<id>", "count");
       export { count };
-      changeCount = $$wrap(changeCount, "<id>", "changeCount");
+      changeCount = /* #__PURE__ */ $$wrap(changeCount, "<id>", "changeCount");
       export { changeCount };
       "
     `);
@@ -73,9 +73,9 @@ export const { x, y: [z] } = { x: 0, y: [1] };
       "
       let { x, y: [z] } = { x: 0, y: [1] };
       ;
-      x = $$wrap(x, "<id>", "x");
+      x = /* #__PURE__ */ $$wrap(x, "<id>", "x");
       export { x };
-      z = $$wrap(z, "<id>", "z");
+      z = /* #__PURE__ */ $$wrap(z, "<id>", "z");
       export { z };
       "
     `);
@@ -86,7 +86,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
       "function Fn() {};
-      const $$wrap_Fn = $$wrap(Fn, "<id>", "default");
+      const $$wrap_Fn = /* #__PURE__ */ $$wrap(Fn, "<id>", "default");
       export { $$wrap_Fn as default };
       "
     `,
@@ -98,7 +98,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
       "const $$default = function () {};
-      const $$wrap_$$default = $$wrap($$default, "<id>", "default");
+      const $$wrap_$$default = /* #__PURE__ */ $$wrap($$default, "<id>", "default");
       export { $$wrap_$$default as default };
       "
     `,
@@ -110,7 +110,7 @@ export const { x, y: [z] } = { x: 0, y: [1] };
     expect(await testTransform(input)).toMatchInlineSnapshot(
       `
       "class Cls {};
-      const $$wrap_Cls = $$wrap(Cls, "<id>", "default");
+      const $$wrap_Cls = /* #__PURE__ */ $$wrap(Cls, "<id>", "default");
       export { $$wrap_Cls as default };
       "
     `,
@@ -127,7 +127,7 @@ export { x }
       const x = 0;
 
       ;
-      const $$wrap_x = $$wrap(x, "<id>", "x");
+      const $$wrap_x = /* #__PURE__ */ $$wrap(x, "<id>", "x");
       export { $$wrap_x as x };
       "
     `);
@@ -143,7 +143,7 @@ export { x as y }
       const x = 0;
 
       ;
-      const $$wrap_x = $$wrap(x, "<id>", "y");
+      const $$wrap_x = /* #__PURE__ */ $$wrap(x, "<id>", "y");
       export { $$wrap_x as y };
       "
     `);
@@ -154,7 +154,7 @@ export { x as y }
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       ";
       import { x as $$import_x } from "./dep";
-      const $$wrap_$$import_x = $$wrap($$import_x, "<id>", "x");
+      const $$wrap_$$import_x = /* #__PURE__ */ $$wrap($$import_x, "<id>", "x");
       export { $$wrap_$$import_x as x };
       "
     `);
@@ -165,7 +165,7 @@ export { x as y }
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       ";
       import { x as $$import_x } from "./dep";
-      const $$wrap_$$import_x = $$wrap($$import_x, "<id>", "y");
+      const $$wrap_$$import_x = /* #__PURE__ */ $$wrap($$import_x, "<id>", "y");
       export { $$wrap_$$import_x as y };
       "
     `);
