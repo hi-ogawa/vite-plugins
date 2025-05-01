@@ -16,12 +16,25 @@ export function transformWrapExport(
   const exportNames: string[] = [];
   const toAppend: string[] = [];
 
-  function wrapSimple(name: string) {
-    // preserve reference export
-    toAppend.push(
-      `${name} = /* #__PURE__ */ ${options.runtime(name, name)}`,
-      `export { ${name} }`,
-    );
+  function wrapSimple(start: number, end: number, names: string[]) {
+    // update code and move to preserve `registerServerReference` position
+    // e.g.
+    // input
+    //   export async function f() {}
+    //   ^^^^^^
+    // output
+    //   async function f() {}
+    //   f = registerServerReference(f, ...)   << maps to original "export" token
+    //   export { f }                          <<
+    const newCode = names
+      .map(
+        (name) =>
+          `${name} = /* #__PURE__ */ ${options.runtime(name, name)};\n` +
+          `export { ${name} };\n`,
+      )
+      .join("");
+    output.update(start, end, newCode);
+    output.move(start, end, input.length);
   }
 
   function wrapExport(name: string, exportName: string) {
@@ -55,9 +68,9 @@ export function transformWrapExport(
             node.declaration.type === "FunctionDeclaration" &&
               node.declaration.async,
           );
-          // strip export
-          output.remove(node.start, node.declaration.start);
-          wrapSimple(node.declaration.id.name);
+          wrapSimple(node.start, node.declaration.start, [
+            node.declaration.id.name,
+          ]);
         } else if (node.declaration.type === "VariableDeclaration") {
           /**
            * export const foo = 1, bar = 2
@@ -70,9 +83,6 @@ export function transformWrapExport(
                 decl.init.async,
             ),
           );
-          // strip export
-          output.remove(node.start, node.declaration.start);
-          // rewrite from "const" to "let"
           if (node.declaration.kind === "const") {
             output.update(
               node.declaration.start,
@@ -80,11 +90,10 @@ export function transformWrapExport(
               "let",
             );
           }
-          for (const decl of node.declaration.declarations) {
-            for (const name of extract_names(decl.id)) {
-              wrapSimple(name);
-            }
-          }
+          const names = node.declaration.declarations.flatMap((decl) =>
+            extract_names(decl.id),
+          );
+          wrapSimple(node.start, node.declaration.start, names);
         } else {
           node.declaration satisfies never;
         }
