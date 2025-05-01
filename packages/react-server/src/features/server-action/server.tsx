@@ -5,19 +5,7 @@ import { $__global } from "../../global";
 import type { ReactServerErrorContext } from "../../server";
 import { findMapInverse } from "../../utils/misc";
 
-// https://github.com/facebook/react/blob/c8a035036d0f257c514b3628e927dd9dd26e5a09/packages/react-server-dom-webpack/src/ReactFlightWebpackReferences.js#L87
-
-/* @__NO_SIDE_EFFECTS__ */
-export function registerServerReference(
-  action: Function,
-  id: string,
-  name: string,
-) {
-  if (typeof action !== "function") {
-    return action;
-  }
-  return ReactServer.registerServerReference(action, id, name);
-}
+export { registerServerReference } from "@hiogawa/vite-rsc/react/rsc";
 
 export type ActionResult = {
   error?: ReactServerErrorContext;
