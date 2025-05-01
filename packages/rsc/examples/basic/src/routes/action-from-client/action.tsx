@@ -2,7 +2,7 @@
 
 // test findSourceMapURL for server action imported from client
 
-export function NotThis() {
+export async function NotThis() {
   //
   //
   //

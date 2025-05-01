@@ -44,6 +44,14 @@ export function transformProxyExport(
     output.update(node.start, node.end, newCode);
   }
 
+  function validateNonAsyncFunction(node: Node, ok?: boolean) {
+    if (options.rejectNonAsyncFunction && !ok) {
+      throw Object.assign(new Error(`unsupported non async function`), {
+        pos: node.start,
+      });
+    }
+  }
+
   for (const node of ast.body) {
     if (node.type === "ExportNamedDeclaration") {
       if (node.declaration) {
@@ -54,11 +62,24 @@ export function transformProxyExport(
           /**
            * export function foo() {}
            */
+          validateNonAsyncFunction(
+            node,
+            node.declaration.type === "FunctionDeclaration" &&
+              node.declaration.async,
+          );
           createExport(node, [node.declaration.id.name]);
         } else if (node.declaration.type === "VariableDeclaration") {
           /**
            * export const foo = 1, bar = 2
            */
+          validateNonAsyncFunction(
+            node,
+            node.declaration.declarations.every(
+              (decl) =>
+                decl.init?.type === "ArrowFunctionExpression" &&
+                decl.init.async,
+            ),
+          );
           const names = node.declaration.declarations.flatMap((decl) =>
             extract_names(decl.id),
           );
@@ -97,6 +118,11 @@ export function transformProxyExport(
      * export default () => {}
      */
     if (node.type === "ExportDefaultDeclaration") {
+      validateNonAsyncFunction(
+        node,
+        node.declaration.type === "FunctionDeclaration" &&
+          node.declaration.async,
+      );
       createExport(node, ["default"]);
       continue;
     }
