@@ -1,7 +1,11 @@
 "use server";
 
-export let count1 = 0;
+let count1 = 0;
 
-export function changeCount1(formData: FormData) {
+export async function getCount1() {
+  return count1;
+}
+
+export async function changeCount1(formData: FormData) {
   count1 += Number(formData.get("value"));
 }
