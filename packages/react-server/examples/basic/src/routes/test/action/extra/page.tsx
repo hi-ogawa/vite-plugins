@@ -85,14 +85,10 @@ let count4 = 0;
 function Counter4() {
   const name = "value".slice();
 
-  async function changeCount4(formData: FormData) {
+  const changeCount4 = async (formData: FormData) => {
     "use server";
     count4 += Number(formData.get(name));
-  }
-  // const changeCount4 = async (formData: FormData) => {
-  //   "use server";
-  //   count4 += Number(formData.get(name));
-  // };
+  };
 
   return (
     <form
