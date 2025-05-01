@@ -573,19 +573,14 @@ function vitePluginUseServer(): Plugin[] {
         const normalizedId = await normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
           const { output } = transformServerActionServer(code, ast, {
-            id: normalizedId,
-            runtime: "$$register",
+            runtime: (value, name) =>
+              `(() => (typeof ${value} === "function"` +
+              ` ? $$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})` +
+              ` : ${value}))()`,
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
-          output.prepend(`
-            import * as $$ReactServer from "${PKG_NAME}/rsc";
-            /* @__NO_SIDE_EFFECTS__ */
-            const $$register = (value, id, name) => {
-              if (typeof value !== 'function') return value;
-              return $$ReactServer.registerServerReference(value, id, name);
-            }
-          `);
+          output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),

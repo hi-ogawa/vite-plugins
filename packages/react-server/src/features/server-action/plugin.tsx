@@ -107,14 +107,14 @@ export function vitePluginServerUseServer({
       const serverId = manager.normalizeReferenceId(id);
       const ast = await parseAstAsync(code);
       const { output } = transformServerActionServer(code, ast, {
-        id: serverId,
-        runtime: "$$register",
+        runtime: (value, name) =>
+          `(() => (typeof ${value} === "function"` +
+          ` ? $$ReactServer.registerServerReference(${value}, ${JSON.stringify(serverId)}, ${JSON.stringify(name)})` +
+          ` : ${value}))()`,
       });
       if (output.hasChanged()) {
         manager.serverReferenceMap.set(id, serverId);
-        output.prepend(
-          `import { registerServerReference as $$register } from "${runtimePath}";\n`,
-        );
+        output.prepend(`import * as $$ReactServer from "${runtimePath}";\n`);
         debug(`[${vitePluginServerUseServer.name}:transform]`, {
           id,
           outCode: output.toString(),

@@ -6,8 +6,9 @@ import { transformWrapExport } from "./wrap-export";
 export function transformServerActionServer(
   input: string,
   ast: Program,
-  options: { id: string; runtime: string },
+  options: { runtime: (value: string, name: string) => string },
 ) {
+  // TODO: unify
   if (hasDirective(ast.body, "use server")) {
     return transformWrapExport(input, ast, options);
   }

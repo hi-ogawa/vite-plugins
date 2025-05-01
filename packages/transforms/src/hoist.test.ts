@@ -7,8 +7,8 @@ describe(transformHoistInlineDirective, () => {
   async function testTransform(input: string) {
     const ast = await parseAstAsync(input);
     const { output } = transformHoistInlineDirective(input, ast, {
-      id: "<id>",
-      runtime: "$$register",
+      runtime: (value, name) =>
+        `$$register(${value}, "<id>", ${JSON.stringify(name)})`,
       directive: "use server",
     });
     if (!output.hasChanged()) {
@@ -56,14 +56,14 @@ export default function w() {
       "
       const x = "x";
 
-      const f = $$register($$hoist_0, "<id>", "$$hoist_0");
+      const f = /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0");
 
       async function g() {
       }
 
-      export const h = $$register($$hoist_1, "<id>", "$$hoist_1");
+      export const h = /* #__PURE__ */ $$register($$hoist_1, "<id>", "$$hoist_1");
 
-      const w = $$register($$hoist_2, "<id>", "$$hoist_2");
+      const w = /* #__PURE__ */ $$register($$hoist_2, "<id>", "$$hoist_2");
       export default w;
 
       ;export async function $$hoist_0() {
@@ -105,7 +105,7 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
+        const changeCount = /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
 
         return "something";
       }
@@ -145,9 +145,9 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
+        const changeCount = /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
 
-        const changeCount2 = $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, name);
+        const changeCount2 = /* #__PURE__ */ $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, name);
 
         return "something";
       }
@@ -190,7 +190,7 @@ function Counter() {
 
         return {
           type: "form",
-          action: $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name)
+          action: /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name)
         }
       }
 
@@ -225,11 +225,11 @@ function validator(action) {
       "
       export default function Page() {
         const x = 0;
-        const action = validator($$register($$hoist_0, "<id>", "$$hoist_0").bind(null, x))
+        const action = validator(/* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, x))
       }
 
       function validator(action) {
-        return $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, action);
+        return /* #__PURE__ */ $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, action);
       }
 
       ;export async function $$hoist_0(x, y) {
