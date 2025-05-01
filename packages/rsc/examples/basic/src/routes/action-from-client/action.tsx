@@ -2,22 +2,22 @@
 
 // test findSourceMapURL for server action imported from client
 
-export async function NotThis() {
+export async function notThis() {
   //
   //
   //
-  NotThis2();
+  notThis2();
 }
 
-export async function TestAction() {
+export async function testAction() {
   console.log("[test-action-from-client]");
 }
 
-function NotThis2() {
+function notThis2() {
   //
   //
 }
 
-export async function TestAction2() {
+export async function testAction2() {
   console.log("[test-action-from-client-2]");
 }
