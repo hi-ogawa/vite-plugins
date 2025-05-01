@@ -9,3 +9,4 @@ dist
 *.tgz
 test-results
 *.tsbuildinfo
+.debug

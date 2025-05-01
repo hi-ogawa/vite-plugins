@@ -24,6 +24,25 @@ export function transformWrapExport(
     );
   }
 
+  function wrapSimple2(name: string, start: number, end: number) {
+    // update code and move to preserve `registerServerReference` position
+    // e.g.
+    // input
+    //   export async function f() {}
+    //   ^^^^^^
+    // output
+    //   async function f() {}
+    //   f = registerServerReference(f, ...)   << maps to original "export" token
+    //   export { f }                          <<
+    output.update(
+      start,
+      end,
+      `${name} = /* #__PURE__ */ ${options.runtime(name, name)};\n` +
+        `export { ${name} };\n`,
+    );
+    output.move(start, end, input.length);
+  }
+
   function wrapExport(name: string, exportName: string) {
     toAppend.push(
       `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName)}`,
@@ -56,8 +75,13 @@ export function transformWrapExport(
               node.declaration.async,
           );
           // strip export
-          output.remove(node.start, node.declaration.start);
-          wrapSimple(node.declaration.id.name);
+          // output.remove(node.start, node.declaration.start);
+          // wrapSimple(node.declaration.id.name);
+          wrapSimple2(
+            node.declaration.id.name,
+            node.start,
+            node.declaration.start,
+          );
         } else if (node.declaration.type === "VariableDeclaration") {
           /**
            * export const foo = 1, bar = 2

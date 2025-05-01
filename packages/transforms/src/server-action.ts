@@ -14,7 +14,7 @@ export function transformServerActionServer(
     rejectNonAsyncFunction?: boolean;
   },
 ) {
-  // TODO: unify
+  // TODO: unify (generalize transformHoistInlineDirective to support top leve directive case)
   if (hasDirective(ast.body, "use server")) {
     return transformWrapExport(input, ast, options);
   }

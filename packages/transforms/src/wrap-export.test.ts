@@ -1,5 +1,6 @@
 import { parseAstAsync } from "vite";
 import { describe, expect, test } from "vitest";
+import { debugSourceMap } from "./test-utils";
 import { transformWrapExport } from "./wrap-export";
 
 async function testTransform(input: string) {
@@ -9,6 +10,9 @@ async function testTransform(input: string) {
       `$$wrap(${value}, "<id>", ${JSON.stringify(name)})`,
     ignoreExportAllDeclaration: true,
   });
+  if (process.env["DEBUG_SOURCEMAP"]) {
+    await debugSourceMap(output);
+  }
   return output.hasChanged() && output.toString();
 }
 
@@ -28,17 +32,17 @@ export class Cls {};
       function Fn() {};
       async function AsyncFn() {};
       class Cls {};
-      ;
-      Arrow = /* #__PURE__ */ $$wrap(Arrow, "<id>", "Arrow");
-      export { Arrow };
-      const $$wrap_$$default = /* #__PURE__ */ $$wrap($$default, "<id>", "default");
-      export { $$wrap_$$default as default };
       Fn = /* #__PURE__ */ $$wrap(Fn, "<id>", "Fn");
       export { Fn };
       AsyncFn = /* #__PURE__ */ $$wrap(AsyncFn, "<id>", "AsyncFn");
       export { AsyncFn };
       Cls = /* #__PURE__ */ $$wrap(Cls, "<id>", "Cls");
       export { Cls };
+      ;
+      Arrow = /* #__PURE__ */ $$wrap(Arrow, "<id>", "Arrow");
+      export { Arrow };
+      const $$wrap_$$default = /* #__PURE__ */ $$wrap($$default, "<id>", "default");
+      export { $$wrap_$$default as default };
       "
     `);
   });
@@ -56,11 +60,11 @@ export function changeCount() {
       function changeCount() {
         count += 1;
       }
+      changeCount = /* #__PURE__ */ $$wrap(changeCount, "<id>", "changeCount");
+      export { changeCount };
       ;
       count = /* #__PURE__ */ $$wrap(count, "<id>", "count");
       export { count };
-      changeCount = /* #__PURE__ */ $$wrap(changeCount, "<id>", "changeCount");
-      export { changeCount };
       "
     `);
   });
