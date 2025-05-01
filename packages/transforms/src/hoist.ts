@@ -35,7 +35,6 @@ export function transformHoistInlineDirective(
           throw Object.assign(
             new Error(`"${directive}" doesn't allow non async function`),
             {
-              // metadata for rollup error handling
               pos: node.start,
             },
           );
