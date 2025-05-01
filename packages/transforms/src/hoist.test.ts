@@ -56,29 +56,32 @@ export default function w() {
       "
       const x = "x";
 
-      const f = /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0");
+      const f = /* #__PURE__ */ $$register($$hoist_0_f, "<id>", "$$hoist_0_f");
 
       async function g() {
       }
 
-      export const h = /* #__PURE__ */ $$register($$hoist_1, "<id>", "$$hoist_1");
+      export const h = /* #__PURE__ */ $$register($$hoist_1_h, "<id>", "$$hoist_1_h");
 
-      const w = /* #__PURE__ */ $$register($$hoist_2, "<id>", "$$hoist_2");
+      const w = /* #__PURE__ */ $$register($$hoist_2_w, "<id>", "$$hoist_2_w");
       export default w;
 
-      ;export async function $$hoist_0() {
+      ;export async function $$hoist_0_f() {
         "use server";
         return x;
       };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_f, "name", { value: "f" });
 
-      ;export async function $$hoist_1(formData) {
+      ;export async function $$hoist_1_h(formData) {
         "use server";
         return formData.get(x);
       };
+      /* #__PURE__ */ Object.defineProperty($$hoist_1_h, "name", { value: "h" });
 
-      ;export function $$hoist_2() {
+      ;export function $$hoist_2_w() {
         "use server";
       };
+      /* #__PURE__ */ Object.defineProperty($$hoist_2_w, "name", { value: "w" });
       "
     `);
   });
@@ -105,15 +108,16 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
+        const changeCount = /* #__PURE__ */ $$register($$hoist_0_changeCount, "<id>", "$$hoist_0_changeCount").bind(null, name);
 
         return "something";
       }
 
-      ;export async function $$hoist_0(name, formData) {
+      ;export async function $$hoist_0_changeCount(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_changeCount, "name", { value: "changeCount" });
       "
     `);
   });
@@ -145,22 +149,24 @@ function Counter() {
       function Counter() {
         const name = "value";
 
-        const changeCount = /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name);
+        const changeCount = /* #__PURE__ */ $$register($$hoist_0_changeCount, "<id>", "$$hoist_0_changeCount").bind(null, name);
 
-        const changeCount2 = /* #__PURE__ */ $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, name);
+        const changeCount2 = /* #__PURE__ */ $$register($$hoist_1_changeCount2, "<id>", "$$hoist_1_changeCount2").bind(null, name);
 
         return "something";
       }
 
-      ;export async function $$hoist_0(name, formData) {
+      ;export async function $$hoist_0_changeCount(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_changeCount, "name", { value: "changeCount" });
 
-      ;export async function $$hoist_1(name, formData) {
+      ;export async function $$hoist_1_changeCount2(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
+      /* #__PURE__ */ Object.defineProperty($$hoist_1_changeCount2, "name", { value: "changeCount2" });
       "
     `);
   });
@@ -190,14 +196,15 @@ function Counter() {
 
         return {
           type: "form",
-          action: /* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, name)
+          action: /* #__PURE__ */ $$register($$hoist_0_anonymous_server_function, "<id>", "$$hoist_0_anonymous_server_function").bind(null, name)
         }
       }
 
-      ;export function $$hoist_0(name, formData) {
+      ;export function $$hoist_0_anonymous_server_function(name, formData) {
             "use server";
             count += Number(formData.get(name));
           };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
       "
     `);
   });
@@ -225,22 +232,24 @@ function validator(action) {
       "
       export default function Page() {
         const x = 0;
-        const action = validator(/* #__PURE__ */ $$register($$hoist_0, "<id>", "$$hoist_0").bind(null, x))
+        const action = validator(/* #__PURE__ */ $$register($$hoist_0_anonymous_server_function, "<id>", "$$hoist_0_anonymous_server_function").bind(null, x))
       }
 
       function validator(action) {
-        return /* #__PURE__ */ $$register($$hoist_1, "<id>", "$$hoist_1").bind(null, action);
+        return /* #__PURE__ */ $$register($$hoist_1_anonymous_server_function, "<id>", "$$hoist_1_anonymous_server_function").bind(null, action);
       }
 
-      ;export async function $$hoist_0(x, y) {
+      ;export async function $$hoist_0_anonymous_server_function(x, y) {
           "use server";
           return x + y;
         };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
 
-      ;export async function $$hoist_1(action, arg) {
+      ;export async function $$hoist_1_anonymous_server_function(action, arg) {
           "use server";
           return action(arg);
         };
+      /* #__PURE__ */ Object.defineProperty($$hoist_1_anonymous_server_function, "name", { value: "anonymous_server_function" });
       "
     `);
   });
