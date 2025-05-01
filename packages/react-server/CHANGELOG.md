@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.5.0 (2025-05-01)
+
+- feat: support `findSourceMapURL` ([#779](https://github.com/hi-ogawa/vite-plugins/pull/779)) ([#796](https://github.com/hi-ogawa/vite-plugins/pull/796))
+- fix!: disallow non async function for "use server" ([#797](https://github.com/hi-ogawa/vite-plugins/pull/797))
+- fix: hydrate while streaming ([#785](https://github.com/hi-ogawa/vite-plugins/pull/785))
+- refactor: use vite-rsc ([#751](https://github.com/hi-ogawa/vite-plugins/pull/751))
+
 ## v0.4.1 (2025-01-24)
 
 - fix: disable hmr for react server runner ([#671](https://github.com/hi-ogawa/vite-plugins/pull/671))
