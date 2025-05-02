@@ -3,7 +3,7 @@ import {
   getExportNames,
   transformDirectiveProxyExport,
 } from "@hiogawa/transforms";
-import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
+import { createDebug, tinyassert } from "@hiogawa/utils";
 import { normalizeViteImportAnalysisUrl } from "@hiogawa/vite-rsc/vite-utils";
 import { type Plugin, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
