@@ -94,14 +94,12 @@ export function vitePluginServerUseClient({
         const result = transformDirectiveProxyExport(ast, {
           directive: USE_CLIENT,
           runtime: (name) =>
-            `$$proxy(${JSON.stringify(id)}, ${JSON.stringify(name)})`,
+            `$$ReactServer.registerClientReference({}, ${JSON.stringify(id)}, ${JSON.stringify(name)})`,
           ignoreExportAllDeclaration: true,
         });
         const output = result?.output;
         tinyassert(output);
-        output.prepend(
-          `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
-        );
+        output.prepend(`import * as $$ReactServer from "${runtimePath}";\n`);
         const outputCode = output.toString();
         debug("[rsc.use-client-node-modules.load]", {
           source,
@@ -152,16 +150,14 @@ export function vitePluginServerUseClient({
       const result = transformDirectiveProxyExport(ast, {
         directive: USE_CLIENT,
         runtime: (name) =>
-          `$$proxy(${JSON.stringify(clientId)}, ${JSON.stringify(name)})`,
+          `$$ReactServer.registerClientReference({}, ${JSON.stringify(clientId)}, ${JSON.stringify(name)})`,
         ignoreExportAllDeclaration: true,
       });
       const output = result?.output;
       if (!output) {
         return;
       }
-      output.prepend(
-        `import { registerClientReference as $$proxy } from "${runtimePath}";\n`,
-      );
+      output.prepend(`import * as $$ReactServer from "${runtimePath}";\n`);
       manager.clientReferenceMap.set(id, clientId);
       if (manager.buildType === "scan") {
         // to discover server references imported only by client
