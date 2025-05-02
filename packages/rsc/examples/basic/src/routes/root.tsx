@@ -5,6 +5,7 @@ import {
   resetServerCounter,
 } from "./action";
 import { TestActionFromClient } from "./action-from-client/client";
+import { TestReplayConsoleLogs2 } from "./console-reply";
 import {
   ClientCounter,
   Hydrated,
@@ -50,6 +51,7 @@ export function Root(props: { url: URL }) {
         <TestReplayConsoleLogs url={props.url} />
         <TestSuspense url={props.url} />
         <TestActionFromClient />
+        <TestReplayConsoleLogs2 />
       </body>
     </html>
   );
