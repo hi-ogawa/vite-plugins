@@ -99,10 +99,11 @@ export default function vitePluginRsc({
                 },
               },
               resolve: {
-                noExternal: [PKG_NAME],
+                noExternal: [PKG_NAME, "react-server-dom-webpack"],
               },
               optimizeDeps: {
-                exclude: [PKG_NAME],
+                exclude: [PKG_NAME, "react", "react-dom"],
+                include: ["react-server-dom-webpack/client.edge"],
               },
             },
             rsc: {
