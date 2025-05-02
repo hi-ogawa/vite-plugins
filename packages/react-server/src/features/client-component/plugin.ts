@@ -47,7 +47,7 @@ export function vitePluginServerUseClient({
     enforce: "pre", // "pre" to steal Vite's node resolve
     apply: "serve",
     applyToEnvironment: applyPluginToServer,
-    resolveId: memoize(async function (this, source, importer) {
+    async resolveId(source, importer) {
       if (
         source[0] !== "." &&
         source[0] !== "/" &&
@@ -62,21 +62,20 @@ export function vitePluginServerUseClient({
           resolved,
         });
         if (resolved && resolved.id.includes("/node_modules/")) {
-          const [id] = resolved.id.split("?v=");
-          tinyassert(id);
-          const code = await fs.promises.readFile(id!, "utf-8");
-          if (code.match(USE_CLIENT_RE)) {
-            manager.nodeModules.useClient.set(source, {
-              id,
-              exportNames: new Set(),
-            });
-            return `\0${VIRTUAL_PREFIX}${source}`;
+          const id = resolved.id.split("?")[0];
+          if (id && fs.existsSync(id)) {
+            const code = fs.readFileSync(id, "utf-8");
+            if (code.match(USE_CLIENT_RE)) {
+              manager.nodeModules.useClient.set(source, {
+                id,
+                exportNames: new Set(),
+              });
+              return `\0${VIRTUAL_PREFIX}${source}`;
+            }
           }
         }
-        return;
       }
-      return;
-    } satisfies Plugin["resolveId"]),
+    },
     async load(id, _options) {
       if (id.startsWith(`\0${VIRTUAL_PREFIX}`)) {
         const source = id.slice(`\0${VIRTUAL_PREFIX}`.length);
