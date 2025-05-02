@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
+    "@jridgewell/trace-mapping": "^0.3.25",
     "@mjackson/node-fetch-server": "^0.6.1",
     "vitefu": "^1.0.5"
   },

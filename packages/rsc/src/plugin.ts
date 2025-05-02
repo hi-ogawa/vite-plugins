@@ -10,7 +10,7 @@ import {
   type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
-  Rollup,
+  type Rollup,
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
@@ -561,6 +561,30 @@ function vitePluginUseClient({
   ];
 }
 
+function remapPluginErrorPosition<F extends (...args: any) => any>(
+  ctx: Rollup.TransformPluginContext,
+  handler: F,
+): F {
+  return function (this: any, ...args: any[]) {
+    try {
+      return handler.apply(this, args);
+    } catch (e) {
+      if (
+        e &&
+        typeof e === "object" &&
+        "pos" in e &&
+        typeof e.pos === "number"
+      ) {
+        const map = ctx.getCombinedSourcemap();
+        map;
+        e.pos;
+        console.log({ map, e });
+      }
+      throw e;
+    }
+  } as any;
+}
+
 function vitePluginUseServer(): Plugin[] {
   // TODO: reject non async function export
   return [
@@ -572,7 +596,11 @@ function vitePluginUseServer(): Plugin[] {
         const ast = await parseAstAsync(code);
         const normalizedId = await normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
-          const { output } = transformServerActionServer(code, ast, {
+          const transform = remapPluginErrorPosition(
+            this,
+            transformServerActionServer,
+          );
+          const { output } = transform(code, ast, {
             runtime: (value, name) =>
               `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
