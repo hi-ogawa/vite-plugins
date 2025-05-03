@@ -809,6 +809,21 @@ export async function findSourceMapURL(
   let mod: EnvironmentModuleNode | undefined;
   if (environmentName === "Server") {
     mod = server.environments.rsc!.moduleGraph.getModuleById(filename);
+    // (TODO: no, it doesn't look like that's the case.)
+    // since server stack trace is already corrected by vite module runner,
+    // we return "identity" source map to avoid "double remapping" on browser.
+    // const map = mod?.transformResult?.map;
+    // if (mod && map) {
+    //   const content = (map as any).sourcesContent?.[0];
+    //   if (typeof content === "string") {
+    //     return {
+    //       ...map,
+    //       sources: [mod.url],
+    //       mappings: "AAAA" + ";AACA".repeat(content.split("\n").length),
+    //     };
+    //   }
+    //   return { ...map, mappings: "", sources: [mod.url] };
+    // }
   }
 
   // `createServerReference(... findSourceMapURL ...)` called on browser
