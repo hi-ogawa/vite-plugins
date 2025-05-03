@@ -53,7 +53,8 @@
       "@vitejs/plugin-react": "$@vitejs/plugin-react"
     },
     "patchedDependencies": {
-      "@remix-run/dev": "patches/@remix-run__dev.patch"
+      "@remix-run/dev": "patches/@remix-run__dev.patch",
+      "react-server-dom-webpack": "patches/react-server-dom-webpack.patch"
     }
   }
 }

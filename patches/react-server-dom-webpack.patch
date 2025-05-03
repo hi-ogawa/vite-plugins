@@ -1,0 +1,12 @@
+diff --git a/cjs/react-server-dom-webpack-client.browser.development.js b/cjs/react-server-dom-webpack-client.browser.development.js
+index 82d93535cfedb5084e6d9568198398856f00b193..64612328fb1ad42c7ae2e5dcba8c1a975b22d1ba 100644
+--- a/cjs/react-server-dom-webpack-client.browser.development.js
++++ b/cjs/react-server-dom-webpack-client.browser.development.js
+@@ -1973,6 +1973,7 @@
+           findSourceMapURL = findSourceMapURL
+             ? findSourceMapURL(filename, environmentName)
+             : null;
++          if (environmentName === 'Server') line -= 2;
+           fn = createFakeFunction(
+             fn,
+             filename,
