@@ -825,19 +825,19 @@ export async function findSourceMapURL(
     }
   }
 
+  const base = server.config.base.slice(0, -1);
+
   // `createServerReference(... findSourceMapURL ...)` called on browser
   if (environmentName === "Client") {
     try {
-      // TODO: base?
-      server.config.base;
-      const url = new URL(filename).pathname;
+      const url = new URL(filename).pathname.slice(base.length);
       mod = server.environments.client.moduleGraph.urlToModuleMap.get(url);
       map = mod?.transformResult?.map;
     } catch (e) {}
   }
 
   if (mod && map) {
-    // fix sources to match Vite module url
-    return { ...map, sources: [mod.url] };
+    // fix sources to match Vite's module url on browser
+    return { ...map, sources: [base + mod.url] };
   }
 }
