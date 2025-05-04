@@ -5,7 +5,6 @@ import {
   resetServerCounter,
 } from "./action";
 import { TestActionFromClient } from "./action-from-client/client";
-import { TestReplayConsoleLogs2 } from "./console-reply";
 import {
   ClientCounter,
   Hydrated,
@@ -51,7 +50,6 @@ export function Root(props: { url: URL }) {
         <TestReplayConsoleLogs url={props.url} />
         <TestSuspense url={props.url} />
         <TestActionFromClient />
-        <TestReplayConsoleLogs2 />
       </body>
     </html>
   );
@@ -74,7 +72,6 @@ function TestServerActionError() {
 
 function TestReplayConsoleLogs(props: { url: URL }) {
   if (props.url.search.includes("test-replay-console-logs")) {
-    // TODO: line posiiton of replay log seems a bit off
     console.log("[test-replay-console-logs]");
   }
   return <a href="?test-replay-console-logs">test-replayConsoleLogs</a>;
