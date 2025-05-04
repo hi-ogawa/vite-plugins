@@ -72,7 +72,6 @@ function TestServerActionError() {
 
 function TestReplayConsoleLogs(props: { url: URL }) {
   if (props.url.search.includes("test-replay-console-logs")) {
-    // TODO: line posiiton of replay log seems a bit off
     console.log("[test-replay-console-logs]");
   }
   return <a href="?test-replay-console-logs">test-replayConsoleLogs</a>;

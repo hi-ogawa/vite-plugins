@@ -805,10 +805,24 @@ export async function findSourceMapURL(
     return;
   }
 
-  // server component or `registerServerReference`
+  // server component stack, replace log, `registerServerReference`, etc...
   let mod: EnvironmentModuleNode | undefined;
+  let map:
+    | NonNullable<EnvironmentModuleNode["transformResult"]>["map"]
+    | undefined;
   if (environmentName === "Server") {
     mod = server.environments.rsc!.moduleGraph.getModuleById(filename);
+    // React extracts stacktrace via resetting `prepareStackTrace` on the server
+    // and let browser devtools handle the mapping.
+    // https://github.com/facebook/react/blob/4a36d3eab7d9bbbfae62699989aa95e5a0297c16/packages/react-server/src/ReactFlightStackConfigV8.js#L15-L20
+    // This means it has additional +2 line offset due to Vite's module runner
+    // function wrapper. We need correct it just like Vite module runner.
+    // https://github.com/vitejs/vite/blob/d94e7b25564abb81ab7b921d4cd44d0f0d22fec4/packages/vite/src/shared/utils.ts#L58-L69
+    // https://github.com/vitejs/vite/blob/d94e7b25564abb81ab7b921d4cd44d0f0d22fec4/packages/vite/src/node/ssr/fetchModule.ts#L142-L146
+    map = mod?.transformResult?.map;
+    if (map && map.mappings) {
+      map = { ...map, mappings: (";;" + map.mappings) as any };
+    }
   }
 
   // `createServerReference(... findSourceMapURL ...)` called on browser
@@ -816,10 +830,10 @@ export async function findSourceMapURL(
     try {
       const url = new URL(filename).pathname;
       mod = server.environments.client.moduleGraph.urlToModuleMap.get(url);
+      map = mod?.transformResult?.map;
     } catch (e) {}
   }
 
-  const map = mod?.transformResult?.map;
   if (mod && map) {
     // fix sources to match Vite module url
     return { ...map, sources: [mod.url] };
