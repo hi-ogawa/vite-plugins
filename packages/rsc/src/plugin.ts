@@ -562,7 +562,6 @@ function vitePluginUseClient({
 }
 
 function vitePluginUseServer(): Plugin[] {
-  // TODO: reject non async function export
   return [
     {
       name: "rsc:use-server",
