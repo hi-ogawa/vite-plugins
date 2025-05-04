@@ -19,9 +19,6 @@ patchedDependencies:
   '@remix-run/dev':
     hash: 5f3898baeffa886bc4c107d8484475b85e481b37ce98d989a505a8500b02a4b3
     path: patches/@remix-run__dev.patch
-  react-server-dom-webpack:
-    hash: d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6
-    path: patches/react-server-dom-webpack.patch
 
 importers:
 
@@ -68,7 +65,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
       tsdown:
         specifier: 0.7.3
         version: 0.7.3(@swc/core@1.11.21)(typescript@5.7.3)
@@ -166,7 +163,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -258,7 +255,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
       react-tweet:
         specifier: ^3.2.1
         version: 3.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -337,7 +334,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20250423.0
@@ -368,7 +365,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -396,7 +393,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -427,7 +424,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -455,7 +452,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -483,7 +480,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest
@@ -517,7 +514,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest
@@ -554,7 +551,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -575,7 +572,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.4
@@ -612,7 +609,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
       rsc-html-stream:
         specifier: ^0.0.5
         version: 0.0.5
@@ -658,7 +655,7 @@ importers:
         version: 4.7.5
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
 
   packages/rsc/examples/react-router:
     dependencies:
@@ -676,7 +673,7 @@ importers:
         version: 0.0.0-experimental-3b3f4b74e(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
-        version: 19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
     devDependencies:
       '@tailwindcss/typography':
         specifier: ^0.5.16
@@ -10772,7 +10769,7 @@ snapshots:
       '@remix-run/router': 1.22.0
       react: 19.1.0
 
-  react-server-dom-webpack@19.1.0(patch_hash=d2a0554a59f9104db1a3bc8f8f99f620831f80e345877f8af03a542b5a9461d6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2)):
+  react-server-dom-webpack@19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2)):
     dependencies:
       acorn-loose: 8.4.0
       neo-async: 2.6.2

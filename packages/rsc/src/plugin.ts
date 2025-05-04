@@ -805,25 +805,23 @@ export async function findSourceMapURL(
     return;
   }
 
-  // server component or `registerServerReference`
+  // server component stack, replace log, `registerServerReference`, etc...
   let mod: EnvironmentModuleNode | undefined;
+  let map:
+    | NonNullable<EnvironmentModuleNode["transformResult"]>["map"]
+    | undefined;
   if (environmentName === "Server") {
     mod = server.environments.rsc!.moduleGraph.getModuleById(filename);
-    // (TODO: no, it doesn't look like that's the case.)
-    // since server stack trace is already corrected by vite module runner,
-    // we return "identity" source map to avoid "double remapping" on browser.
-    // const map = mod?.transformResult?.map;
-    // if (mod && map) {
-    //   const content = (map as any).sourcesContent?.[0];
-    //   if (typeof content === "string") {
-    //     return {
-    //       ...map,
-    //       sources: [mod.url],
-    //       mappings: "AAAA" + ";AACA".repeat(content.split("\n").length),
-    //     };
-    //   }
-    //   return { ...map, mappings: "", sources: [mod.url] };
-    // }
+    // React extract stacktrace via default `prepareStackTrace`.
+    // https://github.com/facebook/react/blob/4a36d3eab7d9bbbfae62699989aa95e5a0297c16/packages/react-server/src/ReactFlightStackConfigV8.js#L15-L20
+    // This means it has additional +2 line offest due to Vite's module runner function wrapper.
+    // we correct this offset here just like Vite module runner.
+    // https://github.com/vitejs/vite/blob/d94e7b25564abb81ab7b921d4cd44d0f0d22fec4/packages/vite/src/shared/utils.ts#L58-L69
+    // https://github.com/vitejs/vite/blob/d94e7b25564abb81ab7b921d4cd44d0f0d22fec4/packages/vite/src/node/ssr/fetchModule.ts#L142-L146
+    map = mod?.transformResult?.map;
+    if (map && map.mappings) {
+      map = { ...map, mappings: (";;" + map.mappings) as any };
+    }
   }
 
   // `createServerReference(... findSourceMapURL ...)` called on browser
@@ -831,10 +829,10 @@ export async function findSourceMapURL(
     try {
       const url = new URL(filename).pathname;
       mod = server.environments.client.moduleGraph.urlToModuleMap.get(url);
+      map = mod?.transformResult?.map;
     } catch (e) {}
   }
 
-  const map = mod?.transformResult?.map;
   if (mod && map) {
     // fix sources to match Vite module url
     return { ...map, sources: [mod.url] };
