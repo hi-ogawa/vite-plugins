@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { expect, test } from "@playwright/test";
 
 test("loader", async ({ page }) => {
@@ -29,4 +30,20 @@ test("navigation", async ({ page }) => {
   await page.waitForURL("/");
   await page.getByText("This is the home page.").click();
   await expect(page.getByTestId("client-state")).toHaveValue("ok");
+});
+
+const testNoJs = test.extend({
+  javaScriptEnabled: ({}, use) => use(false),
+});
+
+testNoJs("ssr modulepreload @build", async ({ page }) => {
+  await page.goto("./");
+  const srcs = await page
+    .locator(`head >> link[rel="modulepreload"]`)
+    .evaluateAll((elements) => elements.map((el) => el.getAttribute("href")));
+  const viteManifest = JSON.parse(
+    fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
+  );
+  const file = "/" + viteManifest["src/routes/home.client.tsx"].file;
+  expect(srcs).toContain(file);
 });
