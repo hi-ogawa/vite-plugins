@@ -418,7 +418,7 @@ function hashString(v: string) {
   return createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
 }
 
-async function normalizeReferenceId(id: string, name: "client" | "rsc") {
+function normalizeReferenceId(id: string, name: "client" | "rsc") {
   if (!server) {
     return hashString(path.relative(config.root, id));
   }
@@ -477,7 +477,7 @@ function vitePluginUseClient({
             referenceKey = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
           }
         } else {
-          referenceKey = await normalizeReferenceId(id, "client");
+          referenceKey = normalizeReferenceId(id, "client");
         }
 
         const result = transformDirectiveProxyExport(ast, {
@@ -562,7 +562,6 @@ function vitePluginUseClient({
 }
 
 function vitePluginUseServer(): Plugin[] {
-  // TODO: reject non async function export
   return [
     {
       name: "rsc:use-server",
@@ -570,7 +569,7 @@ function vitePluginUseServer(): Plugin[] {
         if (id.includes("/.vite/")) return;
         if (!code.includes("use server")) return;
         const ast = await parseAstAsync(code);
-        const normalizedId = await normalizeReferenceId(id, "rsc");
+        const normalizedId = normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
           const { output } = transformServerActionServer(code, ast, {
             runtime: (value, name) =>
@@ -606,10 +605,7 @@ function vitePluginUseServer(): Plugin[] {
           );
           return {
             code: output.toString(),
-            map: output.generateMap({
-              hires: "boundary",
-              includeContent: true,
-            }),
+            map: output.generateMap({ hires: "boundary" }),
           };
         }
       },
