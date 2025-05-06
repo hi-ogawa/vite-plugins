@@ -21,3 +21,7 @@ function notThis2() {
 export async function testAction2() {
   console.log("[test-action-from-client-2]");
 }
+
+export async function testActionState(prev: number) {
+  return prev + 1;
+}

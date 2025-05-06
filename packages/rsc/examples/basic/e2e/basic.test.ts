@@ -43,6 +43,28 @@ async function testAction(page: Page) {
   ).toBeVisible();
 }
 
+test("useActionState @js", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await createReloadChecker(page);
+  await testUseActionState(page);
+});
+
+testNoJs("useActionState @nojs", async ({ page }) => {
+  await page.goto("./");
+  await testUseActionState(page);
+});
+
+async function testUseActionState(page: Page) {
+  await expect(page.getByTestId("use-action-state")).toContainText(
+    "test-useActionState: 0",
+  );
+  await page.getByTestId("use-action-state").click();
+  await expect(page.getByTestId("use-action-state")).toContainText(
+    "test-useActionState: 1",
+  );
+}
+
 testNoJs("module preload on ssr @build", async ({ page }) => {
   await page.goto("./");
   const srcs = await page
