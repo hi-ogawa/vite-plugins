@@ -2,12 +2,12 @@ import fs from "node:fs";
 import { expect, test } from "@playwright/test";
 
 test("loader", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await expect(page.getByText(`loaderData: {"name":"Unknown"}`)).toBeVisible();
 });
 
 test("client", async ({ page }) => {
-  await page.goto("/about");
+  await page.goto("./about");
   await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
   await page.getByRole("button", { name: "Client counter: 0" }).click();
   await expect(
@@ -16,7 +16,7 @@ test("client", async ({ page }) => {
 });
 
 test("navigation", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
   await page.getByText("This is the home page.").click();
   await page.getByTestId("client-state").fill("ok");
