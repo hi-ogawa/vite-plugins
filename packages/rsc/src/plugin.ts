@@ -513,7 +513,7 @@ function vitePluginUseClient({
           ) {
             const resolved = await this.resolve(source, importer, options);
             if (resolved) {
-              clientPackageMeta[resolved.id] = {
+              clientPackageMeta[resolved.id] ??= {
                 source,
                 exportNames: [],
                 renderedExports: [],

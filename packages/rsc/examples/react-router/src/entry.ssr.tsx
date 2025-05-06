@@ -25,10 +25,10 @@ export default async function handler(
     request,
     callServer,
     (body) => createFromReadableStream(body),
-    (payload) =>
+    (getPayload) =>
       ReactDomServer.renderToReadableStream(
         <>
-          <RSCStaticRouter payload={payload} />
+          <RSCStaticRouter getPayload={getPayload} />
           {css}
           {js}
         </>,
