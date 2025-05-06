@@ -45,11 +45,9 @@ async function testAction(page: Page) {
 
 testNoJs("module preload on ssr @build", async ({ page }) => {
   await page.goto("./");
-  const srcs = await Promise.all(
-    (await page.locator(`head >> link[rel="modulepreload"]`).all()).map((s) =>
-      s.getAttribute("href"),
-    ),
-  );
+  const srcs = await page
+    .locator(`head >> link[rel="modulepreload"]`)
+    .evaluateAll((elements) => elements.map((el) => el.getAttribute("href")));
   const viteManifest = JSON.parse(
     fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
   );
