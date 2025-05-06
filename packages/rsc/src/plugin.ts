@@ -605,10 +605,7 @@ function vitePluginUseServer(): Plugin[] {
           );
           return {
             code: output.toString(),
-            map: output.generateMap({
-              hires: "boundary",
-              includeContent: true,
-            }),
+            map: output.generateMap({ hires: "boundary" }),
           };
         }
       },
