@@ -14,7 +14,7 @@
     "@hiogawa/vite-rsc": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-router": "0.0.0-experimental-3b3f4b74e",
+    "react-router": "0.0.0-experimental-a6d1d1d4e",
     "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
