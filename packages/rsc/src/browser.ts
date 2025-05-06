@@ -1,3 +1,4 @@
+import * as clientReferences from "virtual:vite-rsc/client-references";
 import { setRequireModule } from "./core/browser";
 import { withBase } from "./utils/base";
 
@@ -12,9 +13,6 @@ export function initialize(options?: {
         // @ts-ignore
         return __vite_rsc_raw_import__(withBase(id));
       } else {
-        const clientReferences = await import(
-          "virtual:vite-rsc/client-references" as any
-        );
         const import_ = clientReferences.default[id];
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
