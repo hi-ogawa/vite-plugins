@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.1 (2025-05-07)
+
+- fix: statically import client references virtual ([#815](https://github.com/hi-ogawa/vite-plugins/pull/815))
+- fix: fix base for findSourceMapURL ([#812](https://github.com/hi-ogawa/vite-plugins/pull/812))
+- fix: fix module runner line offset in `findSourceMapURL` ([#810](https://github.com/hi-ogawa/vite-plugins/pull/810))
+
 ## v0.1.0 (2025-05-01)
 
 - feat: support `findSourceMapURL` for `createServerReference` ([#796](https://github.com/hi-ogawa/vite-plugins/pull/796))
