@@ -25,7 +25,6 @@ import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 // state for build orchestration
 let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
-let buildScan = false;
 let server: ViteDevServer;
 let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
@@ -115,11 +114,12 @@ export default function vitePluginRsc({
           builder: {
             sharedPlugins: true,
             async buildApp(builder) {
-              buildScan = true;
               builder.environments.rsc!.config.build.write = false;
+              builder.environments.ssr!.config.build.write = false;
               await builder.build(builder.environments.rsc!);
+              await builder.build(builder.environments.ssr!);
               builder.environments.rsc!.config.build.write = true;
-              buildScan = false;
+              builder.environments.ssr!.config.build.write = true;
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
@@ -444,7 +444,6 @@ function vitePluginUseClient({
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
         if (!code.includes("use client")) return;
-        if (buildScan) return;
 
         const ast = await parseAstAsync(code);
 
