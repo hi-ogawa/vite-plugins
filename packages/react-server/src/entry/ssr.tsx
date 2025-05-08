@@ -95,9 +95,6 @@ export async function renderHtml(
 
   const [stream1, stream2] = result.stream.tee();
 
-  const flightDataPromise =
-    ReactClient.createFromReadableStream<FlightData>(stream1);
-
   const url = new URL(request.url);
   const history = createMemoryHistory({
     initialEntries: [url.href.slice(url.origin.length)],
@@ -108,18 +105,25 @@ export async function renderHtml(
 
   const ssrContext = createSsrContext();
 
-  const reactRootEl = (
-    <RouterContext.Provider value={router}>
-      <FlightDataContext.Provider value={flightDataPromise}>
-        <RouteManifestContext.Provider value={routeManifest}>
-          <RouteAssetLinks />
-          <ssrContext.Provider>
-            <LayoutRoot />
-          </ssrContext.Provider>
-        </RouteManifestContext.Provider>
-      </FlightDataContext.Provider>
-    </RouterContext.Provider>
-  );
+  let flightDataPromise: Promise<FlightData>;
+
+  function SsrRoot() {
+    flightDataPromise ??=
+      ReactClient.createFromReadableStream<FlightData>(stream1);
+
+    return (
+      <RouterContext.Provider value={router}>
+        <FlightDataContext.Provider value={flightDataPromise}>
+          <RouteManifestContext.Provider value={routeManifest}>
+            {false && <RouteAssetLinks />}
+            <ssrContext.Provider>
+              <LayoutRoot />
+            </ssrContext.Provider>
+          </RouteManifestContext.Provider>
+        </FlightDataContext.Provider>
+      </RouterContext.Provider>
+    );
+  }
 
   //
   // render
@@ -148,7 +152,7 @@ export async function renderHtml(
   let ssrStream: ReactDOMServer.ReactDOMServerReadableStream;
   let status = result.status;
   try {
-    ssrStream = await ReactDOMServer.renderToReadableStream(reactRootEl, {
+    ssrStream = await ReactDOMServer.renderToReadableStream(<SsrRoot />, {
       formState: result.actionResult?.data,
       bootstrapModules: url.search.includes("__nojs")
         ? []

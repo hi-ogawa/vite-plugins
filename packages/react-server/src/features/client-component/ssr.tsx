@@ -27,6 +27,8 @@ export function initializeReactClientSsr() {
     prepareDestination(id) {
       if (import.meta.env.DEV) return;
       const deps = prepareDestinationManifest[id];
+      // TODO: not working?
+      // console.log("[prepareDestination]", { id, deps })
       for (const js of deps) {
         ReactDOM.preloadModule(js, {
           as: "script",
