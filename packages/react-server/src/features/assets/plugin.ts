@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { tinyassert, typedBoolean } from "@hiogawa/utils";
+import { tinyassert } from "@hiogawa/utils";
 import type { Manifest, Plugin, ViteDevServer } from "vite";
 import { $__global } from "../../global";
 import type { PluginStateManager } from "../../plugin";
@@ -69,13 +69,8 @@ export function vitePluginServerAssets({
           ...(entry.css ?? []),
           ...manager.serverAssets.filter((file) => file.endsWith(".css")),
         ];
-        const js =
-          entry.dynamicImports
-            ?.map((k) => manifest[k]?.file)
-            .filter(typedBoolean) ?? [];
         const head = [
           ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
-          ...js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
         ].join("\n");
         const result: SsrAssetsType = {
           bootstrapModules: [`/${entry.file}`],

@@ -127,7 +127,7 @@ export function vitePluginServerUseServer({
 
   // expose server references for RSC build via virtual module
   const virtualPlugin = createVirtualPlugin("server-references", async () => {
-    if (manager.buildType === "scan") {
+    if (!manager.buildType || manager.buildType === "scan") {
       return `export default {}`;
     }
     tinyassert(manager.buildType === "server");
