@@ -94,7 +94,10 @@ export function routerRevalidate(v: string): HistoryState {
 
 function preloadAssetDeps(deps: AssetDeps) {
   for (const href of deps.js) {
-    ReactDom.preloadModule(href);
+    ReactDom.preloadModule(href, {
+      as: "script",
+      crossOrigin: "",
+    });
   }
   for (const href of deps.css) {
     ReactDom.preload(href, { as: "style" });
@@ -111,7 +114,7 @@ export function RouteAssetLinks() {
   return (
     <>
       {deps.js.map((href) => (
-        <link key={href} rel="modulepreload" href={href} />
+        <link key={href} rel="modulepreload" href={href} crossOrigin="" />
       ))}
       {deps.css.map((href) => (
         // precedence to force head rendering
