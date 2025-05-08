@@ -111,9 +111,11 @@ export function RouteAssetLinks() {
     () => getRouteAssetDeps(routeManifest, pathname),
     [pathname, routeManifest],
   );
+  // During SSR, modulepreload is injected via prepareDestination
+  // (which means "prepareDestination" is actually redundant, but we use it for testing.)
   return (
     <>
-      {false &&
+      {!import.meta.env.SSR &&
         deps.js.map((href) => (
           <link key={href} rel="modulepreload" href={href} crossOrigin="" />
         ))}
