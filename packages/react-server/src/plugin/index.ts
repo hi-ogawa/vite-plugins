@@ -84,6 +84,7 @@ class PluginStateManager {
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
   serverAssets: string[] = [];
+  prepareDestinationManifest?: Record<string, string[]> = {};
 
   // expose "use client" node modules to client via virtual modules
   // to avoid dual package due to deps optimization hash during dev
@@ -370,26 +371,39 @@ export function vitePluginReactServer(
     }),
     createVirtualPlugin(
       ENTRY_SERVER_WRAPPER.slice("virtual:".length),
-      // the first import doesn't necessarily guarantee the execution order depending on chunking.
-      // so, we also have it on packages/react-server/src/features/request-context/utils.ts.
-      // TODO: this might not be enough for React.cache
       () => `
-        import "virtual:inject-async-local-storage";
         export { handler } from "${entryServer}";
         export { router } from "@hiogawa/react-server/entry/server";
       `,
     ),
-    // make `AsyncLocalStorage` available globally for React.cache from edge build
-    // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
-    createVirtualPlugin("inject-async-local-storage", function () {
-      if (this.environment.name !== "rsc" || options?.noAsyncLocalStorage) {
-        return "export {}";
-      }
-      return `
-        import { AsyncLocalStorage } from "node:async_hooks";
-        Object.assign(globalThis, { AsyncLocalStorage });
-      `;
-    }),
+    {
+      // make `AsyncLocalStorage` available globally for React request context on edge build (e.g. React.cache, ssr preload)
+      // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
+      name: "inject-async-local-storage",
+      async configureServer() {
+        if (options?.noAsyncLocalStorage) return;
+
+        const __viteRscAyncHooks = await import("node:async_hooks");
+        (globalThis as any).AsyncLocalStorage =
+          __viteRscAyncHooks.AsyncLocalStorage;
+      },
+      banner(chunk) {
+        if (options?.noAsyncLocalStorage) return "";
+
+        if (
+          (this.environment.name === "ssr" ||
+            this.environment.name === "rsc") &&
+          this.environment.mode === "build" &&
+          chunk.isEntry
+        ) {
+          return `\
+            import * as __viteRscAyncHooks from "node:async_hooks";
+            globalThis.AsyncLocalStorage = __viteRscAyncHooks.AsyncLocalStorage;
+          `;
+        }
+        return "";
+      },
+    },
     wrapServerPlugin(
       validateImportPlugin({
         "client-only": `'client-only' is included in server build`,

@@ -1305,12 +1305,13 @@ test("full client route", async ({ page }) => {
   await page.getByRole("heading", { name: '"use client" page' }).click();
 });
 
-test("preload ssr @build", async ({ request }) => {
+testNoJs("preload ssr @build", async ({ page }) => {
+  await page.goto("/test/deps");
+  const modulepreloads = await page
+    .locator(`head >> link[rel="modulepreload"]`)
+    .evaluateAll((elements) => elements.map((el) => el.getAttribute("href")));
   const file = getClientManifest()["virtual:test-use-client"].file;
-
-  const res = await request.get("/test/deps");
-  const resText = await res.text();
-  expect(resText).toContain(`<link rel="modulepreload" href="/${file}"/>`);
+  expect(modulepreloads).toContain(`/${file}`);
 });
 
 test("preload client @build", async ({ page }) => {

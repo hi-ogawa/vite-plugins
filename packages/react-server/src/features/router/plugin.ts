@@ -84,6 +84,13 @@ export function routeManifestPluginClient({
           manager.routeManifest = {
             routeTree: createFsRouteTree<RouteAssetDeps>(routeToAssetDeps).tree,
           };
+
+          const prepareDestinationManifest: Record<string, string[]> = {};
+          for (const [id, clientId] of manager.clientReferenceMap) {
+            prepareDestinationManifest[clientId] =
+              facadeModuleDeps[id]?.js ?? [];
+          }
+          manager.prepareDestinationManifest = prepareDestinationManifest;
         }
       },
     },
@@ -107,6 +114,13 @@ export function routeManifestPluginClient({
         null,
         2,
       )}`;
+    }),
+    createVirtualPlugin("prepare-destination-manifest", async function () {
+      if (this.environment.mode === "dev") {
+        return `export default {}`;
+      }
+      tinyassert(manager.prepareDestinationManifest);
+      return `export default ${JSON.stringify(manager.prepareDestinationManifest)}`;
     }),
   ];
 }
