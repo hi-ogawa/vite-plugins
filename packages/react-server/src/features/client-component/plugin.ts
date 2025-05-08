@@ -266,7 +266,10 @@ export function vitePluginClientUseClient({
      *   "some-file1": () => import("some-file1"),
      * }
      */
-    createVirtualPlugin("client-references", () => {
+    createVirtualPlugin("client-references", function () {
+      if (this.environment.mode === "dev") {
+        return `export default {};`;
+      }
       tinyassert(
         manager.buildType === "browser" || manager.buildType === "ssr",
       );

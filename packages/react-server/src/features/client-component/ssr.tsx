@@ -1,6 +1,9 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
 
+// @ts-ignore
+import clientReferences from "virtual:client-references";
+
 const debug = createDebug("react-server:ssr-import");
 
 async function ssrImport(id: string) {
@@ -8,10 +11,7 @@ async function ssrImport(id: string) {
   if (import.meta.env.DEV) {
     return import(/* @vite-ignore */ id);
   } else {
-    const clientReferences = await import(
-      "virtual:client-references" as string
-    );
-    const dynImport = clientReferences.default[id];
+    const dynImport = clientReferences[id];
     tinyassert(dynImport, `client reference not found '${id}'`);
     return dynImport();
   }

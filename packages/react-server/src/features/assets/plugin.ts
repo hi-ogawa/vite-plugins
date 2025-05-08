@@ -69,13 +69,14 @@ export function vitePluginServerAssets({
           ...(entry.css ?? []),
           ...manager.serverAssets.filter((file) => file.endsWith(".css")),
         ];
-        const js =
-          entry.dynamicImports
-            ?.map((k) => manifest[k]?.file)
-            .filter(typedBoolean) ?? [];
+        // const js =
+        //   entry.dynamicImports
+        //     ?.map((k) => manifest[k]?.file)
+        //     .filter(typedBoolean) ?? [];
+        typedBoolean;
         const head = [
           ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
-          ...js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
+          // ...js.map((href) => `<link rel="modulepreload" href="/${href}" />`),
         ].join("\n");
         const result: SsrAssetsType = {
           bootstrapModules: [`/${entry.file}`],
