@@ -1,7 +1,4 @@
-import "virtual:inject-async-local-storage";
-
 // we don't require async hooks and fallbacks to sync context
-// (see virtual:inject-async-local-storage)
 
 type ContextStorage<T> = {
   run<R>(store: T, callback: () => R): R;
