@@ -18,5 +18,10 @@ async function ssrImport(id: string) {
 }
 
 export function initializeReactClientSsr() {
-  ReactClient.setRequireModule({ load: ssrImport });
+  ReactClient.setRequireModule({
+    load: ssrImport,
+    prepareDestination(id) {
+      id;
+    },
+  });
 }
