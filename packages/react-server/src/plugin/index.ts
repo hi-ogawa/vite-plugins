@@ -388,8 +388,9 @@ export function vitePluginReactServer(
           __viteRscAyncHooks.AsyncLocalStorage;
       },
       banner(chunk) {
+        if (options?.noAsyncLocalStorage) return "";
+
         if (
-          !options?.noAsyncLocalStorage &&
           (this.environment.name === "ssr" ||
             this.environment.name === "rsc") &&
           this.environment.mode === "build" &&
