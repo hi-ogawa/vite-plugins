@@ -116,7 +116,6 @@ export function routeManifestPluginClient({
       )}`;
     }),
     createVirtualPlugin("prepare-destination-manifest", async function () {
-      tinyassert(manager.buildType === "ssr");
       if (this.environment.mode === "dev") {
         return `export default {}`;
       }
