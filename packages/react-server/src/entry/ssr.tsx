@@ -115,7 +115,7 @@ export async function renderHtml(
       <RouterContext.Provider value={router}>
         <FlightDataContext.Provider value={flightDataPromise}>
           <RouteManifestContext.Provider value={routeManifest}>
-            {false && <RouteAssetLinks />}
+            <RouteAssetLinks />
             <ssrContext.Provider>
               <LayoutRoot />
             </ssrContext.Provider>

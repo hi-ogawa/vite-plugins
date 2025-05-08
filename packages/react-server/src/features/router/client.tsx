@@ -113,9 +113,10 @@ export function RouteAssetLinks() {
   );
   return (
     <>
-      {deps.js.map((href) => (
-        <link key={href} rel="modulepreload" href={href} crossOrigin="" />
-      ))}
+      {false &&
+        deps.js.map((href) => (
+          <link key={href} rel="modulepreload" href={href} crossOrigin="" />
+        ))}
       {deps.css.map((href) => (
         // precedence to force head rendering
         // https://react.dev/reference/react-dom/components/link#special-rendering-behavior
