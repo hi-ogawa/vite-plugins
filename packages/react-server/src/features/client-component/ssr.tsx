@@ -1,8 +1,12 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
 import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
+import * as ReactDOM from "react-dom";
 
 // @ts-ignore
 import clientReferences from "virtual:client-references";
+
+// @ts-ignore
+import prepareDestinationManifest from "virtual:prepare-destination-manifest";
 
 const debug = createDebug("react-server:ssr-import");
 
@@ -21,7 +25,14 @@ export function initializeReactClientSsr() {
   ReactClient.setRequireModule({
     load: ssrImport,
     prepareDestination(id) {
-      id;
+      if (import.meta.env.DEV) return;
+      const deps = prepareDestinationManifest[id];
+      for (const js of deps) {
+        ReactDOM.preloadModule(js, {
+          as: "script",
+          crossOrigin: "",
+        });
+      }
     },
   });
 }
