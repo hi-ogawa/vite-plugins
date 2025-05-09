@@ -1,5 +1,4 @@
 import {
-  Resources,
   createFromReadableStream,
   getAssetsManifest,
   initialize,
@@ -20,10 +19,7 @@ export default async function handler(
     (body) => createFromReadableStream(body),
     (getPayload) =>
       ReactDomServer.renderToReadableStream(
-        <>
-          <RSCStaticRouter getPayload={getPayload} />
-          <Resources />
-        </>,
+        <RSCStaticRouter getPayload={getPayload} />,
         {
           bootstrapModules: getAssetsManifest().entry.bootstrapModules,
         },

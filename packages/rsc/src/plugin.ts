@@ -928,31 +928,6 @@ export function vitePluginRscCss({
         }
       },
     },
-    createVirtualPlugin("vite-rsc/rsc-css-ssr", async function () {
-      if (this.environment.mode === "build") {
-        // during build, css are injected through AssetsManifest.entry.deps.css
-        return `export default () => {}`;
-      }
-      const { hrefs } = await collectCssByUrl(
-        server.environments.rsc!,
-        entries.rsc,
-      );
-      return `
-        import * as React from "react";
-        import * as ReactDOM from "react-dom";
-
-        const CSS_HREFS = ${JSON.stringify(hrefs, null, 2)};
-
-        const BASE = import.meta.env.BASE_URL.slice(0, -1);
-
-        export default async function RscCss({ nonce }) {
-          for (const href of CSS_HREFS) {
-            ReactDOM.preinit(BASE + href, { as: "style", nonce });
-          }
-          return null;
-        }
-      `;
-    }),
     createVirtualPlugin("vite-rsc/rsc-css", async function () {
       if (this.environment.mode === "build") {
         // during build, css are injected through AssetsManifest.entry.deps.css

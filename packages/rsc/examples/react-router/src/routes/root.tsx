@@ -1,3 +1,4 @@
+import { Resources } from "@hiogawa/vite-rsc/rsc";
 import { Link, Outlet } from "react-router";
 import { TestClientState, TestHydrated } from "./client";
 import { DumpError, GlobalNavigationLoadingBar } from "./root.client";
@@ -10,6 +11,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>React Router Vite</title>
+        <Resources />
       </head>
       <body>
         <header className="container px-8 my-8 mx-auto">
