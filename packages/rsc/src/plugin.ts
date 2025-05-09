@@ -7,6 +7,7 @@ import {
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
+  DevEnvironment,
   type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
@@ -196,6 +197,9 @@ export default function vitePluginRsc({
         };
       },
       async hotUpdate(ctx) {
+        // css file imported by anywhere sould work based on default hmr
+        if (isCSSRequest(ctx.file)) return;
+
         const ids = ctx.modules.map((mod) => mod.id).filter((v) => v !== null);
         if (ids.length === 0) return;
 
@@ -365,6 +369,7 @@ export default function vitePluginRsc({
     },
     createVirtualPlugin("vite-rsc/browser-entry", function () {
       let code = "";
+      code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
       if (entries.css) {
         code += `import ${JSON.stringify(entries.css)};\n`;
       }
@@ -410,7 +415,7 @@ export default function vitePluginRsc({
     ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
-    ...vitePluginRscCss(),
+    ...vitePluginRscCss({ entries }),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
@@ -842,8 +847,126 @@ export async function findSourceMapURL(
 // css support
 //
 
-export function vitePluginRscCss(): Plugin[] {
+export function vitePluginRscCss({
+  entries,
+}: { entries: { rsc: string } }): Plugin[] {
+  // this approach likely misses css files found in dynaimic import of server components
+  // during first SSR after server start. (e.g. react router's lazy server routes)
+  // however, frameworks should be able to cover such cases based on their own convention.
+
+  function collectCss(environment: DevEnvironment, entryId: string) {
+    const visited = new Set<string>();
+    const cssIds = new Set<string>();
+
+    function recurse(id: string) {
+      if (visited.has(id)) {
+        return;
+      }
+      visited.add(id);
+      const mod = environment.moduleGraph.getModuleById(id);
+      for (const next of mod?.importedModules ?? []) {
+        if (next.id) {
+          if (isCSSRequest(next.id)) {
+            cssIds.add(next.id);
+          } else {
+            recurse(next.id);
+          }
+        }
+      }
+    }
+
+    recurse(entryId);
+
+    const hrefs = [...cssIds].map((id) =>
+      normalizeViteImportAnalysisUrl(server.environments.client, id),
+    );
+    return { ids: [...cssIds], hrefs };
+  }
+
+  async function collectCssByUrl(
+    environment: DevEnvironment,
+    entryUrl: string,
+  ) {
+    const entryMod = await environment.moduleGraph.getModuleByUrl(entryUrl);
+    return collectCss(environment, entryMod!.id!);
+  }
+
+  function invalidateModule(environment: DevEnvironment, id: string) {
+    const mod = environment.moduleGraph.getModuleById(id);
+    if (mod) {
+      environment.moduleGraph.invalidateModule(mod);
+    }
+  }
+
+  // collect during rsc build and pass it to browser build
+  const rscCssIdsBuild = new Set<string>();
+
   return [
+    {
+      name: "rsc:css",
+      hotUpdate(ctx) {
+        if (this.environment.name === "rsc" && ctx.modules.length > 0) {
+          // simple virtual invalidation to ensure fresh css list
+          invalidateModule(
+            server.environments.ssr,
+            "\0virtual:vite-rsc/css/rsc",
+          );
+          invalidateModule(
+            server.environments.client,
+            "\0virtual:vite-rsc/rsc-css-browser",
+          );
+        }
+      },
+      transform(_code, id) {
+        if (
+          this.environment.mode === "build" &&
+          this.environment.name === "rsc"
+        ) {
+          if (isCSSRequest(id)) {
+            rscCssIdsBuild.add(id);
+          }
+        }
+      },
+    },
+    createVirtualPlugin("vite-rsc/rsc-css-ssr", async function () {
+      if (this.environment.mode === "build") {
+        // during build, css are injected through AssetsManifest.entry.deps.css
+        return `export default () => {}`;
+      }
+      const { hrefs } = await collectCssByUrl(
+        server.environments.rsc!,
+        entries.rsc,
+      );
+      return `
+        import * as React from "react";
+        import * as ReactDOM from "react-dom";
+
+        const CSS_HREFS = ${JSON.stringify(hrefs, null, 2)};
+
+        const BASE = import.meta.env.BASE_URL.slice(0, -1);
+
+        export default async function RscCss({ nonce }) {
+          for (const href of CSS_HREFS) {
+            ReactDOM.preinit(BASE + href, { as: "style", nonce });
+          }
+          return null;
+        }
+      `;
+    }),
+    createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
+      let ids: string[];
+      if (this.environment.mode === "build") {
+        ids = [...rscCssIdsBuild];
+      } else {
+        const collected = await collectCssByUrl(
+          server.environments.rsc!,
+          entries.rsc,
+        );
+        ids = collected.ids;
+      }
+      ids = ids.map((id) => id.replace(/^\0/, ""));
+      return ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
+    }),
     {
       name: "rsc:css/dev-ssr-virtual",
       resolveId(source) {
@@ -856,37 +979,13 @@ export function vitePluginRscCss(): Plugin[] {
           id = id.slice("\0virtual:vite-rsc/css/dev-ssr/".length);
           const mod =
             await server.environments.ssr.moduleGraph.getModuleByUrl(id);
-          const visited = new Set<string>();
-          const ssrCss = new Set<string>();
-          function collectDevSsrCss(id: string) {
-            if (visited.has(id)) {
-              return;
-            }
-            visited.add(id);
-            const mod = server.environments.ssr.moduleGraph.getModuleById(id);
-            for (const next of mod?.importedModules ?? []) {
-              if (next.id) {
-                if (isCSSRequest(next.id)) {
-                  ssrCss.add(
-                    normalizeViteImportAnalysisUrl(
-                      server.environments.client,
-                      next.id,
-                    ),
-                  );
-                }
-                collectDevSsrCss(next.id);
-              }
-            }
+          if (!mod?.id || !mod?.file) {
+            return `export default []`;
           }
-          if (mod?.id) {
-            collectDevSsrCss(mod.id);
-          }
-          if (mod?.file) {
-            // invalidate virtual module on file change to
-            // be able to reflect added/deleted css import
-            this.addWatchFile(mod.file);
-          }
-          return `export default ${JSON.stringify([...ssrCss])}`;
+          const { hrefs } = collectCss(server.environments.ssr, mod.id);
+          // invalidate virtual module on file change to reflect added/deleted css import
+          this.addWatchFile(mod.file);
+          return `export default ${JSON.stringify(hrefs)}`;
         }
       },
     },

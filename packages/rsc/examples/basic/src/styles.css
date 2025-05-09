@@ -1,3 +1,5 @@
+/* css imported by rsc environment */
+
 @import "tailwindcss";
 
 button {
@@ -6,4 +8,8 @@ button {
 
 input {
   @apply mx-1 px-2 border;
+}
+
+.test-style-server {
+  color: rgb(255, 165, 0);
 }

@@ -1,3 +1,4 @@
+import "./styles.css";
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Root } from "./routes/root";
 
