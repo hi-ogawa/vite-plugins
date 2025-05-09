@@ -67,7 +67,7 @@ export function getAssetsManifest(): AssetsManifest {
 }
 
 // TODO: should we render resources in Rsc root?
-// (if so, we need expose it from `@hiogawa/vite-rsc/rsc`)
+// (if so, we need to tweak virtual module and expose this from `@hiogawa/vite-rsc/rsc`)
 export function Resources({ nonce }: { nonce?: string }): React.ReactNode {
   const deps = getAssetsManifest().entry.deps;
   const css = deps.css.map((href) => (
