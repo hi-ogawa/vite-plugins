@@ -920,8 +920,46 @@ export function vitePluginRscCss(): Plugin[] {
         }
       },
     },
-    createVirtualPlugin("vite-rsc/css-resources", () => {
-      //
-    }),
+    {
+      name: "rsc:css/dev-ssr-virtual",
+      resolveId(source) {
+        if (source.startsWith("virtual:vite-rsc/css/dev-ssr/")) {
+          return "\0" + source;
+        }
+      },
+      async load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/css/dev-ssr/")) {
+          id = id.slice("\0virtual:vite-rsc/css/dev-ssr/".length);
+          const mod =
+            await server.environments.ssr.moduleGraph.getModuleByUrl(id);
+          const visited = new Set<string>();
+          const ssrCss = new Set<string>();
+          function collectDevSsrCss(id: string) {
+            if (visited.has(id)) {
+              return;
+            }
+            visited.add(id);
+            const mod = server.environments.ssr.moduleGraph.getModuleById(id);
+            for (const next of mod?.importedModules ?? []) {
+              if (next.id) {
+                if (isCSSRequest(next.id)) {
+                  ssrCss.add(
+                    normalizeViteImportAnalysisUrl(
+                      server.environments.client,
+                      next.id,
+                    ),
+                  );
+                }
+                collectDevSsrCss(next.id);
+              }
+            }
+          }
+          if (mod?.id) {
+            collectDevSsrCss(mod.id);
+          }
+          return `export default ${JSON.stringify([...ssrCss])}`;
+        }
+      },
+    },
   ];
 }

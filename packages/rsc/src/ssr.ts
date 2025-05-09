@@ -13,7 +13,14 @@ export function initialize(): void {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
-        return import(/* @vite-ignore */ id);
+        const mod = await import(/* @vite-ignore */ id);
+        const modCss = await import(
+          /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
+        );
+        for (const href of modCss.default) {
+          ReactDOM.preinit(href, { as: "style" });
+        }
+        return mod;
       } else {
         const import_ = clientReferences.default[id];
         if (!import_) {
@@ -32,6 +39,9 @@ export function initialize(): void {
         if (deps) {
           for (const js of deps.js) {
             ReactDOM.preloadModule(withBase(js));
+          }
+          for (const href of deps.css) {
+            ReactDOM.preinit(withBase(href), { as: "style" });
           }
         }
       }

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import "./counter.css";
 
 export function ClientCounter(): React.ReactElement {
   const [count, setCount] = React.useState(0);
