@@ -1,6 +1,7 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import { setRequireModule } from "./core/rsc";
 import type { AssetsManifest } from "./plugin";
+import { withBase } from "./utils/base";
 
 export {
   createClientManifest,
@@ -40,4 +41,32 @@ export async function importSsr<T>(): Promise<T> {
 
 export function getAssetsManifest(): AssetsManifest {
   return (assetsManifest as any).default;
+}
+
+export async function Resources({
+  nonce,
+}: { nonce?: string }): Promise<React.ReactNode> {
+  let { css, js } = getAssetsManifest().entry.deps;
+  if (import.meta.env.DEV) {
+    const rscCss = await import("virtual:vite-rsc/rsc-css" as string);
+    css = [...css, ...rscCss.default];
+  }
+  const cssLinks = css.map((href) => (
+    <link
+      key={href}
+      rel="stylesheet"
+      href={withBase(href)}
+      precedence="high"
+      nonce={nonce}
+    />
+  ));
+  const jsLinks = js.map((href) => (
+    <link key={href} rel="modulepreload" href={withBase(href)} nonce={nonce} />
+  ));
+  return (
+    <>
+      {cssLinks}
+      {jsLinks}
+    </>
+  );
 }

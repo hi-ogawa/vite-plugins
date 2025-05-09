@@ -13,27 +13,15 @@ export default async function handler(
   request: Request,
   callServer: (request: Request) => Promise<Response>,
 ) {
-  const assets = getAssetsManifest().entry;
-  const css = assets.deps.css.map((href) => (
-    <link key={href} rel="stylesheet" href={href} precedence="high" />
-  ));
-  const js = assets.deps.js.map((href) => (
-    <link key={href} rel="modulepreload" href={href} />
-  ));
-
   return routeRSCServerRequest(
     request,
     callServer,
     (body) => createFromReadableStream(body),
     (getPayload) =>
       ReactDomServer.renderToReadableStream(
-        <>
-          <RSCStaticRouter getPayload={getPayload} />
-          {css}
-          {js}
-        </>,
+        <RSCStaticRouter getPayload={getPayload} />,
         {
-          bootstrapModules: assets.bootstrapModules,
+          bootstrapModules: getAssetsManifest().entry.bootstrapModules,
         },
       ),
   );

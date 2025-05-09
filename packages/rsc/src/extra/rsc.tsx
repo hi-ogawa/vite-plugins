@@ -1,5 +1,6 @@
 import type { ReactFormState } from "react-dom/client";
 import {
+  Resources,
   createTemporaryReferenceSet,
   decodeAction,
   decodeFormState,
@@ -21,6 +22,15 @@ export async function renderRequest(
   root: React.ReactNode,
 ): Promise<Response> {
   initialize();
+
+  function RscRoot() {
+    return (
+      <>
+        <Resources />
+        {root}
+      </>
+    );
+  }
 
   const url = new URL(request.url);
   const isAction = request.method === "POST";
@@ -57,7 +67,7 @@ export async function renderRequest(
     }
   }
 
-  const rscPayload: RscPayload = { root, formState, returnValue };
+  const rscPayload: RscPayload = { root: <RscRoot />, formState, returnValue };
   const rscOptions = { temporaryReferences };
   const stream = renderToReadableStream<RscPayload>(rscPayload, rscOptions);
 
