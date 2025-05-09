@@ -943,12 +943,14 @@ export function vitePluginRscCss({
       `;
     }),
     createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
+      let ids: string[];
       if (this.environment.mode === "build") {
-        return [...rscCssIdsBuild]
-          .map((href) => `import ${JSON.stringify(href)};\n`)
-          .join("\n");
+        ids = [...rscCssIdsBuild];
+      } else {
+        const collected = await collectCssDev(server.environments.rsc!);
+        ids = collected.ids;
       }
-      const { ids } = await collectCssDev(server.environments.rsc!);
+      ids = ids.map((id) => id.replace(/^\0/, ""));
       return ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
     }),
     {
