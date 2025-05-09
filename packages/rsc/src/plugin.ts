@@ -920,6 +920,19 @@ export function vitePluginRscCss(): Plugin[] {
         }
       },
     },
+    createVirtualPlugin("vite-rsc/css/rsc", function () {
+      if (this.environment.mode === "dev") {
+      }
+      return `
+        import * as React from "react"
+        export default function RscCss() {
+          // TODO: inject via preload script
+          // ReactDOM.preloadModule("/@id/__x00__virtual:vite-rsc/css/proxy.js");
+          // for (const href of rscCss) { ReactDOM.preinit(href, { as: "style" }) }
+          return null;
+        }
+      `;
+    }),
     {
       name: "rsc:css/dev-ssr-virtual",
       resolveId(source) {

@@ -10,6 +10,9 @@ import { withBase } from "../utils/base";
 import type { RscPayload } from "./rsc";
 import { injectRscScript } from "./utils/rsc-script";
 
+// @ts-ignore
+import RscCss from "virtual:vite-rsc/css/rsc";
+
 export async function renderHtml({
   stream,
   formState,
@@ -42,6 +45,7 @@ export async function renderHtml({
         {root}
         {css}
         {js}
+        <RscCss />
       </>
     );
   }
