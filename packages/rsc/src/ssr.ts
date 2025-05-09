@@ -18,7 +18,7 @@ export function initialize(): void {
           /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
         );
         for (const href of modCss.default) {
-          ReactDOM.preinit(href, { as: "style" });
+          ReactDOM.preinit(withBase(href), { as: "style" });
         }
         return mod;
       } else {
