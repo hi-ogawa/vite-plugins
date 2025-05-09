@@ -369,9 +369,9 @@ export default function vitePluginRsc({
     },
     createVirtualPlugin("vite-rsc/browser-entry", function () {
       let code = "";
+      code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
       if (entries.css) {
         code += `import ${JSON.stringify(entries.css)};\n`;
-        code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
       }
       if (this.environment.mode === "dev") {
         code += `
@@ -890,6 +890,9 @@ export function vitePluginRscCss({
     }
   }
 
+  // collect during rsc build and pass it to browser build
+  const rscCssIdsBuild = new Set<string>();
+
   return [
     {
       name: "rsc:css",
@@ -906,10 +909,20 @@ export function vitePluginRscCss({
           );
         }
       },
+      transform(_code, id) {
+        if (
+          this.environment.mode === "build" &&
+          this.environment.name === "rsc"
+        ) {
+          if (isCSSRequest(id)) {
+            rscCssIdsBuild.add(id);
+          }
+        }
+      },
     },
-    createVirtualPlugin("vite-rsc/css/rsc", async function () {
-      if (this.environment.mode !== "dev") {
-        // TODO
+    createVirtualPlugin("vite-rsc/rsc-css-ssr", async function () {
+      if (this.environment.mode === "build") {
+        // during build, css are injected through AssetsManifest.entry.deps.css
         return `export default () => {}`;
       }
       const cssHrefs = await collectCssDev(server.environments.rsc!);
@@ -919,20 +932,21 @@ export function vitePluginRscCss({
 
         const CSS_HREFS = ${JSON.stringify(cssHrefs, null, 2)};
 
-        const base = import.meta.env.BASE_URL.slice(0, -1);
+        const BASE = import.meta.env.BASE_URL.slice(0, -1);
 
         export default async function RscCss({ nonce }) {
           for (const href of CSS_HREFS) {
-            ReactDOM.preinit(base + href, { as: "style" });
+            ReactDOM.preinit(BASE + href, { as: "style" });
           }
           return null;
         }
       `;
     }),
     createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
-      if (this.environment.mode == "build") {
-        // TODO
-        return ``;
+      if (this.environment.mode === "build") {
+        return [...rscCssIdsBuild]
+          .map((href) => `import ${JSON.stringify(href)};\n`)
+          .join("\n");
       }
       const cssHrefs = await collectCssDev(server.environments.rsc!);
       return cssHrefs

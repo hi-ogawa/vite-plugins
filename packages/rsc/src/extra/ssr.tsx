@@ -10,9 +10,8 @@ import { withBase } from "../utils/base";
 import type { RscPayload } from "./rsc";
 import { injectRscScript } from "./utils/rsc-script";
 
-// TODO: move to extra/rsc.tsx
 // @ts-ignore
-import RscCss from "virtual:vite-rsc/css/rsc";
+import RscCss from "virtual:vite-rsc/rsc-css-ssr";
 
 export async function renderHtml({
   stream,
@@ -44,6 +43,7 @@ export async function renderHtml({
     return (
       <>
         {root}
+        {/* TODO: move to rsc root */}
         {css}
         {js}
         <RscCss />
