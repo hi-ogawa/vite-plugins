@@ -880,7 +880,7 @@ export function vitePluginRscCss({
     const hrefs = [...cssIds].map((id) =>
       normalizeViteImportAnalysisUrl(server.environments.client, id),
     );
-    return hrefs;
+    return { ids: [...cssIds], hrefs };
   }
 
   function invalidateModule(environment: DevEnvironment, id: string) {
@@ -925,18 +925,18 @@ export function vitePluginRscCss({
         // during build, css are injected through AssetsManifest.entry.deps.css
         return `export default () => {}`;
       }
-      const cssHrefs = await collectCssDev(server.environments.rsc!);
+      const { hrefs } = await collectCssDev(server.environments.rsc!);
       return `
         import * as React from "react";
         import * as ReactDOM from "react-dom";
 
-        const CSS_HREFS = ${JSON.stringify(cssHrefs, null, 2)};
+        const CSS_HREFS = ${JSON.stringify(hrefs, null, 2)};
 
         const BASE = import.meta.env.BASE_URL.slice(0, -1);
 
         export default async function RscCss({ nonce }) {
           for (const href of CSS_HREFS) {
-            ReactDOM.preinit(BASE + href, { as: "style" });
+            ReactDOM.preinit(BASE + href, { as: "style", nonce });
           }
           return null;
         }
@@ -948,10 +948,8 @@ export function vitePluginRscCss({
           .map((href) => `import ${JSON.stringify(href)};\n`)
           .join("\n");
       }
-      const cssHrefs = await collectCssDev(server.environments.rsc!);
-      return cssHrefs
-        .map((href) => `import ${JSON.stringify(href)};\n`)
-        .join("");
+      const { ids } = await collectCssDev(server.environments.rsc!);
+      return ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
     }),
     {
       name: "rsc:css/dev-ssr-virtual",
