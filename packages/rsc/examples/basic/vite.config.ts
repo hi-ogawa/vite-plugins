@@ -101,6 +101,24 @@ export default { fetch: handler };
       },
     },
   ],
+  environments: {
+    client: {
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              "lib-react": [
+                "react",
+                "react/jsx-runtime",
+                "react-dom/client",
+                "react-server-dom-webpack/client.browser",
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
   build: {
     minify: false,
   },
