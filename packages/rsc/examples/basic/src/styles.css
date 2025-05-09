@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+/* TODO: test hmr here */
+
 button {
   @apply bg-gray-200 mx-1 px-2 border;
 }

@@ -7,6 +7,7 @@ import {
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
+  DevEnvironment,
   type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
@@ -20,10 +21,7 @@ import {
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
-import {
-  normalizeResolvedIdToUrl,
-  normalizeViteImportAnalysisUrl,
-} from "./vite-utils";
+import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
 let clientReferences: Record<string, string> = {};
@@ -413,7 +411,7 @@ export default function vitePluginRsc({
     ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
-    ...vitePluginRscCss(),
+    ...vitePluginRscCss({ entries }),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
@@ -887,51 +885,85 @@ export async function findSourceMapURL(
 //     we know "use client" is a component marker, so we can split css there.
 // - on rsc
 
-export function vitePluginRscCss(): Plugin[] {
-  // const cssIds: string[] = [];
-  const rscCssIds = new Set<string>();
+export function vitePluginRscCss({
+  entries,
+}: { entries: { rsc: string } }): Plugin[] {
+  // this approach likely misses css files found in dynaimic import of server components
+  // during first SSR after server start. (e.g. react router's lazy server routes)
+  // however, frameworks should be able to cover such cases based on their own convention.
+  async function collectCssDev(environment: DevEnvironment) {
+    const visited = new Set<string>();
+    const cssIds = new Set<string>();
 
-  // TODO: filter out removed id (e.g. deleted file during dev)
-  // server.environments.client;
-  normalizeResolvedIdToUrl;
+    function recurse(id: string) {
+      if (visited.has(id)) {
+        return;
+      }
+      visited.add(id);
+      const mod = environment.moduleGraph.getModuleById(id);
+      for (const next of mod?.importedModules ?? []) {
+        if (next.id) {
+          if (isCSSRequest(next.id)) {
+            cssIds.add(next.id);
+          } else {
+            recurse(next.id);
+          }
+        }
+      }
+    }
+
+    const entry = await environment.moduleGraph.getModuleByUrl(entries.rsc);
+    recurse(entry!.id!);
+
+    const hrefs = [...cssIds].map((id) =>
+      normalizeViteImportAnalysisUrl(server.environments.client, id),
+    );
+    return hrefs;
+  }
 
   return [
     {
       name: "rsc:css",
-      transform(_code, id) {
-        if (isCSSRequest(id)) {
-          if (this.environment.name === "rsc") {
-            if (!rscCssIds.has(id)) {
-              rscCssIds.add(id);
-              // send event to runtime to trigger ReactDOM.preinit?
-            }
-            // we can collect but how to handle after deleted for example?
-            // we can filter out by moduleGraph existance? e.g.
-            // if (this.environment.mode === 'dev') {
-            //   this.environment.moduleGraph.idToModuleMap
-            // }
-          }
-          if (this.environment.name === "ssr") {
-            id;
-          }
-          if (this.environment.name === "client") {
-            id;
+      hotUpdate(ctx) {
+        if (this.environment.name === "rsc" && ctx.modules.length > 0) {
+          // always invalidate virtuals to ensure fresh css list
+          const mod = server.environments.ssr.moduleGraph.getModuleById(
+            "\0virtual:vite-rsc/css/rsc",
+          );
+          if (mod) {
+            server.environments.ssr.moduleGraph.invalidateModule(mod);
           }
         }
       },
     },
-    createVirtualPlugin("vite-rsc/css/rsc", function () {
-      if (this.environment.mode === "dev") {
+    createVirtualPlugin("vite-rsc/css/rsc", async function () {
+      if (this.environment.mode !== "dev") {
+        // TODO
+        return `export default () => {}`;
       }
+      const cssHrefs = await collectCssDev(server.environments.rsc!);
       return `
-        import * as React from "react"
-        export default function RscCss() {
-          // TODO: inject via preload script
-          // ReactDOM.preloadModule("/@id/__x00__virtual:vite-rsc/css/proxy.js");
-          // for (const href of rscCss) { ReactDOM.preinit(href, { as: "style" }) }
+        import * as React from "react";
+        import * as ReactDOM from "react-dom";
+
+        const CSS_HREFS = ${JSON.stringify(cssHrefs, null, 2)};
+
+        const base = import.meta.env.BASE_URL.slice(0, -1);
+
+        export default async function RscCss({ nonce }) {
+          for (const href of CSS_HREFS) {
+            ReactDOM.preinit(base + href, { as: "style" });
+          }
+          ReactDOM.preloadModule(base + "/@id/__x00__virtual:vite-rsc/css/browser");
           return null;
         }
       `;
+    }),
+    createVirtualPlugin("vite-rsc/css/browser", async function () {
+      const cssHrefs = await collectCssDev(server.environments.rsc!);
+      return cssHrefs
+        .map((href) => `import ${JSON.stringify(href)};\n`)
+        .join("");
     }),
     {
       name: "rsc:css/dev-ssr-virtual",
