@@ -174,7 +174,7 @@ async function testCss(page: Page, color = "rgb(255, 165, 0)") {
   await expect(page.locator(".test-style-server")).toHaveCSS("color", color);
 }
 
-test("css hmr @dev", async ({ page }) => {
+test("css hmr client @dev", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await testCss(page);
@@ -182,7 +182,24 @@ test("css hmr @dev", async ({ page }) => {
   await using _ = await createReloadChecker(page);
   using editor = createEditor("src/routes/counter.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
-  await testCss(page, "rgb(0, 165, 255)");
+  await expect(page.locator(".test-style-client")).toHaveCSS(
+    "color",
+    "rgb(0, 165, 255)",
+  );
+});
+
+test("css hmr server @dev", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await testCss(page);
+
+  await using _ = await createReloadChecker(page);
+  using editor = createEditor("src/styles.css");
+  editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
+  await expect(page.locator(".test-style-server")).toHaveCSS(
+    "color",
+    "rgb(0, 165, 255)",
+  );
 });
 
 test("tailwind @js", async ({ page }) => {

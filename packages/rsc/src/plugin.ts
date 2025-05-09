@@ -197,6 +197,9 @@ export default function vitePluginRsc({
         };
       },
       async hotUpdate(ctx) {
+        // css file imported by anywhere sould work based on default hmr
+        if (isCSSRequest(ctx.file)) return;
+
         const ids = ctx.modules.map((mod) => mod.id).filter((v) => v !== null);
         if (ids.length === 0) return;
 
@@ -954,7 +957,8 @@ export function vitePluginRscCss({
           for (const href of CSS_HREFS) {
             ReactDOM.preinit(base + href, { as: "style" });
           }
-          ReactDOM.preloadModule(base + "/@id/__x00__virtual:vite-rsc/css/browser");
+          // TODO: this can be bootstrap scripts
+          ReactDOM.preinitModule(base + "/@id/__x00__virtual:vite-rsc/css/browser");
           return null;
         }
       `;

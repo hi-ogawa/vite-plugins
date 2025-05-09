@@ -1,6 +1,4 @@
-.test-style-server {
-  color: rgb(255, 165, 0);
-}
+/* css imported by client references */
 
 .test-style-client {
   color: rgb(255, 165, 0);

@@ -1,6 +1,6 @@
-@import "tailwindcss";
+/* css imported by rsc environment */
 
-/* TODO: test hmr here */
+@import "tailwindcss";
 
 button {
   @apply bg-gray-200 mx-1 px-2 border;
@@ -8,4 +8,8 @@ button {
 
 input {
   @apply mx-1 px-2 border;
+}
+
+.test-style-server {
+  color: rgb(255, 165, 0);
 }
