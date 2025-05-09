@@ -371,6 +371,7 @@ export default function vitePluginRsc({
       let code = "";
       if (entries.css) {
         code += `import ${JSON.stringify(entries.css)};\n`;
+        code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
       }
       if (this.environment.mode === "dev") {
         code += `
@@ -846,48 +847,6 @@ export async function findSourceMapURL(
 // css support
 //
 
-// [known input sources]
-// entries.rsc, entries.ssr
-// entries.browser
-// client references (discovered through "entries.rsc" or "server references")
-// server references (discovered through "client references")
-
-// [dev]
-// - entries.rsc, entries.ssr
-//   - traverse module graph from entries
-//   - collect all css imports
-//   - ...todo
-// - entries.browser
-//   - traverse module graph from entries
-// - client references
-//   - traverse module graph
-
-// [build]
-// TODO
-
-// [dev]
-// - is it possible to lazily collect as modules are imported and rendered?
-//   then inject it lazily as wrapper css link
-//     <link rel="stylesheet" href="/@id/__x00__vite-rsc/collect-css" />
-//   and proxy js which imports css as side effect to setup css hmr
-//     <link rel="stylesheet" href="/@id/__x00__vite-rsc/collect-css-proxy.js" />
-//
-// - wrapper css link is difficult (especially how to block and release),
-//   but in principle, we should be able to inject React.preinit(..., { as: "stylesheet" }) to inject css link
-//   as modules are discovered (e.g. via transform hooks.)
-
-// TODO:
-// - we only need a trick to solve first SSR FOUC after server start?
-//   after that, we already have css in module graph, so we can just send it easily.
-
-// NOTE:
-// - on client entries
-//     (don't need to support. by convention put it in server component or client component)
-// - on ssr (client compoennt)
-//     static import should be executed before rendering copmonent.
-//     we know "use client" is a component marker, so we can split css there.
-// - on rsc
-
 export function vitePluginRscCss({
   entries,
 }: { entries: { rsc: string } }): Plugin[] {
@@ -924,18 +883,27 @@ export function vitePluginRscCss({
     return hrefs;
   }
 
+  function invalidateModule(environment: DevEnvironment, id: string) {
+    const mod = environment.moduleGraph.getModuleById(id);
+    if (mod) {
+      environment.moduleGraph.invalidateModule(mod);
+    }
+  }
+
   return [
     {
       name: "rsc:css",
       hotUpdate(ctx) {
         if (this.environment.name === "rsc" && ctx.modules.length > 0) {
-          // always invalidate virtuals to ensure fresh css list
-          const mod = server.environments.ssr.moduleGraph.getModuleById(
+          // simple virtual invalidation to ensure fresh css list
+          invalidateModule(
+            server.environments.ssr,
             "\0virtual:vite-rsc/css/rsc",
           );
-          if (mod) {
-            server.environments.ssr.moduleGraph.invalidateModule(mod);
-          }
+          invalidateModule(
+            server.environments.client,
+            "\0virtual:vite-rsc/rsc-css-browser",
+          );
         }
       },
     },
@@ -957,13 +925,15 @@ export function vitePluginRscCss({
           for (const href of CSS_HREFS) {
             ReactDOM.preinit(base + href, { as: "style" });
           }
-          // TODO: this can be bootstrap scripts
-          ReactDOM.preinitModule(base + "/@id/__x00__virtual:vite-rsc/css/browser");
           return null;
         }
       `;
     }),
-    createVirtualPlugin("vite-rsc/css/browser", async function () {
+    createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
+      if (this.environment.mode == "build") {
+        // TODO
+        return ``;
+      }
       const cssHrefs = await collectCssDev(server.environments.rsc!);
       return cssHrefs
         .map((href) => `import ${JSON.stringify(href)};\n`)
