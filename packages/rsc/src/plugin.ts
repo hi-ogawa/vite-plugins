@@ -881,6 +881,11 @@ export function vitePluginRscCss(): Plugin[] {
           if (mod?.id) {
             collectDevSsrCss(mod.id);
           }
+          if (mod?.file) {
+            // invalidate virtual module on file change to
+            // be able to reflect added/deleted css import
+            this.addWatchFile(mod.file);
+          }
           return `export default ${JSON.stringify([...ssrCss])}`;
         }
       },
