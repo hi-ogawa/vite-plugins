@@ -853,7 +853,8 @@ export function vitePluginRscCss({
   // this approach likely misses css files found in dynaimic import of server components
   // during first SSR after server start. (e.g. react router's lazy server routes)
   // however, frameworks should be able to cover such cases based on their own convention.
-  async function collectCssDev(environment: DevEnvironment) {
+
+  function collectCss(environment: DevEnvironment, entryId: string) {
     const visited = new Set<string>();
     const cssIds = new Set<string>();
 
@@ -874,13 +875,20 @@ export function vitePluginRscCss({
       }
     }
 
-    const entry = await environment.moduleGraph.getModuleByUrl(entries.rsc);
-    recurse(entry!.id!);
+    recurse(entryId);
 
     const hrefs = [...cssIds].map((id) =>
       normalizeViteImportAnalysisUrl(server.environments.client, id),
     );
     return { ids: [...cssIds], hrefs };
+  }
+
+  async function collectCssByUrl(
+    environment: DevEnvironment,
+    entryUrl: string,
+  ) {
+    const entryMod = await environment.moduleGraph.getModuleByUrl(entryUrl);
+    return collectCss(environment, entryMod!.id!);
   }
 
   function invalidateModule(environment: DevEnvironment, id: string) {
@@ -925,7 +933,10 @@ export function vitePluginRscCss({
         // during build, css are injected through AssetsManifest.entry.deps.css
         return `export default () => {}`;
       }
-      const { hrefs } = await collectCssDev(server.environments.rsc!);
+      const { hrefs } = await collectCssByUrl(
+        server.environments.rsc!,
+        entries.rsc,
+      );
       return `
         import * as React from "react";
         import * as ReactDOM from "react-dom";
@@ -947,7 +958,10 @@ export function vitePluginRscCss({
       if (this.environment.mode === "build") {
         ids = [...rscCssIdsBuild];
       } else {
-        const collected = await collectCssDev(server.environments.rsc!);
+        const collected = await collectCssByUrl(
+          server.environments.rsc!,
+          entries.rsc,
+        );
         ids = collected.ids;
       }
       ids = ids.map((id) => id.replace(/^\0/, ""));
@@ -965,37 +979,13 @@ export function vitePluginRscCss({
           id = id.slice("\0virtual:vite-rsc/css/dev-ssr/".length);
           const mod =
             await server.environments.ssr.moduleGraph.getModuleByUrl(id);
-          const visited = new Set<string>();
-          const ssrCss = new Set<string>();
-          function collectDevSsrCss(id: string) {
-            if (visited.has(id)) {
-              return;
-            }
-            visited.add(id);
-            const mod = server.environments.ssr.moduleGraph.getModuleById(id);
-            for (const next of mod?.importedModules ?? []) {
-              if (next.id) {
-                if (isCSSRequest(next.id)) {
-                  ssrCss.add(
-                    normalizeViteImportAnalysisUrl(
-                      server.environments.client,
-                      next.id,
-                    ),
-                  );
-                }
-                collectDevSsrCss(next.id);
-              }
-            }
+          if (!mod?.id || !mod?.file) {
+            return `export default []`;
           }
-          if (mod?.id) {
-            collectDevSsrCss(mod.id);
-          }
-          if (mod?.file) {
-            // invalidate virtual module on file change to
-            // be able to reflect added/deleted css import
-            this.addWatchFile(mod.file);
-          }
-          return `export default ${JSON.stringify([...ssrCss])}`;
+          const { hrefs } = collectCss(server.environments.ssr, mod.id);
+          // invalidate virtual module on file change to reflect added/deleted css import
+          this.addWatchFile(mod.file);
+          return `export default ${JSON.stringify(hrefs)}`;
         }
       },
     },
