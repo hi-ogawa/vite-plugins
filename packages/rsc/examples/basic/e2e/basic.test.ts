@@ -248,6 +248,15 @@ test("tailwind hmr @dev", async ({ page }) => {
   );
 });
 
+testNoJs("no FOUC after server restart @dev @nojs", async ({ page }) => {
+  const res = await page.request.get("/__test_restart");
+  expect(await res.text()).toBe("ok");
+  await new Promise((r) => setTimeout(r, 100));
+  await page.goto("./");
+  await testCss(page);
+  await testTailwind(page);
+});
+
 test("temporary references @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
