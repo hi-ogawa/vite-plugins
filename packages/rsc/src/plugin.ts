@@ -953,6 +953,17 @@ export function vitePluginRscCss({
         }
       `;
     }),
+    createVirtualPlugin("vite-rsc/rsc-css", async function () {
+      if (this.environment.mode === "build") {
+        // during build, css are injected through AssetsManifest.entry.deps.css
+        return `export default []`;
+      }
+      const { hrefs } = await collectCssByUrl(
+        server.environments.rsc!,
+        entries.rsc,
+      );
+      return `export default ${JSON.stringify(hrefs, null, 2)}`;
+    }),
     createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
       let ids: string[];
       if (this.environment.mode === "build") {

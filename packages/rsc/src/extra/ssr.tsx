@@ -2,7 +2,6 @@ import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
 import {
-  Resources,
   createFromReadableStream,
   getAssetsManifest,
   initialize,
@@ -27,12 +26,7 @@ export async function renderHtml({
   function SsrRoot() {
     payload ??= createFromReadableStream<RscPayload>(stream1);
     const root = React.use(payload).root;
-    return (
-      <>
-        {root}
-        <Resources />
-      </>
-    );
+    return root;
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
