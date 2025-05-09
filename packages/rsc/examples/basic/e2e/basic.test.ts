@@ -180,7 +180,7 @@ test("css hmr @dev", async ({ page }) => {
   await testCss(page);
 
   await using _ = await createReloadChecker(page);
-  using editor = createEditor("src/styles.css");
+  using editor = createEditor("src/routes/counter.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await testCss(page, "rgb(0, 165, 255)");
 });

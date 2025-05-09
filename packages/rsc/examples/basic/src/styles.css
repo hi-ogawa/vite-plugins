@@ -1,13 +1,5 @@
 @import "tailwindcss";
 
-.test-style-server {
-  color: rgb(255, 165, 0);
-}
-
-.test-style-client {
-  color: rgb(255, 165, 0);
-}
-
 button {
   @apply bg-gray-200 mx-1 px-2 border;
 }
