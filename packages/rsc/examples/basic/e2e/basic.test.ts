@@ -248,7 +248,7 @@ test("tailwind hmr @dev", async ({ page }) => {
   );
 });
 
-testNoJs("no FOUC after server restart @nojs", async ({ page }) => {
+testNoJs("no FOUC after server restart @dev @nojs", async ({ page }) => {
   const res = await page.request.get("/__test_restart");
   expect(await res.text()).toBe("ok");
   await new Promise((r) => setTimeout(r, 100));
