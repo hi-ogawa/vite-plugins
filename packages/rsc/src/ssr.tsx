@@ -1,9 +1,13 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as clientReferences from "virtual:vite-rsc/client-references";
+import type React from "react";
 import * as ReactDOM from "react-dom";
 import { setRequireModule } from "./core/ssr";
 import type { AssetsManifest } from "./plugin";
 import { withBase } from "./utils/base";
+
+// @ts-ignore
+import RscCss from "virtual:vite-rsc/rsc-css-ssr";
 
 export { createServerConsumerManifest } from "./core/ssr";
 
@@ -60,4 +64,29 @@ export async function importRsc<T>(): Promise<T> {
 
 export function getAssetsManifest(): AssetsManifest {
   return (assetsManifest as any).default;
+}
+
+// TODO: should we render resources in Rsc root?
+// (if so, we need expose it from `@hiogawa/vite-rsc/rsc`)
+export function Resources({ nonce }: { nonce?: string }): React.ReactNode {
+  const deps = getAssetsManifest().entry.deps;
+  const css = deps.css.map((href) => (
+    <link
+      key={href}
+      rel="stylesheet"
+      href={withBase(href)}
+      precedence="high"
+      nonce={nonce}
+    />
+  ));
+  const js = deps.js.map((href) => (
+    <link key={href} rel="modulepreload" href={withBase(href)} nonce={nonce} />
+  ));
+  return (
+    <>
+      {css}
+      {js}
+      <RscCss />
+    </>
+  );
 }

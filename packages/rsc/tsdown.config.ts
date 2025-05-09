@@ -4,7 +4,7 @@ export default defineConfig({
   entry: [
     "src/plugin.ts",
     "src/browser.ts",
-    "src/ssr.ts",
+    "src/ssr.tsx",
     "src/rsc.ts",
     "src/vite-utils.ts",
     "src/core/browser.ts",
