@@ -43,7 +43,7 @@ export async function renderHtml({
     return (
       <>
         {root}
-        {/* TODO: move to rsc root */}
+        {/* TODO: move to rsc root? */}
         {css}
         {js}
         <RscCss />
