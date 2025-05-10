@@ -26,24 +26,26 @@ export function initialize(): void {
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
         }
-        return import_();
-      }
-    },
-    prepareDestination(id) {
-      // we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestination
-      // maybe we can have this logic baked in react-server-dom-vite.
-      // for unbundled dev, preventing waterfall is not practical so this is build only
-      // (need to traverse entire module graph and add entire import chains to modulepreload).
-      if (!import.meta.env.DEV) {
-        const deps = getAssetsManifest().clientReferenceDeps[id];
-        if (deps) {
-          for (const js of deps.js) {
-            ReactDOM.preloadModule(withBase(js));
-          }
-          for (const href of deps.css) {
-            ReactDOM.preinit(withBase(href), { as: "style" });
-          }
-        }
+        const mod: any = await import_();
+        // TODO
+        // The issue of this appraoch is that we don't know `nonce` during flight client `preloadModule`
+        // since they are only passed through `prepareDestination`. To be discussed with React team.
+        return new Proxy(mod, {
+          get(target, p, receiver) {
+            if (p in mod) {
+              const deps = getAssetsManifest().clientReferenceDeps[id];
+              if (deps) {
+                for (const js of deps.js) {
+                  ReactDOM.preloadModule(withBase(js));
+                }
+                for (const href of deps.css) {
+                  ReactDOM.preinit(withBase(href), { as: "style" });
+                }
+              }
+            }
+            return Reflect.get(target, p, receiver);
+          },
+        });
       }
     },
   });
