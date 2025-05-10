@@ -16,6 +16,7 @@ import {
   TestTemporaryReference,
 } from "./counter";
 import ErrorBoundary from "./error-boundary";
+import { TestClientStyleOther } from "./other/client";
 
 export function Root(props: { url: URL }) {
   return (
@@ -37,6 +38,12 @@ export function Root(props: { url: URL }) {
         </form>
         <TestStyleClient />
         <div className="test-style-server">test-style-server</div>
+        <div>
+          <a href="?test-client-style-no-ssr">test-client-style-no-ssr</a>{" "}
+          {props.url.search.includes("test-client-style-no-ssr") && (
+            <TestClientStyleOther />
+          )}
+        </div>
         <TestTailwindClient />
         <div className="test-tw-server text-red-500">test-tw-server</div>
         <TestTemporaryReference
