@@ -458,32 +458,41 @@ function vitePluginUseClient({
     string,
     { source: string; exportNames: string[]; renderedExports: string[] }
   > = {};
+  const packagesMeta: Record<string, { source?: string }> = {};
+  const packageIdSources: Record<string, string> = {};
 
   return [
     {
       name: "rsc:use-client",
+      resolveId: {
+        order: "pre",
+        async handler(source, importer, options) {
+          if (this.environment.name !== "rsc") return;
+
+          // heuristics to handle client package in node_modules
+          if (source[0] !== "." && source[0] !== "/") {
+            const resolved = await this.resolve(source, importer, options);
+            if (resolved) {
+              packageIdSources[resolved.id] = source;
+            }
+          }
+        },
+      },
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
         if (!code.includes("use client")) return;
 
+        packageIdSources[id];
+
         const ast = await parseAstAsync(code);
 
         // [during dev]
-        // key = normalized import id
-        // value = (not used)
+        //   (import analysis id) ---> (id)
+        //   (virtual id)         ---> (id)  << client package >>
 
         // [during build]
-        // key = hashed id
-        // value = id
-
-        // ++++ client package +++
-        // [during dev]
-        // key = virtual id
-        // value = (not used)
-
-        // [during build]
-        // key = hashed id
-        // value = virtual id
+        //   (hashed id) ---> (id)
+        //   (hashed id) ---> (virtual id)  << client package >>
 
         let referenceKey: string;
         let referenceValue = id;
