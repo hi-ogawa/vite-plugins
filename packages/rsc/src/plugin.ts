@@ -32,6 +32,11 @@ let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 
 const PKG_NAME = "@hiogawa/vite-rsc";
+const ENTRIES = {
+  browser: "virtual:vite-rsc/entry-browser",
+  rsc: "virtual:vite-rsc/entry-rsc",
+  ssr: "virtual:vite-rsc/entry-ssr",
+};
 
 export default function vitePluginRsc({
   entries,
@@ -58,7 +63,7 @@ export default function vitePluginRsc({
                 manifest: true,
                 outDir: "dist/client",
                 rollupOptions: {
-                  input: { index: "virtual:vite-rsc/browser-entry" },
+                  input: { index: ENTRIES.browser },
                 },
               },
               optimizeDeps: {
@@ -73,7 +78,7 @@ export default function vitePluginRsc({
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: entries.ssr },
+                  input: { index: ENTRIES.ssr },
                 },
               },
               resolve: {
@@ -106,7 +111,7 @@ export default function vitePluginRsc({
               build: {
                 outDir: "dist/rsc",
                 rollupOptions: {
-                  input: { index: entries.rsc },
+                  input: { index: ENTRIES.rsc },
                 },
               },
             },
@@ -164,7 +169,7 @@ export default function vitePluginRsc({
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              const mod = await viteRscRunner.import(entries.rsc);
+              const mod = await viteRscRunner.import(ENTRIES.rsc);
               createRequestListener(mod.default)(req, res);
             } catch (e) {
               next(e);
@@ -264,10 +269,10 @@ export default function vitePluginRsc({
       },
       load(id) {
         if (id === "\0virtual:vite-rsc/import-rsc") {
-          return `export default () => __viteRscRunner.import(${JSON.stringify(entries.rsc)})`;
+          return `export default () => __viteRscRunner.import(${JSON.stringify(ENTRIES.rsc)})`;
         }
         if (id === "\0virtual:vite-rsc/import-ssr") {
-          return `export default () => __viteSsrRunner.import(${JSON.stringify(entries.ssr)})`;
+          return `export default () => __viteSsrRunner.import(${JSON.stringify(ENTRIES.ssr)})`;
         }
       },
       renderChunk(code, chunk) {
@@ -305,7 +310,7 @@ export default function vitePluginRsc({
           assert(this.environment.name !== "client");
           const manifest: AssetsManifest = {
             entry: {
-              bootstrapModules: ["/@id/__x00__virtual:vite-rsc/browser-entry"],
+              bootstrapModules: ["/@id/__x00__" + ENTRIES.browser],
               deps: {
                 js: [],
                 css: [],
@@ -327,7 +332,7 @@ export default function vitePluginRsc({
               clientReferenceDeps[key] = deps;
             }
           }
-          const entry = assetDeps["\0virtual:vite-rsc/browser-entry"]!;
+          const entry = assetDeps["\0" + ENTRIES.browser]!;
           const manifest: AssetsManifest = {
             entry: {
               bootstrapModules: [`/${entry.chunk.fileName}`],
@@ -366,7 +371,7 @@ export default function vitePluginRsc({
         return;
       },
     },
-    createVirtualPlugin("vite-rsc/browser-entry", function () {
+    createVirtualPlugin(ENTRIES.browser.slice("virtual:".length), function () {
       let code = "";
       code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
       if (this.environment.mode === "dev") {
@@ -383,6 +388,20 @@ export default function vitePluginRsc({
       }
       return code;
     }),
+    {
+      // wrap module runner entry with virtual to avoid bugs such as
+      // https://github.com/vitejs/vite/issues/19975
+      name: "rsc:virtual-entries",
+      enforce: "pre",
+      resolveId(source, importer, options) {
+        if (source === ENTRIES.rsc) {
+          return this.resolve(entries.rsc, importer, options);
+        }
+        if (source === ENTRIES.ssr) {
+          return this.resolve(entries.ssr, importer, options);
+        }
+      },
+    },
     {
       // make `AsyncLocalStorage` available globally for React request context on edge build (e.g. React.cache, ssr preload)
       // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
@@ -411,7 +430,7 @@ export default function vitePluginRsc({
     ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
-    ...vitePluginRscCss({ entries }),
+    ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
