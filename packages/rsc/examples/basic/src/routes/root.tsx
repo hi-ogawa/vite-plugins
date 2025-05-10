@@ -8,14 +8,14 @@ import {
   TestActionFromClient,
   TestUseActionState,
 } from "./action-from-client/client";
-import { TestStyleClient2 } from "./client2";
 import {
   ClientCounter,
   Hydrated,
   TestStyleClient,
   TestTailwindClient,
   TestTemporaryReference,
-} from "./counter";
+} from "./client";
+import { TestStyleClient2 } from "./client2";
 import ErrorBoundary from "./error-boundary";
 
 export function Root(props: { url: URL }) {
