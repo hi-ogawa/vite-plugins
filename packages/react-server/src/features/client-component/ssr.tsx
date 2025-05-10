@@ -28,12 +28,12 @@ export function initializeReactClientSsr() {
   });
 }
 
-function wrapResourceProxy(mod: any, deps: { js: string[] }) {
+function wrapResourceProxy(mod: any, deps?: string[]) {
   return new Proxy(mod, {
     get(target, p, receiver) {
       if (p in mod) {
         if (deps) {
-          for (const href of deps.js) {
+          for (const href of deps) {
             ReactDOM.preloadModule(href, {
               as: "script",
               // vite doesn't allow configuring crossorigin at the moment, so we can hard code it as well.
