@@ -8,6 +8,7 @@ import {
   TestActionFromClient,
   TestUseActionState,
 } from "./action-from-client/client";
+import { TestStyleClient2 } from "./client2";
 import {
   ClientCounter,
   Hydrated,
@@ -16,7 +17,6 @@ import {
   TestTemporaryReference,
 } from "./counter";
 import ErrorBoundary from "./error-boundary";
-import { TestClientStyleOther } from "./other/client";
 
 export function Root(props: { url: URL }) {
   return (
@@ -41,7 +41,7 @@ export function Root(props: { url: URL }) {
         <div>
           <a href="?test-client-style-no-ssr">test-client-style-no-ssr</a>{" "}
           {props.url.search.includes("test-client-style-no-ssr") && (
-            <TestClientStyleOther />
+            <TestStyleClient2 />
           )}
         </div>
         <TestTailwindClient />
