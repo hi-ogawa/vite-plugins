@@ -6,7 +6,6 @@ let init = false;
 
 export function setRequireModule(options: {
   load: (id: string) => unknown;
-  prepareDestination?: (id: string) => void;
 }): void {
   if (init) return;
   init = true;
@@ -16,7 +15,6 @@ export function setRequireModule(options: {
   });
 
   const clientRequire = (id: string) => {
-    options.prepareDestination?.(removeReferenceCacheTag(id));
     return requireModule(id);
   };
   (globalThis as any).__vite_rsc_client_require__ = clientRequire;

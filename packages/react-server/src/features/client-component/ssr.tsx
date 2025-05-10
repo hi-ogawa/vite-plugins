@@ -17,22 +17,33 @@ async function ssrImport(id: string) {
   } else {
     const dynImport = clientReferences[id];
     tinyassert(dynImport, `client reference not found '${id}'`);
-    return dynImport();
+    const mod = await dynImport();
+    return wrapResourceProxy(mod, prepareDestinationManifest[id]);
   }
 }
 
 export function initializeReactClientSsr() {
   ReactClient.setRequireModule({
     load: ssrImport,
-    prepareDestination(id) {
-      if (import.meta.env.DEV) return;
-      const deps = prepareDestinationManifest[id];
-      for (const js of deps) {
-        ReactDOM.preloadModule(js, {
-          as: "script",
-          crossOrigin: "",
-        });
+  });
+}
+
+function wrapResourceProxy(mod: any, deps: { js: string[] }) {
+  return new Proxy(mod, {
+    get(target, p, receiver) {
+      if (p in mod) {
+        if (deps) {
+          for (const href of deps.js) {
+            ReactDOM.preloadModule(href, {
+              as: "script",
+              // vite doesn't allow configuring crossorigin at the moment, so we can hard code it as well.
+              // https://github.com/vitejs/vite/issues/6648
+              crossOrigin: "",
+            });
+          }
+        }
       }
+      return Reflect.get(target, p, receiver);
     },
   });
 }
