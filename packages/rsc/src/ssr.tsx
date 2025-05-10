@@ -2,7 +2,7 @@ import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as clientReferences from "virtual:vite-rsc/client-references";
 import * as ReactDOM from "react-dom";
 import { setRequireModule } from "./core/ssr";
-import type { AssetsManifest } from "./plugin";
+import type { AssetDeps, AssetsManifest } from "./plugin";
 import { withBase } from "./utils/base";
 
 export { createServerConsumerManifest } from "./core/ssr";
@@ -17,34 +17,39 @@ export function initialize(): void {
         const modCss = await import(
           /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
         );
-        for (const href of modCss.default) {
-          ReactDOM.preinit(withBase(href), { as: "style" });
-        }
-        return mod;
+        return wrapResourceProxy(mod, { js: [], css: modCss.default });
       } else {
         const import_ = clientReferences.default[id];
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
         }
-        return import_();
+        const mod: any = await import_();
+        const deps = getAssetsManifest().clientReferenceDeps[id]!;
+        return wrapResourceProxy(mod, deps);
       }
     },
-    prepareDestination(id) {
-      // we manually run `preloadModule` instead of react-server-dom-webpack's prepareDestination
-      // maybe we can have this logic baked in react-server-dom-vite.
-      // for unbundled dev, preventing waterfall is not practical so this is build only
-      // (need to traverse entire module graph and add entire import chains to modulepreload).
-      if (!import.meta.env.DEV) {
-        const deps = getAssetsManifest().clientReferenceDeps[id];
+  });
+}
+
+function wrapResourceProxy(mod: any, deps: AssetDeps) {
+  return new Proxy(mod, {
+    get(target, p, receiver) {
+      if (p in mod) {
         if (deps) {
           for (const js of deps.js) {
-            ReactDOM.preloadModule(withBase(js));
+            ReactDOM.preloadModule(withBase(js), {
+              as: "script",
+              // vite doesn't allow configuring crossorigin at the moment, so we can hard code it as well.
+              // https://github.com/vitejs/vite/issues/6648
+              crossOrigin: "",
+            });
           }
           for (const href of deps.css) {
             ReactDOM.preinit(withBase(href), { as: "style" });
           }
         }
       }
+      return Reflect.get(target, p, receiver);
     },
   });
 }
