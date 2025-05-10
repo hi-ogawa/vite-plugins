@@ -202,6 +202,17 @@ test("css hmr server @dev", async ({ page }) => {
   );
 });
 
+test("css client no ssr", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await createReloadChecker(page);
+  await page.getByRole("link", { name: "test-client-style-no-ssr" }).click();
+  await expect(page.locator(".test-style-client-2")).toHaveCSS(
+    "color",
+    "rgb(0, 200, 100)",
+  );
+});
+
 test("tailwind @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
