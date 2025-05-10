@@ -41,7 +41,6 @@ export default function vitePluginRsc({
     browser: string;
     rsc: string;
     ssr: string;
-    css?: string;
   };
   // TODO: this can be heuristically cralwed from package.json.
   // TODO: in principle, same trick is needed for `"use server"` package imported directly from client component.
@@ -309,7 +308,7 @@ export default function vitePluginRsc({
               bootstrapModules: ["/@id/__x00__virtual:vite-rsc/browser-entry"],
               deps: {
                 js: [],
-                css: entries.css ? [entries.css] : [],
+                css: [],
               },
             },
             clientReferenceDeps: {},
@@ -370,9 +369,6 @@ export default function vitePluginRsc({
     createVirtualPlugin("vite-rsc/browser-entry", function () {
       let code = "";
       code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
-      if (entries.css) {
-        code += `import ${JSON.stringify(entries.css)};\n`;
-      }
       if (this.environment.mode === "dev") {
         code += `
           import RefreshRuntime from "/@react-refresh";
