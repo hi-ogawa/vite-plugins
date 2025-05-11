@@ -63,10 +63,14 @@ export async function Resources({
   const jsLinks = js.map((href) => (
     <link key={href} rel="modulepreload" href={withBase(href)} nonce={nonce} />
   ));
+  // https://vite.dev/guide/features.html#content-security-policy-csp
+  // this isn't needed if `style-src: 'unsafe-inline'` (dev) and `script-src: 'self'`
+  const viteCspNonce = nonce && <meta property="csp-nonce" nonce={nonce} />;
   return (
     <>
       {cssLinks}
       {jsLinks}
+      {viteCspNonce}
     </>
   );
 }
