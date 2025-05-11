@@ -297,3 +297,6 @@ test("hydrate while streaming @js", async ({ page }) => {
   await expect(page.getByTestId("suspense")).toContainText("suspense-fallback");
   await expect(page.getByTestId("suspense")).toContainText("suspense-resolved");
 });
+
+// TODO: probe manifest and verify there's no `__unused_client_reference__` in build output
+test.skip("tree-shaking client reference", async () => {});

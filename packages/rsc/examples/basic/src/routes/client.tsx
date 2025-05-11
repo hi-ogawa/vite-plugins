@@ -47,3 +47,7 @@ export function TestTemporaryReference(props: {
     </div>
   );
 }
+
+export function UnusedClientReference() {
+  console.log("__unused_client_reference__");
+}
