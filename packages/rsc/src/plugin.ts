@@ -487,7 +487,7 @@ function vitePluginUseClient({
             importId = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${packageSource}`;
             referenceKey = importId;
           } else {
-            importId = `virtual:vite-rsc/client-package-proxy/${packageSource}`;
+            importId = packageSource;
             referenceKey = hashString(packageSource);
           }
         } else {
@@ -523,15 +523,22 @@ function vitePluginUseClient({
     },
     createVirtualPlugin("vite-rsc/client-references", function () {
       if (this.environment.mode === "dev") {
-        return { code: `export {}`, map: null };
+        return { code: `export default {}`, map: null };
       }
-      const clientReferences = Object.fromEntries(
-        Object.entries(clientReferenceMetaMap).map(([_id, meta]) => [
-          meta.referenceKey,
-          meta.importId,
-        ]),
-      );
-      let code = generateDynamicImportCode(clientReferences);
+      let code = "";
+      for (const meta of Object.values(clientReferenceMetaMap)) {
+        // vite/rollup can apply tree-shaking to dynamic import of this form
+        const key = JSON.stringify(meta.referenceKey);
+        const id = JSON.stringify(meta.importId);
+        const exports = meta.renderedExports.join(",");
+        code += `
+          ${key}: async () => {
+            const {${exports}} = await import(${id});
+            return {${exports}};
+          },
+        `;
+      }
+      code = `export default {${code}};\n`;
       return { code, map: null };
     }),
     {
@@ -556,16 +563,14 @@ function vitePluginUseClient({
       },
       async load(id) {
         if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
+          assert(this.environment.mode === "dev");
           const source = id.slice(
             "\0virtual:vite-rsc/client-package-proxy/".length,
           );
           const meta = Object.values(clientReferenceMetaMap).find(
             (v) => v.packageSource === source,
           )!;
-          const exportNames =
-            this.environment.mode === "build"
-              ? meta.renderedExports
-              : meta.exportNames;
+          const exportNames = meta.exportNames;
           return `export {${exportNames.join(",")}} from ${JSON.stringify(source)};\n`;
         }
       },
