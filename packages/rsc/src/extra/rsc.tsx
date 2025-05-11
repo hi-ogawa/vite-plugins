@@ -81,5 +81,12 @@ export async function renderRequest(
   }
 
   const ssrEntry = await importSsr<typeof import("./ssr")>();
-  return ssrEntry.renderHtml({ stream, formState, options });
+  return ssrEntry.renderHtml({
+    stream,
+    formState,
+    options: {
+      nonce: options?.nonce,
+      __nojs: url.searchParams.has("__nojs"),
+    },
+  });
 }

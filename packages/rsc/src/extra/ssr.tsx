@@ -17,7 +17,7 @@ export async function renderHtml({
 }: {
   stream: ReadableStream;
   formState?: ReactFormState;
-  options?: { nonce?: string };
+  options?: { nonce?: string; __nojs?: boolean };
 }): Promise<Response> {
   initialize();
 
@@ -37,17 +37,22 @@ export async function renderHtml({
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: assets.bootstrapModules.map((href) => withBase(href)),
+    bootstrapModules: options?.__nojs
+      ? []
+      : assets.bootstrapModules.map((href) => withBase(href)),
     nonce: options?.nonce,
     // @ts-expect-error no types
     formState,
   });
 
-  const responseStream = htmlStream.pipeThrough(
-    injectRscScript(stream2, {
-      nonce: options?.nonce,
-    }),
-  );
+  let responseStream: ReadableStream = htmlStream;
+  if (!options?.__nojs) {
+    responseStream = responseStream.pipeThrough(
+      injectRscScript(stream2, {
+        nonce: options?.nonce,
+      }),
+    );
+  }
 
   return new Response(responseStream, {
     headers: {
