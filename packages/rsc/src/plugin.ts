@@ -539,7 +539,6 @@ function vitePluginUseClient({
         `;
       }
       code = `export default {${code}};\n`;
-      console.log(code);
       return { code, map: null };
     }),
     {
