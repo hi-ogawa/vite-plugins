@@ -137,12 +137,19 @@ export default function vitePluginRsc({
 
         // bundle deps with react-server condition
 
-        // crawl packages with "react" or "next" in "peerDependencies"
+        // crawl packages with "react" in "peerDependencies"
         // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
         const result = await crawlFrameworkPkgs({
           root: process.cwd(),
           isBuild: env.command === "build",
           isFrameworkPkgByJson(pkgJson) {
+            if (
+              [PKG_NAME, "react-dom", "react-server-dom-webpack"].includes(
+                pkgJson.name,
+              )
+            ) {
+              return;
+            }
             const deps = pkgJson["peerDependencies"];
             return deps && "react" in deps;
           },
@@ -460,6 +467,7 @@ function vitePluginUseClient({
   > = {};
   const packagesMeta: Record<string, { source?: string }> = {};
   const packageIdSources: Record<string, string> = {};
+  packagesMeta;
 
   return [
     {
@@ -485,6 +493,14 @@ function vitePluginUseClient({
         packageIdSources[id];
 
         const ast = await parseAstAsync(code);
+
+        /*
+                                  [key]                     [value]
+        [dev - normal]            (import analysis id)      (id)
+        [dev - client package]    (virtual id)              (id)
+        [build - normal]          (hashed id)  -            (id)
+        [build - client package]  (hashed id)               (virtual id)
+         */
 
         // [during dev]
         //   (import analysis id) ---> (id)
