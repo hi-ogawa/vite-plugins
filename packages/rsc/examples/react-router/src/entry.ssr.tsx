@@ -21,7 +21,9 @@ export default async function handler(
       ReactDomServer.renderToReadableStream(
         <RSCStaticRouter getPayload={getPayload} />,
         {
-          bootstrapModules: getAssetsManifest().entry.bootstrapModules,
+          bootstrapModules: new URL(request.url).searchParams.has("__nojs")
+            ? []
+            : getAssetsManifest().entry.bootstrapModules,
         },
       ),
   );

@@ -47,10 +47,6 @@ export async function hydrate(options?: {
     setPayload(payload);
   }
 
-  if (window.location.search.includes("no-hydrate")) {
-    return;
-  }
-
   const initialPayload = await createFromReadableStream<RscPayload>(
     getRscScript(),
   );
