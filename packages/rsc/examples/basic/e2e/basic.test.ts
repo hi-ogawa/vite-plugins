@@ -75,7 +75,7 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
   );
   const file =
     (process.env.TEST_BASE ? "/custom-base/" : "/") +
-    viteManifest["src/routes/counter.tsx"].file;
+    viteManifest["src/routes/client.tsx"].file;
   expect(srcs).toContain(file);
 });
 
@@ -129,7 +129,7 @@ test("client hmr @dev", async ({ page }) => {
     page.getByRole("button", { name: "Client Counter: 1" }),
   ).toBeVisible();
 
-  using editor = createEditor("src/routes/counter.tsx");
+  using editor = createEditor("src/routes/client.tsx");
   editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
   await expect(
     page.getByRole("button", { name: "Client [edit] Counter: 1" }),
@@ -180,7 +180,7 @@ test("css hmr client @dev", async ({ page }) => {
   await testCss(page);
 
   await using _ = await createReloadChecker(page);
-  using editor = createEditor("src/routes/counter.css");
+  using editor = createEditor("src/routes/client.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await expect(page.locator(".test-style-client")).toHaveCSS(
     "color",
@@ -244,7 +244,7 @@ test("tailwind hmr @dev", async ({ page }) => {
 
   await using _ = await createReloadChecker(page);
 
-  using clientFile = createEditor("src/routes/counter.tsx");
+  using clientFile = createEditor("src/routes/client.tsx");
   clientFile.edit((s) => s.replaceAll("text-blue-500", "text-blue-600"));
   await expect(page.locator(".test-tw-client")).toHaveCSS(
     "color",
