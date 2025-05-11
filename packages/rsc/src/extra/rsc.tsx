@@ -20,13 +20,14 @@ export type RscPayload = {
 export async function renderRequest(
   request: Request,
   root: React.ReactNode,
+  options?: { nonce?: string },
 ): Promise<Response> {
   initialize();
 
   function RscRoot() {
     return (
       <>
-        <Resources />
+        <Resources nonce={options?.nonce} />
         {root}
       </>
     );
@@ -80,5 +81,5 @@ export async function renderRequest(
   }
 
   const ssrEntry = await importSsr<typeof import("./ssr")>();
-  return ssrEntry.renderHtml({ stream, formState });
+  return ssrEntry.renderHtml({ stream, formState, options });
 }

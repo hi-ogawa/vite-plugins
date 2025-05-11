@@ -35,7 +35,7 @@ export function TestTemporaryReference(props: {
   const [result, setResult] = React.useState<React.ReactNode>("(none)");
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="flex">
       <form
         action={async () => {
           setResult(await props.action(<span>[client]</span>));

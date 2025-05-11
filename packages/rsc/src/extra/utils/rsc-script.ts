@@ -9,12 +9,16 @@ self.__rsc_stream = new ReadableStream({
 
 export function injectRscScript(
   stream: ReadableStream<Uint8Array>,
+  options?: { nonce?: string },
 ): TransformStream<Uint8Array, Uint8Array> {
   return combineTransform(
     new TextDecoderStream(),
     combineTransform(
       createBufferedTransformStream(),
-      combineTransform(injectRscScriptString(stream), new TextEncoderStream()),
+      combineTransform(
+        injectRscScriptString(stream, options),
+        new TextEncoderStream(),
+      ),
     ),
   );
 }
@@ -24,15 +28,18 @@ export function injectRscScript(
 
 export function injectRscScriptString(
   stream: ReadableStream<Uint8Array>,
+  options?: { nonce?: string },
 ): TransformStream<string, string> {
   let rscPromise: Promise<void> | undefined;
+  const toScriptTag = (code: string) =>
+    `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${code}</script>`;
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
       // inject head script
       if (chunk.includes("</head>")) {
         chunk = chunk.replace(
           "</head>",
-          () => `<script>${INIT_SCRIPT}</script></head>`,
+          () => toScriptTag(INIT_SCRIPT) + `</head>`,
         );
       }
       // delay html end
@@ -53,10 +60,10 @@ export function injectRscScriptString(
         rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
           new WritableStream({
             write(chunk) {
-              enqueue(`<script>__rsc_push(${JSON.stringify(chunk)})</script>`);
+              enqueue(toScriptTag(`__rsc_push(${JSON.stringify(chunk)})`));
             },
             close() {
-              enqueue(`<script>__rsc_close()</script>`);
+              enqueue(toScriptTag(`__rsc_close()`));
             },
           }),
         );

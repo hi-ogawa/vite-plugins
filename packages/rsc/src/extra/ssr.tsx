@@ -13,7 +13,12 @@ import { injectRscScript } from "./utils/rsc-script";
 export async function renderHtml({
   stream,
   formState,
-}: { stream: ReadableStream; formState?: ReactFormState }): Promise<Response> {
+  options,
+}: {
+  stream: ReadableStream;
+  formState?: ReactFormState;
+  options?: { nonce?: string };
+}): Promise<Response> {
   initialize();
 
   const [stream1, stream2] = stream.tee();
@@ -24,18 +29,25 @@ export async function renderHtml({
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
   function SsrRoot() {
-    payload ??= createFromReadableStream<RscPayload>(stream1);
+    payload ??= createFromReadableStream<RscPayload>(stream1, {
+      nonce: options?.nonce,
+    });
     const root = React.use(payload).root;
     return root;
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
     bootstrapModules: assets.bootstrapModules.map((href) => withBase(href)),
+    nonce: options?.nonce,
     // @ts-expect-error no types
     formState,
   });
 
-  const responseStream = htmlStream.pipeThrough(injectRscScript(stream2));
+  const responseStream = htmlStream.pipeThrough(
+    injectRscScript(stream2, {
+      nonce: options?.nonce,
+    }),
+  );
 
   return new Response(responseStream, {
     headers: {
