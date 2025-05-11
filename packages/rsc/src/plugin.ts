@@ -24,12 +24,22 @@ import vitePluginRscCore from "./core/plugin";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
-let clientReferences: Record<string, string> = {};
 let serverReferences: Record<string, string> = {};
 let server: ViteDevServer;
 let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
+
+type ClientReferenceMeta = {
+  importId: string;
+  // same as `importId` during dev. hashed id during build.
+  referenceKey: string;
+  packageSource?: string;
+  // build only for tree-shaking unused export
+  exportNames: string[];
+  renderedExports: string[];
+};
+const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
 const ENTRIES = {
@@ -137,12 +147,19 @@ export default function vitePluginRsc({
 
         // bundle deps with react-server condition
 
-        // crawl packages with "react" or "next" in "peerDependencies"
+        // crawl packages with "react" in "peerDependencies"
         // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
         const result = await crawlFrameworkPkgs({
           root: process.cwd(),
           isBuild: env.command === "build",
           isFrameworkPkgByJson(pkgJson) {
+            if (
+              [PKG_NAME, "react-dom", "react-server-dom-webpack"].includes(
+                pkgJson.name,
+              )
+            ) {
+              return;
+            }
             const deps = pkgJson["peerDependencies"];
             return deps && "react" in deps;
           },
@@ -207,9 +224,7 @@ export default function vitePluginRsc({
         const ids = ctx.modules.map((mod) => mod.id).filter((v) => v !== null);
         if (ids.length === 0) return;
 
-        const cliendIds = new Set(Object.values(clientReferences));
-        const isClientReference = ids.some((id) => cliendIds.has(id));
-        if (!isClientReference) {
+        if (!ids.some((id) => clientReferenceMetaMap[id])) {
           if (this.environment.name === "rsc") {
             // server hmr
             ctx.server.environments.client.hot.send({
@@ -326,10 +341,10 @@ export default function vitePluginRsc({
         if (this.environment.name === "client") {
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
-          for (const [key, id] of Object.entries(clientReferences)) {
+          for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
             const deps = assetDeps[id]?.deps;
             if (deps) {
-              clientReferenceDeps[key] = deps;
+              clientReferenceDeps[meta.referenceKey] = deps;
             }
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
@@ -453,11 +468,7 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
 function vitePluginUseClient({
   clientPackages = [],
 }: { clientPackages?: string[] }): Plugin[] {
-  // TODO: tree shaking can be done for non client package too.
-  const clientPackageMeta: Record<
-    string,
-    { source: string; exportNames: string[]; renderedExports: string[] }
-  > = {};
+  const packageSources = new Map<string, string>();
 
   return [
     {
@@ -468,36 +479,28 @@ function vitePluginUseClient({
 
         const ast = await parseAstAsync(code);
 
-        // [during dev]
-        // key = normalized import id
-        // value = (not used)
-
-        // [during build]
-        // key = hashed id
-        // value = id
-
-        // ++++ client package +++
-        // [during dev]
-        // key = virtual id
-        // value = (not used)
-
-        // [during build]
-        // key = hashed id
-        // value = virtual id
-
+        let importId: string;
         let referenceKey: string;
-        let referenceValue = id;
-        const clientPackage = clientPackageMeta[id];
-        if (clientPackage) {
-          const source = clientPackage.source;
-          if (this.environment.mode === "build") {
-            referenceKey = hashString(source);
-            referenceValue = `virtual:vite-rsc/client-package-proxy/${source}`;
+        const packageSource = packageSources.get(id);
+        if (packageSource) {
+          if (this.environment.mode === "dev") {
+            importId = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${packageSource}`;
+            referenceKey = importId;
           } else {
-            referenceKey = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${source}`;
+            importId = `virtual:vite-rsc/client-package-proxy/${packageSource}`;
+            referenceKey = hashString(packageSource);
           }
         } else {
-          referenceKey = normalizeReferenceId(id, "client");
+          if (this.environment.mode === "dev") {
+            importId = normalizeViteImportAnalysisUrl(
+              server.environments.client,
+              id,
+            );
+            referenceKey = importId;
+          } else {
+            importId = id;
+            referenceKey = hashString(path.relative(config.root, id));
+          }
         }
 
         const result = transformDirectiveProxyExport(ast, {
@@ -507,10 +510,13 @@ function vitePluginUseClient({
         });
         if (!result) return;
         const { output, exportNames } = result;
-        if (clientPackage) {
-          clientPackage.exportNames = exportNames;
-        }
-        clientReferences[referenceKey] = referenceValue;
+        clientReferenceMetaMap[id] = {
+          importId,
+          referenceKey,
+          packageSource,
+          exportNames,
+          renderedExports: [],
+        };
         output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
         return { code: output.toString(), map: { mappings: "" } };
       },
@@ -519,6 +525,12 @@ function vitePluginUseClient({
       if (this.environment.mode === "dev") {
         return { code: `export {}`, map: null };
       }
+      const clientReferences = Object.fromEntries(
+        Object.entries(clientReferenceMetaMap).map(([_id, meta]) => [
+          meta.referenceKey,
+          meta.importId,
+        ]),
+      );
       let code = generateDynamicImportCode(clientReferences);
       return { code, map: null };
     }),
@@ -533,11 +545,7 @@ function vitePluginUseClient({
           ) {
             const resolved = await this.resolve(source, importer, options);
             if (resolved) {
-              clientPackageMeta[resolved.id] ??= {
-                source,
-                exportNames: [],
-                renderedExports: [],
-              };
+              packageSources.set(resolved.id, source);
               return resolved;
             }
           }
@@ -551,8 +559,8 @@ function vitePluginUseClient({
           const source = id.slice(
             "\0virtual:vite-rsc/client-package-proxy/".length,
           );
-          const meta = Object.values(clientPackageMeta).find(
-            (v) => v.source === source,
+          const meta = Object.values(clientReferenceMetaMap).find(
+            (v) => v.packageSource === source,
           )!;
           const exportNames =
             this.environment.mode === "build"
@@ -569,7 +577,7 @@ function vitePluginUseClient({
         for (const chunk of Object.values(bundle)) {
           if (chunk.type === "chunk") {
             for (const [id, mod] of Object.entries(chunk.modules)) {
-              const meta = clientPackageMeta[id];
+              const meta = clientReferenceMetaMap[id];
               if (meta) {
                 meta.renderedExports = mod.renderedExports;
               }
@@ -586,7 +594,6 @@ function vitePluginUseServer(): Plugin[] {
     {
       name: "rsc:use-server",
       async transform(code, id) {
-        if (id.includes("/.vite/")) return;
         if (!code.includes("use server")) return;
         const ast = await parseAstAsync(code);
         const normalizedId = normalizeReferenceId(id, "rsc");
