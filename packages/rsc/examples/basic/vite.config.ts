@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -33,6 +34,17 @@ export default defineConfig({
           }
           next();
         });
+      },
+    },
+    {
+      name: "test-client-reference-tree-shaking",
+      enforce: "post",
+      writeBundle(_options, bundle) {
+        for (const chunk of Object.values(bundle)) {
+          if (chunk.type === "chunk") {
+            assert(!chunk.code.includes("__unused_client_reference__"));
+          }
+        }
       },
     },
   ],
