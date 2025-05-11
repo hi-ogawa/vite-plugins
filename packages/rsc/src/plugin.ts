@@ -564,14 +564,14 @@ function vitePluginUseClient({
       },
       async load(id) {
         if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
-          assert(this.environment.mode === 'dev')
+          assert(this.environment.mode === "dev");
           const source = id.slice(
             "\0virtual:vite-rsc/client-package-proxy/".length,
           );
           const meta = Object.values(clientReferenceMetaMap).find(
             (v) => v.packageSource === source,
           )!;
-          const exportNames = meta.exportNames
+          const exportNames = meta.exportNames;
           return `export {${exportNames.join(",")}} from ${JSON.stringify(source)};\n`;
         }
       },
