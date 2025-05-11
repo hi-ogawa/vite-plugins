@@ -484,10 +484,10 @@ function vitePluginUseClient({
         const packageSource = packageSources.get(id);
         if (packageSource) {
           if (this.environment.mode === "dev") {
-            importId = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${packageSource}`;
+            importId = `/@id/__x00__virtual:vite-rsc/client-reference-proxy/${id}`;
             referenceKey = importId;
           } else {
-            importId = `virtual:vite-rsc/client-package-proxy/${packageSource}`;
+            importId = `virtual:vite-rsc/client-reference-proxy/${id}`;
             referenceKey = hashString(packageSource);
           }
         } else {
@@ -498,7 +498,7 @@ function vitePluginUseClient({
             );
             referenceKey = importId;
           } else {
-            importId = id;
+            importId = `virtual:vite-rsc/client-reference-proxy/${id}`;
             referenceKey = hashString(path.relative(config.root, id));
           }
         }
@@ -549,23 +549,22 @@ function vitePluginUseClient({
               return resolved;
             }
           }
-          if (source.startsWith("virtual:vite-rsc/client-package-proxy/")) {
+          if (source.startsWith("virtual:vite-rsc/client-reference-proxy/")) {
             return "\0" + source;
           }
         },
       },
       async load(id) {
-        if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
-          const source = id.slice(
-            "\0virtual:vite-rsc/client-package-proxy/".length,
+        if (id.startsWith("\0virtual:vite-rsc/client-reference-proxy/")) {
+          const originalId = id.slice(
+            "\0virtual:vite-rsc/client-reference-proxy/".length,
           );
-          const meta = Object.values(clientReferenceMetaMap).find(
-            (v) => v.packageSource === source,
-          )!;
+          const meta = clientReferenceMetaMap[originalId]!;
           const exportNames =
             this.environment.mode === "build"
               ? meta.renderedExports
               : meta.exportNames;
+          const source = meta.packageSource ?? originalId;
           return `export {${exportNames.join(",")}} from ${JSON.stringify(source)};\n`;
         }
       },
