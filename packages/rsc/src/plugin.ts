@@ -341,8 +341,8 @@ export default function vitePluginRsc({
         if (this.environment.name === "client") {
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
-          for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps;
+          for (const [_id, meta] of Object.entries(clientReferenceMetaMap)) {
+            const deps = assetDeps["\0" + meta.importId]?.deps;
             if (deps) {
               clientReferenceDeps[meta.referenceKey] = deps;
             }
