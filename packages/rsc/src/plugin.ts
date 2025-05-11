@@ -526,9 +526,9 @@ function vitePluginUseClient({
         return { code: `export {}`, map: null };
       }
       const clientReferences = Object.fromEntries(
-        Object.entries(clientReferenceMetaMap).map(([id, meta]) => [
+        Object.entries(clientReferenceMetaMap).map(([_id, meta]) => [
           meta.referenceKey,
-          id,
+          meta.importId,
         ]),
       );
       let code = generateDynamicImportCode(clientReferences);
