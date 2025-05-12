@@ -297,3 +297,11 @@ test("hydrate while streaming @js", async ({ page }) => {
   await expect(page.getByTestId("suspense")).toContainText("suspense-fallback");
   await expect(page.getByTestId("suspense")).toContainText("suspense-resolved");
 });
+
+test("ssr rsc payload encoding", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.getByTestId("ssr-rsc-payload")).toHaveText(
+    "test-payload: test1: true, test2: true, test3: true",
+  );
+});

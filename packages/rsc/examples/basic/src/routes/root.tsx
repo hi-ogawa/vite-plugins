@@ -11,6 +11,7 @@ import {
 import {
   ClientCounter,
   Hydrated,
+  TestPayloadClient,
   TestStyleClient,
   TestTailwindClient,
   TestTemporaryReference,
@@ -61,6 +62,7 @@ export function Root(props: { url: URL }) {
         <TestSuspense url={props.url} />
         <TestActionFromClient />
         <TestUseActionState />
+        <TestPayload />
       </body>
     </html>
   );
@@ -104,4 +106,18 @@ function TestSuspense(props: { url: URL }) {
     );
   }
   return <a href="?test-suspense=1000">test-suspense</a>;
+}
+
+function TestPayload() {
+  return (
+    <div data-testid="ssr-rsc-payload">
+      test-payload:{" "}
+      <TestPayloadClient
+        test1={"🙂"}
+        test2={"<script>throw new Error('boom')</script>"}
+        // reverse to have non-utf8 binary data
+        test3={new TextEncoder().encode("🔥").reverse()}
+      />
+    </div>
+  );
 }

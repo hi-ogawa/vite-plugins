@@ -1,8 +1,5 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
-import {
-  createBufferedTransformStream,
-  injectRscScriptString,
-} from "@hiogawa/vite-rsc/extra/utils/rsc-script";
+import { injectRscScript } from "@hiogawa/vite-rsc/extra/utils/rsc-script";
 import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
@@ -199,11 +196,10 @@ export async function renderHtml(
   }
 
   const htmlStream = ssrStream
+    .pipeThrough(injectRscScript(stream2))
     .pipeThrough(new TextDecoderStream())
-    .pipeThrough(createBufferedTransformStream())
     .pipeThrough(injectToHead(() => head + ssrContext.render()))
     .pipeThrough(injectDefaultMetaViewport())
-    .pipeThrough(injectRscScriptString(stream2))
     .pipeThrough(new TextEncoderStream());
 
   return new Response(htmlStream, {
