@@ -110,7 +110,7 @@ function TestSuspense(props: { url: URL }) {
 
 function TestPayload() {
   return (
-    <div>
+    <div data-testid="ssr-rsc-payload">
       test-payload:{" "}
       <TestPayloadClient
         test1={"🙂"}

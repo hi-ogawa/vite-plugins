@@ -59,8 +59,7 @@ export function TestPayloadClient(props: {
 }) {
   const results = {
     test1: props.test1 === "🙂",
-    test2:
-      props.test2 === "<script>throw new Error('test-payload failed')</script>",
+    test2: props.test2 === "<script>throw new Error('boom')</script>",
     test3:
       props.test3 instanceof Uint8Array &&
       isSameArray(props.test3, new TextEncoder().encode("🔥").reverse()),
