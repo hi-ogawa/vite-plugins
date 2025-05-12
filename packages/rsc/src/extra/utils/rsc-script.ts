@@ -9,10 +9,11 @@ export function injectRscScript(
     injectRscScriptInner(stream, options),
   );
 }
+
 const BODY_HTML_END = new TextEncoder().encode("</body></html>");
 
 function stripBodyHtmlEnd(chunk: Uint8Array) {
-  // check `chunk.endsWith(BODY_HTML_END)` in Uint8Array
+  // check `chunk.endsWith(BODY_HTML_END)` as Uint8Array
   if (
     BODY_HTML_END.every(
       (byte, i) => chunk[chunk.length - BODY_HTML_END.length + i] === byte,
@@ -100,33 +101,34 @@ function injectRscScriptInner(
 // Ensure html tag is not split into multiple chunks.
 // This is necessary for `injectRscScriptInner` to not break html stream.
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
+// based on https://github.com/vercel/next.js/blob/8e4568af247fb33af2d41ef886980a407c486375/packages/next/src/server/stream-utils/node-web-streams-helper.ts#L124
 function createBufferedTransformStream(): TransformStream<
   Uint8Array,
   Uint8Array
 > {
   let timeout: ReturnType<typeof setTimeout> | undefined;
-  let bufferedChunks: Uint8Array[] = [];
+  let buffer: Uint8Array[] = [];
   return new TransformStream({
     transform(chunk, controller) {
-      bufferedChunks.push(chunk);
+      buffer.push(chunk);
       if (typeof timeout !== "undefined") {
         clearTimeout(timeout);
       }
       timeout = setTimeout(() => {
         try {
-          controller.enqueue(concatArrays(bufferedChunks));
+          controller.enqueue(concatArrays(buffer));
         } catch (e) {
           // silence enqueue error e.g. when response stream is aborted
           // console.error("[createBufferedTransformStream]", e)
         }
-        bufferedChunks = [];
+        buffer = [];
         timeout = undefined;
       }, 0);
     },
     async flush(controller) {
       if (typeof timeout !== "undefined") {
         clearTimeout(timeout);
-        controller.enqueue(concatArrays(bufferedChunks));
+        controller.enqueue(concatArrays(buffer));
       }
     },
   });
