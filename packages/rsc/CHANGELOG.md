@@ -2,21 +2,17 @@
 
 ## v0.2.0 (2025-05-12)
 
-- fix(rsc): handle html escape and binary data in ssr rsc payload ([#839](https://github.com/hi-ogawa/vite-plugins/pull/839))
 - feat(rsc): apply tree-shaking to all client references (2nd approach) ([#838](https://github.com/hi-ogawa/vite-plugins/pull/838))
-- refactor(rsc): simplify client reference mapping ([#836](https://github.com/hi-ogawa/vite-plugins/pull/836))
-- chore(rsc): add __nojs debug ([#835](https://github.com/hi-ogawa/vite-plugins/pull/835))
 - feat(rsc): support nonce ([#813](https://github.com/hi-ogawa/vite-plugins/pull/813))
-- chore(rsc): tweak examples ([#833](https://github.com/hi-ogawa/vite-plugins/pull/833))
-- fix(rsc): wrap virtual to  workaround module runner entry issues ([#832](https://github.com/hi-ogawa/vite-plugins/pull/832))
-- refactor(rsc)!: remove `entries.css` ([#831](https://github.com/hi-ogawa/vite-plugins/pull/831))
-- refactor(rsc): client reference ssr preinit/preload via proxy and remove `prepareDestination` ([#828](https://github.com/hi-ogawa/vite-plugins/pull/828))
-- test(rsc): test client reference css without ssr ([#829](https://github.com/hi-ogawa/vite-plugins/pull/829))
-- test(rsc): test server restart ([#827](https://github.com/hi-ogawa/vite-plugins/pull/827))
-- refactor(rsc): tweak asset links api ([#826](https://github.com/hi-ogawa/vite-plugins/pull/826))
 - feat(rsc): support css in rsc environment ([#825](https://github.com/hi-ogawa/vite-plugins/pull/825))
 - feat(rsc): support css in client references ([#823](https://github.com/hi-ogawa/vite-plugins/pull/823))
+- fix(rsc): handle html escape and binary data in ssr rsc payload ([#839](https://github.com/hi-ogawa/vite-plugins/pull/839))
+- fix(rsc): wrap virtual to workaround module runner entry issues ([#832](https://github.com/hi-ogawa/vite-plugins/pull/832))
 - fix(rsc): scan build in two environments ([#820](https://github.com/hi-ogawa/vite-plugins/pull/820))
+- refactor(rsc): simplify client reference mapping ([#836](https://github.com/hi-ogawa/vite-plugins/pull/836))
+- refactor(rsc)!: remove `entries.css` ([#831](https://github.com/hi-ogawa/vite-plugins/pull/831))
+- refactor(rsc): client reference ssr preinit/preload via proxy and remove `prepareDestination` ([#828](https://github.com/hi-ogawa/vite-plugins/pull/828))
+- refactor(rsc): tweak asset links api ([#826](https://github.com/hi-ogawa/vite-plugins/pull/826))
 
 ## v0.1.1 (2025-05-07)
 
