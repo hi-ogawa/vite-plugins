@@ -465,39 +465,32 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
-// https://github.com/vitejs/vite/blob/4bcf45863b5f46aa2b41f261283d08f12d3e8675/packages/vite/src/node/utils.ts#L175
-const bareImportRE = /^(?![a-zA-Z]:)[\w@](?!.*:\/\/)/;
-
 function vitePluginUseClient({
   clientPackages = [],
 }: { clientPackages?: string[] }): Plugin[] {
   const packageSources = new Map<string, string>();
-  const packageSources2 = new Map<string, string>();
+
+  // https://github.com/vitejs/vite/blob/4bcf45863b5f46aa2b41f261283d08f12d3e8675/packages/vite/src/node/utils.ts#L175
+  const bareImportRE = /^(?![a-zA-Z]:)[\w@](?!.*:\/\/)/;
 
   return [
     {
       name: "rsc:use-client",
-      resolveId: {
-        order: "pre",
-        async handler(source, importer, options) {
-          if (this.environment.name === "rsc" && bareImportRE.test(source)) {
-            const resolved = await this.resolve(source, importer, options);
-            if (resolved && resolved.id.includes("/node_modules/")) {
-              packageSources2.set(resolved.id, source);
-              return resolved;
-            }
-          }
-        },
-      },
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
+
+        // allow working around client boundary issues on Vite
+        const packageSource = packageSources.get(id);
+        if (packageSource && clientPackages.includes(packageSource)) {
+          code = `"use client";${code}`;
+        }
+
         if (!code.includes("use client")) return;
 
         const ast = await parseAstAsync(code);
 
         let importId: string;
         let referenceKey: string;
-        const packageSource = packageSources.get(id);
         if (packageSource) {
           if (this.environment.mode === "dev") {
             importId = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${packageSource}`;
@@ -562,18 +555,12 @@ function vitePluginUseClient({
       resolveId: {
         order: "pre",
         async handler(source, importer, options) {
-          if (
-            this.environment.name === "rsc" &&
-            clientPackages.includes(source)
-          ) {
+          if (this.environment.name === "rsc" && bareImportRE.test(source)) {
             const resolved = await this.resolve(source, importer, options);
-            if (resolved) {
+            if (resolved && resolved.id.includes("/node_modules/")) {
               packageSources.set(resolved.id, source);
               return resolved;
             }
-          }
-          if (source.startsWith("virtual:vite-rsc/client-package-proxy/")) {
-            return "\0" + source;
           }
         },
       },

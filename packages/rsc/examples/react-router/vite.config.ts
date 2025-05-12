@@ -18,7 +18,6 @@ export default defineConfig({
         ssr: "/src/entry.ssr.tsx",
         rsc: "/src/entry.rsc.tsx",
       },
-      clientPackages: ["react-router"],
     }),
   ],
   optimizeDeps: {
