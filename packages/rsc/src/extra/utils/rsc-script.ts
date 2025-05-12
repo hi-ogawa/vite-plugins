@@ -45,7 +45,7 @@ function injectRscScript2(
       // start injecting rsc
       if (!rscPromise) {
         const encoder = new TextEncoder();
-        const decoder = new TextDecoder();
+        const decoder = new TextDecoder("utf-8", { fatal: true });
         const enqueueScript = (content: string) => {
           try {
             controller.enqueue(
@@ -53,19 +53,42 @@ function injectRscScript2(
                 `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${content}</script>`,
               ),
             );
-          } catch (e) {}
+          } catch (e) {
+            // console.error("[enqueueScript]", e)
+          }
         };
         rscPromise = stream.pipeTo(
           new WritableStream({
             start() {
-              enqueueScript(INIT_SCRIPT);
+              enqueueScript(
+                `
+                self.__rsc_stream = new ReadableStream({
+                  start(controller) {
+                    const encoder = new TextEncoder();
+                    self.__rsc_push = (chunk) => controller.enqueue(encoder.encode(chunk));
+                    self.__rsc_push_bin = (chunk) => controller.enqueue(chunk);
+                    self.__rsc_close = () => controller.close();
+                  }
+                });
+                `.replace(/\s+/g, " "),
+              );
             },
             write(chunk) {
-              // TODO: handle binary payload
-              let decoded = decoder.decode(chunk, { stream: true });
-              enqueueScript(
-                `self.__rsc_push(${escapeHtml(JSON.stringify(decoded))})`,
-              );
+              try {
+                const content = escapeHtml(
+                  JSON.stringify(decoder.decode(chunk, { stream: true })),
+                );
+                enqueueScript(`self.__rsc_push(${content})`);
+              } catch {
+                // https://developer.mozilla.org/en-US/docs/Web/API/Window/btoa#unicode_strings
+                const base64 = btoa(
+                  Array.from(chunk, (byte) => String.fromCodePoint(byte)).join(
+                    "",
+                  ),
+                );
+                const content = `Uint8Array.from(atob("${base64}"), (m) => m.codePointAt(0))`;
+                enqueueScript(`self.__rsc_push_bin(${content})`);
+              }
             },
             close() {
               enqueueScript(`__rsc_close()`);
