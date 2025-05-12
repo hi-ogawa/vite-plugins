@@ -465,14 +465,30 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
+// https://github.com/vitejs/vite/blob/4bcf45863b5f46aa2b41f261283d08f12d3e8675/packages/vite/src/node/utils.ts#L175
+const bareImportRE = /^(?![a-zA-Z]:)[\w@](?!.*:\/\/)/;
+
 function vitePluginUseClient({
   clientPackages = [],
 }: { clientPackages?: string[] }): Plugin[] {
   const packageSources = new Map<string, string>();
+  const packageSources2 = new Map<string, string>();
 
   return [
     {
       name: "rsc:use-client",
+      resolveId: {
+        order: "pre",
+        async handler(source, importer, options) {
+          if (this.environment.name === "rsc" && bareImportRE.test(source)) {
+            const resolved = await this.resolve(source, importer, options);
+            if (resolved && resolved.id.includes("/node_modules/")) {
+              packageSources2.set(resolved.id, source);
+              return resolved;
+            }
+          }
+        },
+      },
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
         if (!code.includes("use client")) return;
