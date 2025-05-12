@@ -2,7 +2,7 @@ import assert from "node:assert";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig, createBuilder } from "vite";
+import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
 
 export default defineConfig({
@@ -51,43 +51,27 @@ export default defineConfig({
       name: "cf-build",
       enforce: "post",
       apply: () => !!process.env.CF_BUILD,
-      config(config) {
-        const buildApp = config.builder!.buildApp!;
+      configEnvironment() {
         return {
-          builder: {
-            async buildApp(builder) {
-              await buildApp(builder);
-
-              // bundle server again for cf deployment
-              // const cfBuilder = await createBuilder({
-              //   configFile: false,
-              //   envDir: false,
-              //   publicDir: false,
-              //   environments: {
-              //     ssr: {
-              //       resolve: {
-              //         noExternal: true,
-              //       },
-              //       build: {
-              //         outDir: 'dist/cf',
-              //         rollupOptions: {
-              //           input: {
-              //             index: 'dist/rsc/index.js'
-              //           },
-              //           // output: {
-              //           //   inlineDynamicImports: true,
-              //           // }
-              //         }
-              //       },
-              //     }
-              //   },
-              // });
-              // await cfBuilder.build(cfBuilder.environments.ssr);
-            },
-          }
+          keepProcessEnv: false,
+          define: {
+            "process.env.NO_CSP": "false",
+          },
+          resolve: {
+            noExternal: true,
+          },
+        };
+      },
+      generateBundle() {
+        if (this.environment.name === "rsc") {
+          this.emitFile({
+            type: "asset",
+            fileName: "cloudflare.js",
+            source: `import handler from './index.js'; export default { fetch: handler };`,
+          });
         }
       },
-    }
+    },
   ],
   build: {
     minify: false,

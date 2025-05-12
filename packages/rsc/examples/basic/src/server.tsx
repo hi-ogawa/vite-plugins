@@ -2,7 +2,7 @@ import "./styles.css";
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Root } from "./routes/root";
 
-async function handler(request: Request): Promise<Response> {
+export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const root = <Root url={url} />;
   const nonce = !process.env.NO_CSP ? crypto.randomUUID() : undefined;
@@ -18,6 +18,3 @@ async function handler(request: Request): Promise<Response> {
   }
   return response;
 }
-
-// make it compatible with cloudflare worker
-export default { fetch: handler }
