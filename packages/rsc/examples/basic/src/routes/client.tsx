@@ -61,10 +61,20 @@ export function TestPayloadClient(props: {
     test1: props.test1 === "🙂",
     test2:
       props.test2 === "<script>throw new Error('test-payload failed')</script>",
-    test3: props.test3 === new TextEncoder().encode("🔥").reverse(),
+    test3:
+      props.test3 instanceof Uint8Array &&
+      isSameArray(props.test3, new TextEncoder().encode("🔥").reverse()),
   };
   const formatted = Object.entries(results)
     .map(([k, v]) => `${k}: ${String(v)}`)
     .join(", ");
   return <>{formatted}</>;
+}
+
+function isSameArray(x: Uint8Array, y: Uint8Array) {
+  if (x.length !== y.length) return false;
+  for (let i = 0; i < x.length; i++) {
+    if (x[i] !== y[i]) return false;
+  }
+  return true;
 }

@@ -114,8 +114,7 @@ function TestPayload() {
       test-payload:{" "}
       <TestPayloadClient
         test1={"🙂"}
-        test2={"<script>throw new Error('test-payload failed')</script>"}
-        // TODO: still not restored correctly?
+        test2={"<script>throw new Error('boom')</script>"}
         test3={new TextEncoder().encode("🔥").reverse()}
       />
     </div>
