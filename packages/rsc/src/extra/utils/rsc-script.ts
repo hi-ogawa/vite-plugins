@@ -54,6 +54,7 @@ function injectRscScript2(
               ),
             );
           } catch (e) {
+            // silence enqueue error e.g. when response stream is aborted
             // console.error("[enqueueScript]", e)
           }
         };
@@ -121,7 +122,10 @@ export function createBufferedTransformStream2(): TransformStream<
       timeout = setTimeout(() => {
         try {
           controller.enqueue(concatArrays(bufferedChunks));
-        } catch (e) {}
+        } catch (e) {
+          // silence enqueue error e.g. when response stream is aborted
+          // console.error("[createBufferedTransformStream]", e)
+        }
         bufferedChunks = [];
         timeout = undefined;
       }, 0);
