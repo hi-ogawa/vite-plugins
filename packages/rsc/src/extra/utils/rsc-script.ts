@@ -18,10 +18,72 @@ export function injectRscScript(
     injectRscScript2(stream, options),
   );
 }
+const BODY_HTML_END = new TextEncoder().encode("</body></html>");
+
+function stripBodyHtmlEnd(chunk: Uint8Array) {
+  // check `chunk.endsWith(BODY_HTML_END)` in Uint8Array
+  if (
+    BODY_HTML_END.every(
+      (byte, i) => chunk[chunk.length - BODY_HTML_END.length + i] === byte,
+    )
+  ) {
+    return chunk.slice(0, -BODY_HTML_END.length);
+  }
+  return chunk;
+}
+
+function injectRscScript2(
+  stream: ReadableStream<Uint8Array>,
+  options?: { nonce?: string },
+): TransformStream<Uint8Array, Uint8Array> {
+  let rscPromise: Promise<void> | undefined;
+  let encoder = new TextEncoder();
+  const createScript = (code: string) =>
+    encoder.encode(
+      `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${code}</script>`,
+    );
+  return new TransformStream({
+    async transform(htmlChunk, controller) {
+      // strip html end and keep original html otherwise
+      controller.enqueue(stripBodyHtmlEnd(htmlChunk));
+
+      // start injecting rsc
+      if (!rscPromise) {
+        let safeEnqueue = (chunk: Uint8Array) => {
+          try {
+            controller.enqueue(chunk);
+          } catch (e) {}
+        };
+        // TODO: handle binary payload
+        rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
+          new WritableStream({
+            start() {
+              safeEnqueue(createScript(INIT_SCRIPT));
+            },
+            write(chunk) {
+              safeEnqueue(
+                createScript(
+                  `self.__rsc_push(${escapeHtml(JSON.stringify(chunk))})`,
+                ),
+              );
+            },
+            close() {
+              safeEnqueue(createScript(`__rsc_close()`));
+            },
+          }),
+        );
+      }
+    },
+    async flush(controller) {
+      await rscPromise;
+      controller.enqueue(BODY_HTML_END);
+    },
+  });
+}
 
 // Ensure html tag is not split into multiple chunks by buffering macro tasks.
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
-function createBufferedTransformStream2(): TransformStream<
+export function createBufferedTransformStream2(): TransformStream<
   Uint8Array,
   Uint8Array
 > {
@@ -62,68 +124,6 @@ function concatArrays(arrays: Uint8Array[]) {
     offset += chunk.length;
   }
   return result;
-}
-
-const BODY_HTML_END = new TextEncoder().encode("</body></html>");
-
-function stripBodyHtmlEnd(chunk: Uint8Array) {
-  if (
-    BODY_HTML_END.every(
-      (byte, i) => chunk[chunk.length - BODY_HTML_END.length + i] === byte,
-    )
-  ) {
-    chunk = chunk.slice(0, -BODY_HTML_END.length);
-  }
-  return chunk;
-}
-
-function injectRscScript2(
-  stream: ReadableStream<Uint8Array>,
-  options?: { nonce?: string },
-): TransformStream<Uint8Array, Uint8Array> {
-  let rscPromise: Promise<void> | undefined;
-  let encoder = new TextEncoder();
-  const toScriptTag = (code: string) =>
-    encoder.encode(
-      `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${code}</script>`,
-    );
-  return new TransformStream({
-    async transform(htmlChunk, controller) {
-      // strip html end and keep original html otherwise
-      controller.enqueue(stripBodyHtmlEnd(htmlChunk));
-
-      // start injecting rsc
-      if (!rscPromise) {
-        let safeEnqueue = (chunk: Uint8Array) => {
-          try {
-            controller.enqueue(chunk);
-          } catch (e) {}
-        };
-        // TODO: handle binary payload
-        rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
-          new WritableStream({
-            start() {
-              safeEnqueue(toScriptTag(INIT_SCRIPT));
-            },
-            write(chunk) {
-              safeEnqueue(
-                toScriptTag(
-                  `self.__rsc_push(${escapeHtml(JSON.stringify(chunk))})`,
-                ),
-              );
-            },
-            close() {
-              safeEnqueue(toScriptTag(`__rsc_close()`));
-            },
-          }),
-        );
-      }
-    },
-    async flush(controller) {
-      await rscPromise;
-      controller.enqueue(BODY_HTML_END);
-    },
-  });
 }
 
 // TODO: handle binary (non utf-8) payload
