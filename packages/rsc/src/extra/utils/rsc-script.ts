@@ -35,15 +35,8 @@ export function injectRscScriptString(
     `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${code}</script>`;
   return new TransformStream<string, string>({
     async transform(chunk, controller) {
-      // inject head script
-      if (chunk.includes("</head>")) {
-        chunk = chunk.replace(
-          "</head>",
-          () => toScriptTag(INIT_SCRIPT) + `</head>`,
-        );
-      }
       // delay html end
-      if (chunk.includes("</body></html>")) {
+      if (chunk.endsWith("</body></html>")) {
         chunk = chunk.slice(0, -"</body></html>".length);
       }
       // start injecting rsc after body start
@@ -59,8 +52,11 @@ export function injectRscScriptString(
         };
         rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
           new WritableStream({
+            start() {
+              enqueue(toScriptTag(INIT_SCRIPT.replace(/\s+/g, " ")));
+            },
             write(chunk) {
-              enqueue(toScriptTag(`__rsc_push(${JSON.stringify(chunk)})`));
+              enqueue(toScriptTag(`self.__rsc_push(${JSON.stringify(chunk)})`));
             },
             close() {
               enqueue(toScriptTag(`__rsc_close()`));
