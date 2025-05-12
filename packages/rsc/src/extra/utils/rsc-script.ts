@@ -10,7 +10,9 @@ export function injectRscScript(
   );
 }
 
-const BODY_HTML_END = new TextEncoder().encode("</body></html>");
+const BODY_HTML_END = /* #__PURE__ */ new TextEncoder().encode(
+  "</body></html>",
+);
 
 function stripBodyHtmlEnd(chunk: Uint8Array) {
   // check `chunk.endsWith(BODY_HTML_END)` as Uint8Array
