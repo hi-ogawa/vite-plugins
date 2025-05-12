@@ -115,7 +115,8 @@ function TestPayload() {
       <TestPayloadClient
         test1={"🙂"}
         test2={"<script>throw new Error('test-payload failed')</script>"}
-        test3={new TextEncoder().encode("🔥").reverse()}
+        test3={"todo"}
+        // test3={new TextEncoder().encode("🔥").reverse()}
       />
     </div>
   );

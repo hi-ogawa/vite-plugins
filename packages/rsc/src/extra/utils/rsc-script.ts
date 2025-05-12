@@ -14,15 +14,116 @@ export function injectRscScript(
   options?: { nonce?: string },
 ): TransformStream<Uint8Array, Uint8Array> {
   return combineTransform(
-    new TextDecoderStream(),
-    combineTransform(
-      createBufferedTransformStream(),
-      combineTransform(
-        injectRscScriptString(stream, options),
-        new TextEncoderStream(),
-      ),
-    ),
+    createBufferedTransformStream2(),
+    injectRscScript2(stream, options),
   );
+}
+
+// Ensure html tag is not split into multiple chunks by buffering macro tasks.
+// see https://github.com/hi-ogawa/vite-plugins/pull/457
+function createBufferedTransformStream2(): TransformStream<
+  Uint8Array,
+  Uint8Array
+> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let bufferedChunks: Uint8Array[] = [];
+  return new TransformStream({
+    transform(chunk, controller) {
+      bufferedChunks.push(chunk);
+      if (typeof timeout !== "undefined") {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => {
+        try {
+          controller.enqueue(concatArrays(bufferedChunks));
+        } catch (e) {}
+        bufferedChunks = [];
+        timeout = undefined;
+      }, 0);
+    },
+    async flush(controller) {
+      if (typeof timeout !== "undefined") {
+        clearTimeout(timeout);
+        controller.enqueue(concatArrays(bufferedChunks));
+      }
+    },
+  });
+}
+
+function concatArrays(arrays: Uint8Array[]) {
+  let total = 0;
+  for (const chunk of arrays) {
+    total += chunk.length;
+  }
+  const result = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of arrays) {
+    result.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return result;
+}
+
+const BODY_HTML_END = new TextEncoder().encode("</body></html>");
+
+function stripBodyHtmlEnd(chunk: Uint8Array) {
+  if (
+    BODY_HTML_END.every(
+      (byte, i) => chunk[chunk.length - BODY_HTML_END.length + i] === byte,
+    )
+  ) {
+    chunk = chunk.slice(0, -BODY_HTML_END.length);
+  }
+  return chunk;
+}
+
+function injectRscScript2(
+  stream: ReadableStream<Uint8Array>,
+  options?: { nonce?: string },
+): TransformStream<Uint8Array, Uint8Array> {
+  let rscPromise: Promise<void> | undefined;
+  let encoder = new TextEncoder();
+  const toScriptTag = (code: string) =>
+    encoder.encode(
+      `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${code}</script>`,
+    );
+  return new TransformStream({
+    async transform(htmlChunk, controller) {
+      // strip html end and keep original html otherwise
+      controller.enqueue(stripBodyHtmlEnd(htmlChunk));
+
+      // start injecting rsc
+      if (!rscPromise) {
+        let safeEnqueue = (chunk: Uint8Array) => {
+          try {
+            controller.enqueue(chunk);
+          } catch (e) {}
+        };
+        // TODO: handle binary payload
+        rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
+          new WritableStream({
+            start() {
+              safeEnqueue(toScriptTag(INIT_SCRIPT));
+            },
+            write(chunk) {
+              safeEnqueue(
+                toScriptTag(
+                  `self.__rsc_push(${escapeHtml(JSON.stringify(chunk))})`,
+                ),
+              );
+            },
+            close() {
+              safeEnqueue(toScriptTag(`__rsc_close()`));
+            },
+          }),
+        );
+      }
+    },
+    async flush(controller) {
+      await rscPromise;
+      controller.enqueue(BODY_HTML_END);
+    },
+  });
 }
 
 // TODO: handle binary (non utf-8) payload
