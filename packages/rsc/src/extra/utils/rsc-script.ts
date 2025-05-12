@@ -37,38 +37,38 @@ function injectRscScript2(
   options?: { nonce?: string },
 ): TransformStream<Uint8Array, Uint8Array> {
   let rscPromise: Promise<void> | undefined;
-  let encoder = new TextEncoder();
-  const createScript = (code: string) =>
-    encoder.encode(
-      `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${code}</script>`,
-    );
   return new TransformStream({
     async transform(htmlChunk, controller) {
-      // strip html end and keep original html otherwise
+      // strip </body></html> and keep original html otherwise
       controller.enqueue(stripBodyHtmlEnd(htmlChunk));
 
       // start injecting rsc
       if (!rscPromise) {
-        let safeEnqueue = (chunk: Uint8Array) => {
+        const encoder = new TextEncoder();
+        const decoder = new TextDecoder();
+        const enqueueScript = (content: string) => {
           try {
-            controller.enqueue(chunk);
+            controller.enqueue(
+              encoder.encode(
+                `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${content}</script>`,
+              ),
+            );
           } catch (e) {}
         };
-        // TODO: handle binary payload
-        rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
+        rscPromise = stream.pipeTo(
           new WritableStream({
             start() {
-              safeEnqueue(createScript(INIT_SCRIPT));
+              enqueueScript(INIT_SCRIPT);
             },
             write(chunk) {
-              safeEnqueue(
-                createScript(
-                  `self.__rsc_push(${escapeHtml(JSON.stringify(chunk))})`,
-                ),
+              // TODO: handle binary payload
+              let decoded = decoder.decode(chunk, { stream: true });
+              enqueueScript(
+                `self.__rsc_push(${escapeHtml(JSON.stringify(decoded))})`,
               );
             },
             close() {
-              safeEnqueue(createScript(`__rsc_close()`));
+              enqueueScript(`__rsc_close()`);
             },
           }),
         );
