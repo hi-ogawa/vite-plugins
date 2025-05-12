@@ -1,11 +1,13 @@
+// both server and client code here but all exports should be tree-shakable
+
 const INIT_SCRIPT = `
 self.__rsc_stream = new ReadableStream({
-	start(controller) {
-		self.__rsc_push = (c) => controller.enqueue(c);
-		self.__rsc_close = () => controller.close();
-	}
+  start(controller) {
+    self.__rsc_push = (chunk) => controller.enqueue(chunk);
+    self.__rsc_close = () => controller.close();
+  }
 }).pipeThrough(new TextEncoderStream());
-`;
+`.replace(/\s+/g, " ");
 
 export function injectRscScript(
   stream: ReadableStream<Uint8Array>,
@@ -53,7 +55,7 @@ export function injectRscScriptString(
         rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
           new WritableStream({
             start() {
-              enqueue(toScriptTag(INIT_SCRIPT.replace(/\s+/g, " ")));
+              enqueue(toScriptTag(INIT_SCRIPT));
             },
             write(chunk) {
               enqueue(toScriptTag(`self.__rsc_push(${JSON.stringify(chunk)})`));
