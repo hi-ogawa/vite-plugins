@@ -97,7 +97,8 @@ function injectRscScriptInner(
   });
 }
 
-// Ensure html tag is not split into multiple chunks by buffering macro tasks.
+// Ensure html tag is not split into multiple chunks.
+// This is necessary for `injectRscScriptInner` to not break html stream.
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
 function createBufferedTransformStream(): TransformStream<
   Uint8Array,
