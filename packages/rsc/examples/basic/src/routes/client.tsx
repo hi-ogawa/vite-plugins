@@ -57,14 +57,14 @@ export function TestPayloadClient(props: {
   test2: any;
   test3: any;
 }) {
-  console.log("[TestPayloadClient]", props);
-  const tests = {
-    test1: props.test1 === "🙂🙂🙂",
+  const results = {
+    test1: props.test1 === "🙂",
     test2:
       props.test2 === "<script>throw new Error('test-payload failed')</script>",
-    test3: "todo",
+    test3: props.test3 === new TextEncoder().encode("🔥").reverse(),
   };
-  return Object.entries(tests)
+  const formatted = Object.entries(results)
     .map(([k, v]) => `${k}: ${String(v)}`)
     .join(", ");
+  return <>{formatted}</>;
 }
