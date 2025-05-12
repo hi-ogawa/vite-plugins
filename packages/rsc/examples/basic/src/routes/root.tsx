@@ -115,6 +115,7 @@ function TestPayload() {
       <TestPayloadClient
         test1={"🙂"}
         test2={"<script>throw new Error('boom')</script>"}
+        // reverse to have non-utf8 binary data
         test3={new TextEncoder().encode("🔥").reverse()}
       />
     </div>
