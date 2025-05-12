@@ -1,5 +1,5 @@
 {
-  "$schema": "https://www.unpkg.com/wrangler@3.114.0/config-schema.json",
+  "$schema": "https://www.unpkg.com/wrangler@4.13.0/config-schema.json",
   "name": "vite-rsc-basic",
   "main": "dist/rsc/cloudflare.js",
   "assets": {
