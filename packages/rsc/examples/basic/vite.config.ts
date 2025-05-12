@@ -67,7 +67,23 @@ export default defineConfig({
           this.emitFile({
             type: "asset",
             fileName: "cloudflare.js",
-            source: `import handler from './index.js'; export default { fetch: handler };`,
+            source: `\
+import handler from './index.js';
+export default { fetch: handler };
+`,
+          });
+        }
+        if (this.environment.name === "client") {
+          // https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers
+          this.emitFile({
+            type: "asset",
+            fileName: "_headers",
+            source: `\
+/favicon.ico
+  Cache-Control: public, max-age=3600, s-maxage=3600
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+`,
           });
         }
       },
