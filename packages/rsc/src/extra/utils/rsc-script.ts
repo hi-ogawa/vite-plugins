@@ -1,21 +1,12 @@
 // both server and client code here but all exports should be tree-shakable
 
-const INIT_SCRIPT = `
-self.__rsc_stream = new ReadableStream({
-  start(controller) {
-    self.__rsc_push = (chunk) => controller.enqueue(chunk);
-    self.__rsc_close = () => controller.close();
-  }
-}).pipeThrough(new TextEncoderStream());
-`.replace(/\s+/g, " ");
-
 export function injectRscScript(
   stream: ReadableStream<Uint8Array>,
   options?: { nonce?: string },
 ): TransformStream<Uint8Array, Uint8Array> {
   return combineTransform(
-    createBufferedTransformStream2(),
-    injectRscScript2(stream, options),
+    createBufferedTransformStream(),
+    injectRscScriptInner(stream, options),
   );
 }
 const BODY_HTML_END = new TextEncoder().encode("</body></html>");
@@ -32,7 +23,7 @@ function stripBodyHtmlEnd(chunk: Uint8Array) {
   return chunk;
 }
 
-function injectRscScript2(
+function injectRscScriptInner(
   stream: ReadableStream<Uint8Array>,
   options?: { nonce?: string },
 ): TransformStream<Uint8Array, Uint8Array> {
@@ -75,6 +66,7 @@ function injectRscScript2(
               );
             },
             write(chunk) {
+              // handle binary data simliar to https://github.com/devongovett/rsc-html-stream
               try {
                 const content = escapeHtml(
                   JSON.stringify(decoder.decode(chunk, { stream: true })),
@@ -107,7 +99,7 @@ function injectRscScript2(
 
 // Ensure html tag is not split into multiple chunks by buffering macro tasks.
 // see https://github.com/hi-ogawa/vite-plugins/pull/457
-export function createBufferedTransformStream2(): TransformStream<
+function createBufferedTransformStream(): TransformStream<
   Uint8Array,
   Uint8Array
 > {
@@ -151,92 +143,6 @@ function concatArrays(arrays: Uint8Array[]) {
     offset += chunk.length;
   }
   return result;
-}
-
-// TODO: handle binary (non utf-8) payload
-// https://github.com/devongovett/rsc-html-stream
-
-export function injectRscScriptString(
-  stream: ReadableStream<Uint8Array>,
-  options?: { nonce?: string },
-): TransformStream<string, string> {
-  let rscPromise: Promise<void> | undefined;
-  const toScriptTag = (code: string) =>
-    `<script ${options?.nonce ? `nonce="${options?.nonce}"` : ""}>${code}</script>`;
-  return new TransformStream<string, string>({
-    async transform(chunk, controller) {
-      // delay html end
-      if (chunk.endsWith("</body></html>")) {
-        chunk = chunk.slice(0, -"</body></html>".length);
-      }
-      // start injecting rsc after body start
-      if (chunk.includes("</head><body")) {
-        controller.enqueue(chunk);
-        if (rscPromise) {
-          throw new Error("Invalid html chunk", { cause: chunk });
-        }
-        let enqueue = (chunk: string) => {
-          try {
-            controller.enqueue(chunk);
-          } catch (e) {}
-        };
-        rscPromise = stream.pipeThrough(new TextDecoderStream()).pipeTo(
-          new WritableStream({
-            start() {
-              enqueue(toScriptTag(INIT_SCRIPT));
-            },
-            write(chunk) {
-              enqueue(
-                toScriptTag(
-                  `self.__rsc_push(${escapeHtml(JSON.stringify(chunk))})`,
-                ),
-              );
-            },
-            close() {
-              enqueue(toScriptTag(`__rsc_close()`));
-            },
-          }),
-        );
-      } else {
-        controller.enqueue(chunk);
-      }
-    },
-    async flush(controller) {
-      await rscPromise;
-      controller.enqueue("</body></html>");
-    },
-  });
-}
-
-// Ensure html tag is not split into multiple chunks, which is necessary for `injectRscScript`.
-// see https://github.com/hi-ogawa/vite-plugins/pull/457
-export function createBufferedTransformStream(): TransformStream<
-  string,
-  string
-> {
-  let timeout: ReturnType<typeof setTimeout> | undefined;
-  let buffer = "";
-  return new TransformStream<string, string>({
-    transform(chunk, controller) {
-      buffer += chunk;
-      if (typeof timeout !== "undefined") {
-        clearTimeout(timeout);
-      }
-      timeout = setTimeout(() => {
-        try {
-          controller.enqueue(buffer);
-        } catch (e) {}
-        buffer = "";
-        timeout = undefined;
-      }, 0);
-    },
-    async flush(controller) {
-      if (typeof timeout !== "undefined") {
-        clearTimeout(timeout);
-        controller.enqueue(buffer);
-      }
-    },
-  });
 }
 
 export function getRscScript(): ReadableStream<Uint8Array> {
