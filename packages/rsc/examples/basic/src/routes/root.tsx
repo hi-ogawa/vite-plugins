@@ -11,6 +11,7 @@ import {
 import {
   ClientCounter,
   Hydrated,
+  TestPayloadClient,
   TestStyleClient,
   TestTailwindClient,
   TestTemporaryReference,
@@ -61,6 +62,7 @@ export function Root(props: { url: URL }) {
         <TestSuspense url={props.url} />
         <TestActionFromClient />
         <TestUseActionState />
+        <TestPayload />
       </body>
     </html>
   );
@@ -104,4 +106,17 @@ function TestSuspense(props: { url: URL }) {
     );
   }
   return <a href="?test-suspense=1000">test-suspense</a>;
+}
+
+function TestPayload() {
+  return (
+    <div>
+      test-payload:{" "}
+      <TestPayloadClient
+        test1={"🙂🙂🙂"}
+        test2={"<script>throw new Error('test-payload failed')</script>"}
+        test3={new Uint8Array([0, 1, 2, 3, 4, 5])}
+      />
+    </div>
+  );
 }

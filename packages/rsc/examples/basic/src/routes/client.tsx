@@ -51,3 +51,20 @@ export function TestTemporaryReference(props: {
 export function UnusedClientReference() {
   console.log("__unused_client_reference__");
 }
+
+export function TestPayloadClient(props: {
+  test1: any;
+  test2: any;
+  test3: any;
+}) {
+  console.log("[TestPayloadClient]", props);
+  const tests = {
+    test1: props.test1 === "🙂🙂🙂",
+    test2:
+      props.test2 === "<script>throw new Error('test-payload failed')</script>",
+    test3: "todo",
+  };
+  return Object.entries(tests)
+    .map(([k, v]) => `${k}: ${String(v)}`)
+    .join(", ");
+}

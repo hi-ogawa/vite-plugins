@@ -58,7 +58,11 @@ export function injectRscScriptString(
               enqueue(toScriptTag(INIT_SCRIPT));
             },
             write(chunk) {
-              enqueue(toScriptTag(`self.__rsc_push(${JSON.stringify(chunk)})`));
+              enqueue(
+                toScriptTag(
+                  `self.__rsc_push(${escapeHtml(JSON.stringify(chunk))})`,
+                ),
+              );
             },
             close() {
               enqueue(toScriptTag(`__rsc_close()`));
@@ -116,4 +120,21 @@ function combineTransform<T1, T2, T3>(
   t2: TransformStream<T2, T3>,
 ): TransformStream<T1, T3> {
   return { writable: t1.writable, readable: t1.readable.pipeThrough(t2) };
+}
+
+// copied from
+// https://github.com/remix-run/react-router/blob/1fb0df7f3cc2f89be99af434a224a98d29b1274d/packages/react-router/lib/dom/ssr/markup.ts#L27-L28
+
+const ESCAPE_LOOKUP: { [match: string]: string } = {
+  "&": "\\u0026",
+  ">": "\\u003e",
+  "<": "\\u003c",
+  "\u2028": "\\u2028",
+  "\u2029": "\\u2029",
+};
+
+const ESCAPE_REGEX = /[&><\u2028\u2029]/g;
+
+function escapeHtml(html: string) {
+  return html.replace(ESCAPE_REGEX, (match) => ESCAPE_LOOKUP[match]!);
 }
