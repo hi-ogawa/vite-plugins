@@ -69,7 +69,7 @@ function injectRscScriptInner(
               // handle binary data simliar to https://github.com/devongovett/rsc-html-stream
               try {
                 const content = escapeHtml(
-                  JSON.stringify(decoder.decode(chunk, { stream: true })),
+                  JSON.stringify(decoder.decode(chunk)),
                 );
                 enqueueScript(`self.__rsc_push(${content})`);
               } catch {
