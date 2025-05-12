@@ -1,0 +1,11 @@
+{
+  "$schema": "https://www.unpkg.com/wrangler@3.114.0/config-schema.json",
+  "name": "vite-rsc-basic",
+  "main": "dist/main.js",
+  "assets": {
+    "directory": "dist/client"
+  },
+  "workers_dev": true,
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_als"]
+}

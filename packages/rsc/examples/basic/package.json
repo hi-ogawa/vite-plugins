@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "vite build --app",
     "preview": "vite preview",
+    "cf-build": "CF_PAGES=1 pnpm build",
+    "cf-preview": "wrangler dev",
+    "cf-release": "wrangler deploy",
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
   },
