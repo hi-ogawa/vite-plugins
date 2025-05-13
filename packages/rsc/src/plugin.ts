@@ -79,6 +79,7 @@ export default function vitePluginRsc({
                 },
               },
               optimizeDeps: {
+                entries: [ENTRIES.browser],
                 include: [
                   "react-dom/client",
                   "react-server-dom-webpack/client.browser",
