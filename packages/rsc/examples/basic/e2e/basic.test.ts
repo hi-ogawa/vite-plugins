@@ -302,6 +302,12 @@ test("ssr rsc payload encoding", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await expect(page.getByTestId("ssr-rsc-payload")).toHaveText(
-    "test-payload: test1: true, test2: true, test3: true",
+    "test-payload: test1: true, test2: true, test3: true, test4: true",
+  );
+
+  await page.goto("./?test-skip-binary");
+  await waitForHydration(page);
+  await expect(page.getByTestId("ssr-rsc-payload")).toHaveText(
+    "test-payload: test1: true, test2: true, test3: false, test4: true",
   );
 });
