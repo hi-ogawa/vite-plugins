@@ -63,6 +63,12 @@ export default function vitePluginRsc({
       config() {
         return {
           appType: "custom",
+          resolve: {
+            // this allows transforms to safely inject `import "@hiogawa/vite-rsc/xxx"`
+            // to the files outside of project root.
+            // (e.g. react-router monorepo playground has "use client" in a linked dep.)
+            dedupe: [PKG_NAME],
+          },
           environments: {
             client: {
               build: {
