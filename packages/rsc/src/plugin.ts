@@ -79,6 +79,9 @@ export default function vitePluginRsc({
                 },
               },
               optimizeDeps: {
+                // NOTE: this needs to be a valid file path
+                // e.g. relative `./src/file` or absolute `(abs-path-roo)/src/file`
+                // but not root-absolute path `/src/file`.
                 entries: [entries.browser],
                 include: [
                   "react-dom/client",
