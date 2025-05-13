@@ -180,6 +180,9 @@ importers:
       '@tanstack/history':
         specifier: ^1.99.13
         version: 1.99.13
+      rsc-html-stream:
+        specifier: ^0.0.6
+        version: 0.0.6
 
   packages/react-server-next:
     dependencies:
