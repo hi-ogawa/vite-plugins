@@ -411,15 +411,15 @@ export default function vitePluginRsc({
       // https://github.com/vitejs/vite/issues/19975
       name: "rsc:virtual-entries",
       enforce: "pre",
-      async resolveId(source) {
+      async resolveId(source, _importer, options) {
         if (source === "virtual:vite-rsc/entry-browser-inner") {
-          return this.resolve(entries.browser);
+          return this.resolve(entries.browser, undefined, options);
         }
         if (source === ENTRIES.rsc) {
-          return this.resolve(entries.rsc);
+          return this.resolve(entries.rsc, undefined, options);
         }
         if (source === ENTRIES.ssr) {
-          return this.resolve(entries.ssr);
+          return this.resolve(entries.ssr, undefined, options);
         }
       },
     },
