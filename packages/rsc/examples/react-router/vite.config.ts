@@ -14,13 +14,10 @@ export default defineConfig({
     react(),
     rsc({
       entries: {
-        browser: "/src/entry.browser.tsx",
-        ssr: "/src/entry.ssr.tsx",
-        rsc: "/src/entry.rsc.tsx",
+        browser: "./src/entry.browser.tsx",
+        ssr: "./src/entry.ssr.tsx",
+        rsc: "./src/entry.rsc.tsx",
       },
     }),
   ],
-  optimizeDeps: {
-    include: ["react-router"],
-  },
 }) as any;
