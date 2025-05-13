@@ -17,7 +17,6 @@ export default defineConfig({
     "src/extra/browser.tsx",
     "src/extra/ssr.tsx",
     "src/extra/rsc.tsx",
-    "src/extra/utils/rsc-script.ts",
   ],
   format: ["esm"],
   external: [/^virtual:/],

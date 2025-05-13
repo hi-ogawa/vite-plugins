@@ -53,9 +53,10 @@ export function UnusedClientReference() {
 }
 
 export function TestPayloadClient(props: {
-  test1: any;
-  test2: any;
-  test3: any;
+  test1?: any;
+  test2?: any;
+  test3?: any;
+  test4?: any;
 }) {
   const results = {
     test1: props.test1 === "🙂",
@@ -63,6 +64,7 @@ export function TestPayloadClient(props: {
     test3:
       props.test3 instanceof Uint8Array &&
       isSameArray(props.test3, new TextEncoder().encode("🔥").reverse()),
+    test4: props.test4 === "&><\u2028\u2029",
   };
   const formatted = Object.entries(results)
     .map(([k, v]) => `${k}: ${String(v)}`)

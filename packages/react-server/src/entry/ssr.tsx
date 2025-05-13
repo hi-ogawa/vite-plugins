@@ -1,8 +1,8 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
-import { injectRscScript } from "@hiogawa/vite-rsc/extra/utils/rsc-script";
 import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
 import { createMemoryHistory } from "@tanstack/history";
 import ReactDOMServer from "react-dom/server.edge";
+import { injectRSCPayload } from "rsc-html-stream/server";
 import type { DevEnvironment, EnvironmentModuleNode } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
@@ -196,7 +196,8 @@ export async function renderHtml(
   }
 
   const htmlStream = ssrStream
-    .pipeThrough(injectRscScript(stream2))
+    .pipeThrough(injectRSCPayload(stream2))
+    .pipeThrough(createBufferedTransformStream())
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(injectToHead(() => head + ssrContext.render()))
     .pipeThrough(injectDefaultMetaViewport())
@@ -239,6 +240,55 @@ async function importRouteManifest(): Promise<{
     const mod = await import("virtual:route-manifest" as string);
     return mod.default;
   }
+}
+
+// Ensure html tag is not split into multiple chunks by merging origin React SSR chunks within macrotask.
+// see https://github.com/hi-ogawa/vite-plugins/pull/457
+// based on https://github.com/vercel/next.js/blob/8e4568af247fb33af2d41ef886980a407c486375/packages/next/src/server/stream-utils/node-web-streams-helper.ts#L124
+function createBufferedTransformStream(): TransformStream<
+  Uint8Array,
+  Uint8Array
+> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let buffer: Uint8Array[] = [];
+  return new TransformStream({
+    transform(chunk, controller) {
+      buffer.push(chunk);
+      if (typeof timeout !== "undefined") {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => {
+        try {
+          controller.enqueue(concatArrays(buffer));
+        } catch (e) {
+          // silence enqueue error e.g. when response stream is aborted
+          // console.error("[createBufferedTransformStream]", e)
+        }
+        buffer = [];
+        timeout = undefined;
+      }, 0);
+    },
+    async flush(controller) {
+      if (typeof timeout !== "undefined") {
+        clearTimeout(timeout);
+        controller.enqueue(concatArrays(buffer));
+      }
+    },
+  });
+}
+
+function concatArrays(arrays: Uint8Array[]) {
+  let total = 0;
+  for (const chunk of arrays) {
+    total += chunk.length;
+  }
+  const result = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of arrays) {
+    result.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return result;
 }
 
 //#region debug dev module graph

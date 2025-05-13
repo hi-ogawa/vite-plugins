@@ -28,5 +28,8 @@
     "react-dom": "*",
     "react-server-dom-webpack": "*",
     "vite": "*"
+  },
+  "devDependencies": {
+    "rsc-html-stream": "^0.0.6"
   }
 }

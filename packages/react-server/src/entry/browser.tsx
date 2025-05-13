@@ -1,10 +1,10 @@
 import * as virtualClientRoutes from "virtual:client-routes";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import { getRscScript } from "@hiogawa/vite-rsc/extra/utils/rsc-script";
 import * as ReactClient from "@hiogawa/vite-rsc/react/browser";
 import type { RouterHistory } from "@tanstack/history";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
+import { rscStream } from "rsc-html-stream/client";
 import { initializeReactClientBrowser } from "../features/client-component/browser";
 import { ErrorBoundary } from "../features/error/error-boundary";
 import { DefaultGlobalErrorPage } from "../features/error/global-error";
@@ -81,9 +81,8 @@ async function start() {
   ReactClient.setServerCallback(callServer);
 
   // prepare initial layout data from inline <script>
-  const initialFlight = ReactClient.createFromReadableStream<FlightData>(
-    getRscScript(),
-  );
+  const initialFlight =
+    ReactClient.createFromReadableStream<FlightData>(rscStream);
 
   //
   // browser root
