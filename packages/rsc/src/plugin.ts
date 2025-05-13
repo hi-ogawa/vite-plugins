@@ -50,16 +50,12 @@ const ENTRIES = {
 
 export default function vitePluginRsc({
   entries,
-  clientPackages,
 }: {
   entries: {
     browser: string;
     rsc: string;
     ssr: string;
   };
-  // TODO: this can be heuristically cralwed from package.json.
-  // TODO: in principle, same trick is needed for `"use server"` package imported directly from client component.
-  clientPackages?: string[];
 }): Plugin[] {
   return [
     {
@@ -442,7 +438,7 @@ export default function vitePluginRsc({
       },
     },
     ...vitePluginRscCore(),
-    ...vitePluginUseClient({ clientPackages }),
+    ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
@@ -465,10 +461,11 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
-function vitePluginUseClient({
-  clientPackages = [],
-}: { clientPackages?: string[] }): Plugin[] {
+function vitePluginUseClient(): Plugin[] {
   const packageSources = new Map<string, string>();
+
+  // https://github.com/vitejs/vite/blob/4bcf45863b5f46aa2b41f261283d08f12d3e8675/packages/vite/src/node/utils.ts#L175
+  const bareImportRE = /^(?![a-zA-Z]:)[\w@](?!.*:\/\/)/;
 
   return [
     {
@@ -546,18 +543,12 @@ function vitePluginUseClient({
       resolveId: {
         order: "pre",
         async handler(source, importer, options) {
-          if (
-            this.environment.name === "rsc" &&
-            clientPackages.includes(source)
-          ) {
+          if (this.environment.name === "rsc" && bareImportRE.test(source)) {
             const resolved = await this.resolve(source, importer, options);
-            if (resolved) {
+            if (resolved && resolved.id.includes("/node_modules/")) {
               packageSources.set(resolved.id, source);
               return resolved;
             }
-          }
-          if (source.startsWith("virtual:vite-rsc/client-package-proxy/")) {
-            return "\0" + source;
           }
         },
       },
