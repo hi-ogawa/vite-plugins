@@ -1,0 +1,26 @@
+{
+  "name": "@hiogawa/vite-rsc-examples-mantine",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --app",
+    "preview": "vite preview",
+    "test-e2e": "playwright test",
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
+  },
+  "dependencies": {
+    "@hiogawa/vite-rsc": "latest",
+    "@mantine/core": "^8.0.0",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-server-dom-webpack": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest"
+  }
+}

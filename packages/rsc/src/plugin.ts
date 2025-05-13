@@ -50,12 +50,14 @@ const ENTRIES = {
 
 export default function vitePluginRsc({
   entries,
+  clientPackages,
 }: {
   entries: {
     browser: string;
     rsc: string;
     ssr: string;
   };
+  clientPackages?: string[];
 }): Plugin[] {
   return [
     {
@@ -438,7 +440,7 @@ export default function vitePluginRsc({
       },
     },
     ...vitePluginRscCore(),
-    ...vitePluginUseClient(),
+    ...vitePluginUseClient({ clientPackages }),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
@@ -461,7 +463,9 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
-function vitePluginUseClient(): Plugin[] {
+function vitePluginUseClient({
+  clientPackages = [],
+}: { clientPackages?: string[] }): Plugin[] {
   const packageSources = new Map<string, string>();
 
   // https://github.com/vitejs/vite/blob/4bcf45863b5f46aa2b41f261283d08f12d3e8675/packages/vite/src/node/utils.ts#L175
@@ -472,13 +476,19 @@ function vitePluginUseClient(): Plugin[] {
       name: "rsc:use-client",
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
+
+        // allow working around client boundary issues on Vite
+        const packageSource = packageSources.get(id);
+        if (packageSource && clientPackages.includes(packageSource)) {
+          code = `"use client";${code}`;
+        }
+
         if (!code.includes("use client")) return;
 
         const ast = await parseAstAsync(code);
 
         let importId: string;
         let referenceKey: string;
-        const packageSource = packageSources.get(id);
         if (packageSource) {
           if (this.environment.mode === "dev") {
             importId = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${packageSource}`;
