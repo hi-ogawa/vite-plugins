@@ -673,8 +673,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: 0.0.0-experimental-a6d1d1d4e
-        version: 0.0.0-experimental-a6d1d1d4e(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.0.0-experimental-28626d62e
+        version: 0.0.0-experimental-28626d62e(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
         version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
@@ -5269,8 +5269,8 @@ packages:
       react: ^19.1.0
       react-dom: ^19.1.0
 
-  react-router@0.0.0-experimental-a6d1d1d4e:
-    resolution: {integrity: sha512-4sDd8+wpgLeODHQstOS8VzDRKsG6NpSQwk5lmAu4euirivJekBFOUf+mEAH8kSdonaSWZ69/4X6caADkd31QoQ==}
+  react-router@0.0.0-experimental-28626d62e:
+    resolution: {integrity: sha512-s3PX3apVrg86b9cgASiPjN4IlAyEjLw/VdvoqgyrCCM4mFY8AhRy5KiUuJMxoecJOrFMjtOHeqwzGgDgsNcP3A==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.1.0
@@ -5882,9 +5882,6 @@ packages:
     resolution: {integrity: sha512-4H8vUNGNjQ4V2EOoGw005+c+dGuPSnhpPBPHBtsZdGZBk/iJb4kguGlPWaZTZ3q5nMtFOEsY0nRDlh9PJyd6SQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
-
-  turbo-stream@2.4.0:
-    resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
@@ -10754,12 +10751,11 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-router: 6.29.0(react@19.1.0)
 
-  react-router@0.0.0-experimental-a6d1d1d4e(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-router@0.0.0-experimental-28626d62e(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       cookie: 1.0.2
       react: 19.1.0
       set-cookie-parser: 2.7.1
-      turbo-stream: 2.4.0
     optionalDependencies:
       react-dom: 19.1.0(react@19.1.0)
 
@@ -11544,8 +11540,6 @@ snapshots:
       get-tsconfig: 4.10.0
     optionalDependencies:
       fsevents: 2.3.3
-
-  turbo-stream@2.4.0: {}
 
   type-is@1.6.18:
     dependencies:
