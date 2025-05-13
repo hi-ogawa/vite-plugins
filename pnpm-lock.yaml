@@ -5307,7 +5307,7 @@ packages:
       react: 0.0.0-experimental-197d6a04-20250424
 
   react-server-dom-vite@file:react-server-dom-vite-19.1.0.tgz:
-    resolution: {integrity: sha512-Ffd42K0Ld3r7n6AxZR5tTKCKyaWO3A2COy4ELiG+NNcpOfcW0mAvPbzLKkyTNda2UjQmRLQ+i+JQH8P9avx8bg==, tarball: file:react-server-dom-vite-19.1.0.tgz}
+    resolution: {integrity: sha512-CfU8DkGsioMx3OYM8LL7x2FF1iAiQ5ygWkhqlPdV5CtsHtPFk1EthKuORBmduNa+SEww+uDgLnuHjjMr7QaLqw==, tarball: file:react-server-dom-vite-19.1.0.tgz}
     version: 19.1.0
     engines: {node: '>=0.10.0'}
     peerDependencies:
