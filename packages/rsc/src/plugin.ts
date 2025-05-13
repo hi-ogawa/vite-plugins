@@ -42,6 +42,7 @@ type ClientReferenceMeta = {
 const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
+const VIRTUAL_PKG_NAME = "virtual:vite-rsc/self";
 const ENTRIES = {
   browser: "virtual:vite-rsc/entry-browser",
   rsc: "virtual:vite-rsc/entry-rsc",
@@ -403,13 +404,24 @@ export default function vitePluginRsc({
       // wrap module runner entry with virtual to avoid bugs such as
       // https://github.com/vitejs/vite/issues/19975
       name: "rsc:virtual-entries",
-      enforce: "pre",
       resolveId(source, importer, options) {
         if (source === ENTRIES.rsc) {
           return this.resolve(entries.rsc, importer, options);
         }
         if (source === ENTRIES.ssr) {
           return this.resolve(entries.ssr, importer, options);
+        }
+      },
+    },
+    {
+      // virtual to resolve `@hiogawa/vite-rsc/xxx` from root.
+      // this allows transforms to inject `import "virtual:vite-rsc/self/xxx"` safely
+      // for the files outside of root.
+      name: "rsc:virtual-package-entries",
+      resolveId(source, _importer, options) {
+        if (source.startsWith(VIRTUAL_PKG_NAME)) {
+          source = PKG_NAME + source.slice(VIRTUAL_PKG_NAME.length);
+          return this.resolve(source, undefined, options);
         }
       },
     },
@@ -514,7 +526,9 @@ function vitePluginUseClient(): Plugin[] {
           exportNames,
           renderedExports: [],
         };
-        output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
+        output.prepend(
+          `import * as $$ReactServer from "${VIRTUAL_PKG_NAME}/rsc";\n`,
+        );
         return { code: output.toString(), map: { mappings: "" } };
       },
     },
@@ -601,7 +615,9 @@ function vitePluginUseServer(): Plugin[] {
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
-          output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
+          output.prepend(
+            `import * as $$ReactServer from "${VIRTUAL_PKG_NAME}/rsc";\n`,
+          );
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
@@ -624,7 +640,7 @@ function vitePluginUseServer(): Plugin[] {
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
           output.prepend(
-            `import * as $$ReactClient from "${PKG_NAME}/${name}";\n`,
+            `import * as $$ReactClient from "${VIRTUAL_PKG_NAME}/${name}";\n`,
           );
           return {
             code: output.toString(),
