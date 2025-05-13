@@ -57,8 +57,6 @@ export default function vitePluginRsc({
     rsc: string;
     ssr: string;
   };
-  // TODO: this can be heuristically cralwed from package.json.
-  // TODO: in principle, same trick is needed for `"use server"` package imported directly from client component.
   clientPackages?: string[];
 }): Plugin[] {
   return [
