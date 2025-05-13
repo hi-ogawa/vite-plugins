@@ -79,7 +79,7 @@ export default function vitePluginRsc({
                 },
               },
               optimizeDeps: {
-                entries: [ENTRIES.browser],
+                entries: [entries.browser],
                 include: [
                   "react-dom/client",
                   "react-server-dom-webpack/client.browser",
@@ -399,10 +399,10 @@ export default function vitePluginRsc({
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          await import(${JSON.stringify(entries.browser)});
+          await import("virtual:vite-rsc/entry-browser-inner");
         `;
       } else {
-        code += `import ${JSON.stringify(entries.browser)};\n`;
+        code += `import "virtual:vite-rsc/entry-browser-inner";\n`;
       }
       return code;
     }),
@@ -411,12 +411,15 @@ export default function vitePluginRsc({
       // https://github.com/vitejs/vite/issues/19975
       name: "rsc:virtual-entries",
       enforce: "pre",
-      resolveId(source, importer, options) {
+      async resolveId(source) {
+        if (source === "virtual:vite-rsc/entry-browser-inner") {
+          return this.resolve(entries.browser);
+        }
         if (source === ENTRIES.rsc) {
-          return this.resolve(entries.rsc, importer, options);
+          return this.resolve(entries.rsc);
         }
         if (source === ENTRIES.ssr) {
-          return this.resolve(entries.ssr, importer, options);
+          return this.resolve(entries.ssr);
         }
       },
     },
