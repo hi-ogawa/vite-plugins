@@ -1,18 +1,25 @@
 # Changelog
 
+## v0.2.1 (2025-05-13)
+
+- feat: automatic client package heuristics ([#830](https://github.com/hi-ogawa/vite-plugins/pull/830))
+- fix: add browser entry to  `optimizeDeps.entries` ([#846](https://github.com/hi-ogawa/vite-plugins/pull/846))
+- fix: resolve self package from project root ([#845](https://github.com/hi-ogawa/vite-plugins/pull/845))
+- refactor: use `rsc-html-stream` ([#843](https://github.com/hi-ogawa/vite-plugins/pull/843))
+
 ## v0.2.0 (2025-05-12)
 
-- feat(rsc): apply tree-shaking to all client references (2nd approach) ([#838](https://github.com/hi-ogawa/vite-plugins/pull/838))
-- feat(rsc): support nonce ([#813](https://github.com/hi-ogawa/vite-plugins/pull/813))
-- feat(rsc): support css in rsc environment ([#825](https://github.com/hi-ogawa/vite-plugins/pull/825))
-- feat(rsc): support css in client references ([#823](https://github.com/hi-ogawa/vite-plugins/pull/823))
-- fix(rsc): handle html escape and binary data in ssr rsc payload ([#839](https://github.com/hi-ogawa/vite-plugins/pull/839))
-- fix(rsc): wrap virtual to workaround module runner entry issues ([#832](https://github.com/hi-ogawa/vite-plugins/pull/832))
-- fix(rsc): scan build in two environments ([#820](https://github.com/hi-ogawa/vite-plugins/pull/820))
-- refactor(rsc): simplify client reference mapping ([#836](https://github.com/hi-ogawa/vite-plugins/pull/836))
+- feat: apply tree-shaking to all client references (2nd approach) ([#838](https://github.com/hi-ogawa/vite-plugins/pull/838))
+- feat: support nonce ([#813](https://github.com/hi-ogawa/vite-plugins/pull/813))
+- feat: support css in rsc environment ([#825](https://github.com/hi-ogawa/vite-plugins/pull/825))
+- feat: support css in client references ([#823](https://github.com/hi-ogawa/vite-plugins/pull/823))
+- fix: handle html escape and binary data in ssr rsc payload ([#839](https://github.com/hi-ogawa/vite-plugins/pull/839))
+- fix: wrap virtual to workaround module runner entry issues ([#832](https://github.com/hi-ogawa/vite-plugins/pull/832))
+- fix: scan build in two environments ([#820](https://github.com/hi-ogawa/vite-plugins/pull/820))
+- refactor: simplify client reference mapping ([#836](https://github.com/hi-ogawa/vite-plugins/pull/836))
 - refactor(rsc)!: remove `entries.css` ([#831](https://github.com/hi-ogawa/vite-plugins/pull/831))
-- refactor(rsc): client reference ssr preinit/preload via proxy and remove `prepareDestination` ([#828](https://github.com/hi-ogawa/vite-plugins/pull/828))
-- refactor(rsc): tweak asset links api ([#826](https://github.com/hi-ogawa/vite-plugins/pull/826))
+- refactor: client reference ssr preinit/preload via proxy and remove `prepareDestination` ([#828](https://github.com/hi-ogawa/vite-plugins/pull/828))
+- refactor: tweak asset links api ([#826](https://github.com/hi-ogawa/vite-plugins/pull/826))
 
 ## v0.1.1 (2025-05-07)
 
