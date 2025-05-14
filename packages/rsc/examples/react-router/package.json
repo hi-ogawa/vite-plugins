@@ -11,11 +11,10 @@
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
   },
   "dependencies": {
-    "@hiogawa/vite-rsc": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-router": "0.0.0-experimental-28626d62e",
-    "react-server-dom-webpack": "latest"
+    "@hiogawa/vite-rsc": "https://pkg.pr.new/hi-ogawa/vite-plugins/@hiogawa/vite-rsc@851",
+    "react": "experimental",
+    "react-dom": "experimental",
+    "react-router": "0.0.0-experimental-28626d62e"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
