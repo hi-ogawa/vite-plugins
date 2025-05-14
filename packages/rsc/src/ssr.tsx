@@ -23,35 +23,44 @@ export function initialize(): void {
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
         }
+        const deps = getAssetsManifest().clientReferenceDeps[id];
+        // kick off preload before initial async import, which is not sync-cached
+        if (deps) {
+          preloadDeps(deps);
+        }
         const mod: any = await import_();
-        const deps = getAssetsManifest().clientReferenceDeps[id]!;
         return wrapResourceProxy(mod, deps);
       }
     },
   });
 }
 
-function wrapResourceProxy(mod: any, deps: AssetDeps) {
+// preload/preinit during getter access since `load` is cached on production
+function wrapResourceProxy(mod: any, deps?: AssetDeps) {
   return new Proxy(mod, {
     get(target, p, receiver) {
       if (p in mod) {
         if (deps) {
-          for (const js of deps.js) {
-            ReactDOM.preloadModule(withBase(js), {
-              as: "script",
-              // vite doesn't allow configuring crossorigin at the moment, so we can hard code it as well.
-              // https://github.com/vitejs/vite/issues/6648
-              crossOrigin: "",
-            });
-          }
-          for (const href of deps.css) {
-            ReactDOM.preinit(withBase(href), { as: "style" });
-          }
+          preloadDeps(deps);
         }
       }
       return Reflect.get(target, p, receiver);
     },
   });
+}
+
+function preloadDeps(deps: AssetDeps) {
+  for (const js of deps.js) {
+    ReactDOM.preloadModule(withBase(js), {
+      as: "script",
+      // vite doesn't allow configuring crossorigin at the moment, so we can hard code it as well.
+      // https://github.com/vitejs/vite/issues/6648
+      crossOrigin: "",
+    });
+  }
+  for (const href of deps.css) {
+    ReactDOM.preinit(withBase(href), { as: "style" });
+  }
 }
 
 export async function importRsc<T>(): Promise<T> {
