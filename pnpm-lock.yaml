@@ -552,9 +552,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -562,6 +559,9 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
     devDependencies:
+      react-server-dom-webpack:
+        specifier: ^19.1.0
+        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
       rsc-html-stream:
         specifier: ^0.0.6
         version: 0.0.6
@@ -577,9 +577,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.4
@@ -614,9 +611,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.4
@@ -657,9 +651,6 @@ importers:
       hono:
         specifier: ^4.7.5
         version: 4.7.5
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
 
   packages/rsc/examples/react-router:
     dependencies:
@@ -675,9 +666,6 @@ importers:
       react-router:
         specifier: 0.0.0-experimental-f1dd850aa
         version: 0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@react-router/dev':
         specifier: 0.0.0-experimental-f1dd850aa

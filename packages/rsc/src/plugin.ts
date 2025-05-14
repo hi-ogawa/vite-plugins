@@ -88,7 +88,7 @@ export default function vitePluginRsc({
                 entries: [entries.browser],
                 include: [
                   "react-dom/client",
-                  "react-server-dom-webpack/client.browser",
+                  `${PKG_NAME}/vendor/react-server-dom/client.browser`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -102,6 +102,7 @@ export default function vitePluginRsc({
               },
               resolve: {
                 noExternal: [PKG_NAME],
+                external: [`${PKG_NAME}/vendor/react-server-dom/client.edge`],
               },
               optimizeDeps: {
                 exclude: [PKG_NAME],
@@ -114,7 +115,7 @@ export default function vitePluginRsc({
                 noExternal: [
                   "react",
                   "react-dom",
-                  "react-server-dom-webpack",
+                  `${PKG_NAME}/vendor/react-server-dom/server.edge`,
                   PKG_NAME,
                 ],
               },
@@ -123,8 +124,8 @@ export default function vitePluginRsc({
                   "react",
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
-                  "react-server-dom-webpack/server.edge",
-                  "react-server-dom-webpack/client.edge",
+                  `${PKG_NAME}/vendor/react-server-dom/server.edge`,
+                  `${PKG_NAME}/vendor/react-server-dom/client.edge`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -165,11 +166,7 @@ export default function vitePluginRsc({
           root: process.cwd(),
           isBuild: env.command === "build",
           isFrameworkPkgByJson(pkgJson) {
-            if (
-              [PKG_NAME, "react-dom", "react-server-dom-webpack"].includes(
-                pkgJson.name,
-              )
-            ) {
+            if ([PKG_NAME, "react-dom"].includes(pkgJson.name)) {
               return;
             }
             const deps = pkgJson["peerDependencies"];

@@ -96,17 +96,27 @@ export default defineConfig({
     },
   ],
   environments: {
+    client: {
+      optimizeDeps: {
+        include: ["@hiogawa/vite-rsc/vendor/react-server-dom/client.browser"],
+      },
+    },
+    ssr: {
+      resolve: {
+        external: ["@hiogawa/vite-rsc/vendor/react-server-dom/client.edge"],
+      },
+    },
     rsc: {
       resolve: {
         conditions: ["react-server", ...defaultServerConditions],
-        noExternal: ["react", "react-dom", "react-server-dom-webpack"],
+        noExternal: true,
       },
       optimizeDeps: {
         include: [
           "react",
           "react/jsx-runtime",
           "react/jsx-dev-runtime",
-          "react-server-dom-webpack/server.edge",
+          "@hiogawa/vite-rsc/vendor/react-server-dom/server.edge",
         ],
       },
     },
