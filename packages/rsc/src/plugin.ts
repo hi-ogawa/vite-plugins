@@ -160,7 +160,7 @@ export default function vitePluginRsc({
           isBuild: env.command === "build",
           isFrameworkPkgByJson(pkgJson) {
             if (
-              [PKG_NAME, "react-dom", "react-server-dom-webpack"].includes(
+              [PKG_NAME, "react-dom", "react-server-dom-vite"].includes(
                 pkgJson.name,
               )
             ) {
