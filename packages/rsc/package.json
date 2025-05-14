@@ -23,13 +23,13 @@
     "@mjackson/node-fetch-server": "^0.6.1",
     "vitefu": "^1.0.5"
   },
+  "devDependencies": {
+    "rsc-html-stream": "^0.0.6"
+  },
   "peerDependencies": {
     "react": "*",
     "react-dom": "*",
     "react-server-dom-webpack": "*",
     "vite": "*"
-  },
-  "devDependencies": {
-    "rsc-html-stream": "^0.0.6"
   }
 }
