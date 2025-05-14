@@ -62,9 +62,7 @@ export function Root(props: { url: URL }) {
         <TestSuspense url={props.url} />
         <TestActionFromClient />
         <TestUseActionState />
-        <TestPayload
-          skipBinary={props.url.searchParams.has("test-skip-binary")}
-        />
+        <TestPayload testBinary={props.url.searchParams.has("test-binary")} />
       </body>
     </html>
   );
@@ -110,7 +108,7 @@ function TestSuspense(props: { url: URL }) {
   return <a href="?test-suspense=1000">test-suspense</a>;
 }
 
-function TestPayload(props: { skipBinary?: boolean }) {
+function TestPayload(props: { testBinary?: boolean }) {
   return (
     <div data-testid="ssr-rsc-payload">
       test-payload:{" "}
@@ -118,7 +116,9 @@ function TestPayload(props: { skipBinary?: boolean }) {
         test1={"🙂"}
         test2={"<script>throw new Error('boom')</script>"}
         // reverse to have non-utf8 binary data
-        test3={props.skipBinary ? "" : new TextEncoder().encode("🔥").reverse()}
+        test3={
+          props.testBinary ? new TextEncoder().encode("🔥").reverse() : null
+        }
         test4={"&><\u2028\u2029"}
       />
     </div>
