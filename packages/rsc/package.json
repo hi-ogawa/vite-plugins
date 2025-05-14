@@ -24,12 +24,13 @@
     "vitefu": "^1.0.5"
   },
   "devDependencies": {
+    "react-server-dom-vite": "*",
     "rsc-html-stream": "^0.0.6"
   },
   "peerDependencies": {
     "react": "*",
     "react-dom": "*",
-    "react-server-dom-vite": "*",
     "vite": "*"
-  }
+  },
+  "bundleDependencies": ["react-server-dom-vite"]
 }
