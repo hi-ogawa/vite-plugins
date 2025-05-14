@@ -19,7 +19,7 @@ export default defineConfig({
     "src/extra/rsc.tsx",
   ],
   format: ["esm"],
-  external: [/^virtual:/],
+  external: [/^virtual:/, /^react-server-dom-vite\//],
   dts: {
     sourceMap: process.argv.slice(2).includes("--sourcemap"),
   },
