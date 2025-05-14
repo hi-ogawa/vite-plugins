@@ -16,8 +16,7 @@
   "dependencies": {
     "@hiogawa/vite-rsc": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "react-server-dom-webpack": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.4",

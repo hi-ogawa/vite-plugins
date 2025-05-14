@@ -14,8 +14,7 @@
     "@hiogawa/vite-rsc": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-router": "0.0.0-experimental-28626d62e",
-    "react-server-dom-webpack": "latest"
+    "react-router": "0.0.0-experimental-28626d62e"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
