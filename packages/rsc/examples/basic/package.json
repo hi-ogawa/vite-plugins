@@ -14,10 +14,9 @@
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
   },
   "dependencies": {
-    "@hiogawa/vite-rsc": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-server-dom-webpack": "latest"
+    "@hiogawa/vite-rsc": "https://pkg.pr.new/hi-ogawa/vite-plugins/@hiogawa/vite-rsc@851",
+    "react": "experimental",
+    "react-dom": "experimental"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.4",

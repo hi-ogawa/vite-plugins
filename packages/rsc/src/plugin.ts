@@ -99,6 +99,7 @@ export default function vitePluginRsc({
               },
               resolve: {
                 noExternal: [PKG_NAME],
+                external: ["react-server-dom-vite/client.edge"],
               },
               optimizeDeps: {
                 exclude: [PKG_NAME],
@@ -149,7 +150,21 @@ export default function vitePluginRsc({
         };
       },
       async configEnvironment(name, _config, env) {
-        if (name !== "rsc") return;
+        // commonjsOptions needs to be tweaked when this is a linked dep
+        // since otherwise vendored cjs doesn't work.
+        const isLinkedDep = !import.meta.url.includes("/node_modules/");
+        const commonjsOptions = isLinkedDep
+          ? {
+              include: [/\/node_modules\//, /\/react-server-dom-vite\//],
+            }
+          : {};
+        if (name !== "rsc") {
+          return {
+            build: {
+              commonjsOptions,
+            },
+          };
+        }
 
         // bundle deps with react-server condition
 
@@ -159,11 +174,7 @@ export default function vitePluginRsc({
           root: process.cwd(),
           isBuild: env.command === "build",
           isFrameworkPkgByJson(pkgJson) {
-            if (
-              [PKG_NAME, "react-dom", "react-server-dom-vite"].includes(
-                pkgJson.name,
-              )
-            ) {
+            if ([PKG_NAME, "react-dom"].includes(pkgJson.name)) {
               return;
             }
             const deps = pkgJson["peerDependencies"];
@@ -174,6 +185,9 @@ export default function vitePluginRsc({
         return {
           resolve: {
             noExternal: result.ssr.noExternal.sort(),
+          },
+          build: {
+            commonjsOptions,
           },
         };
       },
