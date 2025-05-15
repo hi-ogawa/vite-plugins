@@ -918,7 +918,8 @@ export function vitePluginRscCss({
     environment: DevEnvironment,
     entryUrl: string,
   ) {
-    const entryMod = await environment.moduleGraph.getModuleByUrl(entryUrl);
+    const resolved = await environment.moduleGraph.resolveUrl(entryUrl);
+    const entryMod = environment.moduleGraph.getModuleById(resolved![1]);
     return collectCss(environment, entryMod!.id!);
   }
 
