@@ -149,6 +149,9 @@ importers:
       '@hiogawa/transforms':
         specifier: workspace:*
         version: link:../transforms
+      '@hiogawa/vite-rsc':
+        specifier: workspace:*
+        version: link:../rsc
       es-module-lexer:
         specifier: ^1.6.0
         version: 1.7.0
@@ -161,9 +164,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -174,9 +174,6 @@ importers:
       '@edge-runtime/cookies':
         specifier: ^6.0.0
         version: 6.0.0
-      '@hiogawa/vite-rsc':
-        specifier: workspace:*
-        version: link:../rsc
       '@tanstack/history':
         specifier: ^1.99.13
         version: 1.99.13
@@ -256,9 +253,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
       react-tweet:
         specifier: ^3.2.1
         version: 3.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
