@@ -1,4 +1,6 @@
+import fs from "node:fs";
 import { defineConfig } from "tsdown";
+import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig({
   entry: [
@@ -19,9 +21,27 @@ export default defineConfig({
     "src/extra/rsc.tsx",
   ],
   format: ["esm"],
-  external: [/^virtual:/],
+  external: [/^virtual:/, new RegExp(`^${pkg.name}/`)],
   dts: {
     sourceMap: process.argv.slice(2).includes("--sourcemap"),
   },
   bundleDts: false,
+  plugins: [
+    {
+      name: "vendor-react-server-dom",
+      buildStart() {
+        fs.rmSync("./dist/vendor/", { recursive: true, force: true });
+        fs.mkdirSync("./dist/vendor", { recursive: true });
+        fs.cpSync(
+          "./node_modules/react-server-dom-webpack",
+          "./dist/vendor/react-server-dom",
+          { recursive: true, dereference: true },
+        );
+        fs.rmSync("./dist/vendor/react-server-dom/node_modules", {
+          recursive: true,
+          force: true,
+        });
+      },
+    },
+  ],
 }) as any;

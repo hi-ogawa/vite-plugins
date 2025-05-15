@@ -1,6 +1,6 @@
-import type { ReactFormState } from "react-dom/client";
 // @ts-ignore
-import * as ReactServer from "react-server-dom-webpack/server.edge";
+import * as ReactServer from "@hiogawa/vite-rsc/vendor/react-server-dom/server.edge";
+import type { ReactFormState } from "react-dom/client";
 import { createClientManifest, createServerManifest } from "../core/rsc";
 
 export { loadServerAction, setRequireModule } from "../core/rsc";
