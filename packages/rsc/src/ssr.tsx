@@ -5,8 +5,6 @@ import { setRequireModule } from "./core/ssr";
 import type { AssetDeps, AssetsManifest } from "./plugin";
 import { withBase } from "./utils/base";
 
-export { createServerConsumerManifest } from "./core/ssr";
-
 export * from "./react/ssr";
 
 export function initialize(): void {

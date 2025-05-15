@@ -1,6 +1,5 @@
 // @ts-ignore
-import * as ReactClient from "react-server-dom-webpack/client.edge";
-import { createServerConsumerManifest } from "../core/ssr";
+import * as ReactClient from "react-server-dom-vite/client.edge";
 
 export { setRequireModule } from "../core/ssr";
 
@@ -9,7 +8,6 @@ export function createFromReadableStream<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromReadableStream(stream, {
-    serverConsumerManifest: createServerConsumerManifest(),
     ...options,
   });
 }
