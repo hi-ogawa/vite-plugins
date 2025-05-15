@@ -9,6 +9,7 @@ import {
   build,
   createBuilder,
   createServerModuleRunner,
+  defaultServerConditions,
   isCSSRequest,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
@@ -162,11 +163,12 @@ export function vitePluginReactServer(
             "react/jsx-dev-runtime",
             "react-dom",
             "react-dom/client",
-            "react-server-dom-webpack/client.browser",
+            "@hiogawa/react-server > @hiogawa/vite-rsc/react/browser",
           ],
         },
         ssr: {
           noExternal: ["@hiogawa/react-server"],
+          external: ["@hiogawa/vite-rsc"],
           optimizeDeps: {
             exclude: ["@hiogawa/react-server"],
           },
@@ -191,7 +193,7 @@ export function vitePluginReactServer(
           rsc: {
             // external and optimizeDeps are configured by `serverDepsConfigPlugin`
             resolve: {
-              conditions: ["react-server"],
+              conditions: ["react-server", ...defaultServerConditions],
             },
             build: {
               outDir: path.join(outDir, "rsc"),
@@ -559,7 +561,7 @@ function serverDepsConfigPlugin(): Plugin {
             "react",
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
-            "react-server-dom-webpack/server.edge",
+            "@hiogawa/react-server > @hiogawa/vite-rsc/react/rsc",
           ],
         },
       };
