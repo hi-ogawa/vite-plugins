@@ -682,9 +682,6 @@ importers:
       '@react-router/dev':
         specifier: 0.0.0-experimental-f1dd850aa
         version: 0.0.0-experimental-f1dd850aa(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.13.0(@cloudflare/workers-types@4.20250423.0))(yaml@2.7.0)
-      '@react-router/fs-routes':
-        specifier: 0.0.0-experimental-f1dd850aa
-        version: 0.0.0-experimental-f1dd850aa(@react-router/dev@0.0.0-experimental-f1dd850aa(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.13.0(@cloudflare/workers-types@4.20250423.0))(yaml@2.7.0))(typescript@5.7.3)
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.4)
@@ -2416,16 +2413,6 @@ packages:
       typescript:
         optional: true
       wrangler:
-        optional: true
-
-  '@react-router/fs-routes@0.0.0-experimental-f1dd850aa':
-    resolution: {integrity: sha512-YHIfLoFzPnhhZcx3rezE9NZxhcfru4oJlj36issIwE04sjRrS7ISqmekewYUxV+kWyc8dkNjqP9qG6abPmLTJg==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      '@react-router/dev': ^0.0.0-experimental-f1dd850aa
-      typescript: ^5.1.0
-    peerDependenciesMeta:
-      typescript:
         optional: true
 
   '@react-router/node@0.0.0-experimental-f1dd850aa':
@@ -7444,13 +7431,6 @@ snapshots:
       - terser
       - tsx
       - yaml
-
-  '@react-router/fs-routes@0.0.0-experimental-f1dd850aa(@react-router/dev@0.0.0-experimental-f1dd850aa(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.13.0(@cloudflare/workers-types@4.20250423.0))(yaml@2.7.0))(typescript@5.7.3)':
-    dependencies:
-      '@react-router/dev': 0.0.0-experimental-f1dd850aa(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.13.0(@cloudflare/workers-types@4.20250423.0))(yaml@2.7.0)
-      minimatch: 9.0.5
-    optionalDependencies:
-      typescript: 5.7.3
 
   '@react-router/node@0.0.0-experimental-f1dd850aa(react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.7.3)':
     dependencies:
