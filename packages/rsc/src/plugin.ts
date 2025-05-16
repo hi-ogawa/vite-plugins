@@ -361,7 +361,7 @@ export default function vitePluginRsc({
                 source: asset.source,
               });
               if (asset.fileName.endsWith(".css")) {
-                rscCss.push(asset.fileName);
+                rscCss.push(`/${asset.fileName}`);
               }
             }
           }
