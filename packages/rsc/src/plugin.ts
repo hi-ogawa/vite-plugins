@@ -1005,11 +1005,10 @@ export function vitePluginRscCss({
         ids = collected.ids;
       }
       ids = ids.map((id) => id.replace(/^\0/, ""));
-      return ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
-      // let code = ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
-      // // ensure hmr boundary since otherwise non-self accepting css (e.g. css module) causes full reload
-      // code += `if (import.meta.hot) { import.meta.hot.accept() }\n`;
-      // return code;
+      let code = ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
+      // ensure hmr boundary since otherwise non-self accepting css (e.g. css module) causes full reload
+      code += `if (import.meta.hot) { import.meta.hot.accept() }\n`;
+      return code;
     }),
     {
       name: "rsc:css/dev-ssr-virtual",
