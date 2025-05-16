@@ -972,14 +972,6 @@ export function vitePluginRscCss({
             "\0virtual:vite-rsc/rsc-css-browser",
           );
         }
-
-        // if (isCSSRequest(ctx.file)) {
-        //   // filter out `.css?direct` (injected by SSR) to avoid browser full reload
-        //   // when changing non-self accepting css such as `module.css`.
-        //   const modules = ctx.modules.filter((m) => !m.id?.includes("?direct"));
-        //   //
-        //   return modules;
-        // }
       },
     },
     createVirtualPlugin("vite-rsc/rsc-css", async function () {
