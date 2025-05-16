@@ -13,18 +13,19 @@ export default async function handler(
   request: Request,
   callServer: (request: Request) => Promise<Response>,
 ) {
-  return routeRSCServerRequest(
+  return routeRSCServerRequest({
     request,
     callServer,
-    (body) => createFromReadableStream(body),
-    (getPayload) =>
-      ReactDomServer.renderToReadableStream(
+    decode: (body) => createFromReadableStream(body),
+    renderHTML(getPayload) {
+      return ReactDomServer.renderToReadableStream(
         <RSCStaticRouter getPayload={getPayload} />,
         {
           bootstrapModules: new URL(request.url).searchParams.has("__nojs")
             ? []
             : getAssetsManifest().entry.bootstrapModules,
         },
-      ),
-  );
+      );
+    },
+  });
 }

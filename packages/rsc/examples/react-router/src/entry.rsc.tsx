@@ -7,7 +7,6 @@ import {
   loadServerAction,
   renderToReadableStream,
 } from "@hiogawa/vite-rsc/rsc";
-import { unstable_ClientComponentPropsProvider } from "react-router";
 import {
   type DecodeCallServerFunction,
   type DecodeFormActionFunction,
@@ -52,7 +51,6 @@ async function callServer(request: Request) {
     decodeFormAction,
     request,
     routes,
-    unstable_ClientComponentPropsProvider,
     generateResponse(match) {
       return new Response(renderToReadableStream(match.payload), {
         status: match.statusCode,
