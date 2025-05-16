@@ -225,15 +225,18 @@ test("css module @js", async ({ page }) => {
     "rgb(255, 165, 0)",
   );
 
-  // TODO: hmr
-  // if (process.env.E2E_PREVIEW) return;
-  // await using _ = await createReloadChecker(page);
-  // using editor = createEditor("src/routes/client.module.css");
-  // editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
-  // await expect(page.getByTestId("css-module-client")).toHaveCSS(
-  //   "color",
-  //   "rgb(0, 165, 255)",
-  // );
+  if (process.env.E2E_PREVIEW) return;
+
+  // test client css module HMR
+  await using _ = await createReloadChecker(page);
+  using editor = createEditor("src/routes/client.module.css");
+  editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
+  await expect(page.getByTestId("css-module-client")).toHaveCSS(
+    "color",
+    "rgb(0, 165, 255)",
+  );
+
+  // TODO: test server css module HMR
 });
 
 testNoJs("css module @nojs", async ({ page }) => {
