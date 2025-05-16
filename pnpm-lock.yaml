@@ -673,8 +673,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: 0.0.0-experimental-28626d62e
-        version: 0.0.0-experimental-28626d62e(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.0.0-experimental-f1dd850aa
+        version: 0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
         version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
@@ -5269,8 +5269,8 @@ packages:
       react: ^19.1.0
       react-dom: ^19.1.0
 
-  react-router@0.0.0-experimental-28626d62e:
-    resolution: {integrity: sha512-s3PX3apVrg86b9cgASiPjN4IlAyEjLw/VdvoqgyrCCM4mFY8AhRy5KiUuJMxoecJOrFMjtOHeqwzGgDgsNcP3A==}
+  react-router@0.0.0-experimental-f1dd850aa:
+    resolution: {integrity: sha512-TW4BtBwMol4wW0ISd1+jNcGXN/Dd/sM6Uzk7bWFTHiYzWBCNtpQ1mKARVeZM1FbTM0sdyo9CVa5kDOYcWeAYbA==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.1.0
@@ -10751,7 +10751,7 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-router: 6.29.0(react@19.1.0)
 
-  react-router@0.0.0-experimental-28626d62e(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       cookie: 1.0.2
       react: 19.1.0
