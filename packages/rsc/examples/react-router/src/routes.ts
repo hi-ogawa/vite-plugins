@@ -1,20 +1,8 @@
-import type { ServerRouteObject } from "react-router/rsc";
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
-export const routes: ServerRouteObject[] = [
-  {
-    id: "root",
-    lazy: () => import("./routes/root"),
-    children: [
-      {
-        id: "home",
-        index: true,
-        lazy: () => import("./routes/home"),
-      },
-      {
-        id: "about",
-        path: "about",
-        lazy: () => import("./routes/about"),
-      },
-    ],
-  },
-];
+export default [
+  index("routes/home.tsx"),
+  route("about", "routes/about.tsx"),
+] satisfies RouteConfig;
+
+export const root = "./routes/root.tsx";

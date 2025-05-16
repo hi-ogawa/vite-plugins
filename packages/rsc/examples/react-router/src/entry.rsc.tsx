@@ -12,7 +12,9 @@ import {
   type DecodeFormActionFunction,
   matchRSCServerRequest,
 } from "react-router/rsc";
-import { routes } from "./routes";
+
+// @ts-ignore
+import routes from "./routes?react-router-routes";
 
 initialize();
 
