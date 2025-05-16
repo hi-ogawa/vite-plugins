@@ -40,7 +40,9 @@ export function Root(props: { url: URL }) {
         </form>
         <TestStyleClient />
         <div className="test-style-server">test-style-server</div>
-        <div className={styles.server}>test-css-module-server</div>
+        <div data-testid="css-module-server" className={styles.server}>
+          test-css-module-server
+        </div>
         <div>
           <a href="?test-client-style-no-ssr">test-client-style-no-ssr</a>{" "}
           {props.url.search.includes("test-client-style-no-ssr") && (

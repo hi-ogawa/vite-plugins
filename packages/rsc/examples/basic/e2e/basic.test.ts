@@ -213,6 +213,41 @@ test("css client no ssr", async ({ page }) => {
   );
 });
 
+test("css module @js", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.getByTestId("css-module-client")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+  await expect(page.getByTestId("css-module-server")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+
+  // TODO: hmr
+  // if (process.env.E2E_PREVIEW) return;
+  // await using _ = await createReloadChecker(page);
+  // using editor = createEditor("src/routes/client.module.css");
+  // editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
+  // await expect(page.getByTestId("css-module-client")).toHaveCSS(
+  //   "color",
+  //   "rgb(0, 165, 255)",
+  // );
+});
+
+testNoJs("css module @nojs", async ({ page }) => {
+  await page.goto("./");
+  await expect(page.getByTestId("css-module-client")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+  await expect(page.getByTestId("css-module-server")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+});
+
 test("tailwind @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);

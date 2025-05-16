@@ -26,7 +26,9 @@ export function TestStyleClient() {
   return (
     <>
       <div className="test-style-client">test-style-client</div>
-      <div className={styles.client}>test-css-module-client</div>
+      <div data-testid="css-module-client" className={styles.client}>
+        test-css-module-client
+      </div>
     </>
   );
 }
