@@ -29,6 +29,7 @@ let server: ViteDevServer;
 let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
+let rscBundle: Rollup.OutputBundle;
 
 type ClientReferenceMeta = {
   importId: string;
@@ -126,6 +127,7 @@ export default function vitePluginRsc({
               },
               build: {
                 outDir: "dist/rsc",
+                emitAssets: true,
                 rollupOptions: {
                   input: { index: ENTRIES.rsc },
                 },
@@ -344,7 +346,26 @@ export default function vitePluginRsc({
       },
       // client build
       generateBundle(_options, bundle) {
+        // copy assets from rsc build to client build
+        if (this.environment.name === "rsc") {
+          rscBundle = bundle;
+        }
+
         if (this.environment.name === "client") {
+          let rscCss: string[] = [];
+          for (const asset of Object.values(rscBundle)) {
+            if (asset.type === "asset") {
+              this.emitFile({
+                type: "asset",
+                fileName: asset.fileName,
+                source: asset.source,
+              });
+              if (asset.fileName.endsWith(".css")) {
+                rscCss.push(`/${asset.fileName}`);
+              }
+            }
+          }
+
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
@@ -354,6 +375,7 @@ export default function vitePluginRsc({
             }
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
+          entry.deps.css.push(...rscCss);
           const manifest: AssetsManifest = {
             entry: {
               bootstrapModules: [`/${entry.chunk.fileName}`],
@@ -930,9 +952,6 @@ export function vitePluginRscCss({
     }
   }
 
-  // collect during rsc build and pass it to browser build
-  const rscCssIdsBuild = new Set<string>();
-
   return [
     {
       name: "rsc:css",
@@ -947,16 +966,6 @@ export function vitePluginRscCss({
             server.environments.client,
             "\0virtual:vite-rsc/rsc-css-browser",
           );
-        }
-      },
-      transform(_code, id) {
-        if (
-          this.environment.mode === "build" &&
-          this.environment.name === "rsc"
-        ) {
-          if (isCSSRequest(id)) {
-            rscCssIdsBuild.add(id);
-          }
         }
       },
     },
@@ -974,10 +983,8 @@ export function vitePluginRscCss({
     }),
     createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
       assert(this.environment.name === "client");
-      let ids: string[];
-      if (this.environment.mode === "build") {
-        ids = [...rscCssIdsBuild];
-      } else {
+      let ids: string[] = [];
+      if (this.environment.mode === "dev") {
         const collected = await collectCssByUrl(
           server.environments.rsc!,
           entries.rsc,
