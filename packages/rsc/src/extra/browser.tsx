@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import { rscStream } from "rsc-html-stream/client";
 import {
   type CallServerCallback,
   createFromFetch,
@@ -11,6 +10,7 @@ import {
   setServerCallback,
 } from "../browser";
 import type { RscPayload } from "./rsc";
+import { getRscScript } from "./utils/rsc-script";
 
 export async function hydrate(options?: {
   serverCallback?: () => void;
@@ -47,7 +47,9 @@ export async function hydrate(options?: {
     setPayload(payload);
   }
 
-  const initialPayload = await createFromReadableStream<RscPayload>(rscStream);
+  const initialPayload = await createFromReadableStream<RscPayload>(
+    getRscScript(),
+  );
 
   let setPayload: (v: RscPayload) => void;
 
