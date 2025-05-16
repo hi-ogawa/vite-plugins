@@ -49,7 +49,7 @@ function injectRscScriptInner(
             );
           } catch (e) {
             // silence enqueue error e.g. when response stream is aborted
-            // console.error("[enqueueScript]", e)
+            console.error("[enqueueScript]", e);
           }
         };
         rscPromise = stream.pipeTo(
@@ -121,7 +121,7 @@ function createBufferedTransformStream(): TransformStream<
           controller.enqueue(concatArrays(buffer));
         } catch (e) {
           // silence enqueue error e.g. when response stream is aborted
-          // console.error("[createBufferedTransformStream]", e)
+          console.error("[createBufferedTransformStream]", e);
         }
         buffer = [];
         timeout = undefined;
