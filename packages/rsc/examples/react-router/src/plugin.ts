@@ -13,16 +13,17 @@ export default function vitePluginReactRouter(): Plugin[] {
         if (id.endsWith("?react-router-routes")) {
           const imported = await runnerImport<any>(id);
           const appDirectory = path.dirname(id);
+          const routes = [
+            {
+              id: "root",
+              path: "",
+              file: path.resolve(appDirectory, imported.module.root),
+              children: imported.module.default,
+            },
+          ];
           const code = generateRoutesCode({
             appDirectory,
-            routes: [
-              {
-                id: "root",
-                path: "",
-                file: path.resolve(appDirectory, imported.module.root),
-                children: imported.module.default,
-              },
-            ],
+            routes,
           });
           return code;
         }
@@ -48,9 +49,8 @@ function generateRoutesCode(config: {
       continue;
     }
     code += "{";
-    code += `lazy: () => import(${JSON.stringify(
-      path.resolve(config.appDirectory, route.file),
-    )}),`;
+    // TODO: route-module transform
+    code += `lazy: () => import(${JSON.stringify(path.resolve(config.appDirectory, route.file))}),`;
     code += `id: ${JSON.stringify(route.id || createRouteId(route.file, config.appDirectory))},`;
     if (typeof route.path === "string") {
       code += `path: ${JSON.stringify(route.path)},`;
