@@ -39,6 +39,13 @@ jobs:
       - run: pnpm -C packages/rsc/examples/react-router test-e2e
       - run: pnpm -C packages/rsc/examples/react-router build
       - run: pnpm -C packages/rsc/examples/react-router test-e2e-preview
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            packages/rsc/examples/basic/test-results
+            packages/rsc/examples/react-router/test-results
 
   test-react-server-basic:
     runs-on: ubuntu-latest
