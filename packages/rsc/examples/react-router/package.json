@@ -18,6 +18,7 @@
     "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
+    "@react-router/dev": "0.0.0-experimental-f1dd850aa",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.4",
     "@types/react": "latest",
