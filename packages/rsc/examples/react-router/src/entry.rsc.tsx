@@ -10,30 +10,11 @@ import {
 import {
   type DecodeCallServerFunction,
   type DecodeFormActionFunction,
-  type ServerRouteObject,
   matchRSCServerRequest,
 } from "react-router/rsc";
+import { routes } from "./routes";
 
 initialize();
-
-const routes: ServerRouteObject[] = [
-  {
-    id: "root",
-    lazy: () => import("./routes/root"),
-    children: [
-      {
-        id: "home",
-        index: true,
-        lazy: () => import("./routes/home"),
-      },
-      {
-        id: "about",
-        path: "about",
-        lazy: () => import("./routes/about"),
-      },
-    ],
-  },
-];
 
 const decodeCallServer: DecodeCallServerFunction = async (actionId, reply) => {
   const args = await decodeReply(reply);
