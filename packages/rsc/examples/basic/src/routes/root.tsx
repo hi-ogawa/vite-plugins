@@ -18,6 +18,7 @@ import {
 } from "./client";
 import { TestStyleClient2 } from "./client2";
 import ErrorBoundary from "./error-boundary";
+import styles from "./server.module.css";
 
 export function Root(props: { url: URL }) {
   return (
@@ -39,6 +40,9 @@ export function Root(props: { url: URL }) {
         </form>
         <TestStyleClient />
         <div className="test-style-server">test-style-server</div>
+        <div data-testid="css-module-server" className={styles.server}>
+          test-css-module-server
+        </div>
         <div>
           <a href="?test-client-style-no-ssr">test-client-style-no-ssr</a>{" "}
           {props.url.search.includes("test-client-style-no-ssr") && (

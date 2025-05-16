@@ -226,8 +226,13 @@ export default function vitePluginRsc({
         };
       },
       async hotUpdate(ctx) {
-        // css file imported by anywhere sould work based on default hmr
-        if (isCSSRequest(ctx.file)) return;
+        if (isCSSRequest(ctx.file)) {
+          if (this.environment.name === "client") {
+            // filter out `.css?direct` (injected by SSR) to avoid browser full reload
+            // when changing non-self accepting css such as `module.css`.
+            return ctx.modules.filter((m) => !m.id?.includes("?direct"));
+          }
+        }
 
         const ids = ctx.modules.map((mod) => mod.id).filter((v) => v !== null);
         if (ids.length === 0) return;
@@ -992,7 +997,10 @@ export function vitePluginRscCss({
         ids = collected.ids;
       }
       ids = ids.map((id) => id.replace(/^\0/, ""));
-      return ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
+      let code = ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
+      // ensure hmr boundary since otherwise non-self accepting css (e.g. css module) causes full reload
+      code += `if (import.meta.hot) { import.meta.hot.accept() }\n`;
+      return code;
     }),
     {
       name: "rsc:css/dev-ssr-virtual",
