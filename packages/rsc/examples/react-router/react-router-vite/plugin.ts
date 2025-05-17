@@ -1,14 +1,14 @@
+import childProcess from "node:child_process";
 import path from "node:path";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
 import { type Plugin, runnerImport } from "vite";
 
-// based on
-// https://github.com/jacob-ebey/parcel-plugin-react-router/blob/9385be813534537dfb0fe640a3e5c5607be3b61d/packages/resolver/src/resolver.ts
+let typegen: childProcess.ChildProcess;
 
-export default function vitePluginReactRouter(): Plugin[] {
+export function reactRouter(): Plugin[] {
   return [
     {
-      name: "react-router-routes",
+      name: "react-router:routes",
       async load(id) {
         if (id.endsWith("?react-router-routes")) {
           const imported = await runnerImport<any>(id);
@@ -17,7 +17,7 @@ export default function vitePluginReactRouter(): Plugin[] {
             {
               id: "root",
               path: "",
-              file: path.resolve(appDirectory, imported.module.root),
+              file: path.resolve(appDirectory, "root.tsx"),
               children: imported.module.default,
             },
           ];
@@ -29,8 +29,22 @@ export default function vitePluginReactRouter(): Plugin[] {
         }
       },
     },
+    {
+      name: "react-router:typegen",
+      apply: "serve",
+      buildStart() {
+        typegen = childProcess.spawn("react-router", ["typegen", "--watch"]);
+      },
+      buildEnd() {
+        if (typegen) typegen.kill();
+        typegen = undefined!;
+      },
+    },
   ];
 }
+
+// copied from
+// https://github.com/jacob-ebey/parcel-plugin-react-router/blob/9385be813534537dfb0fe640a3e5c5607be3b61d/packages/resolver/src/resolver.ts
 
 function generateRoutesCode(config: {
   appDirectory: string;
