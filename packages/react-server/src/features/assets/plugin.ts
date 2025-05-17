@@ -28,6 +28,10 @@ export function vitePluginServerAssets({
       if (!manager.buildType) {
         // extract <head> injected by plugins
         let { head } = await getIndexHtmlTransform($__global.dev.server);
+        head = head.replace(
+          '<script type="module">',
+          '<script type="module" async>',
+        );
 
         // serve dev css as ?direct so that ssr html won't get too huge.
         // then remove this injected style on first hot update.
