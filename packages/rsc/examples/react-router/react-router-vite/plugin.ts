@@ -98,7 +98,7 @@ export function reactRouter(): Plugin[] {
         // TODO: this seems necessary to compose better with `@hiogawa/vite-rsc`'s `hotUpdate`
         order: "post",
         handler(ctx) {
-          if (this.environment.name === 'client') {
+          if (this.environment.name === "client") {
             // invalidate only client route source for hmr
             const modules = ctx.modules.filter((m) =>
               m.id?.includes("?react-router-client-route-module-source"),
