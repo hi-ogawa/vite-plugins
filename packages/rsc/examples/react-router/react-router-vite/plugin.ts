@@ -1,7 +1,7 @@
 import path from "node:path";
+import type { RouteConfigEntry } from "@react-router/dev/routes";
 import { type Plugin, runnerImport, transformWithEsbuild } from "vite";
 import { transformRouteModule } from "./transformer/transformer";
-import type { RouteConfigEntry } from "@react-router/dev/routes";
 
 export function reactRouter(): Plugin[] {
   return [
@@ -18,7 +18,7 @@ export function reactRouter(): Plugin[] {
             {
               id: "root",
               path: "",
-              file: path.resolve(appDirectory, imported.module.root),
+              file: path.resolve(appDirectory, "root"),
               children: imported.module.default,
             },
           ];
@@ -42,7 +42,8 @@ export function reactRouter(): Plugin[] {
           const result = await transformRouteModule({
             code,
             filePath,
-            clientHelper: "/plugin/transformer/client-route-component-props.ts",
+            clientHelper:
+              "/react-router-vite/transformer/client-route-component-props.ts",
           });
 
           routeModuleAssets[filePath] = {};
