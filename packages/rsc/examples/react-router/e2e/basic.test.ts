@@ -45,7 +45,7 @@ testNoJs("ssr modulepreload @build", async ({ page }) => {
   const viteManifest = JSON.parse(
     fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
   );
-  const file = "/" + viteManifest["src/routes/home.client.tsx"].file;
+  const file = "/" + viteManifest["app/routes/home.client.tsx"].file;
   expect(srcs).toContain(file);
 });
 
@@ -59,7 +59,7 @@ test("client hmr @dev", async ({ page }) => {
     page.getByRole("button", { name: "Client counter: 1" }),
   ).toBeVisible();
 
-  using editor = createEditor("./src/routes/about.tsx");
+  using editor = createEditor("./app/routes/about.tsx");
   editor.edit((s) => s.replace("Client counter:", "Client [edit] counter:"));
 
   await expect(
@@ -74,7 +74,7 @@ test("server hmr @dev", async ({ page }) => {
 
   await page.getByText("This is the home page.").click();
 
-  using editor = createEditor("./src/routes/home.tsx");
+  using editor = createEditor("./app/routes/home.tsx");
   editor.edit((s) =>
     s.replace("This is the home page.", "This is the home [edit] page."),
   );

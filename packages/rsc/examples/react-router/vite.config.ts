@@ -2,7 +2,7 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import reactRouter from "./src/plugin";
+import { reactRouter } from "./react-router-vite/plugin";
 
 export default defineConfig({
   clearScreen: false,
@@ -15,9 +15,9 @@ export default defineConfig({
     reactRouter(),
     rsc({
       entries: {
-        browser: "./src/entry.browser.tsx",
-        ssr: "./src/entry.ssr.tsx",
-        rsc: "./src/entry.rsc.tsx",
+        browser: "./react-router-vite/entry.browser.tsx",
+        ssr: "./react-router-vite/entry.ssr.tsx",
+        rsc: "./react-router-vite/entry.rsc.tsx",
       },
     }),
   ],

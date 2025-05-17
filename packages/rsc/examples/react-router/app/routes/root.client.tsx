@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useNavigate, useNavigation, useRouteError } from "react-router";
+import { useNavigation, useRouteError } from "react-router";
 
 export function GlobalNavigationLoadingBar() {
   const navigation = useNavigation();
@@ -42,19 +41,4 @@ export function DumpError() {
       <pre>{message}</pre>
     </>
   );
-}
-
-export function ServerHmr() {
-  if (import.meta.hot) {
-    const navigate = useNavigate();
-    React.useEffect(() => {
-      const refetch = () =>
-        navigate(window.location.pathname, { replace: true });
-      import.meta.hot!.on("rsc:update", refetch);
-      return () => {
-        import.meta.hot!.off("rsc:update", refetch);
-      };
-    }, [navigate]);
-  }
-  return null;
 }

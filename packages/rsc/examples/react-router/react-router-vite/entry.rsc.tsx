@@ -1,4 +1,3 @@
-import "./styles.css";
 import {
   decodeAction,
   decodeReply,
@@ -14,7 +13,7 @@ import {
 } from "react-router/rsc";
 
 // @ts-ignore
-import routes from "./routes?react-router-routes";
+import routes from "../app/routes?react-router-routes";
 
 initialize();
 
