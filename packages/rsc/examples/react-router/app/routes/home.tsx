@@ -12,7 +12,7 @@ export function loader({ request }: Route.LoaderArgs) {
   return { name: name || "Unknown" };
 }
 
-export default function ServerComponent({ loaderData }: Route.ComponentProps) {
+export function ServerComponent({ loaderData }: Route.ComponentProps) {
   return (
     <main className="container my-8 px-8 mx-auto">
       <article className="paper prose max-w-none">
