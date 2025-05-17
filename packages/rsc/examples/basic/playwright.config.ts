@@ -27,6 +27,7 @@ export default defineConfig({
   webServer: {
     command,
     port,
+    stdout: "pipe",
   },
   grepInvert: isPreview ? /@dev/ : /@build/,
   forbidOnly: !!process.env["CI"],
