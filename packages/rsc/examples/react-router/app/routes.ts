@@ -4,5 +4,3 @@ export default [
   index("routes/home.tsx"),
   route("about", "routes/about.tsx"),
 ] satisfies RouteConfig;
-
-export const root = "./routes/root.tsx";
