@@ -1,7 +1,6 @@
 import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
-import { injectRSCPayload } from "rsc-html-stream/server";
 import {
   createFromReadableStream,
   getAssetsManifest,
@@ -9,6 +8,7 @@ import {
 } from "../ssr";
 import { withBase } from "../utils/base";
 import type { RscPayload } from "./rsc";
+import { injectRscScript } from "./utils/rsc-script";
 
 export async function renderHtml({
   stream,
@@ -48,7 +48,7 @@ export async function renderHtml({
   let responseStream: ReadableStream = htmlStream;
   if (!options?.__nojs) {
     responseStream = responseStream.pipeThrough(
-      injectRSCPayload(stream2, {
+      injectRscScript(stream2, {
         nonce: options?.nonce,
       }),
     );

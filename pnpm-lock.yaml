@@ -180,9 +180,6 @@ importers:
       '@tanstack/history':
         specifier: ^1.99.13
         version: 1.99.13
-      rsc-html-stream:
-        specifier: ^0.0.6
-        version: 0.0.6
 
   packages/react-server-next:
     dependencies:
@@ -617,6 +614,9 @@ importers:
       react-server-dom-webpack:
         specifier: ^19.1.0
         version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.21)(esbuild@0.24.2))
+      rsc-html-stream:
+        specifier: ^0.0.5
+        version: 0.0.5
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.4
@@ -5474,6 +5474,9 @@ packages:
     resolution: {integrity: sha512-5SsIRtJy9bf1ErAOiFMFzl64Ex9X5V7bnJ+WlFMb+zmP459OSWCEG7b0ERZ+PEU7xPt4OG3RHbrp1LJlXxYTrw==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
+
+  rsc-html-stream@0.0.5:
+    resolution: {integrity: sha512-UhLsi8XLAu1NIBcFZjykoPiSLEAxfkGxkmr/Tnv4KnqhG18A65dVTCWovRvFdpzng6IyVW2f6nTAKz7lw+QhgQ==}
 
   rsc-html-stream@0.0.6:
     resolution: {integrity: sha512-oZUJ5AH0oDo9QywxD9yMY6N5Z3VwX2YfQg0FanNdCmvXmO0itTfv7BMkbMSwxg7JmBjYmefU8DTW0EcLsePPgQ==}
@@ -11129,6 +11132,8 @@ snapshots:
       '@rollup/rollup-win32-ia32-msvc': 4.38.0
       '@rollup/rollup-win32-x64-msvc': 4.38.0
       fsevents: 2.3.3
+
+  rsc-html-stream@0.0.5: {}
 
   rsc-html-stream@0.0.6: {}
 
