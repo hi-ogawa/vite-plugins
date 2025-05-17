@@ -1,7 +1,11 @@
 import { Resources } from "@hiogawa/vite-rsc/rsc";
 import { Link, Outlet } from "react-router";
 import { TestClientState, TestHydrated } from "./client";
-import { DumpError, GlobalNavigationLoadingBar } from "./root.client";
+import {
+  DumpError,
+  GlobalNavigationLoadingBar,
+  ServerHmr,
+} from "./root.client";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   console.log("Layout");
@@ -32,6 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </nav>
         </header>
         <GlobalNavigationLoadingBar />
+        <ServerHmr />
         {children}
       </body>
     </html>
