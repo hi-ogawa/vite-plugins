@@ -15,8 +15,7 @@ import type { ServerPayload } from "react-router/rsc";
 
 initialize({
   onHmrReload() {
-    // TODO: refetch on server change?
-    window.location.reload();
+    // currently handle by `<ServerHmr />` in `root.client.tsx`
   },
 });
 

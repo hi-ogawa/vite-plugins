@@ -1,5 +1,11 @@
 import fs from "node:fs";
 import { expect, test } from "@playwright/test";
+import {
+  createEditor,
+  expectNoReload,
+  testNoJs,
+  waitForHydration,
+} from "./helper";
 
 test("loader", async ({ page }) => {
   await page.goto("./");
@@ -8,7 +14,7 @@ test("loader", async ({ page }) => {
 
 test("client", async ({ page }) => {
   await page.goto("./about");
-  await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
+  await waitForHydration(page);
   await page.getByRole("button", { name: "Client counter: 0" }).click();
   await expect(
     page.getByRole("button", { name: "Client counter: 1" }),
@@ -17,23 +23,18 @@ test("client", async ({ page }) => {
 
 test("navigation", async ({ page }) => {
   await page.goto("./");
-  await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+
   await page.getByText("This is the home page.").click();
-  await page.getByTestId("client-state").fill("ok");
 
   await page.getByRole("link", { name: "About" }).click();
   await page.waitForURL("/about");
   await page.getByText("This is the about page.").click();
-  await expect(page.getByTestId("client-state")).toHaveValue("ok");
 
   await page.getByRole("link", { name: "Home" }).click();
   await page.waitForURL("/");
   await page.getByText("This is the home page.").click();
-  await expect(page.getByTestId("client-state")).toHaveValue("ok");
-});
-
-const testNoJs = test.extend({
-  javaScriptEnabled: ({}, use) => use(false),
 });
 
 testNoJs("ssr modulepreload @build", async ({ page }) => {
@@ -46,4 +47,37 @@ testNoJs("ssr modulepreload @build", async ({ page }) => {
   );
   const file = "/" + viteManifest["src/routes/home.client.tsx"].file;
   expect(srcs).toContain(file);
+});
+
+test("client hmr @dev", async ({ page }) => {
+  await page.goto("./about");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+
+  await page.getByRole("button", { name: "Client counter: 0" }).click();
+  await expect(
+    page.getByRole("button", { name: "Client counter: 1" }),
+  ).toBeVisible();
+
+  using editor = createEditor("./src/routes/about.tsx");
+  editor.edit((s) => s.replace("Client counter:", "Client [edit] counter:"));
+
+  await expect(
+    page.getByRole("button", { name: "Client [edit] counter: 1" }),
+  ).toBeVisible();
+});
+
+test("server hmr @dev", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+
+  await page.getByText("This is the home page.").click();
+
+  using editor = createEditor("./src/routes/home.tsx");
+  editor.edit((s) =>
+    s.replace("This is the home page.", "This is the home [edit] page."),
+  );
+
+  await page.getByText("This is the home [edit] page.").click();
 });
