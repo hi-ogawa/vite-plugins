@@ -60,6 +60,7 @@ export async function transformRouteModule(options: {
     uniqueKey: string;
     type: string;
     content: string;
+    exportsToRemove?: string[];
   }[] = [];
 
   const routeSource = options.code;
@@ -127,6 +128,7 @@ export async function transformRouteModule(options: {
       uniqueKey: id,
       type: "jsx",
       content,
+      exportsToRemove,
     });
 
     return id;
