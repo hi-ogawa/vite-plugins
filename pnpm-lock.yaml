@@ -562,9 +562,36 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
     devDependencies:
+      '@react-router/dev':
+        specifier: 0.0.0-experimental-f1dd850aa
+        version: 0.0.0-experimental-f1dd850aa(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.13.0(@cloudflare/workers-types@4.20250423.0))(yaml@2.7.0)
+      react-router:
+        specifier: 0.0.0-experimental-f1dd850aa
+        version: 0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       rsc-html-stream:
         specifier: ^0.0.6
         version: 0.0.6
+
+  packages/rsc-react-router:
+    dependencies:
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@hiogawa/vite-rsc':
+        specifier: workspace:*
+        version: link:../rsc
+      '@react-router/dev':
+        specifier: 0.0.0-experimental-f1dd850aa
+        version: 0.0.0-experimental-f1dd850aa(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.13.0(@cloudflare/workers-types@4.20250423.0))(yaml@2.7.0)
+      react-router:
+        specifier: 0.0.0-experimental-f1dd850aa
+        version: 0.0.0-experimental-f1dd850aa(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+
+  packages/rsc-react-router/examples/basic: {}
 
   packages/rsc/examples/basic:
     dependencies:
