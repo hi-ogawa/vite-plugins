@@ -9,6 +9,8 @@ export { createServerConsumerManifest } from "./core/ssr";
 
 export * from "./react/ssr";
 
+initialize();
+
 export function initialize(): void {
   setRequireModule({
     load: async (id) => {

@@ -4,6 +4,8 @@ import { withBase } from "./utils/base";
 
 export * from "./react/browser";
 
+initialize();
+
 export function initialize(options?: {
   onHmrReload?: () => void;
 }): void {
