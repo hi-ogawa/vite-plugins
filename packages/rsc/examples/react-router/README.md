@@ -8,4 +8,9 @@ Or try it locally by:
 
 ```sh
 npx giget gh:hi-ogawa/vite-plugins/packages/rsc/examples/react-router my-app
+cd my-app
+npm i
+npm run dev
+npm run build
+npm run preview
 ```
