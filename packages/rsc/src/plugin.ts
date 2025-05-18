@@ -712,6 +712,7 @@ function withRollupError<F extends (...args: any[]) => any>(
       if (result instanceof Promise) {
         return result.catch((e: any) => processError(e));
       }
+      return result;
     } catch (e: any) {
       processError(e);
     }
