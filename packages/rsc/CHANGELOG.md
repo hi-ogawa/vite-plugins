@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.2 (2025-05-18)
+
+- fix: emit server assets and copy to client ([#861](https://github.com/hi-ogawa/vite-plugins/pull/861))
+- fix: css modules hmr ([#860](https://github.com/hi-ogawa/vite-plugins/pull/860))
+- fix: fix `collectCssByUrl` error ([#856](https://github.com/hi-ogawa/vite-plugins/pull/856))
+- fix: show invalid transform error with code frame ([#871](https://github.com/hi-ogawa/vite-plugins/pull/871))
+- perf: preload client reference deps before non-cached import ([#850](https://github.com/hi-ogawa/vite-plugins/pull/850))
+
 ## v0.2.1 (2025-05-13)
 
 - feat: automatic client package heuristics ([#830](https://github.com/hi-ogawa/vite-plugins/pull/830))
