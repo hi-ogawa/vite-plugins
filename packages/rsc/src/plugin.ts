@@ -700,14 +700,20 @@ function withRollupError<F extends (...args: any[]) => any>(
   ctx: Rollup.TransformPluginContext,
   f: F,
 ): F {
+  function processError(e: any): never {
+    if (e && typeof e === "object" && typeof e.pos === "number") {
+      return ctx.error(e, e.pos);
+    }
+    throw e;
+  }
   return function (this: any, ...args: any[]) {
     try {
-      return f.apply(this, args);
-    } catch (e: any) {
-      if (e && typeof e === "object" && typeof e.pos === "number") {
-        return ctx.error(e, e.pos);
+      const result = f.apply(this, args);
+      if (result instanceof Promise) {
+        return result.catch((e: any) => processError(e));
       }
-      throw e;
+    } catch (e: any) {
+      processError(e);
     }
   } as F;
 }
