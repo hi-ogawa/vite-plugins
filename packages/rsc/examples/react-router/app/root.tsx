@@ -25,6 +25,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <li className="flex gap-4 not-last:after:block">
                 <Link to="/about">About</Link>
               </li>
+              <li>
+                <Link to="/optimistic">/optimistic</Link>
+              </li>
+              <li>
+                <Link to="/server-loader">/server-loader</Link>
+              </li>
+              <li>
+                <Link to="/client-loader">/client-loader</Link>
+              </li>
+              <li>
+                <Link to="/client-loader-hydrate">/client-loader-hydrate</Link>
+              </li>
+              <li>
+                <Link to="/client-loader-without-server-loader">
+                  /client-loader-without-server-loader
+                </Link>
+              </li>
               <li className="flex-1"></li>
               <li className="flex items-center gap-2 text-gray-500">
                 <TestHydrated />
