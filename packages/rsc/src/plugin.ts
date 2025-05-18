@@ -540,7 +540,11 @@ function vitePluginUseClient(): Plugin[] {
           }
         }
 
-        const result = transformDirectiveProxyExport(ast, {
+        const transformDirectiveProxyExport_ = withRollupError(
+          this,
+          transformDirectiveProxyExport,
+        );
+        const result = transformDirectiveProxyExport_(ast, {
           directive: "use client",
           runtime: (name) =>
             `$$ReactServer.registerClientReference({}, ${JSON.stringify(referenceKey)}, ${JSON.stringify(name)})`,
@@ -634,7 +638,11 @@ function vitePluginUseServer(): Plugin[] {
         const ast = await parseAstAsync(code);
         const normalizedId = normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
-          const { output } = transformServerActionServer(code, ast, {
+          const transformServerActionServer_ = withRollupError(
+            this,
+            transformServerActionServer,
+          );
+          const { output } = transformServerActionServer_(code, ast, {
             runtime: (value, name) =>
               `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
@@ -647,7 +655,11 @@ function vitePluginUseServer(): Plugin[] {
             map: output.generateMap({ hires: "boundary" }),
           };
         } else {
-          const result = transformDirectiveProxyExport(ast, {
+          const transformDirectiveProxyExport_ = withRollupError(
+            this,
+            transformDirectiveProxyExport,
+          );
+          const result = transformDirectiveProxyExport_(ast, {
             code,
             runtime: (name) =>
               `$$ReactClient.createServerReference(` +
@@ -681,6 +693,30 @@ function vitePluginUseServer(): Plugin[] {
       return { code, map: null };
     }),
   ];
+}
+
+// Rethrow transform error through `this.error` with `error.pos` which is injected by `@hiogawa/transforms`
+function withRollupError<F extends (...args: any[]) => any>(
+  ctx: Rollup.TransformPluginContext,
+  f: F,
+): F {
+  function processError(e: any): never {
+    if (e && typeof e === "object" && typeof e.pos === "number") {
+      return ctx.error(e, e.pos);
+    }
+    throw e;
+  }
+  return function (this: any, ...args: any[]) {
+    try {
+      const result = f.apply(this, args);
+      if (result instanceof Promise) {
+        return result.catch((e: any) => processError(e));
+      }
+      return result;
+    } catch (e: any) {
+      processError(e);
+    }
+  } as F;
 }
 
 function createVirtualPlugin(name: string, load: Plugin["load"]) {
