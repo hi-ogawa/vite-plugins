@@ -2,6 +2,7 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import inspect from "vite-plugin-inspect";
 import { reactRouter } from "./react-router-vite/plugin";
 
 export default defineConfig({
@@ -20,5 +21,6 @@ export default defineConfig({
         rsc: "./react-router-vite/entry.rsc.tsx",
       },
     }),
+    inspect(),
   ],
 }) as any;
