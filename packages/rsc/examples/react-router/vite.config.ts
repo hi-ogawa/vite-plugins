@@ -2,8 +2,8 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { reactRouter } from "./react-router-vite/plugin";
 import inspect from "vite-plugin-inspect";
+import { reactRouter } from "./react-router-vite/plugin";
 
 export default defineConfig({
   clearScreen: false,
