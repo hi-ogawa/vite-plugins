@@ -478,10 +478,11 @@ export default function vitePluginRsc({
       },
     },
     ...vitePluginRscCore(),
+    // `?vite-rsc-ssr-css` load hook should run before `virtual:vite-rsc/client-package-proxy`
+    ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
-    ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
@@ -597,10 +598,7 @@ function vitePluginUseClient(): Plugin[] {
         },
       },
       async load(id) {
-        if (
-          id.startsWith("\0virtual:vite-rsc/client-package-proxy/") &&
-          !ssrCssRE.test(id)
-        ) {
+        if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
           assert(this.environment.mode === "dev");
           const source = id.slice(
             "\0virtual:vite-rsc/client-package-proxy/".length,
