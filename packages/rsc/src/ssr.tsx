@@ -16,7 +16,7 @@ export function initialize(): void {
         const mod = await import(/* @vite-ignore */ id);
         // during the dev, css needs to be crawled after the actual module import.
         const modCss = await import(
-          /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
+          /* @vite-ignore */ injectQuery(id, "vite-rsc-ssr-css")
         );
         return wrapResourceProxy(mod, { js: [], css: modCss.default });
       } else {
@@ -34,6 +34,26 @@ export function initialize(): void {
       }
     },
   });
+}
+
+// from vite utils
+function injectQuery(url: string, queryToInject: string): string {
+  const postfixRE = /[?#].*$/;
+
+  function cleanUrl(url: string): string {
+    return url.replace(postfixRE, "");
+  }
+
+  function splitFileAndPostfix(path: string): {
+    file: string;
+    postfix: string;
+  } {
+    const file = cleanUrl(path);
+    return { file, postfix: path.slice(file.length) };
+  }
+
+  const { file, postfix } = splitFileAndPostfix(url);
+  return `${file}?${queryToInject}${postfix[0] === "?" ? `&${postfix.slice(1)}` : /* hash only */ postfix}`;
 }
 
 // preload/preinit during getter access since `load` is cached on production
