@@ -597,7 +597,10 @@ function vitePluginUseClient(): Plugin[] {
         },
       },
       async load(id) {
-        if (id.startsWith("\0virtual:vite-rsc/client-package-proxy/")) {
+        if (
+          id.startsWith("\0virtual:vite-rsc/client-package-proxy/") &&
+          !ssrCssRE.test(id)
+        ) {
           assert(this.environment.mode === "dev");
           const source = id.slice(
             "\0virtual:vite-rsc/client-package-proxy/".length,
