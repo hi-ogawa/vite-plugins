@@ -14,6 +14,7 @@ export function initialize(): void {
     load: async (id) => {
       if (import.meta.env.DEV) {
         const mod = await import(/* @vite-ignore */ id);
+        // during the dev, css needs to be crawled after the actual module import.
         const modCss = await import(
           /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
         );
