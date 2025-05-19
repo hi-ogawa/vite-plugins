@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { reactRouter } from "./react-router-vite/plugin";
+import inspect from "vite-plugin-inspect";
 
 export default defineConfig({
   clearScreen: false,
@@ -20,5 +21,6 @@ export default defineConfig({
         rsc: "./react-router-vite/entry.rsc.tsx",
       },
     }),
+    inspect(),
   ],
 }) as any;
