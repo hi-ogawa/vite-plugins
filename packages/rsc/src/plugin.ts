@@ -43,6 +43,8 @@ type ClientReferenceMeta = {
 };
 const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 
+const serverResourcesMetaMap: Record<string, { key: string }> = {};
+
 const PKG_NAME = "@hiogawa/vite-rsc";
 const ENTRIES = {
   browser: "virtual:vite-rsc/entry-browser",
@@ -376,10 +378,12 @@ export default function vitePluginRsc({
         // copy assets from rsc build to client build
         if (this.environment.name === "rsc") {
           rscBundle = bundle;
+          // const assetDeps = collectAssetDeps(rscBundle);
+          // console.log(assetDeps);
         }
 
         if (this.environment.name === "client") {
-          let rscCss: string[] = [];
+          // let rscCss: string[] = [];
           for (const asset of Object.values(rscBundle)) {
             if (asset.type === "asset") {
               this.emitFile({
@@ -387,10 +391,20 @@ export default function vitePluginRsc({
                 fileName: asset.fileName,
                 source: asset.source,
               });
-              if (asset.fileName.endsWith(".css")) {
-                rscCss.push(`/${asset.fileName}`);
-              }
+              // if (asset.fileName.endsWith(".css")) {
+              //   // TODO
+              //   // rscCss.push(`/${asset.fileName}`);
+              // }
             }
+          }
+
+          const serverResources: Record<string, AssetDeps> = {};
+          const rscAssetDeps = collectAssetDeps(rscBundle);
+          for (const [id, meta] of Object.entries(serverResourcesMetaMap)) {
+            serverResources[meta.key] = {
+              js: [],
+              css: rscAssetDeps[id]?.deps.css ?? [],
+            };
           }
 
           const assetDeps = collectAssetDeps(bundle);
@@ -402,13 +416,15 @@ export default function vitePluginRsc({
             }
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
-          entry.deps.css.push(...rscCss);
+          // entry.deps.css.push(...rscCss);
+
           const manifest: AssetsManifest = {
             entry: {
               bootstrapModules: [`/${entry.chunk.fileName}`],
               deps: entry.deps,
             },
             clientReferenceDeps,
+            serverResources,
           };
           this.emitFile({
             type: "asset",
@@ -442,7 +458,8 @@ export default function vitePluginRsc({
     },
     createVirtualPlugin(ENTRIES.browser.slice("virtual:".length), function () {
       let code = "";
-      code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
+      // TODO
+      // code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
       if (this.environment.mode === "dev") {
         code += `
           import RefreshRuntime from "/@react-refresh";
@@ -816,6 +833,7 @@ function generateDynamicImportCode(map: Record<string, string>) {
 export type AssetsManifest = {
   entry: { bootstrapModules: string[]; deps: AssetDeps };
   clientReferenceDeps: Record<string, AssetDeps>;
+  serverResources?: Record<string, { css: string[] }>;
 };
 
 export type AssetDeps = {
@@ -826,8 +844,17 @@ export type AssetDeps = {
 function collectAssetDeps(bundle: Rollup.OutputBundle) {
   const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
     {};
+  // console.log("[bundle]", Object.fromEntries(
+  //   Object.entries(bundle).map(([k, v]) => [k, {
+  //     facadeModuleId: v.facadeModuleId, type: v.type, fileName: v.fileName,
+  //     imports: v.imports, viteMetadata: v.viteMetadata }]),
+  // ));
   for (const chunk of Object.values(bundle)) {
     if (chunk.type === "chunk" && chunk.facadeModuleId) {
+      // console.log("[collectAssetDepsInner]", {
+      //   id: chunk.facadeModuleId,
+      //   file: chunk.fileName,
+      // });
       map[chunk.facadeModuleId] = {
         chunk,
         deps: collectAssetDepsInner(chunk.fileName, bundle),
@@ -848,11 +875,14 @@ function collectAssetDepsInner(
     if (visited.has(k)) return;
     visited.add(k);
     const v = bundle[k];
-    assert(v);
+    assert(v, `Not found '${k}' in the bundle`);
     if (v.type === "chunk") {
       css.push(...(v.viteMetadata?.importedCss ?? []));
       for (const k2 of v.imports) {
-        recurse(k2);
+        // server external imports is not in bundle
+        if (k2 in bundle) {
+          recurse(k2);
+        }
       }
     }
   }
@@ -1040,6 +1070,7 @@ export function vitePluginRscCss({
         }
       },
     },
+    // TODO
     createVirtualPlugin("vite-rsc/rsc-css", async function () {
       assert(this.environment.name === "rsc");
       if (this.environment.mode === "build") {
@@ -1052,6 +1083,7 @@ export function vitePluginRscCss({
       );
       return `export default ${JSON.stringify(hrefs, null, 2)}`;
     }),
+    // TODO
     createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
       assert(this.environment.name === "client");
       let ids: string[] = [];
@@ -1089,6 +1121,60 @@ export function vitePluginRscCss({
             this.addWatchFile(file);
           }
           return `export default ${JSON.stringify(result.hrefs)}`;
+        }
+      },
+    },
+    {
+      name: "rsc:virtual-resources",
+      resolveId(source, importer) {
+        if (source === "virtual:vite-rsc/resources") {
+          assert(this.environment.name === "rsc");
+          return `\0${source}?importer=${importer}`;
+        }
+      },
+      load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/resources?importer=")) {
+          const importer = id.slice(
+            "\0virtual:vite-rsc/resources?importer=".length,
+          );
+          this.addWatchFile(importer);
+          if (this.environment.mode === "dev") {
+            const cssHrefs = collectCss(
+              server.environments.rsc!,
+              importer,
+            ).hrefs;
+            const jsHrefs = [
+              "/@id/__x00__virtual:vite-rsc/resources-browser?importer=" +
+                encodeURIComponent(importer),
+            ];
+            return `export default ${JSON.stringify({ css: cssHrefs, js: jsHrefs })};`;
+          } else {
+            const key = path.relative(config.root, importer);
+            serverResourcesMetaMap[importer] = { key };
+            return `
+              import assetsManifest from "virtual:vite-rsc/assets-manifest";
+              export default assetsManifest.serverResources[${JSON.stringify(key)}];
+            `;
+          }
+        }
+        if (id.startsWith("\0virtual:vite-rsc/resources-browser?importer=")) {
+          assert(this.environment.name === "client");
+          assert(this.environment.mode === "dev");
+          let importer = id.slice(
+            "\0virtual:vite-rsc/resources-browser?importer=".length,
+          );
+          importer = decodeURIComponent(importer);
+          this.addWatchFile(importer);
+          // TODO: avoid repeating `collectCss`?
+          let ids = collectCss(server.environments.rsc!, importer).ids;
+          ids = ids.map((id) => id.replace(/^\0/, ""));
+          let code = ids
+            .map((id) => `import ${JSON.stringify(id)};\n`)
+            .join("");
+          // ensure hmr boundary at this virtual since otherwise non-self accepting css
+          // (e.g. css module) causes full reload
+          code += `if (import.meta.hot) { import.meta.hot.accept() }\n`;
+          return code;
         }
       },
     },
