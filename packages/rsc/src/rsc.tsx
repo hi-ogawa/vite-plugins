@@ -52,16 +52,12 @@ export async function Resources({
   nonce,
 }: { nonce?: string }): Promise<React.ReactNode> {
   let { css, js } = getAssetsManifest().entry.deps;
-  if (import.meta.env.DEV) {
-    const rscCss = await import("virtual:vite-rsc/rsc-css" as string);
-    css = [...css, ...rscCss.default];
-  }
   const cssLinks = css.map((href) => (
     <link
       key={href}
       rel="stylesheet"
       href={href}
-      precedence="high"
+      precedence="vite-rsc/entry-resources"
       nonce={nonce}
     />
   ));

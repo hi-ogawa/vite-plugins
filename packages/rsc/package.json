@@ -10,9 +10,10 @@
   "license": "MIT",
   "type": "module",
   "exports": {
+    "./types": "./types/index.d.ts",
     "./*": "./dist/*.js"
   },
-  "files": ["dist"],
+  "files": ["dist", "types"],
   "scripts": {
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
