@@ -429,7 +429,7 @@ export default function vitePluginRsc({
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
-          // TODO: remove only the ones we injected during ssr and duplicated browser imports for HMR
+          // TODO: remove only the ones we injected during ssr, which are duplicated by browser imports for HMR
           const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
           await import("virtual:vite-rsc/entry-browser-inner");
           import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
