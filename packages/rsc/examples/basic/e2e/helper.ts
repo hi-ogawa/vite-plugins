@@ -18,11 +18,15 @@ export async function createReloadChecker(page: Page) {
     document.head.append(el);
   });
 
+  // TODO: playwright prints a weird error on dispose error, so maybe this approach is bad :(
   return {
     [Symbol.asyncDispose]: async () => {
       // check if meta is preserved
       await expect(page.locator(`meta[name="x-reload-check"]`)).toBeAttached({
         timeout: 1,
+      });
+      await page.evaluate(() => {
+        document.querySelector(`meta[name="x-reload-check"]`)!.remove();
       });
     },
   };
