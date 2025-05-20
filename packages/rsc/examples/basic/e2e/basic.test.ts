@@ -193,6 +193,13 @@ test("css hmr client @dev", async ({ page }) => {
     "color",
     "rgb(0, 165, 255)",
   );
+  editor.edit((s) =>
+    s.replaceAll(`color: rgb(0, 165, 255);`, `/* color: rgb(0, 165, 255); */`),
+  );
+  await expect(page.locator(".test-style-client")).toHaveCSS(
+    "color",
+    "rgb(0, 0, 0)",
+  );
   editor.reset();
   await expect(page.locator(".test-style-client")).toHaveCSS(
     "color",
@@ -210,6 +217,13 @@ test("css hmr server @dev", async ({ page }) => {
   await expect(page.locator(".test-style-server")).toHaveCSS(
     "color",
     "rgb(0, 165, 255)",
+  );
+  editor.edit((s) =>
+    s.replaceAll(`color: rgb(0, 165, 255);`, `/* color: rgb(0, 165, 255); */`),
+  );
+  await expect(page.locator(".test-style-server")).toHaveCSS(
+    "color",
+    "rgb(0, 0, 0)",
   );
   editor.reset();
   await expect(page.locator(".test-style-server")).toHaveCSS(

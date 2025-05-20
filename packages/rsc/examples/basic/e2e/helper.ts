@@ -34,10 +34,12 @@ export async function expectNoReload(page: Page) {
 
 export function createEditor(filepath: string) {
   const init = readFileSync(filepath, "utf-8");
+  let current = init;
   return {
     edit(editFn: (data: string) => string) {
-      const next = editFn(init);
-      tinyassert(next !== init);
+      const next = editFn(current);
+      tinyassert(next !== current);
+      current = next;
       writeFileSync(filepath, next);
     },
     reset() {
