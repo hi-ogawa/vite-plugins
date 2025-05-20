@@ -429,11 +429,10 @@ export default function vitePluginRsc({
           window.$RefreshReg$ = () => {};
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
+          // TODO: remove only the ones we injected during ssr and duplicated browser imports for HMR
+          const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
           await import("virtual:vite-rsc/entry-browser-inner");
-          import.meta.hot.on("vite:beforeUpdate", () => {
-            // TODO: remove only the ones we injected
-            document.querySelectorAll("link[rel='stylesheet']").forEach(node => node.remove());
-          });
+          import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
         `;
       } else {
         code += `import "virtual:vite-rsc/entry-browser-inner";\n`;
