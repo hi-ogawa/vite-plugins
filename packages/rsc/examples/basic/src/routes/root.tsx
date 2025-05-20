@@ -18,6 +18,7 @@ import {
 } from "./client";
 import { TestStyleClient2 } from "./client2";
 import ErrorBoundary from "./error-boundary";
+import "./server.css";
 import styles from "./server.module.css";
 
 export function Root(props: { url: URL }) {

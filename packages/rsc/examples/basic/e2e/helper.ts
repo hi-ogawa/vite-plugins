@@ -10,7 +10,7 @@ export async function waitForHydration(page: Page) {
   await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
 }
 
-export async function createReloadChecker(page: Page) {
+export async function expectNoReload(page: Page) {
   // inject custom meta
   await page.evaluate(() => {
     const el = document.createElement("meta");
@@ -18,11 +18,15 @@ export async function createReloadChecker(page: Page) {
     document.head.append(el);
   });
 
+  // TODO: playwright prints a weird error on dispose error, so maybe we should avoid this pattern :(
   return {
     [Symbol.asyncDispose]: async () => {
       // check if meta is preserved
       await expect(page.locator(`meta[name="x-reload-check"]`)).toBeAttached({
         timeout: 1,
+      });
+      await page.evaluate(() => {
+        document.querySelector(`meta[name="x-reload-check"]`)!.remove();
       });
     },
   };
@@ -36,7 +40,7 @@ export function createEditor(filepath: string) {
       tinyassert(next !== init);
       writeFileSync(filepath, next);
     },
-    [Symbol.dispose]() {
+    reset() {
       writeFileSync(filepath, init);
     },
   };

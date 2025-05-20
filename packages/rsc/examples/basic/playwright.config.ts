@@ -13,6 +13,9 @@ export default defineConfig({
       ? `http://localhost:${port}/custom-base/`
       : undefined,
     trace: "on-first-retry",
+    launchOptions: {
+      slowMo: process.env.E2E_SLOWMO ? 500 : 0,
+    },
   },
   projects: [
     {
@@ -27,6 +30,7 @@ export default defineConfig({
   webServer: {
     command,
     port,
+    stdout: process.env.E2E_STDOUT ? "pipe" : undefined,
   },
   grepInvert: isPreview ? /@dev/ : /@build/,
   forbidOnly: !!process.env["CI"],
