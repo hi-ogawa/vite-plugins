@@ -147,6 +147,8 @@ test("client hmr @dev", async ({ page }) => {
   // check next ssr is also updated
   const res = await page.goto("./");
   expect(await res?.text()).toContain("Client [edit] Counter");
+  editor.reset();
+  await page.getByRole("button", { name: "Client Counter: 0" }).click();
 });
 
 test("server hmr @dev", async ({ page }) => {
@@ -157,6 +159,10 @@ test("server hmr @dev", async ({ page }) => {
   editor.edit((s) => s.replace("Server Counter", "Server [edit] Counter"));
   await expect(
     page.getByRole("button", { name: "Server [edit] Counter: 0" }),
+  ).toBeVisible();
+  editor.reset();
+  await expect(
+    page.getByRole("button", { name: "Server Counter: 0" }),
   ).toBeVisible();
 });
 

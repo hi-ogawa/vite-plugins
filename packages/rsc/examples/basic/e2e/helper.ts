@@ -34,8 +34,6 @@ export async function expectNoReload(page: Page) {
 
 export function createEditor(filepath: string) {
   const init = readFileSync(filepath, "utf-8");
-  originalFiles[filepath] ??= init;
-
   return {
     edit(editFn: (data: string) => string) {
       const next = editFn(init);
@@ -47,11 +45,3 @@ export function createEditor(filepath: string) {
     },
   };
 }
-
-const originalFiles: Record<string, string> = {};
-
-test.afterAll(() => {
-  for (const [filepath, content] of Object.entries(originalFiles)) {
-    writeFileSync(filepath, content);
-  }
-});
