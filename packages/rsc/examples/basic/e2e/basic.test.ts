@@ -196,6 +196,11 @@ test("css hmr client @dev", async ({ page }) => {
     "color",
     "rgb(0, 165, 255)",
   );
+  editor.reset();
+  await expect(page.locator(".test-style-client")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
 });
 
 test("css hmr server @dev", async ({ page }) => {
@@ -209,6 +214,11 @@ test("css hmr server @dev", async ({ page }) => {
   await expect(page.locator(".test-style-server")).toHaveCSS(
     "color",
     "rgb(0, 165, 255)",
+  );
+  editor.reset();
+  await expect(page.locator(".test-style-server")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
   );
 });
 
@@ -241,6 +251,11 @@ test("css module client @js", async ({ page }) => {
     "color",
     "rgb(0, 165, 255)",
   );
+  editor.reset();
+  await expect(page.getByTestId("css-module-client")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
 });
 
 test("css module server @js", async ({ page }) => {
@@ -260,6 +275,11 @@ test("css module server @js", async ({ page }) => {
   await expect(page.getByTestId("css-module-server")).toHaveCSS(
     "color",
     "rgb(0, 165, 255)",
+  );
+  editor.reset();
+  await expect(page.getByTestId("css-module-server")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
   );
 });
 
@@ -312,12 +332,22 @@ test("tailwind hmr @dev", async ({ page }) => {
     "color",
     "oklch(0.546 0.245 262.881)",
   );
+  clientFile.reset();
+  await expect(page.locator(".test-tw-client")).toHaveCSS(
+    "color",
+    "oklch(0.623 0.214 259.815)",
+  );
 
   using serverFile = createEditor("src/routes/root.tsx");
   serverFile.edit((s) => s.replaceAll("text-red-500", "text-red-600"));
   await expect(page.locator(".test-tw-server")).toHaveCSS(
     "color",
     "oklch(0.577 0.245 27.325)",
+  );
+  serverFile.reset();
+  await expect(page.locator(".test-tw-server")).toHaveCSS(
+    "color",
+    "oklch(0.637 0.237 25.331)",
   );
 });
 
