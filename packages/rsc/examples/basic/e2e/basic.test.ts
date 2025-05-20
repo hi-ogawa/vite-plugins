@@ -97,7 +97,7 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
   ).toBeVisible();
 
   // update server code
-  using editor = createEditor("src/routes/action.tsx");
+  const editor = createEditor("src/routes/action.tsx");
   editor.edit((s) =>
     s.replace("const TEST_UPDATE = 1;", "const TEST_UPDATE = 10;"),
   );
@@ -138,7 +138,7 @@ test("client hmr @dev", async ({ page }) => {
     page.getByRole("button", { name: "Client Counter: 1" }),
   ).toBeVisible();
 
-  using editor = createEditor("src/routes/client.tsx");
+  const editor = createEditor("src/routes/client.tsx");
   editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
   await expect(
     page.getByRole("button", { name: "Client [edit] Counter: 1" }),
@@ -153,19 +153,11 @@ test("server hmr @dev", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await using _ = await expectNoReload(page);
-  // await page.getByRole("button", { name: "Client Counter: 0" }).click();
-  // await expect(
-  //   page.getByRole("button", { name: "Client Counter: 1" }),
-  // ).toBeVisible();
-
-  using editor = createEditor("src/routes/root.tsx");
+  const editor = createEditor("src/routes/root.tsx");
   editor.edit((s) => s.replace("Server Counter", "Server [edit] Counter"));
   await expect(
     page.getByRole("button", { name: "Server [edit] Counter: 0" }),
   ).toBeVisible();
-  // await expect(
-  //   page.getByRole("button", { name: "Client Counter: 1" }),
-  // ).toBeVisible();
 });
 
 test("css @js", async ({ page }) => {
@@ -190,7 +182,7 @@ test("css hmr client @dev", async ({ page }) => {
   await testCss(page);
 
   await using _ = await expectNoReload(page);
-  using editor = createEditor("src/routes/client.css");
+  const editor = createEditor("src/routes/client.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await expect(page.locator(".test-style-client")).toHaveCSS(
     "color",
@@ -209,7 +201,7 @@ test("css hmr server @dev", async ({ page }) => {
   await testCss(page);
 
   await using _ = await expectNoReload(page);
-  using editor = createEditor("src/styles.css");
+  const editor = createEditor("src/styles.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await expect(page.locator(".test-style-server")).toHaveCSS(
     "color",
@@ -245,7 +237,7 @@ test("css module client @js", async ({ page }) => {
 
   // test client css module HMR
   await using _ = await expectNoReload(page);
-  using editor = createEditor("src/routes/client.module.css");
+  const editor = createEditor("src/routes/client.module.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await expect(page.getByTestId("css-module-client")).toHaveCSS(
     "color",
@@ -270,7 +262,7 @@ test("css module server @js", async ({ page }) => {
 
   // test server css module HMR
   await using _ = await expectNoReload(page);
-  using editor = createEditor("src/routes/server.module.css");
+  const editor = createEditor("src/routes/server.module.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await expect(page.getByTestId("css-module-server")).toHaveCSS(
     "color",
@@ -326,7 +318,7 @@ test("tailwind hmr @dev", async ({ page }) => {
 
   await using _ = await expectNoReload(page);
 
-  using clientFile = createEditor("src/routes/client.tsx");
+  const clientFile = createEditor("src/routes/client.tsx");
   clientFile.edit((s) => s.replaceAll("text-blue-500", "text-blue-600"));
   await expect(page.locator(".test-tw-client")).toHaveCSS(
     "color",
@@ -338,7 +330,7 @@ test("tailwind hmr @dev", async ({ page }) => {
     "oklch(0.623 0.214 259.815)",
   );
 
-  using serverFile = createEditor("src/routes/root.tsx");
+  const serverFile = createEditor("src/routes/root.tsx");
   serverFile.edit((s) => s.replaceAll("text-red-500", "text-red-600"));
   await expect(page.locator(".test-tw-server")).toHaveCSS(
     "color",

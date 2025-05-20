@@ -45,9 +45,6 @@ export function createEditor(filepath: string) {
     reset() {
       writeFileSync(filepath, init);
     },
-    [Symbol.dispose]() {
-      // writeFileSync(filepath, init);
-    },
   };
 }
 
