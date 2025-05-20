@@ -1,4 +1,5 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
+import * as serverReferences from "virtual:vite-rsc/server-references";
 import { setRequireModule } from "./core/rsc";
 import type { AssetsManifest } from "./plugin";
 import { withBase } from "./utils/base";
@@ -17,10 +18,7 @@ export function initialize(): void {
       if (import.meta.env.DEV) {
         return import(/* @vite-ignore */ id);
       } else {
-        const references = await import(
-          "virtual:vite-rsc/server-references" as any
-        );
-        const import_ = references.default[id];
+        const import_ = serverReferences.default[id];
         if (!import_) {
           throw new Error(`server reference not found '${id}'`);
         }
