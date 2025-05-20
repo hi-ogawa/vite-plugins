@@ -18,7 +18,7 @@ export async function createReloadChecker(page: Page) {
     document.head.append(el);
   });
 
-  // TODO: playwright prints a weird error on dispose error, so maybe this approach is bad :(
+  // TODO: playwright prints a weird error on dispose error, so maybe we should avoid this pattern :(
   return {
     [Symbol.asyncDispose]: async () => {
       // check if meta is preserved
