@@ -199,7 +199,7 @@ test("css hmr server @dev", async ({ page }) => {
   await waitForHydration(page);
 
   await using _ = await expectNoReload(page);
-  const editor = createEditor("src/styles.css");
+  const editor = createEditor("src/routes/server.css");
   editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
   await expect(page.locator(".test-style-server")).toHaveCSS(
     "color",

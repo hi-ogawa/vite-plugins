@@ -13,7 +13,3 @@ input {
 a {
   @apply text-gray-500 underline hover:text-gray-700;
 }
-
-.test-style-server {
-  color: rgb(255, 165, 0);
-}
