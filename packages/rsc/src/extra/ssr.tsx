@@ -57,6 +57,7 @@ export async function renderHtml({
   return new Response(responseStream, {
     headers: {
       "content-type": "text/html;charset=utf-8",
+      "vary": "accept",
     },
   });
 }
