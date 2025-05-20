@@ -10,7 +10,7 @@ export async function waitForHydration(page: Page) {
   await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
 }
 
-export async function createReloadChecker(page: Page) {
+export async function expectNoReload(page: Page) {
   // inject custom meta
   await page.evaluate(() => {
     const el = document.createElement("meta");
@@ -34,14 +34,27 @@ export async function createReloadChecker(page: Page) {
 
 export function createEditor(filepath: string) {
   const init = readFileSync(filepath, "utf-8");
+  originalFiles[filepath] ??= init;
+
   return {
     edit(editFn: (data: string) => string) {
       const next = editFn(init);
       tinyassert(next !== init);
       writeFileSync(filepath, next);
     },
-    [Symbol.dispose]() {
+    reset() {
       writeFileSync(filepath, init);
+    },
+    [Symbol.dispose]() {
+      // writeFileSync(filepath, init);
     },
   };
 }
+
+const originalFiles: Record<string, string> = {};
+
+test.afterAll(() => {
+  for (const [filepath, content] of Object.entries(originalFiles)) {
+    writeFileSync(filepath, content);
+  }
+});
