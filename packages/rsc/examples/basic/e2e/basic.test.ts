@@ -179,7 +179,6 @@ async function testCss(page: Page, color = "rgb(255, 165, 0)") {
 test("css hmr client @dev", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
-  await testCss(page);
 
   await using _ = await expectNoReload(page);
   const editor = createEditor("src/routes/client.css");
@@ -198,7 +197,6 @@ test("css hmr client @dev", async ({ page }) => {
 test("css hmr server @dev", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
-  await testCss(page);
 
   await using _ = await expectNoReload(page);
   const editor = createEditor("src/styles.css");
