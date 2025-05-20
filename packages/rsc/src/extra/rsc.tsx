@@ -76,6 +76,7 @@ export async function renderRequest(
     return new Response(stream, {
       headers: {
         "content-type": "text/x-component;charset=utf-8",
+        vary: "accept",
       },
     });
   }
