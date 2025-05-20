@@ -430,6 +430,10 @@ export default function vitePluginRsc({
           window.$RefreshSig$ = () => (type) => type;
           window.__vite_plugin_react_preamble_installed__ = true;
           await import("virtual:vite-rsc/entry-browser-inner");
+          import.meta.hot.on("vite:beforeUpdate", () => {
+            // TODO: remove only the ones we injected
+            document.querySelectorAll("link[rel='stylesheet']").forEach(node => node.remove());
+          });
         `;
       } else {
         code += `import "virtual:vite-rsc/entry-browser-inner";\n`;
