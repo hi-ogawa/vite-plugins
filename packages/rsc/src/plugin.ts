@@ -646,6 +646,10 @@ function vitePluginUseClient(): Plugin[] {
 }
 
 function vitePluginUseServer(): Plugin[] {
+  function normalizeName(name: string) {
+    return server ? name : hashString(name);
+  }
+
   return [
     {
       name: "rsc:use-server",
@@ -661,7 +665,10 @@ function vitePluginUseServer(): Plugin[] {
           );
           const result = transformServerActionServer_(code, ast, {
             runtime: (value, name) =>
-              `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
+              `$$ReactServer.registerServerReference(` +
+              `${value},` +
+              `${JSON.stringify(normalizedId)}, ` +
+              `${JSON.stringify(normalizeName(name))})`,
             rejectNonAsyncFunction: true,
           });
           if (!result) return;
@@ -691,7 +698,7 @@ function vitePluginUseServer(): Plugin[] {
               `$$ReactClient.callServer, ` +
               `undefined, ` +
               `$$ReactClient.findSourceMapURL, ` +
-              `${JSON.stringify(name)})`,
+              `${JSON.stringify(normalizeName(name))})`,
             directive: "use server",
             rejectNonAsyncFunction: true,
           });
@@ -724,10 +731,13 @@ function vitePluginUseServer(): Plugin[] {
         const key = JSON.stringify(meta.referenceKey);
         const id = JSON.stringify(meta.importId);
         const exports = meta.exportNames.join(",");
+        const normalized = meta.exportNames
+          .map((name) => `${JSON.stringify(normalizeName(name))}: ${name}`)
+          .join(",");
         code += `
           ${key}: async () => {
             const {${exports}} = await import(${id});
-            return {${exports}};
+            return {${normalized}};
           },
         `;
       }
