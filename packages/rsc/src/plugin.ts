@@ -48,7 +48,7 @@ type ServerRerferenceMeta = {
   // TODO: function name should be also hased on build
   // TODO: do the same filtering on dev
   // TODO: tree shake on build
-  functionNames: string[];
+  exportNames: string[];
 };
 const serverReferenceMetaMap: Record</* id */ string, ServerRerferenceMeta> =
   {};
@@ -671,8 +671,7 @@ function vitePluginUseServer(): Plugin[] {
           serverReferenceMetaMap[id] = {
             importId: id,
             referenceKey: normalizedId,
-            functionNames:
-              "names" in result ? result.names : result.exportNames,
+            exportNames: "names" in result ? result.names : result.exportNames,
           };
           output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
           return {
@@ -703,7 +702,7 @@ function vitePluginUseServer(): Plugin[] {
           serverReferenceMetaMap[id] = {
             importId: id,
             referenceKey: normalizedId,
-            functionNames: result.exportNames,
+            exportNames: result.exportNames,
           };
           const name = this.environment.name === "client" ? "browser" : "ssr";
           output.prepend(
@@ -724,7 +723,7 @@ function vitePluginUseServer(): Plugin[] {
       for (const meta of Object.values(serverReferenceMetaMap)) {
         const key = JSON.stringify(meta.referenceKey);
         const id = JSON.stringify(meta.importId);
-        const exports = meta.functionNames.join(",");
+        const exports = meta.exportNames.join(",");
         code += `
           ${key}: async () => {
             const {${exports}} = await import(${id});
