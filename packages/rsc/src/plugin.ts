@@ -45,6 +45,7 @@ const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 type ServerRerferenceMeta = {
   importId: string;
   referenceKey: string;
+  // TODO: function name should be also hased on build
   // TODO: do the same filtering on dev
   // TODO: tree shake on build
   functionNames: string[];
