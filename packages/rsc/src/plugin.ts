@@ -694,11 +694,11 @@ function vitePluginUseServer(): Plugin[] {
             code,
             runtime: (name) =>
               `$$ReactClient.createServerReference(` +
-              `${JSON.stringify(normalizedId + "#" + name)},` +
+              `${JSON.stringify(normalizedId + "#" + normalizeName(name))},` +
               `$$ReactClient.callServer, ` +
               `undefined, ` +
               `$$ReactClient.findSourceMapURL, ` +
-              `${JSON.stringify(normalizeName(name))})`,
+              `${JSON.stringify(name)})`,
             directive: "use server",
             rejectNonAsyncFunction: true,
           });
