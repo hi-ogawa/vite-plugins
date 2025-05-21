@@ -483,10 +483,11 @@ export default function vitePluginRsc({
       },
     },
     ...vitePluginRscCore(),
+    // `?vite-rsc-ssr-css` load hook should run before `virtual:vite-rsc/client-package-proxy`
+    ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
-    ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
     vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
@@ -1044,26 +1045,26 @@ export function vitePluginRscCss({
       return code;
     }),
     {
-      name: "rsc:css/dev-ssr-virtual",
-      resolveId(source) {
-        if (source.startsWith("virtual:vite-rsc/css/dev-ssr/")) {
-          return "\0" + source;
-        }
-      },
+      name: "rsc:css/dev-ssr-css-virtual",
       async load(id) {
-        if (id.startsWith("\0virtual:vite-rsc/css/dev-ssr/")) {
-          id = id.slice("\0virtual:vite-rsc/css/dev-ssr/".length);
-          const mod =
-            await server.environments.ssr.moduleGraph.getModuleByUrl(id);
+        if (ssrCssRE.test(id)) {
+          id = removeRscSsrCssQuery(id);
+          const mod = server.environments.ssr.moduleGraph.getModuleById(id);
           if (!mod?.id || !mod?.file) {
             return `export default []`;
           }
           const { hrefs } = collectCss(server.environments.ssr, mod.id);
-          // invalidate virtual module on file change to reflect added/deleted css import
-          this.addWatchFile(mod.file);
           return `export default ${JSON.stringify(hrefs)}`;
         }
       },
     },
   ];
+}
+
+// based on removeUrlQuery
+// https://github.com/vitejs/vite/blob/6ce4d9c3fa7f2cbbd367d437f0f8ec9b72e4307d/packages/vite/src/node/utils.ts#L355-L357
+const trailingSeparatorRE = /[?&]$/;
+const ssrCssRE = /(\?|&)vite-rsc-ssr-css(?:&|$)/;
+function removeRscSsrCssQuery(url: string): string {
+  return url.replace(ssrCssRE, "$1").replace(trailingSeparatorRE, "");
 }
