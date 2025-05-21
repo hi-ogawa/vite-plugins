@@ -2,26 +2,11 @@ import "./styles.css";
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Root } from "./routes/root";
 
-const base = import.meta.env.BASE_URL.slice(0, -1);
-
 export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
-  const resources = await import("virtual:vite-rsc/resources" as any);
-  // TODO: provide a wrapper component
-  // <Resources nonce={nonce} base={base} />
   const root = (
     <>
-      {resources.default.css.map((href: string) => (
-        <link
-          rel="stylesheet"
-          precedence="high"
-          key={href}
-          href={base + href}
-        />
-      ))}
-      {resources.default.js.map((href: string) => (
-        <script type="module" key={href} src={base + href} async />
-      ))}
+      <Resources base={import.meta.env.BASE_URL.slice(0, -1)} />
       <Root url={url} />
     </>
   );
@@ -37,4 +22,34 @@ export default async function handler(request: Request): Promise<Response> {
     );
   }
   return response;
+}
+
+// TODO: provide a wrapper component directly as utility?
+async function Resources({
+  base = "/",
+  nonce,
+}: { base?: string; nonce?: string }) {
+  const resources = await import("virtual:vite-rsc/resources" as any);
+  return (
+    <>
+      {resources.default.css.map((href: string) => (
+        <link
+          rel="stylesheet"
+          precedence="high"
+          key={href}
+          href={base + href}
+          nonce={nonce}
+        />
+      ))}
+      {resources.default.js.map((href: string) => (
+        <script
+          type="module"
+          key={href}
+          src={base + href}
+          async
+          nonce={nonce}
+        />
+      ))}
+    </>
+  );
 }
