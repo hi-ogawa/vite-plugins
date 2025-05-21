@@ -1,6 +1,6 @@
 import "./styles.css";
-import { Resources } from "@hiogawa/vite-rsc/rsc";
 import { Link, Outlet } from "react-router";
+import { Resources } from "../react-router-vite/entry.rsc";
 import { ServerHmr } from "../react-router-vite/server-hmr";
 import { TestClientState, TestHydrated } from "./routes/client";
 import { DumpError, GlobalNavigationLoadingBar } from "./routes/root.client";

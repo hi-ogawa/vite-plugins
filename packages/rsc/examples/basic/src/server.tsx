@@ -26,7 +26,7 @@ export default async function handler(request: Request): Promise<Response> {
 
 // TODO: provide a wrapper component directly as utility?
 async function Resources({
-  base = "/",
+  base = "",
   nonce,
 }: { base?: string; nonce?: string }) {
   const resources = await import("virtual:vite-rsc/resources" as any);

@@ -46,3 +46,33 @@ export default async function handler(requrest: Request) {
   const ssr = await importSsr<typeof import("./entry.ssr")>();
   return ssr.default(requrest, callServer);
 }
+
+// TODO: inject to each server route via plugin
+export async function Resources({
+  base = "",
+  nonce,
+}: { base?: string; nonce?: string }) {
+  const resources = await import("virtual:vite-rsc/resources" as any);
+  return (
+    <>
+      {resources.default.css.map((href: string) => (
+        <link
+          rel="stylesheet"
+          precedence="high"
+          key={href}
+          href={base + href}
+          nonce={nonce}
+        />
+      ))}
+      {resources.default.js.map((href: string) => (
+        <script
+          type="module"
+          key={href}
+          src={base + href}
+          async
+          nonce={nonce}
+        />
+      ))}
+    </>
+  );
+}
