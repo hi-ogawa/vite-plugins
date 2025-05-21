@@ -45,7 +45,7 @@ const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 type ServerRerferenceMeta = {
   importId: string;
   referenceKey: string;
-  // TODO: filter on dev
+  // TODO: do the same filtering on dev
   // TODO: tree shake on build
   functionNames: string[];
 };
@@ -813,16 +813,6 @@ function vitePluginSilenceDirectiveBuildWarning(): Plugin {
       };
     },
   };
-}
-
-function generateDynamicImportCode(map: Record<string, string>) {
-  let code = Object.entries(map)
-    .map(
-      ([key, id]) =>
-        `${JSON.stringify(key)}: () => import(${JSON.stringify(id)}),`,
-    )
-    .join("\n");
-  return `export default {${code}};\n`;
 }
 
 //

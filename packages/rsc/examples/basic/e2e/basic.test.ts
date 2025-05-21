@@ -414,12 +414,15 @@ test("ssr rsc payload encoding", async ({ page }) => {
   );
 });
 
-test.skip(`expose only "use server" functions @dev`, async ({ request }) => {
-  // curl -X POST -H "x-rsc-action: /src/routes/root.tsx#Root" http://localhost:5173/
+test(`expose only "use server" functions @build`, async ({ request }) => {
+  // curl -X POST -H "x-rsc-action: 783a248a7e18#Root" http://localhost:4173/
   const res = await request.post("./", {
     headers: {
-      "x-rsc-action": "/src/routes/root.tsx#Root",
+      "x-rsc-action": "783a248a7e18#Root",
     },
   });
   expect(res.status()).toBe(404);
+
+  // TODO: do the same for dev
+  // curl -X POST -H "x-rsc-action: /src/routes/root.tsx#Root" http://localhost:5173/
 });
