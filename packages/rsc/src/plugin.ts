@@ -42,6 +42,16 @@ type ClientReferenceMeta = {
 };
 const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 
+type ServerRerferenceMeta = {
+  importId: string;
+  referenceKey: string;
+  // TODO: filter on dev
+  // TODO: tree shake on build
+  functionNames: string[];
+};
+const serverReferenceMetaMap: Record</* id */ string, ServerRerferenceMeta> =
+  {};
+
 const PKG_NAME = "@hiogawa/vite-rsc";
 const ENTRIES = {
   browser: "virtual:vite-rsc/entry-browser",
@@ -641,19 +651,28 @@ function vitePluginUseServer(): Plugin[] {
       async transform(code, id) {
         if (!code.includes("use server")) return;
         const ast = await parseAstAsync(code);
+        // TODO: refactor like "use client"
         const normalizedId = normalizeReferenceId(id, "rsc");
         if (this.environment.name === "rsc") {
           const transformServerActionServer_ = withRollupError(
             this,
             transformServerActionServer,
           );
-          const { output } = transformServerActionServer_(code, ast, {
+          const result = transformServerActionServer_(code, ast, {
             runtime: (value, name) =>
               `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
           });
+          if (!result) return;
+          const output = result.output;
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
+          serverReferenceMetaMap[id] = {
+            importId: id,
+            referenceKey: normalizedId,
+            functionNames:
+              "names" in result ? result.names : result.exportNames,
+          };
           output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
           return {
             code: output.toString(),
@@ -676,9 +695,15 @@ function vitePluginUseServer(): Plugin[] {
             directive: "use server",
             rejectNonAsyncFunction: true,
           });
+          if (!result) return;
           const output = result?.output;
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
+          serverReferenceMetaMap[id] = {
+            importId: id,
+            referenceKey: normalizedId,
+            functionNames: result.exportNames,
+          };
           const name = this.environment.name === "client" ? "browser" : "ssr";
           output.prepend(
             `import * as $$ReactClient from "${PKG_NAME}/${name}";\n`,
@@ -694,7 +719,19 @@ function vitePluginUseServer(): Plugin[] {
       if (this.environment.mode === "dev") {
         return { code: `export {}`, map: null };
       }
-      const code = generateDynamicImportCode(serverReferences);
+      let code = "";
+      for (const meta of Object.values(serverReferenceMetaMap)) {
+        const key = JSON.stringify(meta.referenceKey);
+        const id = JSON.stringify(meta.importId);
+        const exports = meta.functionNames.join(",");
+        code += `
+          ${key}: async () => {
+            const {${exports}} = await import(${id});
+            return {${exports}};
+          },
+        `;
+      }
+      code = `export default {${code}};\n`;
       return { code, map: null };
     }),
   ];

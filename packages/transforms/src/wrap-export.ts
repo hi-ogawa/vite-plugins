@@ -35,6 +35,7 @@ export function transformWrapExport(
       .join("");
     output.update(start, end, newCode);
     output.move(start, end, input.length);
+    exportNames.push(...names);
   }
 
   function wrapExport(name: string, exportName: string) {
@@ -42,6 +43,7 @@ export function transformWrapExport(
       `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName)}`,
       `export { $$wrap_${name} as ${exportName} }`,
     );
+    exportNames.push(exportName);
   }
 
   function validateNonAsyncFunction(node: Node, ok?: boolean) {
