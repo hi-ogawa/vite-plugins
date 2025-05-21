@@ -415,6 +415,7 @@ test("ssr rsc payload encoding", async ({ page }) => {
 });
 
 test(`expose only "use server" functions @build`, async ({ request }) => {
+  // non-exposed server module export
   // curl -X POST -H "x-rsc-action: 783a248a7e18#Root" http://localhost:4173/
   {
     const res = await request.post("./", {
@@ -428,6 +429,7 @@ test(`expose only "use server" functions @build`, async ({ request }) => {
     );
   }
 
+  // TODO: invalid server module id should be also 404
   // curl -X POST -H "x-rsc-action: 12345678#foo" http://localhost:4173/
   {
     const res = await request.post("./", {
