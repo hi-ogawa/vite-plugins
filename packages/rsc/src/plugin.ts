@@ -1112,7 +1112,7 @@ function generateResourcesCode(resources: string) {
           React.createElement("link", {
             key: "css:" + href,
             rel: "stylesheet",
-            precedence: "high",
+            precedence: "vite-rsc/server-resources",
             href: base + href,
             nocde: props.nonce,
           }),

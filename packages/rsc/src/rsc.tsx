@@ -50,7 +50,7 @@ export async function Resources({
       key={href}
       rel="stylesheet"
       href={withBase(href)}
-      precedence="high"
+      precedence="vite-rsc/entry-resources"
       nonce={nonce}
     />
   ));
