@@ -41,14 +41,11 @@ export function getAssetsManifest(): AssetsManifest {
   return (assetsManifest as any).default;
 }
 
+// TODO: remove
 export async function Resources({
   nonce,
 }: { nonce?: string }): Promise<React.ReactNode> {
   let { css, js } = getAssetsManifest().entry.deps;
-  if (import.meta.env.DEV) {
-    // const rscCss = await import("virtual:vite-rsc/rsc-css" as string);
-    // css = [...css, ...rscCss.default];
-  }
   const cssLinks = css.map((href) => (
     <link
       key={href}

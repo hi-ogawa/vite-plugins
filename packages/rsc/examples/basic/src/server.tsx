@@ -2,9 +2,11 @@ import "./styles.css";
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Root } from "./routes/root";
 
+// @ts-ignore
+import { Resources } from "virtual:vite-rsc/resources";
+
 export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
-  const { Resources } = await import("virtual:vite-rsc/resources" as any);
   const root = (
     <>
       <Resources base={import.meta.env.BASE_URL.slice(0, -1)} />
