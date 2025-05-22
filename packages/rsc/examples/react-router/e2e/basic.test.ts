@@ -100,7 +100,16 @@ test("server css code split", async ({ page }) => {
 
   // SSR of "/about" doesn't include "/" styles
   await page.goto("./about");
+  await waitForHydration(page);
   await expect(page.locator(".test-style-home")).not.toHaveCSS(
+    "color",
+    "rgb(250, 150, 0)",
+  );
+
+  // client side navigation to "/" loads "/" styles
+  await page.getByRole("link", { name: "Home" }).click();
+  await page.waitForURL("/");
+  await expect(page.locator(".test-style-home")).toHaveCSS(
     "color",
     "rgb(250, 150, 0)",
   );
