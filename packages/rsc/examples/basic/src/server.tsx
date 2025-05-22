@@ -2,7 +2,6 @@ import "./styles.css";
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Root } from "./routes/root";
 
-// @ts-ignore
 import { Resources } from "virtual:vite-rsc/importer-resources";
 
 export default async function handler(request: Request): Promise<Response> {

@@ -1138,8 +1138,7 @@ function generateResourcesCode(resources: string) {
 
   return `
     import React from "react";
-    const resources = (${resources});
-    export default resources;
+    export const resources = (${resources});
     export const Resources = (${ResourcesFn.toString()})(React, resources);
   `;
 }
