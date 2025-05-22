@@ -81,3 +81,27 @@ test("server hmr @dev", async ({ page }) => {
 
   await page.getByText("This is the home [edit] page.").click();
 });
+
+test("server css code split", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.locator(".test-style-home")).toHaveCSS(
+    "color",
+    "rgb(250, 150, 0)",
+  );
+
+  // when client side navigation to "/about" keeps "/" styles
+  await page.getByRole("link", { name: "About" }).click();
+  await page.waitForURL("/about");
+  await expect(page.locator(".test-style-home")).toHaveCSS(
+    "color",
+    "rgb(250, 150, 0)",
+  );
+
+  // SSR of "/about" doesn't include "/" styles
+  await page.goto("./about");
+  await expect(page.locator(".test-style-home")).not.toHaveCSS(
+    "color",
+    "rgb(250, 150, 0)",
+  );
+});
