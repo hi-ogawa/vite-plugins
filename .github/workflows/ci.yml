@@ -26,16 +26,27 @@ jobs:
       - run: pnpm test
 
   test-rsc-core:
-    runs-on: ubuntu-latest
+    name: test-rsc-core (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm -C packages/rsc/examples/basic test-e2e
       - run: pnpm -C packages/rsc/examples/basic build
       - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
-      - run: TEST_BASE=1 pnpm -C packages/rsc/examples/basic test-e2e
-      - run: TEST_BASE=1 pnpm -C packages/rsc/examples/basic build
-      - run: TEST_BASE=1 pnpm -C packages/rsc/examples/basic test-e2e-preview
+      - run: pnpm -C packages/rsc/examples/basic test-e2e
+        env:
+          TEST_BASE: 1
+      - run: pnpm -C packages/rsc/examples/basic build
+        env:
+          TEST_BASE: 1
+      - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
+        env:
+          TEST_BASE: 1
       - run: pnpm -C packages/rsc/examples/react-router test-e2e
       - run: pnpm -C packages/rsc/examples/react-router build
       - run: pnpm -C packages/rsc/examples/react-router test-e2e-preview

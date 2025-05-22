@@ -16,6 +16,7 @@ import {
   type ViteDevServer,
   defaultServerConditions,
   isCSSRequest,
+  normalizePath,
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
@@ -203,9 +204,8 @@ export default function vitePluginRsc({
         };
       },
       async configurePreviewServer(server) {
-        const mod = await import(
-          /* @vite-ignore */ path.resolve(`dist/rsc/index.js`)
-        );
+        const entry = pathToFileURL(path.resolve(`dist/rsc/index.js`)).href;
+        const mod = await import(/* @vite-ignore */ entry);
         const handler = createRequestListener(mod.default);
 
         // disable compressions since it breaks html streaming
@@ -309,7 +309,9 @@ export default function vitePluginRsc({
             path.join("dist/ssr", chunk.fileName, ".."),
             path.join("dist/rsc", "index.js"),
           );
-          code = code.replace("\0virtual:vite-rsc/import-rsc", replacement);
+          code = code.replaceAll("\0virtual:vite-rsc/import-rsc", () =>
+            normalizePath(replacement),
+          );
           return { code };
         }
         if (code.includes("\0virtual:vite-rsc/import-ssr")) {
@@ -317,7 +319,9 @@ export default function vitePluginRsc({
             path.join("dist/rsc", chunk.fileName, ".."),
             path.join("dist/ssr", "index.js"),
           );
-          code = code.replace("\0virtual:vite-rsc/import-ssr", replacement);
+          code = code.replaceAll("\0virtual:vite-rsc/import-ssr", () =>
+            normalizePath(replacement),
+          );
           return { code };
         }
         return;
@@ -410,9 +414,8 @@ export default function vitePluginRsc({
               "__vite_rsc_assets_manifest.js",
             ),
           );
-          code = code.replace(
-            "\0virtual:vite-rsc/assets-manifest",
-            replacement,
+          code = code.replaceAll("\0virtual:vite-rsc/assets-manifest", () =>
+            normalizePath(replacement),
           );
           return { code };
         }
@@ -850,7 +853,7 @@ function collectAssetDepsInner(
 //
 
 import fs from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 export function vitePluginFindSourceMapURL(): Plugin[] {
   return [
