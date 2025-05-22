@@ -13,7 +13,7 @@ declare module "virtual:vite-rsc/server-references" {
   export default default_;
 }
 
-declare module "virtual:vite-rsc/resources" {
+declare module "virtual:vite-rsc/importer-resources" {
   const resources: { js: string[]; css: string[] };
   export default resources;
   export function Resources(props: {

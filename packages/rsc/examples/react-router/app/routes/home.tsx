@@ -8,7 +8,7 @@ import { PendingButton } from "./home.client.tsx";
 import "./home.css";
 
 // @ts-ignore
-import { Resources } from "virtual:vite-rsc/resources";
+import { Resources } from "virtual:vite-rsc/importer-resources";
 
 export function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);

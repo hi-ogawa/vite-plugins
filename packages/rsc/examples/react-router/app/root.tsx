@@ -5,7 +5,7 @@ import { TestClientState, TestHydrated } from "./routes/client";
 import { DumpError, GlobalNavigationLoadingBar } from "./routes/root.client";
 
 // @ts-ignore
-import { Resources } from "virtual:vite-rsc/resources";
+import { Resources } from "virtual:vite-rsc/importer-resources";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   console.log("Layout");

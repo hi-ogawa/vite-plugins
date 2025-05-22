@@ -1044,15 +1044,17 @@ export function vitePluginRscCss(): Plugin[] {
     {
       name: "rsc:virtual-resources",
       resolveId(source, importer) {
-        if (source === "virtual:vite-rsc/resources") {
+        // TODO: generalize to arbitrary environment name
+        // e.g. by "virtual:...?environment=rsc&importer=..."
+        if (source === "virtual:vite-rsc/importer-resources") {
           assert(this.environment.name === "rsc");
           return `\0${source}?importer=${importer}`;
         }
       },
       load(id) {
-        if (id.startsWith("\0virtual:vite-rsc/resources?importer=")) {
+        if (id.startsWith("\0virtual:vite-rsc/importer-resources?importer=")) {
           const importer = id.slice(
-            "\0virtual:vite-rsc/resources?importer=".length,
+            "\0virtual:vite-rsc/importer-resources?importer=".length,
           );
           this.addWatchFile(importer);
           if (this.environment.mode === "dev") {
@@ -1061,7 +1063,7 @@ export function vitePluginRscCss(): Plugin[] {
               importer,
             ).hrefs;
             const jsHrefs = [
-              "/@id/__x00__virtual:vite-rsc/resources-browser?importer=" +
+              "/@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
                 encodeURIComponent(importer),
             ];
             return generateResourcesCode(
@@ -1076,11 +1078,15 @@ export function vitePluginRscCss(): Plugin[] {
             `;
           }
         }
-        if (id.startsWith("\0virtual:vite-rsc/resources-browser?importer=")) {
+        if (
+          id.startsWith(
+            "\0virtual:vite-rsc/importer-resources-browser?importer=",
+          )
+        ) {
           assert(this.environment.name === "client");
           assert(this.environment.mode === "dev");
           let importer = id.slice(
-            "\0virtual:vite-rsc/resources-browser?importer=".length,
+            "\0virtual:vite-rsc/importer-resources-browser?importer=".length,
           );
           importer = decodeURIComponent(importer);
           this.addWatchFile(importer);
@@ -1112,7 +1118,7 @@ function generateResourcesCode(resources: string) {
           React.createElement("link", {
             key: "css:" + href,
             rel: "stylesheet",
-            precedence: "vite-rsc/server-resources",
+            precedence: "vite-rsc/importer-resources",
             href: base + href,
             nocde: props.nonce,
           }),
