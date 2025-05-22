@@ -383,7 +383,6 @@ export default function vitePluginRsc({
         if (this.environment.name === "client") {
           for (const asset of Object.values(rscBundle)) {
             if (asset.type === "asset") {
-              // TODO: just copy file directly?
               this.emitFile({
                 type: "asset",
                 fileName: asset.fileName,
