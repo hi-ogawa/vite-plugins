@@ -2,7 +2,7 @@
 
 import React from "react";
 import "./client.css";
-import { TestStyleClientDep } from "./client-dep";
+import { TestClientDep } from "./client-dep";
 import styles from "./client.module.css";
 
 export function ClientCounter(): React.ReactElement {
@@ -30,7 +30,7 @@ export function TestStyleClient() {
       <div data-testid="css-module-client" className={styles.client}>
         test-css-module-client
       </div>
-      <TestStyleClientDep />
+      <TestClientDep />
     </>
   );
 }
