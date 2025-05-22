@@ -303,12 +303,16 @@ export default function vitePluginRsc({
         }
       },
       renderChunk(code, chunk) {
+        // TODO: windows?
         if (code.includes("\0virtual:vite-rsc/import-rsc")) {
           const replacement = path.relative(
             path.join("dist/ssr", chunk.fileName, ".."),
             path.join("dist/rsc", "index.js"),
           );
-          code = code.replace("\0virtual:vite-rsc/import-rsc", replacement);
+          code = code.replace(
+            "\0virtual:vite-rsc/import-rsc",
+            () => replacement,
+          );
           return { code };
         }
         if (code.includes("\0virtual:vite-rsc/import-ssr")) {
@@ -316,7 +320,10 @@ export default function vitePluginRsc({
             path.join("dist/rsc", chunk.fileName, ".."),
             path.join("dist/ssr", "index.js"),
           );
-          code = code.replace("\0virtual:vite-rsc/import-ssr", replacement);
+          code = code.replace(
+            "\0virtual:vite-rsc/import-ssr",
+            () => replacement,
+          );
           return { code };
         }
         return;
@@ -398,6 +405,7 @@ export default function vitePluginRsc({
       renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
+          // TODO: windows?
           const replacement = path.relative(
             path.join(
               this.environment.config.build.outDir,
@@ -411,7 +419,7 @@ export default function vitePluginRsc({
           );
           code = code.replace(
             "\0virtual:vite-rsc/assets-manifest",
-            replacement,
+            () => replacement,
           );
           return { code };
         }
