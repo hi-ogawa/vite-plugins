@@ -1122,6 +1122,7 @@ function generateResourcesCode(resources: string) {
             nocde: props.nonce,
           }),
         ),
+        // js is only for dev to forward css import on browser to have hmr
         ...resources.js.map((href: string) =>
           React.createElement("script", {
             key: "js:" + href,
