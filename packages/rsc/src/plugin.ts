@@ -16,6 +16,7 @@ import {
   type ViteDevServer,
   defaultServerConditions,
   isCSSRequest,
+  normalizePath,
   parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
@@ -303,15 +304,13 @@ export default function vitePluginRsc({
         }
       },
       renderChunk(code, chunk) {
-        // TODO: windows?
         if (code.includes("\0virtual:vite-rsc/import-rsc")) {
           const replacement = path.relative(
             path.join("dist/ssr", chunk.fileName, ".."),
             path.join("dist/rsc", "index.js"),
           );
-          code = code.replace(
-            "\0virtual:vite-rsc/import-rsc",
-            () => replacement,
+          code = code.replaceAll("\0virtual:vite-rsc/import-rsc", () =>
+            normalizePath(replacement),
           );
           return { code };
         }
@@ -320,9 +319,8 @@ export default function vitePluginRsc({
             path.join("dist/rsc", chunk.fileName, ".."),
             path.join("dist/ssr", "index.js"),
           );
-          code = code.replace(
-            "\0virtual:vite-rsc/import-ssr",
-            () => replacement,
+          code = code.replaceAll("\0virtual:vite-rsc/import-ssr", () =>
+            normalizePath(replacement),
           );
           return { code };
         }
@@ -405,7 +403,6 @@ export default function vitePluginRsc({
       renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
-          // TODO: windows?
           const replacement = path.relative(
             path.join(
               this.environment.config.build.outDir,
@@ -417,9 +414,8 @@ export default function vitePluginRsc({
               "__vite_rsc_assets_manifest.js",
             ),
           );
-          code = code.replace(
-            "\0virtual:vite-rsc/assets-manifest",
-            () => replacement,
+          code = code.replaceAll("\0virtual:vite-rsc/assets-manifest", () =>
+            normalizePath(replacement),
           );
           return { code };
         }
