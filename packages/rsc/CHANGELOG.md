@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.3 (2025-05-22)
+
+- fix: support Windows ([#884](https://github.com/hi-ogawa/vite-plugins/pull/884))
+- fix: remove stale ssr styles during dev ([#879](https://github.com/hi-ogawa/vite-plugins/pull/879))
+- fix: add `vary` header to avoid rsc payload on tab re-open ([#877](https://github.com/hi-ogawa/vite-plugins/pull/877))
+
 ## v0.2.2 (2025-05-18)
 
 - fix: emit server assets and copy to client ([#861](https://github.com/hi-ogawa/vite-plugins/pull/861))

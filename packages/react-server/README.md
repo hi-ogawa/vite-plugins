@@ -43,6 +43,6 @@ pnpm --parallel --filter './packages/react-server*' dev
 pnpm -C packages/react-server/examples/basic dev
 
 # release
-pnpm changelog --dir packages/react-server
+pnpm changelog packages/react-server
 pnpm publish packages/react-server
 ```
