@@ -90,7 +90,7 @@ test("server css code split", async ({ page }) => {
     "rgb(250, 150, 0)",
   );
 
-  // when client side navigation to "/about" keeps "/" styles
+  // client side navigation to "/about" keeps "/" styles
   await page.getByRole("link", { name: "About" }).click();
   await page.waitForURL("/about");
   await expect(page.locator(".test-style-home")).toHaveCSS(
