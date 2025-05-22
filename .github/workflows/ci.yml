@@ -26,7 +26,11 @@ jobs:
       - run: pnpm test
 
   test-rsc-core:
-    runs-on: [ubuntu-latest, windows-latest]
+    name: test-rsc-core ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
