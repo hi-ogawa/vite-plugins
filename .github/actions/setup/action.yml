@@ -15,8 +15,8 @@ runs:
       with:
         node-version: 22
 
-    # - run: npm install -g corepack@latest && corepack enable
-    #   shell: bash
+    - run: npm install -g corepack@latest --force && corepack enable
+      shell: bash
 
     - run: pnpm i
       shell: bash
