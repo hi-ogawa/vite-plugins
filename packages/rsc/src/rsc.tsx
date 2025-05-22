@@ -41,7 +41,6 @@ export function getAssetsManifest(): AssetsManifest {
   return (assetsManifest as any).default;
 }
 
-// TODO: remove
 export async function Resources({
   nonce,
 }: { nonce?: string }): Promise<React.ReactNode> {
