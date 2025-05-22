@@ -1064,13 +1064,15 @@ export function vitePluginRscCss(): Plugin[] {
               "/@id/__x00__virtual:vite-rsc/resources-browser?importer=" +
                 encodeURIComponent(importer),
             ];
-            return `export default ${JSON.stringify({ css: cssHrefs, js: jsHrefs })};`;
+            return generateResourcesCode(
+              JSON.stringify({ css: cssHrefs, js: jsHrefs }, null, 2),
+            );
           } else {
             const key = path.relative(config.root, importer);
             serverResourcesMetaMap[importer] = { key };
             return `
               import assetsManifest from "virtual:vite-rsc/assets-manifest";
-              export default assetsManifest.serverResources[${JSON.stringify(key)}];
+              ${generateResourcesCode(`assetsManifest.serverResources[${JSON.stringify(key)}]`)}
             `;
           }
         }
@@ -1096,4 +1098,42 @@ export function vitePluginRscCss(): Plugin[] {
       },
     },
   ];
+}
+
+function generateResourcesCode(resources: string) {
+  const ResourcesFn = (
+    React: typeof import("react"),
+    resources: { js: string[]; css: string[] },
+  ) => {
+    return async function Resources(props: { base?: string; nonce?: string }) {
+      const base = props.base ?? "";
+      return React.createElement(React.Fragment, null, [
+        ...resources.css.map((href: string) =>
+          React.createElement("link", {
+            key: "css:" + href,
+            rel: "stylesheet",
+            precedence: "high",
+            href: base + href,
+            nocde: props.nonce,
+          }),
+        ),
+        ...resources.js.map((href: string) =>
+          React.createElement("script", {
+            key: "js:" + href,
+            type: "module",
+            async: true,
+            src: base + href,
+            nocde: props.nonce,
+          }),
+        ),
+      ]);
+    };
+  };
+
+  return `
+    import React from "react";
+    const resources = (${resources});
+    export default resources;
+    export const Resources = (${ResourcesFn.toString()})(React, resources);
+  `;
 }

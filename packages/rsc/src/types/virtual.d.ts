@@ -12,3 +12,12 @@ declare module "virtual:vite-rsc/server-references" {
   const default_: Record<string, () => Promise<unknown>>;
   export default default_;
 }
+
+declare module "virtual:vite-rsc/resources" {
+  const resources: { js: string[]; css: string[] };
+  export default resources;
+  export function Resources(props: {
+    base?: string;
+    nonce?: string;
+  }): import("react").JSX.Element;
+}

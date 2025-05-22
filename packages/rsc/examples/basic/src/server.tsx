@@ -4,6 +4,7 @@ import { Root } from "./routes/root";
 
 export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
+  const { Resources } = await import("virtual:vite-rsc/resources" as any);
   const root = (
     <>
       <Resources base={import.meta.env.BASE_URL.slice(0, -1)} />
@@ -22,34 +23,4 @@ export default async function handler(request: Request): Promise<Response> {
     );
   }
   return response;
-}
-
-// TODO: provide a wrapper component directly as utility?
-async function Resources({
-  base = "",
-  nonce,
-}: { base?: string; nonce?: string }) {
-  const resources = await import("virtual:vite-rsc/resources" as any);
-  return (
-    <>
-      {resources.default.css.map((href: string) => (
-        <link
-          rel="stylesheet"
-          precedence="high"
-          key={href}
-          href={base + href}
-          nonce={nonce}
-        />
-      ))}
-      {resources.default.js.map((href: string) => (
-        <script
-          type="module"
-          key={href}
-          src={base + href}
-          async
-          nonce={nonce}
-        />
-      ))}
-    </>
-  );
 }

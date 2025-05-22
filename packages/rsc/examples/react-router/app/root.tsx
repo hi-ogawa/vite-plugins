@@ -1,9 +1,11 @@
 import "./styles.css";
 import { Link, Outlet } from "react-router";
-import { Resources } from "../react-router-vite/entry.rsc";
 import { ServerHmr } from "../react-router-vite/server-hmr";
 import { TestClientState, TestHydrated } from "./routes/client";
 import { DumpError, GlobalNavigationLoadingBar } from "./routes/root.client";
+
+// @ts-ignore
+import { Resources } from "virtual:vite-rsc/resources";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   console.log("Layout");
