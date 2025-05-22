@@ -203,9 +203,8 @@ export default function vitePluginRsc({
         };
       },
       async configurePreviewServer(server) {
-        const mod = await import(
-          /* @vite-ignore */ path.resolve(`dist/rsc/index.js`)
-        );
+        const entry = pathToFileURL(path.resolve(`dist/rsc/index.js`)).href;
+        const mod = await import(/* @vite-ignore */ entry);
         const handler = createRequestListener(mod.default);
 
         // disable compressions since it breaks html streaming
@@ -850,7 +849,7 @@ function collectAssetDepsInner(
 //
 
 import fs from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 export function vitePluginFindSourceMapURL(): Plugin[] {
   return [
