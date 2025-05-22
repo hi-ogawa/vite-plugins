@@ -26,7 +26,7 @@ jobs:
       - run: pnpm test
 
   test-rsc-core:
-    name: test-rsc-core ${{ matrix.os }}
+    name: test-rsc-core (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
