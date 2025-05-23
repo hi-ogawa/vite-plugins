@@ -106,7 +106,7 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
     if (!options.js) await page.goto("./");
     await expect(
       page.getByRole("button", { name: "Server Counter: 0" }),
-    ).toBeVisible({ timeout: 0 });
+    ).toBeVisible({ timeout: 10 });
   }).toPass();
 
   await page.getByRole("button", { name: "Server Counter: 0" }).click();
@@ -119,7 +119,7 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
     if (!options.js) await page.goto("./");
     await expect(
       page.getByRole("button", { name: "Server Counter: 0" }),
-    ).toBeVisible({ timeout: 0 });
+    ).toBeVisible({ timeout: 10 });
   }).toPass();
 }
 
@@ -259,7 +259,7 @@ async function testAddRemoveCssClient(page: Page, options: { js: boolean }) {
     await expect(page.locator(".test-style-client-dep")).toHaveCSS(
       "color",
       "rgb(0, 0, 0)",
-      { timeout: 0 },
+      { timeout: 10 },
     );
   }).toPass();
 
@@ -271,7 +271,7 @@ async function testAddRemoveCssClient(page: Page, options: { js: boolean }) {
     await expect(page.locator(".test-style-client-dep")).toHaveCSS(
       "color",
       "rgb(255, 165, 0)",
-      { timeout: 0 },
+      { timeout: 10 },
     );
   }).toPass();
 }
