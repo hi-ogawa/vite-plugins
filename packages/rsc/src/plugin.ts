@@ -1009,8 +1009,9 @@ export function vitePluginRscCss(): Plugin[] {
 
     recurse(entryId);
 
+    // this doesn't include ?t= query so that RSC <link /> won't keep adding styles.
     const hrefs = [...cssIds].map((id) =>
-      normalizeViteImportAnalysisUrl(server.environments.client, id),
+      normalizeViteImportAnalysisUrl(environment, id),
     );
     return { ids: [...cssIds], hrefs, visitedFiles: [...visitedFiles] };
   }
@@ -1057,9 +1058,6 @@ export function vitePluginRscCss(): Plugin[] {
           );
           if (this.environment.mode === "dev") {
             const result = collectCss(server.environments.rsc!, importer);
-            for (const file of [importer, ...result.visitedFiles]) {
-              this.addWatchFile(file);
-            }
             const jsHrefs = [
               "/@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
                 encodeURIComponent(importer),
@@ -1087,11 +1085,7 @@ export function vitePluginRscCss(): Plugin[] {
             "\0virtual:vite-rsc/importer-resources-browser?importer=".length,
           );
           importer = decodeURIComponent(importer);
-          // TODO: avoid repeating `collectCss`
           const result = collectCss(server.environments.rsc!, importer);
-          for (const file of [importer, ...result.visitedFiles]) {
-            this.addWatchFile(file);
-          }
           let code = result.ids
             .map((id) => id.replace(/^\0/, ""))
             .map((id) => `import ${JSON.stringify(id)};\n`)
@@ -1102,8 +1096,50 @@ export function vitePluginRscCss(): Plugin[] {
           return code;
         }
       },
+      hotUpdate(ctx) {
+        if (this.environment.name === "rsc") {
+          const mods = collectModuleDependents(ctx.modules);
+          for (const mod of mods) {
+            if (mod.id) {
+              const importer = mod.id;
+              invalidteModuleById(
+                server.environments.rsc!,
+                `\0virtual:vite-rsc/importer-resources?importer=${importer}`,
+              );
+              // TODO: trigger refetch this virtual <link?
+              invalidteModuleById(
+                server.environments.client,
+                `\0virtual:vite-rsc/importer-resources-browser?importer=${encodeURIComponent(importer)}`,
+              );
+            }
+          }
+        }
+      },
     },
   ];
+}
+
+function invalidteModuleById(environment: DevEnvironment, id: string) {
+  const mod = environment.moduleGraph.getModuleById(id);
+  if (mod) {
+    environment.moduleGraph.invalidateModule(mod);
+  }
+  return mod;
+}
+
+function collectModuleDependents(mods: EnvironmentModuleNode[]) {
+  const visited = new Set<EnvironmentModuleNode>();
+  function recurse(mod: EnvironmentModuleNode) {
+    if (visited.has(mod)) return;
+    visited.add(mod);
+    for (const importer of mod.importers) {
+      recurse(importer);
+    }
+  }
+  for (const mod of mods) {
+    recurse(mod);
+  }
+  return [...visited];
 }
 
 function generateResourcesCode(resources: string) {

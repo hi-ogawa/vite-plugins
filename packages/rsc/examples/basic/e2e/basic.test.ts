@@ -301,7 +301,7 @@ test("css hmr server @dev", async ({ page }) => {
   );
 });
 
-// TODO: browser css is still stale
+// TODO: need a way to add/remove links on server hmr. for now, it requires a manually reload.
 test.skip("adding/removing css server @dev @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
