@@ -260,10 +260,8 @@ async function testAddRemoveCssClient(page: Page, options: { js: boolean }) {
       `/* import "./client-dep.css"; */`,
     ),
   );
-  if (!options.js) {
-    await page.waitForTimeout(100);
-    await page.reload();
-  }
+  await page.waitForTimeout(100);
+  if (!options.js) await page.reload();
   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
     "color",
     "rgb(0, 0, 0)",
@@ -271,10 +269,8 @@ async function testAddRemoveCssClient(page: Page, options: { js: boolean }) {
 
   // add back css import
   editor.reset();
-  if (!options.js) {
-    await page.waitForTimeout(100);
-    await page.reload();
-  }
+  await page.waitForTimeout(100);
+  if (!options.js) await page.reload();
   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
     "color",
     "rgb(255, 165, 0)",
