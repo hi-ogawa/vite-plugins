@@ -261,20 +261,26 @@ async function testAddRemoveCssClient(page: Page, options: { js: boolean }) {
     ),
   );
   await page.waitForTimeout(100);
-  if (!options.js) await page.reload();
-  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
-    "color",
-    "rgb(0, 0, 0)",
-  );
+  await expect(async () => {
+    if (!options.js) await page.reload();
+    await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+      "color",
+      "rgb(0, 0, 0)",
+      { timeout: 0 },
+    );
+  }).toPass();
 
   // add back css import
   editor.reset();
   await page.waitForTimeout(100);
-  if (!options.js) await page.reload();
-  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
-    "color",
-    "rgb(255, 165, 0)",
-  );
+  await expect(async () => {
+    if (!options.js) await page.reload();
+    await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+      "color",
+      "rgb(255, 165, 0)",
+      { timeout: 0 },
+    );
+  }).toPass();
 }
 
 test("css hmr server @dev", async ({ page }) => {

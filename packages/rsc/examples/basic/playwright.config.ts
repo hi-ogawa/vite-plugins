@@ -17,6 +17,9 @@ export default defineConfig({
       slowMo: process.env.E2E_SLOWMO ? 500 : 0,
     },
   },
+  expect: {
+    toPass: { timeout: 5000 },
+  },
   projects: [
     {
       name: "chromium",
