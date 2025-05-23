@@ -17,6 +17,9 @@ export default defineConfig({
       slowMo: process.env.E2E_SLOWMO ? 500 : 0,
     },
   },
+  expect: {
+    toPass: { timeout: 5000 },
+  },
   projects: [
     {
       name: "chromium",
@@ -35,5 +38,5 @@ export default defineConfig({
   grepInvert: isPreview ? /@dev/ : /@build/,
   forbidOnly: !!process.env["CI"],
   retries: process.env["CI"] ? 2 : 0,
-  reporter: "list",
+  reporter: process.env["CI"] ? "github" : "list",
 });
