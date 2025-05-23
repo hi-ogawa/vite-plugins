@@ -234,6 +234,84 @@ test("css hmr client @dev", async ({ page }) => {
   );
 });
 
+test("adding/removing css client @dev", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+
+  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+
+  // remove css import
+  const editor = createEditor("src/routes/client-dep.tsx");
+  editor.edit((s) =>
+    s.replaceAll(
+      `import "./client-dep.css";`,
+      `/* import "./client-dep.css"; */`,
+    ),
+  );
+  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+    "color",
+    "rgb(0, 0, 0)",
+  );
+
+  // add back css import
+  editor.reset();
+  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+});
+
+// TODO
+testNoJs.skip("adding/removing css client @dev @nojs", async ({ page }) => {
+  await page.goto("./");
+  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+
+  // remove css import
+  const editor = createEditor("src/routes/client-dep.tsx");
+  editor.edit((s) =>
+    s.replaceAll(
+      `import "./client-dep.css";`,
+      `/* import "./client-dep.css"; */`,
+    ),
+  );
+  await page.reload();
+  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+    "color",
+    "rgb(0, 0, 0)",
+  );
+  // await expect(async () => {
+  //   await page.reload();
+  //   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+  //     "color",
+  //     "rgb(0, 0, 0)",
+  //     { timeout: 10 },
+  //   )
+  // }).toPass();
+
+  // add back css import
+  editor.reset();
+  await page.reload();
+  await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+  // await expect(async () => {
+  //   await page.reload();
+  //   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
+  //     "color",
+  //     "rgb(255, 165, 0)",
+  //     { timeout: 10 },
+  //   )
+  // }).toPass();
+});
+
 test("css hmr server @dev", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
