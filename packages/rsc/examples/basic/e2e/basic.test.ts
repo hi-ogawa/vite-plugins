@@ -265,8 +265,7 @@ test("adding/removing css client @dev", async ({ page }) => {
   );
 });
 
-// TODO
-testNoJs.skip("adding/removing css client @dev @nojs", async ({ page }) => {
+testNoJs("adding/removing css client @dev @nojs", async ({ page }) => {
   await page.goto("./");
   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
     "color",
@@ -281,35 +280,21 @@ testNoJs.skip("adding/removing css client @dev @nojs", async ({ page }) => {
       `/* import "./client-dep.css"; */`,
     ),
   );
+  await page.waitForTimeout(100);
   await page.reload();
   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
     "color",
     "rgb(0, 0, 0)",
   );
-  // await expect(async () => {
-  //   await page.reload();
-  //   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
-  //     "color",
-  //     "rgb(0, 0, 0)",
-  //     { timeout: 10 },
-  //   )
-  // }).toPass();
 
   // add back css import
   editor.reset();
+  await page.waitForTimeout(100);
   await page.reload();
   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
     "color",
     "rgb(255, 165, 0)",
   );
-  // await expect(async () => {
-  //   await page.reload();
-  //   await expect(page.locator(".test-style-client-dep")).toHaveCSS(
-  //     "color",
-  //     "rgb(255, 165, 0)",
-  //     { timeout: 10 },
-  //   )
-  // }).toPass();
 });
 
 test("css hmr server @dev", async ({ page }) => {

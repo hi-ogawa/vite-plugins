@@ -977,6 +977,7 @@ export function vitePluginRscCss({
   function collectCss(environment: DevEnvironment, entryId: string) {
     const visited = new Set<string>();
     const cssIds = new Set<string>();
+    const visitedFiles = new Set<string>();
 
     function recurse(id: string) {
       if (visited.has(id)) {
@@ -984,6 +985,9 @@ export function vitePluginRscCss({
       }
       visited.add(id);
       const mod = environment.moduleGraph.getModuleById(id);
+      if (mod?.file) {
+        visitedFiles.add(mod.file);
+      }
       for (const next of mod?.importedModules ?? []) {
         if (next.id) {
           if (isCSSRequest(next.id)) {
@@ -1000,7 +1004,7 @@ export function vitePluginRscCss({
     const hrefs = [...cssIds].map((id) =>
       normalizeViteImportAnalysisUrl(server.environments.client, id),
     );
-    return { ids: [...cssIds], hrefs };
+    return { ids: [...cssIds], hrefs, visitedFiles: [...visitedFiles] };
   }
 
   async function collectCssByUrl(
@@ -1079,10 +1083,12 @@ export function vitePluginRscCss({
           if (!mod?.id || !mod?.file) {
             return `export default []`;
           }
-          const { hrefs } = collectCss(server.environments.ssr, mod.id);
-          // invalidate virtual module on file change to reflect added/deleted css import
-          this.addWatchFile(mod.file);
-          return `export default ${JSON.stringify(hrefs)}`;
+          const result = collectCss(server.environments.ssr, mod.id);
+          // invalidate virtual module on js file changes to reflect added/deleted css import
+          for (const file of [mod.file, ...result.visitedFiles]) {
+            this.addWatchFile(file);
+          }
+          return `export default ${JSON.stringify(result.hrefs)}`;
         }
       },
     },
