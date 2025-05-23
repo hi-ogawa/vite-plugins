@@ -82,6 +82,7 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
 test("server reference update @dev @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
+  await using _ = await expectNoReload(page);
   await testServerActionUpdate(page, { js: true });
 });
 
@@ -101,14 +102,12 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
   editor.edit((s) =>
     s.replace("const TEST_UPDATE = 1;", "const TEST_UPDATE = 10;"),
   );
-  if (!options.js) {
-    await expect(async () => {
-      await page.goto("./");
-      await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
-      ).toBeVisible({ timeout: 10 });
-    }).toPass();
-  }
+  await expect(async () => {
+    if (!options.js) await page.goto("./");
+    await expect(
+      page.getByRole("button", { name: "Server Counter: 0" }),
+    ).toBeVisible({ timeout: 0 });
+  }).toPass();
 
   await page.getByRole("button", { name: "Server Counter: 0" }).click();
   await expect(
@@ -116,18 +115,12 @@ async function testServerActionUpdate(page: Page, options: { js: boolean }) {
   ).toBeVisible();
 
   editor.reset();
-  if (!options.js) {
-    await expect(async () => {
-      await page.goto("./");
-      await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
-      ).toBeVisible({ timeout: 10 });
-    }).toPass();
-  }
-
-  await expect(
-    page.getByRole("button", { name: "Server Counter: 0" }),
-  ).toBeVisible();
+  await expect(async () => {
+    if (!options.js) await page.goto("./");
+    await expect(
+      page.getByRole("button", { name: "Server Counter: 0" }),
+    ).toBeVisible({ timeout: 0 });
+  }).toPass();
 }
 
 test("client hmr @dev", async ({ page }) => {
