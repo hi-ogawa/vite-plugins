@@ -4,9 +4,13 @@ Random collection of vite plugins
 
 ## plugins
 
+### [`@hiogawa/vite-rsc`](./packages/rsc)
+
+Framework-less Vite RSC plugin
+
 ### [`@hiogawa/react-server`](./packages/react-server)
 
-Vite plugin for React Server Component and Server Action
+Next.js-like RSC framework on Vite
 
 ### [`@hiogawa/vite-node-miniflare`](./packages/vite-node-miniflare)
 
