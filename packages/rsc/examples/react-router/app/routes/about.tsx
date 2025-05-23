@@ -10,6 +10,7 @@ export default function About() {
       <article className="paper prose max-w-none">
         <h1>About</h1>
         <p>This is the about page.</p>
+        <p className="test-style-home">[test-style-home]</p>
         <button className="btn" onClick={() => setCount((c) => c + 1)}>
           Client counter: {count}
         </button>
