@@ -237,7 +237,25 @@ export default function vitePluginRsc({
         const ids = ctx.modules.map((mod) => mod.id).filter((v) => v !== null);
         if (ids.length === 0) return;
 
-        if (!ids.some((id) => clientReferenceMetaMap[id])) {
+        // TODO: what if shared component?
+        function isInsideClientBoundary(mods: EnvironmentModuleNode[]) {
+          const visited = new Set<string>();
+          function recurse(mod: EnvironmentModuleNode): boolean {
+            if (!mod.id) return false;
+            if (clientReferenceMetaMap[mod.id]) return true;
+            if (visited.has(mod.id)) return false;
+            visited.add(mod.id);
+            for (const importer of mod.importers) {
+              if (recurse(importer)) {
+                return true;
+              }
+            }
+            return false;
+          }
+          return mods.some((mod) => recurse(mod));
+        }
+
+        if (!isInsideClientBoundary(ctx.modules)) {
           if (this.environment.name === "rsc") {
             // server hmr
             ctx.server.environments.client.hot.send({

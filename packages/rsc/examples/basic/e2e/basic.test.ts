@@ -151,6 +151,33 @@ test("client hmr @dev", async ({ page }) => {
   await page.getByRole("button", { name: "Client Counter: 0" }).click();
 });
 
+test("non-boundary client hmr @dev", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+
+  await page
+    .getByRole("textbox", { name: "test-client-dep-state" })
+    .fill("test");
+
+  const editor = createEditor("src/routes/client-dep.tsx");
+  editor.edit((s) =>
+    s.replace("test-client-dep-state", "test-client-[edit]-dep-state"),
+  );
+  await expect(
+    page.getByRole("textbox", { name: "test-client-[edit]-dep-state" }),
+  ).toHaveValue("test");
+
+  // check next ssr is also updated
+  const res = await page.goto("./");
+  expect(await res?.text()).toContain("test-client-[edit]-dep-state");
+
+  await waitForHydration(page);
+  editor.reset();
+  await expect(
+    page.getByRole("textbox", { name: "test-client-dep-state" }),
+  ).toBeVisible();
+});
+
 test("server hmr @dev", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
