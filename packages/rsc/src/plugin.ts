@@ -1055,18 +1055,17 @@ export function vitePluginRscCss(): Plugin[] {
           const importer = id.slice(
             "\0virtual:vite-rsc/importer-resources?importer=".length,
           );
-          this.addWatchFile(importer);
           if (this.environment.mode === "dev") {
-            const cssHrefs = collectCss(
-              server.environments.rsc!,
-              importer,
-            ).hrefs;
+            const result = collectCss(server.environments.rsc!, importer);
+            for (const file of [importer, ...result.visitedFiles]) {
+              this.addWatchFile(file);
+            }
             const jsHrefs = [
               "/@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
                 encodeURIComponent(importer),
             ];
             return generateResourcesCode(
-              JSON.stringify({ css: cssHrefs, js: jsHrefs }, null, 2),
+              JSON.stringify({ css: result.hrefs, js: jsHrefs }, null, 2),
             );
           } else {
             const key = path.relative(config.root, importer);
@@ -1088,11 +1087,13 @@ export function vitePluginRscCss(): Plugin[] {
             "\0virtual:vite-rsc/importer-resources-browser?importer=".length,
           );
           importer = decodeURIComponent(importer);
-          this.addWatchFile(importer);
-          // TODO: avoid repeating `collectCss`?
-          let ids = collectCss(server.environments.rsc!, importer).ids;
-          ids = ids.map((id) => id.replace(/^\0/, ""));
-          let code = ids
+          // TODO: avoid repeating `collectCss`
+          const result = collectCss(server.environments.rsc!, importer);
+          for (const file of [importer, ...result.visitedFiles]) {
+            this.addWatchFile(file);
+          }
+          let code = result.ids
+            .map((id) => id.replace(/^\0/, ""))
             .map((id) => `import ${JSON.stringify(id)};\n`)
             .join("");
           // ensure hmr boundary at this virtual since otherwise non-self accepting css
