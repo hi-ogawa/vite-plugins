@@ -18,12 +18,23 @@
     "react-server-dom-webpack": "latest"
   },
   "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/generator": "^7.27.1",
+    "@babel/parser": "^7.27.2",
+    "@babel/traverse": "^7.27.1",
+    "@babel/types": "^7.27.1",
     "@react-router/dev": "0.0.0-experimental-f1dd850aa",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.4",
+    "@types/babel__core": "^7.20.5",
+    "@types/babel__generator": "^7.27.0",
+    "@types/babel__traverse": "^7.20.7",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
+    "babel-dead-code-elimination": "^1.0.10",
+    "oxc-parser": "^0.64.0",
+    "oxc-transform": "^0.64.0",
     "tailwindcss": "^4.1.4",
     "vite": "latest",
     "vite-plugin-inspect": "^11.0.1"
