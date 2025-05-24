@@ -56,8 +56,15 @@ export async function renderRequest(
         ? await request.formData()
         : await request.text();
       temporaryReferences = createTemporaryReferenceSet();
-      const args = await decodeReply(body, { temporaryReferences });
       const action = await loadServerAction(actionId);
+      if (!action) {
+        // TODO: how to handle progressive enhancement case?
+        // TODO: how to handle invalid module key?
+        return new Response(`Server function not found '${actionId}'`, {
+          status: 404,
+        });
+      }
+      const args = await decodeReply(body, { temporaryReferences });
       returnValue = await action.apply(null, args);
     } else {
       // progressive enhancement
