@@ -10,7 +10,8 @@
     "@hiogawa/vite-rsc": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-server-dom-webpack": "latest"
+    "react-server-dom-webpack": "latest",
+    "rsc-html-stream": "^0.0.5"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.4",
