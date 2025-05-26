@@ -135,9 +135,6 @@ export default function vitePluginRsc({
               },
             },
           },
-          build: {
-            modulePreload: false,
-          },
           builder: {
             sharedPlugins: true,
             sharedConfigBuild: true,
@@ -505,6 +502,30 @@ export default function vitePluginRsc({
           `;
         }
         return "";
+      },
+    },
+    // disable __vitePreload/__vite__mapDeps entirely
+    // and manage js/css assets splitting per client reference on our own
+    // https://github.com/vitejs/vite/issues/19505#issuecomment-2683954298
+    {
+      name: "rsc:disable-vite-preload",
+      apply: "build",
+      config() {
+        return {
+          build: {
+            modulePreload: false,
+          },
+        };
+      },
+      configResolved(config) {
+        const index = config.plugins.findIndex(
+          (p) => p.name === "vite:build-import-analysis",
+        );
+        assert(index >= 0);
+        (config.plugins as unknown[]).splice(index, 1);
+      },
+      renderChunk(code) {
+        return "const __VITE_IS_MODERN__ = true;" + code;
       },
     },
     ...vitePluginRscCore(),
