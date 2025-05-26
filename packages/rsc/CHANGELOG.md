@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.4 (2025-05-26)
+
+- fix: fix stale css import in non-boundary client module ([#887](https://github.com/hi-ogawa/vite-plugins/pull/887))
+- fix: fix non-client-boundary client module hmr in tailwind example ([#886](https://github.com/hi-ogawa/vite-plugins/pull/886))
+
 ## v0.2.3 (2025-05-22)
 
 - fix: support Windows ([#884](https://github.com/hi-ogawa/vite-plugins/pull/884))
