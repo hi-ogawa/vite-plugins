@@ -66,7 +66,7 @@ export function createClientManifest(): BundlerConfig {
         tinyassert(id);
         tinyassert(name);
         return {
-          id: JSON.stringify({ id, cacheTag }),
+          id: JSON.stringify({ id, cacheTag, ...manifest[id] }),
           name,
           chunks: [],
           async: true,
@@ -74,4 +74,21 @@ export function createClientManifest(): BundlerConfig {
       },
     },
   );
+}
+
+export type ClientReferencePayload = {
+  id: string;
+  js: string[];
+  css: string[];
+  // ssrId: string;
+};
+
+export type ClientReferenceManifest = Record<string, ClientReferencePayload>;
+
+let manifest: ClientReferenceManifest = {};
+
+export function setClientReferenceManifest(
+  manifest_: ClientReferenceManifest,
+): void {
+  manifest = manifest_;
 }

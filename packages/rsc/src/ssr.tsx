@@ -11,7 +11,8 @@ export * from "./react/ssr";
 
 export function initialize(): void {
   setRequireModule({
-    load: async (id) => {
+    load: async (payload) => {
+      const id = payload.id;
       if (import.meta.env.DEV) {
         const mod = await import(/* @vite-ignore */ id);
         const modCss = await import(
@@ -23,13 +24,10 @@ export function initialize(): void {
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
         }
-        const deps = getAssetsManifest().clientReferenceDeps[id];
         // kick off preload before initial async import, which is not sync-cached
-        if (deps) {
-          preloadDeps(deps);
-        }
+        preloadDeps(payload);
         const mod: any = await import_();
-        return wrapResourceProxy(mod, deps);
+        return wrapResourceProxy(mod, payload);
       }
     },
   });

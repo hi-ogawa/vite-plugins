@@ -22,6 +22,7 @@ import {
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
+import type { ClientReferenceManifest } from "./core/rsc";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
@@ -368,6 +369,7 @@ export default function vitePluginRsc({
               },
             },
             clientReferenceDeps: {},
+            clientReferenceManifest: {},
           };
           return `export default ${JSON.stringify(manifest, null, 2)}`;
         }
@@ -396,11 +398,15 @@ export default function vitePluginRsc({
 
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
+          const clientReferenceManifest: ClientReferenceManifest = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps;
-            if (deps) {
-              clientReferenceDeps[meta.referenceKey] = deps;
-            }
+            const deps = assetDeps[id]?.deps ?? { js: [], css: [] };
+            clientReferenceDeps[meta.referenceKey] = deps;
+            clientReferenceManifest[meta.referenceKey] = {
+              id: meta.referenceKey,
+              js: deps.js,
+              css: deps.css,
+            };
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
           entry.deps.css.push(...rscCss);
@@ -410,6 +416,7 @@ export default function vitePluginRsc({
               deps: entry.deps,
             },
             clientReferenceDeps,
+            clientReferenceManifest,
           };
           this.emitFile({
             type: "asset",
@@ -509,7 +516,7 @@ export default function vitePluginRsc({
     // https://github.com/vitejs/vite/issues/19505#issuecomment-2683954298
     {
       name: "rsc:disable-vite-preload",
-      apply: "build",
+      // apply: "build",
       config() {
         return {
           build: {
@@ -518,14 +525,29 @@ export default function vitePluginRsc({
         };
       },
       configResolved(config) {
-        const index = config.plugins.findIndex(
+        if (config.command === "serve") return;
+        const plugin = config.plugins.find(
           (p) => p.name === "vite:build-import-analysis",
         );
-        assert(index >= 0);
-        (config.plugins as unknown[]).splice(index, 1);
+        assert(plugin);
+        // remove builtin __vitePreload logic except `\0vite/preload-helper.js` virtual
+        delete plugin.transform;
+        delete plugin.generateBundle;
       },
-      renderChunk(code) {
-        return "const __VITE_IS_MODERN__ = true;" + code;
+      // wrapper virtual module to make it no-op on dev
+      resolveId(source) {
+        if (source === "virtual:vite-rsc/preload-helper") {
+          assert(this.environment.name === "client");
+          if (this.environment.mode === "build") {
+            return "\0vite/preload-helper.js";
+          }
+          return "\0" + source;
+        }
+      },
+      load(id) {
+        if (id === "\0virtual:vite-rsc/preload-helper") {
+          return `export const __vitePreload = () => {}`;
+        }
       },
     },
     ...vitePluginRscCore(),
@@ -803,7 +825,9 @@ function generateDynamicImportCode(map: Record<string, string>) {
 
 export type AssetsManifest = {
   entry: { bootstrapModules: string[]; deps: AssetDeps };
+  // TODO: remove `clientReferenceDeps` in favor of `clientReferenceManifest`
   clientReferenceDeps: Record<string, AssetDeps>;
+  clientReferenceManifest: ClientReferenceManifest;
 };
 
 export type AssetDeps = {

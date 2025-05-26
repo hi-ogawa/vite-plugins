@@ -1,17 +1,17 @@
 import { memoize } from "@hiogawa/utils";
+import type { ClientReferencePayload } from "./rsc";
 import { setInternalRequire } from "./shared";
 
 let init = false;
 
 export function setRequireModule(options: {
-  load: (id: string) => Promise<unknown>;
+  load: (payload: ClientReferencePayload) => Promise<unknown>;
 }): void {
   if (init) return;
   init = true;
 
   const requireModule = memoize((id: string) => {
-    const payload = JSON.parse(id);
-    return options.load(payload.id);
+    return options.load(JSON.parse(id));
   });
 
   (globalThis as any).__vite_rsc_client_require__ = requireModule;
