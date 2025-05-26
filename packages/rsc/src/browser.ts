@@ -13,6 +13,9 @@ export function initialize(options?: {
         // @ts-ignore
         return __vite_rsc_raw_import__(withBase(id));
       } else {
+        // TODO: do __vitePreload equivalent on our own for client reference chunks
+        // - modulepreload for js deps
+        // - link rel=stylesheet for css deps
         const import_ = clientReferences.default[id];
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
