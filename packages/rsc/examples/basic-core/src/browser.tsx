@@ -7,7 +7,7 @@ import type { RscPayload } from "./rsc";
 async function main() {
   ReactClient.setRequireModule({
     load(id) {
-      return import(/* @vite-ignore */ id);
+      return import(/* @vite-ignore */ id.id);
     },
   });
 

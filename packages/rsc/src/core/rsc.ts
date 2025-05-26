@@ -100,18 +100,18 @@ export function createServerDecodeClientManifest(): ModuleMap {
 }
 
 export function createClientManifest(): BundlerConfig {
-  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
+  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : undefined;
 
   return new Proxy(
     {},
     {
       get(_target, $$id, _receiver) {
         tinyassert(typeof $$id === "string");
-        let [id, name] = $$id.split("#");
-        tinyassert(id);
+        let [key, name] = $$id.split("#");
+        tinyassert(key);
         tinyassert(name);
         return {
-          id: id + cacheTag,
+          id: JSON.stringify({ id: key, cacheTag, ...manifest[key], key }),
           name,
           chunks: [],
           async: true,
@@ -119,4 +119,21 @@ export function createClientManifest(): BundlerConfig {
       },
     },
   );
+}
+
+export type ClientReferencePayload = {
+  key?: string;
+  id: string;
+  js: string[];
+  css: string[];
+};
+
+export type ClientReferenceManifest = Record<string, ClientReferencePayload>;
+
+let manifest: ClientReferenceManifest = {};
+
+export function setClientReferenceManifest(
+  manifest_: ClientReferenceManifest,
+): void {
+  manifest = manifest_;
 }

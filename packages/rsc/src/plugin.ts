@@ -22,6 +22,7 @@ import {
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
+import type { ClientReferenceManifest } from "./core/rsc";
 import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
@@ -75,7 +76,6 @@ export default function vitePluginRsc({
           environments: {
             client: {
               build: {
-                manifest: true,
                 outDir: "dist/client",
                 rollupOptions: {
                   input: { index: ENTRIES.browser },
@@ -370,6 +370,7 @@ export default function vitePluginRsc({
               },
             },
             clientReferenceDeps: {},
+            clientReferenceManifest: {},
           };
           return `export default ${JSON.stringify(manifest, null, 2)}`;
         }
@@ -396,15 +397,34 @@ export default function vitePluginRsc({
             }
           }
 
-          const assetDeps = collectAssetDeps(bundle);
+          const chunkToDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
-          for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps;
-            if (deps) {
-              clientReferenceDeps[meta.referenceKey] = deps;
+          const clientReferenceManifest: ClientReferenceManifest = {};
+          const idToDeps: Record<
+            string,
+            { chunk: Rollup.OutputChunk; deps: AssetDeps }
+          > = {};
+          for (const [chunk, deps] of chunkToDeps.entries()) {
+            for (const id of chunk.moduleIds) {
+              idToDeps[id] = { chunk, deps };
             }
           }
-          const entry = assetDeps["\0" + ENTRIES.browser]!;
+          for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
+            const moduleId =
+              "\0virtual:vite-rsc/build-client-reference/" + meta.referenceKey;
+            assert(
+              moduleId in idToDeps,
+              `missing client reference chunk '${id}'`,
+            );
+            const { deps, chunk } = idToDeps[moduleId]!;
+            clientReferenceDeps[meta.referenceKey] = deps;
+            clientReferenceManifest[meta.referenceKey] = {
+              id: "/" + chunk.fileName,
+              js: deps.js,
+              css: deps.css,
+            };
+          }
+          const entry = idToDeps["\0" + ENTRIES.browser]!;
           entry.deps.css.push(...rscCss);
           const manifest: AssetsManifest = {
             entry: {
@@ -412,6 +432,7 @@ export default function vitePluginRsc({
               deps: entry.deps,
             },
             clientReferenceDeps,
+            clientReferenceManifest,
           };
           this.emitFile({
             type: "asset",
@@ -424,6 +445,7 @@ export default function vitePluginRsc({
       renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
+          this.environment.config.plugins;
           const replacement = path.relative(
             path.join(
               this.environment.config.build.outDir,
@@ -506,6 +528,37 @@ export default function vitePluginRsc({
         return "";
       },
     },
+    // disable __vitePreload/__vite__mapDeps entirely
+    // and manage js/css assets splitting per client reference on our own
+    // https://github.com/vitejs/vite/issues/19505#issuecomment-2683954298
+    {
+      name: "rsc:disable-vite-preload",
+      configResolved(config) {
+        if (config.command === "serve") return;
+        const plugin = config.plugins.find(
+          (p) => p.name === "vite:build-import-analysis",
+        );
+        assert(plugin);
+        // remove builtin __vitePreload logic except `\0vite/preload-helper.js` virtual
+        delete plugin.transform;
+        delete plugin.generateBundle;
+      },
+      // wrapper virtual module to make it no-op on dev
+      resolveId(source) {
+        if (source === "virtual:vite-rsc/preload-helper") {
+          assert(this.environment.name === "client");
+          if (this.environment.mode === "build") {
+            return "\0vite/preload-helper.js";
+          }
+          return "\0" + source;
+        }
+      },
+      load(id) {
+        if (id === "\0virtual:vite-rsc/preload-helper") {
+          return `export const __vitePreload = () => {}`;
+        }
+      },
+    },
     ...vitePluginRscCore(),
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
@@ -520,7 +573,7 @@ function hashString(v: string) {
 
 function normalizeReferenceId(id: string, name: "client" | "rsc") {
   if (!server) {
-    return hashString(path.relative(config.root, id));
+    return hashString(normalizePath(path.relative(config.root, id)));
   }
 
   // align with how Vite import analysis would rewrite id
@@ -564,7 +617,9 @@ function vitePluginUseClient(): Plugin[] {
             referenceKey = importId;
           } else {
             importId = id;
-            referenceKey = hashString(path.relative(config.root, id));
+            referenceKey = hashString(
+              normalizePath(path.relative(config.root, id)),
+            );
           }
         }
 
@@ -613,6 +668,41 @@ function vitePluginUseClient(): Plugin[] {
       code = `export default {${code}};\n`;
       return { code, map: null };
     }),
+    {
+      name: "rsc:build-emit-client-reference",
+      apply: "build",
+      buildStart() {
+        if (this.environment.name === "rsc") return;
+        for (const [, meta] of Object.entries(clientReferenceMetaMap)) {
+          this.emitFile({
+            type: "chunk",
+            name: path.basename(meta.importId),
+            id: "virtual:vite-rsc/build-client-reference/" + meta.referenceKey,
+            // TODO: does this allows merging client reference chunks?
+            // cf. https://github.com/rollup/rollup/pull/5891
+            preserveSignature: "allow-extension",
+          });
+        }
+      },
+      resolveId(source) {
+        if (source.startsWith("virtual:vite-rsc/build-client-reference/")) {
+          return "\0" + source;
+        }
+      },
+      load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/build-client-reference/")) {
+          const key = id.slice(
+            "\0virtual:vite-rsc/build-client-reference/".length,
+          );
+          const meta = Object.values(clientReferenceMetaMap).find(
+            (meta) => meta.referenceKey === key,
+          )!;
+          const importId = JSON.stringify(meta.importId);
+          const exports = meta.renderedExports.join(",");
+          return `export {${exports}} from ${importId};\n`;
+        }
+      },
+    },
     {
       name: "rsc:virtual-client-package",
       resolveId: {
@@ -797,7 +887,9 @@ function generateDynamicImportCode(map: Record<string, string>) {
 
 export type AssetsManifest = {
   entry: { bootstrapModules: string[]; deps: AssetDeps };
+  // TODO: remove `clientReferenceDeps` in favor of `clientReferenceManifest`
   clientReferenceDeps: Record<string, AssetDeps>;
+  clientReferenceManifest: ClientReferenceManifest;
 };
 
 export type AssetDeps = {
@@ -806,14 +898,10 @@ export type AssetDeps = {
 };
 
 function collectAssetDeps(bundle: Rollup.OutputBundle) {
-  const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
-    {};
+  const map = new Map<Rollup.OutputChunk, AssetDeps>();
   for (const chunk of Object.values(bundle)) {
-    if (chunk.type === "chunk" && chunk.facadeModuleId) {
-      map[chunk.facadeModuleId] = {
-        chunk,
-        deps: collectAssetDepsInner(chunk.fileName, bundle),
-      };
+    if (chunk.type === "chunk") {
+      map.set(chunk, collectAssetDepsInner(chunk.fileName, bundle));
     }
   }
   return map;
@@ -833,6 +921,7 @@ function collectAssetDepsInner(
     assert(v);
     if (v.type === "chunk") {
       css.push(...(v.viteMetadata?.importedCss ?? []));
+      // TODO: collect dynaimic imports too for browser since we disable vitePreload
       for (const k2 of v.imports) {
         recurse(k2);
       }
