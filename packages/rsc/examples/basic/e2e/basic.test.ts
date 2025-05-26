@@ -301,6 +301,53 @@ test("css hmr server @dev", async ({ page }) => {
   );
 });
 
+// TODO: need a way to add/remove links on server hmr. for now, it requires a manually reload.
+test.skip("adding/removing css server @dev @js", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+  await testAddRemoveCssServer(page, { js: true });
+});
+
+testNoJs("adding/removing css server @dev @nojs", async ({ page }) => {
+  await page.goto("./");
+  await testAddRemoveCssServer(page, { js: false });
+});
+
+async function testAddRemoveCssServer(page: Page, options: { js: boolean }) {
+  await expect(page.locator(".test-style-server")).toHaveCSS(
+    "color",
+    "rgb(255, 165, 0)",
+  );
+
+  // remove css import
+  const editor = createEditor("src/routes/root.tsx");
+  editor.edit((s) =>
+    s.replaceAll(`import "./server.css";`, `/* import "./server.css"; */`),
+  );
+  await page.waitForTimeout(100);
+  await expect(async () => {
+    if (!options.js) await page.reload();
+    await expect(page.locator(".test-style-server")).toHaveCSS(
+      "color",
+      "rgb(0, 0, 0)",
+      { timeout: 10 },
+    );
+  }).toPass();
+
+  // add back css import
+  editor.reset();
+  await page.waitForTimeout(100);
+  await expect(async () => {
+    if (!options.js) await page.reload();
+    await expect(page.locator(".test-style-server")).toHaveCSS(
+      "color",
+      "rgb(255, 165, 0)",
+      { timeout: 10 },
+    );
+  }).toPass();
+}
+
 test("css client no ssr", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);

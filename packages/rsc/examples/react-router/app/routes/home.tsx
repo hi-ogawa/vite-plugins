@@ -5,6 +5,9 @@ namespace Route {
 
 import { sayHello } from "./home.actions.ts";
 import { PendingButton } from "./home.client.tsx";
+import "./home.css";
+
+import { Resources } from "virtual:vite-rsc/importer-resources";
 
 export function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -15,9 +18,11 @@ export function loader({ request }: Route.LoaderArgs) {
 export default function ServerComponent({ loaderData }: Route.ComponentProps) {
   return (
     <main className="container my-8 px-8 mx-auto">
+      <Resources />
       <article className="paper prose max-w-none">
         <h1>Home</h1>
         <p>This is the home page.</p>
+        <span className="test-style-home">[test-style-home]</span>
         <pre>
           <code>loaderData: {JSON.stringify(loaderData)}</code>
         </pre>
