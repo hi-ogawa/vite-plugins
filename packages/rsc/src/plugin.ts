@@ -135,6 +135,9 @@ export default function vitePluginRsc({
               },
             },
           },
+          build: {
+            modulePreload: false,
+          },
           builder: {
             sharedPlugins: true,
             sharedConfigBuild: true,
