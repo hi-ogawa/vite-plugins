@@ -16,5 +16,7 @@ async function importWrapper(id: string) {
 }
 
 export function initializeReactClientBrowser() {
-  ReactClient.setRequireModule({ load: importWrapper });
+  ReactClient.setRequireModule({
+    load: (payload) => importWrapper(payload.id),
+  });
 }
