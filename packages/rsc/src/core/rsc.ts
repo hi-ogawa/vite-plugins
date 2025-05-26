@@ -66,7 +66,7 @@ export function createClientManifest(): BundlerConfig {
         tinyassert(id);
         tinyassert(name);
         return {
-          id: id + cacheTag,
+          id: JSON.stringify({ id, cacheTag }),
           name,
           chunks: [],
           async: true,

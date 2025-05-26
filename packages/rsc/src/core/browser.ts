@@ -1,5 +1,5 @@
 import { memoize } from "@hiogawa/utils";
-import { removeReferenceCacheTag, setInternalRequire } from "./shared";
+import { setInternalRequire } from "./shared";
 
 let init = false;
 
@@ -10,7 +10,8 @@ export function setRequireModule(options: {
   init = true;
 
   const requireModule = memoize((id: string) => {
-    return options.load(removeReferenceCacheTag(id));
+    const payload = JSON.parse(id);
+    return options.load(payload.id);
   });
 
   (globalThis as any).__vite_rsc_client_require__ = requireModule;
