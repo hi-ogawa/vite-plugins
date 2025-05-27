@@ -24,6 +24,8 @@ export function initialize(options?: {
         }
         return __vitePreload(
           import_,
+          // base is handled by `__vitePreload`
+          // TODO: refactor base handling?
           [...payload.js, ...payload.css].map((href) => href.slice(1)),
         );
       }

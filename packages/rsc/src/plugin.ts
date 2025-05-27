@@ -516,14 +516,6 @@ export default function vitePluginRsc({
     // https://github.com/vitejs/vite/issues/19505#issuecomment-2683954298
     {
       name: "rsc:disable-vite-preload",
-      // apply: "build",
-      config() {
-        return {
-          build: {
-            modulePreload: false,
-          },
-        };
-      },
       configResolved(config) {
         if (config.command === "serve") return;
         const plugin = config.plugins.find(
@@ -863,6 +855,7 @@ function collectAssetDepsInner(
     assert(v);
     if (v.type === "chunk") {
       css.push(...(v.viteMetadata?.importedCss ?? []));
+      // TODO: collect dynaimic imports too for browser since we disable vitePreload
       for (const k2 of v.imports) {
         recurse(k2);
       }
