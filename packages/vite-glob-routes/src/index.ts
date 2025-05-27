@@ -2,7 +2,6 @@ import type { Plugin } from "vite";
 import { name as packageName } from "../package.json";
 
 // pass internal runtime data via virtual module
-// biome-ignore format: .
 const VIRTUAL = {
   apiRoutes: `virtual:${packageName}/internal/apiRoutes`,
   pageRoutesServer: `virtual:${packageName}/internal/pageRoutesServer`,
