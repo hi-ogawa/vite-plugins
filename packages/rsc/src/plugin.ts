@@ -508,7 +508,6 @@ export default function vitePluginRsc({
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
-    vitePluginSilenceDirectiveBuildWarning(),
   ];
 }
 
@@ -758,45 +757,6 @@ function createVirtualPlugin(name: string, load: Plugin["load"]) {
       }
     },
   } satisfies Plugin;
-}
-
-// silence warning due to "use ..." directives
-// https://github.com/vitejs/vite-plugin-react/blob/814ed8043d321f4b4679a9f4a781d1ed14f185e4/packages/plugin-react/src/index.ts#L303
-function vitePluginSilenceDirectiveBuildWarning(): Plugin {
-  return {
-    name: "rsc:silence-directive-build-warning",
-    enforce: "post",
-    config(config, _env) {
-      return {
-        build: {
-          rollupOptions: {
-            onwarn(warning, defaultHandler) {
-              // https://github.com/vitejs/vite/issues/15012#issuecomment-1948550039
-              if (
-                warning.code === "SOURCEMAP_ERROR" &&
-                warning.message.includes("(1:0)")
-              ) {
-                return;
-              }
-              // https://github.com/TanStack/query/pull/5161#issuecomment-1506683450
-              if (
-                warning.code === "MODULE_LEVEL_DIRECTIVE" &&
-                (warning.message.includes(`use client`) ||
-                  warning.message.includes(`use server`))
-              ) {
-                return;
-              }
-              if (config.build?.rollupOptions?.onwarn) {
-                config.build.rollupOptions.onwarn(warning, defaultHandler);
-              } else {
-                defaultHandler(warning);
-              }
-            },
-          },
-        },
-      };
-    },
-  };
 }
 
 function generateDynamicImportCode(map: Record<string, string>) {

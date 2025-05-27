@@ -45,7 +45,6 @@ import {
   ENTRY_SERVER_WRAPPER,
   createVirtualPlugin,
   hashString,
-  vitePluginSilenceDirectiveBuildWarning,
   wrapClientPlugin,
   wrapServerPlugin,
 } from "./utils";
@@ -339,7 +338,6 @@ export function vitePluginReactServer(
     ...vitePluginFindSourceMapURL(),
     rscParentPlugin,
     buildOrchestrationPlugin,
-    vitePluginSilenceDirectiveBuildWarning(),
 
     //
     // react server
