@@ -11,7 +11,7 @@ export function wrapServerPlugin<T extends Plugin | Plugin[]>(p: T): T {
     ...p,
     applyToEnvironment: applyPluginToServer,
   });
-  return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
+  return (Array.isArray(p) ? p.map((p) => wrap(p)) : wrap(p)) as any;
 }
 
 export function wrapClientPlugin<T extends Plugin | Plugin[]>(p: T): T {
@@ -19,7 +19,7 @@ export function wrapClientPlugin<T extends Plugin | Plugin[]>(p: T): T {
     ...p,
     applyToEnvironment: applyPluginToClient,
   });
-  return Array.isArray(p) ? p.map((p) => wrap(p)) : (wrap(p) as any);
+  return (Array.isArray(p) ? p.map((p) => wrap(p)) : wrap(p)) as any;
 }
 
 export function invalidateModule(server: ViteDevServer, id: string) {
