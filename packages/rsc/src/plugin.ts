@@ -400,12 +400,16 @@ export default function vitePluginRsc({
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           const clientReferenceManifest: ClientReferenceManifest = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps ?? { js: [], css: [] };
+            // TODO: facadeModuleId is not guranteed for some client reference chunk?
+            const key = "\0virtual:vite-rsc/build-client-reference/" + id;
+            assert(key in assetDeps, `missing client reference chunk '${id}'`);
+            const { deps, chunk } = assetDeps[key]!;
             clientReferenceDeps[meta.referenceKey] = deps;
             clientReferenceManifest[meta.referenceKey] = {
               id: meta.referenceKey,
               js: deps.js,
               css: deps.css,
+              clientId: "/" + chunk.fileName,
             };
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
@@ -649,6 +653,39 @@ function vitePluginUseClient(): Plugin[] {
       code = `export default {${code}};\n`;
       return { code, map: null };
     }),
+    {
+      name: "rsc:build-emit-client-reference",
+      apply: "build",
+      buildStart() {
+        if (this.environment.name === "rsc") return;
+        for (const key of Object.keys(clientReferenceMetaMap)) {
+          this.emitFile({
+            type: "chunk",
+            id: "virtual:vite-rsc/build-client-reference/" + key,
+            // TODO: does this allow merging client reference chunks if not export conflict?
+            // (but if merged, we cannot use facadeModuleId as a key to find corresponding chunk.)
+            // cf. https://github.com/rollup/rollup/pull/5891
+            preserveSignature: "allow-extension",
+          });
+        }
+      },
+      resolveId(source) {
+        if (source.startsWith("virtual:vite-rsc/build-client-reference/")) {
+          return "\0" + source;
+        }
+      },
+      load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/build-client-reference/")) {
+          const key = id.slice(
+            "\0virtual:vite-rsc/build-client-reference/".length,
+          );
+          const meta = clientReferenceMetaMap[key]!;
+          const importId = JSON.stringify(meta.importId);
+          const exports = meta.renderedExports.join(",");
+          return `export {${exports}} from ${importId};\n`;
+        }
+      },
+    },
     {
       name: "rsc:virtual-client-package",
       resolveId: {

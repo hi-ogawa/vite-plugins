@@ -1,5 +1,3 @@
-// TODO: move virtual off from main bundle
-import * as clientReferences from "virtual:vite-rsc/client-references";
 import { setRequireModule } from "./core/browser";
 import { withBase } from "./utils/base";
 
@@ -18,14 +16,10 @@ export function initialize(options?: {
         // @ts-ignore
         return __vite_rsc_raw_import__(withBase(id));
       } else {
-        const import_ = clientReferences.default[id];
-        if (!import_) {
-          throw new Error(`client reference not found '${id}'`);
-        }
         return __vitePreload(
-          import_,
-          // base is handled by `__vitePreload`
-          // TODO: refactor base handling?
+          () => import(/* @vite-ignore */ withBase(payload.clientId!)),
+          // base for deps is handled by `__vitePreload`
+          // TODO: refactor base handling to be consistent?
           [...payload.js, ...payload.css].map((href) => href.slice(1)),
         );
       }

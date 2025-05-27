@@ -80,6 +80,7 @@ export type ClientReferencePayload = {
   id: string;
   js: string[];
   css: string[];
+  clientId?: string;
   // ssrId: string;
 };
 
