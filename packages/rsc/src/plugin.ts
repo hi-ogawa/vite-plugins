@@ -75,7 +75,6 @@ export default function vitePluginRsc({
           environments: {
             client: {
               build: {
-                manifest: true,
                 outDir: "dist/client",
                 rollupOptions: {
                   input: { index: ENTRIES.browser },
@@ -396,14 +395,26 @@ export default function vitePluginRsc({
             }
           }
 
-          const assetDeps = collectAssetDeps(bundle);
+          const chunkToDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           const clientReferenceManifest: ClientReferenceManifest = {};
+          const idToDeps: Record<
+            string,
+            { chunk: Rollup.OutputChunk; deps: AssetDeps }
+          > = {};
+          for (const [chunk, deps] of chunkToDeps.entries()) {
+            for (const id of chunk.moduleIds) {
+              idToDeps[id] = { chunk, deps };
+            }
+          }
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            // TODO: facadeModuleId is not guranteed for some client reference chunk?
-            const key = "\0virtual:vite-rsc/build-client-reference/" + id;
-            assert(key in assetDeps, `missing client reference chunk '${id}'`);
-            const { deps, chunk } = assetDeps[key]!;
+            const moduleId =
+              "\0virtual:vite-rsc/build-client-reference/" + meta.referenceKey;
+            assert(
+              moduleId in idToDeps,
+              `missing client reference chunk '${id}'`,
+            );
+            const { deps, chunk } = idToDeps[moduleId]!;
             clientReferenceDeps[meta.referenceKey] = deps;
             clientReferenceManifest[meta.referenceKey] = {
               id: meta.referenceKey,
@@ -412,7 +423,7 @@ export default function vitePluginRsc({
               clientId: "/" + chunk.fileName,
             };
           }
-          const entry = assetDeps["\0" + ENTRIES.browser]!;
+          const entry = idToDeps["\0" + ENTRIES.browser]!;
           entry.deps.css.push(...rscCss);
           const manifest: AssetsManifest = {
             entry: {
@@ -658,12 +669,11 @@ function vitePluginUseClient(): Plugin[] {
       apply: "build",
       buildStart() {
         if (this.environment.name === "rsc") return;
-        for (const key of Object.keys(clientReferenceMetaMap)) {
+        for (const [, meta] of Object.entries(clientReferenceMetaMap)) {
           this.emitFile({
             type: "chunk",
-            id: "virtual:vite-rsc/build-client-reference/" + key,
+            id: "virtual:vite-rsc/build-client-reference/" + meta.referenceKey,
             // TODO: does this allow merging client reference chunks if not export conflict?
-            // (but if merged, we cannot use facadeModuleId as a key to find corresponding chunk.)
             // cf. https://github.com/rollup/rollup/pull/5891
             preserveSignature: "allow-extension",
           });
@@ -679,7 +689,9 @@ function vitePluginUseClient(): Plugin[] {
           const key = id.slice(
             "\0virtual:vite-rsc/build-client-reference/".length,
           );
-          const meta = clientReferenceMetaMap[key]!;
+          const meta = Object.values(clientReferenceMetaMap).find(
+            (meta) => meta.referenceKey === key,
+          )!;
           const importId = JSON.stringify(meta.importId);
           const exports = meta.renderedExports.join(",");
           return `export {${exports}} from ${importId};\n`;
@@ -865,14 +877,10 @@ export type AssetDeps = {
 };
 
 function collectAssetDeps(bundle: Rollup.OutputBundle) {
-  const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
-    {};
+  const map = new Map<Rollup.OutputChunk, AssetDeps>();
   for (const chunk of Object.values(bundle)) {
-    if (chunk.type === "chunk" && chunk.facadeModuleId) {
-      map[chunk.facadeModuleId] = {
-        chunk,
-        deps: collectAssetDepsInner(chunk.fileName, bundle),
-      };
+    if (chunk.type === "chunk") {
+      map.set(chunk, collectAssetDepsInner(chunk.fileName, bundle));
     }
   }
   return map;
