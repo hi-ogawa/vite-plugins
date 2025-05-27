@@ -1,7 +1,7 @@
 import {
+  createBrowserHistory,
   type HistoryLocation,
   type RouterHistory,
-  createBrowserHistory,
 } from "@tanstack/history";
 import React from "react";
 import { TinyStore, useStore } from "./store-utils";

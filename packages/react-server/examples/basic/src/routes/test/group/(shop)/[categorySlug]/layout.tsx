@@ -1,4 +1,4 @@
-import { type LayoutProps, createError } from "@hiogawa/react-server/server";
+import { createError, type LayoutProps } from "@hiogawa/react-server/server";
 import { NavMenu } from "../../../../../components/nav-menu";
 import { demoData } from "../../_utils";
 

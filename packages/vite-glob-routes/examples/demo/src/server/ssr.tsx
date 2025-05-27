@@ -2,9 +2,9 @@ import { type RequestHandler } from "@hattip/compose";
 import { generateThemeScript } from "@hiogawa/theme-script";
 import { tinyassert } from "@hiogawa/utils";
 import {
-  type ServerRouterResult,
   globPageRoutesServer,
   handleReactRouterServer,
+  type ServerRouterResult,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
 import { resolveRouteDependenciesByIds } from "@hiogawa/vite-glob-routes/dist/react-router/shared";
 import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
@@ -12,8 +12,8 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { isRouteErrorResponse } from "react-router-dom";
 import {
-  StaticRouterProvider,
   createStaticRouter,
+  StaticRouterProvider,
 } from "react-router-dom/server";
 import type { Manifest } from "vite";
 import { logError } from "./log";

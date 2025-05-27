@@ -1,6 +1,6 @@
 import "./install-polyfill";
 import process from "node:process";
-import { TinyCli, arg, tinyCliMain } from "@hiogawa/tiny-cli";
+import { arg, TinyCli, tinyCliMain } from "@hiogawa/tiny-cli";
 import { writeCookieSession } from "./session";
 
 const cli = new TinyCli();

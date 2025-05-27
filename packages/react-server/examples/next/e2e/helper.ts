@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 export async function waitForHydration(page: Page) {
   await expect(page.locator("html")).toHaveAttribute(

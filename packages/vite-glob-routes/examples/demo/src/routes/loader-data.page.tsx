@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "../utils/toast";
-import { updateCounterClient } from "./loader-data-counter.api";
 import type { LoaderData } from "./loader-data.page.server";
+import { updateCounterClient } from "./loader-data-counter.api";
 
 export function Component() {
   const loaderData = useLoaderData() as LoaderData;

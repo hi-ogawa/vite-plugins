@@ -8,12 +8,12 @@ import { normalizeViteImportAnalysisUrl } from "@hiogawa/vite-rsc/vite-utils";
 import { type Plugin, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
-  type CustomModuleMeta,
-  USE_CLIENT,
-  USE_CLIENT_RE,
   applyPluginToClient,
   applyPluginToServer,
+  type CustomModuleMeta,
   createVirtualPlugin,
+  USE_CLIENT,
+  USE_CLIENT_RE,
 } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:use-client");

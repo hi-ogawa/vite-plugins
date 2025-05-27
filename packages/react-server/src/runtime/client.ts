@@ -2,8 +2,8 @@
 
 export {
   ErrorBoundary,
-  RedirectBoundary,
   NotFoundBoundary,
+  RedirectBoundary,
 } from "../features/error/error-boundary";
 export {
   LayoutContent,

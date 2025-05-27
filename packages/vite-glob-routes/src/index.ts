@@ -2,11 +2,11 @@ import type { Plugin } from "vite";
 import { name as packageName } from "../package.json";
 
 // pass internal runtime data via virtual module
-// biome-ignore format:
+// biome-ignore format: .
 const VIRTUAL = {
-  apiRoutes:            `virtual:${packageName}/internal/apiRoutes`,
-  pageRoutesServer:     `virtual:${packageName}/internal/pageRoutesServer`,
-  pageRoutesClient:     `virtual:${packageName}/internal/pageRoutesClient`,
+  apiRoutes: `virtual:${packageName}/internal/apiRoutes`,
+  pageRoutesServer: `virtual:${packageName}/internal/pageRoutesServer`,
+  pageRoutesClient: `virtual:${packageName}/internal/pageRoutesClient`,
   pageRoutesClientLazy: `virtual:${packageName}/internal/pageRoutesClientLazy`,
 };
 const VIRTUALS = Object.values(VIRTUAL);

@@ -1,4 +1,4 @@
-import { type FilterPattern, type Plugin, createFilter } from "vite";
+import { createFilter, type FilterPattern, type Plugin } from "vite";
 
 // quick-dirty plugin to mutate Function.name to cheat react-refresh's capitalized name check
 // https://github.com/facebook/react/blob/4e3618ae41669c95a3377ae615c727f74f89d141/packages/react-refresh/src/ReactFreshRuntime.js#L713-L715

@@ -2,8 +2,8 @@
 
 import React from "react";
 import "./client.css";
-import { TestClientDep } from "./client-dep";
 import styles from "./client.module.css";
+import { TestClientDep } from "./client-dep";
 
 export function ClientCounter(): React.ReactElement {
   const [count, setCount] = React.useState(0);

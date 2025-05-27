@@ -1,9 +1,9 @@
 import * as esModuleLexer from "es-module-lexer";
 import {
+  createFilter,
   type FilterPattern,
   type Plugin,
   type ResolvedConfig,
-  createFilter,
 } from "vite";
 import { name as packageName } from "../package.json";
 

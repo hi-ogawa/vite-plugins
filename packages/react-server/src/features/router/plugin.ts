@@ -16,15 +16,18 @@ import {
 } from "../../plugin/utils";
 import {
   type AssetDeps,
-  type RouteAssetDeps,
   mergeAssetDeps,
+  type RouteAssetDeps,
 } from "./manifest";
 import { createFsRouteTree } from "./tree";
 
 export function routeManifestPluginServer({
   manager,
   routeDir,
-}: { manager: PluginStateManager; routeDir: string }): Plugin[] {
+}: {
+  manager: PluginStateManager;
+  routeDir: string;
+}): Plugin[] {
   return [
     {
       name: "server-route-manifest",
@@ -60,7 +63,9 @@ export function routeManifestPluginServer({
 
 export function routeManifestPluginClient({
   manager,
-}: { manager: PluginStateManager }): Plugin[] {
+}: {
+  manager: PluginStateManager;
+}): Plugin[] {
   return [
     {
       name: routeManifestPluginClient.name + ":bundle",

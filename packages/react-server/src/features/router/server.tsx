@@ -6,14 +6,14 @@ import type { Metadata } from "../meta/utils";
 import type { RevalidationType } from "../server-component/utils";
 import type { ApiRouteMoudle } from "./api-route";
 import {
-  type MatchSegment,
-  type TreeNode,
   createFsRouteTree,
+  type MatchSegment,
   matchPageRoute,
   parseRoutePath,
+  type TreeNode,
   toMatchParams,
 } from "./tree";
-import { LAYOUT_ROOT_NAME, isAncestorPath } from "./utils";
+import { isAncestorPath, LAYOUT_ROOT_NAME } from "./utils";
 
 // TODO(refactor): move to tree.ts with ROUTE_MODULE_KEYS constants
 // cf. https://nextjs.org/docs/app/building-your-application/routing#file-conventions

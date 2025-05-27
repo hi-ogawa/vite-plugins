@@ -1,16 +1,16 @@
 import { type RequestHandler } from "@hattip/compose";
 import { tinyassert } from "@hiogawa/utils";
 import {
-  type ServerRouterResult,
   globPageRoutesServer,
   handleReactRouterServer,
+  type ServerRouterResult,
 } from "@hiogawa/vite-glob-routes/dist/react-router/server";
 import { viteDevServer } from "@hiogawa/vite-import-dev-server/runtime";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import {
-  StaticRouterProvider,
   createStaticRouter,
+  StaticRouterProvider,
 } from "react-router-dom/server";
 import { logError } from "./log";
 

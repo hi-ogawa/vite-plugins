@@ -8,16 +8,16 @@ import {
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
   DevEnvironment,
+  defaultServerConditions,
   type EnvironmentModuleNode,
+  isCSSRequest,
+  normalizePath,
   type Plugin,
+  parseAstAsync,
   type ResolvedConfig,
   Rollup,
   RunnableDevEnvironment,
   type ViteDevServer,
-  defaultServerConditions,
-  isCSSRequest,
-  normalizePath,
-  parseAstAsync,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
@@ -929,7 +929,9 @@ export async function findSourceMapURL(
 
 export function vitePluginRscCss({
   entries,
-}: { entries: { rsc: string } }): Plugin[] {
+}: {
+  entries: { rsc: string };
+}): Plugin[] {
   // this approach likely misses css files found in dynaimic import of server components
   // during first SSR after server start. (e.g. react router's lazy server routes)
   // however, frameworks should be able to cover such cases based on their own convention.

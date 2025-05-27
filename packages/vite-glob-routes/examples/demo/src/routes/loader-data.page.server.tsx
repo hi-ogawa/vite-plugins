@@ -1,4 +1,4 @@
-import { type LoaderFunction, json } from "react-router-dom";
+import { json, type LoaderFunction } from "react-router-dom";
 import { getCounter } from "./loader-data-counter.api";
 
 export type LoaderData = {

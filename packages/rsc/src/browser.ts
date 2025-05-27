@@ -4,9 +4,7 @@ import { withBase } from "./utils/base";
 
 export * from "./react/browser";
 
-export function initialize(options?: {
-  onHmrReload?: () => void;
-}): void {
+export function initialize(options?: { onHmrReload?: () => void }): void {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {

@@ -3,7 +3,7 @@ import { tinyReactVitePlugin } from "@hiogawa/tiny-react/dist/plugins/vite";
 import { vitePluginWorkerd } from "@hiogawa/vite-node-miniflare";
 import { vitePluginSimpleHmr } from "@hiogawa/vite-plugin-simple-hmr";
 import { Log } from "miniflare";
-import { type Plugin, type ViteDevServer, defineConfig } from "vite";
+import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 
 export default defineConfig({
   clearScreen: false,

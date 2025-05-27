@@ -1,8 +1,7 @@
-import { tinyassert } from "@hiogawa/utils";
-import * as ReactClient from "@hiogawa/vite-rsc/react/browser";
-
 // @ts-ignore
 import clientReferences from "virtual:client-references";
+import { tinyassert } from "@hiogawa/utils";
+import * as ReactClient from "@hiogawa/vite-rsc/react/browser";
 
 async function importWrapper(id: string) {
   if (import.meta.env.DEV) {

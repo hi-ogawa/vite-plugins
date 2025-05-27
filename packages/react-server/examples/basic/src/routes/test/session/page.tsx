@@ -1,5 +1,5 @@
 import { Link } from "@hiogawa/react-server/client";
-import { type PageProps, cookies } from "@hiogawa/react-server/server";
+import { cookies, type PageProps } from "@hiogawa/react-server/server";
 import { getCounter, incrementCounter, signout } from "./_action";
 import { SESSION_KEY } from "./utils";
 

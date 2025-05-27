@@ -1,10 +1,10 @@
 import rscCore from "@hiogawa/vite-rsc/core/plugin";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import {
-  type RunnableDevEnvironment,
-  type ViteDevServer,
   defaultServerConditions,
   defineConfig,
+  type RunnableDevEnvironment,
+  type ViteDevServer,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
 

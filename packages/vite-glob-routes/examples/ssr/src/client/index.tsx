@@ -3,7 +3,7 @@ import { injectDataRequestLoaders } from "@hiogawa/vite-glob-routes/dist/react-r
 import { globPageRoutesClientEager } from "@hiogawa/vite-glob-routes/dist/react-router/client-eager";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const serverHandoff = window as any as {
   __serverLoaderRouteIds: string[];

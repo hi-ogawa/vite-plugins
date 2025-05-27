@@ -1,5 +1,5 @@
 import type { PageProps } from "@hiogawa/react-server/server";
-import { type PostType, fetchPosts } from "../layout";
+import { fetchPosts, type PostType } from "../layout";
 
 // https://nextjs.org/docs/app/api-reference/functions/generate-static-params
 export async function generateStaticParams() {
