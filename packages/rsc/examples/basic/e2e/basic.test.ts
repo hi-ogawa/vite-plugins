@@ -73,6 +73,9 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
   const { default: manifest } = await import(
     "../dist/client/__vite_rsc_assets_manifest.js" as any
   );
+  function hashString(v: string) {
+    return createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
+  }
   const deps =
     manifest.clientReferenceManifest[hashString("src/routes/client.tsx")];
   const hrefs = deps.js.map(
@@ -80,10 +83,6 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
   );
   expect(srcs).toEqual(expect.arrayContaining(hrefs));
 });
-
-function hashString(v: string) {
-  return createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
-}
 
 test("server reference update @dev @js", async ({ page }) => {
   await page.goto("./");
