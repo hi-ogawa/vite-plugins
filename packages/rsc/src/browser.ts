@@ -17,7 +17,7 @@ export function initialize(options?: {
         return __vite_rsc_raw_import__(withBase(id));
       } else {
         return __vitePreload(
-          () => import(/* @vite-ignore */ withBase(payload.clientId!)),
+          () => import(/* @vite-ignore */ withBase(id)),
           // base for deps is handled by `__vitePreload`
           // TODO: refactor base handling to be consistent?
           [...payload.js, ...payload.css].map((href) => href.slice(1)),

@@ -417,10 +417,9 @@ export default function vitePluginRsc({
             const { deps, chunk } = idToDeps[moduleId]!;
             clientReferenceDeps[meta.referenceKey] = deps;
             clientReferenceManifest[meta.referenceKey] = {
-              id: meta.referenceKey,
+              id: "/" + chunk.fileName,
               js: deps.js,
               css: deps.css,
-              clientId: "/" + chunk.fileName,
             };
           }
           const entry = idToDeps["\0" + ENTRIES.browser]!;
@@ -444,6 +443,7 @@ export default function vitePluginRsc({
       renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
+          this.environment.config.plugins;
           const replacement = path.relative(
             path.join(
               this.environment.config.build.outDir,

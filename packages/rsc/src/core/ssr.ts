@@ -1,5 +1,5 @@
 import { memoize } from "@hiogawa/utils";
-import type { ServerConsumerManifest } from "../types";
+import type { ImportManifestEntry, ServerConsumerManifest } from "../types";
 import type { ClientReferencePayload } from "./rsc";
 import { setInternalRequire } from "./shared";
 
@@ -24,5 +24,40 @@ export function setRequireModule(options: {
 }
 
 export function createServerConsumerManifest(): ServerConsumerManifest {
-  return {};
+  return {
+    moduleMap: new Proxy(
+      {},
+      {
+        get(_target, id: string, _receiver) {
+          return new Proxy(
+            {},
+            {
+              get(_target, name: string) {
+                const payload = JSON.parse(id);
+                return {
+                  id: JSON.stringify({
+                    ...payload,
+                    ...ssrManifest[payload.key],
+                  }),
+                  name,
+                  chunks: [],
+                  async: true,
+                } satisfies ImportManifestEntry;
+              },
+            },
+          );
+        },
+      },
+    ),
+  };
+}
+
+type SsrClientReferenceManifest = Record<string, { id: string }>;
+
+let ssrManifest: SsrClientReferenceManifest = {};
+
+export function setSsrClientReferenceManifest(
+  manifest_: SsrClientReferenceManifest,
+): void {
+  ssrManifest = manifest_;
 }

@@ -55,18 +55,18 @@ export function createServerManifest(): BundlerConfig {
 }
 
 export function createClientManifest(): BundlerConfig {
-  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
+  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : undefined;
 
   return new Proxy(
     {},
     {
       get(_target, $$id, _receiver) {
         tinyassert(typeof $$id === "string");
-        let [id, name] = $$id.split("#");
-        tinyassert(id);
+        let [key, name] = $$id.split("#");
+        tinyassert(key);
         tinyassert(name);
         return {
-          id: JSON.stringify({ id, cacheTag, ...manifest[id] }),
+          id: JSON.stringify({ id: key, cacheTag, ...manifest[key], key }),
           name,
           chunks: [],
           async: true,
@@ -77,11 +77,11 @@ export function createClientManifest(): BundlerConfig {
 }
 
 export type ClientReferencePayload = {
+  // TODO: do ssr id remapping via ssrManifest
+  key?: string;
   id: string;
   js: string[];
   css: string[];
-  clientId?: string;
-  // ssrId: string;
 };
 
 export type ClientReferenceManifest = Record<string, ClientReferencePayload>;

@@ -1,7 +1,7 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as clientReferences from "virtual:vite-rsc/client-references";
 import * as ReactDOM from "react-dom";
-import { setRequireModule } from "./core/ssr";
+import { setRequireModule, setSsrClientReferenceManifest } from "./core/ssr";
 import type { AssetDeps, AssetsManifest } from "./plugin";
 import { withBase } from "./utils/base";
 
@@ -10,16 +10,20 @@ export { createServerConsumerManifest } from "./core/ssr";
 export * from "./react/ssr";
 
 export function initialize(): void {
+  // TODO
+  setSsrClientReferenceManifest({});
+
   setRequireModule({
     load: async (payload) => {
-      const id = payload.id;
       if (import.meta.env.DEV) {
+        const id = payload.id;
         const mod = await import(/* @vite-ignore */ id);
         const modCss = await import(
           /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
         );
         return wrapResourceProxy(mod, { js: [], css: modCss.default });
       } else {
+        const id = payload.key!;
         const import_ = clientReferences.default[id];
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
