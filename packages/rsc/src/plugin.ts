@@ -674,8 +674,9 @@ function vitePluginUseClient(): Plugin[] {
         for (const [, meta] of Object.entries(clientReferenceMetaMap)) {
           this.emitFile({
             type: "chunk",
+            name: path.basename(meta.importId),
             id: "virtual:vite-rsc/build-client-reference/" + meta.referenceKey,
-            // TODO: does this allow merging client reference chunks if not export conflict?
+            // TODO: does this allows merging client reference chunks?
             // cf. https://github.com/rollup/rollup/pull/5891
             preserveSignature: "allow-extension",
           });
