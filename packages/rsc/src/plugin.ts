@@ -571,7 +571,7 @@ function hashString(v: string) {
 
 function normalizeReferenceId(id: string, name: "client" | "rsc") {
   if (!server) {
-    return hashString(path.relative(config.root, id));
+    return hashString(normalizePath(path.relative(config.root, id)));
   }
 
   // align with how Vite import analysis would rewrite id
@@ -615,7 +615,9 @@ function vitePluginUseClient(): Plugin[] {
             referenceKey = importId;
           } else {
             importId = id;
-            referenceKey = hashString(path.relative(config.root, id));
+            referenceKey = hashString(
+              normalizePath(path.relative(config.root, id)),
+            );
           }
         }
 
