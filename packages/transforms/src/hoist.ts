@@ -12,10 +12,13 @@ export function transformHoistInlineDirective(
     runtime,
     directive,
     rejectNonAsyncFunction,
+    ...options
   }: {
     runtime: (value: string, name: string) => string;
     directive: string;
     rejectNonAsyncFunction?: boolean;
+    encode?: (value: string) => string;
+    decode?: (value: string) => string;
   },
 ) {
   const output = new MagicString(input);
@@ -59,10 +62,20 @@ export function transformHoistInlineDirective(
           const owner = scope.find_owner(ref);
           return owner && owner !== scope && owner !== analyzed.scope;
         });
-        const newParams = [
+        let newParams = [
           ...bindVars,
           ...node.params.map((n) => input.slice(n.start, n.end)),
         ].join(", ");
+        if (bindVars.length > 0 && options.decode) {
+          newParams = [
+            "$$hoist_encoded",
+            ...node.params.map((n) => input.slice(n.start, n.end)),
+          ].join(", ");
+          output.appendLeft(
+            node.body.body[0]!.start,
+            `const [${bindVars.join(",")}] = ${options.decode("$$hoist_encoded")};\n`,
+          );
+        }
 
         // append a new `FunctionDeclaration` at the end
         const newName =
@@ -82,7 +95,10 @@ export function transformHoistInlineDirective(
         // replace original declartion with action register + bind
         let newCode = `/* #__PURE__ */ ${runtime(newName, newName)}`;
         if (bindVars.length > 0) {
-          newCode = `${newCode}.bind(${["null", ...bindVars].join(", ")})`;
+          const bindArgs = options.encode
+            ? options.encode("[" + bindVars.join(", ") + "]")
+            : bindVars.join(", ");
+          newCode = `${newCode}.bind(null, ${bindArgs})`;
         }
         if (declName) {
           newCode = `const ${declName} = ${newCode};`;
