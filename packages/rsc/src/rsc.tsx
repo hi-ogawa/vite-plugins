@@ -1,8 +1,14 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as serverReferences from "virtual:vite-rsc/server-references";
-import { setRequireModule } from "./core/rsc";
+import { createServerManifest, setRequireModule } from "./core/rsc";
 import type { AssetsManifest } from "./plugin";
+import { renderToReadableStream } from "./rsc";
 import { withBase } from "./utils/base";
+import {
+  arrayBufferToString,
+  concatArrayStream,
+  stringToUint8Array,
+} from "./utils/encryption-utils";
 
 export {
   createClientManifest,
@@ -71,4 +77,92 @@ export async function Resources({
       {viteCspNonce}
     </>
   );
+}
+
+// based on
+// https://github.com/parcel-bundler/parcel/blob/9855f558a69edde843b1464f39a6010f6b421efe/packages/transformers/js/src/rsc-utils.js
+// https://github.com/vercel/next.js/blob/c10c10daf9e95346c31c24dc49d6b7cda48b5bc8/packages/next/src/server/app-render/encryption.ts
+// https://github.com/vercel/next.js/pull/56377
+// https://github.com/vercel/next.js/pull/71527
+
+export async function encryptActionBoundArgs(
+  originalValue: unknown,
+): Promise<string> {
+  const serialized = await concatArrayStream(
+    renderToReadableStream(originalValue),
+  );
+  const iv = crypto.getRandomValues(new Uint8Array(16));
+  const encrypted = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv,
+    },
+    await getEncryptionKey(),
+    serialized,
+  );
+  return btoa(arrayBufferToString(iv) + arrayBufferToString(encrypted));
+}
+
+export async function decryptActionBoundArgs(
+  encryptionResult: ReturnType<typeof encryptActionBoundArgs>,
+): Promise<unknown> {
+  const encryptedString = atob(await encryptionResult);
+  const iv = stringToUint8Array(encryptedString.slice(0, 16));
+  const encrypted = stringToUint8Array(encryptedString.slice(16));
+  const serialized = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv,
+    },
+    await getEncryptionKey(),
+    encrypted,
+  );
+  const serializedStream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new Uint8Array(serialized));
+      controller.close();
+    },
+  });
+  const { createFromReadableStream } = await importLibSsr();
+  const originalValue = await createFromReadableStream(serializedStream, {
+    serverConsumerManifest: {
+      serverModuleMap: createServerManifest(),
+    },
+  });
+  return originalValue;
+}
+
+async function importLibSsr(): Promise<typeof import("./ssr")> {
+  const mod = await import("virtual:vite-rsc/import-lib-ssr" as any);
+  if (import.meta.env.DEV) {
+    return mod.default();
+  } else {
+    return mod;
+  }
+}
+
+declare let __VITE_RSC_ENCRYPTION_KEY__: string;
+
+const getEncryptionKey = once(async () => {
+  return crypto.subtle.importKey(
+    "raw",
+    stringToUint8Array(atob(__VITE_RSC_ENCRYPTION_KEY__)),
+    {
+      name: "AES-GCM",
+    },
+    true,
+    ["encrypt", "decrypt"],
+  );
+});
+
+function once<T>(f: () => T): () => T {
+  let called = false;
+  let result: T;
+  return () => {
+    if (!called) {
+      called = true;
+      result = f();
+    }
+    return result;
+  };
 }

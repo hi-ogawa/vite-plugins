@@ -96,7 +96,7 @@ export default function vitePluginRsc({
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: ENTRIES.ssr },
+                  input: { index: ENTRIES.ssr, lib: `${PKG_NAME}/ssr` },
                 },
               },
               resolve: {
@@ -305,6 +305,7 @@ export default function vitePluginRsc({
       name: "rsc:virtual:vite-rsc/import-entry",
       resolveId(source) {
         if (
+          source === "virtual:vite-rsc/import-lib-ssr" ||
           source === "virtual:vite-rsc/import-rsc" ||
           source === "virtual:vite-rsc/import-ssr"
         ) {
@@ -321,8 +322,12 @@ export default function vitePluginRsc({
         if (id === "\0virtual:vite-rsc/import-ssr") {
           return `export default () => __viteSsrRunner.import(${JSON.stringify(ENTRIES.ssr)})`;
         }
+        if (id === "\0virtual:vite-rsc/import-lib-ssr") {
+          return `export default () => __viteSsrRunner.import(${JSON.stringify(PKG_NAME + "/ssr")})`;
+        }
       },
-      renderChunk(code, chunk) {
+      renderChunk(originalCode, chunk) {
+        let code = originalCode;
         if (code.includes("\0virtual:vite-rsc/import-rsc")) {
           const replacement = path.relative(
             path.join("dist/ssr", chunk.fileName, ".."),
@@ -331,7 +336,6 @@ export default function vitePluginRsc({
           code = code.replaceAll("\0virtual:vite-rsc/import-rsc", () =>
             normalizePath(replacement),
           );
-          return { code };
         }
         if (code.includes("\0virtual:vite-rsc/import-ssr")) {
           const replacement = path.relative(
@@ -341,9 +345,19 @@ export default function vitePluginRsc({
           code = code.replaceAll("\0virtual:vite-rsc/import-ssr", () =>
             normalizePath(replacement),
           );
+        }
+        if (code.includes("\0virtual:vite-rsc/import-lib-ssr")) {
+          const replacement = path.relative(
+            path.join("dist/rsc", chunk.fileName, ".."),
+            path.join("dist/ssr", "lib.js"),
+          );
+          code = code.replaceAll("\0virtual:vite-rsc/import-lib-ssr", () =>
+            normalizePath(replacement),
+          );
+        }
+        if (code !== originalCode) {
           return { code };
         }
-        return;
       },
     },
     {
@@ -662,6 +676,19 @@ function vitePluginUseServer(): Plugin[] {
   return [
     {
       name: "rsc:use-server",
+      async configEnvironment(name, config) {
+        if (name === "rsc") {
+          // define default encryption key at build time.
+          // users can override e.g. by { define: { __VITE_RSC_ENCRYPTION_KEY__: 'process.env.MY_KEY' } }
+          config.define ??= {};
+          if (!config.define["__VITE_RSC_ENCRYPTION_KEY__"]) {
+            const encryptionKey = await generateEncryptionKey();
+            config.define["__VITE_RSC_ENCRYPTION_KEY__"] = JSON.stringify(
+              btoa(arrayBufferToString(encryptionKey)),
+            );
+          }
+        }
+      },
       async transform(code, id) {
         if (!code.includes("use server")) return;
         const ast = await parseAstAsync(code);
@@ -675,6 +702,9 @@ function vitePluginUseServer(): Plugin[] {
             runtime: (value, name) =>
               `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
+            encode: (value) => `$$ReactServer.encryptActionBoundArgs(${value})`,
+            decode: (value) =>
+              `await $$ReactServer.decryptActionBoundArgs(${value})`,
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
@@ -836,6 +866,10 @@ function collectAssetDepsInner(
 
 import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import {
+  arrayBufferToString,
+  generateEncryptionKey,
+} from "./utils/encryption-utils";
 
 export function vitePluginFindSourceMapURL(): Plugin[] {
   return [

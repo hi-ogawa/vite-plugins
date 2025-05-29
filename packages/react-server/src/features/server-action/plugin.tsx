@@ -111,6 +111,9 @@ export function vitePluginServerUseServer({
         runtime: (value, name) =>
           `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(serverId)}, ${JSON.stringify(name)})`,
         rejectNonAsyncFunction: true,
+        // TODO: encryption
+        encode: (value) => value,
+        decode: (value) => value,
       });
       if (output.hasChanged()) {
         manager.serverReferenceMap.set(id, serverId);
