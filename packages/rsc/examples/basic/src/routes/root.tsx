@@ -68,6 +68,7 @@ export function Root(props: { url: URL }) {
         <TestActionFromClient />
         <TestUseActionState />
         <TestPayload testBinary={props.url.searchParams.has("test-binary")} />
+        <TestServerActionHigherOrder />
       </body>
     </html>
   );
@@ -127,5 +128,39 @@ function TestPayload(props: { testBinary?: boolean }) {
         test4={"&><\u2028\u2029"}
       />
     </div>
+  );
+}
+
+let TestServerActionHigherOrderState = "[?]";
+
+function TestServerActionHigherOrder() {
+  // based on https://github.com/vercel/next.js/pull/71527
+  async function otherAction() {
+    "use server";
+    return "otherActionValue";
+  }
+
+  function wrapAction(value: string, action: () => Promise<string>) {
+    return async function (formValue: string) {
+      "use server";
+      const actionValue = await action();
+      return [actionValue === "otherActionValue", formValue === value];
+    };
+  }
+
+  const action = wrapAction("ok", otherAction);
+
+  return (
+    <form
+      action={async (formData: FormData) => {
+        "use server";
+        const result = await action(String(formData.get("value")));
+        TestServerActionHigherOrderState = JSON.stringify(result);
+      }}
+    >
+      <input type="hidden" name="value" value="ok" />
+      <button type="submit">test-server-action-closure</button>
+      <span>{TestServerActionHigherOrderState}</span>
+    </form>
   );
 }
