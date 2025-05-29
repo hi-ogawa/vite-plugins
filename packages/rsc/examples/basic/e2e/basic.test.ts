@@ -511,11 +511,7 @@ test("action bind client @js", async ({ page }) => {
   await testActionBindClient(page);
 });
 
-// TODO: not working
-//   Failed to serialize an action for progressive enhancement:
-//   Error: React Element cannot be passed to Server Functions from the Client without a temporary reference set. Pass a TemporaryReferenceSet to the options.
-//     [</>]
-//      ^^^
+// this doesn't work on Next either https://github.com/hi-ogawa/reproductions/tree/main/next-rsc-client-action-bind
 testNoJs.skip("action bind client @nojs", async ({ page }) => {
   await page.goto("./");
   await testActionBindClient(page);
