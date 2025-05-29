@@ -483,38 +483,65 @@ test("ssr rsc payload encoding", async ({ page }) => {
   );
 });
 
-test("action bind simple", async ({ page }) => {
+test("action bind simple @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await using _ = await expectNoReload(page);
+  await testActionBindSimple(page);
+});
+
+testNoJs("action bind simple @nojs", async ({ page }) => {
+  await page.goto("./");
+  await testActionBindSimple(page);
+});
+
+async function testActionBindSimple(page: Page) {
   await page
     .getByRole("button", { name: "test-server-action-bind-simple" })
     .click();
   await expect(page.getByTestId("test-server-action-bind-simple")).toHaveText(
     "true",
   );
-});
+}
 
-test("action bind client", async ({ page }) => {
+test("action bind client @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await using _ = await expectNoReload(page);
+  await testActionBindClient(page);
+});
+
+testNoJs("action bind client @nojs", async ({ page }) => {
+  await page.goto("./");
+  await testActionBindClient(page);
+});
+
+async function testActionBindClient(page: Page) {
   await page
     .getByRole("button", { name: "test-server-action-bind-client" })
     .click();
   await expect(page.getByTestId("test-server-action-bind-client")).toHaveText(
     "true",
   );
-});
+}
 
-test("action bind action", async ({ page }) => {
+test("action bind action @js", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await using _ = await expectNoReload(page);
+  await testActionBindAction(page);
+});
+
+testNoJs("action bind action @nojs", async ({ page }) => {
+  await page.goto("./");
+  await testActionBindAction(page);
+});
+
+async function testActionBindAction(page: Page) {
   await page
     .getByRole("button", { name: "test-server-action-bind-action" })
     .click();
   await expect(page.getByTestId("test-server-action-bind-action")).toHaveText(
     "[true,true]",
   );
-});
+}
