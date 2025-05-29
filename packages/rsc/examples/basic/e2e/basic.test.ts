@@ -483,26 +483,38 @@ test("ssr rsc payload encoding", async ({ page }) => {
   );
 });
 
-test("action closure", async ({ page }) => {
+test("action bind simple", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await using _ = await expectNoReload(page);
   await page
-    .getByRole("button", { name: "test-server-action-closure" })
+    .getByRole("button", { name: "test-server-action-bind-simple" })
     .click();
-  await expect(page.getByTestId("test-server-action-closure")).toHaveText(
+  await expect(page.getByTestId("test-server-action-bind-simple")).toHaveText(
     "true",
   );
 });
 
-test("action higher order", async ({ page }) => {
+test("action bind client", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await using _ = await expectNoReload(page);
   await page
-    .getByRole("button", { name: "test-server-action-higher-order" })
+    .getByRole("button", { name: "test-server-action-bind-client" })
     .click();
-  await expect(page.getByTestId("test-server-action-higher-order")).toHaveText(
+  await expect(page.getByTestId("test-server-action-bind-client")).toHaveText(
+    "true",
+  );
+});
+
+test("action bind action", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+  await page
+    .getByRole("button", { name: "test-server-action-bind-action" })
+    .click();
+  await expect(page.getByTestId("test-server-action-bind-action")).toHaveText(
     "[true,true]",
   );
 });

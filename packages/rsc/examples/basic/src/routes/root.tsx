@@ -19,6 +19,11 @@ import {
 import { TestStyleClient2 } from "./client2";
 import ErrorBoundary from "./error-boundary";
 import "./server.css";
+import {
+  TestServerActionBindAction,
+  TestServerActionBindClient,
+  TestServerActionBindSimple,
+} from "./action-bind/server";
 import styles from "./server.module.css";
 
 export function Root(props: { url: URL }) {
@@ -68,8 +73,9 @@ export function Root(props: { url: URL }) {
         <TestActionFromClient />
         <TestUseActionState />
         <TestPayload testBinary={props.url.searchParams.has("test-binary")} />
-        <TestServerActionClsoure />
-        <TestServerActionHigherOrder />
+        <TestServerActionBindSimple />
+        <TestServerActionBindClient />
+        <TestServerActionBindAction />
       </body>
     </html>
   );
@@ -129,63 +135,5 @@ function TestPayload(props: { testBinary?: boolean }) {
         test4={"&><\u2028\u2029"}
       />
     </div>
-  );
-}
-
-let TestServerActionClosureState = "[?]";
-
-function TestServerActionClsoure() {
-  const outerValue = "outerValue";
-
-  return (
-    <form
-      action={async (formData: FormData) => {
-        "use server";
-        const result = String(formData.get("value")) === outerValue;
-        TestServerActionClosureState = JSON.stringify(result);
-      }}
-    >
-      <input type="hidden" name="value" value={outerValue} />
-      <button type="submit">test-server-action-closure</button>
-      <span data-testid="test-server-action-closure">
-        {TestServerActionClosureState}
-      </span>
-    </form>
-  );
-}
-
-let TestServerActionHigherOrderState = "[?]";
-
-function TestServerActionHigherOrder() {
-  // based on https://github.com/vercel/next.js/pull/71527
-  async function otherAction() {
-    "use server";
-    return "otherActionValue";
-  }
-
-  function wrapAction(value: string, action: () => Promise<string>) {
-    return async function (formValue: string) {
-      "use server";
-      const actionValue = await action();
-      return [actionValue === "otherActionValue", formValue === value];
-    };
-  }
-
-  const action = wrapAction("ok", otherAction);
-
-  return (
-    <form
-      action={async (formData: FormData) => {
-        "use server";
-        const result = await action(String(formData.get("value")));
-        TestServerActionHigherOrderState = JSON.stringify(result);
-      }}
-    >
-      <input type="hidden" name="value" value="ok" />
-      <button type="submit">test-server-action-higher-order</button>
-      <span data-testid="test-server-action-higher-order">
-        {TestServerActionHigherOrderState}
-      </span>
-    </form>
   );
 }
