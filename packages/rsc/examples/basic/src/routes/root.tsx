@@ -19,6 +19,11 @@ import {
 import { TestStyleClient2 } from "./client2";
 import ErrorBoundary from "./error-boundary";
 import "./server.css";
+import {
+  TestServerActionBindAction,
+  TestServerActionBindClient,
+  TestServerActionBindSimple,
+} from "./action-bind/server";
 import styles from "./server.module.css";
 
 export function Root(props: { url: URL }) {
@@ -68,6 +73,9 @@ export function Root(props: { url: URL }) {
         <TestActionFromClient />
         <TestUseActionState />
         <TestPayload testBinary={props.url.searchParams.has("test-binary")} />
+        <TestServerActionBindSimple />
+        <TestServerActionBindClient />
+        <TestServerActionBindAction />
       </body>
     </html>
   );
