@@ -482,3 +482,27 @@ test("ssr rsc payload encoding", async ({ page }) => {
     "test-payload: test1: true, test2: true, test3: true, test4: true",
   );
 });
+
+test("action closure", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+  await page
+    .getByRole("button", { name: "test-server-action-closure" })
+    .click();
+  await expect(page.getByTestId("test-server-action-closure")).toHaveText(
+    "true",
+  );
+});
+
+test("action higher order", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+  await page
+    .getByRole("button", { name: "test-server-action-higher-order" })
+    .click();
+  await expect(page.getByTestId("test-server-action-higher-order")).toHaveText(
+    "[true,true]",
+  );
+});
