@@ -68,6 +68,7 @@ export function Root(props: { url: URL }) {
         <TestActionFromClient />
         <TestUseActionState />
         <TestPayload testBinary={props.url.searchParams.has("test-binary")} />
+        <TestServerActionClsoure />
         <TestServerActionHigherOrder />
       </body>
     </html>
@@ -131,6 +132,28 @@ function TestPayload(props: { testBinary?: boolean }) {
   );
 }
 
+let TestServerActionClosureState = "[?]";
+
+function TestServerActionClsoure() {
+  const outerValue = "outerValue";
+
+  return (
+    <form
+      action={async (formData: FormData) => {
+        "use server";
+        const result = String(formData.get("value")) === outerValue;
+        TestServerActionClosureState = JSON.stringify(result);
+      }}
+    >
+      <input type="hidden" name="value" value={outerValue} />
+      <button type="submit">test-server-action-closure</button>
+      <span data-testid="test-server-action-closure">
+        {TestServerActionClosureState}
+      </span>
+    </form>
+  );
+}
+
 let TestServerActionHigherOrderState = "[?]";
 
 function TestServerActionHigherOrder() {
@@ -159,8 +182,10 @@ function TestServerActionHigherOrder() {
       }}
     >
       <input type="hidden" name="value" value="ok" />
-      <button type="submit">test-server-action-closure</button>
-      <span>{TestServerActionHigherOrderState}</span>
+      <button type="submit">test-server-action-higher-order</button>
+      <span data-testid="test-server-action-higher-order">
+        {TestServerActionHigherOrderState}
+      </span>
     </form>
   );
 }
