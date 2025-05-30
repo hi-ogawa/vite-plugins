@@ -505,6 +505,9 @@ async function testActionBindSimple(page: Page) {
   await expect(page.getByTestId("test-server-action-bind-simple")).toHaveText(
     "true",
   );
+  await page
+    .getByRole("button", { name: "test-server-action-bind-reset" })
+    .click();
 }
 
 test("action bind client @js", async ({ page }) => {
@@ -530,6 +533,9 @@ async function testActionBindClient(page: Page) {
   await expect(page.getByTestId("test-server-action-bind-client")).toHaveText(
     "true",
   );
+  await page
+    .getByRole("button", { name: "test-server-action-bind-reset" })
+    .click();
 }
 
 test("action bind action @js", async ({ page }) => {
@@ -554,4 +560,7 @@ async function testActionBindAction(page: Page) {
   await expect(page.getByTestId("test-server-action-bind-action")).toHaveText(
     "[true,true]",
   );
+  await page
+    .getByRole("button", { name: "test-server-action-bind-reset" })
+    .click();
 }

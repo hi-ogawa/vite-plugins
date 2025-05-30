@@ -4,6 +4,21 @@
 import { ActionBindClient } from "./client";
 import { TestServerActionBindClientForm } from "./form";
 
+export function TestServerActionBindReset() {
+  return (
+    <form
+      action={async () => {
+        "use server";
+        testServerActionBindSimpleState = "[?]";
+        testServerActionBindActionState = "[?]";
+        testServerActionBindClientState++;
+      }}
+    >
+      <button>test-server-action-bind-reset</button>
+    </form>
+  );
+}
+
 let testServerActionBindSimpleState = "[?]";
 
 export function TestServerActionBindSimple() {
@@ -26,9 +41,12 @@ export function TestServerActionBindSimple() {
   );
 }
 
+let testServerActionBindClientState = 0;
+
 export function TestServerActionBindClient() {
   return (
     <TestServerActionBindClientForm
+      key={testServerActionBindClientState}
       action={async () => {
         "use server";
         return <ActionBindClient />;

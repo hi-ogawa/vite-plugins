@@ -22,6 +22,7 @@ import "./server.css";
 import {
   TestServerActionBindAction,
   TestServerActionBindClient,
+  TestServerActionBindReset,
   TestServerActionBindSimple,
 } from "./action-bind/server";
 import styles from "./server.module.css";
@@ -73,6 +74,7 @@ export function Root(props: { url: URL }) {
         <TestActionFromClient />
         <TestUseActionState />
         <TestPayload testBinary={props.url.searchParams.has("test-binary")} />
+        <TestServerActionBindReset />
         <TestServerActionBindSimple />
         <TestServerActionBindClient />
         <TestServerActionBindAction />
