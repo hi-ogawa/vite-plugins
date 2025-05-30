@@ -572,7 +572,10 @@ function vitePluginUseClient(): Plugin[] {
         const result = transformDirectiveProxyExport_(ast, {
           directive: "use client",
           runtime: (name) =>
-            `$$ReactServer.registerClientReference({}, ${JSON.stringify(referenceKey)}, ${JSON.stringify(name)})`,
+            `$$ReactServer.registerClientReference(` +
+            `() => { new Error("Attempted to call client reference export '" + ${JSON.stringify(name)} + "' on server") },` +
+            `${JSON.stringify(referenceKey)},` +
+            `${JSON.stringify(name)})`,
         });
         if (!result) return;
         const { output, exportNames } = result;
