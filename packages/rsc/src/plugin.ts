@@ -573,7 +573,7 @@ function vitePluginUseClient(): Plugin[] {
           directive: "use client",
           runtime: (name) =>
             `$$ReactServer.registerClientReference(` +
-            `() => { new Error("Attempted to call client reference export '" + ${JSON.stringify(name)} + "' on server") },` +
+            `() => { throw new Error("Unexpectedly client reference export '" + ${JSON.stringify(name)} + "' is called on server") },` +
             `${JSON.stringify(referenceKey)},` +
             `${JSON.stringify(name)})`,
         });
