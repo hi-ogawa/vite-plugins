@@ -496,6 +496,9 @@ testNoJs("action bind simple @nojs", async ({ page }) => {
 });
 
 async function testActionBindSimple(page: Page) {
+  await expect(page.getByTestId("test-server-action-bind-simple")).toHaveText(
+    "[?]",
+  );
   await page
     .getByRole("button", { name: "test-server-action-bind-simple" })
     .click();
@@ -518,6 +521,9 @@ testNoJs.skip("action bind client @nojs", async ({ page }) => {
 });
 
 async function testActionBindClient(page: Page) {
+  await expect(page.getByTestId("test-server-action-bind-client")).toHaveText(
+    "[?]",
+  );
   await page
     .getByRole("button", { name: "test-server-action-bind-client" })
     .click();
@@ -539,6 +545,9 @@ testNoJs("action bind action @nojs", async ({ page }) => {
 });
 
 async function testActionBindAction(page: Page) {
+  await expect(page.getByTestId("test-server-action-bind-action")).toHaveText(
+    "[?]",
+  );
   await page
     .getByRole("button", { name: "test-server-action-bind-action" })
     .click();
