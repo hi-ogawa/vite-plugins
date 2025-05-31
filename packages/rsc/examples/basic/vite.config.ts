@@ -20,6 +20,18 @@ export default defineConfig({
     }),
     Inspect(),
     {
+      name: "show-encryption-key",
+      enforce: "post",
+      configEnvironment(name, config) {
+        if (name === "rsc") {
+          console.log(
+            "[encryption key]",
+            config.define?.__VITE_RSC_ENCRYPTION_KEY__,
+          );
+        }
+      },
+    },
+    {
       // test server restart scenario on e2e
       name: "test-api",
       configureServer(server) {

@@ -558,6 +558,7 @@ function serverDepsConfigPlugin(): Plugin {
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
             "react-server-dom-webpack/server.edge",
+            "react-server-dom-webpack/client.edge",
           ],
         },
       };
