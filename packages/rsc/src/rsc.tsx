@@ -83,7 +83,6 @@ export async function Resources({
 // https://github.com/parcel-bundler/parcel/blob/9855f558a69edde843b1464f39a6010f6b421efe/packages/transformers/js/src/rsc-utils.js
 // https://github.com/vercel/next.js/blob/c10c10daf9e95346c31c24dc49d6b7cda48b5bc8/packages/next/src/server/app-render/encryption.ts
 // https://github.com/vercel/next.js/pull/56377
-// https://github.com/vercel/next.js/pull/71527
 
 export async function encryptActionBoundArgs(
   originalValue: unknown,
@@ -126,6 +125,8 @@ export async function decryptActionBoundArgs(
   const { createFromReadableStream } = await importLibSsr();
   const originalValue = await createFromReadableStream(serializedStream, {
     serverConsumerManifest: {
+      // https://github.com/facebook/react/pull/31300
+      // https://github.com/vercel/next.js/pull/71527
       serverModuleMap: createServerManifest(),
     },
   });
