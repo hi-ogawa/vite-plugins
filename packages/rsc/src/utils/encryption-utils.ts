@@ -63,3 +63,36 @@ export async function generateEncryptionKey(): Promise<Uint8Array> {
   const exported = await crypto.subtle.exportKey("raw", key);
   return new Uint8Array(exported);
 }
+
+export async function encryptBuffer(
+  data: BufferSource,
+  key: CryptoKey,
+): Promise<string> {
+  const iv = crypto.getRandomValues(new Uint8Array(16));
+  const encrypted = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv,
+    },
+    key,
+    data,
+  );
+  return btoa(arrayBufferToString(iv) + arrayBufferToString(encrypted));
+}
+
+export async function decryptBuffer(
+  encryptedString: string,
+  key: CryptoKey,
+): Promise<BufferSource> {
+  const encryptedData = atob(encryptedString);
+  const iv = stringToUint8Array(encryptedData.slice(0, 16));
+  const encrypted = stringToUint8Array(encryptedData.slice(16));
+  return crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv,
+    },
+    key,
+    encrypted,
+  );
+}
