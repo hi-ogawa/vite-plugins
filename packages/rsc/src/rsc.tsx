@@ -5,10 +5,11 @@ import type { AssetsManifest } from "./plugin";
 import { createFromReadableStream, renderToReadableStream } from "./rsc";
 import { withBase } from "./utils/base";
 import {
+  arrayToStream,
   concatArrayStream,
   decryptBuffer,
   encryptBuffer,
-  stringToUint8Array,
+  fromBase64,
 } from "./utils/encryption-utils";
 
 export {
@@ -100,29 +101,22 @@ export async function decryptActionBoundArgs(
     await encrypted,
     await getEncryptionKey(),
   );
-  const serialized = new ReadableStream({
-    start(controller) {
-      controller.enqueue(new Uint8Array(serializedBuffer));
-      controller.close();
-    },
-  });
+  const serialized = arrayToStream(new Uint8Array(serializedBuffer));
   return createFromReadableStream(serialized);
 }
 
+// configurable via `define.__VITE_RSC_ENCRYPTION_KEY__`
 declare let __VITE_RSC_ENCRYPTION_KEY__: string;
 let keyPromise_: Promise<CryptoKey> | undefined;
 
 function getEncryptionKey() {
-  if (!keyPromise_) {
-    keyPromise_ = crypto.subtle.importKey(
-      "raw",
-      stringToUint8Array(atob(__VITE_RSC_ENCRYPTION_KEY__)),
-      {
-        name: "AES-GCM",
-      },
-      true,
-      ["encrypt", "decrypt"],
-    );
-  }
-  return keyPromise_;
+  return (keyPromise_ ||= crypto.subtle.importKey(
+    "raw",
+    fromBase64(__VITE_RSC_ENCRYPTION_KEY__),
+    {
+      name: "AES-GCM",
+    },
+    true,
+    ["encrypt", "decrypt"],
+  ));
 }

@@ -22,6 +22,7 @@ import {
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
+import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
@@ -671,7 +672,7 @@ function vitePluginUseServer(): Plugin[] {
           if (!config.define["__VITE_RSC_ENCRYPTION_KEY__"]) {
             const encryptionKey = await generateEncryptionKey();
             config.define["__VITE_RSC_ENCRYPTION_KEY__"] = JSON.stringify(
-              btoa(arrayBufferToString(encryptionKey)),
+              toBase64(encryptionKey),
             );
           }
         }
@@ -853,10 +854,6 @@ function collectAssetDepsInner(
 
 import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import {
-  arrayBufferToString,
-  generateEncryptionKey,
-} from "./utils/encryption-utils";
 
 export function vitePluginFindSourceMapURL(): Plugin[] {
   return [
