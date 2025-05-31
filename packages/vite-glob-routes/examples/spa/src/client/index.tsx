@@ -6,7 +6,7 @@ import {
 } from "@hiogawa/vite-glob-routes/dist/react-router/client";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import type { Manifest } from "vite";
 
 // see examples/spa/misc/inject-global-script.js

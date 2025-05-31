@@ -43,7 +43,9 @@ export function getAssetsManifest(): AssetsManifest {
 
 export async function Resources({
   nonce,
-}: { nonce?: string }): Promise<React.ReactNode> {
+}: {
+  nonce?: string;
+}): Promise<React.ReactNode> {
   let { css, js } = getAssetsManifest().entry.deps;
   if (import.meta.env.DEV) {
     const rscCss = await import("virtual:vite-rsc/rsc-css" as string);

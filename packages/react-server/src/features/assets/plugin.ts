@@ -4,7 +4,7 @@ import { tinyassert } from "@hiogawa/utils";
 import type { Manifest, Plugin, ViteDevServer } from "vite";
 import { $__global } from "../../global";
 import type { PluginStateManager } from "../../plugin";
-import { ENTRY_BROWSER_WRAPPER, createVirtualPlugin } from "../../plugin/utils";
+import { createVirtualPlugin, ENTRY_BROWSER_WRAPPER } from "../../plugin/utils";
 import { collectStyleUrls, transformStyleUrls } from "./css";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "./shared";
 
@@ -162,7 +162,9 @@ export function vitePluginServerAssets({
 
 export function serverAssetsPluginServer({
   manager,
-}: { manager: PluginStateManager }): Plugin[] {
+}: {
+  manager: PluginStateManager;
+}): Plugin[] {
   // 0. track server assets during server build (this plugin)
   // 1. copy all server assets to browser build (copy-build plugin)
   // 2. out of those, inject links automatically (ssr-assets virtual plugin)

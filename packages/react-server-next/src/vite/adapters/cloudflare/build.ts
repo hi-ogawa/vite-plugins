@@ -7,7 +7,10 @@ import FastGlob from "fast-glob";
 export async function build({
   outDir,
   publicDir,
-}: { outDir: string; publicDir: string }) {
+}: {
+  outDir: string;
+  publicDir: string;
+}) {
   const buildDir = join(process.cwd(), outDir);
   const adapterOutDir = join(process.cwd(), outDir, "cloudflare");
 

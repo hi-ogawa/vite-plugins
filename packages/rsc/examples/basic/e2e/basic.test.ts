@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import {
   createEditor,
   expectNoReload,

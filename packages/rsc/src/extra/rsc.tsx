@@ -1,6 +1,5 @@
 import type { ReactFormState } from "react-dom/client";
 import {
-  Resources,
   createTemporaryReferenceSet,
   decodeAction,
   decodeFormState,
@@ -8,6 +7,7 @@ import {
   importSsr,
   initialize,
   loadServerAction,
+  Resources,
   renderToReadableStream,
 } from "../rsc";
 

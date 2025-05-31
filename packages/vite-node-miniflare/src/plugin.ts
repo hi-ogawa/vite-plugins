@@ -1,11 +1,11 @@
-import { readFileSync } from "fs";
 import { webToNodeHandler } from "@hiogawa/utils-node";
+import { readFileSync } from "fs";
 import {
   Miniflare,
   Response as MiniflareResponse,
+  mergeWorkerOptions,
   type SharedOptions,
   type WorkerOptions,
-  mergeWorkerOptions,
 } from "miniflare";
 import {
   DevEnvironment,

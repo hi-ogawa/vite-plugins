@@ -6,8 +6,8 @@ import { useRouter } from "../../client";
 import type { RevalidationType } from "../server-component/utils";
 import {
   type AssetDeps,
-  type RouteManifest,
   getRouteAssetDeps,
+  type RouteManifest,
 } from "./manifest";
 import { type MatchSegment, toMatchParams, toMatchValues } from "./tree";
 import { type FlightData, LAYOUT_ROOT_NAME } from "./utils";
@@ -135,7 +135,10 @@ export const RouteManifestContext = React.createContext<RouteManifest>(
 export function usePreloadHandlers({
   href,
   preload,
-}: { href: string; preload?: boolean }) {
+}: {
+  href: string;
+  preload?: boolean;
+}) {
   const routeManifest = React.useContext(RouteManifestContext);
   const callback = React.useCallback(() => {
     if (!preload) return;

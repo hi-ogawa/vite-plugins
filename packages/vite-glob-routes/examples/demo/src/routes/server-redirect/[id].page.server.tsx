@@ -1,4 +1,4 @@
-import { type LoaderFunction, json, redirect } from "react-router-dom";
+import { json, type LoaderFunction, redirect } from "react-router-dom";
 import { sleep } from "../../utils/misc";
 
 export const loader: LoaderFunction = async ({ params }) => {

@@ -1,6 +1,6 @@
 import {
-  type StaticHandlerContext,
   createStaticHandler,
+  type StaticHandlerContext,
 } from "react-router-dom/server";
 import type { GlobPageRoutesResult } from "../../route-utils";
 import { handleDateRequest } from "../data-request/server";

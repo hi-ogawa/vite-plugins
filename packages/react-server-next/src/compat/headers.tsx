@@ -1,4 +1,4 @@
-export { headers, cookies } from "@hiogawa/react-server/server";
+export { cookies, headers } from "@hiogawa/react-server/server";
 
 /** @todo */
 export function draftMode() {

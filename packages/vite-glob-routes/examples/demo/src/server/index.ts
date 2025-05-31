@@ -1,4 +1,4 @@
-import { type RequestHandler, compose } from "@hattip/compose";
+import { compose, type RequestHandler } from "@hattip/compose";
 import { globApiRoutes } from "@hiogawa/vite-glob-routes/dist/hattip";
 import { rpcHandler } from "../rpc/server";
 import { logError } from "./log";

@@ -1,9 +1,9 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
 import type { BundlerConfig, ImportManifestEntry } from "../types";
 import {
-  SERVER_REFERENCE_PREFIX,
   createReferenceCacheTag,
   removeReferenceCacheTag,
+  SERVER_REFERENCE_PREFIX,
   setInternalRequire,
 } from "./shared";
 

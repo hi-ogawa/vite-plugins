@@ -2,7 +2,7 @@
 
 import { useServerInsertedHTML } from "@hiogawa/react-server/client";
 import React from "react";
-import { StyleRegistry, createStyleRegistry } from "styled-jsx";
+import { createStyleRegistry, StyleRegistry } from "styled-jsx";
 import JSXStyle from "styled-jsx/style";
 
 // https://github.com/vercel/styled-jsx#server-side-rendering
