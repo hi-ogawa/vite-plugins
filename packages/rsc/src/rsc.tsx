@@ -12,6 +12,8 @@ export {
 
 export * from "./react/rsc";
 
+initialize();
+
 export function initialize(): void {
   setRequireModule({
     load: async (id) => {
