@@ -1,8 +1,8 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as serverReferences from "virtual:vite-rsc/server-references";
-import { createServerManifest, setRequireModule } from "./core/rsc";
+import { setRequireModule } from "./core/rsc";
 import type { AssetsManifest } from "./plugin";
-import { renderToReadableStream } from "./rsc";
+import { createFromReadableStream, renderToReadableStream } from "./rsc";
 import { withBase } from "./utils/base";
 import {
   arrayBufferToString,
@@ -116,30 +116,15 @@ export async function decryptActionBoundArgs(
     await getEncryptionKey(),
     encrypted,
   );
-  const serializedStream = new ReadableStream({
-    start(controller) {
-      controller.enqueue(new Uint8Array(serialized));
-      controller.close();
-    },
-  });
-  const { createFromReadableStream } = await importLibSsr();
-  const originalValue = await createFromReadableStream(serializedStream, {
-    serverConsumerManifest: {
-      // https://github.com/facebook/react/pull/31300
-      // https://github.com/vercel/next.js/pull/71527
-      serverModuleMap: createServerManifest(),
-    },
-  });
+  const originalValue = await createFromReadableStream(
+    new ReadableStream({
+      start(controller) {
+        controller.enqueue(new Uint8Array(serialized));
+        controller.close();
+      },
+    }),
+  );
   return originalValue;
-}
-
-async function importLibSsr(): Promise<typeof import("./ssr")> {
-  const mod = await import("virtual:vite-rsc/import-lib-ssr" as any);
-  if (import.meta.env.DEV) {
-    return mod.default();
-  } else {
-    return mod;
-  }
 }
 
 declare let __VITE_RSC_ENCRYPTION_KEY__: string;
