@@ -77,7 +77,6 @@ export function createClientManifest(): BundlerConfig {
 }
 
 export type ClientReferencePayload = {
-  // TODO: do ssr id remapping via ssrManifest
   key?: string;
   id: string;
   js: string[];

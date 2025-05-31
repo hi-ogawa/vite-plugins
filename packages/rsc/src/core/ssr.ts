@@ -33,12 +33,8 @@ export function createServerConsumerManifest(): ServerConsumerManifest {
             {},
             {
               get(_target, name: string) {
-                const payload = JSON.parse(id);
                 return {
-                  id: JSON.stringify({
-                    ...payload,
-                    ...ssrManifest[payload.key],
-                  }),
+                  id,
                   name,
                   chunks: [],
                   async: true,
@@ -50,14 +46,4 @@ export function createServerConsumerManifest(): ServerConsumerManifest {
       },
     ),
   };
-}
-
-type SsrClientReferenceManifest = Record<string, { id: string }>;
-
-let ssrManifest: SsrClientReferenceManifest = {};
-
-export function setSsrClientReferenceManifest(
-  manifest_: SsrClientReferenceManifest,
-): void {
-  ssrManifest = manifest_;
 }

@@ -1,7 +1,7 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as clientReferences from "virtual:vite-rsc/client-references";
 import * as ReactDOM from "react-dom";
-import { setRequireModule, setSsrClientReferenceManifest } from "./core/ssr";
+import { setRequireModule } from "./core/ssr";
 import type { AssetDeps, AssetsManifest } from "./plugin";
 import { withBase } from "./utils/base";
 
@@ -10,9 +10,6 @@ export { createServerConsumerManifest } from "./core/ssr";
 export * from "./react/ssr";
 
 export function initialize(): void {
-  // TODO
-  setSsrClientReferenceManifest({});
-
   setRequireModule({
     load: async (payload) => {
       if (import.meta.env.DEV) {
@@ -28,7 +25,7 @@ export function initialize(): void {
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
         }
-        // kick off preload before initial async import, which is not sync-cached
+        // kick off preload early for initial async import
         preloadDeps(payload);
         const mod: any = await import_();
         return wrapResourceProxy(mod, payload);
