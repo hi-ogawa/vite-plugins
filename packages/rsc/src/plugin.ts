@@ -96,7 +96,7 @@ export default function vitePluginRsc({
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: ENTRIES.ssr, lib: `${PKG_NAME}/ssr` },
+                  input: { index: ENTRIES.ssr },
                 },
               },
               resolve: {
