@@ -137,6 +137,7 @@ export default function vitePluginRsc({
           },
           builder: {
             sharedPlugins: true,
+            sharedConfigBuild: true,
             async buildApp(builder) {
               builder.environments.rsc!.config.build.write = false;
               builder.environments.ssr!.config.build.write = false;
