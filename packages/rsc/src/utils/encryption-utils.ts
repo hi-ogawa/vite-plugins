@@ -1,7 +1,7 @@
 // based on
 // https://github.com/vercel/next.js/blob/a0993d90c280690e83a2a1bc7c292e1187429fe8/packages/next/src/server/app-render/encryption-utils.ts
 
-export function arrayBufferToString(buffer: ArrayBuffer | Uint8Array): string {
+function arrayBufferToString(buffer: ArrayBuffer | Uint8Array): string {
   const bytes = new Uint8Array(buffer);
   const len = bytes.byteLength;
   if (len < 65535) {
@@ -14,7 +14,7 @@ export function arrayBufferToString(buffer: ArrayBuffer | Uint8Array): string {
   return binary;
 }
 
-export function stringToUint8Array(binary: string): Uint8Array {
+function stringToUint8Array(binary: string): Uint8Array {
   const len = binary.length;
   const arr = new Uint8Array(len);
   for (let i = 0; i < len; i++) {
@@ -23,7 +23,7 @@ export function stringToUint8Array(binary: string): Uint8Array {
   return arr;
 }
 
-export function concatArray(chunks: Uint8Array[]): Uint8Array {
+function concatArray(chunks: Uint8Array[]): Uint8Array {
   let total = 0;
   for (const chunk of chunks) {
     total += chunk.length;
@@ -49,6 +49,23 @@ export async function concatArrayStream(
     }),
   );
   return concatArray(chunks);
+}
+
+export function arrayToStream(data: Uint8Array): ReadableStream<Uint8Array> {
+  return new ReadableStream({
+    start(controller) {
+      controller.enqueue(data);
+      controller.close();
+    },
+  });
+}
+
+export function toBase64(buffer: Uint8Array): string {
+  return btoa(arrayBufferToString(buffer));
+}
+
+export function fromBase64(data: string): Uint8Array {
+  return stringToUint8Array(atob(data));
 }
 
 export async function generateEncryptionKey(): Promise<Uint8Array> {
@@ -77,16 +94,16 @@ export async function encryptBuffer(
     key,
     data,
   );
-  return btoa(arrayBufferToString(iv) + arrayBufferToString(encrypted));
+  return toBase64(concatArray([iv, new Uint8Array(encrypted)]));
 }
 
 export async function decryptBuffer(
   encryptedString: string,
   key: CryptoKey,
 ): Promise<ArrayBuffer> {
-  const encryptedData = atob(encryptedString);
-  const iv = stringToUint8Array(encryptedData.slice(0, 16));
-  const encrypted = stringToUint8Array(encryptedData.slice(16));
+  const concatenated = fromBase64(encryptedString);
+  const iv = concatenated.slice(0, 16);
+  const encrypted = concatenated.slice(16);
   return crypto.subtle.decrypt(
     {
       name: "AES-GCM",
