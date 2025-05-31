@@ -1,5 +1,5 @@
 import { memoize } from "@hiogawa/utils";
-import type { ImportManifestEntry, ServerConsumerManifest } from "../types";
+import type { ServerConsumerManifest } from "../types";
 import type { ClientReferencePayload } from "./rsc";
 import { setInternalRequire } from "./shared";
 
@@ -24,26 +24,5 @@ export function setRequireModule(options: {
 }
 
 export function createServerConsumerManifest(): ServerConsumerManifest {
-  return {
-    moduleMap: new Proxy(
-      {},
-      {
-        get(_target, id: string, _receiver) {
-          return new Proxy(
-            {},
-            {
-              get(_target, name: string) {
-                return {
-                  id,
-                  name,
-                  chunks: [],
-                  async: true,
-                } satisfies ImportManifestEntry;
-              },
-            },
-          );
-        },
-      },
-    ),
-  };
+  return {};
 }
