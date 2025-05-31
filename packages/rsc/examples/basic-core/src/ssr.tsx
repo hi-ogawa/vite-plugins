@@ -13,7 +13,7 @@ export async function renderHtml({
 }: { url: URL; stream: ReadableStream; formState?: ReactFormState }) {
   ReactClient.setRequireModule({
     load(id) {
-      return import(/* @vite-ignore */ id);
+      return import(/* @vite-ignore */ id.id);
     },
   });
 

@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { createHash } from "node:crypto";
 import { expect, test } from "@playwright/test";
 import {
   createEditor,
@@ -42,11 +42,15 @@ testNoJs("ssr modulepreload @build", async ({ page }) => {
   const srcs = await page
     .locator(`head >> link[rel="modulepreload"]`)
     .evaluateAll((elements) => elements.map((el) => el.getAttribute("href")));
-  const viteManifest = JSON.parse(
-    fs.readFileSync("dist/client/.vite/manifest.json", "utf-8"),
+  const { default: manifest } = await import(
+    "../dist/client/__vite_rsc_assets_manifest.js" as any
   );
-  const file = "/" + viteManifest["app/routes/home.client.tsx"].file;
-  expect(srcs).toContain(file);
+  function hashString(v: string) {
+    return createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
+  }
+  const deps =
+    manifest.clientReferenceManifest[hashString("app/routes/home.client.tsx")];
+  expect(srcs).toEqual(expect.arrayContaining(deps.js));
 });
 
 test("client hmr @dev", async ({ page }) => {

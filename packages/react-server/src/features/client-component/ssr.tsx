@@ -24,7 +24,7 @@ async function ssrImport(id: string) {
 
 export function initializeReactClientSsr() {
   ReactClient.setRequireModule({
-    load: ssrImport,
+    load: (payload) => ssrImport(payload.id),
   });
 }
 
