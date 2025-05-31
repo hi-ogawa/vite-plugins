@@ -5,8 +5,9 @@ import type { AssetsManifest } from "./plugin";
 import { createFromReadableStream, renderToReadableStream } from "./rsc";
 import { withBase } from "./utils/base";
 import {
-  arrayBufferToString,
   concatArrayStream,
+  decryptBuffer,
+  encryptBuffer,
   stringToUint8Array,
 } from "./utils/encryption-utils";
 
@@ -87,68 +88,41 @@ export async function Resources({
 export async function encryptActionBoundArgs(
   originalValue: unknown,
 ): Promise<string> {
-  const serialized = await concatArrayStream(
-    renderToReadableStream(originalValue),
-  );
-  const iv = crypto.getRandomValues(new Uint8Array(16));
-  const encrypted = await crypto.subtle.encrypt(
-    {
-      name: "AES-GCM",
-      iv,
-    },
-    await getEncryptionKey(),
-    serialized,
-  );
-  return btoa(arrayBufferToString(iv) + arrayBufferToString(encrypted));
+  const serialized = renderToReadableStream(originalValue);
+  const serializedBuffer = await concatArrayStream(serialized);
+  return encryptBuffer(serializedBuffer, await getEncryptionKey());
 }
 
 export async function decryptActionBoundArgs(
-  encryptionResult: ReturnType<typeof encryptActionBoundArgs>,
+  encrypted: ReturnType<typeof encryptActionBoundArgs>,
 ): Promise<unknown> {
-  const encryptedString = atob(await encryptionResult);
-  const iv = stringToUint8Array(encryptedString.slice(0, 16));
-  const encrypted = stringToUint8Array(encryptedString.slice(16));
-  const serialized = await crypto.subtle.decrypt(
-    {
-      name: "AES-GCM",
-      iv,
-    },
+  const serializedBuffer = await decryptBuffer(
+    await encrypted,
     await getEncryptionKey(),
-    encrypted,
   );
-  const originalValue = await createFromReadableStream(
-    new ReadableStream({
-      start(controller) {
-        controller.enqueue(new Uint8Array(serialized));
-        controller.close();
-      },
-    }),
-  );
-  return originalValue;
+  const serialized = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new Uint8Array(serializedBuffer));
+      controller.close();
+    },
+  });
+  return createFromReadableStream(serialized);
 }
 
 declare let __VITE_RSC_ENCRYPTION_KEY__: string;
+let keyPromise_: Promise<CryptoKey> | undefined;
 
-const getEncryptionKey = once(async () => {
-  return crypto.subtle.importKey(
-    "raw",
-    stringToUint8Array(atob(__VITE_RSC_ENCRYPTION_KEY__)),
-    {
-      name: "AES-GCM",
-    },
-    true,
-    ["encrypt", "decrypt"],
-  );
-});
-
-function once<T>(f: () => T): () => T {
-  let called = false;
-  let result: T;
-  return () => {
-    if (!called) {
-      called = true;
-      result = f();
-    }
-    return result;
-  };
+function getEncryptionKey() {
+  if (!keyPromise_) {
+    keyPromise_ = crypto.subtle.importKey(
+      "raw",
+      stringToUint8Array(atob(__VITE_RSC_ENCRYPTION_KEY__)),
+      {
+        name: "AES-GCM",
+      },
+      true,
+      ["encrypt", "decrypt"],
+    );
+  }
+  return keyPromise_;
 }
