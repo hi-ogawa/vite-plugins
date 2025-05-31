@@ -83,7 +83,7 @@ export async function encryptBuffer(
 export async function decryptBuffer(
   encryptedString: string,
   key: CryptoKey,
-): Promise<BufferSource> {
+): Promise<ArrayBuffer> {
   const encryptedData = atob(encryptedString);
   const iv = stringToUint8Array(encryptedData.slice(0, 16));
   const encrypted = stringToUint8Array(encryptedData.slice(16));
