@@ -306,7 +306,6 @@ export default function vitePluginRsc({
       name: "rsc:virtual:vite-rsc/import-entry",
       resolveId(source) {
         if (
-          source === "virtual:vite-rsc/import-lib-ssr" ||
           source === "virtual:vite-rsc/import-rsc" ||
           source === "virtual:vite-rsc/import-ssr"
         ) {
@@ -323,12 +322,8 @@ export default function vitePluginRsc({
         if (id === "\0virtual:vite-rsc/import-ssr") {
           return `export default () => __viteSsrRunner.import(${JSON.stringify(ENTRIES.ssr)})`;
         }
-        if (id === "\0virtual:vite-rsc/import-lib-ssr") {
-          return `export default () => __viteSsrRunner.import(${JSON.stringify(PKG_NAME + "/ssr")})`;
-        }
       },
-      renderChunk(originalCode, chunk) {
-        let code = originalCode;
+      renderChunk(code, chunk) {
         if (code.includes("\0virtual:vite-rsc/import-rsc")) {
           const replacement = path.relative(
             path.join("dist/ssr", chunk.fileName, ".."),
@@ -337,6 +332,7 @@ export default function vitePluginRsc({
           code = code.replaceAll("\0virtual:vite-rsc/import-rsc", () =>
             normalizePath(replacement),
           );
+          return { code };
         }
         if (code.includes("\0virtual:vite-rsc/import-ssr")) {
           const replacement = path.relative(
@@ -346,19 +342,9 @@ export default function vitePluginRsc({
           code = code.replaceAll("\0virtual:vite-rsc/import-ssr", () =>
             normalizePath(replacement),
           );
-        }
-        if (code.includes("\0virtual:vite-rsc/import-lib-ssr")) {
-          const replacement = path.relative(
-            path.join("dist/rsc", chunk.fileName, ".."),
-            path.join("dist/ssr", "lib.js"),
-          );
-          code = code.replaceAll("\0virtual:vite-rsc/import-lib-ssr", () =>
-            normalizePath(replacement),
-          );
-        }
-        if (code !== originalCode) {
           return { code };
         }
+        return;
       },
     },
     {
