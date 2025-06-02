@@ -38,7 +38,7 @@ export function setRequireModule(options: {
             `Unexpectedly client reference export '${name}' is called on server`,
           );
         },
-        removeReferenceCacheTag(id),
+        id,
         name,
       );
       return { [name]: reference };
@@ -85,8 +85,11 @@ export function createServerDecodeClientManifest(): ModuleMap {
           {},
           {
             get(_target, name: string) {
+              const payload = JSON.parse(id);
               return {
-                id: SERVER_DECODE_CLIENT_PREFIX + JSON.stringify({ id, name }),
+                id:
+                  SERVER_DECODE_CLIENT_PREFIX +
+                  JSON.stringify({ id: payload.key || payload.id, name }),
                 name,
                 chunks: [],
                 async: true,
