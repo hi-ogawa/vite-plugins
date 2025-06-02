@@ -3,7 +3,11 @@ import type { ReactFormState } from "react-dom/client";
 import * as ReactClient from "react-server-dom-webpack/client.edge";
 // @ts-ignore
 import * as ReactServer from "react-server-dom-webpack/server.edge";
-import { createClientManifest, createServerManifest } from "../core/rsc";
+import {
+  createClientManifest,
+  createServerDecodeClientManifest,
+  createServerManifest,
+} from "../core/rsc";
 
 export { loadServerAction, setRequireModule } from "../core/rsc";
 
@@ -27,6 +31,7 @@ export function createFromReadableStream<T>(
       // https://github.com/facebook/react/pull/31300
       // https://github.com/vercel/next.js/pull/71527
       serverModuleMap: createServerManifest(),
+      moduleMap: createServerDecodeClientManifest(),
     },
     ...options,
   });
