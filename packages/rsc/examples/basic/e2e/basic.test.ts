@@ -569,3 +569,10 @@ async function testActionBindAction(page: Page) {
     .getByRole("button", { name: "test-server-action-bind-reset" })
     .click();
 }
+
+test("merged client reference chunks", async ({ page }) => {
+  await page.goto("./");
+  await expect(page.getByTestId("test-client-chunk")).toHaveText(
+    "test-chunk1|test-chunk-conflict1|test-chunk2|test-chunk3|test-chunk-conflict3",
+  );
+});

@@ -1,8 +1,9 @@
-import assert from "node:assert";
+import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { type Rollup, defineConfig, normalizePath } from "vite";
 import Inspect from "vite-plugin-inspect";
 
 export default defineConfig({
@@ -97,6 +98,85 @@ export default { fetch: handler };
   Cache-Control: public, max-age=31536000, immutable
 `,
           });
+        }
+      },
+    },
+    {
+      name: "optimize-chunks",
+      apply: "build",
+      config() {
+        const resolvePackageSource = (source: string) =>
+          normalizePath(fileURLToPath(import.meta.resolve(source)));
+
+        const pkgBrowserPath = resolvePackageSource(
+          "@hiogawa/vite-rsc/browser",
+        );
+
+        // Non-functional form cannot handle commonjs plugin module
+        // e.g. `(id)?commonjs-es-import`
+        // manualChunks: {
+        //   "lib-react": [
+        //     "react",
+        //     "react/jsx-runtime",
+        //     "react-dom/client",
+        //     "react-server-dom-webpack/client.browser",
+        //   ],
+        // }
+
+        const manualChunksFn: Rollup.ManualChunksOption = (id, meta) => {
+          // users can merge client reference chunks by own heuristics
+          if (id.startsWith("\0virtual:vite-rsc/build-client-reference/")) {
+            const info = meta.getModuleInfo(id)!;
+            const originalId = info.importedIds[0]!;
+            // e.g. group by directory
+            if (originalId.includes("/src/routes/chunks/")) {
+              return "rsc-custom";
+            }
+          }
+
+          // similar to
+          // https://github.com/web-infra-dev/rsbuild/blob/main/packages/plugin-react/src/splitChunks.ts
+          if (
+            id.includes("node_modules/react/") ||
+            id.includes("node_modules/react/") ||
+            id.includes("node_modules/react-dom/") ||
+            id.includes("node_modules/react-server-dom-webpack/")
+          ) {
+            return "lib-react";
+          }
+
+          if (
+            id === "\0virtual:vite-rsc/entry-browser" ||
+            id === pkgBrowserPath
+          ) {
+            return "rsc-entry";
+          }
+        };
+
+        return {
+          environments: {
+            client: {
+              build: {
+                manifest: true,
+                rollupOptions: {
+                  output: {
+                    manualChunks: manualChunksFn,
+                  },
+                },
+              },
+            },
+          },
+        };
+      },
+      // verify merged chunks
+      writeBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          const chunks = Object.values(bundle).filter(
+            (chunk) =>
+              chunk.type === "chunk" &&
+              chunk.exports.some((e) => e.startsWith("TestClientChunk")),
+          );
+          assert.equal(chunks.length, 2);
         }
       },
     },

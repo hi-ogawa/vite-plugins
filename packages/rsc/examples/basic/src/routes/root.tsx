@@ -25,6 +25,7 @@ import {
   TestServerActionBindReset,
   TestServerActionBindSimple,
 } from "./action-bind/server";
+import { TestClientChunkServer } from "./chunks/server";
 import styles from "./server.module.css";
 
 export function Root(props: { url: URL }) {
@@ -78,6 +79,7 @@ export function Root(props: { url: URL }) {
         <TestServerActionBindSimple />
         <TestServerActionBindClient />
         <TestServerActionBindAction />
+        <TestClientChunkServer />
       </body>
     </html>
   );

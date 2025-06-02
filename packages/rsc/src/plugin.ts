@@ -407,6 +407,14 @@ export default function vitePluginRsc({
               idToDeps[id] = { chunk, deps };
             }
           }
+          // prioritize `facadeModuleId` as moduleId since `chunk.moduleIds` becomes empty
+          // when `manualChunks` merged multiple client references
+          // TODO: is it correct?
+          for (const [chunk, deps] of chunkToDeps.entries()) {
+            if (chunk.type === "chunk" && chunk.facadeModuleId) {
+              idToDeps[chunk.facadeModuleId] = { chunk, deps };
+            }
+          }
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
             const moduleId =
               "\0virtual:vite-rsc/build-client-reference/" + meta.referenceKey;
