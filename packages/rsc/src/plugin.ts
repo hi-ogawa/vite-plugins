@@ -675,8 +675,8 @@ function vitePluginUseClient(): Plugin[] {
             type: "chunk",
             name: path.basename(meta.importId),
             id: "virtual:vite-rsc/build-client-reference/" + meta.referenceKey,
-            // TODO: does this allows merging client reference chunks?
-            // cf. https://github.com/rollup/rollup/pull/5891
+            // this allows merging client reference chunks via rollup `manualChunks`
+            // https://github.com/rollup/rollup/pull/5891
             preserveSignature: "allow-extension",
           });
         }
