@@ -22,6 +22,7 @@ import {
 import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
+import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
@@ -123,6 +124,7 @@ export default function vitePluginRsc({
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
                   "react-server-dom-webpack/server.edge",
+                  "react-server-dom-webpack/client.edge",
                 ],
                 exclude: [PKG_NAME],
               },
@@ -662,6 +664,19 @@ function vitePluginUseServer(): Plugin[] {
   return [
     {
       name: "rsc:use-server",
+      async configEnvironment(name, config) {
+        if (name === "rsc") {
+          // define default encryption key at build time.
+          // users can override e.g. by { define: { __VITE_RSC_ENCRYPTION_KEY__: 'process.env.MY_KEY' } }
+          config.define ??= {};
+          if (!config.define["__VITE_RSC_ENCRYPTION_KEY__"]) {
+            const encryptionKey = await generateEncryptionKey();
+            config.define["__VITE_RSC_ENCRYPTION_KEY__"] = JSON.stringify(
+              toBase64(encryptionKey),
+            );
+          }
+        }
+      },
       async transform(code, id) {
         if (!code.includes("use server")) return;
         const ast = await parseAstAsync(code);
@@ -675,6 +690,9 @@ function vitePluginUseServer(): Plugin[] {
             runtime: (value, name) =>
               `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
+            encode: (value) => `$$ReactServer.encryptActionBoundArgs(${value})`,
+            decode: (value) =>
+              `await $$ReactServer.decryptActionBoundArgs(${value})`,
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;

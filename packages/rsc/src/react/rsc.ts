@@ -1,5 +1,7 @@
 import type { ReactFormState } from "react-dom/client";
 // @ts-ignore
+import * as ReactClient from "react-server-dom-webpack/client.edge";
+// @ts-ignore
 import * as ReactServer from "react-server-dom-webpack/server.edge";
 import { createClientManifest, createServerManifest } from "../core/rsc";
 
@@ -14,6 +16,20 @@ export function renderToReadableStream<T>(
     createClientManifest(),
     options,
   );
+}
+
+export function createFromReadableStream<T>(
+  stream: ReadableStream<Uint8Array>,
+  options: object = {},
+): Promise<T> {
+  return ReactClient.createFromReadableStream(stream, {
+    serverConsumerManifest: {
+      // https://github.com/facebook/react/pull/31300
+      // https://github.com/vercel/next.js/pull/71527
+      serverModuleMap: createServerManifest(),
+    },
+    ...options,
+  });
 }
 
 export function registerClientReference<T>(
