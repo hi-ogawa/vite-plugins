@@ -8,6 +8,9 @@ import {
   setInternalRequire,
 } from "./shared";
 
+// @ts-ignore
+import * as ReactServer from "react-server-dom-webpack/server.edge";
+
 let init = false;
 let requireModule!: (id: string) => unknown;
 
@@ -25,12 +28,21 @@ export function setRequireModule(options: {
   (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
 
   (globalThis as any).__vite_rsc_server_decode_client__ = memoize(
-    async (id: string) => {
-      // need to restore the client reference proxy module on server
-      // TODO: how to do prod?
-      // TODO: dev also doesn't feel right.
-      id = removeReferenceCacheTag(id);
-      return import(/* @vite-ignore */ id);
+    async (raw: string) => {
+      // restore client reference export on server for decoding.
+      // learned from https://github.com/lazarv/react-server/blob/79e7acebc6f4a8c930ad8422e2a4a9fdacfcce9b/packages/react-server/server/module-loader.mjs#L19
+      const { id, name } = JSON.parse(raw);
+      return {
+        [name]: ReactServer.registerClientReference(
+          () => {
+            throw new Error(
+              `Unexpectedly client reference export '${name}' is called on server`,
+            );
+          },
+          removeReferenceCacheTag(id),
+          name,
+        ),
+      };
     },
   );
 
@@ -75,7 +87,7 @@ export function createServerDecodeClientManifest(): ModuleMap {
           {
             get(_target, name: string) {
               return {
-                id: SERVER_DECODE_CLIENT_PREFIX + id,
+                id: SERVER_DECODE_CLIENT_PREFIX + JSON.stringify({ id, name }),
                 name,
                 chunks: [],
                 async: true,
