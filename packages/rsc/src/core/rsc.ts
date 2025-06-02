@@ -29,20 +29,19 @@ export function setRequireModule(options: {
 
   (globalThis as any).__vite_rsc_server_decode_client__ = memoize(
     async (raw: string) => {
-      // restore client reference export on server for decoding.
+      // restore client reference on server for decoding.
       // learned from https://github.com/lazarv/react-server/blob/79e7acebc6f4a8c930ad8422e2a4a9fdacfcce9b/packages/react-server/server/module-loader.mjs#L19
       const { id, name } = JSON.parse(raw);
-      return {
-        [name]: ReactServer.registerClientReference(
-          () => {
-            throw new Error(
-              `Unexpectedly client reference export '${name}' is called on server`,
-            );
-          },
-          removeReferenceCacheTag(id),
-          name,
-        ),
-      };
+      const reference = ReactServer.registerClientReference(
+        () => {
+          throw new Error(
+            `Unexpectedly client reference export '${name}' is called on server`,
+          );
+        },
+        removeReferenceCacheTag(id),
+        name,
+      );
+      return { [name]: reference };
     },
   );
 

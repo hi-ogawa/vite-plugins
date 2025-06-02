@@ -49,11 +49,7 @@ export function TestServerActionBindClient() {
 
   const action = async () => {
     "use server";
-    // [not ok]
     return client;
-
-    // [ok]
-    // return <ActionBindClient />;
   };
 
   return (
