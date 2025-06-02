@@ -20,7 +20,7 @@ export function initialize(): void {
         );
         return wrapResourceProxy(mod, { js: [], css: modCss.default });
       } else {
-        const id = payload.key!;
+        const id = payload.key;
         const import_ = clientReferences.default[id];
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);

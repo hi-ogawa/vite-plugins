@@ -107,11 +107,11 @@ export function createClientManifest(): BundlerConfig {
     {
       get(_target, $$id, _receiver) {
         tinyassert(typeof $$id === "string");
-        let [key, name] = $$id.split("#");
-        tinyassert(key);
+        const [id, name] = $$id.split("#");
+        tinyassert(id);
         tinyassert(name);
         return {
-          id: JSON.stringify({ id: key, cacheTag, ...manifest[key], key }),
+          id: JSON.stringify({ id, cacheTag, ...manifest[id] }),
           name,
           chunks: [],
           async: true,
@@ -122,7 +122,7 @@ export function createClientManifest(): BundlerConfig {
 }
 
 export type ClientReferencePayload = {
-  key?: string;
+  key: string;
   id: string;
   js: string[];
   css: string[];

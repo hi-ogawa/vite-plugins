@@ -369,7 +369,6 @@ export default function vitePluginRsc({
                 css: [],
               },
             },
-            clientReferenceDeps: {},
             clientReferenceManifest: {},
           };
           return `export default ${JSON.stringify(manifest, null, 2)}`;
@@ -398,7 +397,6 @@ export default function vitePluginRsc({
           }
 
           const chunkToDeps = collectAssetDeps(bundle);
-          const clientReferenceDeps: Record<string, AssetDeps> = {};
           const clientReferenceManifest: ClientReferenceManifest = {};
           const idToDeps: Record<
             string,
@@ -417,8 +415,8 @@ export default function vitePluginRsc({
               `missing client reference chunk '${id}'`,
             );
             const { deps, chunk } = idToDeps[moduleId]!;
-            clientReferenceDeps[meta.referenceKey] = deps;
             clientReferenceManifest[meta.referenceKey] = {
+              key: meta.referenceKey,
               id: "/" + chunk.fileName,
               js: deps.js,
               css: deps.css,
@@ -431,7 +429,6 @@ export default function vitePluginRsc({
               bootstrapModules: [`/${entry.chunk.fileName}`],
               deps: entry.deps,
             },
-            clientReferenceDeps,
             clientReferenceManifest,
           };
           this.emitFile({
@@ -887,8 +884,6 @@ function generateDynamicImportCode(map: Record<string, string>) {
 
 export type AssetsManifest = {
   entry: { bootstrapModules: string[]; deps: AssetDeps };
-  // TODO: remove `clientReferenceDeps` in favor of `clientReferenceManifest`
-  clientReferenceDeps: Record<string, AssetDeps>;
   clientReferenceManifest: ClientReferenceManifest;
 };
 
