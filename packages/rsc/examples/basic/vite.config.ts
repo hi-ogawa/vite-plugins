@@ -1,4 +1,4 @@
-import assert from "node:assert";
+import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
@@ -167,6 +167,17 @@ export default { fetch: handler };
             },
           },
         };
+      },
+      // verify merged chunks
+      writeBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          const chunks = Object.values(bundle).filter(
+            (chunk) =>
+              chunk.type === "chunk" &&
+              chunk.exports.some((e) => e.startsWith("TestClientChunk")),
+          );
+          assert.equal(chunks.length, 2);
+        }
       },
     },
   ],
