@@ -12,6 +12,8 @@ export function transformServerActionServer(
   options: {
     runtime: (value: string, name: string) => string;
     rejectNonAsyncFunction?: boolean;
+    encode?: (value: string) => string;
+    decode?: (value: string) => string;
   },
 ) {
   // TODO: unify (generalize transformHoistInlineDirective to support top leve directive case)

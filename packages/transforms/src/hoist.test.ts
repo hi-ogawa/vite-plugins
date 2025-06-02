@@ -4,12 +4,14 @@ import { transformHoistInlineDirective } from "./hoist";
 import { debugSourceMap } from "./test-utils";
 
 describe(transformHoistInlineDirective, () => {
-  async function testTransform(input: string) {
+  async function testTransform(input: string, options?: { encode?: boolean }) {
     const ast = await parseAstAsync(input);
     const { output } = transformHoistInlineDirective(input, ast, {
       runtime: (value, name) =>
         `$$register(${value}, "<id>", ${JSON.stringify(name)})`,
       directive: "use server",
+      encode: options?.encode ? (v) => `__enc(${v})` : undefined,
+      decode: options?.encode ? (v) => `__dec(${v})` : undefined,
     });
     if (!output.hasChanged()) {
       return;
@@ -84,6 +86,11 @@ export default function w() {
       /* #__PURE__ */ Object.defineProperty($$hoist_2_w, "name", { value: "w" });
       "
     `);
+
+    // nothing to encode
+    expect(await testTransform(input, { encode: true })).toBe(
+      await testTransform(input),
+    );
   });
 
   it("closure", async () => {
@@ -207,6 +214,28 @@ function Counter() {
       /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
       "
     `);
+
+    expect(await testTransform(input, { encode: true })).toMatchInlineSnapshot(`
+      "
+      let count = 0;
+
+      function Counter() {
+        const name = "value";
+
+        return {
+          type: "form",
+          action: /* #__PURE__ */ $$register($$hoist_0_anonymous_server_function, "<id>", "$$hoist_0_anonymous_server_function").bind(null, __enc([name]))
+        }
+      }
+
+      ;export function $$hoist_0_anonymous_server_function($$hoist_encoded, formData) {
+            const [name] = __dec($$hoist_encoded);
+      "use server";
+            count += Number(formData.get(name));
+          };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
+      "
+    `);
   });
 
   it("higher order", async () => {
@@ -247,6 +276,33 @@ function validator(action) {
 
       ;export async function $$hoist_1_anonymous_server_function(action, arg) {
           "use server";
+          return action(arg);
+        };
+      /* #__PURE__ */ Object.defineProperty($$hoist_1_anonymous_server_function, "name", { value: "anonymous_server_function" });
+      "
+    `);
+
+    expect(await testTransform(input, { encode: true })).toMatchInlineSnapshot(`
+      "
+      export default function Page() {
+        const x = 0;
+        const action = validator(/* #__PURE__ */ $$register($$hoist_0_anonymous_server_function, "<id>", "$$hoist_0_anonymous_server_function").bind(null, __enc([x])))
+      }
+
+      function validator(action) {
+        return /* #__PURE__ */ $$register($$hoist_1_anonymous_server_function, "<id>", "$$hoist_1_anonymous_server_function").bind(null, __enc([action]));
+      }
+
+      ;export async function $$hoist_0_anonymous_server_function($$hoist_encoded, y) {
+          const [x] = __dec($$hoist_encoded);
+      "use server";
+          return x + y;
+        };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
+
+      ;export async function $$hoist_1_anonymous_server_function($$hoist_encoded, arg) {
+          const [action] = __dec($$hoist_encoded);
+      "use server";
           return action(arg);
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_1_anonymous_server_function, "name", { value: "anonymous_server_function" });
