@@ -44,13 +44,22 @@ export function TestServerActionBindSimple() {
 let testServerActionBindClientState = 0;
 
 export function TestServerActionBindClient() {
+  // client element as server action bound argument
+  const client = <ActionBindClient />;
+
+  const action = async () => {
+    "use server";
+    // [not ok]
+    return client;
+
+    // [ok]
+    // return <ActionBindClient />;
+  };
+
   return (
     <TestServerActionBindClientForm
       key={testServerActionBindClientState}
-      action={async () => {
-        "use server";
-        return <ActionBindClient />;
-      }}
+      action={action}
     />
   );
 }
