@@ -5,5 +5,5 @@ export function TestClientChunk3() {
 }
 
 export function TestClientChunkConflict() {
-  return <span>test-chunk-confclit3</span>;
+  return <span>test-chunk-conflict3</span>;
 }

@@ -10,7 +10,7 @@ import {
 
 export function TestClientChunkServer() {
   return (
-    <div>
+    <div data-testid="test-client-chunk">
       <TestClientChunk1 />|
       <TestClientChunkConflict1 />|
       <TestClientChunk2 />|
