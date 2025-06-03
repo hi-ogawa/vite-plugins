@@ -1,17 +1,18 @@
 import { memoize } from "@hiogawa/utils";
 import type { ServerConsumerManifest } from "../types";
-import { removeReferenceCacheTag, setInternalRequire } from "./shared";
+import type { ClientReferencePayload } from "./rsc";
+import { setInternalRequire } from "./shared";
 
 let init = false;
 
 export function setRequireModule(options: {
-  load: (id: string) => unknown;
+  load: (payload: ClientReferencePayload) => unknown;
 }): void {
   if (init) return;
   init = true;
 
   const requireModule = memoize((id: string) => {
-    return options.load(removeReferenceCacheTag(id));
+    return options.load(JSON.parse(id));
   });
 
   const clientRequire = (id: string) => {

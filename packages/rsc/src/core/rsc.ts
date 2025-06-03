@@ -38,7 +38,7 @@ export function setRequireModule(options: {
             `Unexpectedly client reference export '${name}' is called on server`,
           );
         },
-        removeReferenceCacheTag(id),
+        id,
         name,
       );
       return { [name]: reference };
@@ -85,8 +85,11 @@ export function createServerDecodeClientManifest(): ModuleMap {
           {},
           {
             get(_target, name: string) {
+              const payload = JSON.parse(id);
               return {
-                id: SERVER_DECODE_CLIENT_PREFIX + JSON.stringify({ id, name }),
+                id:
+                  SERVER_DECODE_CLIENT_PREFIX +
+                  JSON.stringify({ id: payload.key || payload.id, name }),
                 name,
                 chunks: [],
                 async: true,
@@ -100,18 +103,18 @@ export function createServerDecodeClientManifest(): ModuleMap {
 }
 
 export function createClientManifest(): BundlerConfig {
-  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : "";
+  const cacheTag = import.meta.env.DEV ? createReferenceCacheTag() : undefined;
 
   return new Proxy(
     {},
     {
       get(_target, $$id, _receiver) {
         tinyassert(typeof $$id === "string");
-        let [id, name] = $$id.split("#");
+        const [id, name] = $$id.split("#");
         tinyassert(id);
         tinyassert(name);
         return {
-          id: id + cacheTag,
+          id: JSON.stringify({ id, cacheTag, ...manifest[id] }),
           name,
           chunks: [],
           async: true,
@@ -119,4 +122,21 @@ export function createClientManifest(): BundlerConfig {
       },
     },
   );
+}
+
+export type ClientReferencePayload = {
+  key: string;
+  id: string;
+  js: string[];
+  css: string[];
+};
+
+export type ClientReferenceManifest = Record<string, ClientReferencePayload>;
+
+let manifest: ClientReferenceManifest = {};
+
+export function setClientReferenceManifest(
+  manifest_: ClientReferenceManifest,
+): void {
+  manifest = manifest_;
 }
