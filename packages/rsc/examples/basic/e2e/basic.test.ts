@@ -564,3 +564,11 @@ async function testActionBindAction(page: Page) {
     .getByRole("button", { name: "test-server-action-bind-reset" })
     .click();
 }
+
+test("test serialization @js", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.getByTestId("serialization")).toHaveText("?");
+  await page.getByTestId("serialization").click();
+  await expect(page.getByTestId("serialization")).toHaveText("ok");
+});
