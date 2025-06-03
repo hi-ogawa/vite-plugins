@@ -25,6 +25,7 @@ import {
   TestServerActionBindReset,
   TestServerActionBindSimple,
 } from "./action-bind/server";
+import { TestSerializationServer } from "./serialization/server";
 import styles from "./server.module.css";
 
 export function Root(props: { url: URL }) {
@@ -78,6 +79,7 @@ export function Root(props: { url: URL }) {
         <TestServerActionBindSimple />
         <TestServerActionBindClient />
         <TestServerActionBindAction />
+        <TestSerializationServer />
       </body>
     </html>
   );
