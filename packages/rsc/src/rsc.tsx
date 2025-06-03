@@ -1,8 +1,13 @@
 import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as serverReferences from "virtual:vite-rsc/server-references";
 import { setRequireModule } from "./core/rsc";
+import { SERVER_DECODE_CLIENT_PREFIX } from "./core/shared";
 import type { AssetsManifest } from "./plugin";
-import { createFromReadableStream, renderToReadableStream } from "./rsc";
+import {
+  createFromReadableStream,
+  registerClientReference,
+  renderToReadableStream,
+} from "./react/rsc";
 import { withBase } from "./utils/base";
 import {
   arrayToStream,
@@ -23,6 +28,21 @@ export * from "./react/rsc";
 export function initialize(): void {
   setRequireModule({
     load: async (id) => {
+      if (id.startsWith(SERVER_DECODE_CLIENT_PREFIX)) {
+        // TODO: construct virtual?
+        id = id.slice(SERVER_DECODE_CLIENT_PREFIX.length);
+        const payload = JSON.parse(id);
+        const reference = registerClientReference(
+          () => {
+            throw new Error(
+              `Unexpectedly client reference export '${payload.name}' is called on server`,
+            );
+          },
+          payload.id,
+          payload.name,
+        );
+        return { [payload.name]: reference };
+      }
       if (import.meta.env.DEV) {
         return import(/* @vite-ignore */ id);
       } else {
