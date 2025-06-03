@@ -2,7 +2,7 @@ import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as serverReferences from "virtual:vite-rsc/server-references";
 import { setRequireModule } from "./core/rsc";
 import type { AssetsManifest } from "./plugin";
-import { createFromReadableStream, renderToReadableStream } from "./rsc";
+import { createFromReadableStream, renderToReadableStream } from "./react/rsc";
 import { withBase } from "./utils/base";
 import {
   arrayToStream,
