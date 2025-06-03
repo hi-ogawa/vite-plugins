@@ -664,8 +664,8 @@ function vitePluginUseServer(): Plugin[] {
   return [
     {
       name: "rsc:use-server",
-      async configEnvironment(name, config) {
-        if (name === "rsc") {
+      async configEnvironment(name, config, env) {
+        if (name === "rsc" && !env.isPreview) {
           // define default encryption key at build time.
           // users can override e.g. by { define: { __VITE_RSC_ENCRYPTION_KEY__: 'process.env.MY_KEY' } }
           config.define ??= {};

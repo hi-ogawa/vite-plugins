@@ -22,8 +22,8 @@ export default defineConfig({
     {
       name: "show-encryption-key",
       enforce: "post",
-      configEnvironment(name, config) {
-        if (name === "rsc") {
+      configEnvironment(name, config, env) {
+        if (name === "rsc" && !env.isPreview) {
           console.log(
             "[encryption key]",
             config.define?.__VITE_RSC_ENCRYPTION_KEY__,
