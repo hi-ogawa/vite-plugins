@@ -363,7 +363,7 @@ export default function vitePluginRsc({
           assert(this.environment.name !== "client");
           const manifest: AssetsManifest = {
             entry: {
-              bootstrapModules: [assetsURL("/@id/__x00__" + ENTRIES.browser)],
+              bootstrapModules: [assetsURL("@id/__x00__" + ENTRIES.browser)],
               deps: {
                 js: [],
                 css: [],
@@ -409,7 +409,7 @@ export default function vitePluginRsc({
           entry.deps.css.push(...rscCss);
           const manifest: AssetsManifest = {
             entry: {
-              bootstrapModules: [assetsURL(`/${entry.chunk.fileName}`)],
+              bootstrapModules: [assetsURL(entry.chunk.fileName)],
               deps: {
                 js: entry.deps.js.map((href) => assetsURL(href)),
                 css: entry.deps.css.map((href) => assetsURL(href)),
@@ -797,8 +797,7 @@ function generateDynamicImportCode(map: Record<string, string>) {
 
 // // https://github.com/vitejs/vite/blob/2a7473cfed96237711cda9f736465c84d442ddef/packages/vite/src/node/plugins/importAnalysisBuild.ts#L222-L230
 function assetsURL(url: string) {
-  // TODO: remove "/"
-  return config.base + url.slice(1);
+  return config.base + url;
 }
 
 //
@@ -851,8 +850,8 @@ function collectAssetDepsInner(
 
   recurse(fileName);
   return {
-    js: [...visited].map((file) => `/${file}`),
-    css: [...new Set(css)].map((file) => `/${file}`),
+    js: [...visited],
+    css: [...new Set(css)],
   };
 }
 
@@ -1042,7 +1041,7 @@ export function vitePluginRscCss({
         server.environments.rsc!,
         entries.rsc,
       );
-      const hrefs = result.hrefs.map((id) => assetsURL(id));
+      const hrefs = result.hrefs.map((href) => assetsURL(href.slice(1)));
       return `export default ${JSON.stringify(hrefs, null, 2)}`;
     }),
     createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
@@ -1081,7 +1080,7 @@ export function vitePluginRscCss({
           for (const file of [mod.file, ...result.visitedFiles]) {
             this.addWatchFile(file);
           }
-          const hrefs = result.hrefs.map((id) => assetsURL(id));
+          const hrefs = result.hrefs.map((href) => assetsURL(href.slice(1)));
           return `export default ${JSON.stringify(hrefs)}`;
         }
       },
