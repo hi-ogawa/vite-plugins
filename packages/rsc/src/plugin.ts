@@ -1037,10 +1037,11 @@ export function vitePluginRscCss({
         // during build, css are injected through AssetsManifest.entry.deps.css
         return `export default []`;
       }
-      const { hrefs } = await collectCssByUrl(
+      const result = await collectCssByUrl(
         server.environments.rsc!,
         entries.rsc,
       );
+      const hrefs = result.hrefs.map((id) => assetsURL(id));
       return `export default ${JSON.stringify(hrefs, null, 2)}`;
     }),
     createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
@@ -1079,7 +1080,8 @@ export function vitePluginRscCss({
           for (const file of [mod.file, ...result.visitedFiles]) {
             this.addWatchFile(file);
           }
-          return `export default ${JSON.stringify(result.hrefs)}`;
+          const hrefs = result.hrefs.map((id) => assetsURL(id));
+          return `export default ${JSON.stringify(hrefs)}`;
         }
       },
     },
