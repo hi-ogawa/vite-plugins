@@ -1083,6 +1083,21 @@ export function vitePluginRscCss({
           const hrefs = result.hrefs.map((href) => assetsURL(href.slice(1)));
           return `export default ${JSON.stringify(hrefs)}`;
         }
+        // TODO: need to invalidate like https://github.com/hi-ogawa/vite-plugins/pull/876
+        if (id.startsWith("\0virtual:vite-rsc/client-css-browser/")) {
+          assert(this.environment.mode === 'dev')
+          id = id.slice("\0virtual:vite-rsc/client-css-browser/".length);
+          const mod =
+            await server.environments.ssr.moduleGraph.getModuleByUrl(id);
+          if (!mod?.id || !mod?.file) {
+            return `export {}`;
+          }
+          const result = collectCss(server.environments.ssr, mod.id);
+          const ids = result.ids.map((id) => id.replace(/^\0/, ""));
+          let code = ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
+          code += `if (import.meta.hot) { import.meta.hot.accept() }\n`;
+          return code;
+        }
       },
     },
   ];
