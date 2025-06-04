@@ -399,10 +399,11 @@ export default function vitePluginRsc({
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps;
-            if (deps) {
-              clientReferenceDeps[meta.referenceKey] = deps;
-            }
+            const deps = assetDeps[id]?.deps ?? { js: [], css: [] };
+            clientReferenceDeps[meta.referenceKey] = {
+              js: deps.js.map((href) => assetsURL(href)),
+              css: deps.css.map((href) => assetsURL(href)),
+            };
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
           entry.deps.css.push(...rscCss);
