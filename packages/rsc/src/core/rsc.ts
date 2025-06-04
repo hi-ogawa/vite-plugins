@@ -25,23 +25,30 @@ export function setRequireModule(options: {
   };
 
   // need memoize to return stable promise from __webpack_require__
-  (globalThis as any).__vite_rsc_server_require__ = memoize(requireModule);
-
-  (globalThis as any).__vite_rsc_server_decode_client__ = memoize(
-    async (raw: string) => {
-      // restore client reference on server for decoding.
-      // learned from https://github.com/lazarv/react-server/blob/79e7acebc6f4a8c930ad8422e2a4a9fdacfcce9b/packages/react-server/server/module-loader.mjs#L19
-      const { id, name } = JSON.parse(raw);
-      const reference = ReactServer.registerClientReference(
-        () => {
-          throw new Error(
-            `Unexpectedly client reference export '${name}' is called on server`,
-          );
-        },
-        removeReferenceCacheTag(id),
-        name,
-      );
-      return { [name]: reference };
+  (globalThis as any).__vite_rsc_server_require__ = memoize(
+    async (id: string) => {
+      if (id.startsWith(SERVER_DECODE_CLIENT_PREFIX)) {
+        id = id.slice(SERVER_DECODE_CLIENT_PREFIX.length);
+        // create `registerClientReference` on the fly since there's no way to
+        // grab the original client reference module on ther server.
+        // cf. https://github.com/lazarv/react-server/blob/79e7acebc6f4a8c930ad8422e2a4a9fdacfcce9b/packages/react-server/server/module-loader.mjs#L19
+        // decode client reference on the server
+        return new Proxy({} as any, {
+          get(target, name, _receiver) {
+            if (typeof name !== "string" || name === "then") return;
+            return (target[name] ??= ReactServer.registerClientReference(
+              () => {
+                throw new Error(
+                  `Unexpectedly client reference export '${name}' is called on server`,
+                );
+              },
+              id,
+              name,
+            ));
+          },
+        });
+      }
+      return requireModule(id);
     },
   );
 
@@ -86,7 +93,7 @@ export function createServerDecodeClientManifest(): ModuleMap {
           {
             get(_target, name: string) {
               return {
-                id: SERVER_DECODE_CLIENT_PREFIX + JSON.stringify({ id, name }),
+                id: SERVER_REFERENCE_PREFIX + SERVER_DECODE_CLIENT_PREFIX + id,
                 name,
                 chunks: [],
                 async: true,
