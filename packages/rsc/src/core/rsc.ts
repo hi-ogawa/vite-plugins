@@ -29,6 +29,7 @@ export function setRequireModule(options: {
     async (id: string) => {
       if (id.startsWith(SERVER_DECODE_CLIENT_PREFIX)) {
         id = id.slice(SERVER_DECODE_CLIENT_PREFIX.length);
+        id = removeReferenceCacheTag(id);
         // create `registerClientReference` on the fly since there's no way to
         // grab the original client reference module on ther server.
         // cf. https://github.com/lazarv/react-server/blob/79e7acebc6f4a8c930ad8422e2a4a9fdacfcce9b/packages/react-server/server/module-loader.mjs#L19
