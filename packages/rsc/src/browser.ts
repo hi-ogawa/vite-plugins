@@ -1,6 +1,5 @@
 import * as clientReferences from "virtual:vite-rsc/client-references";
 import { setRequireModule } from "./core/browser";
-import { withBase } from "./utils/base";
 
 export * from "./react/browser";
 
@@ -11,7 +10,7 @@ export function initialize(options?: {
     load: async (id) => {
       if (import.meta.env.DEV) {
         // @ts-ignore
-        return __vite_rsc_raw_import__(withBase(id));
+        return __vite_rsc_raw_import__(import.meta.env.BASE_URL + id.slice(1));
       } else {
         const import_ = clientReferences.default[id];
         if (!import_) {

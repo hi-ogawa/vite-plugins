@@ -3,7 +3,6 @@ import * as serverReferences from "virtual:vite-rsc/server-references";
 import { setRequireModule } from "./core/rsc";
 import type { AssetsManifest } from "./plugin";
 import { createFromReadableStream, renderToReadableStream } from "./react/rsc";
-import { withBase } from "./utils/base";
 import {
   arrayToStream,
   concatArrayStream,
@@ -61,13 +60,13 @@ export async function Resources({
     <link
       key={href}
       rel="stylesheet"
-      href={withBase(href)}
+      href={href}
       precedence="high"
       nonce={nonce}
     />
   ));
   const jsLinks = js.map((href) => (
-    <link key={href} rel="modulepreload" href={withBase(href)} nonce={nonce} />
+    <link key={href} rel="modulepreload" href={href} nonce={nonce} />
   ));
   // https://vite.dev/guide/features.html#content-security-policy-csp
   // this isn't needed if `style-src: 'unsafe-inline'` (dev) and `script-src: 'self'`

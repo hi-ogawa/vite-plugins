@@ -3,7 +3,6 @@ import * as clientReferences from "virtual:vite-rsc/client-references";
 import * as ReactDOM from "react-dom";
 import { setRequireModule } from "./core/ssr";
 import type { AssetDeps, AssetsManifest } from "./plugin";
-import { withBase } from "./utils/base";
 
 export { createServerConsumerManifest } from "./core/ssr";
 
@@ -50,8 +49,8 @@ function wrapResourceProxy(mod: any, deps?: AssetDeps) {
 }
 
 function preloadDeps(deps: AssetDeps) {
-  for (const js of deps.js) {
-    ReactDOM.preloadModule(withBase(js), {
+  for (const href of deps.js) {
+    ReactDOM.preloadModule(href, {
       as: "script",
       // vite doesn't allow configuring crossorigin at the moment, so we can hard code it as well.
       // https://github.com/vitejs/vite/issues/6648
@@ -59,7 +58,7 @@ function preloadDeps(deps: AssetDeps) {
     });
   }
   for (const href of deps.css) {
-    ReactDOM.preinit(withBase(href), { as: "style" });
+    ReactDOM.preinit(href, { as: "style" });
   }
 }
 
