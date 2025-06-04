@@ -4,8 +4,6 @@ import * as ReactDOM from "react-dom";
 import { setRequireModule } from "./core/ssr";
 import type { AssetDeps, AssetsManifest } from "./plugin";
 
-export { createServerConsumerManifest } from "./core/ssr";
-
 export * from "./react/ssr";
 
 export function initialize(): void {
