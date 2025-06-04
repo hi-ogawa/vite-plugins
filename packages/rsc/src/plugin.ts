@@ -363,7 +363,7 @@ export default function vitePluginRsc({
           assert(this.environment.name !== "client");
           const manifest: AssetsManifest = {
             entry: {
-              bootstrapModules: ["/@id/__x00__" + ENTRIES.browser],
+              bootstrapModules: [assetsURL("/@id/__x00__" + ENTRIES.browser)],
               deps: {
                 js: [],
                 css: [],
@@ -408,8 +408,11 @@ export default function vitePluginRsc({
           entry.deps.css.push(...rscCss);
           const manifest: AssetsManifest = {
             entry: {
-              bootstrapModules: [`/${entry.chunk.fileName}`],
-              deps: entry.deps,
+              bootstrapModules: [assetsURL(`/${entry.chunk.fileName}`)],
+              deps: {
+                js: entry.deps.js.map((href) => assetsURL(href)),
+                css: entry.deps.css.map((href) => assetsURL(href)),
+              },
             },
             clientReferenceDeps,
           };
@@ -789,6 +792,12 @@ function generateDynamicImportCode(map: Record<string, string>) {
     )
     .join("\n");
   return `export default {${code}};\n`;
+}
+
+// // https://github.com/vitejs/vite/blob/2a7473cfed96237711cda9f736465c84d442ddef/packages/vite/src/node/plugins/importAnalysisBuild.ts#L222-L230
+function assetsURL(url: string) {
+  // TODO: remove "/"
+  return config.base + url.slice(1);
 }
 
 //

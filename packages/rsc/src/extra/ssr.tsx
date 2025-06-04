@@ -7,7 +7,6 @@ import {
   getAssetsManifest,
   initialize,
 } from "../ssr";
-import { withBase } from "../utils/base";
 import type { RscPayload } from "./rsc";
 
 export async function renderHtml({
@@ -37,9 +36,7 @@ export async function renderHtml({
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: options?.__nojs
-      ? []
-      : assets.bootstrapModules.map((href) => withBase(href)),
+    bootstrapModules: options?.__nojs ? [] : assets.bootstrapModules,
     nonce: options?.nonce,
     // @ts-expect-error no types
     formState,
