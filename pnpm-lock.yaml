@@ -9,6 +9,7 @@ overrides:
   react: ^19.1.0
   react-dom: ^19.1.0
   react-server-dom-webpack: ^19.1.0
+  react-server-dom-vite: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a
   '@hiogawa/react-server': workspace:*
   '@hiogawa/vite-rsc': workspace:*
   '@types/react': ^19.1.2
@@ -63,6 +64,9 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
+      react-server-dom-vite:
+        specifier: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a
+        version: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
         version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
@@ -161,6 +165,9 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
+      react-server-dom-vite:
+        specifier: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a
+        version: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-server-dom-webpack:
         specifier: ^19.1.0
         version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
@@ -555,9 +562,9 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
+      react-server-dom-vite:
+        specifier: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a
+        version: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -5336,6 +5343,14 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: ^19.1.0
+
+  react-server-dom-vite@https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a:
+    resolution: {tarball: https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a}
+    version: 19.1.0
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^19.1.0
+      react-dom: ^19.1.0
 
   react-server-dom-webpack@19.1.0:
     resolution: {integrity: sha512-GUbawkNSN0oj8GnuNhMzsvyIHpXqqpAmyOY5NRqNNQ/M8wvUUN8YBoGjDUj9lbmBrmAHS65BByp6325CcWA0eg==}
@@ -10906,6 +10921,11 @@ snapshots:
     dependencies:
       '@remix-run/router': 1.22.0
       react: 19.1.0
+
+  react-server-dom-vite@https://pkg.pr.new/hi-ogawa/react/react-server-dom-vite@8b4546a(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-server-dom-webpack@19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2)):
     dependencies:

@@ -1,5 +1,6 @@
 // @ts-ignore
-import * as ReactClient from "react-server-dom-webpack/client.browser";
+import * as ReactClient from "react-server-dom-vite/client.browser";
+import { clientManifest } from "../core/browser";
 import type { CallServerCallback } from "../types";
 
 export { setRequireModule } from "../core/browser";
@@ -9,6 +10,7 @@ export function createFromReadableStream<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromReadableStream(stream, {
+    clientManifest,
     callServer,
     findSourceMapURL,
     ...options,
@@ -20,6 +22,7 @@ export function createFromFetch<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromFetch(promiseForResponse, {
+    clientManifest,
     callServer,
     findSourceMapURL,
     ...options,

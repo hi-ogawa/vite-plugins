@@ -93,7 +93,7 @@ export default function vitePluginRsc({
                 entries: [entries.browser],
                 include: [
                   "react-dom/client",
-                  "react-server-dom-webpack/client.browser",
+                  "react-server-dom-vite/client.browser",
                 ],
                 exclude: [PKG_NAME],
               },
@@ -119,7 +119,7 @@ export default function vitePluginRsc({
                 noExternal: [
                   "react",
                   "react-dom",
-                  "react-server-dom-webpack",
+                  "react-server-dom-vite",
                   PKG_NAME,
                 ],
               },
@@ -128,8 +128,8 @@ export default function vitePluginRsc({
                   "react",
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
-                  "react-server-dom-webpack/server.edge",
-                  "react-server-dom-webpack/client.edge",
+                  "react-server-dom-vite/server.edge",
+                  "react-server-dom-vite/client.edge",
                 ],
                 exclude: [PKG_NAME],
               },
@@ -171,7 +171,7 @@ export default function vitePluginRsc({
           isBuild: env.command === "build",
           isFrameworkPkgByJson(pkgJson) {
             if (
-              [PKG_NAME, "react-dom", "react-server-dom-webpack"].includes(
+              [PKG_NAME, "react-dom", "react-server-dom-vite"].includes(
                 pkgJson.name,
               )
             ) {

@@ -1,12 +1,12 @@
 import type { ReactFormState } from "react-dom/client";
 // @ts-ignore
-import * as ReactClient from "react-server-dom-webpack/client.edge";
+import * as ReactClient from "react-server-dom-vite/client.edge";
 // @ts-ignore
-import * as ReactServer from "react-server-dom-webpack/server.edge";
+import * as ReactServer from "react-server-dom-vite/server.edge";
 import {
-  createClientManifest,
-  createServerDecodeClientManifest,
-  createServerManifest,
+  clientManifest,
+  clientMetadataManifest,
+  serverManifest,
 } from "../core/rsc";
 
 export { loadServerAction, setRequireModule } from "../core/rsc";
@@ -17,7 +17,7 @@ export function renderToReadableStream<T>(
 ): ReadableStream<Uint8Array> {
   return ReactServer.renderToReadableStream(
     data,
-    createClientManifest(),
+    clientMetadataManifest,
     options,
   );
 }
@@ -27,12 +27,8 @@ export function createFromReadableStream<T>(
   options: object = {},
 ): Promise<T> {
   return ReactClient.createFromReadableStream(stream, {
-    serverConsumerManifest: {
-      // https://github.com/facebook/react/pull/31300
-      // https://github.com/vercel/next.js/pull/71527
-      serverModuleMap: createServerManifest(),
-      moduleMap: createServerDecodeClientManifest(),
-    },
+    serverManifest,
+    clientManifest,
     ...options,
   });
 }
@@ -55,22 +51,18 @@ export function decodeReply(
   body: string | FormData,
   options?: unknown,
 ): Promise<unknown[]> {
-  return ReactServer.decodeReply(body, createServerManifest(), options);
+  return ReactServer.decodeReply(body, serverManifest, options);
 }
 
 export function decodeAction(body: FormData): Promise<() => Promise<void>> {
-  return ReactServer.decodeAction(body, createServerManifest());
+  return ReactServer.decodeAction(body, serverManifest);
 }
 
 export function decodeFormState(
   actionResult: unknown,
   body: FormData,
 ): Promise<ReactFormState | undefined> {
-  return ReactServer.decodeFormState(
-    actionResult,
-    body,
-    createServerManifest(),
-  );
+  return ReactServer.decodeFormState(actionResult, body, serverManifest);
 }
 
 export const createTemporaryReferenceSet: () => unknown =

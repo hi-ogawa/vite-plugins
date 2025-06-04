@@ -31,7 +31,7 @@
   "peerDependencies": {
     "react": "*",
     "react-dom": "*",
-    "react-server-dom-webpack": "*",
+    "react-server-dom-vite": "*",
     "vite": "*"
   }
 }
