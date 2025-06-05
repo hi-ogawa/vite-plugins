@@ -3,3 +3,5 @@ declare global {
     readonly viteRscCss: import("react").JSX.Element;
   }
 }
+
+export {};
