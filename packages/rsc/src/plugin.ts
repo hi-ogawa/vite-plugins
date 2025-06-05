@@ -366,9 +366,9 @@ export default function vitePluginRsc({
       load(id) {
         if (id === "\0virtual:vite-rsc/assets-manifest") {
           assert(this.environment.name !== "client");
-          const entry = assetsURL("@id/__x00__" + ENTRIES.browser);
+          const entryUrl = assetsURL("@id/__x00__" + ENTRIES.browser);
           const manifest: AssetsManifest = {
-            bootstrapScriptContent: `import(${JSON.stringify(entry)})`,
+            bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
             clientReferenceDeps: {},
           };
           return `export default ${JSON.stringify(manifest, null, 2)}`;
