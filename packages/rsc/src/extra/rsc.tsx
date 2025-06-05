@@ -1,6 +1,5 @@
 import type { ReactFormState } from "react-dom/client";
 import {
-  Resources,
   createTemporaryReferenceSet,
   decodeAction,
   decodeFormState,
@@ -25,12 +24,7 @@ export async function renderRequest(
   initialize();
 
   function RscRoot() {
-    return (
-      <>
-        <Resources nonce={options?.nonce} />
-        {root}
-      </>
-    );
+    return root;
   }
 
   const url = new URL(request.url);

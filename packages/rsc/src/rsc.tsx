@@ -48,35 +48,6 @@ export function getAssetsManifest(): AssetsManifest {
   return (assetsManifest as any).default;
 }
 
-// TODO: tweak API (rename to EntryResources?)
-export async function Resources({
-  nonce,
-}: { nonce?: string }): Promise<React.ReactNode> {
-  let { css, js } = getAssetsManifest().entry.deps;
-  const cssLinks = css.map((href) => (
-    <link
-      key={href}
-      rel="stylesheet"
-      href={href}
-      precedence="vite-rsc/entry-resources"
-      nonce={nonce}
-    />
-  ));
-  const jsLinks = js.map((href) => (
-    <link key={href} rel="modulepreload" href={href} nonce={nonce} />
-  ));
-  // https://vite.dev/guide/features.html#content-security-policy-csp
-  // this isn't needed if `style-src: 'unsafe-inline'` (dev) and `script-src: 'self'`
-  const viteCspNonce = nonce && <meta property="csp-nonce" nonce={nonce} />;
-  return (
-    <>
-      {cssLinks}
-      {jsLinks}
-      {viteCspNonce}
-    </>
-  );
-}
-
 // based on
 // https://github.com/parcel-bundler/parcel/blob/9855f558a69edde843b1464f39a6010f6b421efe/packages/transformers/js/src/rsc-utils.js
 // https://github.com/vercel/next.js/blob/c10c10daf9e95346c31c24dc49d6b7cda48b5bc8/packages/next/src/server/app-render/encryption.ts
