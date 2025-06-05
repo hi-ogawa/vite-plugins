@@ -397,29 +397,23 @@ export default function vitePluginRsc({
           const serverResources: Record<string, AssetDeps> = {};
           const rscAssetDeps = collectAssetDeps(rscBundle);
           for (const [id, meta] of Object.entries(serverResourcesMetaMap)) {
-            serverResources[meta.key] = {
+            serverResources[meta.key] = assetsURLOfDeps({
               js: [],
               css: rscAssetDeps[id]?.deps.css ?? [],
-            };
+            });
           }
 
           const assetDeps = collectAssetDeps(bundle);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
             const deps = assetDeps[id]?.deps ?? { js: [], css: [] };
-            clientReferenceDeps[meta.referenceKey] = {
-              js: deps.js.map((href) => assetsURL(href)),
-              css: deps.css.map((href) => assetsURL(href)),
-            };
+            clientReferenceDeps[meta.referenceKey] = assetsURLOfDeps(deps);
           }
           const entry = assetDeps["\0" + ENTRIES.browser]!;
           const manifest: AssetsManifest = {
             entry: {
               bootstrapModules: [assetsURL(entry.chunk.fileName)],
-              deps: {
-                js: entry.deps.js.map((href) => assetsURL(href)),
-                css: entry.deps.css.map((href) => assetsURL(href)),
-              },
+              deps: assetsURLOfDeps(entry.deps),
             },
             clientReferenceDeps,
             serverResources,
@@ -806,6 +800,13 @@ function assetsURL(url: string) {
   return config.base + url;
 }
 
+function assetsURLOfDeps(deps: AssetDeps) {
+  return {
+    js: deps.js.map((href) => assetsURL(href)),
+    css: deps.css.map((href) => assetsURL(href)),
+  };
+}
+
 //
 // collect client reference dependency chunk for modulepreload
 //
@@ -1048,16 +1049,15 @@ export function vitePluginRscCss(): Plugin[] {
           const importer = id.slice(
             "\0virtual:vite-rsc/importer-resources?importer=".length,
           );
-          // TODO: assetsURL
           if (this.environment.mode === "dev") {
             const result = collectCss(server.environments.rsc!, importer);
+            const cssHrefs = result.hrefs.map((href) => href.slice(1));
             const jsHrefs = [
-              "/@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
+              "@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
                 encodeURIComponent(importer),
             ];
-            return generateResourcesCode(
-              JSON.stringify({ css: result.hrefs, js: jsHrefs }, null, 2),
-            );
+            const deps = assetsURLOfDeps({ css: cssHrefs, js: jsHrefs });
+            return generateResourcesCode(JSON.stringify(deps, null, 2));
           } else {
             const key = path.relative(config.root, importer);
             serverResourcesMetaMap[importer] = { key };
@@ -1140,15 +1140,14 @@ function generateResourcesCode(resources: string) {
     React: typeof import("react"),
     resources: { js: string[]; css: string[] },
   ) => {
-    return async function Resources(props: { base?: string; nonce?: string }) {
-      const base = props.base ?? "";
+    return async function Resources(props: { nonce?: string }) {
       return React.createElement(React.Fragment, null, [
         ...resources.css.map((href: string) =>
           React.createElement("link", {
             key: "css:" + href,
             rel: "stylesheet",
             precedence: "vite-rsc/importer-resources",
-            href: base + href,
+            href: href,
             nocde: props.nonce,
           }),
         ),
@@ -1158,7 +1157,7 @@ function generateResourcesCode(resources: string) {
             key: "js:" + href,
             type: "module",
             async: true,
-            src: base + href,
+            src: href,
             nocde: props.nonce,
           }),
         ),
