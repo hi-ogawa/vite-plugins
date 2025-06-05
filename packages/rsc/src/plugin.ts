@@ -1076,15 +1076,13 @@ export function vitePluginRscCss(): Plugin[] {
                 encodeURIComponent(importer),
             ];
             const deps = assetsURLOfDeps({ css: cssHrefs, js: jsHrefs });
-            const depsCode = JSON.stringify(deps, null, 2);
-            return generateResourcesCode(depsCode);
+            return generateResourcesCode(JSON.stringify(deps, null, 2));
           } else {
             const key = path.relative(config.root, importer);
             serverResourcesMetaMap[importer] = { key };
-            const depsCode = `assetsManifest.serverResources[${JSON.stringify(key)}]`;
             return `
-              import assetsManifest from "virtual:vite-rsc/assets-manifest";
-              ${generateResourcesCode(depsCode)}
+              import __vite_rsc_assets_manifest__ from "virtual:vite-rsc/assets-manifest";
+              ${generateResourcesCode(`__vite_rsc_assets_manifest__.serverResources[${JSON.stringify(key)}]`)}
             `;
           }
         }
@@ -1181,7 +1179,7 @@ function generateResourcesCode(depsCode: string) {
   };
 
   return `
-    import React from "react";
-    export const Resources = (${ResourcesFn.toString()})(React, ${depsCode});
+    import __vite_rsc_react__ from "react";
+    export const Resources = (${ResourcesFn.toString()})(__vite_rsc_react__, ${depsCode});
   `;
 }
