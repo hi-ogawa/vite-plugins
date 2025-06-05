@@ -4,13 +4,15 @@ import { Root } from "./routes/root";
 
 export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
+  const nonce = !process.env.NO_CSP ? crypto.randomUUID() : undefined;
   const root = (
     <>
+      {/* https://vite.dev/guide/features.html#content-security-policy-csp */}
+      {nonce && <meta property="csp-nonce" nonce={nonce} />}
       {import.meta.viteRscCss}
       <Root url={url} />
     </>
   );
-  const nonce = !process.env.NO_CSP ? crypto.randomUUID() : undefined;
   const response = await renderRequest(request, root, { nonce });
   if (nonce) {
     response.headers.set(

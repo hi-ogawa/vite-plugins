@@ -366,14 +366,9 @@ export default function vitePluginRsc({
       load(id) {
         if (id === "\0virtual:vite-rsc/assets-manifest") {
           assert(this.environment.name !== "client");
+          const entry = assetsURL("@id/__x00__" + ENTRIES.browser);
           const manifest: AssetsManifest = {
-            entry: {
-              bootstrapModules: [assetsURL("@id/__x00__" + ENTRIES.browser)],
-              deps: {
-                js: [],
-                css: [],
-              },
-            },
+            bootstrapScriptContent: `import(${JSON.stringify(entry)})`,
             clientReferenceDeps: {},
           };
           return `export default ${JSON.stringify(manifest, null, 2)}`;
@@ -407,17 +402,17 @@ export default function vitePluginRsc({
           }
 
           const assetDeps = collectAssetDeps(bundle);
+          const entry = assetDeps["\0" + ENTRIES.browser]!;
+          const entryUrl = assetsURL(entry.chunk.fileName);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps ?? { js: [], css: [] };
-            clientReferenceDeps[meta.referenceKey] = assetsURLOfDeps(deps);
+            const deps: AssetDeps = assetDeps[id]?.deps ?? { js: [], css: [] };
+            clientReferenceDeps[meta.referenceKey] = assetsURLOfDeps(
+              mergeAssetDeps(deps, entry.deps),
+            );
           }
-          const entry = assetDeps["\0" + ENTRIES.browser]!;
           const manifest: AssetsManifest = {
-            entry: {
-              bootstrapModules: [assetsURL(entry.chunk.fileName)],
-              deps: assetsURLOfDeps(entry.deps),
-            },
+            bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
             clientReferenceDeps,
             serverResources,
           };
@@ -815,7 +810,7 @@ function assetsURLOfDeps(deps: AssetDeps) {
 //
 
 export type AssetsManifest = {
-  entry: { bootstrapModules: string[]; deps: AssetDeps };
+  bootstrapScriptContent: string;
   clientReferenceDeps: Record<string, AssetDeps>;
   serverResources?: Record<string, { css: string[] }>;
 };
@@ -824,6 +819,13 @@ export type AssetDeps = {
   js: string[];
   css: string[];
 };
+
+function mergeAssetDeps(a: AssetDeps, b: AssetDeps): AssetDeps {
+  return {
+    js: [...new Set([...a.js, ...b.js])],
+    css: [...new Set([...a.css, ...b.css])],
+  };
+}
 
 function collectAssetDeps(bundle: Rollup.OutputBundle) {
   const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
