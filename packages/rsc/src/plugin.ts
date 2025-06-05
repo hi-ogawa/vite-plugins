@@ -1037,39 +1037,30 @@ export function vitePluginRscCss(): Plugin[] {
       },
     },
     {
-      name: "rsc:virtual-resources",
-      resolveId(source, importer) {
-        // TODO: generalize to arbitrary environment name
-        // e.g. by "virtual:...?environment=rsc&importer=..."
-        if (source === "virtual:vite-rsc/importer-resources") {
-          assert(this.environment.name === "rsc");
-          return `\0${source}?importer=${importer}`;
-        }
-        if (source.startsWith("virtual:vite-rsc/importer-resources-lazy")) {
-          assert(this.environment.name === "rsc");
-          assert(this.environment.mode === "dev");
-          return `\0${source}`;
-        }
-        if (
-          source.startsWith("virtual:vite-rsc/importer-resources?importer=")
-        ) {
-          return "\0" + source;
-        }
-      },
+      name: "rsc:importer-resources",
       async transform(code, id) {
         if (code.includes("import.meta.viteRscCss")) {
           assert(this.environment.name === "rsc");
           const output = new MagicString(code);
-          output.prepend(`import __vite_rsc_react__ from "react";`);
           const importId = `virtual:vite-rsc/importer-resources?importer=${id}`;
+          output.prepend(`import __vite_rsc_react__ from "react";`);
           output.replaceAll(
             "import.meta.viteRscCss",
-            `(__vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => m.resources)))`,
+            // wrap async component element
+            `(__vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => __vite_rsc_react__.createElement(m.Resources))))`,
           );
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
           };
+        }
+      },
+      resolveId(source) {
+        if (
+          source.startsWith("virtual:vite-rsc/importer-resources?importer=")
+        ) {
+          assert(this.environment.name === "rsc");
+          return "\0" + source;
         }
       },
       load(id) {
@@ -1078,37 +1069,24 @@ export function vitePluginRscCss(): Plugin[] {
             "\0virtual:vite-rsc/importer-resources?importer=".length,
           );
           if (this.environment.mode === "dev") {
-            // additional virtual module indirection to ensure
-            // static imports are cralwed before css collection
-            const lazyId = `virtual:vite-rsc/importer-resources-lazy?importer=${importer}`;
-            const loadFnCode = `() => import(${JSON.stringify(lazyId)}).then(m => m.default)`;
-            return generateResourcesCode(loadFnCode);
+            const result = collectCss(server.environments.rsc!, importer);
+            const cssHrefs = result.hrefs.map((href) => href.slice(1));
+            const jsHrefs = [
+              "@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
+                encodeURIComponent(importer),
+            ];
+            const deps = assetsURLOfDeps({ css: cssHrefs, js: jsHrefs });
+            const depsCode = JSON.stringify(deps, null, 2);
+            return generateResourcesCode(depsCode);
           } else {
             const key = path.relative(config.root, importer);
             serverResourcesMetaMap[importer] = { key };
-            const loadFnCode = `() => assetsManifest.serverResources[${JSON.stringify(key)}]`;
+            const depsCode = `assetsManifest.serverResources[${JSON.stringify(key)}]`;
             return `
               import assetsManifest from "virtual:vite-rsc/assets-manifest";
-              ${generateResourcesCode(loadFnCode)}
+              ${generateResourcesCode(depsCode)}
             `;
           }
-        }
-        if (
-          id.startsWith("\0virtual:vite-rsc/importer-resources-lazy?importer=")
-        ) {
-          assert(this.environment.name === "rsc");
-          assert(this.environment.mode === "dev");
-          const importer = id.slice(
-            "\0virtual:vite-rsc/importer-resources-lazy?importer=".length,
-          );
-          const result = collectCss(server.environments.rsc!, importer);
-          const cssHrefs = result.hrefs.map((href) => href.slice(1));
-          const jsHrefs = [
-            "@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
-              encodeURIComponent(importer),
-          ];
-          const deps = assetsURLOfDeps({ css: cssHrefs, js: jsHrefs });
-          return `export default ${JSON.stringify(deps, null, 2)}`;
         }
         if (
           id.startsWith(
@@ -1140,7 +1118,7 @@ export function vitePluginRscCss(): Plugin[] {
               const importer = mod.id;
               invalidteModuleById(
                 server.environments.rsc!,
-                `\0virtual:vite-rsc/importer-resources-lazy?importer=${importer}`,
+                `\0virtual:vite-rsc/importer-resources?importer=${importer}`,
               );
               invalidteModuleById(
                 server.environments.client,
@@ -1177,15 +1155,11 @@ function collectModuleDependents(mods: EnvironmentModuleNode[]) {
   return [...visited];
 }
 
-function generateResourcesCode(loadFnCode: string) {
-  const ResourcesFn = (
-    React: typeof import("react"),
-    load: () => Promise<{ js: string[]; css: string[] }>,
-  ) => {
-    return async function Resources() {
-      const resources = await load();
+function generateResourcesCode(depsCode: string) {
+  const ResourcesFn = (React: typeof import("react"), deps: AssetDeps) => {
+    return function Resources() {
       return React.createElement(React.Fragment, null, [
-        ...resources.css.map((href: string) =>
+        ...deps.css.map((href: string) =>
           React.createElement("link", {
             key: "css:" + href,
             rel: "stylesheet",
@@ -1194,7 +1168,7 @@ function generateResourcesCode(loadFnCode: string) {
           }),
         ),
         // js is only for dev to forward css import on browser to have hmr
-        ...resources.js.map((href: string) =>
+        ...deps.js.map((href: string) =>
           React.createElement("script", {
             key: "js:" + href,
             type: "module",
@@ -1208,7 +1182,6 @@ function generateResourcesCode(loadFnCode: string) {
 
   return `
     import React from "react";
-    export const Resources = (${ResourcesFn.toString()})(React, ${loadFnCode});
-    export const resources = React.createElement(Resources)
+    export const Resources = (${ResourcesFn.toString()})(React, ${depsCode});
   `;
 }
