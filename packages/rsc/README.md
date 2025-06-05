@@ -7,6 +7,7 @@ Vite RSC plugin without framework. See https://github.com/hi-ogawa/vite-plugins/
 - [`./examples/basic`](./examples/basic)
 - [`./examples/basic-core`](./examples/basic-core)
 - [`./examples/react-router`](./examples/react-router)
+- [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
 
 ## high level API
 
