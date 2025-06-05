@@ -972,10 +972,6 @@ export async function findSourceMapURL(
 //
 
 export function vitePluginRscCss(): Plugin[] {
-  // this approach likely misses css files found in dynaimic import of server components
-  // during first SSR after server start. (e.g. react router's lazy server routes)
-  // however, frameworks should be able to cover such cases based on their own convention.
-
   function collectCss(environment: DevEnvironment, entryId: string) {
     const visited = new Set<string>();
     const cssIds = new Set<string>();
