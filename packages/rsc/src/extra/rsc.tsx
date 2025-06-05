@@ -1,6 +1,5 @@
 import type { ReactFormState } from "react-dom/client";
 import {
-  Resources,
   createTemporaryReferenceSet,
   decodeAction,
   decodeFormState,
@@ -25,9 +24,14 @@ export async function renderRequest(
   initialize();
 
   function RscRoot() {
+    // https://vite.dev/guide/features.html#content-security-policy-csp
+    // this isn't needed if `style-src: 'unsafe-inline'` (dev) and `script-src: 'self'`
+    const nonceMeta = options?.nonce && (
+      <meta property="csp-nonce" nonce={options.nonce} />
+    );
     return (
       <>
-        <Resources nonce={options?.nonce} />
+        {nonceMeta}
         {root}
       </>
     );

@@ -1,11 +1,14 @@
 import assert from "node:assert";
 import { createHash } from "node:crypto";
+import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
+import MagicString from "magic-string";
 import {
   DevEnvironment,
   type EnvironmentModuleNode,
@@ -43,6 +46,8 @@ type ClientReferenceMeta = {
   renderedExports: string[];
 };
 const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
+
+const serverResourcesMetaMap: Record<string, { key: string }> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
 const ENTRIES = {
@@ -361,14 +366,9 @@ export default function vitePluginRsc({
       load(id) {
         if (id === "\0virtual:vite-rsc/assets-manifest") {
           assert(this.environment.name !== "client");
+          const entryUrl = assetsURL("@id/__x00__" + ENTRIES.browser);
           const manifest: AssetsManifest = {
-            entry: {
-              bootstrapModules: [assetsURL("@id/__x00__" + ENTRIES.browser)],
-              deps: {
-                js: [],
-                css: [],
-              },
-            },
+            bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
             clientReferenceDeps: {},
           };
           return `export default ${JSON.stringify(manifest, null, 2)}`;
@@ -382,7 +382,6 @@ export default function vitePluginRsc({
         }
 
         if (this.environment.name === "client") {
-          let rscCss: string[] = [];
           for (const asset of Object.values(rscBundle)) {
             if (asset.type === "asset") {
               this.emitFile({
@@ -390,32 +389,32 @@ export default function vitePluginRsc({
                 fileName: asset.fileName,
                 source: asset.source,
               });
-              if (asset.fileName.endsWith(".css")) {
-                rscCss.push(asset.fileName);
-              }
             }
           }
 
+          const serverResources: Record<string, AssetDeps> = {};
+          const rscAssetDeps = collectAssetDeps(rscBundle);
+          for (const [id, meta] of Object.entries(serverResourcesMetaMap)) {
+            serverResources[meta.key] = assetsURLOfDeps({
+              js: [],
+              css: rscAssetDeps[id]?.deps.css ?? [],
+            });
+          }
+
           const assetDeps = collectAssetDeps(bundle);
+          const entry = assetDeps["\0" + ENTRIES.browser]!;
+          const entryUrl = assetsURL(entry.chunk.fileName);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
-            const deps = assetDeps[id]?.deps ?? { js: [], css: [] };
-            clientReferenceDeps[meta.referenceKey] = {
-              js: deps.js.map((href) => assetsURL(href)),
-              css: deps.css.map((href) => assetsURL(href)),
-            };
+            const deps: AssetDeps = assetDeps[id]?.deps ?? { js: [], css: [] };
+            clientReferenceDeps[meta.referenceKey] = assetsURLOfDeps(
+              mergeAssetDeps(deps, entry.deps),
+            );
           }
-          const entry = assetDeps["\0" + ENTRIES.browser]!;
-          entry.deps.css.push(...rscCss);
           const manifest: AssetsManifest = {
-            entry: {
-              bootstrapModules: [assetsURL(entry.chunk.fileName)],
-              deps: {
-                js: entry.deps.js.map((href) => assetsURL(href)),
-                css: entry.deps.css.map((href) => assetsURL(href)),
-              },
-            },
+            bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
             clientReferenceDeps,
+            serverResources,
           };
           this.emitFile({
             type: "asset",
@@ -449,7 +448,6 @@ export default function vitePluginRsc({
     },
     createVirtualPlugin(ENTRIES.browser.slice("virtual:".length), function () {
       let code = "";
-      code += `import "virtual:vite-rsc/rsc-css-browser";\n`;
       if (this.environment.mode === "dev") {
         code += `
           import RefreshRuntime from "/@react-refresh";
@@ -514,7 +512,7 @@ export default function vitePluginRsc({
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
-    ...vitePluginRscCss({ entries: { rsc: ENTRIES.rsc } }),
+    ...vitePluginRscCss(),
   ];
 }
 
@@ -800,19 +798,34 @@ function assetsURL(url: string) {
   return config.base + url;
 }
 
+function assetsURLOfDeps(deps: AssetDeps) {
+  return {
+    js: deps.js.map((href) => assetsURL(href)),
+    css: deps.css.map((href) => assetsURL(href)),
+  };
+}
+
 //
 // collect client reference dependency chunk for modulepreload
 //
 
 export type AssetsManifest = {
-  entry: { bootstrapModules: string[]; deps: AssetDeps };
+  bootstrapScriptContent: string;
   clientReferenceDeps: Record<string, AssetDeps>;
+  serverResources?: Record<string, { css: string[] }>;
 };
 
 export type AssetDeps = {
   js: string[];
   css: string[];
 };
+
+function mergeAssetDeps(a: AssetDeps, b: AssetDeps): AssetDeps {
+  return {
+    js: [...new Set([...a.js, ...b.js])],
+    css: [...new Set([...a.css, ...b.css])],
+  };
+}
 
 function collectAssetDeps(bundle: Rollup.OutputBundle) {
   const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
@@ -839,11 +852,14 @@ function collectAssetDepsInner(
     if (visited.has(k)) return;
     visited.add(k);
     const v = bundle[k];
-    assert(v);
+    assert(v, `Not found '${k}' in the bundle`);
     if (v.type === "chunk") {
       css.push(...(v.viteMetadata?.importedCss ?? []));
       for (const k2 of v.imports) {
-        recurse(k2);
+        // server external imports is not in bundle
+        if (k2 in bundle) {
+          recurse(k2);
+        }
       }
     }
   }
@@ -860,9 +876,6 @@ function collectAssetDepsInner(
 // https://github.com/facebook/react/pull/29708
 // https://github.com/facebook/react/pull/30741
 //
-
-import fs from "node:fs";
-import { fileURLToPath, pathToFileURL } from "node:url";
 
 export function vitePluginFindSourceMapURL(): Plugin[] {
   return [
@@ -958,13 +971,7 @@ export async function findSourceMapURL(
 // css support
 //
 
-export function vitePluginRscCss({
-  entries,
-}: { entries: { rsc: string } }): Plugin[] {
-  // this approach likely misses css files found in dynaimic import of server components
-  // during first SSR after server start. (e.g. react router's lazy server routes)
-  // however, frameworks should be able to cover such cases based on their own convention.
-
+export function vitePluginRscCss(): Plugin[] {
   function collectCss(environment: DevEnvironment, entryId: string) {
     const visited = new Set<string>();
     const cssIds = new Set<string>();
@@ -992,74 +999,14 @@ export function vitePluginRscCss({
 
     recurse(entryId);
 
+    // this doesn't include ?t= query so that RSC <link /> won't keep adding styles.
     const hrefs = [...cssIds].map((id) =>
-      normalizeViteImportAnalysisUrl(server.environments.client, id),
+      normalizeViteImportAnalysisUrl(environment, id),
     );
     return { ids: [...cssIds], hrefs, visitedFiles: [...visitedFiles] };
   }
 
-  async function collectCssByUrl(
-    environment: DevEnvironment,
-    entryUrl: string,
-  ) {
-    const resolved = await environment.moduleGraph.resolveUrl(entryUrl);
-    const entryMod = environment.moduleGraph.getModuleById(resolved![1]);
-    return collectCss(environment, entryMod!.id!);
-  }
-
-  function invalidateModule(environment: DevEnvironment, id: string) {
-    const mod = environment.moduleGraph.getModuleById(id);
-    if (mod) {
-      environment.moduleGraph.invalidateModule(mod);
-    }
-  }
-
   return [
-    {
-      name: "rsc:css",
-      hotUpdate(ctx) {
-        if (this.environment.name === "rsc" && ctx.modules.length > 0) {
-          // simple virtual invalidation to ensure fresh css list
-          invalidateModule(
-            server.environments.ssr,
-            "\0virtual:vite-rsc/css/rsc",
-          );
-          invalidateModule(
-            server.environments.client,
-            "\0virtual:vite-rsc/rsc-css-browser",
-          );
-        }
-      },
-    },
-    createVirtualPlugin("vite-rsc/rsc-css", async function () {
-      assert(this.environment.name === "rsc");
-      if (this.environment.mode === "build") {
-        // during build, css are injected through AssetsManifest.entry.deps.css
-        return `export default []`;
-      }
-      const result = await collectCssByUrl(
-        server.environments.rsc!,
-        entries.rsc,
-      );
-      const hrefs = result.hrefs.map((href) => assetsURL(href.slice(1)));
-      return `export default ${JSON.stringify(hrefs, null, 2)}`;
-    }),
-    createVirtualPlugin("vite-rsc/rsc-css-browser", async function () {
-      assert(this.environment.name === "client");
-      let ids: string[] = [];
-      if (this.environment.mode === "dev") {
-        const collected = await collectCssByUrl(
-          server.environments.rsc!,
-          entries.rsc,
-        );
-        ids = collected.ids;
-      }
-      ids = ids.map((id) => id.replace(/^\0/, ""));
-      let code = ids.map((id) => `import ${JSON.stringify(id)};\n`).join("");
-      // ensure hmr boundary since otherwise non-self accepting css (e.g. css module) causes full reload
-      code += `if (import.meta.hot) { import.meta.hot.accept() }\n`;
-      return code;
-    }),
     {
       name: "rsc:css/dev-ssr-virtual",
       resolveId(source) {
@@ -1085,5 +1032,150 @@ export function vitePluginRscCss({
         }
       },
     },
+    {
+      name: "rsc:importer-resources",
+      async transform(code, id) {
+        if (code.includes("import.meta.viteRscCss")) {
+          assert(this.environment.name === "rsc");
+          const output = new MagicString(code);
+          const importId = `virtual:vite-rsc/importer-resources?importer=${id}`;
+          output.prepend(`import __vite_rsc_react__ from "react";`);
+          output.replaceAll(
+            "import.meta.viteRscCss",
+            // wrap async component element
+            `(__vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => __vite_rsc_react__.createElement(m.Resources))))`,
+          );
+          return {
+            code: output.toString(),
+            map: output.generateMap({ hires: "boundary" }),
+          };
+        }
+      },
+      resolveId(source) {
+        if (
+          source.startsWith("virtual:vite-rsc/importer-resources?importer=")
+        ) {
+          assert(this.environment.name === "rsc");
+          return "\0" + source;
+        }
+      },
+      load(id) {
+        if (id.startsWith("\0virtual:vite-rsc/importer-resources?importer=")) {
+          const importer = id.slice(
+            "\0virtual:vite-rsc/importer-resources?importer=".length,
+          );
+          if (this.environment.mode === "dev") {
+            const result = collectCss(server.environments.rsc!, importer);
+            const cssHrefs = result.hrefs.map((href) => href.slice(1));
+            const jsHrefs = [
+              "@id/__x00__virtual:vite-rsc/importer-resources-browser?importer=" +
+                encodeURIComponent(importer),
+            ];
+            const deps = assetsURLOfDeps({ css: cssHrefs, js: jsHrefs });
+            return generateResourcesCode(JSON.stringify(deps, null, 2));
+          } else {
+            const key = path.relative(config.root, importer);
+            serverResourcesMetaMap[importer] = { key };
+            return `
+              import __vite_rsc_assets_manifest__ from "virtual:vite-rsc/assets-manifest";
+              ${generateResourcesCode(`__vite_rsc_assets_manifest__.serverResources[${JSON.stringify(key)}]`)}
+            `;
+          }
+        }
+        if (
+          id.startsWith(
+            "\0virtual:vite-rsc/importer-resources-browser?importer=",
+          )
+        ) {
+          assert(this.environment.name === "client");
+          assert(this.environment.mode === "dev");
+          let importer = id.slice(
+            "\0virtual:vite-rsc/importer-resources-browser?importer=".length,
+          );
+          importer = decodeURIComponent(importer);
+          const result = collectCss(server.environments.rsc!, importer);
+          let code = result.ids
+            .map((id) => id.replace(/^\0/, ""))
+            .map((id) => `import ${JSON.stringify(id)};\n`)
+            .join("");
+          // ensure hmr boundary at this virtual since otherwise non-self accepting css
+          // (e.g. css module) causes full reload
+          code += `if (import.meta.hot) { import.meta.hot.accept() }\n`;
+          return code;
+        }
+      },
+      hotUpdate(ctx) {
+        if (this.environment.name === "rsc") {
+          const mods = collectModuleDependents(ctx.modules);
+          for (const mod of mods) {
+            if (mod.id) {
+              const importer = mod.id;
+              invalidteModuleById(
+                server.environments.rsc!,
+                `\0virtual:vite-rsc/importer-resources?importer=${importer}`,
+              );
+              invalidteModuleById(
+                server.environments.client,
+                `\0virtual:vite-rsc/importer-resources-browser?importer=${encodeURIComponent(importer)}`,
+              );
+            }
+          }
+        }
+      },
+    },
   ];
+}
+
+function invalidteModuleById(environment: DevEnvironment, id: string) {
+  const mod = environment.moduleGraph.getModuleById(id);
+  if (mod) {
+    environment.moduleGraph.invalidateModule(mod);
+  }
+  return mod;
+}
+
+function collectModuleDependents(mods: EnvironmentModuleNode[]) {
+  const visited = new Set<EnvironmentModuleNode>();
+  function recurse(mod: EnvironmentModuleNode) {
+    if (visited.has(mod)) return;
+    visited.add(mod);
+    for (const importer of mod.importers) {
+      recurse(importer);
+    }
+  }
+  for (const mod of mods) {
+    recurse(mod);
+  }
+  return [...visited];
+}
+
+function generateResourcesCode(depsCode: string) {
+  const ResourcesFn = (React: typeof import("react"), deps: AssetDeps) => {
+    return function Resources() {
+      return React.createElement(React.Fragment, null, [
+        ...deps.css.map((href: string) =>
+          React.createElement("link", {
+            key: "css:" + href,
+            rel: "stylesheet",
+            precedence: "vite-rsc/importer-resources",
+            href: href,
+          }),
+        ),
+        // js is only for dev to forward css import on browser to have hmr
+        ...deps.js.map((href: string) =>
+          React.createElement("script", {
+            key: "js:" + href,
+            type: "module",
+            async: true,
+            src: href,
+          }),
+        ),
+      ]);
+    };
+  };
+
+  return `
+    import __vite_rsc_react__ from "react";
+    export const Resources = (${ResourcesFn.toString()})(__vite_rsc_react__, ${depsCode});
+  `;
 }

@@ -4,7 +4,12 @@ import { Root } from "./routes/root";
 
 export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
-  const root = <Root url={url} />;
+  const root = (
+    <>
+      {import.meta.viteRscCss}
+      <Root url={url} />
+    </>
+  );
   const nonce = !process.env.NO_CSP ? crypto.randomUUID() : undefined;
   const response = await renderRequest(request, root, { nonce });
   if (nonce) {

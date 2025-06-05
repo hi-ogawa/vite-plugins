@@ -22,8 +22,6 @@ export async function renderHtml({
 
   const [stream1, stream2] = stream.tee();
 
-  const assets = getAssetsManifest().entry;
-
   // flight deserialization needs to be kicked off inside SSR context
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
@@ -36,7 +34,9 @@ export async function renderHtml({
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapModules: options?.__nojs ? [] : assets.bootstrapModules,
+    bootstrapScriptContent: options?.__nojs
+      ? undefined
+      : getAssetsManifest().bootstrapScriptContent,
     nonce: options?.nonce,
     // @ts-expect-error no types
     formState,
