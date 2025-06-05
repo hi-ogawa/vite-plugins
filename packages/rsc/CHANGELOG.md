@@ -4,18 +4,8 @@
 
 - feat!: rsc css code split ([#876](https://github.com/hi-ogawa/vite-plugins/pull/876))
 - feat: encrypt closure bind values ([#897](https://github.com/hi-ogawa/vite-plugins/pull/897))
-<!-- - refactor: move assets base handling to plugin ([#912](https://github.com/hi-ogawa/vite-plugins/pull/912)) -->
-<!-- - refactor: simplify __vite_rsc_server_require__ ([#911](https://github.com/hi-ogawa/vite-plugins/pull/911)) -->
-<!-- - test: add server serialization example ([#910](https://github.com/hi-ogawa/vite-plugins/pull/910)) -->
-<!-- - refactor: remove self import ([#909](https://github.com/hi-ogawa/vite-plugins/pull/909)) -->
-<!-- - fix: skip encryption key config on preview ([#907](https://github.com/hi-ogawa/vite-plugins/pull/907)) -->
 - fix: client element as bound arg encryption ([#905](https://github.com/hi-ogawa/vite-plugins/pull/905))
-<!-- - refactor: use `sharedConfigBuild: true` ([#903](https://github.com/hi-ogawa/vite-plugins/pull/903)) -->
-<!-- - test: correctly test nojs action bind ([#901](https://github.com/hi-ogawa/vite-plugins/pull/901)) -->
 - fix: throw on client reference call on server ([#900](https://github.com/hi-ogawa/vite-plugins/pull/900))
-<!-- - test: test nojs action ([#899](https://github.com/hi-ogawa/vite-plugins/pull/899)) -->
-<!-- - test: test server action closure ([#898](https://github.com/hi-ogawa/vite-plugins/pull/898)) -->
-<!-- - refactor: update react plugin and remove `vitePluginSilenceDirectiveBuildWarning` ([#892](https://github.com/hi-ogawa/vite-plugins/pull/892)) -->
 
 ## v0.2.4 (2025-05-26)
 
