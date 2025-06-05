@@ -1,5 +1,4 @@
 import "./styles.css";
-import { Resources } from "virtual:vite-rsc/importer-resources";
 import { Link, Outlet } from "react-router";
 import { ServerHmr } from "../react-router-vite/server-hmr";
 import { TestClientState, TestHydrated } from "./routes/client";
@@ -13,7 +12,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>React Router Vite</title>
-        <Resources />
+        {import.meta.viteRscCss}
       </head>
       <body>
         <header className="container px-8 my-8 mx-auto">

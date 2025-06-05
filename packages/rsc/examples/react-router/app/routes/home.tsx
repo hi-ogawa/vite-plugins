@@ -3,7 +3,6 @@ namespace Route {
   export type ComponentProps = any;
 }
 
-import { Resources } from "virtual:vite-rsc/importer-resources";
 import { sayHello } from "./home.actions.ts";
 import { PendingButton } from "./home.client.tsx";
 import "./home.css";
@@ -17,7 +16,7 @@ export function loader({ request }: Route.LoaderArgs) {
 export default function ServerComponent({ loaderData }: Route.ComponentProps) {
   return (
     <main className="container my-8 px-8 mx-auto">
-      <Resources />
+      {import.meta.viteRscCss}
       <article className="paper prose max-w-none">
         <h1>Home</h1>
         <p>This is the home page.</p>
