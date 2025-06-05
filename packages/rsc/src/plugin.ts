@@ -1049,6 +1049,17 @@ export function vitePluginRscCss(): Plugin[] {
           return `\0${source}`;
         }
       },
+      async transform(code, id) {
+        if (code.includes("import.meta.viteRsc.resources")) {
+          assert(this.environment.name === "rsc");
+          id;
+          code = code.replaceAll(
+            "import.meta.viteRsc.resources",
+            JSON.stringify(null),
+          );
+          return code;
+        }
+      },
       load(id) {
         if (id.startsWith("\0virtual:vite-rsc/importer-resources?importer=")) {
           const importer = id.slice(

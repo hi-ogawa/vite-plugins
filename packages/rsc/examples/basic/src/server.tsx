@@ -8,6 +8,7 @@ export default async function handler(request: Request): Promise<Response> {
   const root = (
     <>
       <Resources />
+      {import.meta.viteRsc.resources}
       <Root url={url} />
     </>
   );
