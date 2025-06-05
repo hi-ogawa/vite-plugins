@@ -3,11 +3,10 @@ namespace Route {
   export type ComponentProps = any;
 }
 
+import { Resources } from "virtual:vite-rsc/importer-resources";
 import { sayHello } from "./home.actions.ts";
 import { PendingButton } from "./home.client.tsx";
 import "./home.css";
-
-import { Resources } from "virtual:vite-rsc/importer-resources";
 
 export function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
