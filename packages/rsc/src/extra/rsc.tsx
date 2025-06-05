@@ -24,7 +24,17 @@ export async function renderRequest(
   initialize();
 
   function RscRoot() {
-    return root;
+    // https://vite.dev/guide/features.html#content-security-policy-csp
+    // this isn't needed if `style-src: 'unsafe-inline'` (dev) and `script-src: 'self'`
+    const nonceMeta = options?.nonce && (
+      <meta property="csp-nonce" nonce={options.nonce} />
+    );
+    return (
+      <>
+        {nonceMeta}
+        {root}
+      </>
+    );
   }
 
   const url = new URL(request.url);
