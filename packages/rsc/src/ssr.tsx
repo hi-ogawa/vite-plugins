@@ -13,9 +13,16 @@ export function initialize(): void {
     load: async (id) => {
       if (import.meta.env.DEV) {
         const mod = await import(/* @vite-ignore */ id);
-        const modCss = await import(
-          /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
-        );
+        // const modCss = await import(
+        //   /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
+        // );
+        const modCss = {
+          default: [
+            "/@id/__x00__virtual:vite-rsc/client-css-browser?importer=" +
+              encodeURIComponent(id),
+          ],
+        };
+        // "/@id/__x00__virtual:vite-rsc/css/dev-ssr/"
         return wrapResourceProxy(mod, { js: [], css: modCss.default });
       } else {
         const import_ = clientReferences.default[id];
