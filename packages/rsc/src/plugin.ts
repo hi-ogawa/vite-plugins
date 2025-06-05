@@ -1182,7 +1182,7 @@ function generateResourcesCode(loadFnCode: string) {
     React: typeof import("react"),
     load: () => Promise<{ js: string[]; css: string[] }>,
   ) => {
-    return async function Resources(props: { nonce?: string }) {
+    return async function Resources() {
       const resources = await load();
       return React.createElement(React.Fragment, null, [
         ...resources.css.map((href: string) =>
@@ -1191,7 +1191,6 @@ function generateResourcesCode(loadFnCode: string) {
             rel: "stylesheet",
             precedence: "vite-rsc/importer-resources",
             href: href,
-            nocde: props.nonce,
           }),
         ),
         // js is only for dev to forward css import on browser to have hmr
@@ -1201,7 +1200,6 @@ function generateResourcesCode(loadFnCode: string) {
             type: "module",
             async: true,
             src: href,
-            nocde: props.nonce,
           }),
         ),
       ]);
