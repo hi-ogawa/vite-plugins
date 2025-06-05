@@ -22,6 +22,7 @@
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
     "@mjackson/node-fetch-server": "^0.6.1",
+    "magic-string": "^0.30.17",
     "vitefu": "^1.0.5"
   },
   "devDependencies": {

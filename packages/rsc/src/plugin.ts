@@ -1,11 +1,14 @@
 import assert from "node:assert";
 import { createHash } from "node:crypto";
+import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   transformDirectiveProxyExport,
   transformServerActionServer,
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
+import MagicString from "magic-string";
 import {
   DevEnvironment,
   type EnvironmentModuleNode,
@@ -872,9 +875,6 @@ function collectAssetDepsInner(
 // https://github.com/facebook/react/pull/30741
 //
 
-import fs from "node:fs";
-import { fileURLToPath, pathToFileURL } from "node:url";
-
 export function vitePluginFindSourceMapURL(): Plugin[] {
   return [
     {
@@ -1048,16 +1048,26 @@ export function vitePluginRscCss(): Plugin[] {
           assert(this.environment.mode === "dev");
           return `\0${source}`;
         }
+        if (
+          source.startsWith("virtual:vite-rsc/importer-resources?importer=")
+        ) {
+          return "\0" + source;
+        }
       },
       async transform(code, id) {
-        if (code.includes("import.meta.viteRsc.resources")) {
+        if (code.includes("import.meta.viteRscCss")) {
           assert(this.environment.name === "rsc");
-          id;
-          code = code.replaceAll(
-            "import.meta.viteRsc.resources",
-            JSON.stringify(null),
+          const output = new MagicString(code);
+          output.prepend(`import __vite_rsc_react__ from "react";`);
+          const importId = `virtual:vite-rsc/importer-resources?importer=${id}`;
+          output.replaceAll(
+            "import.meta.viteRscCss",
+            `(__vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => m.resources)))`,
           );
-          return code;
+          return {
+            code: output.toString(),
+            map: output.generateMap({ hires: "boundary" }),
+          };
         }
       },
       load(id) {
@@ -1199,5 +1209,6 @@ function generateResourcesCode(loadFnCode: string) {
   return `
     import React from "react";
     export const Resources = (${ResourcesFn.toString()})(React, ${loadFnCode});
+    export const resources = React.createElement(Resources)
   `;
 }

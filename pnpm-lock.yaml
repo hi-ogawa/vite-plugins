@@ -546,6 +546,9 @@ importers:
       '@mjackson/node-fetch-server':
         specifier: ^0.6.1
         version: 0.6.1
+      magic-string:
+        specifier: ^0.30.17
+        version: 0.30.17
       react:
         specifier: ^19.1.0
         version: 19.1.0

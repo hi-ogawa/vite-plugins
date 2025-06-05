@@ -1,5 +1,4 @@
 import "./styles.css";
-import { Resources } from "virtual:vite-rsc/importer-resources";
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Root } from "./routes/root";
 
@@ -7,8 +6,7 @@ export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const root = (
     <>
-      <Resources />
-      {import.meta.viteRsc.resources}
+      {import.meta.viteRscCss}
       <Root url={url} />
     </>
   );
