@@ -40,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function ServerComponent() {
+export function Component() {
   console.log("Root");
   return (
     <>

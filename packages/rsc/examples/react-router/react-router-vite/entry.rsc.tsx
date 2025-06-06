@@ -7,9 +7,9 @@ import {
   renderToReadableStream,
 } from "@hiogawa/vite-rsc/rsc";
 import {
-  type DecodeCallServerFunction,
-  type DecodeFormActionFunction,
-  matchRSCServerRequest,
+  type unstable_DecodeCallServerFunction as DecodeCallServerFunction,
+  type unstable_DecodeFormActionFunction as DecodeFormActionFunction,
+  unstable_matchRSCServerRequest as matchRSCServerRequest,
 } from "react-router/rsc";
 
 // @ts-ignore

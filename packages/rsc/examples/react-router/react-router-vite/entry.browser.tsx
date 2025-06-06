@@ -7,11 +7,11 @@ import {
 import * as React from "react";
 import { hydrateRoot } from "react-dom/client";
 import {
-  RSCHydratedRouter,
-  createCallServer,
-  getServerStream,
+  unstable_RSCHydratedRouter as RSCHydratedRouter,
+  unstable_createCallServer as createCallServer,
+  unstable_getServerStream as getServerStream,
 } from "react-router";
-import type { ServerPayload } from "react-router/rsc";
+import type { unstable_ServerPayload as ServerPayload } from "react-router/rsc";
 
 initialize({
   onHmrReload() {
