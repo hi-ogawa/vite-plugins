@@ -1,5 +1,63 @@
 # @hiogawa/vite-rsc
 
+## Plugin API
+
+cf. https://github.com/hi-ogawa/vite-plugins/discussions/606
+
+- `vite.config.ts`
+
+```js
+import rsc from "@hiogawa/vite-rsc/plugin";
+
+export default defineConfig() {
+  plugins: [
+    rsc({
+      entries: {
+        // browser entry
+        browser: "./entry.browser.tsx",
+        // server module with react-server condition
+        // - RSC serialization from
+        // - server function handling
+        rsc: "./entry.rsc.tsx",
+        // server module without react-server condition
+        // - RSC deserialization for SSR
+        ssr: "./entry.ssr.tsx",
+      },
+    })
+  ]
+}
+```
+
+- `entry.rsc.tsx`
+
+```js
+import {} from "@hiogawa/vite-rsc/rsc";
+
+export default function handler(request: Request) {}
+```
+
+- `entry.ssr.tsx`
+
+```js
+import {} from "@hiogawa/vite-rsc/rsc";
+
+export default function handler(request: Request) {}
+```
+
+- `entry.browser.tsx`
+
+```js
+import {} from "@hiogawa/vite-rsc/rsc";
+```
+
+## RSC API
+
+```js
+import.meta.viteRscCss;
+```
+
+---
+
 Vite RSC plugin without framework. See https://github.com/hi-ogawa/vite-plugins/issues/748 for how this package relates to future `react-server-dom-vite`.
 
 ## examples
