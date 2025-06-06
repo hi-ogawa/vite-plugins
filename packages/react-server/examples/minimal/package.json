@@ -12,8 +12,7 @@
     "@hiogawa/react-server": "workspace:*",
     "next": "link:../../../react-server-next",
     "react": "latest",
-    "react-dom": "latest",
-    "react-server-dom-webpack": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",
