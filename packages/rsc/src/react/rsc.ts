@@ -1,8 +1,8 @@
+// @ts-ignore
+import * as ReactClient from "@hiogawa/vite-rsc/vendor/react-server-dom/client.edge";
+// @ts-ignore
+import * as ReactServer from "@hiogawa/vite-rsc/vendor/react-server-dom/server.edge";
 import type { ReactFormState } from "react-dom/client";
-// @ts-ignore
-import * as ReactClient from "react-server-dom-webpack/client.edge";
-// @ts-ignore
-import * as ReactServer from "react-server-dom-webpack/server.edge";
 import {
   createClientManifest,
   createServerDecodeClientManifest,
