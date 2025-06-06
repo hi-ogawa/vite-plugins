@@ -22,8 +22,7 @@
     "@hiogawa/test-deps-jsx-in-js": "file:./deps/test-jsx-in-js",
     "next": "link:../../../react-server-next",
     "react": "latest",
-    "react-dom": "latest",
-    "react-server-dom-webpack": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",

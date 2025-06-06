@@ -329,9 +329,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20250423.0
@@ -360,9 +357,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -388,9 +382,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -419,9 +410,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -447,9 +435,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -475,9 +460,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest
@@ -509,9 +491,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest

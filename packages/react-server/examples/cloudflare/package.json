@@ -16,8 +16,7 @@
     "@hiogawa/react-server": "workspace:*",
     "next": "link:../../../react-server-next",
     "react": "latest",
-    "react-dom": "latest",
-    "react-server-dom-webpack": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250423.0",
