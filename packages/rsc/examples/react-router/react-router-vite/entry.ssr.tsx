@@ -5,7 +5,10 @@ import {
 } from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
 import * as ReactDomServer from "react-dom/server.edge";
-import { RSCStaticRouter, routeRSCServerRequest } from "react-router";
+import {
+  unstable_RSCStaticRouter as RSCStaticRouter,
+  unstable_routeRSCServerRequest as routeRSCServerRequest,
+} from "react-router";
 
 initialize();
 
