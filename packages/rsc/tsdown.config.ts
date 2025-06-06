@@ -33,7 +33,7 @@ export default defineConfig({
         fs.rmSync("./dist/vendor/", { recursive: true, force: true });
         fs.mkdirSync("./dist/vendor", { recursive: true });
         fs.cpSync(
-          "./node_modules/react-server-dom-webpack",
+          "./node_modules/react-server-dom-vite",
           "./dist/vendor/react-server-dom",
           { recursive: true, dereference: true },
         );
