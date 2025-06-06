@@ -547,7 +547,6 @@ function serverDepsConfigPlugin(): Plugin {
           noExternal: uniq([
             "react",
             "react-dom",
-            "react-server-dom-webpack",
             "server-only",
             "client-only",
             ...result.ssr.noExternal,
