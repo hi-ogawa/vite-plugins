@@ -1,6 +1,16 @@
 # @hiogawa/vite-rsc
 
-## Plugin API
+## Features
+
+TODO
+
+## Examples
+
+- [`./examples/basic`](./examples/basic)
+- [`./examples/react-router`](./examples/react-router)
+- [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
+
+## Basic Concepts
 
 cf. https://github.com/hi-ogawa/vite-plugins/discussions/606
 
@@ -13,15 +23,19 @@ export default defineConfig() {
   plugins: [
     rsc({
       entries: {
-        // browser entry
-        browser: "./entry.browser.tsx",
-        // server module with react-server condition
-        // - RSC serialization from
+        // server module with react-server condition, which can do
+        // - RSC serialization
+        // - RSC deserialization
         // - server function handling
         rsc: "./entry.rsc.tsx",
-        // server module without react-server condition
+
+        // server module without react-server condition, which can do
         // - RSC deserialization for SSR
         ssr: "./entry.ssr.tsx",
+
+        // main script entry executed on browser, which can do
+        // - RSC deserialization for hydration
+        browser: "./entry.browser.tsx",
       },
     })
   ]
@@ -30,59 +44,68 @@ export default defineConfig() {
 
 - `entry.rsc.tsx`
 
-```js
-import {} from "@hiogawa/vite-rsc/rsc";
+```tsx
+import {
+  // React API
+  renderToReadableStream,
+  decodeReply,
+  loadServerAction,
+  // Helper API
+  initialize,
+  importSsr,
+} from "@hiogawa/vite-rsc/rsc";
 
-export default function handler(request: Request) {}
+// the plugin assumes `rsc` entry having default export of request handler
+export default function handler(request: Request): Promise<Response> {
+  // 1. RSC serialization
+  const stream = renderToReadableStream(<Root />);
+
+  // 2. delegate to SSR environment for html rendering
+  const { handleSsr } = await importSsr<typeof import("./entry.ssr.tsx")>();
+  return handleSsr(stream);
+}
+
+// root component
+function Root() {
+  return <html><body><h1>Test</h1></body></html>;
+}
 ```
 
 - `entry.ssr.tsx`
 
-```js
-import {} from "@hiogawa/vite-rsc/rsc";
+```tsx
+import {} from "@hiogawa/vite-rsc/ssr";
 
-export default function handler(request: Request) {}
+export function handleSsr(stream: ReadableStream) {
+  // 1. RSC deserialization for ssr
+}
 ```
 
 - `entry.browser.tsx`
 
-```js
-import {} from "@hiogawa/vite-rsc/rsc";
+```tsx
+import {} from "@hiogawa/vite-rsc/browser";
+
+function main() {
+}
+
+main();
 ```
 
-## RSC API
+## Handling server function
 
-```js
-import.meta.viteRscCss;
+The first example omits
+
+```tsx
+TODO
 ```
 
----
+## React API overview
 
-Vite RSC plugin without framework. See https://github.com/hi-ogawa/vite-plugins/issues/748 for how this package relates to future `react-server-dom-vite`.
+- `renderToReadableStream`
+- `createFromReadableStream`
 
-## examples
+## Helper API overview
 
-- [`./examples/basic`](./examples/basic)
-- [`./examples/basic-core`](./examples/basic-core)
-- [`./examples/react-router`](./examples/react-router)
-- [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
-
-## high level API
-
-- `@hiogawa/vite-rsc/{plugin,browser,ssr,rsc}`
-  - Framework-less rsc plugin, runtime, and re-export of react-server-dom API with types. The plugin is "opinionated" in the sense that it's not necessary compose-able with existing frameworks or plugins, but the implementation is minimal.
-  - See [`examples/react-router`](./examples/react-router) for the usage
-- `@hiogawa/vite-rsc/extra/{browser,ssr,rsc}`
-  - Rsc helper API similar to [`@parcel/rsc`](https://parceljs.org/recipes/rsc). Less flexible but easier to play with.
-  - See [`examples/basic`](./examples/basic) for the usage
-
-## low level API
-
-Low level API is mostly consumed internally by high level API, but they can be used when writing own plugins. My plan is to propose `react-server-dom-vite` with mostly same runtime API without the need of plugin.
-
-- `@hiogawa/vite-rsc/react/{browser,ssr,rsc}`
-  - re-export of react-server-dom-webpack API with prescribed options (e.g. manifest, call server)
-- `@hiogawa/vite-rsc/core/{plugin,browser,ssr,rsc}`
-  - workaround to make async module loading with dev invalidation work with `react-server-dom-webpack`
-
-See [`./examples/basic-core`](./examples/basic-core) for the usage. See https://github.com/hi-ogawa/vite-plugins/pull/751 for the example of migrating from direct `react-server-dom-webpack` usage.
+- `importSsr`
+- `import.meta.viteRscCss`
