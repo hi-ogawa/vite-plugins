@@ -2,7 +2,7 @@
 
 ## v0.3.1 (2025-06-06)
 
-- refactor(rsc): vendor react-server-dom ([#854](https://github.com/hi-ogawa/vite-plugins/pull/854))
+- refactor: vendor react-server-dom ([#854](https://github.com/hi-ogawa/vite-plugins/pull/854))
 
 ## v0.3.0 (2025-06-05)
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.1 (2025-06-06)
+
+- refactor: vendor react-server-dom ([#854](https://github.com/hi-ogawa/vite-plugins/pull/854))
+- feat: encrypt closure bind values ([#897](https://github.com/hi-ogawa/vite-plugins/pull/897))
+- feat: support prepare destination ([#821](https://github.com/hi-ogawa/vite-plugins/pull/821))
+
 ## v0.5.0 (2025-05-01)
 
 - feat: support `findSourceMapURL` ([#779](https://github.com/hi-ogawa/vite-plugins/pull/779)) ([#796](https://github.com/hi-ogawa/vite-plugins/pull/796))
