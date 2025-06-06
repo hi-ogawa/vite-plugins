@@ -1,30 +1,111 @@
 # @hiogawa/vite-rsc
 
-Vite RSC plugin without framework. See https://github.com/hi-ogawa/vite-plugins/issues/748 for how this package relates to future `react-server-dom-vite`.
+## Features
 
-## examples
+TODO
+
+## Examples
 
 - [`./examples/basic`](./examples/basic)
-- [`./examples/basic-core`](./examples/basic-core)
 - [`./examples/react-router`](./examples/react-router)
 - [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
 
-## high level API
+## Basic Concepts
 
-- `@hiogawa/vite-rsc/{plugin,browser,ssr,rsc}`
-  - Framework-less rsc plugin, runtime, and re-export of react-server-dom API with types. The plugin is "opinionated" in the sense that it's not necessary compose-able with existing frameworks or plugins, but the implementation is minimal.
-  - See [`examples/react-router`](./examples/react-router) for the usage
-- `@hiogawa/vite-rsc/extra/{browser,ssr,rsc}`
-  - Rsc helper API similar to [`@parcel/rsc`](https://parceljs.org/recipes/rsc). Less flexible but easier to play with.
-  - See [`examples/basic`](./examples/basic) for the usage
+cf. https://github.com/hi-ogawa/vite-plugins/discussions/606
 
-## low level API
+- `vite.config.ts`
 
-Low level API is mostly consumed internally by high level API, but they can be used when writing own plugins. My plan is to propose `react-server-dom-vite` with mostly same runtime API without the need of plugin.
+```js
+import rsc from "@hiogawa/vite-rsc/plugin";
 
-- `@hiogawa/vite-rsc/react/{browser,ssr,rsc}`
-  - re-export of react-server-dom-webpack API with prescribed options (e.g. manifest, call server)
-- `@hiogawa/vite-rsc/core/{plugin,browser,ssr,rsc}`
-  - workaround to make async module loading with dev invalidation work with `react-server-dom-webpack`
+export default defineConfig() {
+  plugins: [
+    rsc({
+      entries: {
+        // server module with react-server condition, which can do
+        // - RSC serialization
+        // - RSC deserialization
+        // - server function handling
+        rsc: "./entry.rsc.tsx",
 
-See [`./examples/basic-core`](./examples/basic-core) for the usage. See https://github.com/hi-ogawa/vite-plugins/pull/751 for the example of migrating from direct `react-server-dom-webpack` usage.
+        // server module without react-server condition, which can do
+        // - RSC deserialization for SSR
+        ssr: "./entry.ssr.tsx",
+
+        // main script entry executed on browser, which can do
+        // - RSC deserialization for hydration
+        browser: "./entry.browser.tsx",
+      },
+    })
+  ]
+}
+```
+
+- `entry.rsc.tsx`
+
+```tsx
+import {
+  // React API
+  renderToReadableStream,
+  decodeReply,
+  loadServerAction,
+  // Helper API
+  initialize,
+  importSsr,
+} from "@hiogawa/vite-rsc/rsc";
+
+// the plugin assumes `rsc` entry having default export of request handler
+export default function handler(request: Request): Promise<Response> {
+  // 1. RSC serialization
+  const stream = renderToReadableStream(<Root />);
+
+  // 2. delegate to SSR environment for html rendering
+  const { handleSsr } = await importSsr<typeof import("./entry.ssr.tsx")>();
+  return handleSsr(stream);
+}
+
+// root component
+function Root() {
+  return <html><body><h1>Test</h1></body></html>;
+}
+```
+
+- `entry.ssr.tsx`
+
+```tsx
+import {} from "@hiogawa/vite-rsc/ssr";
+
+export function handleSsr(stream: ReadableStream) {
+  // 1. RSC deserialization for ssr
+}
+```
+
+- `entry.browser.tsx`
+
+```tsx
+import {} from "@hiogawa/vite-rsc/browser";
+
+function main() {
+}
+
+main();
+```
+
+## Handling server function
+
+The first example omits
+
+```tsx
+TODO
+```
+
+## React API overview
+
+- `renderToReadableStream`
+- `createFromReadableStream`
+
+## Helper API overview
+
+- `importSsr`
+- `import.meta.viteRscCss`
