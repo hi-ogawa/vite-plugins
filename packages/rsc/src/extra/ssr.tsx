@@ -2,11 +2,7 @@ import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import {
-  createFromReadableStream,
-  getAssetsManifest,
-  initialize,
-} from "../ssr";
+import { createFromReadableStream, getAssetsManifest } from "../ssr";
 import type { RscPayload } from "./rsc";
 
 export async function renderHtml({
@@ -18,8 +14,6 @@ export async function renderHtml({
   formState?: ReactFormState;
   options?: { nonce?: string; __nojs?: boolean };
 }): Promise<Response> {
-  initialize();
-
   const [stream1, stream2] = stream.tee();
 
   // flight deserialization needs to be kicked off inside SSR context

@@ -1,7 +1,6 @@
 import {
   createFromReadableStream,
   getAssetsManifest,
-  initialize,
 } from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
 import * as ReactDomServer from "react-dom/server.edge";
@@ -9,8 +8,6 @@ import {
   unstable_RSCStaticRouter as RSCStaticRouter,
   unstable_routeRSCServerRequest as routeRSCServerRequest,
 } from "react-router";
-
-initialize();
 
 export default async function handler(
   request: Request,

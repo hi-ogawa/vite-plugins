@@ -7,22 +7,11 @@ import {
   createFromReadableStream,
   createTemporaryReferenceSet,
   encodeReply,
-  initialize,
   setServerCallback,
 } from "../browser";
 import type { RscPayload } from "./rsc";
 
-export async function hydrate(options?: {
-  serverCallback?: () => void;
-  onHmrReload?: () => void;
-}): Promise<void> {
-  initialize({
-    onHmrReload() {
-      window.history.replaceState({}, "", window.location.href);
-      options?.onHmrReload?.();
-    },
-  });
-
+export async function hydrate(): Promise<void> {
   const callServer: CallServerCallback = async (id, args) => {
     const url = new URL(window.location.href);
     const temporaryReferences = createTemporaryReferenceSet();
@@ -74,6 +63,12 @@ export async function hydrate(options?: {
   ReactDomClient.hydrateRoot(document, browserRoot, {
     formState: initialPayload.formState,
   });
+
+  if (import.meta.hot) {
+    import.meta.hot.on("rsc:update", () => {
+      window.history.replaceState({}, "", window.location.href);
+    });
+  }
 }
 
 export async function fetchRSC(

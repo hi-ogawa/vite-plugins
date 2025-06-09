@@ -2,7 +2,6 @@ import {
   decodeAction,
   decodeReply,
   importSsr,
-  initialize,
   loadServerAction,
   renderToReadableStream,
 } from "@hiogawa/vite-rsc/rsc";
@@ -14,8 +13,6 @@ import {
 
 // @ts-ignore
 import routes from "../app/routes?react-router-routes";
-
-initialize();
 
 const decodeCallServer: DecodeCallServerFunction = async (actionId, reply) => {
   const args = await decodeReply(reply);
