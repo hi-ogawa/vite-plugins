@@ -106,10 +106,13 @@ export default function vitePluginRsc({
                 },
               },
               resolve: {
-                noExternal: [PKG_NAME],
-                external: [`${PKG_NAME}/vendor/react-server-dom/client.edge`],
+                noExternal: [
+                  PKG_NAME,
+                  `${PKG_NAME}/vendor/react-server-dom/client.edge`,
+                ],
               },
               optimizeDeps: {
+                include: [`${PKG_NAME}/vendor/react-server-dom/client.edge`],
                 exclude: [PKG_NAME],
               },
             },
@@ -127,6 +130,7 @@ export default function vitePluginRsc({
               optimizeDeps: {
                 include: [
                   "react",
+                  "react-dom",
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
                   `${PKG_NAME}/vendor/react-server-dom/server.edge`,
