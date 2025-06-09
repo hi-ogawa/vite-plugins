@@ -106,10 +106,7 @@ export default function vitePluginRsc({
                 },
               },
               resolve: {
-                noExternal: [
-                  PKG_NAME,
-                  `${PKG_NAME}/vendor/react-server-dom/client.edge`,
-                ],
+                noExternal: [PKG_NAME],
               },
               optimizeDeps: {
                 include: [`${PKG_NAME}/vendor/react-server-dom/client.edge`],
