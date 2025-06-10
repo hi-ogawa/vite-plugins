@@ -24,7 +24,7 @@ const decodeFormAction: DecodeFormActionFunction = async (formData) => {
   return await decodeAction(formData);
 };
 
-async function callServer(request: Request) {
+export async function callServer(request: Request) {
   return await matchRSCServerRequest({
     decodeCallServer,
     decodeFormAction,

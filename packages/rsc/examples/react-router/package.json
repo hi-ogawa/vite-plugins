@@ -7,8 +7,14 @@
     "dev": "vite",
     "build": "vite build --app",
     "preview": "vite preview",
+    "cf-dev": "vite -c ./cf/vite.config.ts",
+    "cf-build": "vite -c ./cf/vite.config.ts build",
+    "cf-preview": "vite -c ./cf/vite.config.ts preview",
+    "cf-release": "wrangler deploy -c dist/rsc/wrangler.json && wrangler deploy",
     "test-e2e": "playwright test",
-    "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
+    "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
+    "test-e2e-cf": "E2E_CF=1 playwright test",
+    "test-e2e-cf-preview": "E2E_PREVIEW=1 E2E_CF=1 playwright test"
   },
   "dependencies": {
     "@hiogawa/vite-rsc": "latest",
@@ -17,6 +23,7 @@
     "react-router": "0.0.0-experimental-f2b42587c"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.5.0",
     "@react-router/dev": "0.0.0-experimental-f2b42587c",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.4",
@@ -25,6 +32,7 @@
     "@vitejs/plugin-react": "latest",
     "tailwindcss": "^4.1.4",
     "vite": "latest",
-    "vite-plugin-inspect": "^11.0.1"
+    "vite-plugin-inspect": "^11.0.1",
+    "wrangler": "^4.19.1"
   }
 }
