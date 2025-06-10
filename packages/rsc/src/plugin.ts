@@ -606,7 +606,9 @@ function vitePluginUseClient(): Plugin[] {
         // vite/rollup can apply tree-shaking to dynamic import of this form
         const key = JSON.stringify(meta.referenceKey);
         const id = JSON.stringify(meta.importId);
-        const exports = meta.renderedExports.join(",");
+        const exports = meta.renderedExports
+          .map((name) => (name === "default" ? "default: _default" : name))
+          .sort();
         code += `
           ${key}: async () => {
             const {${exports}} = await import(${id});
