@@ -71,7 +71,7 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
     .locator(`head >> link[rel="modulepreload"]`)
     .evaluateAll((elements) => elements.map((el) => el.getAttribute("href")));
   const { default: manifest } = await import(
-    "../dist/client/__vite_rsc_assets_manifest.js" as any
+    "../dist/ssr/__vite_rsc_assets_manifest.js" as any
   );
   const hashString = (v: string) =>
     createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
