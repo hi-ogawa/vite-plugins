@@ -36,6 +36,7 @@ let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 let rscBundle: Rollup.OutputBundle;
 let buildAssetsManifest: AssetsManifest | undefined;
+const BUILD_ASSETS_MANIFEST_NAME = "__vite_rsc_assets_manifest.js";
 
 type ClientReferenceMeta = {
   importId: string;
@@ -159,12 +160,13 @@ export default function vitePluginRsc({
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
 
-              // emit manifest to non-client builds
+              // emit manifest to non-client build directly
+              // (makeing server build self-contained for cloudflare)
               const assetsManifestCode = `export default ${JSON.stringify(buildAssetsManifest, null, 2)}`;
               for (const name of ["ssr", "rsc"]) {
                 const manifestPath = path.join(
                   config.environments[name]!.build.outDir,
-                  "__vite_rsc_assets_manifest.js",
+                  BUILD_ASSETS_MANIFEST_NAME,
                 );
                 fs.writeFileSync(manifestPath, assetsManifestCode);
               }
@@ -368,7 +370,8 @@ export default function vitePluginRsc({
         if (source === "virtual:vite-rsc/assets-manifest") {
           return {
             id: `\0` + source,
-            external: this.environment.mode === "build",
+            external:
+              this.environment.mode === "build" ? "relative" : undefined,
           };
         }
       },
@@ -432,15 +435,8 @@ export default function vitePluginRsc({
         if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
           const replacement = path.relative(
-            path.join(
-              this.environment.config.build.outDir,
-              chunk.fileName,
-              "..",
-            ),
-            path.join(
-              this.environment.config.build.outDir,
-              "__vite_rsc_assets_manifest.js",
-            ),
+            path.join(chunk.fileName, ".."),
+            BUILD_ASSETS_MANIFEST_NAME,
           );
           code = code.replaceAll(
             "\0virtual:vite-rsc/assets-manifest",
