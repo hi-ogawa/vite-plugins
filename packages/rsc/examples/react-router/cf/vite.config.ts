@@ -32,11 +32,13 @@ const cfConfig = defineConfig({
             );
           }
         };
+
         // workaround (fixed in Vite 7) https://github.com/vitejs/vite/pull/20077
         (config.environments as any).ssr.resolve.noExternal = true;
         (config.environments as any).rsc.resolve.noExternal = true;
 
-        // overwrite plugin entries
+        // overwrite server entries
+        // TODO: better plugin API to customize?
         (config.environments as any).ssr.build.rollupOptions.input.index =
           "./cf/entry.ssr.tsx";
         (config.environments as any).rsc.build.rollupOptions.input.index =
