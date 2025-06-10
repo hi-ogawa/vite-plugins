@@ -82,7 +82,6 @@ export default function vitePluginRsc({
           environments: {
             client: {
               build: {
-                manifest: true,
                 outDir: "dist/client",
                 rollupOptions: {
                   input: { index: ENTRIES.browser },
