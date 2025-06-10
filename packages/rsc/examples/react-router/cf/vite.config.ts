@@ -63,20 +63,10 @@ const cfConfig = defineConfig({
           "react-dom/server.edge",
         ],
       },
-      build: {
-        rollupOptions: {
-          preserveEntrySignatures: "strict",
-        },
-      },
     },
     rsc: {
       optimizeDeps: {
         include: ["react-router"],
-      },
-      build: {
-        rollupOptions: {
-          preserveEntrySignatures: "strict",
-        },
       },
     },
   },
