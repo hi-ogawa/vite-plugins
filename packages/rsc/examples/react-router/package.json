@@ -10,6 +10,7 @@
     "cf-dev": "vite -c ./cf/vite.config.ts",
     "cf-build": "vite -c ./cf/vite.config.ts build",
     "cf-preview": "vite -c ./cf/vite.config.ts preview",
+    "cf-release": "wrangler deploy -c dist/rsc/wrangler.json && wrangler deploy",
     "test-e2e": "playwright test",
     "test-e2e-preview": "E2E_PREVIEW=1 playwright test",
     "test-e2e-cf": "E2E_CF=1 playwright test",

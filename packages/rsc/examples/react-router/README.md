@@ -1,5 +1,7 @@
 # rsc react-router
 
+https://vite-rsc-react-router.hiro18181.workers.dev
+
 Vite RSC example based React router team's demo:
 - https://github.com/jacob-ebey/parcel-plugin-react-router/
 - https://github.com/jacob-ebey/experimental-parcel-react-router-starter
@@ -17,8 +19,9 @@ npm run dev
 npm run build
 npm run preview
 
-# run on @cloudflare/vite-plugin
+# run on @cloudflare/vite-plugin and deploy
 npm run cf-dev
 npm run cf-build
 npm run cf-preview
+npm run cf-release
 ```
