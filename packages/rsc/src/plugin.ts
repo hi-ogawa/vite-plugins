@@ -35,6 +35,8 @@ let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 let rscBundle: Rollup.OutputBundle;
+let buildAssetsManifest: AssetsManifest | undefined;
+const BUILD_ASSETS_MANIFEST_NAME = "__vite_rsc_assets_manifest.js";
 
 type ClientReferenceMeta = {
   importId: string;
@@ -80,7 +82,6 @@ export default function vitePluginRsc({
           environments: {
             client: {
               build: {
-                manifest: true,
                 outDir: "dist/client",
                 rollupOptions: {
                   input: { index: ENTRIES.browser },
@@ -157,6 +158,17 @@ export default function vitePluginRsc({
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
+
+              // emit manifest to non-client build directly
+              // (makeing server build self-contained for cloudflare)
+              const assetsManifestCode = `export default ${JSON.stringify(buildAssetsManifest, null, 2)}`;
+              for (const name of ["ssr", "rsc"]) {
+                const manifestPath = path.join(
+                  config.environments[name]!.build.outDir,
+                  BUILD_ASSETS_MANIFEST_NAME,
+                );
+                fs.writeFileSync(manifestPath, assetsManifestCode);
+              }
             },
           },
         };
@@ -357,7 +369,8 @@ export default function vitePluginRsc({
         if (source === "virtual:vite-rsc/assets-manifest") {
           return {
             id: `\0` + source,
-            external: this.environment.mode === "build",
+            external:
+              this.environment.mode === "build" ? "relative" : undefined,
           };
         }
       },
@@ -409,16 +422,11 @@ export default function vitePluginRsc({
               mergeAssetDeps(deps, entry.deps),
             );
           }
-          const manifest: AssetsManifest = {
+          buildAssetsManifest = {
             bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
             clientReferenceDeps,
             serverResources,
           };
-          this.emitFile({
-            type: "asset",
-            fileName: "__vite_rsc_assets_manifest.js",
-            source: `export default ${JSON.stringify(manifest, null, 2)}`,
-          });
         }
       },
       // non-client builds can load assets manifest as external
@@ -426,18 +434,12 @@ export default function vitePluginRsc({
         if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
           const replacement = path.relative(
-            path.join(
-              this.environment.config.build.outDir,
-              chunk.fileName,
-              "..",
-            ),
-            path.join(
-              config.environments.client!.build.outDir,
-              "__vite_rsc_assets_manifest.js",
-            ),
+            path.join(chunk.fileName, ".."),
+            BUILD_ASSETS_MANIFEST_NAME,
           );
-          code = code.replaceAll("\0virtual:vite-rsc/assets-manifest", () =>
-            normalizePath(replacement),
+          code = code.replaceAll(
+            "\0virtual:vite-rsc/assets-manifest",
+            () => "./" + normalizePath(replacement),
           );
           return { code };
         }
@@ -564,7 +566,9 @@ function vitePluginUseClient(): Plugin[] {
             referenceKey = importId;
           } else {
             importId = id;
-            referenceKey = hashString(path.relative(config.root, id));
+            referenceKey = hashString(
+              normalizePath(path.relative(config.root, id)),
+            );
           }
         }
 
@@ -1072,7 +1076,7 @@ export function vitePluginRscCss(): Plugin[] {
             const deps = assetsURLOfDeps({ css: cssHrefs, js: jsHrefs });
             return generateResourcesCode(JSON.stringify(deps, null, 2));
           } else {
-            const key = path.relative(config.root, importer);
+            const key = normalizePath(path.relative(config.root, importer));
             serverResourcesMetaMap[importer] = { key };
             return `
               import __vite_rsc_assets_manifest__ from "virtual:vite-rsc/assets-manifest";
