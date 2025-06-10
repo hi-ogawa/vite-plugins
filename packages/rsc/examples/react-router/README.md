@@ -1,6 +1,6 @@
 # rsc react-router
 
-Vite RSC example based React router teams' demos:
+Vite RSC example based React router team's demo:
 - https://github.com/jacob-ebey/parcel-plugin-react-router/
 - https://github.com/jacob-ebey/experimental-parcel-react-router-starter
 - https://github.com/remix-run/react-router/tree/rsc/playground/rsc-vite
@@ -19,4 +19,6 @@ npm run preview
 
 # run on @cloudflare/vite-plugin
 npm run cf-dev
+npm run cf-build
+npm run cf-preview
 ```
