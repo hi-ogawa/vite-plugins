@@ -6,9 +6,15 @@ const cfConfig = defineConfig({
   plugins: [
     cloudflare({
       configPath: "./cf/wrangler.ssr.jsonc",
+      viteEnvironment: {
+        name: "ssr",
+      },
       auxiliaryWorkers: [
         {
           configPath: "./cf/wrangler.rsc.jsonc",
+          viteEnvironment: {
+            name: "rsc",
+          },
         },
       ],
     }),
@@ -27,7 +33,7 @@ const cfConfig = defineConfig({
             return original.apply(this, args);
           } catch (e) {
             console.log(
-              "[cloudflare:patch]",
+              "[patched cloudflare plugin error]",
               e instanceof Error ? e.message : e,
             );
           }
