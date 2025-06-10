@@ -3,9 +3,9 @@ import { setRequireModule } from "./core/browser";
 
 export * from "./react/browser";
 
-export function initialize(options?: {
-  onHmrReload?: () => void;
-}): void {
+initialize();
+
+export function initialize(): void {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
@@ -20,10 +20,4 @@ export function initialize(options?: {
       }
     },
   });
-
-  if (import.meta.hot) {
-    import.meta.hot.on("rsc:update", () => {
-      options?.onHmrReload?.();
-    });
-  }
 }

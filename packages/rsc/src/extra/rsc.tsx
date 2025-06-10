@@ -5,7 +5,6 @@ import {
   decodeFormState,
   decodeReply,
   importSsr,
-  initialize,
   loadServerAction,
   renderToReadableStream,
 } from "../rsc";
@@ -21,8 +20,6 @@ export async function renderRequest(
   root: React.ReactNode,
   options?: { nonce?: string },
 ): Promise<Response> {
-  initialize();
-
   function RscRoot() {
     // https://vite.dev/guide/features.html#content-security-policy-csp
     // this isn't needed if `style-src: 'unsafe-inline'` (dev) and `script-src: 'self'`
