@@ -566,7 +566,9 @@ function vitePluginUseClient(): Plugin[] {
             referenceKey = importId;
           } else {
             importId = id;
-            referenceKey = hashString(path.relative(config.root, id));
+            referenceKey = hashString(
+              normalizePath(path.relative(config.root, id)),
+            );
           }
         }
 
@@ -1074,7 +1076,7 @@ export function vitePluginRscCss(): Plugin[] {
             const deps = assetsURLOfDeps({ css: cssHrefs, js: jsHrefs });
             return generateResourcesCode(JSON.stringify(deps, null, 2));
           } else {
-            const key = path.relative(config.root, importer);
+            const key = normalizePath(path.relative(config.root, importer));
             serverResourcesMetaMap[importer] = { key };
             return `
               import __vite_rsc_assets_manifest__ from "virtual:vite-rsc/assets-manifest";
