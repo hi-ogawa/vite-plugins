@@ -77,10 +77,7 @@ testNoJs("module preload on ssr @build", async ({ page }) => {
     createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
   const deps =
     manifest.clientReferenceDeps[hashString("src/routes/client.tsx")];
-  const hrefs = deps.js.map(
-    (href: string) => (process.env.TEST_BASE ? "/custom-base" : "") + href,
-  );
-  expect(srcs).toEqual(expect.arrayContaining(hrefs));
+  expect(srcs).toEqual(expect.arrayContaining(deps.js));
 });
 
 test("server reference update @dev @js", async ({ page }) => {
