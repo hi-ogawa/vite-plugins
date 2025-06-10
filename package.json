@@ -31,7 +31,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "unplugin-isolated-decl": "^0.13.5",
-    "vite": "^6.3.2",
+    "vite": "npm:rolldown-vite@6.3.18",
     "vite-plugin-inspect": "^11.0.1",
     "vitest": "^3.1.1",
     "wrangler": "^4.19.1"
