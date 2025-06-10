@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.2 (2025-06-10)
+
+- feat: auto initialize ([#925](https://github.com/hi-ogawa/vite-plugins/pull/925))
+- fix: emit assets manifest only in server build ([#929](https://github.com/hi-ogawa/vite-plugins/pull/929))
+- refactor: inline react-server-dom in ssr (2) ([#927](https://github.com/hi-ogawa/vite-plugins/pull/927))
+- chore: add `@cloudflare/vite-plugin` example ([#926](https://github.com/hi-ogawa/vite-plugins/pull/926))
+
 ## v0.3.1 (2025-06-06)
 
 - refactor: vendor react-server-dom ([#854](https://github.com/hi-ogawa/vite-plugins/pull/854))
