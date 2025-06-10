@@ -35,6 +35,7 @@ let config: ResolvedConfig;
 let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 let rscBundle: Rollup.OutputBundle;
+let buildAssetsManifest: AssetsManifest | undefined;
 
 type ClientReferenceMeta = {
   importId: string;
@@ -157,6 +158,16 @@ export default function vitePluginRsc({
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
+
+              // emit manifest to non-client builds
+              const assetsManifestCode = `export default ${JSON.stringify(buildAssetsManifest, null, 2)}`;
+              for (const name of ["ssr", "rsc"]) {
+                const manifestPath = path.join(
+                  config.environments[name]!.build.outDir,
+                  "__vite_rsc_assets_manifest.js",
+                );
+                fs.writeFileSync(manifestPath, assetsManifestCode);
+              }
             },
           },
         };
@@ -409,16 +420,11 @@ export default function vitePluginRsc({
               mergeAssetDeps(deps, entry.deps),
             );
           }
-          const manifest: AssetsManifest = {
+          buildAssetsManifest = {
             bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
             clientReferenceDeps,
             serverResources,
           };
-          this.emitFile({
-            type: "asset",
-            fileName: "__vite_rsc_assets_manifest.js",
-            source: `export default ${JSON.stringify(manifest, null, 2)}`,
-          });
         }
       },
       // non-client builds can load assets manifest as external
@@ -432,12 +438,13 @@ export default function vitePluginRsc({
               "..",
             ),
             path.join(
-              config.environments.client!.build.outDir,
+              this.environment.config.build.outDir,
               "__vite_rsc_assets_manifest.js",
             ),
           );
-          code = code.replaceAll("\0virtual:vite-rsc/assets-manifest", () =>
-            normalizePath(replacement),
+          code = code.replaceAll(
+            "\0virtual:vite-rsc/assets-manifest",
+            () => "./" + normalizePath(replacement),
           );
           return { code };
         }
