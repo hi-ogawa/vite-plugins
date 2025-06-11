@@ -325,10 +325,10 @@ export default function vitePluginRsc({
           source === "virtual:vite-rsc/import-rsc" ||
           source === "virtual:vite-rsc/import-ssr"
         ) {
-          return {
-            id: `\0` + source,
-            external: this.environment.mode === "build",
-          };
+          if (this.environment.mode === "build") {
+            return { id: source, external: true };
+          }
+          return `\0` + source;
         }
       },
       load(id) {
@@ -340,22 +340,22 @@ export default function vitePluginRsc({
         }
       },
       renderChunk(code, chunk) {
-        if (code.includes("\0virtual:vite-rsc/import-rsc")) {
+        if (code.includes("virtual:vite-rsc/import-rsc")) {
           const replacement = path.relative(
             path.join("dist/ssr", chunk.fileName, ".."),
             path.join("dist/rsc", "index.js"),
           );
-          code = code.replaceAll("\0virtual:vite-rsc/import-rsc", () =>
+          code = code.replaceAll("virtual:vite-rsc/import-rsc", () =>
             normalizePath(replacement),
           );
           return { code };
         }
-        if (code.includes("\0virtual:vite-rsc/import-ssr")) {
+        if (code.includes("virtual:vite-rsc/import-ssr")) {
           const replacement = path.relative(
             path.join("dist/rsc", chunk.fileName, ".."),
             path.join("dist/ssr", "index.js"),
           );
-          code = code.replaceAll("\0virtual:vite-rsc/import-ssr", () =>
+          code = code.replaceAll("virtual:vite-rsc/import-ssr", () =>
             normalizePath(replacement),
           );
           return { code };
@@ -367,11 +367,10 @@ export default function vitePluginRsc({
       name: "rsc:virtual:vite-rsc/assets-manifest",
       resolveId(source) {
         if (source === "virtual:vite-rsc/assets-manifest") {
-          return {
-            id: `\0` + source,
-            external:
-              this.environment.mode === "build" ? "relative" : undefined,
-          };
+          if (this.environment.mode === "build") {
+            return { id: source, external: true };
+          }
+          return `\0` + source;
         }
       },
       load(id) {
@@ -431,14 +430,14 @@ export default function vitePluginRsc({
       },
       // non-client builds can load assets manifest as external
       renderChunk(code, chunk) {
-        if (code.includes("\0virtual:vite-rsc/assets-manifest")) {
+        if (code.includes("virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
           const replacement = path.relative(
             path.join(chunk.fileName, ".."),
             BUILD_ASSETS_MANIFEST_NAME,
           );
           code = code.replaceAll(
-            "\0virtual:vite-rsc/assets-manifest",
+            "virtual:vite-rsc/assets-manifest",
             () => "./" + normalizePath(replacement),
           );
           return { code };
@@ -606,7 +605,9 @@ function vitePluginUseClient(): Plugin[] {
         // vite/rollup can apply tree-shaking to dynamic import of this form
         const key = JSON.stringify(meta.referenceKey);
         const id = JSON.stringify(meta.importId);
-        const exports = meta.renderedExports.join(",");
+        const exports = meta.renderedExports
+          .map((name) => (name === "default" ? "default: _default" : name))
+          .sort();
         code += `
           ${key}: async () => {
             const {${exports}} = await import(${id});

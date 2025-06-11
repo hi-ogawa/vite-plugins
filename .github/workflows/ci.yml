@@ -61,6 +61,17 @@ jobs:
             packages/rsc/examples/basic/test-results
             packages/rsc/examples/react-router/test-results
 
+  test-rolldown:
+    name: test-rolldown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm i -w vite@npm:rolldown-vite@latest
+      - run: pnpm -C packages/rsc/examples/basic test-e2e
+      - run: pnpm -C packages/rsc/examples/basic build
+      - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
+
   test-react-server-basic:
     runs-on: ubuntu-latest
     steps:
