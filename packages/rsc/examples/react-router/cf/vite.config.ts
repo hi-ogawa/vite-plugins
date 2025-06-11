@@ -50,6 +50,18 @@ const cfConfig = defineConfig({
         (config.environments as any).rsc.build.rollupOptions.input.index =
           "./cf/entry.rsc.tsx";
       },
+      configEnvironment(name) {
+        if (name !== "client") {
+          return {
+            build: {
+              rollupOptions: {
+                // avoid "node:module" from "rolldown:runtime"
+                platform: "neutral",
+              },
+            },
+          };
+        }
+      },
     },
   ],
   environments: {
