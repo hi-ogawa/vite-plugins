@@ -60,7 +60,7 @@ export default defineConfig({
       // workaround https://github.com/vitejs/rolldown-vite/issues/249
       name: "fix-require-external",
       apply: "build",
-      applyToEnvironment: environment => environment.name === "ssr",
+      applyToEnvironment: (environment) => environment.name === "ssr",
       transform(code) {
         if (code.includes(`require("react")`)) {
           code = code.replaceAll(`require("react")`, `__require_react`);
@@ -68,7 +68,7 @@ export default defineConfig({
           return code;
         }
       },
-    }
+    },
   ],
   build: {
     ssrEmitAssets: true,
