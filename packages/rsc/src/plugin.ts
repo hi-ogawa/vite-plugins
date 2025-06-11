@@ -445,27 +445,35 @@ export default function vitePluginRsc({
         return;
       },
     },
-    createVirtualPlugin(ENTRIES.browser.slice("virtual:".length), function () {
-      let code = "";
-      if (this.environment.mode === "dev") {
-        code += `
-          import RefreshRuntime from "/@react-refresh";
-          RefreshRuntime.injectIntoGlobalHook(window);
-          window.$RefreshReg$ = () => {};
-          window.$RefreshSig$ = () => (type) => type;
-          window.__vite_plugin_react_preamble_installed__ = true;
-          await import("virtual:vite-rsc/entry-browser-inner");
+    createVirtualPlugin(
+      ENTRIES.browser.slice("virtual:".length),
+      async function () {
+        let code = "";
+        if (this.environment.mode === "dev") {
+          // enable hmr only when react plugin is available
+          const resolved = await this.resolve("/@react-refresh");
+          if (resolved) {
+            code += `
+              import RefreshRuntime from "/@react-refresh";
+              RefreshRuntime.injectIntoGlobalHook(window);
+              window.$RefreshReg$ = () => {};
+              window.$RefreshSig$ = () => (type) => type;
+            `;
+          }
+          code += `await import("virtual:vite-rsc/entry-browser-inner");`;
           // TODO
           // should remove only the ones we injected during ssr, which are duplicated by browser imports for HMR.
           // technically this doesn't have to wait for "vite:beforeUpdate" and should do it right after browser css import.
-          const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
-          import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
-        `;
-      } else {
-        code += `import "virtual:vite-rsc/entry-browser-inner";\n`;
-      }
-      return code;
-    }),
+          code += `
+            const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
+            import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
+          `;
+        } else {
+          code += `import "virtual:vite-rsc/entry-browser-inner";\n`;
+        }
+        return code;
+      },
+    ),
     {
       // wrap module runner entry with virtual to avoid bugs such as
       // https://github.com/vitejs/vite/issues/19975
