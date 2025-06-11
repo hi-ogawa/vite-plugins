@@ -56,6 +56,19 @@ export default defineConfig({
         buildMode: process.env.VERCEL || process.env.CF_PAGES ? "import" : "fs",
       }),
     ]),
+    {
+      // workaround https://github.com/vitejs/rolldown-vite/issues/249
+      name: "fix-require-external",
+      apply: "build",
+      applyToEnvironment: environment => environment.name === "ssr",
+      transform(code) {
+        if (code.includes(`require("react")`)) {
+          code = code.replaceAll(`require("react")`, `__require_react`);
+          code = `import __require_react from "react";` + code;
+          return code;
+        }
+      },
+    }
   ],
   build: {
     ssrEmitAssets: true,
