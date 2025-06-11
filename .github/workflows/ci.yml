@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: pnpm i -w npm:rolldown-vite@latest
+      - run: pnpm i -w vite@npm:rolldown-vite@latest
       - run: pnpm -C packages/rsc/examples/basic test-e2e
       - run: pnpm -C packages/rsc/examples/basic build
       - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
