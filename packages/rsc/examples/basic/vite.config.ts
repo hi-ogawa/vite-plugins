@@ -1,9 +1,8 @@
-import assert from "node:assert/strict";
-import { fileURLToPath } from "node:url";
+import assert from "node:assert";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { type Rollup, defineConfig, normalizePath } from "vite";
+import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
 
 export default defineConfig({
@@ -98,85 +97,6 @@ export default { fetch: handler };
   Cache-Control: public, max-age=31536000, immutable
 `,
           });
-        }
-      },
-    },
-    {
-      name: "optimize-chunks",
-      apply: "build",
-      config() {
-        const resolvePackageSource = (source: string) =>
-          normalizePath(fileURLToPath(import.meta.resolve(source)));
-
-        const pkgBrowserPath = resolvePackageSource(
-          "@hiogawa/vite-rsc/react/browser",
-        );
-
-        const manualChunksFn: Rollup.ManualChunksOption = (id) => {
-          // need to use functional form to handle commonjs plugin proxy module
-          // e.g. `(id)?commonjs-es-import`
-          if (
-            id.includes("node_modules/react/") ||
-            id.includes("node_modules/react-dom/") ||
-            id.includes(pkgBrowserPath)
-          ) {
-            return "lib-react";
-          }
-        };
-
-        return {
-          environments: {
-            client: {
-              build: {
-                manifest: true, // for debugging
-                rollupOptions: {
-                  output: {
-                    manualChunks: manualChunksFn,
-                    // for test-rolldown ci
-                    advancedChunks: {
-                      groups: [
-                        {
-                          name: "lib-react",
-                          // @ts-ignore
-                          test: (id) => !!manualChunksFn(id),
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
-            },
-          },
-        };
-      },
-      // verify chunks are "stable"
-      writeBundle(_options, bundle) {
-        if (this.environment.name === "client") {
-          const entryChunks: Rollup.OutputChunk[] = [];
-          const vendorChunks: Rollup.OutputChunk[] = [];
-          for (const chunk of Object.values(bundle)) {
-            if (chunk.type === "chunk") {
-              if (chunk.facadeModuleId === "\0virtual:vite-rsc/entry-browser") {
-                entryChunks.push(chunk);
-              } else if (chunk.name === "lib-react") {
-                vendorChunks.push(chunk);
-              }
-            }
-          }
-
-          // react vendor chunk has no import
-          assert(vendorChunks.length === 1);
-          assert.deepEqual(
-            vendorChunks[0].imports.filter(
-              (f) => !f.includes("rolldown-runtime"),
-            ),
-            [],
-          );
-          assert.deepEqual(vendorChunks[0].dynamicImports, []);
-
-          // entry chunk has no export
-          assert(entryChunks.length === 1);
-          assert.deepEqual(entryChunks[0].exports, []);
         }
       },
     },
