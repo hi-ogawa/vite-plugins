@@ -737,7 +737,7 @@ function vitePluginUseServer(): Plugin[] {
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
           output.prepend(
-            `import * as $$ReactClient from "${PKG_NAME}/${name}";\n`,
+            `import * as $$ReactClient from "${PKG_NAME}/react/${name}";\n`,
           );
           return {
             code: output.toString(),

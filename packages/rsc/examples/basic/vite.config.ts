@@ -1,8 +1,9 @@
 import assert from "node:assert";
+import { fileURLToPath } from "node:url";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { type Rollup, defineConfig, normalizePath } from "vite";
 import Inspect from "vite-plugin-inspect";
 
 export default defineConfig({
@@ -100,25 +101,58 @@ export default { fetch: handler };
         }
       },
     },
-  ],
-  environments: {
-    client: {
-      build: {
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              "lib-react": [
-                "react",
-                "react/jsx-runtime",
-                "react-dom/client",
-                "react-server-dom-webpack/client.browser",
-              ],
+    {
+      name: "optimize-chunks",
+      apply: "build",
+      config() {
+        const resolvePackageSource = (source: string) =>
+          normalizePath(fileURLToPath(import.meta.resolve(source)));
+
+        const pkgBrowserPath = resolvePackageSource(
+          "@hiogawa/vite-rsc/react/browser",
+        );
+
+        const manualChunksFn: Rollup.ManualChunksOption = (id) => {
+          // need to use functional form to handle commonjs plugin proxy module
+          // e.g. `(id)?commonjs-es-import`
+          if (
+            id.includes("node_modules/react/") ||
+            id.includes("node_modules/react-dom/") ||
+            id.includes(pkgBrowserPath)
+          ) {
+            return "lib-react";
+          }
+        };
+
+        return {
+          environments: {
+            client: {
+              build: {
+                manifest: true,
+                rollupOptions: {
+                  output: {
+                    manualChunks: manualChunksFn,
+                  },
+                },
+              },
             },
           },
-        },
+        };
+      },
+      // verify chunks are "stable"
+      writeBundle(_options, bundle) {
+        if (this.environment.name === "client") {
+          // TODO
+          // react vendor chunk has no import
+          bundle;
+
+          // entry chunk has no export
+
+          // client reference chunks
+        }
       },
     },
-  },
+  ],
   build: {
     minify: false,
   },
