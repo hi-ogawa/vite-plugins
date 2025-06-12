@@ -1,9 +1,11 @@
 # @hiogawa/vite-rsc
 
-- Framework-less: provide RSC runtime API directly without opinionated framework abstractions.
-- Hot Module Replacement: HMR support for client component and server component.
-- CSS Support: Automatic CSS asset collection and injection.
-- Runtime Agnostic: built on top of [Vite environment API](https://vite.dev/guide/api-environment.html) and it works on other runtime (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
+## Features
+
+- Framework-less: provides direct RSC runtime API without opinionated framework abstractions.
+- HMR support: allow editing client components and server components without full reload.
+- CSS support: CSS is code split at client boundaries and injected automatically. For server components, depending CSS assets can be manually rendered via `import.meta.viteRscCss` API based on framework/user's routing convention.
+- Runtime agnostic: built on top of [Vite environment API](https://vite.dev/guide/api-environment.html) and it works on other runtime (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
 ## Examples
 
