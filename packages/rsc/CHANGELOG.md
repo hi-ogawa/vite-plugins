@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.3 (2025-06-12)
+
+- feat: support rolldown-vite ([#931](https://github.com/hi-ogawa/vite-plugins/pull/931))
+- fix: allow usage without react plugin ([#934](https://github.com/hi-ogawa/vite-plugins/pull/934))
+- chore: docs ([#921](https://github.com/hi-ogawa/vite-plugins/pull/921))
+
 ## v0.3.2 (2025-06-10)
 
 - feat: auto initialize ([#925](https://github.com/hi-ogawa/vite-plugins/pull/925))
