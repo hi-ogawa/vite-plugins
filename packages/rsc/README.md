@@ -2,7 +2,7 @@
 
 ## Features
 
-- **Framework-agnostic**: Implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides direct `react-server-dom` runtime API without framework-specific abstractions.
+- **Framework-less**: Implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides direct `react-server-dom` runtime API without framework-specific abstractions.
 - **CSS support**: CSS is automatically code-split at client boundaries and injected upon rendering. For server components, CSS assets can be manually rendered via `import.meta.viteRscCss` API based on own routing conventions.
 - **HMR support**: Enables editing both client and server components without full page reloads.
 - **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
@@ -17,7 +17,7 @@
 
 This example can be found in [`./examples/basic-doc`](./examples/basic-doc).
 
-- `vite.config.ts`
+- [`vite.config.ts`](./examples/basic-doc/vite.config.ts)
 
 ```js
 import rsc from "@hiogawa/vite-rsc/plugin";
@@ -29,24 +29,24 @@ export default defineConfig() {
         // server entry with react-server condition, which should manage:
         // - RSC serialization
         // - server functions handling
-        rsc: "./entry.rsc.tsx",
+        rsc: "./src/entry.rsc.tsx",
 
         // server entry without react-server condition, which should manage:
         // - RSC deserialization for SSR
-        ssr: "./entry.ssr.tsx",
+        ssr: "./src/entry.ssr.tsx",
 
         // main script entry executed on browser, which should manage:
         // - RSC deserialization for hydration
         // - refetch and re-render RSC
         // - calling server functions
-        browser: "./entry.browser.tsx",
+        browser: "./src/entry.browser.tsx",
       },
     })
   ]
 }
 ```
 
-- `entry.rsc.tsx`
+- [`entry.rsc.tsx`](./examples/basic-doc/src/entry.rsc.tsx)
 
 ```tsx
 import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // React core API
@@ -80,7 +80,7 @@ export default async function handler(request: Request): Promise<Response> {
 }
 ```
 
-- `entry.ssr.tsx`
+- [`entry.ssr.tsx`](./examples/basic-doc/src/entry.ssr.tsx)
 
 ```tsx
 import * as ReactClient from "@hiogawa/vite-rsc/ssr";
@@ -101,7 +101,7 @@ export async function handleSsr(rscStream: ReadableStream) {
 }
 ```
 
-- `entry.browser.tsx`
+- [`entry.browser.tsx`](./examples/basic-doc/src/entry.browser.tsx)
 
 ```tsx
 import * as ReactClient from "@hiogawa/vite-rsc/browser";
@@ -122,7 +122,9 @@ main();
 
 ## Handling server function
 
-TODO: for now, read `./src/extra/{rsc,browser}` or `./examples/react-router` for the idea.
+TODO
+
+For now, read [`./src/extra/{rsc,browser}`](./src/extra) or [`./examples/react-router`](./examples/react-router/) for the idea.
 
 ## RSC API
 
@@ -180,8 +182,8 @@ export function ServerPage() {
 
 ## Higher level RSC API
 
-This is a simple wrapper of the first "RSC API". See `./examples/basic` for usage.
-Also you can read implementations `./src/extra/{rsc,ssr,browser}` to understand
+This is a simple wrapper of the first "RSC API". See [`./examples/basic`](./examples/basic/) for usage.
+Also you can read implementations [`./src/extra/{rsc,ssr,browser}`](./src/extra/) to understand
 how bare RSC API is intended to be used.
 
 #### `@hiogawa/vite-rsc/extra/rsc`
