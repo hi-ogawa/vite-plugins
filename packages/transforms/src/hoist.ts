@@ -22,6 +22,19 @@ export function transformHoistInlineDirective(
   },
 ) {
   const output = new MagicString(input);
+
+  // re-export somehow confuses periscopic scopes so remove them before analysis
+  walk(ast, {
+    enter(node) {
+      if (node.type === "ExportAllDeclaration") {
+        this.remove();
+      }
+      if (node.type === "ExportNamedDeclaration" && !node.declaration) {
+        this.remove();
+      }
+    },
+  });
+
   const analyzed = analyze(ast);
   const names: string[] = [];
 
