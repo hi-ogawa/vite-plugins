@@ -141,6 +141,10 @@ export default { fetch: handler };
       },
       // verify chunks are "stable"
       writeBundle(_options, bundle) {
+        // skip rolldown-vite for now as it requires
+        // `advancedChunks` config instead of `manualChunks`
+        if ("rolldownVersion" in this.meta) return;
+
         if (this.environment.name === "client") {
           const entryChunks: Rollup.OutputChunk[] = [];
           const vendorChunks: Rollup.OutputChunk[] = [];
