@@ -8,7 +8,7 @@
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json",
     "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
     "test": "pnpm -r --sequential test run",
-    "vite-ecosystem-ci:build": "pnpm build",
+    "vite-ecosystem-ci:build": "pnpm -r --filter '@hiogawa/vite-rsc...' build",
     "vite-ecosystem-ci:before-test": "playwright install chromium",
     "vite-ecosystem-ci:test": "bash scripts/vite-ecosystem-ci.sh",
     "lint": "biome check --write .",
