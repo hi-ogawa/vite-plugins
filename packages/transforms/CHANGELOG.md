@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.1 (2025-06-12)
+
+- feat: support encrypt closure bind ([#896](https://github.com/hi-ogawa/vite-plugins/pull/896))
+- fix: fix hoist transform ([#941](https://github.com/hi-ogawa/vite-plugins/pull/941))
+
 ## v0.1.0 (2025-05-01)
 
 - fix: fix source map of `registerServerReference` calls ([#798](https://github.com/hi-ogawa/vite-plugins/pull/798))

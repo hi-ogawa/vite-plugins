@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.4 (2025-06-12)
+
+- fix: fix internal import to allow stable react vendor chunk ([#824](https://github.com/hi-ogawa/vite-plugins/pull/824))
+- fix: compat for old react plugin ([#939](https://github.com/hi-ogawa/vite-plugins/pull/939))
+
 ## v0.3.3 (2025-06-12)
 
 - feat: support rolldown-vite ([#931](https://github.com/hi-ogawa/vite-plugins/pull/931))
