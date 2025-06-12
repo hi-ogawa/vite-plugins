@@ -2,10 +2,10 @@
 
 ## Features
 
-- Framework-less: provides direct RSC runtime API without opinionated framework abstractions.
-- HMR support: allow editing client components and server components without full reload.
-- CSS support: CSS is code split at client boundaries and injected automatically. For server components, depending CSS assets can be manually rendered via `import.meta.viteRscCss` API based on framework/user's routing convention.
-- Runtime agnostic: built on top of [Vite environment API](https://vite.dev/guide/api-environment.html) and it works on other runtime (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
+- **Framework-agnostic**: Implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides direct `react-server-dom` runtime API without framework-specific abstractions.
+- **CSS support**: CSS is automatically code-split at client boundaries and injected upon rendering. For server components, CSS assets can be manually rendered via `import.meta.viteRscCss` API based on own routing conventions.
+- **HMR support**: Enables editing both client and server components without full page reloads.
+- **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
 ## Examples
 
