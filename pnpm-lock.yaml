@@ -19,6 +19,9 @@ patchedDependencies:
   '@remix-run/dev':
     hash: 5f3898baeffa886bc4c107d8484475b85e481b37ce98d989a505a8500b02a4b3
     path: patches/@remix-run__dev.patch
+  vite-plugin-inspect:
+    hash: 4358c12549f701aab92baf4b465fc58833bffd7552fe85cfeac7765909d1d08a
+    path: patches/vite-plugin-inspect.patch
 
 importers:
 
@@ -86,7 +89,7 @@ importers:
         version: 7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
       vite-plugin-inspect:
         specifier: ^11.0.1
-        version: 11.0.1(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+        version: 11.0.1(patch_hash=4358c12549f701aab92baf4b465fc58833bffd7552fe85cfeac7765909d1d08a)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
       vitest:
         specifier: ^3.2.3
         version: 3.2.3(@types/debug@4.1.12)(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -574,7 +577,7 @@ importers:
         version: 7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
       vite-plugin-inspect:
         specifier: ^11.0.1
-        version: 11.0.1(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+        version: 11.0.1(patch_hash=4358c12549f701aab92baf4b465fc58833bffd7552fe85cfeac7765909d1d08a)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
 
   packages/rsc/examples/basic-core:
     dependencies:
@@ -694,7 +697,7 @@ importers:
         version: 7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
       vite-plugin-inspect:
         specifier: ^11.0.1
-        version: 11.0.1(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+        version: 11.0.1(patch_hash=4358c12549f701aab92baf4b465fc58833bffd7552fe85cfeac7765909d1d08a)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
       wrangler:
         specifier: ^4.19.1
         version: 4.19.1(@cloudflare/workers-types@4.20250607.0)
@@ -12419,7 +12422,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-inspect@11.0.1(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)):
+  vite-plugin-inspect@11.0.1(patch_hash=4358c12549f701aab92baf4b465fc58833bffd7552fe85cfeac7765909d1d08a)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)):
     dependencies:
       ansis: 3.17.0
       debug: 4.4.1
