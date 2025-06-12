@@ -2,7 +2,7 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import { defineConfig, mergeConfig } from "vite";
 import baseConfig from "../vite.config.ts";
 
-const cfConfig = defineConfig({
+const cfConfig = defineConfig((env) => ({
   plugins: [
     cloudflare({
       configPath: "./cf/wrangler.ssr.jsonc",
@@ -43,12 +43,16 @@ const cfConfig = defineConfig({
         (config.environments as any).ssr.resolve.noExternal = true;
         (config.environments as any).rsc.resolve.noExternal = true;
 
-        // overwrite server entries
-        // TODO: better plugin API to customize?
-        (config.environments as any).ssr.build.rollupOptions.input.index =
-          "./cf/entry.ssr.tsx";
-        (config.environments as any).rsc.build.rollupOptions.input.index =
-          "./cf/entry.rsc.tsx";
+        // overwrite server entries for dev
+        if (env.command === "serve") {
+          (config.environments as any).ssr.build.rollupOptions.input.index =
+            "./cf/entry.ssr.tsx";
+          (config.environments as any).rsc.build.rollupOptions.input.index =
+            "./cf/entry.rsc.tsx";
+        } else {
+          (config.environments as any).rsc.build.rollupOptions.input.index =
+            "./cf/entry.rsc.build.tsx";
+        }
       },
     },
   ],
@@ -70,6 +74,8 @@ const cfConfig = defineConfig({
       },
     },
   },
-});
+}));
 
-export default mergeConfig(cfConfig, baseConfig) as any;
+export default defineConfig((env) =>
+  mergeConfig(cfConfig(env), baseConfig),
+) as any;
