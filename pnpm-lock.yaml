@@ -16,6 +16,9 @@ overrides:
   '@vitejs/plugin-react': ^4.5.0
 
 patchedDependencies:
+  '@cloudflare/vite-plugin':
+    hash: 75963f8dfa989892238328f0f030a95e0377edc0ce47a5735d88df6e979d892f
+    path: patches/@cloudflare__vite-plugin.patch
   '@remix-run/dev':
     hash: 5f3898baeffa886bc4c107d8484475b85e481b37ce98d989a505a8500b02a4b3
     path: patches/@remix-run__dev.patch
@@ -670,7 +673,7 @@ importers:
     devDependencies:
       '@cloudflare/vite-plugin':
         specifier: ^1.5.0
-        version: 1.5.0(rollup@4.43.0)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250525.0)(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))
+        version: 1.5.0(patch_hash=75963f8dfa989892238328f0f030a95e0377edc0ce47a5735d88df6e979d892f)(rollup@4.43.0)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250525.0)(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))
       '@react-router/dev':
         specifier: 0.0.0-experimental-f2b42587c
         version: 0.0.0-experimental-f2b42587c(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-f2b42587c(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)
@@ -6876,7 +6879,7 @@ snapshots:
     optionalDependencies:
       workerd: 1.20250525.0
 
-  '@cloudflare/vite-plugin@1.5.0(rollup@4.43.0)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250525.0)(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))':
+  '@cloudflare/vite-plugin@1.5.0(patch_hash=75963f8dfa989892238328f0f030a95e0377edc0ce47a5735d88df6e979d892f)(rollup@4.43.0)(vite@7.0.0-beta.1(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250525.0)(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))':
     dependencies:
       '@cloudflare/unenv-preset': 2.3.2(unenv@2.0.0-rc.17)(workerd@1.20250525.0)
       '@mjackson/node-fetch-server': 0.6.1

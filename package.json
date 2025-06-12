@@ -57,7 +57,8 @@
     },
     "patchedDependencies": {
       "@remix-run/dev": "patches/@remix-run__dev.patch",
-      "vite-plugin-inspect": "patches/vite-plugin-inspect.patch"
+      "vite-plugin-inspect": "patches/vite-plugin-inspect.patch",
+      "@cloudflare/vite-plugin": "patches/@cloudflare__vite-plugin.patch"
     }
   }
 }
