@@ -1,4 +1,4 @@
-import assert from "node:assert";
+import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
@@ -128,7 +128,7 @@ export default { fetch: handler };
           environments: {
             client: {
               build: {
-                manifest: true,
+                manifest: true, // for debugging
                 rollupOptions: {
                   output: {
                     manualChunks: manualChunksFn,
@@ -142,13 +142,26 @@ export default { fetch: handler };
       // verify chunks are "stable"
       writeBundle(_options, bundle) {
         if (this.environment.name === "client") {
-          // TODO
+          const entryChunks: Rollup.OutputChunk[] = [];
+          const vendorChunks: Rollup.OutputChunk[] = [];
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === "chunk") {
+              if (chunk.facadeModuleId === "\0virtual:vite-rsc/entry-browser") {
+                entryChunks.push(chunk);
+              } else if (chunk.name === "lib-react") {
+                vendorChunks.push(chunk);
+              }
+            }
+          }
+
           // react vendor chunk has no import
-          bundle;
+          assert(vendorChunks.length === 1);
+          assert.deepEqual(vendorChunks[0].imports, []);
+          assert.deepEqual(vendorChunks[0].dynamicImports, []);
 
           // entry chunk has no export
-
-          // client reference chunks
+          assert(entryChunks.length === 1);
+          assert.deepEqual(entryChunks[0].exports, []);
         }
       },
     },
