@@ -132,6 +132,16 @@ export default { fetch: handler };
                 rollupOptions: {
                   output: {
                     manualChunks: manualChunksFn,
+                    // for test-rolldown ci
+                    advancedChunks: {
+                      groups: [
+                        {
+                          name: "lib-react",
+                          // @ts-ignore
+                          test: (id) => !!manualChunksFn(id),
+                        },
+                      ],
+                    },
                   },
                 },
               },
@@ -141,10 +151,6 @@ export default { fetch: handler };
       },
       // verify chunks are "stable"
       writeBundle(_options, bundle) {
-        // skip rolldown-vite for now as it requires
-        // `advancedChunks` config instead of `manualChunks`
-        if ("rolldownVersion" in this.meta) return;
-
         if (this.environment.name === "client") {
           const entryChunks: Rollup.OutputChunk[] = [];
           const vendorChunks: Rollup.OutputChunk[] = [];
@@ -160,7 +166,12 @@ export default { fetch: handler };
 
           // react vendor chunk has no import
           assert(vendorChunks.length === 1);
-          assert.deepEqual(vendorChunks[0].imports, []);
+          assert.deepEqual(
+            vendorChunks[0].imports.filter(
+              (f) => !f.includes("rolldown-runtime"),
+            ),
+            [],
+          );
           assert.deepEqual(vendorChunks[0].dynamicImports, []);
 
           // entry chunk has no export
