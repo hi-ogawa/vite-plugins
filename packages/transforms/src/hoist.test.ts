@@ -329,10 +329,10 @@ export default () => {
       import { redirect } from "react-router/rsc";
 
       export default () => {
-        const redirectOnServer = /* #__PURE__ */ $$register($$hoist_0_redirectOnServer, "<id>", "$$hoist_0_redirectOnServer").bind(null, redirect);
+        const redirectOnServer = /* #__PURE__ */ $$register($$hoist_0_redirectOnServer, "<id>", "$$hoist_0_redirectOnServer");
       }
 
-      ;export async function $$hoist_0_redirectOnServer(redirect) {
+      ;export async function $$hoist_0_redirectOnServer() {
           "use server";
           throw redirect();
         };
