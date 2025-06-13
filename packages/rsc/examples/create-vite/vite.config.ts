@@ -1,13 +1,15 @@
 import rsc from "@hiogawa/vite-rsc/plugin";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
+    react(),
     rsc({
       entries: {
-        browser: "./src/entry.browser.tsx",
-        rsc: "./src/entry.rsc.tsx",
-        ssr: "./src/entry.ssr.tsx",
+        browser: "./src/framework/entry.browser.tsx",
+        rsc: "./src/framework/entry.rsc.tsx",
+        ssr: "./src/framework/entry.ssr.tsx",
       },
     }),
   ],
