@@ -1,0 +1,17 @@
+diff --git a/dist/runner-worker/index.js b/dist/runner-worker/index.js
+index fd546107cacf5dc718e0d40e269cc175e8dea533..1303aee4d16661d34ef3dd511f3f1d9f34914221 100644
+--- a/dist/runner-worker/index.js
++++ b/dist/runner-worker/index.js
+@@ -1339,6 +1339,12 @@ ${getStack()}`
+       [ssrDynamicImportKey]: dynamicRequest,
+       [ssrModuleExportsKey]: exports,
+       [ssrExportAllKey]: (obj) => exportAll(exports, obj),
++      __vite_ssr_exportName__: (name, getter) =>
++        Object.defineProperty(exports, name, {
++          enumerable: true,
++          configurable: true,
++          get: getter,
++        }),
+       [ssrImportMetaKey]: meta
+     };
+     return this.debug?.("[module runner] executing", href), await this.evaluator.runInlinedModule(context, code, mod), exports;

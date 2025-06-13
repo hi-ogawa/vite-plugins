@@ -1,0 +1,13 @@
+diff --git a/dist/shared/vite-plugin-inspect.Bht9Q8w0.mjs b/dist/shared/vite-plugin-inspect.Bht9Q8w0.mjs
+index eff7b2fe39d67f6c13c4b5d77d6d24b0a97ed383..d5683ceab92eee0e41ce36b9558be8c4ffb03f39 100644
+--- a/dist/shared/vite-plugin-inspect.Bht9Q8w0.mjs
++++ b/dist/shared/vite-plugin-inspect.Bht9Q8w0.mjs
+@@ -678,7 +678,7 @@ function PluginInspect(options = {}) {
+     },
+     hotUpdate({ modules, environment }) {
+       const ids = modules.map((module) => module.id);
+-      environment.hot.send({
++      this.environment.hot.send({
+         type: "custom",
+         event: "vite-plugin-inspect:update",
+         data: { ids }
