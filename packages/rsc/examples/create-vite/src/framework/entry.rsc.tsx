@@ -45,6 +45,8 @@ export default async function handler(request: Request): Promise<Response> {
   // to achieve single round trip to mutate and fetch from server.
   const rscStream = ReactServer.renderToReadableStream<RscPayload>({
     root: <Root />,
+    returnValue,
+    formState,
   });
 
   // respond RSC stream without HTML rendering based on framework's convention.
