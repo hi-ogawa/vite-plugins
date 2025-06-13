@@ -2,13 +2,14 @@
 
 ## Features
 
-- **Framework-less**: Implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides direct `react-server-dom` runtime API without framework-specific abstractions.
-- **CSS support**: CSS is automatically code-split at client boundaries and injected upon rendering. For server components, CSS assets can be manually rendered via `import.meta.viteRscCss` API based on own routing conventions.
+- **Framework-less RSC experience**: The plugin purely implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides direct `react-server-dom` runtime API without framework-specific abstractions.
+- **CSS support**: CSS is automatically code-split at client boundaries and injected upon rendering. For server components, CSS assets can be manually rendered via `import.meta.viteRscCss` API based on your own server routing conventions.
 - **HMR support**: Enables editing both client and server components without full page reloads.
 - **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
 ## Examples
 
+- [`./examples/create-vite`](./examples/create-vite)
 - [`./examples/react-router`](./examples/react-router)
 - [`./examples/basic`](./examples/basic)
 - [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
