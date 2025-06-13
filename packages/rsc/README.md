@@ -10,9 +10,13 @@
 ## Examples
 
 - [`./examples/starter`](./examples/starter)
+  - TODO: explain
 - [`./examples/react-router`](./examples/react-router)
+  - TODO: explain https://remix.run/blog/rsc-preview
 - [`./examples/basic`](./examples/basic)
+  - TODO: explain main example for integration tests
 - [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
+  - TODO: explain
 
 ## Basic Concepts
 
