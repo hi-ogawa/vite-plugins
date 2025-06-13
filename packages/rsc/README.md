@@ -9,7 +9,7 @@
 
 ## Examples
 
-- [`./examples/create-vite`](./examples/create-vite)
+- [`./examples/starter`](./examples/starter)
 - [`./examples/react-router`](./examples/react-router)
 - [`./examples/basic`](./examples/basic)
 - [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
@@ -125,7 +125,7 @@ main();
 
 TODO
 
-For now, read [`./examples/create-vite/src/framework/entry.{browser,rsc}.tsx`](./examples/create-vite/src/framework) for the idea.
+For now, please read [`./examples/starter/src/framework/entry.{browser,rsc}.tsx`](./examples/starter/src/framework) to get the idea.
 
 ## RSC API
 
