@@ -3,8 +3,6 @@ import { importSsr } from "@hiogawa/vite-rsc/rsc"; // Vite specifc helper
 import type { ReactFormState } from "react-dom/client";
 import { Root } from "../root.tsx";
 
-// TODO: explain
-
 export type RscPayload = {
   root: React.ReactNode;
   returnValue?: unknown;
@@ -71,8 +69,15 @@ export default async function handler(request: Request): Promise<Response> {
   // The plugin provides `importSsr` helper to allow import SSR environment entry module
   // in RSC environment. however this can be customized by implementing own runtime communication
   // e.g. `@cloudflare/vite-plugin`'s service binding.
-  const { handleSsr } = await importSsr<typeof import("./entry.ssr.tsx")>();
-  const htmlStream = await handleSsr(rscStream);
+  const ssrEntryModule = await importSsr<typeof import("./entry.ssr.tsx")>();
+  const htmlStream = await ssrEntryModule.renderHTML({
+    stream: rscStream,
+    formState,
+    options: {
+      // allow quick simulation of javscript disabled browser
+      debugNojs: url.searchParams.has("__nojs"),
+    },
+  });
 
   // respond html
   return new Response(htmlStream, {

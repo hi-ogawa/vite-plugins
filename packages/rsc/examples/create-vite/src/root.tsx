@@ -45,7 +45,8 @@ function App() {
       <p>
         Edit <code>src/client.tsx</code> to test client HMR. <br />
         Edit <code>src/root.tsx</code> to test server HMR. <br />
-        Reload a browser to see server counter state is preserved.
+        Reload a browser to see server counter state is preserved. <br />
+        {/* try ?__nojs server action*/}
       </p>
     </div>
   );

@@ -1,23 +1,36 @@
 import { getAssetsManifest } from "@hiogawa/vite-rsc/ssr";
 import * as ReactClient from "@hiogawa/vite-rsc/ssr";
 import React from "react";
-// @ts-ignore
+import type { ReactFormState } from "react-dom/client";
 import * as ReactDOMServer from "react-dom/server.edge";
 import type { RscPayload } from "./entry.rsc";
 
-// TODO: explain
-
-export async function handleSsr(rscStream: ReadableStream) {
-  // deserialize RSC
+export async function renderHTML({
+  stream,
+  formState,
+  options,
+}: {
+  stream: ReadableStream;
+  formState?: ReactFormState;
+  options?: { nonce?: string; debugNojs?: boolean };
+}) {
+  // deserialize stream into react tree
   let payload: Promise<RscPayload>;
   function SsrRoot() {
-    payload ??= ReactClient.createFromReadableStream<RscPayload>(rscStream);
+    // flight deserialization needs to be kicked off inside ReactDOMServer context
+    // for ReactDomServer preinit/preloading to work
+    payload ??= ReactClient.createFromReadableStream<RscPayload>(stream);
     return React.use(payload).root;
   }
 
   // render html (traditional SSR)
-  const htmlStream = ReactDOMServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapScriptContent: getAssetsManifest().bootstrapScriptContent,
+  const htmlStream = await ReactDOMServer.renderToReadableStream(<SsrRoot />, {
+    bootstrapScriptContent: options?.debugNojs
+      ? undefined
+      : getAssetsManifest().bootstrapScriptContent,
+    nonce: options?.nonce,
+    // @ts-expect-error no types
+    formState,
   });
 
   return htmlStream;
