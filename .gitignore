@@ -10,3 +10,4 @@ dist
 test-results
 *.tsbuildinfo
 .debug
+.vite-inspect

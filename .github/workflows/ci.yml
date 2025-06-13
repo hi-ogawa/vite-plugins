@@ -35,6 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+      - run: pnpm -C packages/rsc/examples/starter-e2e test-e2e
+      - run: pnpm -C packages/rsc/examples/starter build
+      - run: pnpm -C packages/rsc/examples/starter-e2e test-e2e-preview
       - run: pnpm -C packages/rsc/examples/basic test-e2e
       - run: pnpm -C packages/rsc/examples/basic build
       - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
