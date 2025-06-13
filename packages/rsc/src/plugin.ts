@@ -14,7 +14,7 @@ import {
   type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
-  Rollup,
+  type Rollup,
   RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
@@ -840,17 +840,22 @@ function mergeAssetDeps(a: AssetDeps, b: AssetDeps): AssetDeps {
 }
 
 function collectAssetDeps(bundle: Rollup.OutputBundle) {
-  const map: Record<string, { chunk: Rollup.OutputChunk; deps: AssetDeps }> =
-    {};
+  const chunkToDeps = new Map<Rollup.OutputChunk, AssetDeps>();
   for (const chunk of Object.values(bundle)) {
-    if (chunk.type === "chunk" && chunk.facadeModuleId) {
-      map[chunk.facadeModuleId] = {
-        chunk,
-        deps: collectAssetDepsInner(chunk.fileName, bundle),
-      };
+    if (chunk.type === "chunk") {
+      chunkToDeps.set(chunk, collectAssetDepsInner(chunk.fileName, bundle));
     }
   }
-  return map;
+  const idToDeps: Record<
+    string,
+    { chunk: Rollup.OutputChunk; deps: AssetDeps }
+  > = {};
+  for (const [chunk, deps] of chunkToDeps.entries()) {
+    for (const id of chunk.moduleIds) {
+      idToDeps[id] = { chunk, deps };
+    }
+  }
+  return idToDeps;
 }
 
 function collectAssetDepsInner(
