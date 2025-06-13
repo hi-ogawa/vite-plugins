@@ -4,6 +4,39 @@ import * as ReactDOMClient from "react-dom/client";
 import type { RscPayload } from "./entry.rsc";
 
 async function main() {
+  // stash `setPayload` function to trigger re-rendering
+  // from outside of `BrowserRoot` component (e.g. server function call, navigation, hmr)
+  let setPayload: (v: RscPayload) => void;
+
+  // deserialize initial RSC stream into react node
+  const initialPayload = await ReactClient.createFromFetch<RscPayload>(
+    fetch(window.location.href),
+  );
+
+  // browser root component to (re-)render RSC payload as state
+  function BrowserRoot() {
+    const [payload, setPayload_] = React.useState(initialPayload);
+
+    React.useEffect(() => {
+      setPayload = (v) => React.startTransition(() => setPayload_(v));
+    }, [setPayload_]);
+
+    // re-fetch/render on client side navigation
+    React.useEffect(() => {
+      return listenNavigation(() => fetchRscPayload());
+    }, []);
+
+    return payload.root;
+  }
+
+  // re-fetch RSC and trigger re-rendering
+  async function fetchRscPayload() {
+    const payload = await ReactClient.createFromFetch<RscPayload>(
+      fetch(window.location.href),
+    );
+    setPayload(payload);
+  }
+
   // register a handler which will be internally called by React
   // on server function request after hydration.
   ReactClient.setServerCallback(async (id, args) => {
@@ -23,47 +56,12 @@ async function main() {
     return payload.returnValue;
   });
 
-  // deserialize to React tree for traditional CSR
-  // TODO: injects initial rsc stream as script
-  const initialPayload = await ReactClient.createFromFetch<RscPayload>(
-    fetch(window.location.href),
-  );
-  // const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(rscStream);
-
-  // re-fetch and re-render RSC payload on navigation
-  async function fetchRscPayload() {
-    const url = new URL(window.location.href);
-    const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url));
-    setPayload(payload);
-  }
-
-  // stash `setPayload` function to trigger re-rendering
-  // from outside of `BrowserRoot` component (e.g. server function call, navigation, hmr)
-  let setPayload: (v: RscPayload) => void;
-
-  // browser root component to re-render RSC payload
-  // on navigation and server function call
-  function BrowserRoot() {
-    const [payload, setPayload_] = React.useState(initialPayload);
-
-    React.useEffect(() => {
-      setPayload = (v) => React.startTransition(() => setPayload_(v));
-    }, [setPayload_]);
-
-    React.useEffect(() => {
-      return listenNavigation(() => fetchRscPayload());
-    }, []);
-
-    return payload.root;
-  }
-
+  // hydration
   const browserRoot = (
     <React.StrictMode>
       <BrowserRoot />
     </React.StrictMode>
   );
-
-  // hydrate html
   ReactDOMClient.hydrateRoot(document, browserRoot, {
     formState: initialPayload.formState,
   });
@@ -76,7 +74,7 @@ async function main() {
   }
 }
 
-// a helper to intercept events for client side navigation
+// a little helper to setup events interception for client side navigation
 function listenNavigation(onNavigation: () => void) {
   window.addEventListener("popstate", onNavigation);
 
