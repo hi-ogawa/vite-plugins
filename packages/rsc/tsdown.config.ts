@@ -19,6 +19,8 @@ export default defineConfig({
     "src/extra/browser.tsx",
     "src/extra/ssr.tsx",
     "src/extra/rsc.tsx",
+    "src/rsc-html-stream/ssr.ts",
+    "src/rsc-html-stream/browser.ts",
   ],
   format: ["esm"],
   external: [/^virtual:/, new RegExp(`^${pkg.name}/`)],
