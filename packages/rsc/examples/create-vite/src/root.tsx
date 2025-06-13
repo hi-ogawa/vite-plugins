@@ -12,7 +12,11 @@ export function Root() {
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Vite + RSC</title>
-        {/* TODO: explain */}
+        {/*
+          This is the API to collect css assets which are imported through this module (i.e. `root.tsx`)
+          and render associated resources inside server components.
+          In this case, this will include `<link rel="stylesheet" />` for `index.css`.
+        */}
         {import.meta.viteRscCss}
       </head>
       <body>
@@ -29,7 +33,10 @@ function App() {
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
-        <a href="https://react.dev" target="_blank">
+        <a
+          href="https://react.dev/reference/rsc/server-components"
+          target="_blank"
+        >
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
@@ -42,12 +49,14 @@ function App() {
           <button>Server counter : {getServerCounter()}</button>
         </form>
       </div>
-      <p>
-        Edit <code>src/client.tsx</code> to test client HMR. <br />
-        Edit <code>src/root.tsx</code> to test server HMR. <br />
-        Reload a browser to see server counter state is preserved. <br />
-        {/* try ?__nojs server action*/}
-      </p>
+      <ul className="read-the-docs">
+        <li>
+          Edit <code>src/client.tsx</code> to test client HMR.
+        </li>
+        <li>
+          Edit <code>src/root.tsx</code> to test server HMR.
+        </li>
+      </ul>
     </div>
   );
 }
