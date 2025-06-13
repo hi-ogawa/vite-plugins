@@ -5,6 +5,17 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
 
+// log unhandled rejection to debug e2e failures
+if (!(globalThis as any).__debugHandlerRegisterd) {
+  process.on("uncaughtException", (err) => {
+    console.error("⚠️⚠️⚠️ uncaughtException ⚠️⚠️⚠️", err);
+  });
+  process.on("unhandledRejection", (err) => {
+    console.error("⚠️⚠️⚠️ unhandledRejection ⚠️⚠️⚠️", err);
+  });
+  (globalThis as any).__debugHandlerRegisterd = true;
+}
+
 export default defineConfig({
   base: process.env.TEST_BASE ? "/custom-base/" : undefined,
   clearScreen: false,
