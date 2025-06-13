@@ -1,8 +1,8 @@
 import "./index.css";
 import viteLogo from "/vite.svg";
+import { getServerCounter, updateServerCounter } from "./action.tsx";
 import reactLogo from "./assets/react.svg";
 import { ClientCounter } from "./client.tsx";
-import { getServerCounter, updateServerCounter } from "./action.tsx";
 
 export function Root() {
   return (
@@ -42,11 +42,11 @@ function App() {
           <button>Server counter : {getServerCounter()}</button>
         </form>
       </div>
-        <p>
-          Edit <code>src/client.tsx</code> to test client HMR. <br/>
-          Edit <code>src/root.tsx</code> to test server HMR. <br/>
-          Reload a browser to see server counter state is preserved.
-        </p>
+      <p>
+        Edit <code>src/client.tsx</code> to test client HMR. <br />
+        Edit <code>src/root.tsx</code> to test server HMR. <br />
+        Reload a browser to see server counter state is preserved.
+      </p>
     </div>
   );
 }
