@@ -576,37 +576,6 @@ importers:
         specifier: ^11.0.1
         version: 11.0.1(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
 
-  packages/rsc/examples/basic-core:
-    dependencies:
-      '@hiogawa/vite-rsc':
-        specifier: workspace:*
-        version: link:../..
-      react:
-        specifier: ^19.1.0
-        version: 19.1.0
-      react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
-    devDependencies:
-      '@tailwindcss/vite':
-        specifier: ^4.1.4
-        version: 4.1.4(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
-      '@types/react':
-        specifier: ^19.1.2
-        version: 19.1.2
-      '@types/react-dom':
-        specifier: ^19.1.2
-        version: 19.1.2(@types/react@19.1.2)
-      '@vitejs/plugin-react':
-        specifier: ^4.5.0
-        version: 4.5.0(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
-      tailwindcss:
-        specifier: ^4.1.4
-        version: 4.1.4
-      vite:
-        specifier: ^6.3.2
-        version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
-
   packages/rsc/examples/basic-doc:
     dependencies:
       '@hiogawa/vite-rsc':
@@ -634,18 +603,6 @@ importers:
       '@hiogawa/vite-rsc':
         specifier: workspace:*
         version: link:../..
-      hono:
-        specifier: ^4.7.5
-        version: 4.7.5
-
-  packages/rsc/examples/hono-core:
-    dependencies:
-      '@hiogawa/vite-rsc':
-        specifier: workspace:*
-        version: link:../..
-      '@hono/node-server':
-        specifier: ^1.14.1
-        version: 1.14.1(hono@4.7.5)
       hono:
         specifier: ^4.7.5
         version: 4.7.5
@@ -2017,12 +1974,6 @@ packages:
 
   '@hiogawa/utils@1.7.0':
     resolution: {integrity: sha512-ghiEFWBR1NENoHn+lSuW7liicTIzVPN+8Srm5UedCTw43gus0mlse6Wp2lz6GmbOXJ/CalMPp/0Tz2X8tajkAg==}
-
-  '@hono/node-server@1.14.1':
-    resolution: {integrity: sha512-vmbuM+HPinjWzPe7FFPWMMQMsbKE9gDPhaH0FFdqbGpkT5lp++tcWDTxwBl5EgS5y6JVgIaCdjeHRfQ4XRBRjQ==}
-    engines: {node: '>=18.14.1'}
-    peerDependencies:
-      hono: ^4
 
   '@iconify-json/ri@1.2.5':
     resolution: {integrity: sha512-kWGimOXMZrlYusjBKKXYOWcKhbOHusFsmrmRGmjS7rH0BpML5A9/fy8KHZqFOwZfC4M6amObQYbh8BqO5cMC3w==}
@@ -7081,10 +7032,6 @@ snapshots:
   '@hiogawa/utils-node@0.0.2': {}
 
   '@hiogawa/utils@1.7.0': {}
-
-  '@hono/node-server@1.14.1(hono@4.7.5)':
-    dependencies:
-      hono: 4.7.5
 
   '@iconify-json/ri@1.2.5':
     dependencies:
