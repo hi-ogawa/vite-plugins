@@ -125,7 +125,7 @@ main();
 
 TODO
 
-For now, read [`./src/extra/{rsc,browser}`](./src/extra) or [`./examples/react-router`](./examples/react-router/) for the idea.
+For now, read [`./examples/create-vite/src/framework/entry.{browser,rsc}.tsx`](./examples/create-vite/src/framework) for the idea.
 
 ## RSC API
 
