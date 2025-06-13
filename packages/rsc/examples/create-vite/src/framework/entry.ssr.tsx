@@ -1,5 +1,6 @@
 import { getAssetsManifest } from "@hiogawa/vite-rsc/ssr";
-import * as ReactClient from "@hiogawa/vite-rsc/ssr";
+import * as ReactClient from "@hiogawa/vite-rsc/ssr"; // core RSC API
+import { injectRscStreamToHtml } from "@hiogawa/vite-rsc/ssr"; // helper API
 import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import * as ReactDOMServer from "react-dom/server.edge";
@@ -14,12 +15,17 @@ export async function renderHTML({
   formState?: ReactFormState;
   options?: { nonce?: string; debugNojs?: boolean };
 }) {
+  // copy RSC stream into two.
+  // - one for SSR (ReactClient.createFromReadableStream below)
+  // - another for browser hydration payload by injecting <script>...FLIGHT_DATA...</script>
+  const [stream1, stream2] = stream.tee();
+
   // deserialize stream into react tree
   let payload: Promise<RscPayload>;
   function SsrRoot() {
     // flight deserialization needs to be kicked off inside ReactDOMServer context
     // for ReactDomServer preinit/preloading to work
-    payload ??= ReactClient.createFromReadableStream<RscPayload>(stream);
+    payload ??= ReactClient.createFromReadableStream<RscPayload>(stream1);
     return React.use(payload).root;
   }
 
@@ -33,5 +39,15 @@ export async function renderHTML({
     formState,
   });
 
-  return htmlStream;
+  let responseStream: ReadableStream = htmlStream;
+  if (!options?.debugNojs) {
+    // initial RSC stream is injected in SSR stream as <script>...FLIGHT_DATA...</script>
+    responseStream = responseStream.pipeThrough(
+      injectRscStreamToHtml(stream2, {
+        nonce: options?.nonce,
+      }),
+    );
+  }
+
+  return responseStream;
 }

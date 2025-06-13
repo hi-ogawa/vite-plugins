@@ -1,5 +1,5 @@
-import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // React core API
-import { importSsr } from "@hiogawa/vite-rsc/rsc"; // Vite specifc helper
+import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // core RSC API
+import { importSsr } from "@hiogawa/vite-rsc/rsc"; // helper API
 import type { ReactFormState } from "react-dom/client";
 import { Root } from "../root.tsx";
 

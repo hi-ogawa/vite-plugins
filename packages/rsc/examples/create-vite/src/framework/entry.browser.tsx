@@ -1,4 +1,5 @@
 import * as ReactClient from "@hiogawa/vite-rsc/browser";
+import { getRscStreamFromHtml } from "@hiogawa/vite-rsc/browser"; // helper API
 import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import type { RscPayload } from "./entry.rsc";
@@ -8,9 +9,10 @@ async function main() {
   // from outside of `BrowserRoot` component (e.g. server function call, navigation, hmr)
   let setPayload: (v: RscPayload) => void;
 
-  // deserialize initial RSC stream into react node
-  const initialPayload = await ReactClient.createFromFetch<RscPayload>(
-    fetch(window.location.href),
+  // deserialize RSC stream into react node for CSR
+  const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(
+    // initial RSC stream is injected in SSR stream as <script>...FLIGHT_DATA...</script>
+    getRscStreamFromHtml(),
   );
 
   // browser root component to (re-)render RSC payload as state
