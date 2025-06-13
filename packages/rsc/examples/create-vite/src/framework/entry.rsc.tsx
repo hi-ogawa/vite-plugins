@@ -1,34 +1,75 @@
 import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // React core API
 import { importSsr } from "@hiogawa/vite-rsc/rsc"; // Vite specifc helper
+import type { ReactFormState } from "react-dom/client";
 import { Root } from "../root.tsx";
+
+// TODO: explain
 
 export type RscPayload = {
   root: React.ReactNode;
+  returnValue?: unknown;
+  formState?: ReactFormState;
 };
 
 // the plugin by default assumes `rsc` entry having default export of request handler.
 // however, how server entries are executed can be customized by registering
 // own server handler e.g. `@cloudflare/vite-plugin`.
 export default async function handler(request: Request): Promise<Response> {
-  // serialize RSC
+  // handle server function request
+  const isAction = request.method === "POST";
+  let returnValue: unknown | undefined;
+  let formState: ReactFormState | undefined;
+  let temporaryReferences: unknown | undefined;
+  if (isAction) {
+    // x-rsc-action header exists when action is called via
+    const actionId = request.headers.get("x-rsc-action");
+    if (actionId) {
+      // client stream request
+      const contentType = request.headers.get("content-type");
+      const body = contentType?.startsWith("multipart/form-data")
+        ? await request.formData()
+        : await request.text();
+      temporaryReferences = ReactServer.createTemporaryReferenceSet();
+      const args = await ReactServer.decodeReply(body, { temporaryReferences });
+      const action = await ReactServer.loadServerAction(actionId);
+      returnValue = await action.apply(null, args);
+    } else {
+      // progressive enhancement
+      const formData = await request.formData();
+      const decodedAction = await ReactServer.decodeAction(formData);
+      const result = await decodedAction();
+      formState = await ReactServer.decodeFormState(result, formData);
+    }
+  }
+
+  // render RSC stream after handling server function request
+  // so that new render reflects updated state from server function call
+  // to achieve single round trip to mutate and fetch from server.
   const rscStream = ReactServer.renderToReadableStream<RscPayload>({
     root: <Root />,
   });
 
-  // respond direct RSC stream request based on framework's convention
-  // here we uses request header content-type.
-  // TODO
-  if (request.url.endsWith(".rsc")) {
+  // respond RSC stream without HTML rendering based on framework's convention.
+  // here we use request header `content-type`.
+  // additionally we allow `?__rsc` and `?__html` to easily view payload directly.
+  const url = new URL(request.url);
+  const isRscRequest =
+    (!request.headers.get("accept")?.includes("text/html") &&
+      !url.searchParams.has("__html")) ||
+    url.searchParams.has("__rsc");
+
+  if (isRscRequest) {
     return new Response(rscStream, {
       headers: {
-        "Content-type": "text/html",
+        "content-type": "text/x-component;charset=utf-8",
+        vary: "accept",
       },
     });
   }
 
   // Delegate to SSR environment for html rendering.
-  // The plugin provides `importSsr` helper to allow import SSR entry in RSC environment,
-  // however this can be customized by implementing own runtime communication
+  // The plugin provides `importSsr` helper to allow import SSR environment entry module
+  // in RSC environment. however this can be customized by implementing own runtime communication
   // e.g. `@cloudflare/vite-plugin`'s service binding.
   const { handleSsr } = await importSsr<typeof import("./entry.ssr.tsx")>();
   const htmlStream = await handleSsr(rscStream);
@@ -37,6 +78,7 @@ export default async function handler(request: Request): Promise<Response> {
   return new Response(htmlStream, {
     headers: {
       "Content-type": "text/html",
+      vary: "accept",
     },
   });
 }

@@ -5,6 +5,8 @@ import React from "react";
 import * as ReactDOMServer from "react-dom/server.edge";
 import type { RscPayload } from "./entry.rsc";
 
+// TODO: explain
+
 export async function handleSsr(rscStream: ReadableStream) {
   // deserialize RSC
   let payload: Promise<RscPayload>;
