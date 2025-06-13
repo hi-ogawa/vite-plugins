@@ -18,7 +18,8 @@ export default defineConfig({
         ssr: "@hiogawa/vite-rsc/extra/ssr",
       },
     }),
-    Inspect(),
+    // avoid ecosystem CI fail due to vite-plugin-inspect compatibility
+    !process.env.ECOSYSTEM_CI && Inspect(),
     {
       name: "show-encryption-key",
       enforce: "post",
