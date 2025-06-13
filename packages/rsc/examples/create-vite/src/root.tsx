@@ -46,7 +46,7 @@ function App() {
       </div>
       <div className="card">
         <form action={updateServerCounter.bind(null, 1)}>
-          <button>Server counter : {getServerCounter()}</button>
+          <button>Server Counter: {getServerCounter()}</button>
         </form>
       </div>
       <ul className="read-the-docs">

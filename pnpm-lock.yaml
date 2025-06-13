@@ -657,6 +657,8 @@ importers:
         specifier: latest
         version: 11.1.0(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
 
+  packages/rsc/examples/create-vite-e2e: {}
+
   packages/rsc/examples/hono:
     dependencies:
       '@hiogawa/vite-rsc':

@@ -7,7 +7,7 @@ export function ClientCounter() {
 
   return (
     <button onClick={() => setCount((count) => count + 1)}>
-      Client counter : {count}
+      Client Counter: {count}
     </button>
   );
 }
