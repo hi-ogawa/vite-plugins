@@ -1,5 +1,5 @@
 import * as ReactClient from "@hiogawa/vite-rsc/browser";
-import { getRscStreamFromHtml } from "@hiogawa/vite-rsc/browser"; // helper API
+import { getRscStreamFromHtml } from "@hiogawa/vite-rsc/rsc-html-stream/browser";
 import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import type { RscPayload } from "./entry.rsc";
