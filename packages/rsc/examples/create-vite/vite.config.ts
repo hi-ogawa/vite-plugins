@@ -1,6 +1,7 @@
 import rsc from "@hiogawa/vite-rsc/plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import inspect from "vite-plugin-inspect";
 
 export default defineConfig({
   plugins: [
@@ -12,5 +13,6 @@ export default defineConfig({
         ssr: "./src/framework/entry.ssr.tsx",
       },
     }),
+    inspect({ build: true }),
   ],
 });
