@@ -1,11 +1,10 @@
 {
-  "name": "@hiogawa/vite-rsc-examples-create-vite-e2e",
+  "name": "@hiogawa/vite-rsc-examples-starter-e2e",
   "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
     "test-e2e": "playwright test",
-    "x-test-e2e": "cd ../create-vite && playwright test --config ../create-vite-e2e/playwright.config.ts",
     "test-e2e-preview": "E2E_PREVIEW=1 pnpm test-e2e"
   }
 }
