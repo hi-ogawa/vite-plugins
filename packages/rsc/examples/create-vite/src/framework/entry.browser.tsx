@@ -3,21 +3,10 @@ import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import type { RscPayload } from "./entry.rsc";
 
-// TODO: explain
-
 async function main() {
-  // register handler which will be internally called by React
-  // on server function request.
+  // register a handler which will be internally called by React
+  // on server function request after hydration.
   ReactClient.setServerCallback(async (id, args) => {
-    // the implementation can be vary, but a standard way is to
-    // - browser
-    // -   call POST request with (id, args) encoded in payload
-    // - server
-    //   - decoded (id, args) and execute corresponding server function
-    //   - re-render RSC stream
-    // - browser
-    //   - deserialize RSC stream and re-render React tree
-    // which would achieves single round trip to mutate and fetch from server.
     const url = new URL(window.location.href);
     const temporaryReferences = ReactClient.createTemporaryReferenceSet();
     const payload = await ReactClient.createFromFetch<RscPayload>(
@@ -35,6 +24,7 @@ async function main() {
   });
 
   // deserialize to React tree for traditional CSR
+  // TODO: injects initial rsc stream as script
   const initialPayload = await ReactClient.createFromFetch<RscPayload>(
     fetch(window.location.href),
   );
@@ -86,7 +76,7 @@ async function main() {
   }
 }
 
-// a (little) helper to intercept events for client side navigation
+// a helper to intercept events for client side navigation
 function listenNavigation(onNavigation: () => void) {
   window.addEventListener("popstate", onNavigation);
 

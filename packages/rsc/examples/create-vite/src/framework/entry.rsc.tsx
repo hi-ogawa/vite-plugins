@@ -3,6 +3,7 @@ import { importSsr } from "@hiogawa/vite-rsc/rsc"; // Vite specifc helper
 import type { ReactFormState } from "react-dom/client";
 import { Root } from "../root.tsx";
 
+// TODO: explain
 export type RscPayload = {
   root: React.ReactNode;
   returnValue?: unknown;
@@ -19,10 +20,9 @@ export default async function handler(request: Request): Promise<Response> {
   let formState: ReactFormState | undefined;
   let temporaryReferences: unknown | undefined;
   if (isAction) {
-    // x-rsc-action header exists when action is called via
+    // x-rsc-action header exists when action is called via `ReactClient.setServerCallback`.
     const actionId = request.headers.get("x-rsc-action");
     if (actionId) {
-      // client stream request
       const contentType = request.headers.get("content-type");
       const body = contentType?.startsWith("multipart/form-data")
         ? await request.formData()
@@ -32,7 +32,8 @@ export default async function handler(request: Request): Promise<Response> {
       const action = await ReactServer.loadServerAction(actionId);
       returnValue = await action.apply(null, args);
     } else {
-      // progressive enhancement
+      // otherwise server function is called via `<form action={...}>`
+      // before hydration (e.g. when javascript is disabled).
       const formData = await request.formData();
       const decodedAction = await ReactServer.decodeAction(formData);
       const result = await decodedAction();
