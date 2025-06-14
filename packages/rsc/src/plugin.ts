@@ -53,6 +53,8 @@ const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 const serverResourcesMetaMap: Record<string, { key: string }> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
+
+// dev-only wrapper virtual module of rollupOptions.input.index
 const VIRTUAL_ENTRIES = {
   browser: "virtual:vite-rsc/entry-browser",
   rsc: "virtual:vite-rsc/entry-rsc",
@@ -381,6 +383,7 @@ export default function vitePluginRsc(
       load(id) {
         if (id === "\0virtual:vite-rsc/assets-manifest") {
           assert(this.environment.name !== "client");
+          assert(this.environment.mode === "dev");
           const entryUrl = assetsURL("@id/__x00__" + VIRTUAL_ENTRIES.browser);
           const manifest: AssetsManifest = {
             bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
