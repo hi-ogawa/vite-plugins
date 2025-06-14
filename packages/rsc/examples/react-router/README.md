@@ -21,7 +21,8 @@ npm run dev
 npm run build
 npm run preview
 
-# run on @cloudflare/vite-plugin and deploy
+# run on @cloudflare/vite-plugin and deploy.
+# a separate configuration is found in ./cf/vite.config.ts
 npm run cf-dev
 npm run cf-build
 npm run cf-preview

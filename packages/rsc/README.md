@@ -10,17 +10,15 @@
 ## Examples
 
 - [`./examples/starter`](./examples/starter)
-  - TODO: explain
+  - This example provides an in-depth overview of API explained with inline comments.
 - [`./examples/react-router`](./examples/react-router)
-  - TODO: explain https://remix.run/blog/rsc-preview
+  - This demonstrates how to integrate [experimental React Router RSC API](https://remix.run/blog/rsc-preview) with this plugin. It also includes `@cloudflare/vite-plugin` integration.
 - [`./examples/basic`](./examples/basic)
-  - TODO: explain main example for integration tests
+  - This is mainly used for e2e testing. It also uses a high level `@hiogawa/vite-rsc/extra/{rsc,ssr,browser}` API.
 
 ## Basic Concepts
 
-This example is a simplified version of [`./examples/starter`](./examples/starter).
-You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework)
-for more in depth commentary, which includes server function handling and client-side RSC re-fetching/rendering.
+This example is a simplified version of [`./examples/starter`](./examples/starter). You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework) for more in-depth commentary, which includes server function handling and client-side RSC re-fetching/rendering.
 
 - [`vite.config.ts`](./examples/starter/vite.config.ts)
 
