@@ -10,7 +10,7 @@
 ## Examples
 
 - [`./examples/starter`](./examples/starter)
-  - This example provides an in-depth overview of API with inline comments to explain how they function through RSC app.
+  - This example provides an in-depth overview of API with inline comments to explain how they function within RSC-powered React application.
 - [`./examples/react-router`](./examples/react-router)
   - This demonstrates how to integrate [experimental React Router RSC API](https://remix.run/blog/rsc-preview) with this plugin. It also includes `@cloudflare/vite-plugin` integration.
 - [`./examples/basic`](./examples/basic)
