@@ -1,9 +1,27 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
-import { defineConfig, mergeConfig } from "vite";
-import baseConfig from "../vite.config.ts";
+import rsc from "@hiogawa/vite-rsc/plugin";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import inspect from "vite-plugin-inspect";
+import { reactRouter } from "../react-router-vite/plugin";
 
-const cfConfig = defineConfig({
+export default defineConfig({
+  clearScreen: false,
+  build: {
+    minify: false,
+  },
   plugins: [
+    tailwindcss(),
+    react(),
+    reactRouter(),
+    rsc({
+      entries: {
+        client: "./react-router-vite/entry.browser.tsx",
+      },
+      disableServerHandler: true,
+    }),
+    inspect(),
     cloudflare({
       configPath: "./cf/wrangler.ssr.jsonc",
       viteEnvironment: {
@@ -42,13 +60,6 @@ const cfConfig = defineConfig({
         // workaround (fixed in Vite 7) https://github.com/vitejs/vite/pull/20077
         (config.environments as any).ssr.resolve.noExternal = true;
         (config.environments as any).rsc.resolve.noExternal = true;
-
-        // overwrite server entries
-        // TODO: better plugin API to customize?
-        (config.environments as any).ssr.build.rollupOptions.input.index =
-          "./cf/entry.ssr.tsx";
-        (config.environments as any).rsc.build.rollupOptions.input.index =
-          "./cf/entry.rsc.tsx";
       },
     },
   ],
@@ -71,5 +82,3 @@ const cfConfig = defineConfig({
     },
   },
 });
-
-export default mergeConfig(cfConfig, baseConfig) as any;

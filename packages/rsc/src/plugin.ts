@@ -66,7 +66,7 @@ export default function vitePluginRsc(
     /**
      * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
      */
-    entries?: Record<"client" | "ssr" | "rsc", string>;
+    entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
     disableServerHandler?: boolean;
   } = {},
 ): Plugin[] {
