@@ -10,8 +10,13 @@ import { Root } from "../root.tsx";
 // 3. Delegate to SSR for full HTML rendering
 
 export type RscPayload = {
+  // this demo renders/serializes/deserizlies entire root html element
+  // but this mechanism can be changed to render/fetch different parts of components
+  // based on your own route conventions.
   root: React.ReactNode;
+  // server action return value of non-progressive enhancement case
   returnValue?: unknown;
+  // server action form state (e.g. useActionState) of progressive enhancement case
   formState?: ReactFormState;
 };
 
@@ -39,6 +44,7 @@ export default async function handler(request: Request): Promise<Response> {
     } else {
       // otherwise server function is called via `<form action={...}>`
       // before hydration (e.g. when javascript is disabled).
+      // (aka progressive enhancement)
       const formData = await request.formData();
       const decodedAction = await ReactServer.decodeAction(formData);
       const result = await decodedAction();
@@ -50,9 +56,7 @@ export default async function handler(request: Request): Promise<Response> {
   // so that new render reflects updated state from server function call
   // to achieve single round trip to mutate and fetch from server.
   const rscStream = ReactServer.renderToReadableStream<RscPayload>({
-    // in this example, we always render the same `<Root />`,
-    // but this can be changed to render different components based on your own route conventions
-    // e.g. by passing `request.url`.
+    // in this example, we always render the same `<Root />`
     root: <Root />,
     returnValue,
     formState,

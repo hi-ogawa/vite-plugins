@@ -24,9 +24,9 @@ export default defineConfig({
     react(),
     rsc({
       entries: {
-        browser: "./src/client.tsx",
-        rsc: "./src/server.tsx",
+        client: "./src/client.tsx",
         ssr: "@hiogawa/vite-rsc/extra/ssr",
+        rsc: "./src/server.tsx",
       },
     }),
     // avoid ecosystem CI fail due to vite-plugin-inspect compatibility

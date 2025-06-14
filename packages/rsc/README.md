@@ -40,7 +40,7 @@ export default defineConfig() {
         // - RSC deserialization for hydration
         // - refetch and re-render RSC
         // - calling server functions
-        browser: "./src/entry.browser.tsx",
+        client: "./src/entry.browser.tsx",
       },
     })
   ]

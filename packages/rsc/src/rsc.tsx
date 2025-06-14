@@ -37,6 +37,9 @@ export function initialize(): void {
   });
 }
 
+/**
+ * import ssr environment module specified by `environments.ssr.build.rollupOptions.input.index`
+ */
 export async function importSsr<T>(): Promise<T> {
   const mod = await import("virtual:vite-rsc/import-ssr" as any);
   if (import.meta.env.DEV) {

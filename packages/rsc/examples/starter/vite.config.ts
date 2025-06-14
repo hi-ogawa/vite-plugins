@@ -3,16 +3,45 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import inspect from "vite-plugin-inspect";
 
+// TODO: explain
+
 export default defineConfig({
   plugins: [
+    // TODO
     react(),
-    rsc({
-      entries: {
-        browser: "./src/framework/entry.browser.tsx",
-        rsc: "./src/framework/entry.rsc.tsx",
-        ssr: "./src/framework/entry.ssr.tsx",
-      },
-    }),
+    // TODO
+    rsc(),
+    // TODO
     inspect({ build: true }),
   ],
+  // TODO
+  environments: {
+    client: {
+      build: {
+        rollupOptions: {
+          input: {
+            index: "./src/framework/entry.browser.tsx",
+          },
+        },
+      },
+    },
+    ssr: {
+      build: {
+        rollupOptions: {
+          input: {
+            index: "./src/framework/entry.ssr.tsx",
+          },
+        },
+      },
+    },
+    rsc: {
+      build: {
+        rollupOptions: {
+          input: {
+            index: "./src/framework/entry.rsc.tsx",
+          },
+        },
+      },
+    },
+  },
 });
