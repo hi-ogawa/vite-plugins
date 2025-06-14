@@ -90,9 +90,6 @@ export default function vitePluginRsc(
             client: {
               build: {
                 outDir: "dist/client",
-                rollupOptions: {
-                  // input: { index: VIRTUAL_ENTRIES.browser },
-                },
               },
               optimizeDeps: {
                 include: [
@@ -105,9 +102,6 @@ export default function vitePluginRsc(
             ssr: {
               build: {
                 outDir: "dist/ssr",
-                rollupOptions: {
-                  // input: { index: VIRTUAL_ENTRIES.ssr },
-                },
               },
               resolve: {
                 noExternal: [PKG_NAME],
@@ -142,9 +136,6 @@ export default function vitePluginRsc(
               build: {
                 outDir: "dist/rsc",
                 emitAssets: true,
-                rollupOptions: {
-                  // input: { index: VIRTUAL_ENTRIES.rsc },
-                },
               },
             },
           },
@@ -399,8 +390,7 @@ export default function vitePluginRsc(
           this.environment.name === "client"
         ) {
           const resolved = await this.resolve(
-            // @ts-ignore
-            this.environment.config.build.rollupOptions.input.index,
+            getEntrySource(this.environment.config),
           );
           assert(resolved);
           browserEntryId = resolved.id;
@@ -470,30 +460,29 @@ export default function vitePluginRsc(
     createVirtualPlugin(
       VIRTUAL_ENTRIES.browser.slice("virtual:".length),
       async function () {
+        assert(this.environment.mode === "dev");
         let code = "";
-        if (this.environment.mode === "dev") {
-          // enable hmr only when react plugin is available
-          const resolved = await this.resolve("/@react-refresh");
-          if (resolved) {
-            code += `
-              import RefreshRuntime from "/@react-refresh";
-              RefreshRuntime.injectIntoGlobalHook(window);
-              window.$RefreshReg$ = () => {};
-              window.$RefreshSig$ = () => (type) => type;
-              window.__vite_plugin_react_preamble_installed__ = true;
-            `;
-          }
-          code += `await import("virtual:vite-rsc/entry-browser-inner");`;
-          // TODO
-          // should remove only the ones we injected during ssr, which are duplicated by browser imports for HMR.
-          // technically this doesn't have to wait for "vite:beforeUpdate" and should do it right after browser css import.
+        // enable hmr only when react plugin is available
+        const resolved = await this.resolve("/@react-refresh");
+        if (resolved) {
           code += `
-            const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
-            import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
+            import RefreshRuntime from "/@react-refresh";
+            RefreshRuntime.injectIntoGlobalHook(window);
+            window.$RefreshReg$ = () => {};
+            window.$RefreshSig$ = () => (type) => type;
+            window.__vite_plugin_react_preamble_installed__ = true;
           `;
-        } else {
-          code += `import "virtual:vite-rsc/entry-browser-inner";\n`;
         }
+        code += `await import("virtual:vite-rsc/entry-browser-inner");`;
+        // TODO
+        // should remove only the ones we injected during ssr, which are duplicated by browser imports for HMR.
+        // technically this doesn't have to wait for "vite:beforeUpdate" and should do it right after browser css import.
+        // TODO: there migth be a clever way to let Vite deduplicate itself.
+        // cf. https://github.com/withastro/astro/blob/acb9b302f56e38833a1ab01147f7fde0bf967889/packages/astro/src/vite-plugin-astro-server/pipeline.ts#L133-L135
+        code += `
+          const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
+          import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
+        `;
         return code;
       },
     ),
@@ -504,9 +493,10 @@ export default function vitePluginRsc(
       enforce: "pre",
       async resolveId(source, _importer, options) {
         if (source === "virtual:vite-rsc/entry-browser-inner") {
+          assert(this.environment.name === "client");
+          assert(this.environment.mode === "dev");
           return this.resolve(
-            // @ts-ignore
-            config.environments.client!.build.rollupOptions.input?.index,
+            getEntrySource(this.environment.config),
             undefined,
             options,
           );
@@ -515,8 +505,7 @@ export default function vitePluginRsc(
           assert(this.environment.name === "rsc");
           assert(this.environment.mode === "dev");
           return this.resolve(
-            // @ts-ignore
-            config.environments.rsc!.build.rollupOptions.input.index,
+            getEntrySource(this.environment.config),
             undefined,
             options,
           );
@@ -525,8 +514,7 @@ export default function vitePluginRsc(
           assert(this.environment.name === "ssr");
           assert(this.environment.mode === "dev");
           return this.resolve(
-            // @ts-ignore
-            config.environments.ssr!.build.rollupOptions.input.index,
+            getEntrySource(this.environment.config),
             undefined,
             options,
           );
@@ -563,6 +551,17 @@ export default function vitePluginRsc(
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss(),
   ];
+}
+
+function getEntrySource(config: ResolvedConfig) {
+  const input = config.build.rollupOptions.input;
+  assert(input);
+  assert(
+    typeof input === "object" &&
+      "index" in input &&
+      typeof input.index === "string",
+  );
+  return input.index;
 }
 
 function hashString(v: string) {
