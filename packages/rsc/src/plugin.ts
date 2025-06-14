@@ -58,9 +58,7 @@ const ENTRIES = {
   ssr: "virtual:vite-rsc/entry-ssr",
 };
 
-export default function vitePluginRsc({
-  entries,
-}: {
+export default function vitePluginRsc(rscPluginOptions: {
   entries: {
     browser: string;
     rsc: string;
@@ -68,8 +66,9 @@ export default function vitePluginRsc({
   };
   ssrEntry?: string;
   handlerEntry?: string;
-  getServerHandler?: () => Promise<string>;
+  getServerHandler?: false | (() => Promise<string>);
 }): Plugin[] {
+  const { entries } = rscPluginOptions;
   return [
     {
       name: "rsc",
@@ -213,11 +212,20 @@ export default function vitePluginRsc({
         (globalThis as any).__viteSsrRunner = viteSsrRunner;
         (globalThis as any).__viteRscRunner = viteRscRunner;
 
+        if (rscPluginOptions.getServerHandler === false) {
+          return;
+        }
+
+        async function defaultGetServerHandler() {
+          const mod = await viteRscRunner.import(ENTRIES.rsc);
+          return mod.default;
+        }
+
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              const mod = await viteRscRunner.import(ENTRIES.rsc);
-              createRequestListener(mod.default)(req, res);
+              const handler = await defaultGetServerHandler();
+              createRequestListener(handler)(req, res);
             } catch (e) {
               next(e);
             }

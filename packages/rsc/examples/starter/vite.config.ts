@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     rsc({
+      // TODO: use rollupOptions.input instead
       entries: {
         browser: "./src/framework/entry.browser.tsx",
         rsc: "./src/framework/entry.rsc.tsx",
@@ -15,4 +16,33 @@ export default defineConfig({
     }),
     inspect({ build: true }),
   ],
+  // environments: {
+  //   client: {
+  //     build: {
+  //       rollupOptions: {
+  //         input: {
+  //           index: "./src/framework/entry.browser.tsx",
+  //         },
+  //       },
+  //     },
+  //   },
+  //   ssr: {
+  //     build: {
+  //       rollupOptions: {
+  //         input: {
+  //           index: "./src/framework/entry.ssr.tsx",
+  //         },
+  //       },
+  //     },
+  //   },
+  //   rsc: {
+  //     build: {
+  //       rollupOptions: {
+  //         input: {
+  //           index: "./src/framework/entry.rsc.tsx",
+  //         },
+  //       },
+  //     },
+  //   },
+  // },
 });
