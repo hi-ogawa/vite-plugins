@@ -154,7 +154,7 @@ These API provide a necessary API to integrate multi environment features into a
   This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment.
 
 ```js
-await import.meta.viteRsc.loadSsrModule("index")
+import.meta.viteRsc.loadSsrModule("index");
 ```
 
 - `import.meta.viteRsc.loadCss: () => React.ReactNode`
