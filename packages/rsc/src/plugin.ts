@@ -63,6 +63,10 @@ const VIRTUAL_ENTRIES = {
 
 export default function vitePluginRsc(
   rscPluginOptions: {
+    /**
+     * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
+     */
+    entries?: Record<"client" | "ssr" | "rsc", string>;
     disableServerHandler?: boolean;
   } = {},
 ): Plugin[] {
@@ -82,6 +86,11 @@ export default function vitePluginRsc(
             client: {
               build: {
                 outDir: "dist/client",
+                rollupOptions: {
+                  input: rscPluginOptions.entries?.client && {
+                    index: rscPluginOptions.entries.client,
+                  },
+                },
               },
               optimizeDeps: {
                 include: [
@@ -94,6 +103,11 @@ export default function vitePluginRsc(
             ssr: {
               build: {
                 outDir: "dist/ssr",
+                rollupOptions: {
+                  input: rscPluginOptions.entries?.ssr && {
+                    index: rscPluginOptions.entries.ssr,
+                  },
+                },
               },
               resolve: {
                 noExternal: [PKG_NAME],
@@ -104,6 +118,15 @@ export default function vitePluginRsc(
               },
             },
             rsc: {
+              build: {
+                outDir: "dist/rsc",
+                emitAssets: true,
+                rollupOptions: {
+                  input: rscPluginOptions.entries?.rsc && {
+                    index: rscPluginOptions.entries.rsc,
+                  },
+                },
+              },
               // `configEnvironment` below adds more `noExternal`
               resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
@@ -124,10 +147,6 @@ export default function vitePluginRsc(
                   `${PKG_NAME}/vendor/react-server-dom/client.edge`,
                 ],
                 exclude: [PKG_NAME],
-              },
-              build: {
-                outDir: "dist/rsc",
-                emitAssets: true,
               },
             },
           },

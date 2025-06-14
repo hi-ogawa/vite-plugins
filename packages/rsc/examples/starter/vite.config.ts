@@ -3,8 +3,18 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import inspect from "vite-plugin-inspect";
 
+// TODO: explain
+
 export default defineConfig({
-  plugins: [react(), rsc(), inspect({ build: true })],
+  plugins: [
+    // TODO
+    react(),
+    // TODO
+    rsc(),
+    // TODO
+    inspect({ build: true }),
+  ],
+  // TODO
   environments: {
     client: {
       build: {
