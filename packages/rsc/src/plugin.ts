@@ -66,6 +66,9 @@ export default function vitePluginRsc({
     rsc: string;
     ssr: string;
   };
+  ssrEntry?: string;
+  handlerEntry?: string;
+  getServerHandler?: () => Promise<string>;
 }): Plugin[] {
   return [
     {
