@@ -16,7 +16,7 @@ export default defineConfig({
     reactRouter(),
     rsc({
       entries: {
-        browser: "./react-router-vite/entry.browser.tsx",
+        client: "./react-router-vite/entry.browser.tsx",
         ssr: "./react-router-vite/entry.ssr.tsx",
         rsc: "./react-router-vite/entry.rsc.tsx",
       },

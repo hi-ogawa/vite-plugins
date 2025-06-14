@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     rsc({
       entries: {
-        browser: "./src/client.tsx",
+        client: "./src/client.tsx",
         rsc: "./src/server.tsx",
         ssr: "@hiogawa/vite-rsc/extra/ssr",
       },
