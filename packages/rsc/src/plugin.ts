@@ -10,12 +10,12 @@ import {
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import MagicString from "magic-string";
 import {
-  DevEnvironment,
+  type DevEnvironment,
   type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
   type Rollup,
-  RunnableDevEnvironment,
+  type RunnableDevEnvironment,
   type ViteDevServer,
   defaultServerConditions,
   isCSSRequest,
@@ -327,45 +327,55 @@ export default function vitePluginRsc(
       },
     },
     {
-      // externalize `dist/rsc/...` import as relative path in ssr build (and vice versa)
-      name: "rsc:virtual:vite-rsc/import-entry",
-      resolveId(source) {
-        if (
-          source === "virtual:vite-rsc/import-rsc" ||
-          source === "virtual:vite-rsc/import-ssr"
-        ) {
-          if (this.environment.mode === "build") {
-            return { id: source, external: true };
+      // allow loading ssr entry module in rsc environment by
+      // - dev:   rewriting to `__viteSsrRunner.import(...)`
+      // - build: rewriting to external import of `import("../dist/ssr/...")`
+      name: "rsc:load-ssr-module",
+      transform(code) {
+        if (code.includes("import.meta.viteRsc.loadSsrModule")) {
+          const s = new MagicString(code);
+          for (const match of code.matchAll(
+            /import\.meta\.viteRsc\.loadSsrModule\((?:"([^"]+)"|'([^']+)')\)/g,
+          )) {
+            const entryName = match[1] || match[2];
+            let replacement: string;
+            if (this.environment.mode === "dev") {
+              const source = getEntrySource(
+                config.environments.ssr!,
+                entryName,
+              );
+              replacement = `__viteSsrRunner.import(${JSON.stringify(source)})`;
+            } else {
+              replacement = JSON.stringify(
+                "__vite_rsc_load_ssr_entry:" + entryName,
+              );
+            }
+            s.overwrite(
+              match.index!,
+              match.index! + match[0].length,
+              replacement,
+            );
           }
-          return `\0` + source;
-        }
-      },
-      load(id) {
-        if (id === "\0virtual:vite-rsc/import-rsc") {
-          return `export default () => __viteRscRunner.import(${JSON.stringify(VIRTUAL_ENTRIES.rsc)})`;
-        }
-        if (id === "\0virtual:vite-rsc/import-ssr") {
-          return `export default () => __viteSsrRunner.import(${JSON.stringify(VIRTUAL_ENTRIES.ssr)})`;
+          if (s.hasChanged()) {
+            return {
+              code: s.toString(),
+              map: s.generateMap({ hires: "boundary" }),
+            };
+          }
         }
       },
       renderChunk(code, chunk) {
-        if (code.includes("virtual:vite-rsc/import-rsc")) {
-          const replacement = path.relative(
-            path.join("dist/ssr", chunk.fileName, ".."),
-            path.join("dist/rsc", "index.js"),
-          );
-          code = code.replaceAll("virtual:vite-rsc/import-rsc", () =>
-            normalizePath(replacement),
-          );
-          return { code };
-        }
-        if (code.includes("virtual:vite-rsc/import-ssr")) {
-          const replacement = path.relative(
-            path.join("dist/rsc", chunk.fileName, ".."),
-            path.join("dist/ssr", "index.js"),
-          );
-          code = code.replaceAll("virtual:vite-rsc/import-ssr", () =>
-            normalizePath(replacement),
+        if (code.includes("__vite_rsc_load_ssr_entry:")) {
+          assert(this.environment.name === "rsc");
+          code = code.replaceAll(
+            /['"]__vite_rsc_load_ssr_entry:(\w+)['"]/g,
+            (_match, name) => {
+              const relativePath = path.relative(
+                path.join("dist/rsc", chunk.fileName, ".."),
+                path.join("dist/ssr", `${name}.js`),
+              );
+              return `(import(${JSON.stringify(normalizePath(relativePath))}))`;
+            },
           );
           return { code };
         }
@@ -565,15 +575,19 @@ export default function vitePluginRsc(
   ];
 }
 
-function getEntrySource(config: ResolvedConfig) {
+function getEntrySource(
+  config: Pick<ResolvedConfig, "build">,
+  name: string = "index",
+) {
   const input = config.build.rollupOptions.input;
   assert(input);
   assert(
     typeof input === "object" &&
-      "index" in input &&
-      typeof input.index === "string",
+      !Array.isArray(input) &&
+      name in input &&
+      typeof input[name] === "string",
   );
-  return input.index;
+  return input[name];
 }
 
 function hashString(v: string) {
@@ -1104,15 +1118,16 @@ export function vitePluginRscCss(): Plugin[] {
     {
       name: "rsc:importer-resources",
       async transform(code, id) {
-        if (code.includes("import.meta.viteRscCss")) {
+        // TODO: use es-module-lexer
+        if (code.includes("import.meta.viteRsc.loadCss")) {
           assert(this.environment.name === "rsc");
           const output = new MagicString(code);
           const importId = `virtual:vite-rsc/importer-resources?importer=${id}`;
           output.prepend(`import __vite_rsc_react__ from "react";`);
           output.replaceAll(
-            "import.meta.viteRscCss",
+            "import.meta.viteRsc.loadCss",
             // wrap async component element
-            `(__vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => __vite_rsc_react__.createElement(m.Resources))))`,
+            `(() => __vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => __vite_rsc_react__.createElement(m.Resources))))`,
           );
           return {
             code: output.toString(),

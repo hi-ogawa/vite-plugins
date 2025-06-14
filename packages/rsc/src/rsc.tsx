@@ -1,7 +1,5 @@
-import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as serverReferences from "virtual:vite-rsc/server-references";
 import { setRequireModule } from "./core/rsc";
-import type { AssetsManifest } from "./plugin";
 import { createFromReadableStream, renderToReadableStream } from "./react/rsc";
 import {
   arrayToStream,
@@ -21,7 +19,7 @@ export * from "./react/rsc";
 
 initialize();
 
-export function initialize(): void {
+function initialize(): void {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
@@ -35,22 +33,6 @@ export function initialize(): void {
       }
     },
   });
-}
-
-/**
- * import ssr environment module specified by `environments.ssr.build.rollupOptions.input.index`
- */
-export async function importSsr<T>(): Promise<T> {
-  const mod = await import("virtual:vite-rsc/import-ssr" as any);
-  if (import.meta.env.DEV) {
-    return mod.default();
-  } else {
-    return mod;
-  }
-}
-
-export function getAssetsManifest(): AssetsManifest {
-  return (assetsManifest as any).default;
 }
 
 // based on

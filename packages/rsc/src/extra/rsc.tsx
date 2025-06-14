@@ -4,7 +4,6 @@ import {
   decodeAction,
   decodeFormState,
   decodeReply,
-  importSsr,
   loadServerAction,
   renderToReadableStream,
 } from "../rsc";
@@ -82,7 +81,9 @@ export async function renderRequest(
     });
   }
 
-  const ssrEntry = await importSsr<typeof import("./ssr")>();
+  const ssrEntry = await import.meta.viteRsc.loadSsrModule<
+    typeof import("./ssr")
+  >("index");
   return ssrEntry.renderHtml({
     stream,
     formState,

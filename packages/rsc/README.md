@@ -3,7 +3,7 @@
 ## Features
 
 - **Framework-less RSC experience**: The plugin implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides low level `react-server-dom` runtime API without framework-specific abstractions.
-- **CSS support**: CSS is automatically code-split at client boundaries and injected upon rendering. For server components, CSS assets can be manually rendered via `import.meta.viteRscCss` API based on your own server routing conventions.
+- **CSS support**: CSS is automatically code-split at client boundaries and injected upon rendering. For server components, CSS assets can be manually rendered via `import.meta.viteRsc.loadCss` API based on your own server routing conventions.
 - **HMR support**: Enables editing both client and server components without full page reloads.
 - **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
@@ -50,8 +50,7 @@ export default defineConfig() {
 - [`entry.rsc.tsx`](./examples/basic-doc/src/entry.rsc.tsx)
 
 ```tsx
-import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // React core API
-import { importSsr } from "@hiogawa/vite-rsc/rsc"; // Vite specifc helper
+import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 
 // the plugin assumes `rsc` entry having default export of request handler
 export default async function handler(request: Request): Promise<Response> {
@@ -69,8 +68,8 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   // delegate to SSR environment for html rendering
-  const { handleSsr } = await importSsr<typeof import("./entry.ssr.tsx")>();
-  const htmlStream = await handleSsr(rscStream);
+  const ssrEntry = await import.meta.viteRsc.loadSsrModule<typeof import("./entry.ssr.tsx")>();
+  const htmlStream = await ssrEntry.handleSsr(rscStream);
 
   // respond html
   return new Response(htmlStream, {
@@ -151,34 +150,40 @@ These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-d
 
 These API provide a necessary API to integrate multi environment features into an app.
 
-#### `@hiogawa/vite-rsc/rsc`
+#### `rsc` environment
 
-- `importSsr<T>: () => Promise<T>`
-  This allows importing `ssr` entry module inside `rsc` environment.
+- `import.meta.viteRsc.loadSsrModule: <T>(entryName: string) => Promise<T>`
+  This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment.
 
-#### `@hiogawa/vite-rsc/ssr`
+```js
+await import.meta.viteRsc.loadSsrModule("index")
+```
 
-- `importRsc<T>: () => Promise<T>`
-  This allows importing `rsc` entry module inside `ssr` environment.
-
-- `getAssetsManifest().bootstrapScriptContent: string`
-  This provides a code to execute browser entry on browser.
-
-- `import.meta.viteRscCss: React.ReactNode`
-  This allows collecting css which is imported through a current server module and injecting them inside server components.
+- `import.meta.viteRsc.loadCss: () => React.ReactNode`
+  This allows collecting css which is imported through a current server module
+  and injecting them inside server components.
 
 ```tsx
 import "./test.css";
-import child from "./child.tsx";
+import dep from "./dep.tsx";
 
 export function ServerPage() {
   // this will include css assets for "test.css"
-  // and any css transitively imported through "child.tsx"
+  // and any css transitively imported through "dep.tsx"
   return <>
-    {import.meta.viteRscCss}
+    {import.meta.viteRsc.loadCss()}
     ...
   </>
 }
+```
+
+#### `ssr` environment
+
+- `import.meta.viteRsc.getBootstrapScriptContentByEntry: (entryName: string) => string`
+  This provides a code to execute browser entry on browser.
+
+```js
+TODO: example
 ```
 
 ## Higher level RSC API

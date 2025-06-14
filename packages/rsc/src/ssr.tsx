@@ -10,7 +10,7 @@ export * from "./react/ssr";
 
 initialize();
 
-export function initialize(): void {
+function initialize(): void {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {
@@ -61,15 +61,6 @@ function preloadDeps(deps: AssetDeps) {
   }
   for (const href of deps.css) {
     ReactDOM.preinit(href, { as: "style" });
-  }
-}
-
-export async function importRsc<T>(): Promise<T> {
-  const mod = await import("virtual:vite-rsc/import-rsc" as any);
-  if (import.meta.env.DEV) {
-    return mod.default();
-  } else {
-    return mod;
   }
 }
 

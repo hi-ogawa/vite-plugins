@@ -1,5 +1,4 @@
 import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // React core API
-import { importSsr } from "@hiogawa/vite-rsc/rsc"; // Vite specifc helper
 import { Hydrated } from "./components/client.tsx";
 
 // the plugin assumes `rsc` entry having default export of request handler
@@ -27,7 +26,9 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   // delegate to SSR environment for html rendering
-  const { handleSsr } = await importSsr<typeof import("./entry.ssr.tsx")>();
+  const { handleSsr } = await import.meta.viteRsc.loadSsrModule<
+    typeof import("./entry.ssr.tsx")
+  >("index");
   const htmlStream = await handleSsr(rscStream);
 
   // respond html
