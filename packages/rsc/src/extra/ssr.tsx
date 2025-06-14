@@ -1,8 +1,9 @@
+import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import { createFromReadableStream, getAssetsManifest } from "../ssr";
+import { createFromReadableStream } from "../ssr";
 import type { RscPayload } from "./rsc";
 
 export async function renderHtml({
@@ -30,7 +31,7 @@ export async function renderHtml({
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
     bootstrapScriptContent: options?.__nojs
       ? undefined
-      : getAssetsManifest().bootstrapScriptContent,
+      : bootstrapScriptContent,
     nonce: options?.nonce,
     // @ts-expect-error no types
     formState,

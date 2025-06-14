@@ -1,5 +1,5 @@
+import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 import { injectRscStreamToHtml } from "@hiogawa/vite-rsc/rsc-html-stream/ssr"; // helper API
-import { getAssetsManifest } from "@hiogawa/vite-rsc/ssr";
 import * as ReactClient from "@hiogawa/vite-rsc/ssr"; // RSC API
 import React from "react";
 import type { ReactFormState } from "react-dom/client";
@@ -33,7 +33,7 @@ export async function renderHTML({
   const htmlStream = await ReactDOMServer.renderToReadableStream(<SsrRoot />, {
     bootstrapScriptContent: options?.debugNojs
       ? undefined
-      : getAssetsManifest().bootstrapScriptContent,
+      : bootstrapScriptContent,
     nonce: options?.nonce,
     // @ts-expect-error no types
     formState,
