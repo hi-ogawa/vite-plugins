@@ -63,17 +63,9 @@ const VIRTUAL_ENTRIES = {
 
 export default function vitePluginRsc(
   rscPluginOptions: {
-    entries?: {
-      browser: string;
-      rsc: string;
-      ssr: string;
-    };
-    ssrEntry?: string;
-    handlerEntry?: string;
     disableServerHandler?: boolean;
   } = {},
 ): Plugin[] {
-  // const { entries } = rscPluginOptions;
   return [
     {
       name: "rsc",
