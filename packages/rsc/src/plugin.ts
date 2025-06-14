@@ -36,7 +36,6 @@ let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 let rscBundle: Rollup.OutputBundle;
 let buildAssetsManifest: AssetsManifest | undefined;
-let browserEntryId: string;
 const BUILD_ASSETS_MANIFEST_NAME = "__vite_rsc_assets_manifest.js";
 
 type ClientReferenceMeta = {
@@ -404,19 +403,6 @@ export default function vitePluginRsc(
           return `export default ${JSON.stringify(manifest, null, 2)}`;
         }
       },
-      async buildEnd(error) {
-        if (
-          !error &&
-          this.environment.mode === "build" &&
-          this.environment.name === "client"
-        ) {
-          const resolved = await this.resolve(
-            getEntrySource(this.environment.config),
-          );
-          assert(resolved);
-          browserEntryId = resolved.id;
-        }
-      },
       // client build
       generateBundle(_options, bundle) {
         // copy assets from rsc build to client build
@@ -445,7 +431,9 @@ export default function vitePluginRsc(
           }
 
           const assetDeps = collectAssetDeps(bundle);
-          const entry = assetDeps[browserEntryId];
+          const entry = Object.values(assetDeps).find(
+            (v) => v.chunk.name === "index",
+          );
           assert(entry);
           const entryUrl = assetsURL(entry.chunk.fileName);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
