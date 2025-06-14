@@ -1,8 +1,8 @@
-import * as assetsManifest from "virtual:vite-rsc/assets-manifest";
+import assetsManifest from "virtual:vite-rsc/assets-manifest";
 import * as clientReferences from "virtual:vite-rsc/client-references";
 import * as ReactDOM from "react-dom";
 import { setRequireModule } from "./core/ssr";
-import type { AssetDeps, AssetsManifest } from "./plugin";
+import type { AssetDeps } from "./plugin";
 
 export { createServerConsumerManifest } from "./core/ssr";
 
@@ -24,7 +24,7 @@ function initialize(): void {
         if (!import_) {
           throw new Error(`client reference not found '${id}'`);
         }
-        const deps = getAssetsManifest().clientReferenceDeps[id];
+        const deps = assetsManifest.clientReferenceDeps[id];
         // kick off preload before initial async import, which is not sync-cached
         if (deps) {
           preloadDeps(deps);
@@ -62,8 +62,4 @@ function preloadDeps(deps: AssetDeps) {
   for (const href of deps.css) {
     ReactDOM.preinit(href, { as: "style" });
   }
-}
-
-export function getAssetsManifest(): AssetsManifest {
-  return (assetsManifest as any).default;
 }

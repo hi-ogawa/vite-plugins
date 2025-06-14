@@ -1,4 +1,4 @@
-import { getAssetsManifest } from "@hiogawa/vite-rsc/ssr";
+import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 import * as ReactClient from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
 import * as ReactDOMServer from "react-dom/server.edge";
@@ -10,7 +10,7 @@ export async function handleSsr(rscStream: ReadableStream) {
 
   // render html (traditional SSR)
   const htmlStream = ReactDOMServer.renderToReadableStream(root, {
-    bootstrapScriptContent: getAssetsManifest().bootstrapScriptContent,
+    bootstrapScriptContent,
   });
 
   return htmlStream;

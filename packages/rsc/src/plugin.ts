@@ -474,43 +474,6 @@ export default function vitePluginRsc(
         export default assetsManifest.bootstrapScriptContent;
       `;
     }),
-    {
-      name: "rsc:bootstrap-script-content",
-      transform(code) {
-        if (
-          !code.includes(
-            "import.meta.viteRsc.loadBootstrapScriptContentByEntry",
-          )
-        ) {
-          return;
-        }
-        const s = new MagicString(code);
-        for (const match of code.matchAll(
-          /import\.meta\.viteRsc\.loadBootstrapScriptContentByEntry\((?:"([^"]+)"|'([^']+)')\)/g,
-        )) {
-          const entryName = match[1] || match[2];
-          assert(
-            entryName === "index",
-            `Only 'loadBootstrapScriptContentByEntry("index")' is supported.`,
-          );
-          const replacement = `(async () => {
-            const mod = await import("virtual:vite-rsc/assets-manifest");
-            return mod.default.bootstrapScriptContent;
-          })()`;
-          s.overwrite(
-            match.index!,
-            match.index! + match[0].length,
-            replacement,
-          );
-        }
-        if (s.hasChanged()) {
-          return {
-            code: s.toString(),
-            map: s.generateMap({ hires: "boundary" }),
-          };
-        }
-      },
-    },
     createVirtualPlugin(
       VIRTUAL_ENTRIES.browser.slice("virtual:".length),
       async function () {

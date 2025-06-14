@@ -1,4 +1,7 @@
-declare module "virtual:vite-rsc/assets-manifest" {}
+declare module "virtual:vite-rsc/assets-manifest" {
+  const assetsManifest: import("../plugin").AssetsManifest;
+  export default assetsManifest;
+}
 
 declare module "virtual:vite-rsc/client-references" {
   const default_: Record<string, () => Promise<unknown>>;

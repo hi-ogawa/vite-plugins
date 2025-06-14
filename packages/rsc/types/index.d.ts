@@ -1,3 +1,5 @@
+import "./virtual";
+
 declare global {
   interface ImportMeta {
     readonly viteRsc: {
