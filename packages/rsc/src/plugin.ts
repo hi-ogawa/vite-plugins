@@ -52,23 +52,25 @@ const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 const serverResourcesMetaMap: Record<string, { key: string }> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
-const ENTRIES = {
+const VIRTUAL_ENTRIES = {
   browser: "virtual:vite-rsc/entry-browser",
   rsc: "virtual:vite-rsc/entry-rsc",
   ssr: "virtual:vite-rsc/entry-ssr",
 };
 
-export default function vitePluginRsc(rscPluginOptions: {
-  entries: {
-    browser: string;
-    rsc: string;
-    ssr: string;
-  };
-  ssrEntry?: string;
-  handlerEntry?: string;
-  getServerHandler?: false | (() => Promise<string>);
-}): Plugin[] {
-  const { entries } = rscPluginOptions;
+export default function vitePluginRsc(
+  rscPluginOptions: {
+    entries?: {
+      browser: string;
+      rsc: string;
+      ssr: string;
+    };
+    ssrEntry?: string;
+    handlerEntry?: string;
+    disableServerHandler?: boolean;
+  } = {},
+): Plugin[] {
+  // const { entries } = rscPluginOptions;
   return [
     {
       name: "rsc",
@@ -86,14 +88,10 @@ export default function vitePluginRsc(rscPluginOptions: {
               build: {
                 outDir: "dist/client",
                 rollupOptions: {
-                  input: { index: ENTRIES.browser },
+                  // input: { index: VIRTUAL_ENTRIES.browser },
                 },
               },
               optimizeDeps: {
-                // NOTE: this needs to be a valid file path
-                // e.g. relative `./src/file` or absolute `(abs-path-roo)/src/file`
-                // but not root-absolute path `/src/file`.
-                entries: [entries.browser],
                 include: [
                   "react-dom/client",
                   `${PKG_NAME}/vendor/react-server-dom/client.browser`,
@@ -105,7 +103,7 @@ export default function vitePluginRsc(rscPluginOptions: {
               build: {
                 outDir: "dist/ssr",
                 rollupOptions: {
-                  input: { index: ENTRIES.ssr },
+                  // input: { index: VIRTUAL_ENTRIES.ssr },
                 },
               },
               resolve: {
@@ -142,7 +140,7 @@ export default function vitePluginRsc(rscPluginOptions: {
                 outDir: "dist/rsc",
                 emitAssets: true,
                 rollupOptions: {
-                  input: { index: ENTRIES.rsc },
+                  // input: { index: VIRTUAL_ENTRIES.rsc },
                 },
               },
             },
@@ -212,20 +210,13 @@ export default function vitePluginRsc(rscPluginOptions: {
         (globalThis as any).__viteSsrRunner = viteSsrRunner;
         (globalThis as any).__viteRscRunner = viteRscRunner;
 
-        if (rscPluginOptions.getServerHandler === false) {
-          return;
-        }
-
-        async function defaultGetServerHandler() {
-          const mod = await viteRscRunner.import(ENTRIES.rsc);
-          return mod.default;
-        }
+        if (rscPluginOptions.disableServerHandler) return;
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              const handler = await defaultGetServerHandler();
-              createRequestListener(handler)(req, res);
+              const mod = await viteRscRunner.import(VIRTUAL_ENTRIES.rsc);
+              createRequestListener(mod.default)(req, res);
             } catch (e) {
               next(e);
             }
@@ -233,6 +224,8 @@ export default function vitePluginRsc(rscPluginOptions: {
         };
       },
       async configurePreviewServer(server) {
+        if (rscPluginOptions.disableServerHandler) return;
+
         const entry = pathToFileURL(path.resolve(`dist/rsc/index.js`)).href;
         const mod = await import(/* @vite-ignore */ entry);
         const handler = createRequestListener(mod.default);
@@ -344,10 +337,10 @@ export default function vitePluginRsc(rscPluginOptions: {
       },
       load(id) {
         if (id === "\0virtual:vite-rsc/import-rsc") {
-          return `export default () => __viteRscRunner.import(${JSON.stringify(ENTRIES.rsc)})`;
+          return `export default () => __viteRscRunner.import(${JSON.stringify(VIRTUAL_ENTRIES.rsc)})`;
         }
         if (id === "\0virtual:vite-rsc/import-ssr") {
-          return `export default () => __viteSsrRunner.import(${JSON.stringify(ENTRIES.ssr)})`;
+          return `export default () => __viteSsrRunner.import(${JSON.stringify(VIRTUAL_ENTRIES.ssr)})`;
         }
       },
       renderChunk(code, chunk) {
@@ -387,7 +380,7 @@ export default function vitePluginRsc(rscPluginOptions: {
       load(id) {
         if (id === "\0virtual:vite-rsc/assets-manifest") {
           assert(this.environment.name !== "client");
-          const entryUrl = assetsURL("@id/__x00__" + ENTRIES.browser);
+          const entryUrl = assetsURL("@id/__x00__" + VIRTUAL_ENTRIES.browser);
           const manifest: AssetsManifest = {
             bootstrapScriptContent: `import(${JSON.stringify(entryUrl)})`,
             clientReferenceDeps: {},
@@ -423,7 +416,7 @@ export default function vitePluginRsc(rscPluginOptions: {
           }
 
           const assetDeps = collectAssetDeps(bundle);
-          const entry = assetDeps["\0" + ENTRIES.browser]!;
+          const entry = assetDeps["\0" + VIRTUAL_ENTRIES.browser]!;
           const entryUrl = assetsURL(entry.chunk.fileName);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
@@ -457,7 +450,7 @@ export default function vitePluginRsc(rscPluginOptions: {
       },
     },
     createVirtualPlugin(
-      ENTRIES.browser.slice("virtual:".length),
+      VIRTUAL_ENTRIES.browser.slice("virtual:".length),
       async function () {
         let code = "";
         if (this.environment.mode === "dev") {
@@ -493,13 +486,28 @@ export default function vitePluginRsc(rscPluginOptions: {
       enforce: "pre",
       async resolveId(source, _importer, options) {
         if (source === "virtual:vite-rsc/entry-browser-inner") {
-          return this.resolve(entries.browser, undefined, options);
+          return this.resolve(
+            // @ts-ignore
+            config.environments.client!.build.rollupOptions.input?.index,
+            undefined,
+            options,
+          );
         }
-        if (source === ENTRIES.rsc) {
-          return this.resolve(entries.rsc, undefined, options);
+        if (source === VIRTUAL_ENTRIES.rsc) {
+          return this.resolve(
+            // @ts-ignore
+            config.environments.rsc!.build.rollupOptions.input.index,
+            undefined,
+            options,
+          );
         }
-        if (source === ENTRIES.ssr) {
-          return this.resolve(entries.ssr, undefined, options);
+        if (source === VIRTUAL_ENTRIES.ssr) {
+          return this.resolve(
+            // @ts-ignore
+            config.environments.ssr!.build.rollupOptions.input.index,
+            undefined,
+            options,
+          );
         }
       },
     },
