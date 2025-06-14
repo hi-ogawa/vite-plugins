@@ -54,7 +54,7 @@ import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 
 // the plugin assumes `rsc` entry having default export of request handler
 export default async function handler(request: Request): Promise<Response> {
-  // serialize RSC
+  // serialize React tree to RSC stream
   const root = <html><body><h1>Test</h1></body></html>;
   const rscStream = ReactServer.renderToReadableStream(root);
 
@@ -85,16 +85,15 @@ export default async function handler(request: Request): Promise<Response> {
 ```tsx
 import * as ReactClient from "@hiogawa/vite-rsc/ssr";
 import * as ReactDOMServer from "react-dom/server.edge";
-import { getAssetsManifest } from "@hiogawa/vite-rsc/ssr";
+import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 
 export async function handleSsr(rscStream: ReadableStream) {
-  // deserialize RSC
-  // (NOTE: ssr deserization should be done inside a wrapper component, but it's simplified for doc.)
+  // deserialize RSC stream back to React tree
   const root = await ReactClient.createFromReadableStream(rscStream);
 
   // render html (traditional SSR)
   const htmlStream = ReactDOMServer.renderToReadableStream(root, {
-    bootstrapScriptContent: getAssetsManifest().bootstrapScriptContent,
+    bootstrapScriptContent,
   })
 
   return htmlStream;
@@ -108,8 +107,7 @@ import * as ReactClient from "@hiogawa/vite-rsc/browser";
 import * as ReactDOMClient from "react-dom/client";
 
 async function main() {
-  // fetch and deserialize RSC
-  // (NOTE: extra fetch for hydration can be avoided but it's simplified for doc.)
+  // fetch and deserialize RSC back to React tree
   const rscResponse = await fetch(window.location.href + ".rsc");
   const root = await ReactClient.createFromReadableStream(rscResponse.body);
 
