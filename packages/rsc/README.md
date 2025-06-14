@@ -15,8 +15,6 @@
   - TODO: explain https://remix.run/blog/rsc-preview
 - [`./examples/basic`](./examples/basic)
   - TODO: explain main example for integration tests
-- [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
-  - TODO: explain
 
 ## Basic Concepts
 
@@ -167,10 +165,6 @@ async function main() {
 main();
 ```
 
-## Handling server function
-
-WIP. For now, please read [`./examples/starter/src/framework/entry.{browser,rsc}.tsx`](./examples/starter/src/framework) for the overview.
-
 ## `react-server-dom` API
 
 These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-dom-xxx/client`, aka React flight API.
@@ -233,19 +227,3 @@ import { renderToReadableStream } from "react-dom/server.edge";
 
 renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
-
-## Wrapper RSC API
-
-This is a simple wrapper of `react-server-dom` API. See [`./examples/basic`](./examples/basic/) for usage.
-
-#### `@hiogawa/vite-rsc/extra/rsc`
-
-- `renderRequest`
-
-#### `@hiogawa/vite-rsc/extra/ssr`
-
-- `renderHtml`
-
-#### `@hiogawa/vite-rsc/extra/browser`
-
-- `hydrate`
