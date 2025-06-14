@@ -1,7 +1,6 @@
 import {
   decodeAction,
   decodeReply,
-  importSsr,
   loadServerAction,
   renderToReadableStream,
 } from "@hiogawa/vite-rsc/rsc";
@@ -37,9 +36,4 @@ export async function callServer(request: Request) {
       });
     },
   });
-}
-
-export default async function handler(requrest: Request) {
-  const ssr = await importSsr<typeof import("./entry.ssr")>();
-  return ssr.default(requrest, callServer);
 }

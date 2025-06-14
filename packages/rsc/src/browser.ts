@@ -5,7 +5,7 @@ export * from "./react/browser";
 
 initialize();
 
-export function initialize(): void {
+function initialize(): void {
   setRequireModule({
     load: async (id) => {
       if (import.meta.env.DEV) {

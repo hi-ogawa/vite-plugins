@@ -25,7 +25,7 @@ export default defineConfig({
     rsc({
       entries: {
         client: "./src/client.tsx",
-        ssr: "@hiogawa/vite-rsc/extra/ssr",
+        ssr: "./src/server.ssr.tsx",
         rsc: "./src/server.tsx",
       },
     }),

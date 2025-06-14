@@ -1,6 +1,9 @@
 declare global {
   interface ImportMeta {
-    readonly viteRscCss: import("react").JSX.Element;
+    readonly viteRsc: {
+      loadCss: () => import("react").ReactNode;
+      loadSsrModule: <T>(entry: string) => Promise<T>;
+    };
   }
 }
 

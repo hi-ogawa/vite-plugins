@@ -17,7 +17,7 @@ export function Root() {
           and render associated resources inside server components.
           In this case, this will include `<link rel="stylesheet" />` for `index.css`.
         */}
-        {import.meta.viteRscCss}
+        {import.meta.viteRsc.loadCss()}
       </head>
       <body>
         <App />
