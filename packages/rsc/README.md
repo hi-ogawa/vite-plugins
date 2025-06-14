@@ -179,11 +179,14 @@ export function ServerPage() {
 
 #### `ssr` environment
 
-- `import.meta.viteRsc.getBootstrapScriptContentByEntry: (entryName: string) => string`
-  This provides a code to execute browser entry on browser.
+- `virtual:vite-rsc/bootstrap-script-content`
+  This provides a raw js code to execute a browser entry files specified by `environments.client.build.rollupOptions.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
 
 ```js
-TODO: example
+import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content"
+import { renderToReadableStream } from "react-dom/server.edge";
+
+renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
 
 ## Higher level RSC API
