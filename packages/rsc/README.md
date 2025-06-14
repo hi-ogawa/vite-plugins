@@ -10,15 +10,17 @@
 ## Examples
 
 - [`./examples/starter`](./examples/starter)
+  - This example provides an in-depth overview of API with inline comments to explain how they function through RSC app.
 - [`./examples/react-router`](./examples/react-router)
+  - This demonstrates how to integrate [experimental React Router RSC API](https://remix.run/blog/rsc-preview) with this plugin. It also includes `@cloudflare/vite-plugin` integration.
 - [`./examples/basic`](./examples/basic)
-- [`rsc-movies`](https://github.com/hi-ogawa/rsc-movies/)
+  - This is mainly used for e2e testing. It also uses a high level `@hiogawa/vite-rsc/extra/{rsc,ssr,browser}` API.
 
 ## Basic Concepts
 
-This example can be found in [`./examples/basic-doc`](./examples/basic-doc).
+This example is a simplified version of [`./examples/starter`](./examples/starter). You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework) for more in-depth commentary, which includes server function handling and client-side RSC re-fetching/rendering.
 
-- [`vite.config.ts`](./examples/basic-doc/vite.config.ts)
+- [`vite.config.ts`](./examples/starter/vite.config.ts)
 
 ```js
 import rsc from "@hiogawa/vite-rsc/plugin";
@@ -26,24 +28,66 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 export default defineConfig() {
   plugins: [
     rsc({
-      entries: {
-        // server entry with react-server condition, which should manage:
-        // - RSC serialization
-        // - server functions handling
-        rsc: "./src/entry.rsc.tsx",
+      // `entries` option can be also used as a shorthand for specifying each `rollupOptions.input` below
+      // entries: { rsc, ssr, client },
 
-        // server entry without react-server condition, which should manage:
-        // - RSC deserialization for SSR
-        ssr: "./src/entry.ssr.tsx",
+      // by default, the plugin setup request handler based on `default export` of `rsc` environment `rollupOptions.input.index`.
+      // this can be disabled when setting up own server handler e.g. `@cloudflare/vite-plugin`.
+      // disableServerHandler: true
+    }),
 
-        // main script entry executed on browser, which should manage:
-        // - RSC deserialization for hydration
-        // - refetch and re-render RSC
-        // - calling server functions
-        client: "./src/entry.browser.tsx",
+    // add one of @vitejs/plugin-react-xxx plugins to enable client component HMR
+    // https://github.com/vitejs/vite-plugin-react
+    // react(),
+  ],
+
+  // specify entry point for each environment.
+  // (currently the plugin assumes `rollupOptions.input.index` for some features.)
+  environments: {
+    // `rsc` environment loads modules with `react-server` condition.
+    // this environment is responsible for:
+    // - RSC stream serialization (React VDOM -> RSC stream)
+    // - server functions handling
+    rsc: {
+      build: {
+        rollupOptions: {
+          input: {
+            index: "./src/entry.rsc.tsx",
+          },
+        },
       },
-    })
-  ]
+    },
+
+    // `ssr` environment loads modules without `react-server` condition.
+    // this environment is responsible for:
+    // - RSC stream deserialization (RSC stream -> React VDOM)
+    // - traditional SSR (React VDOM -> HTML string/stream)
+    ssr: {
+      build: {
+        rollupOptions: {
+          input: {
+            index: "./src/entry.ssr.tsx",
+          },
+        },
+      },
+    },
+
+    // client environment is used for hydration and client-side rendering
+    // this environment is responsible for:
+    // - RSC stream deserialization (RSC stream -> React VDOM)
+    // - traditional CSR (React VDOM -> Browser DOM tree mount/hydration)
+    // - refetch and re-render RSC
+    // - calling server functions
+    client: {
+      build: {
+        rollupOptions: {
+          input: {
+            index: "./src/entry.browser.tsx",
+          },
+        },
+      },
+    },
+  },
 }
 ```
 
@@ -54,7 +98,7 @@ import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 
 // the plugin assumes `rsc` entry having default export of request handler
 export default async function handler(request: Request): Promise<Response> {
-  // serialize React tree to RSC stream
+  // serialize React VDOM to RSC stream
   const root = <html><body><h1>Test</h1></body></html>;
   const rscStream = ReactServer.renderToReadableStream(root);
 
@@ -68,6 +112,7 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   // delegate to SSR environment for html rendering
+  // `loadSsrModule` is a helper API provided by plugin for multi environment interaction.
   const ssrEntry = await import.meta.viteRsc.loadSsrModule<typeof import("./entry.ssr.tsx")>();
   const htmlStream = await ssrEntry.handleSsr(rscStream);
 
@@ -88,7 +133,7 @@ import * as ReactDOMServer from "react-dom/server.edge";
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 
 export async function handleSsr(rscStream: ReadableStream) {
-  // deserialize RSC stream back to React tree
+  // deserialize RSC stream back to React VDOM
   const root = await ReactClient.createFromReadableStream(rscStream);
 
   // render html (traditional SSR)
@@ -107,7 +152,7 @@ import * as ReactClient from "@hiogawa/vite-rsc/browser";
 import * as ReactDOMClient from "react-dom/client";
 
 async function main() {
-  // fetch and deserialize RSC back to React tree
+  // fetch and deserialize RSC stream back to React VDOM
   const rscResponse = await fetch(window.location.href + ".rsc");
   const root = await ReactClient.createFromReadableStream(rscResponse.body);
 
@@ -118,35 +163,29 @@ async function main() {
 main();
 ```
 
-## Handling server function
-
-TODO
-
-For now, please read [`./examples/starter/src/framework/entry.{browser,rsc}.tsx`](./examples/starter/src/framework) to get the idea.
-
-## RSC API
+## `react-server-dom` API
 
 These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-dom-xxx/client`, aka React flight API.
 
 #### `@hiogawa/vite-rsc/rsc`
 
-- `renderToReadableStream`: RSC serialization
-- `createFromReadableStream`: RSC deserialization (This is also available on rsc environment itself. For example, it allows saving serailized RSC and deserializing it for later use.)
-- `decodeAction/decodeReply/loadServerAction`: server function related
+- `renderToReadableStream`: RSC serialization (React VDOM -> RSC stream)
+- `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM). This is also available on rsc environment itself. For example, it allows saving serailized RSC and deserializing it for later use.
+- `decodeAction/decodeReply/loadServerAction`: server function related...
 
 #### `@hiogawa/vite-rsc/ssr`
 
-- `createFromReadableStream`: RSC deserialization on server for SSR
+- `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM)
 
 #### `@hiogawa/vite-rsc/browser`
 
-- `createFromReadableStream`: RSC deserialization on browser for hydration
+- `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM)
 - `createFromFetch`: a robust way of `createFromReadableStream((await fetch("...")).body)`
-- `encodeReply/setServerCallback`: server function related
+- `encodeReply/setServerCallback`: server function related...
 
 ## Helper API
 
-These API provide a necessary API to integrate multi environment features into an app.
+The plugin provides an additional helper for multi environment interaction.
 
 #### `rsc` environment
 
@@ -186,21 +225,3 @@ import { renderToReadableStream } from "react-dom/server.edge";
 
 renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
-
-## Higher level RSC API
-
-This is a simple wrapper of the first "RSC API". See [`./examples/basic`](./examples/basic/) for usage.
-Also you can read implementations [`./src/extra/{rsc,ssr,browser}`](./src/extra/) to understand
-how bare RSC API is intended to be used.
-
-#### `@hiogawa/vite-rsc/extra/rsc`
-
-- `renderRequest`
-
-#### `@hiogawa/vite-rsc/extra/ssr`
-
-- `renderHtml`
-
-#### `@hiogawa/vite-rsc/extra/browser`
-
-- `hydrate`
