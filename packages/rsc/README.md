@@ -20,9 +20,11 @@
 
 ## Basic Concepts
 
-This example can be found in [`./examples/basic-doc`](./examples/basic-doc).
+This example is a simplified version of [`./examples/starter`](./examples/starter).
+You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework)
+for more in depth commentary, which includes server function handling and client-side RSC re-fetching/rendering.
 
-- [`vite.config.ts`](./examples/basic-doc/vite.config.ts)
+- [`vite.config.ts`](./examples/starter/vite.config.ts)
 
 ```js
 import rsc from "@hiogawa/vite-rsc/plugin";
@@ -114,7 +116,7 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   // delegate to SSR environment for html rendering
-  // `loadSsrModule` is a helper provided by plugin for multi environment interaction.
+  // `loadSsrModule` is a helper API provided by plugin for multi environment interaction.
   const ssrEntry = await import.meta.viteRsc.loadSsrModule<typeof import("./entry.ssr.tsx")>();
   const htmlStream = await ssrEntry.handleSsr(rscStream);
 
@@ -135,7 +137,7 @@ import * as ReactDOMServer from "react-dom/server.edge";
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 
 export async function handleSsr(rscStream: ReadableStream) {
-  // deserialize RSC stream back to React tree
+  // deserialize RSC stream back to React VDOM
   const root = await ReactClient.createFromReadableStream(rscStream);
 
   // render html (traditional SSR)
@@ -154,7 +156,7 @@ import * as ReactClient from "@hiogawa/vite-rsc/browser";
 import * as ReactDOMClient from "react-dom/client";
 
 async function main() {
-  // fetch and deserialize RSC back to React tree
+  // fetch and deserialize RSC stream back to React VDOM
   const rscResponse = await fetch(window.location.href + ".rsc");
   const root = await ReactClient.createFromReadableStream(rscResponse.body);
 
@@ -232,11 +234,9 @@ import { renderToReadableStream } from "react-dom/server.edge";
 renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
 
-## Higher level RSC API
+## Wrapper RSC API
 
-This is a simple wrapper of the core "RSC API". See [`./examples/basic`](./examples/basic/) for usage.
-You can read implementations [`./src/extra/{rsc,ssr,browser}`](./src/extra/) to understand
-how RSC API is intended to be used.
+This is a simple wrapper of `react-server-dom` API. See [`./examples/basic`](./examples/basic/) for usage.
 
 #### `@hiogawa/vite-rsc/extra/rsc`
 

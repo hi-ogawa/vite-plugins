@@ -8,19 +8,19 @@ import inspect from "vite-plugin-inspect";
 export default defineConfig({
   plugins: [
     // TODO
-    react(),
-    // TODO
     rsc(),
+    // TODO
+    react(),
     // TODO
     inspect({ build: true }),
   ],
   // TODO
   environments: {
-    client: {
+    rsc: {
       build: {
         rollupOptions: {
           input: {
-            index: "./src/framework/entry.browser.tsx",
+            index: "./src/framework/entry.rsc.tsx",
           },
         },
       },
@@ -34,11 +34,11 @@ export default defineConfig({
         },
       },
     },
-    rsc: {
+    client: {
       build: {
         rollupOptions: {
           input: {
-            index: "./src/framework/entry.rsc.tsx",
+            index: "./src/framework/entry.browser.tsx",
           },
         },
       },
