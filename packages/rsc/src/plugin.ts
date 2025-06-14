@@ -424,7 +424,8 @@ export default function vitePluginRsc(
           }
 
           const assetDeps = collectAssetDeps(bundle);
-          const entry = assetDeps[browserEntryId]!;
+          const entry = assetDeps[browserEntryId];
+          assert(entry);
           const entryUrl = assetsURL(entry.chunk.fileName);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
