@@ -36,6 +36,7 @@ let viteSsrRunner: ModuleRunner;
 let viteRscRunner: ModuleRunner;
 let rscBundle: Rollup.OutputBundle;
 let buildAssetsManifest: AssetsManifest | undefined;
+let browserEntryId: string;
 const BUILD_ASSETS_MANIFEST_NAME = "__vite_rsc_assets_manifest.js";
 
 type ClientReferenceMeta = {
@@ -388,6 +389,20 @@ export default function vitePluginRsc(
           return `export default ${JSON.stringify(manifest, null, 2)}`;
         }
       },
+      async buildEnd(error) {
+        if (
+          !error &&
+          this.environment.mode === "build" &&
+          this.environment.name === "client"
+        ) {
+          const resolved = await this.resolve(
+            // @ts-ignore
+            this.environment.config.build.rollupOptions.input.index,
+          );
+          assert(resolved);
+          browserEntryId = resolved.id;
+        }
+      },
       // client build
       generateBundle(_options, bundle) {
         // copy assets from rsc build to client build
@@ -416,7 +431,7 @@ export default function vitePluginRsc(
           }
 
           const assetDeps = collectAssetDeps(bundle);
-          const entry = assetDeps["\0" + VIRTUAL_ENTRIES.browser]!;
+          const entry = assetDeps[browserEntryId]!;
           const entryUrl = assetsURL(entry.chunk.fileName);
           const clientReferenceDeps: Record<string, AssetDeps> = {};
           for (const [id, meta] of Object.entries(clientReferenceMetaMap)) {
@@ -494,6 +509,8 @@ export default function vitePluginRsc(
           );
         }
         if (source === VIRTUAL_ENTRIES.rsc) {
+          assert(this.environment.name === "rsc");
+          assert(this.environment.mode === "dev");
           return this.resolve(
             // @ts-ignore
             config.environments.rsc!.build.rollupOptions.input.index,
@@ -502,6 +519,8 @@ export default function vitePluginRsc(
           );
         }
         if (source === VIRTUAL_ENTRIES.ssr) {
+          assert(this.environment.name === "ssr");
+          assert(this.environment.mode === "dev");
           return this.resolve(
             // @ts-ignore
             config.environments.ssr!.build.rollupOptions.input.index,
