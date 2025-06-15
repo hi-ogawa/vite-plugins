@@ -18,7 +18,7 @@
 
 ## Basic Concepts
 
-This example is a simplified version of [`./examples/starter`](./examples/starter). You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework) for more in-depth commentary, which includes server function handling and client-side RSC re-fetching/rendering.
+This example is a simplified version of [`./examples/starter`](./examples/starter). You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework) for more in-depth commentary, which includes server function handling and client-side RSC re-fetching/re-rendering.
 
 - [`vite.config.ts`](./examples/starter/vite.config.ts)
 
@@ -81,14 +81,14 @@ export default defineConfig() {
 }
 ```
 
-- [`entry.rsc.tsx`](./examples/basic-doc/src/entry.rsc.tsx)
+- [`entry.rsc.tsx`](./examples/starter/src/framework/entry.rsc.tsx)
 
 ```tsx
 import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 
 // the plugin assumes `rsc` entry having default export of request handler
 export default async function handler(request: Request): Promise<Response> {
-  // serialize React VDOM to RSC stream
+  // serialization (React VDOM -> RSC stream)
   const root = <html><body><h1>Test</h1></body></html>;
   const rscStream = ReactServer.renderToReadableStream(root);
 
@@ -115,7 +115,7 @@ export default async function handler(request: Request): Promise<Response> {
 }
 ```
 
-- [`entry.ssr.tsx`](./examples/basic-doc/src/entry.ssr.tsx)
+- [`entry.ssr.tsx`](./examples/starter/src/framework/entry.ssr.tsx)
 
 ```tsx
 import * as ReactClient from "@hiogawa/vite-rsc/ssr";
@@ -135,7 +135,7 @@ export async function handleSsr(rscStream: ReadableStream) {
 }
 ```
 
-- [`entry.browser.tsx`](./examples/basic-doc/src/entry.browser.tsx)
+- [`entry.browser.tsx`](./examples/starter/src/framework/entry.browser.tsx)
 
 ```tsx
 import * as ReactClient from "@hiogawa/vite-rsc/browser";
