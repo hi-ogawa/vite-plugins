@@ -43,7 +43,7 @@ export default async function handler(request: Request): Promise<Response> {
     } else {
       // otherwise server function is called via `<form action={...}>`
       // before hydration (e.g. when javascript is disabled).
-      // (aka progressive enhancement)
+      // aka progressive enhancement.
       const formData = await request.formData();
       const decodedAction = await ReactServer.decodeAction(formData);
       const result = await decodedAction();

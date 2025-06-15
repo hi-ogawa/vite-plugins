@@ -3,27 +3,33 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import inspect from "vite-plugin-inspect";
 
-// TODO: explain
-
 export default defineConfig({
   plugins: [
     rsc({
       // `entries` option is only a shorthand for specifying each `rollupOptions.input` below
       // > entries: { rsc, ssr, client },
+      //
       // by default, the plugin setup request handler based on `default export` of `rsc` environment `rollupOptions.input.index`.
-      // this can be disabled when setting up own server handler e.g. `@cloudflare/vite-plugin`.
+      // This can be disabled when setting up own server handler e.g. `@cloudflare/vite-plugin`.
       // > disableServerHandler: true
     }),
 
-    // add any of @vitejs/plugin-react-xxx plugins to enable client component HMR
+    // use any of @vitejs/plugin-react-xxx plugins to enable client component HMR
     // https://github.com/vitejs/vite-plugin-react
     react(),
 
-    // TODO
+    // vite-plugin-inspect is useful for understanding
+    // "use client" / "use server" transforms.
     inspect({ build: true }),
   ],
-  // TODO
+
+  // specify entry point for each environment.
+  // (currently the plugin assumes `rollupOptions.input.index` for some features.)
   environments: {
+    // `rsc` environment loads modules with `react-server` condition.
+    // this environment is responsible for:
+    // - RSC stream serialization (React VDOM -> RSC stream)
+    // - server functions handling
     rsc: {
       build: {
         rollupOptions: {
@@ -33,6 +39,11 @@ export default defineConfig({
         },
       },
     },
+
+    // `ssr` environment loads modules without `react-server` condition.
+    // this environment is responsible for:
+    // - RSC stream deserialization (RSC stream -> React VDOM)
+    // - traditional SSR (React VDOM -> HTML string/stream)
     ssr: {
       build: {
         rollupOptions: {
@@ -42,6 +53,13 @@ export default defineConfig({
         },
       },
     },
+
+    // client environment is used for hydration and client-side rendering
+    // this environment is responsible for:
+    // - RSC stream deserialization (RSC stream -> React VDOM)
+    // - traditional CSR (React VDOM -> Browser DOM tree mount/hydration)
+    // - refetch and re-render RSC
+    // - calling server functions
     client: {
       build: {
         rollupOptions: {

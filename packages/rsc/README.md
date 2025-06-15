@@ -42,7 +42,7 @@ export default defineConfig() {
       build: {
         rollupOptions: {
           input: {
-            index: "./src/entry.rsc.tsx",
+            index: "./src/framework/entry.rsc.tsx",
           },
         },
       },
@@ -56,7 +56,7 @@ export default defineConfig() {
       build: {
         rollupOptions: {
           input: {
-            index: "./src/entry.ssr.tsx",
+            index: "./src/framework/entry.ssr.tsx",
           },
         },
       },
@@ -72,7 +72,7 @@ export default defineConfig() {
       build: {
         rollupOptions: {
           input: {
-            index: "./src/entry.browser.tsx",
+            index: "./src/framework/entry.browser.tsx",
           },
         },
       },
@@ -88,7 +88,7 @@ import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 
 // the plugin assumes `rsc` entry having default export of request handler
 export default async function handler(request: Request): Promise<Response> {
-  // serialization (React VDOM -> RSC stream)
+  // serialization React VDOM to RSC stream
   const root = <html><body><h1>Test</h1></body></html>;
   const rscStream = ReactServer.renderToReadableStream(root);
 
@@ -102,7 +102,7 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   // delegate to SSR environment for html rendering
-  // `loadSsrModule` is a helper API provided by plugin for multi environment interaction.
+  // `loadSsrModule` is a helper API provided by the plugin for multi environment interaction.
   const ssrEntry = await import.meta.viteRsc.loadSsrModule<typeof import("./entry.ssr.tsx")>();
   const htmlStream = await ssrEntry.handleSsr(rscStream);
 
@@ -120,6 +120,7 @@ export default async function handler(request: Request): Promise<Response> {
 ```tsx
 import * as ReactClient from "@hiogawa/vite-rsc/ssr";
 import * as ReactDOMServer from "react-dom/server.edge";
+// helper API to allow referencing browser entry content from SSR environment
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 
 export async function handleSsr(rscStream: ReadableStream) {
