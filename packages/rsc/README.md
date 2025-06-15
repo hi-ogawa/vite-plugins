@@ -241,7 +241,7 @@ export function ServerPage() {
 #### `ssr` environment
 
 - `virtual:vite-rsc/bootstrap-script-content`
-  This provides a raw js code to execute a browser entry files specified by `environments.client.build.rollupOptions.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
+  This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
 
 ```js
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content"
