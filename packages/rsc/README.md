@@ -20,6 +20,38 @@
 
 This example is a simplified version of [`./examples/starter`](./examples/starter). You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework) for more in-depth commentary, which includes server function handling and client-side RSC re-fetching/re-rendering.
 
+This is the diagram to show the basic flow of RSC rendering process. (See also https://github.com/hi-ogawa/vite-plugins/discussions/606).
+
+```mermaid
+graph TD
+
+    subgraph "<strong>rsc environment</strong>"
+        A["React virtual dom tree"] --> |"[react-server-dom-xxx/server]<br /><code>renderToReadableStream</code>"| B1["RSC Stream"];
+    end
+
+    B1 --> B2
+    B1 --> |"e.g. client side fetch or inject payload along with initial SSR"| B3
+
+    subgraph "<strong>ssr environment</strong>"
+        B2["RSC Stream"] --> |"[react-server-dom-xxx/client]<br /><code>renderToReadableStream</code>"| C1["React virtual dom tree"];
+        C1 --> |"[react-dom/server]<br/>SSR"| E["HTML String/Stream"];
+    end
+
+    subgraph "<strong>client environment</strong>"
+        B3["RSC Stream"] --> |"[react-server-dom-xxx/client]<br /><code>renderToReadableStream</code>"| C2["React virtual dom tree"];
+        C2 --> |"[react-dom/client]<br/>CSR: mount, hydration"| D["DOM Elements"];
+    end
+
+    style A fill:#D6EAF8,stroke:#333,stroke-width:2px
+    style B1 fill:#FEF9E7,stroke:#333,stroke-width:2px
+    style B2 fill:#FEF9E7,stroke:#333,stroke-width:2px
+    style B3 fill:#FEF9E7,stroke:#333,stroke-width:2px
+    style C1 fill:#D6EAF8,stroke:#333,stroke-width:2px
+    style C2 fill:#D6EAF8,stroke:#333,stroke-width:2px
+    style D fill:#D5F5E3,stroke:#333,stroke-width:2px
+    style E fill:#FADBD8,stroke:#333,stroke-width:2px
+```
+
 - [`vite.config.ts`](./examples/starter/vite.config.ts)
 
 ```js
