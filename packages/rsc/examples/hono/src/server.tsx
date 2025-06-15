@@ -1,3 +1,4 @@
+import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
 import { Hono } from "hono";
 
@@ -26,6 +27,7 @@ function Document() {
       </head>
       <body>
         <div id="root"></div>
+        <script dangerouslySetInnerHTML={{ __html: bootstrapScriptContent }} />
       </body>
     </html>
   );
