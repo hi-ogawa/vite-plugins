@@ -117,7 +117,7 @@ export default defineConfig() {
 - [`entry.rsc.tsx`](./examples/starter/src/framework/entry.rsc.tsx)
 
 ```tsx
-import * as ReactServer from "@hiogawa/vite-rsc/rsc";
+import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // re-export of react-server-dom/server.edge
 
 // the plugin assumes `rsc` entry having default export of request handler
 export default async function handler(request: Request): Promise<Response> {
@@ -151,7 +151,7 @@ export default async function handler(request: Request): Promise<Response> {
 - [`entry.ssr.tsx`](./examples/starter/src/framework/entry.ssr.tsx)
 
 ```tsx
-import * as ReactClient from "@hiogawa/vite-rsc/ssr";
+import * as ReactClient from "@hiogawa/vite-rsc/ssr"; // re-export of react-server-dom/client.edge
 import * as ReactDOMServer from "react-dom/server.edge";
 // helper API to allow referencing browser entry content from SSR environment
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
@@ -172,7 +172,7 @@ export async function handleSsr(rscStream: ReadableStream) {
 - [`entry.browser.tsx`](./examples/starter/src/framework/entry.browser.tsx)
 
 ```tsx
-import * as ReactClient from "@hiogawa/vite-rsc/browser";
+import * as ReactClient from "@hiogawa/vite-rsc/browser"; // re-export of react-server-dom/client.browser
 import * as ReactDOMClient from "react-dom/client";
 
 async function main() {
@@ -189,9 +189,9 @@ main();
 
 ## `react-server-dom` API
 
-These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-dom-xxx/client`, aka React flight API.
-
 #### `@hiogawa/vite-rsc/rsc`
+
+This module re-exports RSC runtime API provided by `react-server-dom/server.edge`
 
 - `renderToReadableStream`: RSC serialization (React VDOM -> RSC stream)
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM). This is also available on rsc environment itself. For example, it allows saving serailized RSC and deserializing it for later use.
@@ -199,9 +199,13 @@ These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-d
 
 #### `@hiogawa/vite-rsc/ssr`
 
+This module re-exports RSC runtime API provided by `react-server-dom/client.edge`
+
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM)
 
 #### `@hiogawa/vite-rsc/browser`
+
+This module re-exports RSC runtime API provided by `react-server-dom/client.browser`
 
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM)
 - `createFromFetch`: a robust way of `createFromReadableStream((await fetch("...")).body)`
@@ -214,15 +218,17 @@ The plugin provides an additional helper for multi environment interaction.
 #### `rsc` environment
 
 - `import.meta.viteRsc.loadSsrModule: <T>(entryName: string) => Promise<T>`
-  This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment.
+  This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment. This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
+  When that's not the case, the communication between two environments needs to be implemented on your own (e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
 
 ```js
-import.meta.viteRsc.loadSsrModule("index");
+// rsc environment
+const ssrModule = await import.meta.viteRsc.loadSsrModule("index");
+ssrModule.renderHtml(...)
 ```
 
 - `import.meta.viteRsc.loadCss: () => React.ReactNode`
-  This allows collecting css which is imported through a current server module
-  and injecting them inside server components.
+  This allows collecting css which is imported through a current server module and injecting them inside server components.
 
 ```tsx
 import "./test.css";
