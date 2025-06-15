@@ -15,6 +15,7 @@
   },
   "files": ["dist", "types"],
   "scripts": {
+    "test-package": "bash scripts/test-package.sh",
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
     "prepack": "tsdown --clean"

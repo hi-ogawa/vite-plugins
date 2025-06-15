@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync } from "fs";
-import { tinyassert } from "@hiogawa/utils";
+import assert from "node:assert/strict";
+import { readFileSync, writeFileSync } from "node:fs";
 import test, { type Page, expect } from "@playwright/test";
 
 export const testNoJs = test.extend({
@@ -39,7 +39,7 @@ export function createEditor(filepath: string) {
   return {
     edit(editFn: (data: string) => string) {
       const next = editFn(current);
-      tinyassert(next !== current);
+      assert(next !== current);
       current = next;
       writeFileSync(filepath, next);
     },
