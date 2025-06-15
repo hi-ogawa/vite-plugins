@@ -1,13 +1,9 @@
-import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // RSC API
+import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 import type { ReactFormState } from "react-dom/client";
 import { Root } from "../root.tsx";
 
-// RSC (React Server Components) entry point that handles both server actions and rendering.
-// This file processes incoming requests and determines whether to:
-// 1. Execute server actions (POST requests)
-// 2. Return RSC payload for client-side navigation
-// 3. Delegate to SSR for full HTML rendering
-
+// The schema of payload which is serialized into RSC stream on rsc environment
+// and deserialized on ssr/client environments.
 export type RscPayload = {
   // this demo renders/serializes/deserizlies entire root html element
   // but this mechanism can be changed to render/fetch different parts of components
@@ -51,7 +47,8 @@ export default async function handler(request: Request): Promise<Response> {
     }
   }
 
-  // render RSC stream after handling server function request
+  // serialization from React VDOM tree to RSC stream.
+  // we render RSC stream after handling server function request
   // so that new render reflects updated state from server function call
   // to achieve single round trip to mutate and fetch from server.
   const rscStream = ReactServer.renderToReadableStream<RscPayload>({

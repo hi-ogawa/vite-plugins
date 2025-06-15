@@ -9,7 +9,7 @@ async function main() {
   // from outside of `BrowserRoot` component (e.g. server function call, navigation, hmr)
   let setPayload: (v: RscPayload) => void;
 
-  // deserialize RSC stream into react node for CSR
+  // deserialize RSC stream back to React VDOM for CSR
   const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(
     // initial RSC stream is injected in SSR stream as <script>...FLIGHT_DATA...</script>
     getRscStreamFromHtml(),

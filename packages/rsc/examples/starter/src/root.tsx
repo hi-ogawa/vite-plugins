@@ -56,6 +56,8 @@ function App() {
         <li>
           Edit <code>src/root.tsx</code> to test server HMR.
         </li>
+        {/* TODO: test server function without javascript by ?__nojs */}
+        {/* TODO: view rsc stream content via */}
       </ul>
     </div>
   );

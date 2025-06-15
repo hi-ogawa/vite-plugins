@@ -14,8 +14,8 @@ export default defineConfig({
       // > disableServerHandler: true
     }),
 
-    // use any of @vitejs/plugin-react-xxx plugins to enable client component HMR
-    // https://github.com/vitejs/vite-plugin-react
+    // use any of react plugins https://github.com/vitejs/vite-plugin-react
+    // to enable client component HMR
     react(),
 
     // vite-plugin-inspect is useful for understanding

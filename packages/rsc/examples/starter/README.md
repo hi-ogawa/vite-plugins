@@ -11,7 +11,24 @@ npm run build
 npm run preview
 ```
 
-## Tips
+## API usages
+
+- [`vite.config.ts`](./vite.config.ts)
+  - `@higoawa/vite-rsc/plugin`
+- [`./src/framework/entry.rsc.tsx`](./src/framework/entry.rsc.tsx)
+  - `@hiogawa/vite-rsc/rsc`
+- [`./src/framework/entry.ssr.tsx`](./src/framework/entry.ssr.tsx)
+  - `@hiogawa/vite-rsc/ssr`
+  - `@hiogawa/vite-rsc/rsc-html-stream/ssr`
+  - `virtual:vite-rsc/bootstrap-script-content`
+- [`./src/framework/entry.browser.tsx`](./src/framework/entry.browser.tsx)
+  - `@hiogawa/vite-rsc/browser`
+  - `@hiogawa/vite-rsc/rsc-html-stream/ssr`
+  - `@hiogawa/vite-rsc/rsc-html-stream/browser`
+- [./src/root.tsx](./src/root.tsx)
+  - `import.meta.viteRsc.loadCss`
+
+## Notes
 
 - [`./src/framework/entry.{browser,rsc,ssr}.tsx`](./src/framework) (with inline comments) provides an overview of how low level RSC (React flight) API can be used to build RSC framework.
 - You can use [`vite-plugin-inspect`](https://github.com/antfu-collective/vite-plugin-inspect) (available at http://localhost:5173/__inspect/) to see how `"use client"` and `"use server"` directives are internally transformed.
