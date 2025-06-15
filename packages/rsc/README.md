@@ -26,19 +26,19 @@ This is the diagram to show the basic flow of RSC rendering process. See also ht
 graph TD
 
     subgraph "<strong>rsc environment</strong>"
-        A["React virtual dom tree"] --> |"[@hiogawa/vite-rsc/rsc]<br /><code>renderToReadableStream</code>"| B1["RSC Stream"];
+        A["React virtual dom tree"] --> |"[react-server-dom/server.edge]<br /><code>renderToReadableStream</code>"| B1["RSC Stream"];
     end
 
     B1 --> B2
     B1 --> B3
 
     subgraph "<strong>ssr environment</strong>"
-        B2["RSC Stream"] --> |"[@hiogawa/vite-rsc/ssr]<br /><code>createFromReadableStream</code>"| C1["React virtual dom tree"];
+        B2["RSC Stream"] --> |"[react-server-dom/client.edge]<br /><code>createFromReadableStream</code>"| C1["React virtual dom tree"];
         C1 --> |"[react-dom/server]<br/>SSR"| E["HTML String/Stream"];
     end
 
     subgraph "<strong>client environment</strong>"
-        B3["RSC Stream"] --> |"[@hiogawa/vite-rsc/browser]<br /><code>createFromReadableStream</code>"| C2["React virtual dom tree"];
+        B3["RSC Stream"] --> |"[react-server-dom/client.browser]<br /><code>createFromReadableStream</code>"| C2["React virtual dom tree"];
         C2 --> |"[react-dom/client]<br/>CSR: mount, hydration"| D["DOM Elements"];
     end
 
@@ -117,7 +117,7 @@ export default defineConfig() {
 - [`entry.rsc.tsx`](./examples/starter/src/framework/entry.rsc.tsx)
 
 ```tsx
-import * as ReactServer from "@hiogawa/vite-rsc/rsc";
+import * as ReactServer from "@hiogawa/vite-rsc/rsc"; // re-export of react-server-dom/server.edge
 
 // the plugin assumes `rsc` entry having default export of request handler
 export default async function handler(request: Request): Promise<Response> {
@@ -151,7 +151,7 @@ export default async function handler(request: Request): Promise<Response> {
 - [`entry.ssr.tsx`](./examples/starter/src/framework/entry.ssr.tsx)
 
 ```tsx
-import * as ReactClient from "@hiogawa/vite-rsc/ssr";
+import * as ReactClient from "@hiogawa/vite-rsc/ssr"; // re-export of react-server-dom/client.edge
 import * as ReactDOMServer from "react-dom/server.edge";
 // helper API to allow referencing browser entry content from SSR environment
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
@@ -172,7 +172,7 @@ export async function handleSsr(rscStream: ReadableStream) {
 - [`entry.browser.tsx`](./examples/starter/src/framework/entry.browser.tsx)
 
 ```tsx
-import * as ReactClient from "@hiogawa/vite-rsc/browser";
+import * as ReactClient from "@hiogawa/vite-rsc/browser"; // re-export of react-server-dom/client.browser
 import * as ReactDOMClient from "react-dom/client";
 
 async function main() {
