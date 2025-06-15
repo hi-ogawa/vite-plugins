@@ -2,18 +2,18 @@
 set -eu -o pipefail
 
 # run examples/basic e2e on fresh installation
-#   bash misc/test.sh
 
 test_dir="/tmp/test-vite-rsc"
-lib_dir="$PWD"
+this_dir="$(dirname "$(realpath "$0")")"
+package_dir="$(realpath "$this_dir/..")"
 
 rm -rf "$test_dir"
-cp -r examples/basic "$test_dir"
+cp -r "$package_dir/examples/basic" "$test_dir"
 
 cd "$test_dir"
 rm -rf dist node_modules
 
-node "$lib_dir/misc/overrides.mjs" "$test_dir/package.json"
+node "$this_dir/overrides.mjs" "$test_dir/package.json"
 pnpm i
 
 if test "${CI:-}" = "true"; then

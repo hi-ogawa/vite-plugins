@@ -2,10 +2,12 @@ import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { argv } from "process";
 
-const packages = resolve(import.meta.dirname, "..", "..");
+const packagesDir = resolve(import.meta.dirname, "..", "..");
 
-overrides["@hiogawa/transforms"] = `file:${resolve(packages, "transforms")}`;
-overrides["@hiogawa/vite-rsc"] = `file:${resolve(packages, "rsc")}`;
+const overrides = {
+  "@hiogawa/transforms": `file:${resolve(packagesDir, "transforms")}`,
+  "@hiogawa/vite-rsc": `file:${resolve(packagesDir, "rsc")}`,
+};
 
 editJson(argv[2], (pkg) => {
   Object.assign(((pkg.pnpm ??= {}).overrides ??= {}), overrides);
