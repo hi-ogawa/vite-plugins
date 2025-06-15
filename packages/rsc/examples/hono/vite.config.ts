@@ -12,7 +12,16 @@ export default defineConfig({
         rsc: "./src/server.tsx",
         ssr: "@hiogawa/vite-rsc/extra/ssr",
       },
+      disableServerHandler: true,
     }),
+    {
+      name: "spa",
+      config() {
+        return {
+          appType: "spa",
+        };
+      },
+    },
   ],
   build: {
     minify: false,
