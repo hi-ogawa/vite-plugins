@@ -20,7 +20,7 @@
 
 This example is a simplified version of [`./examples/starter`](./examples/starter). You can read [`./examples/starter/src/framework/entry.{rsc,ssr,browser}.tsx`](./examples/starter/src/framework) for more in-depth commentary, which includes server function handling and client-side RSC re-fetching/re-rendering.
 
-This is the diagram to show the basic flow of RSC rendering process. (See also https://github.com/hi-ogawa/vite-plugins/discussions/606).
+This is the diagram to show the basic flow of RSC rendering process. See also https://github.com/hi-ogawa/vite-plugins/discussions/606.
 
 ```mermaid
 graph TD
@@ -84,6 +84,7 @@ export default defineConfig() {
     // this environment is responsible for:
     // - RSC stream deserialization (RSC stream -> React VDOM)
     // - traditional SSR (React VDOM -> HTML string/stream)
+    // (NOTE: as it can be seen in the above diagram. SSR is technically an optional mechanism.)
     ssr: {
       build: {
         rollupOptions: {
