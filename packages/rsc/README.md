@@ -26,19 +26,19 @@ This is the diagram to show the basic flow of RSC rendering process. See also ht
 graph TD
 
     subgraph "<strong>rsc environment</strong>"
-        A["React virtual dom tree"] --> |"[react-server-dom-xxx/server]<br /><code>renderToReadableStream</code>"| B1["RSC Stream"];
+        A["React virtual dom tree"] --> |"[@hiogawa/vite-rsc/rsc]<br /><code>renderToReadableStream</code>"| B1["RSC Stream"];
     end
 
     B1 --> B2
-    B1 --> |"e.g. client side fetch or inject payload along with initial SSR"| B3
+    B1 --> |"e.g. client side fetch"| B3
 
     subgraph "<strong>ssr environment</strong>"
-        B2["RSC Stream"] --> |"[react-server-dom-xxx/client]<br /><code>renderToReadableStream</code>"| C1["React virtual dom tree"];
+        B2["RSC Stream"] --> |"[@hiogawa/vite-rsc/ssr]<br /><code>renderToReadableStream</code>"| C1["React virtual dom tree"];
         C1 --> |"[react-dom/server]<br/>SSR"| E["HTML String/Stream"];
     end
 
     subgraph "<strong>client environment</strong>"
-        B3["RSC Stream"] --> |"[react-server-dom-xxx/client]<br /><code>renderToReadableStream</code>"| C2["React virtual dom tree"];
+        B3["RSC Stream"] --> |"[@hiogawa/vite-rsc/browser]<br /><code>renderToReadableStream</code>"| C2["React virtual dom tree"];
         C2 --> |"[react-dom/client]<br/>CSR: mount, hydration"| D["DOM Elements"];
     end
 
