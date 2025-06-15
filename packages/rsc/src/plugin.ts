@@ -454,13 +454,17 @@ export default function vitePluginRsc(
       renderChunk(code, chunk) {
         if (code.includes("virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
-          const replacement = path.relative(
+          let replacement = path.relative(
             path.join(chunk.fileName, ".."),
             BUILD_ASSETS_MANIFEST_NAME,
           );
+          replacement = normalizePath(replacement);
+          if (!replacement.startsWith(".")) {
+            replacement = "./" + replacement;
+          }
           code = code.replaceAll(
             "virtual:vite-rsc/assets-manifest",
-            () => "./" + normalizePath(replacement),
+            () => replacement,
           );
           return { code };
         }
