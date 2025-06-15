@@ -189,9 +189,9 @@ main();
 
 ## `react-server-dom` API
 
-These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-dom-xxx/client`, aka React flight API.
-
 #### `@hiogawa/vite-rsc/rsc`
+
+This module re-exports RSC runtime API provided by `react-server-dom/server.edge`
 
 - `renderToReadableStream`: RSC serialization (React VDOM -> RSC stream)
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM). This is also available on rsc environment itself. For example, it allows saving serailized RSC and deserializing it for later use.
@@ -199,9 +199,13 @@ These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-d
 
 #### `@hiogawa/vite-rsc/ssr`
 
+This module re-exports RSC runtime API provided by `react-server-dom/client.edge`
+
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM)
 
 #### `@hiogawa/vite-rsc/browser`
+
+This module re-exports RSC runtime API provided by `react-server-dom/client.browser`
 
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM)
 - `createFromFetch`: a robust way of `createFromReadableStream((await fetch("...")).body)`
@@ -214,15 +218,17 @@ The plugin provides an additional helper for multi environment interaction.
 #### `rsc` environment
 
 - `import.meta.viteRsc.loadSsrModule: <T>(entryName: string) => Promise<T>`
-  This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment.
+  This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment. This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
+  When that's not the case, the communication between two environments need to be implemented on your own (e.g. `@cloudflare/vite-plugin` allows service binding to achieve this mechanism).
 
 ```js
-import.meta.viteRsc.loadSsrModule("index");
+// rsc environment
+const ssrModule = await import.meta.viteRsc.loadSsrModule("index");
+ssrModule.renderHtml(...)
 ```
 
 - `import.meta.viteRsc.loadCss: () => React.ReactNode`
-  This allows collecting css which is imported through a current server module
-  and injecting them inside server components.
+  This allows collecting css which is imported through a current server module and injecting them inside server components.
 
 ```tsx
 import "./test.css";
