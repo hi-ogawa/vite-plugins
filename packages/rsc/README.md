@@ -14,7 +14,7 @@
 - [`./examples/react-router`](./examples/react-router)
   - This demonstrates how to integrate [experimental React Router RSC API](https://remix.run/blog/rsc-preview) with this plugin. It also includes `@cloudflare/vite-plugin` integration.
 - [`./examples/basic`](./examples/basic)
-  - This is mainly used for e2e testing. It also uses a high level `@hiogawa/vite-rsc/extra/{rsc,ssr,browser}` API.
+  - This is mainly used for e2e testing and include various edge cases. It also uses a high level `@hiogawa/vite-rsc/extra/{rsc,ssr,browser}` API.
 
 ## Basic Concepts
 
@@ -27,18 +27,8 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 
 export default defineConfig() {
   plugins: [
-    rsc({
-      // `entries` option can be also used as a shorthand for specifying each `rollupOptions.input` below
-      // entries: { rsc, ssr, client },
-
-      // by default, the plugin setup request handler based on `default export` of `rsc` environment `rollupOptions.input.index`.
-      // this can be disabled when setting up own server handler e.g. `@cloudflare/vite-plugin`.
-      // disableServerHandler: true
-    }),
-
-    // add one of @vitejs/plugin-react-xxx plugins to enable client component HMR
-    // https://github.com/vitejs/vite-plugin-react
-    // react(),
+    // add plugin
+    rsc(),
   ],
 
   // specify entry point for each environment.
@@ -183,7 +173,7 @@ These are mostly re-exports of `react-server-dom-xxx/server` and `react-server-d
 - `createFromFetch`: a robust way of `createFromReadableStream((await fetch("...")).body)`
 - `encodeReply/setServerCallback`: server function related...
 
-## Helper API
+## Environment helper API
 
 The plugin provides an additional helper for multi environment interaction.
 
@@ -225,3 +215,19 @@ import { renderToReadableStream } from "react-dom/server.edge";
 
 renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
+
+## Higher level API
+
+This is a wrapper of `react-server-dom` API and helper API to setup a minimal RSC app without writing own framework code like [`./examples/starter/src/framework`](./examples/starter/src/framework/). See [`./examples/basic`](./examples/basic/) for how this API is used.
+
+#### `@hiogawa/vite-rsc/extra/rsc`
+
+- `renderRequest`
+
+#### `@hiogawa/vite-rsc/extra/ssr`
+
+- `renderHtml`
+
+#### `@hiogawa/vite-rsc/extra/browser`
+
+- `hydrate`

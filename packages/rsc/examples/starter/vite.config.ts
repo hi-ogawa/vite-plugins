@@ -7,10 +7,18 @@ import inspect from "vite-plugin-inspect";
 
 export default defineConfig({
   plugins: [
-    // TODO
-    rsc(),
-    // TODO
+    rsc({
+      // `entries` option is only a shorthand for specifying each `rollupOptions.input` below
+      // > entries: { rsc, ssr, client },
+      // by default, the plugin setup request handler based on `default export` of `rsc` environment `rollupOptions.input.index`.
+      // this can be disabled when setting up own server handler e.g. `@cloudflare/vite-plugin`.
+      // > disableServerHandler: true
+    }),
+
+    // add any of @vitejs/plugin-react-xxx plugins to enable client component HMR
+    // https://github.com/vitejs/vite-plugin-react
     react(),
+
     // TODO
     inspect({ build: true }),
   ],
