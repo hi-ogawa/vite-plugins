@@ -6,9 +6,9 @@ settings:
 
 overrides:
   vite: ^6.3.2
-  react: ^19.1.0
-  react-dom: ^19.1.0
-  react-server-dom-webpack: ^19.1.0
+  react: 0.0.0-experimental-12bc60f5-20250613
+  react-dom: 0.0.0-experimental-12bc60f5-20250613
+  react-server-dom-webpack: 0.0.0-experimental-12bc60f5-20250613
   '@hiogawa/react-server': workspace:*
   '@hiogawa/vite-rsc': workspace:*
   '@types/react': ^19.1.2
@@ -58,14 +58,14 @@ importers:
         specifier: ^0.24.2
         version: 0.24.2
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
       tsdown:
         specifier: 0.7.3
         version: 0.7.3(@swc/core@1.11.29)(typescript@5.8.3)
@@ -159,11 +159,11 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -205,11 +205,11 @@ importers:
         specifier: ^0.30.17
         version: 0.30.17
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -234,37 +234,37 @@ importers:
         version: link:../..
       '@hiogawa/test-dep-cjs':
         specifier: file:deps/cjs
-        version: file:packages/react-server/examples/basic/deps/cjs(react@19.1.0)
+        version: file:packages/react-server/examples/basic/deps/cjs(react@0.0.0-experimental-12bc60f5-20250613)
       '@hiogawa/test-dep-context':
         specifier: file:deps/context
-        version: file:packages/react-server/examples/basic/deps/context(react@19.1.0)
+        version: file:packages/react-server/examples/basic/deps/context(react@0.0.0-experimental-12bc60f5-20250613)
       '@hiogawa/test-dep-mixed':
         specifier: file:deps/mixed
-        version: '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@19.1.0)'
+        version: '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@0.0.0-experimental-12bc60f5-20250613)'
       '@hiogawa/test-dep-server-component':
         specifier: file:deps/server-component
-        version: '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@19.1.0)'
+        version: '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@0.0.0-experimental-12bc60f5-20250613)'
       '@hiogawa/test-dep-use-client':
         specifier: file:deps/use-client
-        version: '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.1.0)'
+        version: '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@0.0.0-experimental-12bc60f5-20250613)'
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-tweet:
         specifier: ^3.2.1
-        version: 3.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 3.2.1(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       react-wrap-balancer:
         specifier: ^1.1.1
-        version: 1.1.1(react@19.1.0)
+        version: 1.1.1(react@0.0.0-experimental-12bc60f5-20250613)
       shiki:
         specifier: ^3.0.0
         version: 3.0.0
       styled-jsx:
         specifier: ^5.1.6
-        version: 5.1.6(@babel/core@7.26.10)(react@19.1.0)
+        version: 5.1.6(@babel/core@7.26.10)(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
@@ -324,11 +324,11 @@ importers:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20250607.0
@@ -352,11 +352,11 @@ importers:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -377,11 +377,11 @@ importers:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -400,16 +400,16 @@ importers:
         version: link:../..
       '@hiogawa/test-deps-jsx-in-js':
         specifier: file:./deps/test-jsx-in-js
-        version: file:packages/react-server/examples/next/deps/test-jsx-in-js(react@19.1.0)
+        version: file:packages/react-server/examples/next/deps/test-jsx-in-js(react@0.0.0-experimental-12bc60f5-20250613)
       next:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -430,11 +430,11 @@ importers:
         specifier: link:../../../react-server-next
         version: link:../../../react-server-next
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -455,11 +455,11 @@ importers:
         specifier: workspace:*
         version: link:../..
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest
@@ -486,11 +486,11 @@ importers:
         specifier: workspace:*
         version: link:../..
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@hiogawa/utils-node':
         specifier: latest
@@ -523,11 +523,11 @@ importers:
         specifier: ^0.30.17
         version: 0.30.17
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -536,8 +536,8 @@ importers:
         version: 1.0.5(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
     devDependencies:
       react-server-dom-webpack:
-        specifier: ^19.1.0
-        version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2))
       rsc-html-stream:
         specifier: ^0.0.6
         version: 0.0.6
@@ -548,11 +548,11 @@ importers:
         specifier: workspace:*
         version: link:../..
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.4
@@ -591,21 +591,21 @@ importers:
         specifier: workspace:*
         version: link:../..
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-router:
         specifier: 0.0.0-experimental-7db49e8d4
-        version: 0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@cloudflare/vite-plugin':
         specifier: ^1.5.0
         version: 1.5.0(rollup@4.38.0)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250525.0)(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))
       '@react-router/dev':
         specifier: 0.0.0-experimental-7db49e8d4
-        version: 0.0.0-experimental-7db49e8d4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)
+        version: 0.0.0-experimental-7db49e8d4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.4)
@@ -640,11 +640,11 @@ importers:
         specifier: workspace:*
         version: link:../..
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@types/react':
         specifier: ^19.1.2
@@ -701,17 +701,17 @@ importers:
         specifier: ^0.0.44
         version: 0.0.44
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-router:
         specifier: ^6.29.0
-        version: 6.29.0(react@19.1.0)
+        version: 6.29.0(react@0.0.0-experimental-12bc60f5-20250613)
       react-router-dom:
         specifier: ^6.29.0
-        version: 6.29.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 6.29.0(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
 
   packages/vite-glob-routes/examples/demo:
     devDependencies:
@@ -735,19 +735,19 @@ importers:
         version: 0.0.4-pre.1
       '@hiogawa/tiny-form':
         specifier: 0.0.1-pre.10
-        version: 0.0.1-pre.10(react@19.1.0)
+        version: 0.0.1-pre.10(react@0.0.0-experimental-12bc60f5-20250613)
       '@hiogawa/tiny-jwt':
         specifier: 0.2.8-pre.2
         version: 0.2.8-pre.2
       '@hiogawa/tiny-progress':
         specifier: 0.0.1-pre.4
-        version: 0.0.1-pre.4(react@19.1.0)
+        version: 0.0.1-pre.4(react@0.0.0-experimental-12bc60f5-20250613)
       '@hiogawa/tiny-rpc':
         specifier: 0.2.3-pre.18
         version: 0.2.3-pre.18
       '@hiogawa/tiny-toast':
         specifier: 0.1.1-pre.10
-        version: 0.1.1-pre.10(react@19.1.0)
+        version: 0.1.1-pre.10(react@0.0.0-experimental-12bc60f5-20250613)
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
         version: 2.2.1-pre.7(unocss@0.58.9(postcss@8.5.3)(rollup@4.38.0)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)))
@@ -771,10 +771,10 @@ importers:
         version: 1.2.5
       '@tanstack/react-query':
         specifier: ^5.66.9
-        version: 5.66.9(react@19.1.0)
+        version: 5.66.9(react@0.0.0-experimental-12bc60f5-20250613)
       '@tanstack/react-query-devtools':
         specifier: ^5.66.9
-        version: 5.66.9(@tanstack/react-query@5.66.9(react@19.1.0))(react@19.1.0)
+        version: 5.66.9(@tanstack/react-query@5.66.9(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       '@types/cookie':
         specifier: ^0.6.0
         version: 0.6.0
@@ -797,17 +797,17 @@ importers:
         specifier: ^4.21.2
         version: 4.21.2
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-router:
         specifier: 6.22.3
-        version: 6.22.3(react@19.1.0)
+        version: 6.22.3(react@0.0.0-experimental-12bc60f5-20250613)
       react-router-dom:
         specifier: ^6.29.0
-        version: 6.29.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 6.29.0(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       unocss:
         specifier: ^0.58.9
         version: 0.58.9(postcss@8.5.3)(rollup@4.38.0)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
@@ -836,14 +836,14 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-router-dom:
         specifier: ^6.29.0
-        version: 6.29.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 6.29.0(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -890,14 +890,14 @@ importers:
         specifier: ^4.21.2
         version: 4.21.2
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-router-dom:
         specifier: ^6.29.0
-        version: 6.29.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 6.29.0(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -963,11 +963,11 @@ importers:
         specifier: ^4.20250525.1
         version: 4.20250525.1
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -999,14 +999,14 @@ importers:
         specifier: ^4.20250525.1
         version: 4.20250525.1
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       react-router-dom:
         specifier: ^6.29.0
-        version: 6.29.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 6.29.0(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -1015,7 +1015,7 @@ importers:
     dependencies:
       '@remix-run/react':
         specifier: 2.8.1
-        version: 2.8.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
+        version: 2.8.1(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)(typescript@5.8.3)
       '@remix-run/server-runtime':
         specifier: 2.8.1
         version: 2.8.1(typescript@5.8.3)
@@ -1023,11 +1023,11 @@ importers:
         specifier: ^5.1.23
         version: 5.1.23
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20250607.0
@@ -1096,11 +1096,11 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
       react:
-        specifier: ^19.1.0
-        version: 19.1.0
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613
       react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 0.0.0-experimental-12bc60f5-20250613
+        version: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       vite:
         specifier: ^6.3.2
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -1865,32 +1865,32 @@ packages:
   '@hiogawa/test-dep-cjs@file:packages/react-server/examples/basic/deps/cjs':
     resolution: {directory: packages/react-server/examples/basic/deps/cjs, type: directory}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/test-dep-context@file:packages/react-server/examples/basic/deps/context':
     resolution: {directory: packages/react-server/examples/basic/deps/context, type: directory}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/test-deps-jsx-in-js@file:packages/react-server/examples/next/deps/test-jsx-in-js':
     resolution: {directory: packages/react-server/examples/next/deps/test-jsx-in-js, type: directory}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed':
     resolution: {directory: packages/react-server/examples/basic/deps/mixed, type: directory}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component':
     resolution: {directory: packages/react-server/examples/basic/deps/server-component, type: directory}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client':
     resolution: {directory: packages/react-server/examples/basic/deps/use-client, type: directory}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/theme-script@0.0.4-pre.3':
     resolution: {integrity: sha512-2uxVhemdAMUFE/OaUcaTT2QeZsXnxtnF/CLNs+CcrlgwaUXXfsnXUTvUZCz8MTmxzzz4Vp5hfAyi4pp58XHJCQ==}
@@ -1906,7 +1906,7 @@ packages:
   '@hiogawa/tiny-form@0.0.1-pre.10':
     resolution: {integrity: sha512-BIvGs22O+RNCDclikqSAMMxuLTi4Onz0fpMK1qGtxA3ga+jBN3hRfOxUWl1Mei2lPo07ralKGNhKBTxhIlQ3eA==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
     peerDependenciesMeta:
       react:
         optional: true
@@ -1918,7 +1918,7 @@ packages:
   '@hiogawa/tiny-progress@0.0.1-pre.4':
     resolution: {integrity: sha512-7v367ZbgmJRE4gMGvo7sqwx6eAf5FegipkS6FGCUwZd6iiyfrTVpRYmtg8ITUhkIR2LNnmMRllbVIcebWsD1Og==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
     peerDependenciesMeta:
       react:
         optional: true
@@ -1937,7 +1937,7 @@ packages:
   '@hiogawa/tiny-toast@0.1.1-pre.10':
     resolution: {integrity: sha512-vA0kmobSc0KSQw/ff3Fm9pQBkJkhaHcvjuhpBYnBjev4dC2qeCGOvUax/+iUMYns816z6/X3XAr3Mwp92qZtuQ==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
     peerDependenciesMeta:
       react:
         optional: true
@@ -2418,8 +2418,8 @@ packages:
     resolution: {integrity: sha512-HTPm1U8+xz2jPaVjZnssrckfmFMA8sUZUdaWnoF5lmLWdReqcQv+XlBhIrQQ3jO9L8iYYdnzaSZZcRFYSdpTYg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      react: ^19.1.0
-      react-dom: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613
       typescript: ^5.1.0
     peerDependenciesMeta:
       typescript:
@@ -2860,12 +2860,12 @@ packages:
     resolution: {integrity: sha512-70G6AR35he53SYUcUK6EdqNR18zejCv1rM6900gjZP408EAex56YLwVSeijzk9lWeU2J42G9Fjh0i1WngUTsgw==}
     peerDependencies:
       '@tanstack/react-query': ^5.66.9
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@tanstack/react-query@5.66.9':
     resolution: {integrity: sha512-NRI02PHJsP5y2gAuWKP+awamTIBFBSKMnO6UVzi03GTclmHHHInH5UzVgzi5tpu4+FmGfsdT7Umqegobtsp23A==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@tsconfig/strictest@2.0.5':
     resolution: {integrity: sha512-ec4tjL2Rr0pkZ5hww65c+EEPYwxOi4Ryv+0MtjeaSQRJyq322Q27eOQiFbuNgw2hpL4hB1/W/HBGk3VKS43osg==}
@@ -5260,10 +5260,10 @@ packages:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
     engines: {node: '>= 0.8'}
 
-  react-dom@19.1.0:
-    resolution: {integrity: sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==}
+  react-dom@0.0.0-experimental-12bc60f5-20250613:
+    resolution: {integrity: sha512-hoUp3gifulHMX0Xz5t9si/vsJlkxzEdP1WubRSpXs9UTHF1EDaE3ZGrNxZc47e/yKpWkkMGv4vzGJuLTjQ401w==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
@@ -5277,22 +5277,22 @@ packages:
     resolution: {integrity: sha512-7ZILI7HjcE+p31oQvwbokjk6OA/bnFxrhJ19n82Ex9Ph8fNAq+Hm/7KchpMGlTgWhUxRHMMCut+vEtNpWpowKw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: ^19.1.0
-      react-dom: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613
 
   react-router-dom@6.29.0:
     resolution: {integrity: sha512-pkEbJPATRJ2iotK+wUwHfy0xs2T59YPEN8BQxVCPeBZvK7kfPESRc/nyxzdcxR17hXgUPYx2whMwl+eo9cUdnQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: ^19.1.0
-      react-dom: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613
 
   react-router@0.0.0-experimental-7db49e8d4:
     resolution: {integrity: sha512-7LNNQ6DQmewph4/DLitj/B9bCiaoFiDAa+ON4JGu4lUiutfTmInYTAT5Ettif07xsB9jn/+huw+CuwxG000M2A==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
-      react: ^19.1.0
-      react-dom: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613
     peerDependenciesMeta:
       react-dom:
         optional: true
@@ -5301,35 +5301,35 @@ packages:
     resolution: {integrity: sha512-dr2eb3Mj5zK2YISHK++foM9w4eBnO23eKnZEDs7c880P6oKbrjz/Svg9+nxqtHQK+oMW4OtjZca0RqPglXxguQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   react-router@6.29.0:
     resolution: {integrity: sha512-DXZJoE0q+KyeVw75Ck6GkPxFak63C4fGqZGNijnWgzB/HzSP1ZfTlBj5COaGWwhrMQ/R8bXiq5Ooy4KG+ReyjQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  react-server-dom-webpack@19.1.0:
-    resolution: {integrity: sha512-GUbawkNSN0oj8GnuNhMzsvyIHpXqqpAmyOY5NRqNNQ/M8wvUUN8YBoGjDUj9lbmBrmAHS65BByp6325CcWA0eg==}
+  react-server-dom-webpack@0.0.0-experimental-12bc60f5-20250613:
+    resolution: {integrity: sha512-gJnwcUrnTWsmFsTNUBjzK68jYoU7aX6+wdQu1129AvP5zrKItm+U0O4EYK1VCOSt4AiYJQtAzZGzxOGUtWPorQ==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
-      react: ^19.1.0
-      react-dom: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613
       webpack: ^5.59.0
 
   react-tweet@3.2.1:
     resolution: {integrity: sha512-dktP3RMuwRB4pnSDocKpSsW5Hq1IXRW6fONkHhxT5EBIXsKZzdQuI70qtub1XN2dtZdkJWWxfBm/Q+kN+vRYFA==}
     peerDependencies:
-      react: ^19.1.0
-      react-dom: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613
 
   react-wrap-balancer@1.1.1:
     resolution: {integrity: sha512-AB+l7FPRWl6uZ28VcJ8skkwLn2+UC62bjiw8tQUrZPlEWDVnR9MG0lghyn7EyxuJSsFEpht4G+yh2WikEqQ/5Q==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  react@19.1.0:
-    resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
+  react@0.0.0-experimental-12bc60f5-20250613:
+    resolution: {integrity: sha512-ImRVkYxhHYmafNMZWSqtKqilXYFFBbUVLtFXAWMq4y0AOT/ws1sN2v21LNkDRcIa4mVJt0RlE38Rzn3iK3lvdQ==}
     engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
@@ -5487,8 +5487,8 @@ packages:
     resolution: {integrity: sha512-0SbjchvDrDbeXeQgxWVtSWxww7qcFgk3DtSE2/blHOSlLsSHwIqO2fCrtVa/EudJ7Eqno8A33QNx56rUyGbLuw==}
     engines: {node: '>=16'}
 
-  scheduler@0.26.0:
-    resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
+  scheduler@0.0.0-experimental-12bc60f5-20250613:
+    resolution: {integrity: sha512-Q5tRWshNVe6Y4IzRcBTAiinVHMf9P+gHWewux/U/4u23S4CrLgqATskB39OD7jxgt/9RJBq2d189dj+j/JZEbA==}
 
   schema-utils@3.3.0:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
@@ -5696,7 +5696,7 @@ packages:
     peerDependencies:
       '@babel/core': '*'
       babel-plugin-macros: '*'
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
     peerDependenciesMeta:
       '@babel/core':
         optional: true
@@ -5723,7 +5723,7 @@ packages:
   swr@2.3.2:
     resolution: {integrity: sha512-RosxFpiabojs75IwQ316DGoDRmOqtiAj0tg8wCcbEu4CiLZBs/a9QNtHV7TUfDXmmlgqij/NqzKq/eLelyv9xA==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   tailwindcss@3.4.17:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
@@ -6047,7 +6047,7 @@ packages:
   use-sync-external-store@1.4.0:
     resolution: {integrity: sha512-9WXSPC5fMv61vaupRkCKCxsPxBocVnwakBEkMIHHpkTTg6icbJtg6jzgtLDm4bl3cSHAca52rYWih0k4K3PfHw==}
     peerDependencies:
-      react: ^19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -6953,29 +6953,29 @@ snapshots:
 
   '@hiogawa/query-proxy@0.1.1-pre.3': {}
 
-  '@hiogawa/test-dep-cjs@file:packages/react-server/examples/basic/deps/cjs(react@19.1.0)':
+  '@hiogawa/test-dep-cjs@file:packages/react-server/examples/basic/deps/cjs(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  '@hiogawa/test-dep-context@file:packages/react-server/examples/basic/deps/context(react@19.1.0)':
+  '@hiogawa/test-dep-context@file:packages/react-server/examples/basic/deps/context(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  '@hiogawa/test-deps-jsx-in-js@file:packages/react-server/examples/next/deps/test-jsx-in-js(react@19.1.0)':
+  '@hiogawa/test-deps-jsx-in-js@file:packages/react-server/examples/next/deps/test-jsx-in-js(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@19.1.0)':
+  '@hiogawa/test-deps-mixed@file:packages/react-server/examples/basic/deps/mixed(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@19.1.0)':
+  '@hiogawa/test-deps-server-component@file:packages/react-server/examples/basic/deps/server-component(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@19.1.0)':
+  '@hiogawa/test-deps-use-client@file:packages/react-server/examples/basic/deps/use-client(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/theme-script@0.0.4-pre.3(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
     optionalDependencies:
@@ -6983,15 +6983,15 @@ snapshots:
 
   '@hiogawa/tiny-cli@0.0.4-pre.1': {}
 
-  '@hiogawa/tiny-form@0.0.1-pre.10(react@19.1.0)':
+  '@hiogawa/tiny-form@0.0.1-pre.10(react@0.0.0-experimental-12bc60f5-20250613)':
     optionalDependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/tiny-jwt@0.2.8-pre.2': {}
 
-  '@hiogawa/tiny-progress@0.0.1-pre.4(react@19.1.0)':
+  '@hiogawa/tiny-progress@0.0.1-pre.4(react@0.0.0-experimental-12bc60f5-20250613)':
     optionalDependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/tiny-react@0.0.2-pre.9(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
     optionalDependencies:
@@ -6999,9 +6999,9 @@ snapshots:
 
   '@hiogawa/tiny-rpc@0.2.3-pre.18': {}
 
-  '@hiogawa/tiny-toast@0.1.1-pre.10(react@19.1.0)':
+  '@hiogawa/tiny-toast@0.1.1-pre.10(react@0.0.0-experimental-12bc60f5-20250613)':
     optionalDependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@hiogawa/unocss-preset-antd@2.2.1-pre.7(unocss@0.58.9(postcss@8.5.3)(rollup@4.38.0)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)))':
     dependencies:
@@ -7388,7 +7388,7 @@ snapshots:
     dependencies:
       quansync: 0.2.10
 
-  '@react-router/dev@0.0.0-experimental-7db49e8d4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)':
+  '@react-router/dev@0.0.0-experimental-7db49e8d4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)':
     dependencies:
       '@babel/core': 7.26.10
       '@babel/generator': 7.27.0
@@ -7399,7 +7399,7 @@ snapshots:
       '@babel/traverse': 7.27.0
       '@babel/types': 7.27.0
       '@npmcli/package-json': 4.0.1
-      '@react-router/node': 0.0.0-experimental-7db49e8d4(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
+      '@react-router/node': 0.0.0-experimental-7db49e8d4(react-router@0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613))(typescript@5.8.3)
       arg: 5.0.2
       babel-dead-code-elimination: 1.0.10
       chokidar: 4.0.3
@@ -7413,7 +7413,7 @@ snapshots:
       picocolors: 1.1.1
       prettier: 2.8.8
       react-refresh: 0.14.2
-      react-router: 0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-router: 0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       semver: 7.7.1
       set-cookie-parser: 2.7.1
       valibot: 0.41.0(typescript@5.8.3)
@@ -7438,10 +7438,10 @@ snapshots:
       - tsx
       - yaml
 
-  '@react-router/node@0.0.0-experimental-7db49e8d4(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)':
+  '@react-router/node@0.0.0-experimental-7db49e8d4(react-router@0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613))(typescript@5.8.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
-      react-router: 0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-router: 0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
       source-map-support: 0.5.21
       stream-slice: 0.1.2
       undici: 6.21.3
@@ -7539,14 +7539,14 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.3
 
-  '@remix-run/react@2.8.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)':
+  '@remix-run/react@2.8.1(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)(typescript@5.8.3)':
     dependencies:
       '@remix-run/router': 1.15.3
       '@remix-run/server-runtime': 2.8.1(typescript@5.8.3)
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-router: 6.22.3(react@19.1.0)
-      react-router-dom: 6.22.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
+      react-router: 6.22.3(react@0.0.0-experimental-12bc60f5-20250613)
+      react-router-dom: 6.22.3(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)
     optionalDependencies:
       typescript: 5.8.3
 
@@ -7885,16 +7885,16 @@ snapshots:
 
   '@tanstack/query-devtools@5.65.0': {}
 
-  '@tanstack/react-query-devtools@5.66.9(@tanstack/react-query@5.66.9(react@19.1.0))(react@19.1.0)':
+  '@tanstack/react-query-devtools@5.66.9(@tanstack/react-query@5.66.9(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
       '@tanstack/query-devtools': 5.65.0
-      '@tanstack/react-query': 5.66.9(react@19.1.0)
-      react: 19.1.0
+      '@tanstack/react-query': 5.66.9(react@0.0.0-experimental-12bc60f5-20250613)
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  '@tanstack/react-query@5.66.9(react@19.1.0)':
+  '@tanstack/react-query@5.66.9(react@0.0.0-experimental-12bc60f5-20250613)':
     dependencies:
       '@tanstack/query-core': 5.66.4
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   '@tsconfig/strictest@2.0.5': {}
 
@@ -10877,69 +10877,69 @@ snapshots:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
-  react-dom@19.1.0(react@19.1.0):
+  react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
-      react: 19.1.0
-      scheduler: 0.26.0
+      react: 0.0.0-experimental-12bc60f5-20250613
+      scheduler: 0.0.0-experimental-12bc60f5-20250613
 
   react-refresh@0.14.2: {}
 
   react-refresh@0.17.0: {}
 
-  react-router-dom@6.22.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-router-dom@6.22.3(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-router: 6.22.3(react@19.1.0)
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
+      react-router: 6.22.3(react@0.0.0-experimental-12bc60f5-20250613)
 
-  react-router-dom@6.29.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-router-dom@6.29.0(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       '@remix-run/router': 1.22.0
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-router: 6.29.0(react@19.1.0)
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
+      react-router: 6.29.0(react@0.0.0-experimental-12bc60f5-20250613)
 
-  react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-router@0.0.0-experimental-7db49e8d4(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       cookie: 1.0.2
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
       set-cookie-parser: 2.7.1
     optionalDependencies:
-      react-dom: 19.1.0(react@19.1.0)
+      react-dom: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
 
-  react-router@6.22.3(react@19.1.0):
+  react-router@6.22.3(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       '@remix-run/router': 1.15.3
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  react-router@6.29.0(react@19.1.0):
+  react-router@6.29.0(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       '@remix-run/router': 1.22.0
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  react-server-dom-webpack@19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2)):
+  react-server-dom-webpack@0.0.0-experimental-12bc60f5-20250613(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613)(webpack@5.93.0(@swc/core@1.11.29)(esbuild@0.24.2)):
     dependencies:
       acorn-loose: 8.4.0
       neo-async: 2.6.2
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
       webpack: 5.93.0(@swc/core@1.11.29)(esbuild@0.24.2)
       webpack-sources: 3.2.3
 
-  react-tweet@3.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-tweet@3.2.1(react-dom@0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613))(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       '@swc/helpers': 0.5.15
       clsx: 2.1.1
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      swr: 2.3.2(react@19.1.0)
+      react: 0.0.0-experimental-12bc60f5-20250613
+      react-dom: 0.0.0-experimental-12bc60f5-20250613(react@0.0.0-experimental-12bc60f5-20250613)
+      swr: 2.3.2(react@0.0.0-experimental-12bc60f5-20250613)
 
-  react-wrap-balancer@1.1.1(react@19.1.0):
+  react-wrap-balancer@1.1.1(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
-  react@19.1.0: {}
+  react@0.0.0-experimental-12bc60f5-20250613: {}
 
   read-cache@1.0.0:
     dependencies:
@@ -11192,7 +11192,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       yoga-wasm-web: 0.3.3
 
-  scheduler@0.26.0: {}
+  scheduler@0.0.0-experimental-12bc60f5-20250613: {}
 
   schema-utils@3.3.0:
     dependencies:
@@ -11451,10 +11451,10 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.1.6(@babel/core@7.26.10)(react@19.1.0):
+  styled-jsx@5.1.6(@babel/core@7.26.10)(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       client-only: 0.0.1
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
     optionalDependencies:
       '@babel/core': 7.26.10
 
@@ -11478,11 +11478,11 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  swr@2.3.2(react@19.1.0):
+  swr@2.3.2(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
       dequal: 2.0.3
-      react: 19.1.0
-      use-sync-external-store: 1.4.0(react@19.1.0)
+      react: 0.0.0-experimental-12bc60f5-20250613
+      use-sync-external-store: 1.4.0(react@0.0.0-experimental-12bc60f5-20250613)
 
   tailwindcss@3.4.17:
     dependencies:
@@ -11889,9 +11889,9 @@ snapshots:
 
   urlpattern-polyfill@10.0.0: {}
 
-  use-sync-external-store@1.4.0(react@19.1.0):
+  use-sync-external-store@1.4.0(react@0.0.0-experimental-12bc60f5-20250613):
     dependencies:
-      react: 19.1.0
+      react: 0.0.0-experimental-12bc60f5-20250613
 
   util-deprecate@1.0.2: {}
 
