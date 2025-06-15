@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.1 (2025-06-15)
+
+- fix: re-publish to fix vendored dependency
+
 ## v0.4.0 (2025-06-15)
 
 - refactor!: rework multi environment API (bootstrap script) ([#958](https://github.com/hi-ogawa/vite-plugins/pull/958))
