@@ -30,15 +30,15 @@ graph TD
     end
 
     B1 --> B2
-    B1 --> |"e.g. client side fetch"| B3
+    B1 --> B3
 
     subgraph "<strong>ssr environment</strong>"
-        B2["RSC Stream"] --> |"[@hiogawa/vite-rsc/ssr]<br /><code>renderToReadableStream</code>"| C1["React virtual dom tree"];
+        B2["RSC Stream"] --> |"[@hiogawa/vite-rsc/ssr]<br /><code>createFromReadableStream</code>"| C1["React virtual dom tree"];
         C1 --> |"[react-dom/server]<br/>SSR"| E["HTML String/Stream"];
     end
 
     subgraph "<strong>client environment</strong>"
-        B3["RSC Stream"] --> |"[@hiogawa/vite-rsc/browser]<br /><code>renderToReadableStream</code>"| C2["React virtual dom tree"];
+        B3["RSC Stream"] --> |"[@hiogawa/vite-rsc/browser]<br /><code>createFromReadableStream</code>"| C2["React virtual dom tree"];
         C2 --> |"[react-dom/client]<br/>CSR: mount, hydration"| D["DOM Elements"];
     end
 
