@@ -15,10 +15,7 @@ rm -rf dist node_modules
 
 node "$this_dir/overrides.mjs" "$test_dir/package.json"
 pnpm i
-
-if test "${CI:-}" = "true"; then
-  npx playwright install chromium
-fi
+pnpm exec playwright install chromium
 
 pnpm test-e2e
 pnpm build
