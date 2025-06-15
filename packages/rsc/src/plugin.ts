@@ -369,11 +369,13 @@ export default function vitePluginRsc(
           code = code.replaceAll(
             /['"]__vite_rsc_load_ssr_entry:(\w+)['"]/g,
             (_match, name) => {
-              const relativePath = path.relative(
-                path.join("dist/rsc", chunk.fileName, ".."),
-                path.join("dist/ssr", `${name}.js`),
+              const replacement = normalizeRelativePath(
+                path.relative(
+                  path.join("dist/rsc", chunk.fileName, ".."),
+                  path.join("dist/ssr", `${name}.js`),
+                ),
               );
-              return `(import(${JSON.stringify(normalizePath(relativePath))}))`;
+              return `(import(${JSON.stringify(replacement)}))`;
             },
           );
           return { code };
@@ -454,14 +456,12 @@ export default function vitePluginRsc(
       renderChunk(code, chunk) {
         if (code.includes("virtual:vite-rsc/assets-manifest")) {
           assert(this.environment.name !== "client");
-          let replacement = path.relative(
-            path.join(chunk.fileName, ".."),
-            BUILD_ASSETS_MANIFEST_NAME,
+          const replacement = normalizeRelativePath(
+            path.relative(
+              path.join(chunk.fileName, ".."),
+              BUILD_ASSETS_MANIFEST_NAME,
+            ),
           );
-          replacement = normalizePath(replacement);
-          if (!replacement.startsWith(".")) {
-            replacement = "./" + replacement;
-          }
           code = code.replaceAll(
             "virtual:vite-rsc/assets-manifest",
             () => replacement,
@@ -572,6 +572,11 @@ export default function vitePluginRsc(
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss(),
   ];
+}
+
+function normalizeRelativePath(s: string) {
+  s = normalizePath(s);
+  return s[0] === "." ? s : "./" + s;
 }
 
 function getEntrySource(
