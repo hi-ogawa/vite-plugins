@@ -7,6 +7,14 @@
 - **HMR support**: Enables editing both client and server components without full page reloads.
 - **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
+## Getting started
+
+You can start a project by copying an example locally by:
+
+```sh
+npx degit hi-ogawa/vite-plugins/packages/rsc/examples/starter my-app
+```
+
 ## Examples
 
 - [`./examples/starter`](./examples/starter)
