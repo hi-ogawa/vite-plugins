@@ -264,6 +264,39 @@ import { renderToReadableStream } from "react-dom/server.edge";
 renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
 
+## Plugin API
+
+```js
+import rsc from "@hiogawa/vite-rsc/plugin";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    rsc({
+      // this is only a shorthand of specifying each
+      // `environments[name].build.rollupOptions.input.index`
+      entries: {
+        rsc: "...",
+        ssr: "...",
+        client: "...",
+      },
+    }),
+  ],
+  environments: {
+    rsc: {
+      define: {
+        // The plugin uses an encryption key for "use server" closure argument binding,
+        // which is generated at build time by default.
+        // This can be overwritten by configuring `define.__VITE_RSC_ENCRYPTION_KEY__`
+        // e.g. to obtain a key during runtime through envrionment variable.
+        // cf. https://nextjs.org/docs/app/guides/data-security#overwriting-encryption-keys-advanced
+        __VITE_RSC_ENCRYPTION_KEY__: "process.env.MY_ENCRYPTION_KEY",
+      }
+    }
+  },
+});
+```
+
 ## Higher level API
 
 This is a wrapper of `react-server-dom` API and helper API to setup a minimal RSC app without writing own framework code like [`./examples/starter/src/framework`](./examples/starter/src/framework/). See [`./examples/basic`](./examples/basic/) for how this API is used.
