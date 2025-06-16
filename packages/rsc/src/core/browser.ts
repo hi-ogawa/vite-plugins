@@ -13,7 +13,7 @@ export function setRequireModule(options: {
     return options.load(removeReferenceCacheTag(id));
   });
 
-  (globalThis as any).__vite_rsc_client_require__ = requireModule;
+  globalThis.__vite_rsc_client_require__ = requireModule;
 
   setInternalRequire();
 }

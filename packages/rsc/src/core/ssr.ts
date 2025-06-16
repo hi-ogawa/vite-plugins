@@ -17,7 +17,7 @@ export function setRequireModule(options: {
   const clientRequire = (id: string) => {
     return requireModule(id);
   };
-  (globalThis as any).__vite_rsc_client_require__ = clientRequire;
+  globalThis.__vite_rsc_client_require__ = clientRequire;
 
   setInternalRequire();
 }
