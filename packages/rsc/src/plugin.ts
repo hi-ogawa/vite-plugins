@@ -55,6 +55,7 @@ const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 const serverResourcesMetaMap: Record<string, { key: string }> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
+const REACT_SERVER_DOM_NAME = `${PKG_NAME}/vendor/react-server-dom`;
 
 // dev-only wrapper virtual module of rollupOptions.input.index
 const VIRTUAL_ENTRIES = {
@@ -70,24 +71,12 @@ export default function vitePluginRsc(
      */
     entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
     disableServerHandler?: boolean;
-    /**
-     * This is used to configure `optimizeDeps.include` properly when `@hiogwa/vite-rsc` is used as transitive dependency, e.g.
-     *   optimizeDeps.include: ["yourFrameworkPackage > @higoawa/vite-rsc/xxx"]
-     */
-    parentPackage?: string;
   } = {},
 ): Plugin[] {
   return [
     {
       name: "rsc",
       config() {
-        const reactServerDomDep = [
-          rscPluginOptions.parentPackage,
-          `${PKG_NAME}/vendor/react-server-dom`,
-        ]
-          .filter(Boolean)
-          .join(">");
-
         return {
           appType: "custom",
           environments: {
@@ -103,7 +92,7 @@ export default function vitePluginRsc(
               optimizeDeps: {
                 include: [
                   "react-dom/client",
-                  `${reactServerDomDep}/client.browser`,
+                  `${REACT_SERVER_DOM_NAME}/client.browser`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -121,7 +110,7 @@ export default function vitePluginRsc(
                 noExternal: [PKG_NAME],
               },
               optimizeDeps: {
-                include: [`${reactServerDomDep}/client.edge`],
+                include: [`${REACT_SERVER_DOM_NAME}/client.edge`],
                 exclude: [PKG_NAME],
               },
             },
@@ -146,8 +135,8 @@ export default function vitePluginRsc(
                   "react-dom",
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
-                  `${reactServerDomDep}/server.edge`,
-                  `${reactServerDomDep}/client.edge`,
+                  `${REACT_SERVER_DOM_NAME}/server.edge`,
+                  `${REACT_SERVER_DOM_NAME}/client.edge`,
                 ],
                 exclude: [PKG_NAME],
               },
