@@ -80,7 +80,27 @@ export default function vitePluginRsc(
   return [
     {
       name: "rsc",
-      config() {
+      async config(_config, env) {
+        // crawl packages with "react" in "peerDependencies" to bundle react deps on server
+        // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
+        const result = await crawlFrameworkPkgs({
+          root: process.cwd(),
+          isBuild: env.command === "build",
+          isFrameworkPkgByJson(pkgJson) {
+            if ([PKG_NAME, "react-dom"].includes(pkgJson.name)) {
+              return;
+            }
+            const deps = pkgJson["peerDependencies"];
+            return deps && "react" in deps;
+          },
+        });
+        const noExternal = [
+          "react",
+          "react-dom",
+          PKG_NAME,
+          ...result.ssr.noExternal.sort(),
+        ];
+
         return {
           appType: "custom",
           environments: {
@@ -111,10 +131,17 @@ export default function vitePluginRsc(
                 },
               },
               resolve: {
-                noExternal: [PKG_NAME],
+                noExternal,
               },
               optimizeDeps: {
-                include: [`${REACT_SERVER_DOM_NAME}/client.edge`],
+                include: [
+                  "react",
+                  "react-dom",
+                  "react/jsx-runtime",
+                  "react/jsx-dev-runtime",
+                  "react-dom/server.edge",
+                  `${REACT_SERVER_DOM_NAME}/client.edge`,
+                ],
                 exclude: [PKG_NAME],
               },
             },
@@ -128,10 +155,9 @@ export default function vitePluginRsc(
                   },
                 },
               },
-              // `configEnvironment` below adds more `noExternal`
               resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
-                noExternal: ["react", "react-dom", PKG_NAME],
+                noExternal,
               },
               optimizeDeps: {
                 include: [
@@ -160,31 +186,6 @@ export default function vitePluginRsc(
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
             },
-          },
-        };
-      },
-      async configEnvironment(name, _config, env) {
-        if (name !== "rsc") return;
-
-        // bundle deps with react-server condition
-
-        // crawl packages with "react" in "peerDependencies"
-        // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
-        const result = await crawlFrameworkPkgs({
-          root: process.cwd(),
-          isBuild: env.command === "build",
-          isFrameworkPkgByJson(pkgJson) {
-            if ([PKG_NAME, "react-dom"].includes(pkgJson.name)) {
-              return;
-            }
-            const deps = pkgJson["peerDependencies"];
-            return deps && "react" in deps;
-          },
-        });
-
-        return {
-          resolve: {
-            noExternal: result.ssr.noExternal.sort(),
           },
         };
       },
