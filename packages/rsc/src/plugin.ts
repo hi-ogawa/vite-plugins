@@ -72,7 +72,7 @@ export default function vitePluginRsc(
     disableServerHandler?: boolean;
     /**
      * This is used to configure `optimizeDeps.include` properly when `@hiogwa/vite-rsc` is used as transitive dependency, e.g.
-     *   optimizeDeps.include: ["yourParentPackage > @higoawa/vite-rsc/xxx"]
+     *   optimizeDeps.include: ["yourFrameworkPackage > @higoawa/vite-rsc/xxx"]
      */
     parentPackage?: string;
   } = {},
