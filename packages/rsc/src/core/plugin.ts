@@ -4,9 +4,7 @@ export default function vitePluginRscCore(): Plugin[] {
   return [
     {
       name: "rsc:patch-react-server-dom-webpack",
-      transform(originalCode, id, _options) {
-        if (!id.includes("react-server-dom")) return;
-
+      transform(originalCode, _id, _options) {
         let code = originalCode;
         if (code.includes("__webpack_require__.u")) {
           // avoid accessing `__webpack_require__` on import side effect
