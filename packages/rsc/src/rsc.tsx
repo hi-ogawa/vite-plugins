@@ -9,11 +9,7 @@ import {
   fromBase64,
 } from "./utils/encryption-utils";
 
-export {
-  createClientManifest,
-  createServerManifest,
-  loadServerAction,
-} from "./core/rsc";
+export { loadServerAction } from "./core/rsc";
 
 export * from "./react/rsc";
 
