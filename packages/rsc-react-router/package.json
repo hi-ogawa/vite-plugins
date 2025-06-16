@@ -1,0 +1,36 @@
+{
+  "name": "@hiogawa/vite-rsc-react-router",
+  "version": "0.0.0-pre.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/rsc-react-router",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "directory": "packages/rsc-react-router"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./*": "./dist/*.js",
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsdown --sourcemap --watch src",
+    "build": "tsdown",
+    "prepack": "tsdown --clean"
+  },
+  "dependencies": {
+    "@hiogawa/vite-rsc": "workspace:*"
+  },
+  "devDependencies": {
+    "@react-router/dev": "0.0.0-experimental-7db49e8d4",
+    "react-router": "0.0.0-experimental-7db49e8d4"
+  },
+  "peerDependencies": {
+    "@react-router/dev": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-router": "*",
+    "vite": "*"
+  }
+}
