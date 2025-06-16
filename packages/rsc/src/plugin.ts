@@ -162,17 +162,6 @@ export default function vitePluginRsc(
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
-
-              // emit manifest to non-client build directly
-              // (makeing server build self-contained for cloudflare)
-              const assetsManifestCode = `export default ${JSON.stringify(buildAssetsManifest, null, 2)}`;
-              for (const name of ["ssr", "rsc"]) {
-                const manifestPath = path.join(
-                  config.environments[name]!.build.outDir,
-                  BUILD_ASSETS_MANIFEST_NAME,
-                );
-                fs.writeFileSync(manifestPath, assetsManifestCode);
-              }
             },
           },
         };
@@ -469,6 +458,20 @@ export default function vitePluginRsc(
           return { code };
         }
         return;
+      },
+      writeBundle() {
+        if (this.environment.name === "ssr") {
+          // output client manifest to non-client build directly.
+          // this makes server build to be self-contained and deploy-able for cloudflare.
+          const assetsManifestCode = `export default ${JSON.stringify(buildAssetsManifest, null, 2)}`;
+          for (const name of ["ssr", "rsc"]) {
+            const manifestPath = path.join(
+              config.environments[name]!.build.outDir,
+              BUILD_ASSETS_MANIFEST_NAME,
+            );
+            fs.writeFileSync(manifestPath, assetsManifestCode);
+          }
+        }
       },
     },
     createVirtualPlugin("vite-rsc/bootstrap-script-content", function () {
