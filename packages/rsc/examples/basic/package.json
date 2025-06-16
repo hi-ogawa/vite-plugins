@@ -25,6 +25,6 @@
     "@vitejs/plugin-react": "latest",
     "tailwindcss": "^4.1.4",
     "vite": "latest",
-    "vite-plugin-inspect": "^11.0.1"
+    "vite-plugin-inspect": "^11.2.0"
   }
 }
