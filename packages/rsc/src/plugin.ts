@@ -29,8 +29,6 @@ import vitePluginRscCore from "./core/plugin";
 import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
-const require = createRequire(import.meta.url);
-
 // state for build orchestration
 let serverReferences: Record<string, string> = {};
 let server: ViteDevServer;
@@ -63,6 +61,12 @@ const VIRTUAL_ENTRIES = {
   rsc: "virtual:vite-rsc/entry-rsc",
   ssr: "virtual:vite-rsc/entry-ssr",
 };
+
+const require = createRequire(import.meta.url);
+
+function resolvePackage(name: string) {
+  return pathToFileURL(require.resolve(name)).href;
+}
 
 export default function vitePluginRsc(
   rscPluginOptions: {
@@ -667,7 +671,7 @@ function vitePluginUseClient(): Plugin[] {
           exportNames,
           renderedExports: [],
         };
-        const importSource = require.resolve(`${PKG_NAME}/react/rsc`);
+        const importSource = resolvePackage(`${PKG_NAME}/react/rsc`);
         output.prepend(`import * as $$ReactServer from "${importSource}";\n`);
         return { code: output.toString(), map: { mappings: "" } };
       },
@@ -777,7 +781,7 @@ function vitePluginUseServer(): Plugin[] {
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
-          const importSource = require.resolve(`${PKG_NAME}/rsc`);
+          const importSource = resolvePackage(`${PKG_NAME}/rsc`);
           output.prepend(`import * as $$ReactServer from "${importSource}";\n`);
           return {
             code: output.toString(),
@@ -804,7 +808,7 @@ function vitePluginUseServer(): Plugin[] {
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
-          const importSource = require.resolve(`${PKG_NAME}/react/${name}`);
+          const importSource = resolvePackage(`${PKG_NAME}/react/${name}`);
           output.prepend(`import * as $$ReactClient from "${importSource}";\n`);
           return {
             code: output.toString(),
