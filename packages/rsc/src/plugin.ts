@@ -67,8 +67,14 @@ export default function vitePluginRsc(
      */
     entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
     disableServerHandler?: boolean;
+    parentPackage?: string;
   } = {},
 ): Plugin[] {
+  let reactServerDomDep = `${PKG_NAME}/vendor/react-server-dom`;
+  if (rscPluginOptions.parentPackage) {
+    reactServerDomDep = `${rscPluginOptions.parentPackage} > ${reactServerDomDep}`;
+  }
+
   return [
     {
       name: "rsc",
@@ -94,7 +100,7 @@ export default function vitePluginRsc(
               optimizeDeps: {
                 include: [
                   "react-dom/client",
-                  `${PKG_NAME}/vendor/react-server-dom/client.browser`,
+                  `${reactServerDomDep}/client.browser`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -112,7 +118,7 @@ export default function vitePluginRsc(
                 noExternal: [PKG_NAME],
               },
               optimizeDeps: {
-                include: [`${PKG_NAME}/vendor/react-server-dom/client.edge`],
+                include: [`${reactServerDomDep}/client.edge`],
                 exclude: [PKG_NAME],
               },
             },
@@ -129,12 +135,7 @@ export default function vitePluginRsc(
               // `configEnvironment` below adds more `noExternal`
               resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
-                noExternal: [
-                  "react",
-                  "react-dom",
-                  `${PKG_NAME}/vendor/react-server-dom/server.edge`,
-                  PKG_NAME,
-                ],
+                noExternal: ["react", "react-dom", PKG_NAME],
               },
               optimizeDeps: {
                 include: [
@@ -142,8 +143,8 @@ export default function vitePluginRsc(
                   "react-dom",
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
-                  `${PKG_NAME}/vendor/react-server-dom/server.edge`,
-                  `${PKG_NAME}/vendor/react-server-dom/client.edge`,
+                  `${reactServerDomDep}/server.edge`,
+                  `${reactServerDomDep}/client.edge`,
                 ],
                 exclude: [PKG_NAME],
               },
