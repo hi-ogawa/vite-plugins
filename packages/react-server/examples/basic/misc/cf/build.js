@@ -19,7 +19,10 @@ async function main() {
 
   // worker
   const result = await esbuild.build({
-    entryPoints: [join(buildDir, "server/index.js")],
+    stdin: {
+      contents: `export { default } from "./server/index.js";`,
+      resolveDir: buildDir,
+    },
     outfile: join(outDir, "main.js"),
     metafile: true,
     bundle: true,
