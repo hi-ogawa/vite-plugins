@@ -169,7 +169,7 @@ export function vitePluginReactServer(
           noExternal: ["@hiogawa/react-server"],
           optimizeDeps: {
             include: ["@hiogawa/react-server > @hiogawa/vite-rsc/react/ssr"],
-            exclude: ["@hiogawa/react-server"],
+            exclude: ["@hiogawa/react-server", "react", "react-dom"],
           },
         },
         build: {
