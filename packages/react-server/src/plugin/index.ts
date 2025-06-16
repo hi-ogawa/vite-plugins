@@ -165,13 +165,6 @@ export function vitePluginReactServer(
             "@hiogawa/react-server > @hiogawa/vite-rsc/react/browser",
           ],
         },
-        ssr: {
-          noExternal: ["@hiogawa/react-server"],
-          external: ["@hiogawa/vite-rsc"],
-          optimizeDeps: {
-            exclude: ["@hiogawa/react-server"],
-          },
-        },
         build: {
           manifest: true,
           outDir: path.join(outDir, env.isSsrBuild ? "server" : "client"),
@@ -190,7 +183,6 @@ export function vitePluginReactServer(
         },
         environments: {
           rsc: {
-            // external and optimizeDeps are configured by `serverDepsConfigPlugin`
             resolve: {
               conditions: ["react-server", ...defaultServerConditions],
             },
@@ -527,7 +519,7 @@ function serverDepsConfigPlugin(): Plugin {
   return {
     name: serverDepsConfigPlugin.name,
     async configEnvironment(name, _config, env) {
-      if (name !== "rsc") {
+      if (name !== "rsc" && name !== "ssr") {
         return;
       }
 
@@ -556,10 +548,17 @@ function serverDepsConfigPlugin(): Plugin {
         optimizeDeps: {
           include: [
             "react",
+            "react-dom",
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
-            "@hiogawa/react-server > @hiogawa/vite-rsc/react/rsc",
+            ...(name === "ssr"
+              ? [
+                  "react-dom/server.edge",
+                  "@hiogawa/react-server > @hiogawa/vite-rsc/react/ssr",
+                ]
+              : ["@hiogawa/react-server > @hiogawa/vite-rsc/react/rsc"]),
           ],
+          exclude: ["@hiogawa/react-server"],
         },
       };
     },

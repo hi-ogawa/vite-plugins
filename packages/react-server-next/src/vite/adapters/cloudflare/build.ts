@@ -59,7 +59,10 @@ export async function build({
   // https://developers.cloudflare.com/pages/functions/advanced-mode/
   const esbuild = await import("esbuild");
   const result = await esbuild.build({
-    entryPoints: [join(buildDir, "server/index.js")],
+    stdin: {
+      contents: `export { default } from "./server/index.js";`,
+      resolveDir: buildDir,
+    },
     outfile: join(adapterOutDir, "_worker.js"),
     bundle: true,
     minify: true,

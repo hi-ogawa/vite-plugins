@@ -75,6 +75,13 @@ export default defineConfig({
     ],
   },
   envPrefix: "MY_PREFIX_",
+  environments: {
+    ssr: {
+      optimizeDeps: {
+        include: ["styled-jsx", "styled-jsx/style"],
+      },
+    },
+  },
 });
 
 function testVitePluginVirtual(): Plugin {
