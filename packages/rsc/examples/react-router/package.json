@@ -20,11 +20,11 @@
     "@hiogawa/vite-rsc": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-router": "0.0.0-experimental-f2b42587c"
+    "react-router": "0.0.0-experimental-7db49e8d4"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.5.0",
-    "@react-router/dev": "0.0.0-experimental-f2b42587c",
+    "@react-router/dev": "0.0.0-experimental-7db49e8d4",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.4",
     "@types/react": "latest",
