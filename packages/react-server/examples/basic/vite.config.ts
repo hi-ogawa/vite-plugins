@@ -75,6 +75,16 @@ export default defineConfig({
     ],
   },
   envPrefix: "MY_PREFIX_",
+  environments: {
+    ssr: {
+      build: {
+        rollupOptions: {
+          preserveEntrySignatures:
+            process.env.VERCEL || process.env.CF_PAGES ? "strict" : undefined,
+        },
+      },
+    },
+  },
 });
 
 function testVitePluginVirtual(): Plugin {
