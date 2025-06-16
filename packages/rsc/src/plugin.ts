@@ -74,15 +74,17 @@ export default function vitePluginRsc(
     parentPackage?: string;
   } = {},
 ): Plugin[] {
-  let reactServerDomDep = `${PKG_NAME}/vendor/react-server-dom`;
-  if (rscPluginOptions.parentPackage) {
-    reactServerDomDep = `${rscPluginOptions.parentPackage} > ${reactServerDomDep}`;
-  }
-
   return [
     {
       name: "rsc",
       config() {
+        const reactServerDomDep = [
+          rscPluginOptions.parentPackage,
+          `${PKG_NAME}/vendor/react-server-dom`,
+        ]
+          .filter(Boolean)
+          .join(">");
+
         return {
           appType: "custom",
           resolve: {
