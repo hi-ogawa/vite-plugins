@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
@@ -52,6 +53,7 @@ const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 const serverResourcesMetaMap: Record<string, { key: string }> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
+const REACT_SERVER_DOM_NAME = `${PKG_NAME}/vendor/react-server-dom`;
 
 // dev-only wrapper virtual module of rollupOptions.input.index
 const VIRTUAL_ENTRIES = {
@@ -59,6 +61,12 @@ const VIRTUAL_ENTRIES = {
   rsc: "virtual:vite-rsc/entry-rsc",
   ssr: "virtual:vite-rsc/entry-ssr",
 };
+
+const require = createRequire(import.meta.url);
+
+function resolvePackage(name: string) {
+  return pathToFileURL(require.resolve(name)).href;
+}
 
 export default function vitePluginRsc(
   rscPluginOptions: {
@@ -75,12 +83,6 @@ export default function vitePluginRsc(
       config() {
         return {
           appType: "custom",
-          resolve: {
-            // this allows transforms to safely inject `import "@hiogawa/vite-rsc/xxx"`
-            // to the files outside of project root.
-            // (e.g. react-router monorepo playground has "use client" in a linked dep.)
-            dedupe: [PKG_NAME],
-          },
           environments: {
             client: {
               build: {
@@ -94,7 +96,7 @@ export default function vitePluginRsc(
               optimizeDeps: {
                 include: [
                   "react-dom/client",
-                  `${PKG_NAME}/vendor/react-server-dom/client.browser`,
+                  `${REACT_SERVER_DOM_NAME}/client.browser`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -112,7 +114,7 @@ export default function vitePluginRsc(
                 noExternal: [PKG_NAME],
               },
               optimizeDeps: {
-                include: [`${PKG_NAME}/vendor/react-server-dom/client.edge`],
+                include: [`${REACT_SERVER_DOM_NAME}/client.edge`],
                 exclude: [PKG_NAME],
               },
             },
@@ -129,12 +131,7 @@ export default function vitePluginRsc(
               // `configEnvironment` below adds more `noExternal`
               resolve: {
                 conditions: ["react-server", ...defaultServerConditions],
-                noExternal: [
-                  "react",
-                  "react-dom",
-                  `${PKG_NAME}/vendor/react-server-dom/server.edge`,
-                  PKG_NAME,
-                ],
+                noExternal: ["react", "react-dom", PKG_NAME],
               },
               optimizeDeps: {
                 include: [
@@ -142,8 +139,8 @@ export default function vitePluginRsc(
                   "react-dom",
                   "react/jsx-runtime",
                   "react/jsx-dev-runtime",
-                  `${PKG_NAME}/vendor/react-server-dom/server.edge`,
-                  `${PKG_NAME}/vendor/react-server-dom/client.edge`,
+                  `${REACT_SERVER_DOM_NAME}/server.edge`,
+                  `${REACT_SERVER_DOM_NAME}/client.edge`,
                 ],
                 exclude: [PKG_NAME],
               },
@@ -674,7 +671,8 @@ function vitePluginUseClient(): Plugin[] {
           exportNames,
           renderedExports: [],
         };
-        output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
+        const importSource = resolvePackage(`${PKG_NAME}/react/rsc`);
+        output.prepend(`import * as $$ReactServer from "${importSource}";\n`);
         return { code: output.toString(), map: { mappings: "" } };
       },
     },
@@ -783,7 +781,8 @@ function vitePluginUseServer(): Plugin[] {
           });
           if (!output.hasChanged()) return;
           serverReferences[normalizedId] = id;
-          output.prepend(`import * as $$ReactServer from "${PKG_NAME}/rsc";\n`);
+          const importSource = resolvePackage(`${PKG_NAME}/rsc`);
+          output.prepend(`import * as $$ReactServer from "${importSource}";\n`);
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
@@ -809,9 +808,8 @@ function vitePluginUseServer(): Plugin[] {
           if (!output?.hasChanged()) return;
           serverReferences[normalizedId] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
-          output.prepend(
-            `import * as $$ReactClient from "${PKG_NAME}/react/${name}";\n`,
-          );
+          const importSource = resolvePackage(`${PKG_NAME}/react/${name}`);
+          output.prepend(`import * as $$ReactClient from "${importSource}";\n`);
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
