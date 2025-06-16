@@ -15,6 +15,8 @@ npm run preview
 
 ## API usages
 
+See [`@hiogawa/vite-rsc`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/rsc) for the documentation.
+
 - [`vite.config.ts`](./vite.config.ts)
   - `@higoawa/vite-rsc/plugin`
 - [`./src/framework/entry.rsc.tsx`](./src/framework/entry.rsc.tsx)
