@@ -558,6 +558,7 @@ function serverDepsConfigPlugin(): Plugin {
                 ]
               : ["@hiogawa/react-server > @hiogawa/vite-rsc/react/rsc"]),
           ],
+          exclude: ["@hiogawa/react-server"],
         },
       };
     },
