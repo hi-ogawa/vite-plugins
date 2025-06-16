@@ -7,7 +7,7 @@
 - **HMR support**: Enables editing both client and server components without full page reloads.
 - **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
-## Getting started
+## Getting Started
 
 You can start a project by copying an example locally by:
 
@@ -255,7 +255,7 @@ export function ServerPage() {
 #### `ssr` environment
 
 - `virtual:vite-rsc/bootstrap-script-content`
-  This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
+  This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.input.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
 
 ```js
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content"
