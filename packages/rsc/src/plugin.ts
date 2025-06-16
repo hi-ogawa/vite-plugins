@@ -80,7 +80,7 @@ export default function vitePluginRsc(
   return [
     {
       name: "rsc",
-      config(config) {
+      config() {
         return {
           appType: "custom",
           environments: {
