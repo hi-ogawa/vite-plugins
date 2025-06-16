@@ -35,6 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+        with:
+          build: false
+      - run: pnpm vite-ecosystem-ci:build
       - run: pnpm -C packages/rsc/examples/starter-e2e test-e2e
       - run: pnpm -C packages/rsc/examples/starter build
       - run: pnpm -C packages/rsc/examples/starter-e2e test-e2e-preview
@@ -72,6 +75,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+        with:
+          build: false
+      - run: pnpm vite-ecosystem-ci:build
       - run: pnpm i -w vite@npm:rolldown-vite@latest && pnpm i --no-frozen-lockfile
       - run: pnpm -C packages/rsc/examples/basic test-e2e
       - run: pnpm -C packages/rsc/examples/basic build
