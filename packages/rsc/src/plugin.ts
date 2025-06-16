@@ -115,14 +115,7 @@ export default function vitePluginRsc(
               },
               optimizeDeps: {
                 include: [`${REACT_SERVER_DOM_NAME}/client.edge`],
-                exclude: [
-                  PKG_NAME,
-                  // ensure `react` and `react-dom` are not optimized
-                  // unless `noExternal` environment (e.g. cloudflare)
-                  ...(!config.environments?.ssr?.resolve?.noExternal
-                    ? ["react", "react-dom"]
-                    : []),
-                ],
+                exclude: [PKG_NAME],
               },
             },
             rsc: {
