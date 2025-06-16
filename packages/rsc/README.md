@@ -7,6 +7,14 @@
 - **HMR support**: Enables editing both client and server components without full page reloads.
 - **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
+## Getting Started
+
+You can start a project by copying an example locally by:
+
+```sh
+npx degit hi-ogawa/vite-plugins/packages/rsc/examples/starter my-app
+```
+
 ## Examples
 
 - [`./examples/starter`](./examples/starter)
@@ -247,13 +255,46 @@ export function ServerPage() {
 #### `ssr` environment
 
 - `virtual:vite-rsc/bootstrap-script-content`
-  This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
+  This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.input.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
 
 ```js
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content"
 import { renderToReadableStream } from "react-dom/server.edge";
 
 renderToReadableStream(reactNode, { bootstrapScriptContent });
+```
+
+## Plugin API
+
+```js
+import rsc from "@hiogawa/vite-rsc/plugin";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    rsc({
+      // this is only a shorthand of specifying each
+      // `environments[name].build.rollupOptions.input.index`
+      entries: {
+        rsc: "...",
+        ssr: "...",
+        client: "...",
+      },
+    }),
+  ],
+  environments: {
+    rsc: {
+      define: {
+        // The plugin uses an encryption key for "use server" closure argument binding,
+        // which is generated at build time by default.
+        // This can be overwritten by configuring `define.__VITE_RSC_ENCRYPTION_KEY__`
+        // e.g. to obtain a key during runtime through envrionment variable.
+        // cf. https://nextjs.org/docs/app/guides/data-security#overwriting-encryption-keys-advanced
+        __VITE_RSC_ENCRYPTION_KEY__: "process.env.MY_ENCRYPTION_KEY",
+      }
+    }
+  },
+});
 ```
 
 ## Higher level API
