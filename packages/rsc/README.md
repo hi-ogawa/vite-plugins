@@ -1,5 +1,8 @@
 # @hiogawa/vite-rsc
 
+This package provides [React Server Components](https://react.dev/reference/rsc/server-components) (RSC) support for Vite.
+Any feedback is welcome, please feel free to share an idea in [the discussion](https://github.com/hi-ogawa/vite-plugins/discussions/979).
+
 ## Features
 
 - **Framework-less RSC experience**: The plugin implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides low level `react-server-dom` runtime API without framework-specific abstractions.
