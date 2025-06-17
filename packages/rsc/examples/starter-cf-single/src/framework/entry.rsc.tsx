@@ -96,7 +96,8 @@ async function getRenderHTML(origin: string): Promise<RenderHTML> {
     return module.renderHTML;
   }
 
-  // for dev, ssr environment runs on node and is proxied through special endpoing.
+  // for dev, ssr environment runs on node and is proxied through special endpoint.
+  // error handling is likely more complicated but that would be same for two workers setup.
   return async (rscStream, options) => {
     const proxyRequest = new Request(
       new URL("/__vite_rsc_render_html", origin),
