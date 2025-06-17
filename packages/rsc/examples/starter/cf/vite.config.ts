@@ -3,7 +3,7 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig((env) => ({
   clearScreen: false,
   build: {
     minify: false,
@@ -18,10 +18,24 @@ export default defineConfig({
       disableServerHandler: true,
     }),
     cloudflare({
-      configPath: "./cf/wrangler.jsonc",
+      configPath:
+        env.command === "build"
+          ? "./cf/wrangler.rsc.build.jsonc"
+          : "./cf/wrangler.rsc.jsonc",
       viteEnvironment: {
         name: "rsc",
       },
+      auxiliaryWorkers:
+        env.command === "build"
+          ? []
+          : [
+              {
+                configPath: "./cf/wrangler.ssr.jsonc",
+                viteEnvironment: {
+                  name: "ssr",
+                },
+              },
+            ],
     }),
     {
       name: "fix-up",
@@ -68,4 +82,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

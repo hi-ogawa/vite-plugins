@@ -1,9 +1,16 @@
 import handler from "../src/framework/entry.rsc";
 
-console.log("[debug:cf-rsc-entry]");
-
 export default {
-  fetch(request: Request) {
+  fetch(request: Request, env: any) {
+    if (import.meta.env.DEV) {
+      (globalThis as any).__viteSsrRunner = {
+        import: async () => {
+          return {
+            renderHTML: (...args: any[]) => env.SSR.renderHTML(...args),
+          };
+        },
+      };
+    }
     return handler(request);
   },
 };
