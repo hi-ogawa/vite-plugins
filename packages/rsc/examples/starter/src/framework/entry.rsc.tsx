@@ -18,7 +18,10 @@ export type RscPayload = {
 // the plugin by default assumes `rsc` entry having default export of request handler.
 // however, how server entries are executed can be customized by registering
 // own server handler e.g. `@cloudflare/vite-plugin`.
-export default async function handler(request: Request): Promise<Response> {
+export default async function handler(
+  request: Request,
+  loadSsrModule: () => Promise<typeof import("./entry.ssr.tsx")>,
+): Promise<Response> {
   // handle server function request
   const isAction = request.method === "POST";
   let returnValue: unknown | undefined;
@@ -76,14 +79,12 @@ export default async function handler(request: Request): Promise<Response> {
     });
   }
 
-  // Delegate to SSR environment for html rendering.
+  // Delegate html rendering to SSR environment.
   // The plugin provides `loadSsrModule` helper to allow loading SSR environment entry module
   // in RSC environment. however this can be customized by implementing own runtime communication
   // e.g. `@cloudflare/vite-plugin`'s service binding.
-  const ssrEntryModule = await import.meta.viteRsc.loadSsrModule<
-    typeof import("./entry.ssr.tsx")
-  >("index");
-  const htmlStream = await ssrEntryModule.renderHTML({
+  const { renderHTML } = await loadSsrModule();
+  const htmlStream = await renderHTML({
     stream: rscStream,
     formState,
     options: {

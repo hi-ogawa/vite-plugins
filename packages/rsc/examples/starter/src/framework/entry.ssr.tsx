@@ -6,14 +6,6 @@ import type { ReactFormState } from "react-dom/client";
 import * as ReactDOMServer from "react-dom/server.edge";
 import type { RscPayload } from "./entry.rsc";
 
-export function renderHTMLRequest(request: Request) {
-  const meta = JSON.parse(request.headers.get("x-ssr-render-html-meta")!);
-  return renderHTML({
-    stream: request.body as ReadableStream,
-    ...meta,
-  });
-}
-
 export async function renderHTML({
   stream,
   formState,

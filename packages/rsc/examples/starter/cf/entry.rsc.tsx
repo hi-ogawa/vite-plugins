@@ -1,7 +1,7 @@
-import handler from "../src/framework/entry.rsc.base";
+import handler from "../src/framework/entry.rsc";
 
 export default {
   fetch(request: Request, env: any) {
-    return handler(request, (arg) => env.SSR.renderHTML(arg));
+    return handler(request, () => env.SSR);
   },
 };
