@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-rsc-react-router",
-  "private": true,
+  "version": "0.0.0-pre.0",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/rsc-react-router",
   "repository": {
     "type": "git",
