@@ -202,7 +202,7 @@ main();
 
 ## `react-server-dom` API
 
-#### `@hiogawa/vite-rsc/rsc`
+### `@hiogawa/vite-rsc/rsc`
 
 This module re-exports RSC runtime API provided by `react-server-dom/server.edge`
 
@@ -210,13 +210,13 @@ This module re-exports RSC runtime API provided by `react-server-dom/server.edge
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM). This is also available on rsc environment itself. For example, it allows saving serailized RSC and deserializing it for later use.
 - `decodeAction/decodeReply/loadServerAction`: server function related...
 
-#### `@hiogawa/vite-rsc/ssr`
+### `@hiogawa/vite-rsc/ssr`
 
 This module re-exports RSC runtime API provided by `react-server-dom/client.edge`
 
 - `createFromReadableStream`: RSC deserialization (RSC stream -> React VDOM)
 
-#### `@hiogawa/vite-rsc/browser`
+### `@hiogawa/vite-rsc/browser`
 
 This module re-exports RSC runtime API provided by `react-server-dom/client.browser`
 
@@ -228,11 +228,12 @@ This module re-exports RSC runtime API provided by `react-server-dom/client.brow
 
 The plugin provides an additional helper for multi environment interaction.
 
-#### `rsc` environment
+### `rsc` environment
 
-- `import.meta.viteRsc.loadSsrModule: <T>(entryName: string) => Promise<T>`
-  This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment. This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
-  When that's not the case, the communication between two environments needs to be implemented on your own (e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
+#### `import.meta.viteRsc.loadSsrModule: <T>(entryName: string) => Promise<T>`
+
+This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment. This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
+When that's not the case, the communication between two environments needs to be implemented on your own (e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
 
 ```js
 // rsc environment
@@ -240,8 +241,9 @@ const ssrModule = await import.meta.viteRsc.loadSsrModule("index");
 ssrModule.renderHtml(...)
 ```
 
-- `import.meta.viteRsc.loadCss: () => React.ReactNode`
-  This allows collecting css which is imported through a current server module and injecting them inside server components.
+#### `import.meta.viteRsc.loadCss: () => React.ReactNode`
+
+This allows collecting css which is imported through a current server module and injecting them inside server components.
 
 ```tsx
 import "./test.css";
@@ -257,10 +259,11 @@ export function ServerPage() {
 }
 ```
 
-#### `ssr` environment
+### `ssr` environment
 
-- `virtual:vite-rsc/bootstrap-script-content`
-  This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.input.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
+#### `virtual:vite-rsc/bootstrap-script-content`
+
+This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.input.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
 
 ```js
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content"
@@ -306,14 +309,14 @@ export default defineConfig({
 
 This is a wrapper of `react-server-dom` API and helper API to setup a minimal RSC app without writing own framework code like [`./examples/starter/src/framework`](./examples/starter/src/framework/). See [`./examples/basic`](./examples/basic/) for how this API is used.
 
-#### `@hiogawa/vite-rsc/extra/rsc`
+### `@hiogawa/vite-rsc/extra/rsc`
 
 - `renderRequest`
 
-#### `@hiogawa/vite-rsc/extra/ssr`
+### `@hiogawa/vite-rsc/extra/ssr`
 
 - `renderHtml`
 
-#### `@hiogawa/vite-rsc/extra/browser`
+### `@hiogawa/vite-rsc/extra/browser`
 
 - `hydrate`
