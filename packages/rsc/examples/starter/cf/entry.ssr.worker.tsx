@@ -1,9 +1,0 @@
-// @ts-ignore
-import { WorkerEntrypoint } from "cloudflare:workers";
-import { renderHTML } from "../src/framework/entry.ssr";
-
-export default class DevRenderHTML extends WorkerEntrypoint {
-  renderHTML(...args: Parameters<typeof renderHTML>) {
-    return renderHTML(...args);
-  }
-}
