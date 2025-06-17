@@ -7,7 +7,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cf-dev": "vite -c cf/vite.config.ts",
+    "cf-build": "vite build -c cf/vite.config.ts",
+    "cf-preview": "vite preview -c cf/vite.config.ts"
   },
   "dependencies": {
     "@hiogawa/vite-rsc": "latest",
@@ -15,6 +18,7 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.5.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
