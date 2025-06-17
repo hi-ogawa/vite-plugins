@@ -74,17 +74,17 @@ export default function vitePluginRsc(
      * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
      */
     entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
-    serverHandler?:
-      | false
-      | {
-          match?: (url: URL) => boolean;
-        };
+    /**
+     * By default, the plugin setup request handler based on `default` export of `rsc` environment `rollupOptions.input.index`.
+     * This can be disabled by `serverHandler: false` or selectivly enable it for matched URL.
+     */
+    serverHandler?: false | ((url: string) => boolean);
   } = {},
 ): Plugin[] {
   return [
     {
       name: "rsc",
-      async config(_config, env) {
+      async config(config, env) {
         // crawl packages with "react" in "peerDependencies" to bundle react deps on server
         // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
         const result = await crawlFrameworkPkgs({
@@ -106,7 +106,7 @@ export default function vitePluginRsc(
         ];
 
         return {
-          appType: "custom",
+          appType: config.appType || "custom", // respect "spa" if set explicitly
           environments: {
             client: {
               build: {
@@ -205,10 +205,15 @@ export default function vitePluginRsc(
         (globalThis as any).__viteSsrRunner = viteSsrRunner;
         (globalThis as any).__viteRscRunner = viteRscRunner;
 
-        if (rscPluginOptions.serverHandler) return;
+        if (rscPluginOptions.serverHandler === false) return;
+        const matchServerHandler =
+          rscPluginOptions.serverHandler ?? (() => true);
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
+            if (!matchServerHandler(req.url ?? "/")) {
+              return next();
+            }
             try {
               const mod = await viteRscRunner.import(VIRTUAL_ENTRIES.rsc);
               createRequestListener(mod.default)(req, res);
@@ -219,7 +224,9 @@ export default function vitePluginRsc(
         };
       },
       async configurePreviewServer(server) {
-        if (rscPluginOptions.serverHandler) return;
+        if (rscPluginOptions.serverHandler === false) return;
+        const matchServerHandler =
+          rscPluginOptions.serverHandler ?? (() => true);
 
         const entry = pathToFileURL(path.resolve(`dist/rsc/index.js`)).href;
         const mod = await import(/* @vite-ignore */ entry);
@@ -234,6 +241,9 @@ export default function vitePluginRsc(
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
+            if (!matchServerHandler(req.url ?? "/")) {
+              return next();
+            }
             try {
               handler(req, res);
             } catch (e) {
