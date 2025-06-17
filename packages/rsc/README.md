@@ -291,9 +291,9 @@ export default defineConfig({
     rsc: {
       define: {
         // The plugin uses an encryption key for "use server" closure argument binding,
-        // which is generated at build time by default.
-        // This can be overwritten by configuring `define.__VITE_RSC_ENCRYPTION_KEY__`
-        // e.g. to obtain a key during runtime through envrionment variable.
+        // which is generated at build time by default (and it makes rsc build non-deterministic).
+        // This can be overwritten by configuring `define.__VITE_RSC_ENCRYPTION_KEY__`,
+        // for example, to obtain a key through envrionment variable during runtime.
         // cf. https://nextjs.org/docs/app/guides/data-security#overwriting-encryption-keys-advanced
         __VITE_RSC_ENCRYPTION_KEY__: "process.env.MY_ENCRYPTION_KEY",
       }
