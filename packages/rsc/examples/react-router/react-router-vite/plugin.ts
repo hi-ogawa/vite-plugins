@@ -5,8 +5,17 @@ import { type Plugin, runnerImport } from "vite";
 export function reactRouter(): Plugin[] {
   return [
     {
-      name: "react-router:routes",
+      name: "react-router:config",
+      configResolved() {
+      },
+      resolveId(source) {
+        if (source === "virtual:react-router-routes") {
+          return "\0" + source;
+        }
+      },
       async load(id) {
+        if (id === "\0virtual:react-router-routes") {
+        }
         if (id.endsWith("?react-router-routes")) {
           const imported = await runnerImport<any>(id);
           const appDirectory = path.dirname(id);
