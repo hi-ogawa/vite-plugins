@@ -74,7 +74,11 @@ export default function vitePluginRsc(
      * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
      */
     entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
-    disableServerHandler?: boolean;
+    serverHandler?:
+      | false
+      | {
+          match?: (url: URL) => boolean;
+        };
   } = {},
 ): Plugin[] {
   return [
@@ -201,7 +205,7 @@ export default function vitePluginRsc(
         (globalThis as any).__viteSsrRunner = viteSsrRunner;
         (globalThis as any).__viteRscRunner = viteRscRunner;
 
-        if (rscPluginOptions.disableServerHandler) return;
+        if (rscPluginOptions.serverHandler) return;
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
@@ -215,7 +219,7 @@ export default function vitePluginRsc(
         };
       },
       async configurePreviewServer(server) {
-        if (rscPluginOptions.disableServerHandler) return;
+        if (rscPluginOptions.serverHandler) return;
 
         const entry = pathToFileURL(path.resolve(`dist/rsc/index.js`)).href;
         const mod = await import(/* @vite-ignore */ entry);
