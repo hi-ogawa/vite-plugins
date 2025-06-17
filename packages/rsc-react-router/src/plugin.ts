@@ -15,7 +15,7 @@ export function reactRouter(): Plugin[] {
   return [
     ...rsc({
       entries: {
-        rsc: require.resolve(`${PKG_NAME}/entry.rsc.node`),
+        rsc: require.resolve(`${PKG_NAME}/entry.rsc.single`),
         ssr: require.resolve(`${PKG_NAME}/entry.ssr`),
         client: require.resolve(`${PKG_NAME}/entry.browser`),
       },
