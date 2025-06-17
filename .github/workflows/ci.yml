@@ -61,6 +61,9 @@ jobs:
       - run: pnpm -C packages/rsc/examples/react-router test-e2e-cf
       - run: pnpm -C packages/rsc/examples/react-router cf-build
       - run: pnpm -C packages/rsc/examples/react-router test-e2e-cf-preview
+      - run: pnpm -C packages/rsc/examples/starter-cf-single test-e2e
+      - run: pnpm -C packages/rsc/examples/starter-cf-single build
+      - run: pnpm -C packages/rsc/examples/starter-cf-single test-e2e-preview
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -46,7 +46,7 @@ test("client hmr @dev", async ({ page }) => {
     page.getByRole("button", { name: "Client Counter: 1" }),
   ).toBeVisible();
 
-  const editor = createEditor("../starter/src/client.tsx");
+  const editor = createEditor("./src/client.tsx");
   editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
   await expect(
     page.getByRole("button", { name: "Client [edit] Counter: 1" }),

@@ -80,7 +80,7 @@ export default function vitePluginRsc(
   return [
     {
       name: "rsc",
-      async config(_config, env) {
+      async config(config, env) {
         // crawl packages with "react" in "peerDependencies" to bundle react deps on server
         // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
         const result = await crawlFrameworkPkgs({
@@ -106,7 +106,8 @@ export default function vitePluginRsc(
           environments: {
             client: {
               build: {
-                outDir: "dist/client",
+                outDir:
+                  config.environments?.client?.build?.outDir ?? "dist/client",
                 rollupOptions: {
                   input: rscPluginOptions.entries?.client && {
                     index: rscPluginOptions.entries.client,
@@ -123,7 +124,7 @@ export default function vitePluginRsc(
             },
             ssr: {
               build: {
-                outDir: "dist/ssr",
+                outDir: config.environments?.ssr?.build?.outDir ?? "dist/ssr",
                 rollupOptions: {
                   input: rscPluginOptions.entries?.ssr && {
                     index: rscPluginOptions.entries.ssr,
@@ -147,7 +148,7 @@ export default function vitePluginRsc(
             },
             rsc: {
               build: {
-                outDir: "dist/rsc",
+                outDir: config.environments?.rsc?.build?.outDir ?? "dist/rsc",
                 emitAssets: true,
                 rollupOptions: {
                   input: rscPluginOptions.entries?.rsc && {
@@ -217,7 +218,11 @@ export default function vitePluginRsc(
       async configurePreviewServer(server) {
         if (rscPluginOptions.disableServerHandler) return;
 
-        const entry = pathToFileURL(path.resolve(`dist/rsc/index.js`)).href;
+        const entryFile = path.join(
+          config.environments.rsc!.build.outDir,
+          "index.js",
+        );
+        const entry = pathToFileURL(entryFile).href;
         const mod = await import(/* @vite-ignore */ entry);
         const handler = createRequestListener(mod.default);
 
@@ -315,7 +320,7 @@ export default function vitePluginRsc(
     {
       // allow loading ssr entry module in rsc environment by
       // - dev:   rewriting to `__viteSsrRunner.import(...)`
-      // - build: rewriting to external import of `import("../dist/ssr/...")`
+      // - build: rewriting to external import of `import("../ssr/index.js")`
       name: "rsc:load-ssr-module",
       transform(code) {
         if (code.includes("import.meta.viteRsc.loadSsrModule")) {
@@ -358,8 +363,15 @@ export default function vitePluginRsc(
             (_match, name) => {
               const replacement = normalizeRelativePath(
                 path.relative(
-                  path.join("dist/rsc", chunk.fileName, ".."),
-                  path.join("dist/ssr", `${name}.js`),
+                  path.join(
+                    config.environments.rsc!.build.outDir,
+                    chunk.fileName,
+                    "..",
+                  ),
+                  path.join(
+                    config.environments.ssr!.build.outDir,
+                    `${name}.js`,
+                  ),
                 ),
               );
               return `(import(${JSON.stringify(replacement)}))`;
