@@ -11,7 +11,7 @@ import {
 } from "react-router/rsc";
 
 // @ts-ignore
-import routes from "../app/routes?react-router-routes";
+import routes from "virtual:react-router-routes";
 
 const decodeCallServer: DecodeCallServerFunction = async (actionId, reply) => {
   const args = await decodeReply(reply);
