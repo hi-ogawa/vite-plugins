@@ -27,8 +27,8 @@ export default defineConfig((_env) => ({
     {
       name: "vite-rsc-ssr-proxy",
       configureServer(server) {
-        // proxy RSC SSR requests to the node server
-        // so that we can use `import.meta.viteRsc.loadSsrModule` in the browser.
+        // expose `renderHTML` of node ssr environment through
+        // this special endpoint for cloudflare rsc environment during dev.
         server.middlewares.use(async (req, res, next) => {
           if (req.url === "/__vite_rsc_render_html") {
             const ssrRunner = (
