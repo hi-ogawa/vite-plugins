@@ -1,34 +1,17 @@
-import { renderRequest } from "@hiogawa/vite-rsc/extra/rsc";
+import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 import { Hono } from "hono";
 
 const app = new Hono();
 
-app.get("/api/rsc", (c) => {
+app.get("/api/rsc", () => {
   const el = (
     <div>
       <div>Hono!</div>
       <div>random: ${Math.random().toString(36).slice(2)}</div>
     </div>
   );
-  // TODO: request is irrelevant
-  return renderRequest(c.req.raw, el);
+  const stream = ReactServer.renderToReadableStream(el);
+  return new Response(stream);
 });
-
-app.all("/", (c) => {
-  return renderRequest(c.req.raw, <Document />);
-});
-
-function Document() {
-  return (
-    <html>
-      <head>
-        <title>vite-rsc</title>
-      </head>
-      <body>
-        <div id="root"></div>
-      </body>
-    </html>
-  );
-}
 
 export default app.fetch;

@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  appType: "spa",
   clearScreen: false,
   plugins: [
     react(),
@@ -10,8 +11,8 @@ export default defineConfig({
       entries: {
         client: "./src/client.tsx",
         rsc: "./src/server.tsx",
-        ssr: "@hiogawa/vite-rsc/extra/ssr",
       },
+      serverHandler: (url) => url.startsWith("/api/"),
     }),
   ],
   build: {
