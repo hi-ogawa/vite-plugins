@@ -19,10 +19,10 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.6.0",
+    "@mjackson/node-fetch-server": "^0.6.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "vite-plugin-inspect": "latest"
+    "vite": "latest"
   }
 }
