@@ -1,12 +1,17 @@
+import assert from "node:assert/strict";
 import path from "node:path";
+import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { type Plugin, runnerImport } from "vite";
+import { type Plugin, createIdResolver, runnerImport } from "vite";
 
 export function reactRouter(): Plugin[] {
+  let resolveId: ReturnType<typeof createIdResolver>;
+
   return [
     {
       name: "react-router:config",
-      configResolved() {
+      configResolved(config) {
+        resolveId = createIdResolver(config);
       },
       resolveId(source) {
         if (source === "virtual:react-router-routes") {
@@ -15,16 +20,46 @@ export function reactRouter(): Plugin[] {
       },
       async load(id) {
         if (id === "\0virtual:react-router-routes") {
-        }
-        if (id.endsWith("?react-router-routes")) {
-          const imported = await runnerImport<any>(id);
-          const appDirectory = path.dirname(id);
+          // find react-router.config.ts
+          const configFile = await resolveId(
+            this.environment,
+            "./react-router.config",
+          );
+          assert(configFile, "Cannot find 'react-router.config' file");
+          const configImport = await runnerImport<{ default: Config }>(
+            configFile,
+          );
+          const appDirectory = path.resolve(
+            configImport.module.default.appDirectory ?? "app",
+          );
+
+          // find routes.ts
+          const routesFile = await resolveId(
+            this.environment,
+            path.join(appDirectory, "routes"),
+          );
+          assert(routesFile, "Cannot find 'routes' file");
+          const routesImport = await runnerImport<{
+            default: RouteConfigEntry[];
+          }>(routesFile);
+
+          // find root.tsx
+          const rootFile = await resolveId(
+            this.environment,
+            path.join(appDirectory, "root"),
+          );
+          assert(rootFile, "Cannot find 'root' file");
+
+          this.addWatchFile(configFile);
+          this.addWatchFile(routesFile);
+          this.addWatchFile(rootFile);
+
           const routes = [
             {
               id: "root",
               path: "",
-              file: path.resolve(appDirectory, "root.tsx"),
-              children: imported.module.default,
+              file: rootFile,
+              children: routesImport.module.default,
             },
           ];
           const code = generateRoutesCode({
