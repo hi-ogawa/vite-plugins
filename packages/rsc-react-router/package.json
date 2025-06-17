@@ -19,14 +19,13 @@
     "build": "tsdown",
     "prepack": "tsdown --clean"
   },
-  "dependencies": {
-    "@hiogawa/vite-rsc": "workspace:*"
-  },
   "devDependencies": {
+    "@hiogawa/vite-rsc": "workspace:*",
     "@react-router/dev": "0.0.0-experimental-7db49e8d4",
     "react-router": "0.0.0-experimental-7db49e8d4"
   },
   "peerDependencies": {
+    "@hiogawa/vite-rsc": "*",
     "@react-router/dev": "*",
     "react": "*",
     "react-dom": "*",

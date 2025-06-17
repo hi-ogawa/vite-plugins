@@ -1,41 +1,18 @@
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
 import path from "node:path";
-import rsc from "@hiogawa/vite-rsc/plugin";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
 import { type Plugin, createIdResolver, runnerImport } from "vite";
 
-const require = createRequire(import.meta.url);
 const PKG_NAME = "@hiogawa/vite-rsc-react-router";
 
 export function reactRouter(): Plugin[] {
   let idResolver: ReturnType<typeof createIdResolver>;
 
   return [
-    ...rsc({
-      entries: {
-        rsc: require.resolve(`${PKG_NAME}/entry.rsc.single`),
-        ssr: require.resolve(`${PKG_NAME}/entry.ssr`),
-        client: require.resolve(`${PKG_NAME}/entry.browser`),
-      },
-    }),
     {
       name: "rsc-react-router",
-      configEnvironment(_name, config, _env) {
-        // fixup `optimizeDeps.include` for transitive dependency
-        if (config.optimizeDeps?.include) {
-          const SUB_PKG_NAME = "@hiogawa/vite-rsc";
-          config.optimizeDeps.include = config.optimizeDeps.include.map(
-            (name) => {
-              if (name.startsWith(SUB_PKG_NAME)) {
-                name = `${PKG_NAME} > ${name}`;
-              }
-              return name;
-            },
-          );
-        }
-
+      configEnvironment(_name, _config, _env) {
         return {
           resolve: {
             noExternal: [PKG_NAME],
