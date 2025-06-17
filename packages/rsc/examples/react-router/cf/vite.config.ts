@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 import inspect from "vite-plugin-inspect";
 import { reactRouter } from "../react-router-vite/plugin";
 
-export default defineConfig({
+export default defineConfig((env) => ({
   clearScreen: false,
   build: {
     minify: false,
@@ -29,7 +29,10 @@ export default defineConfig({
       },
       auxiliaryWorkers: [
         {
-          configPath: "./cf/wrangler.rsc.jsonc",
+          configPath:
+            env.command === "build"
+              ? "./cf/wrangler.rsc.build.jsonc"
+              : "./cf/wrangler.rsc.jsonc",
           viteEnvironment: {
             name: "rsc",
           },
@@ -64,21 +67,10 @@ export default defineConfig({
     },
   ],
   environments: {
-    ssr: {
-      optimizeDeps: {
-        include: [
-          "react",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime",
-          "react-dom",
-          "react-dom/server.edge",
-        ],
-      },
-    },
     rsc: {
       optimizeDeps: {
         include: ["react-router"],
       },
     },
   },
-});
+}));
