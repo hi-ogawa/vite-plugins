@@ -1,89 +1,69 @@
-import assert from "node:assert";
-import { createRequire } from "node:module";
+import assert from "node:assert/strict";
 import path from "node:path";
-import rsc from "@hiogawa/vite-rsc/plugin";
-import type { Config as ReactRouterConfig } from "@react-router/dev/config";
+import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { type Plugin, runnerImport } from "vite";
+import { type Plugin, createIdResolver, runnerImport } from "vite";
 
-const require = createRequire(import.meta.url);
-const PKG_NAME = "@hiogawa/vite-rsc-react-router";
+export function reactRouter(): Plugin[] {
+  let idResolver: ReturnType<typeof createIdResolver>;
 
-export function reactRouter(reactRouterOptions: ReactRouterConfig): Plugin[] {
-  const appDirectory = path.resolve(
-    process.cwd(),
-    reactRouterOptions.appDirectory || "app",
-  );
   return [
-    ...rsc({
-      entries: {
-        rsc: require.resolve(`${PKG_NAME}/entry.rsc.node`),
-        ssr: require.resolve(`${PKG_NAME}/entry.ssr`),
-        client: require.resolve(`${PKG_NAME}/entry.browser`),
-      },
-    }),
     {
-      name: "rsc-react-router",
-      configEnvironment(_name, config, _env) {
-        // fixup `optimizeDeps.include` for transitive dependency
-        if (config.optimizeDeps?.include) {
-          const SUB_PKG_NAME = "@hiogawa/vite-rsc";
-          config.optimizeDeps.include = config.optimizeDeps.include.map(
-            (name) => {
-              if (name.startsWith(SUB_PKG_NAME)) {
-                name = `${PKG_NAME} > ${name}`;
-              }
-              return name;
-            },
-          );
-        }
-
-        return {
-          resolve: {
-            noExternal: [PKG_NAME],
-          },
-          optimizeDeps: {
-            exclude: [PKG_NAME],
-          },
-        };
+      name: "react-router:config",
+      configResolved(config) {
+        idResolver = createIdResolver(config);
       },
-    },
-    {
-      name: "react-router:routes",
-      async resolveId(source, _importer, options) {
-        // redirect virtual module to `app/routes.(ext)` file
-        if (source === "virtual:vite-rsc-react-router/routes") {
-          const file =
-            path.join(appDirectory, "routes") + "?react-router-routes";
-          const resolved = await this.resolve(file, undefined, options);
-          assert(resolved, "Cannot find 'routes' file");
-          return resolved;
+      resolveId(source) {
+        if (source === "virtual:react-router-routes") {
+          return "\0" + source;
         }
       },
       async load(id) {
-        if (id.endsWith("?react-router-routes")) {
-          const imported = await runnerImport<any>(id);
-          const rootResolved = await this.resolve(
-            path.join(appDirectory, "root"),
-          );
-          assert(rootResolved, "Cannot find 'root' file");
-          const routes = [
-            {
-              id: "root",
-              path: "",
-              file: rootResolved.id,
-              children: imported.module.default,
-            },
-          ];
-          const code = generateRoutesCode({
-            appDirectory,
-            routes,
-          });
+        if (id === "\0virtual:react-router-routes") {
+          const findFile = (id: string) => idResolver(this.environment, id);
+          const config = await readReactRouterConfig(findFile);
+          this.addWatchFile(config.configFile);
+          this.addWatchFile(config.routesFile);
+          const code = generateRoutesCode(config);
           return code;
         }
       },
     },
   ];
+}
+
+async function readReactRouterConfig(
+  findFile: (id: string) => Promise<string | undefined>,
+) {
+  // find react-router.config.ts
+  const configFile = await findFile("./react-router.config");
+  assert(configFile, "Cannot find 'react-router.config' file");
+  const configImport = await runnerImport<{ default: Config }>(configFile);
+  const appDirectory = path.resolve(
+    configImport.module.default.appDirectory ?? "app",
+  );
+
+  // find routes.ts
+  const routesFile = await findFile(path.join(appDirectory, "routes"));
+  assert(routesFile, "Cannot find 'routes' file");
+  const routesImport = await runnerImport<{
+    default: RouteConfigEntry[];
+  }>(routesFile);
+
+  // find root.tsx
+  const rootFile = await findFile(path.join(appDirectory, "root"));
+  assert(rootFile, "Cannot find 'root' file");
+
+  const routes = [
+    {
+      id: "root",
+      path: "",
+      file: rootFile,
+      children: routesImport.module.default,
+    },
+  ];
+
+  return { configFile, routesFile, appDirectory, routes };
 }
 
 // copied from

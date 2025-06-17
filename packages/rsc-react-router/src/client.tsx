@@ -5,14 +5,13 @@ import { useNavigate } from "react-router";
 
 export function ServerHmr() {
   if (import.meta.hot) {
-    const hot = import.meta.hot;
     const navigate = useNavigate();
     React.useEffect(() => {
       const refetch = () =>
         navigate(window.location.pathname, { replace: true });
-      hot.on("rsc:update", refetch);
+      import.meta.hot!.on("rsc:update", refetch);
       return () => {
-        hot.off("rsc:update", refetch);
+        import.meta.hot!.off("rsc:update", refetch);
       };
     }, [navigate]);
   }
