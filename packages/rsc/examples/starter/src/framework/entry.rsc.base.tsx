@@ -79,7 +79,7 @@ export default async function handler(
     });
   }
 
-  // Delegate to SSR environment for html rendering.
+  // Delegate html rendering to SSR environment.
   // The plugin provides `loadSsrModule` helper to allow loading SSR environment entry module
   // in RSC environment. however this can be customized by implementing own runtime communication
   // e.g. `@cloudflare/vite-plugin`'s service binding.

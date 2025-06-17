@@ -1,7 +1,7 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
-import rsc from "@hiogawa/vite-rsc/plugin";
+import rsc, { loadSsrModuleDev } from "@hiogawa/vite-rsc/plugin";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { RunnableDevEnvironment, defineConfig } from "vite";
 
 export default defineConfig((env) => ({
   clearScreen: false,
@@ -37,6 +37,28 @@ export default defineConfig((env) => ({
               },
             ],
     }),
+    {
+      name: "dev-ssr-proxy",
+      configureServer(server) {
+        server.middlewares.use(async (req, res, next) => {
+          if (req.url === "/__dev_ssr") {
+            // assert(server.environments.ssr as RunnableDevEnvironment);
+            // (server.environments.ssr as RunnableDevEnvironment).runner.import("./src/framework/entry.ssr.tsx");
+            // loadSsrModule
+            try {
+              const ssrEntry =
+                loadSsrModuleDev<
+                  typeof import("../src/framework/entry.ssr.tsx")
+                >("index");
+              // loadSsrModuleDev
+            } catch (e) {
+              next(e);
+            }
+          }
+          next();
+        });
+      },
+    },
     {
       name: "fix-up",
       enforce: "post",
