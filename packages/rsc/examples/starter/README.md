@@ -35,4 +35,4 @@ See [`@hiogawa/vite-rsc`](https://github.com/hi-ogawa/vite-plugins/tree/main/pac
 ## Notes
 
 - [`./src/framework/entry.{browser,rsc,ssr}.tsx`](./src/framework) (with inline comments) provides an overview of how low level RSC (React flight) API can be used to build RSC framework.
-- You can use [`vite-plugin-inspect`](https://github.com/antfu-collective/vite-plugin-inspect) (available at http://localhost:5173/__inspect/) to see how `"use client"` and `"use server"` directives are internally transformed.
+- You can use [`vite-plugin-inspect`](https://github.com/antfu-collective/vite-plugin-inspect) to understand how `"use client"` and `"use server"` directives are transformed internally.

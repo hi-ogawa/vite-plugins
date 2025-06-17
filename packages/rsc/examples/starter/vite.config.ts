@@ -1,7 +1,6 @@
 import rsc from "@hiogawa/vite-rsc/plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import inspect from "vite-plugin-inspect";
 
 export default defineConfig({
   plugins: [
@@ -17,10 +16,6 @@ export default defineConfig({
     // use any of react plugins https://github.com/vitejs/vite-plugin-react
     // to enable client component HMR
     react(),
-
-    // vite-plugin-inspect is useful for understanding
-    // "use client" / "use server" transforms.
-    inspect({ build: true }),
   ],
 
   // specify entry point for each environment.
