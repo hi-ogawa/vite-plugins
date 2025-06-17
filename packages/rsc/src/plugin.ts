@@ -106,7 +106,8 @@ export default function vitePluginRsc(
           environments: {
             client: {
               build: {
-                outDir: "dist/client",
+                outDir:
+                  config.environments?.client?.build?.outDir ?? "dist/client",
                 rollupOptions: {
                   input: rscPluginOptions.entries?.client && {
                     index: rscPluginOptions.entries.client,
@@ -147,7 +148,7 @@ export default function vitePluginRsc(
             },
             rsc: {
               build: {
-                outDir: "dist/rsc",
+                outDir: config.environments?.rsc?.build?.outDir ?? "dist/rsc",
                 emitAssets: true,
                 rollupOptions: {
                   input: rscPluginOptions.entries?.rsc && {
@@ -217,7 +218,11 @@ export default function vitePluginRsc(
       async configurePreviewServer(server) {
         if (rscPluginOptions.disableServerHandler) return;
 
-        const entry = pathToFileURL(path.resolve(`dist/rsc/index.js`)).href;
+        const entryFile = path.join(
+          config.environments.rsc!.build.outDir,
+          "index.js",
+        );
+        const entry = pathToFileURL(entryFile).href;
         const mod = await import(/* @vite-ignore */ entry);
         const handler = createRequestListener(mod.default);
 
@@ -358,7 +363,11 @@ export default function vitePluginRsc(
             (_match, name) => {
               const replacement = normalizeRelativePath(
                 path.relative(
-                  path.join("dist/rsc", chunk.fileName, ".."),
+                  path.join(
+                    config.environments.rsc!.build.outDir,
+                    chunk.fileName,
+                    "..",
+                  ),
                   path.join(
                     config.environments.ssr!.build.outDir,
                     `${name}.js`,
