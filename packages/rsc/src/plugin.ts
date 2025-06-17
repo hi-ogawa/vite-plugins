@@ -578,11 +578,6 @@ export default function vitePluginRsc(
   ];
 }
 
-export async function loadSsrModuleDev<T>(entryName: string): Promise<T> {
-  const source = getEntrySource(config.environments.ssr!, entryName);
-  return await viteSsrRunner.import(source);
-}
-
 function normalizeRelativePath(s: string) {
   s = normalizePath(s);
   return s[0] === "." ? s : "./" + s;
