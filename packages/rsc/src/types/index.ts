@@ -31,4 +31,5 @@ export type CallServerCallback = (id: string, args: unknown[]) => unknown;
 declare global {
   var __viteRscSsrRunner: ModuleRunner;
   var __viteRscCallServer: CallServerCallback;
+  var __vite_rsc_raw_import__: (id: string) => unknown;
 }
