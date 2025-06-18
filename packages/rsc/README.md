@@ -230,18 +230,22 @@ The plugin provides an additional helper for multi environment interaction.
 
 ### `rsc` environment
 
-#### `import.meta.viteRsc.loadSsrModule: <T>(entryName: string) => Promise<T>`
+#### `import.meta.viteRsc.loadSsrModule`
+
+- Type: `(entryName: string) => Promise<T>`
 
 This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment. This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
 When that's not the case, the communication between two environments needs to be implemented on your own (e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
 
 ```js
-// rsc environment
+// inside rsc environment
 const ssrModule = await import.meta.viteRsc.loadSsrModule("index");
 ssrModule.renderHtml(...)
 ```
 
-#### `import.meta.viteRsc.loadCss: () => React.ReactNode`
+#### `import.meta.viteRsc.loadCss`
+
+- Type: `(importer?: string) => React.ReactNode`
 
 This allows collecting css which is imported through a current server module and injecting them inside server components.
 
@@ -256,6 +260,31 @@ export function ServerPage() {
     {import.meta.viteRsc.loadCss()}
     ...
   </>
+}
+```
+
+Where specifying `loadCss(importer)`, it will collect css through the speicifed `importer` server module.
+
+```tsx
+// virtual:my-framework-helper
+export function Assets() {
+  return <>
+    {import.meta.viteRsc.loadCss("/routes/home.tsx")}
+    {import.meta.viteRsc.loadCss("/routes/about.tsx")}
+    {...}
+  </>
+}
+
+// user-app.tsx
+import { Assets } from "virtual:my-framework-helper";
+
+export function UserApp() {
+  return <html>
+    <head>
+      <Assets />
+    </head>
+    <body>...</body>
+  </html>
 }
 ```
 

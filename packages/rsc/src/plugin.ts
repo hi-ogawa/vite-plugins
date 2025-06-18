@@ -1136,17 +1136,43 @@ export function vitePluginRscCss(): Plugin[] {
     {
       name: "rsc:importer-resources",
       async transform(code, id) {
-        // TODO: use es-module-lexer
-        if (code.includes("import.meta.viteRsc.loadCss")) {
-          assert(this.environment.name === "rsc");
-          const output = new MagicString(code);
-          const importId = `virtual:vite-rsc/importer-resources?importer=${id}`;
-          output.prepend(`import __vite_rsc_react__ from "react";`);
-          output.replaceAll(
-            "import.meta.viteRsc.loadCss",
-            // wrap async component element
-            `(() => __vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => __vite_rsc_react__.createElement(m.Resources))))`,
+        if (!code.includes("import.meta.viteRsc.loadCss")) return;
+
+        assert(this.environment.name === "rsc");
+        const output = new MagicString(code);
+        output.prepend(`import __vite_rsc_react__ from "react";`);
+
+        for (const match of code.matchAll(
+          /import\.meta\.viteRsc\.loadCss\(([\s\S]*?)\)/dg,
+        )) {
+          const [start, end] = match.indices![0]!;
+          const argCode = match[1]!.trim();
+          let importer = id;
+          if (argCode) {
+            const argValue = evalValue<string>(argCode);
+            const resolved = await this.resolve(argValue, id);
+            if (resolved) {
+              importer = resolved.id;
+            } else {
+              this.warn(
+                `[vite-rsc] failed to transform 'import.meta.viteRsc.loadCss(${argCode})'`,
+              );
+              output.update(start, end, `null`);
+              continue;
+            }
+          }
+          const importId = `virtual:vite-rsc/importer-resources?importer=${importer}`;
+          output.update(
+            start,
+            end,
+            `__vite_rsc_react__.createElement(async () => {
+               const __m = await import(${JSON.stringify(importId)});
+               return __vite_rsc_react__.createElement(__m.Resources);
+             })`,
           );
+        }
+
+        if (output.hasChanged()) {
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
@@ -1280,4 +1306,13 @@ function generateResourcesCode(depsCode: string) {
     import __vite_rsc_react__ from "react";
     export const Resources = (${ResourcesFn.toString()})(__vite_rsc_react__, ${depsCode});
   `;
+}
+
+// https://github.com/vitejs/vite/blob/ea9aed7ebcb7f4be542bd2a384cbcb5a1e7b31bd/packages/vite/src/node/utils.ts#L1469-L1475
+function evalValue<T = any>(rawValue: string): T {
+  const fn = new Function(`
+    var console, exports, global, module, process, require
+    return (\n${rawValue}\n)
+  `);
+  return fn();
 }
