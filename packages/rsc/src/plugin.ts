@@ -1166,7 +1166,6 @@ export function vitePluginRscCss(): Plugin[] {
 
         assert(this.environment.name === "rsc");
         const output = new MagicString(code);
-        output.prepend(`import __vite_rsc_react_load_css from "react";`);
 
         for (const match of code.matchAll(
           /import\.meta\.viteRsc\.loadCss\(([\s\S]*?)\)/dg,
@@ -1191,14 +1190,17 @@ export function vitePluginRscCss(): Plugin[] {
           output.update(
             start,
             end,
-            `__vite_rsc_react_load_css.createElement(async () => {
+            `__vite_rsc_react__.createElement(async () => {
                const __m = await import(${JSON.stringify(importId)});
-               return __vite_rsc_react_load_css.createElement(__m.Resources);
+               return __vite_rsc_react__.createElement(__m.Resources);
              })`,
           );
         }
 
         if (output.hasChanged()) {
+          if (!code.includes("__vite_rsc_react__")) {
+            output.prepend(`import __vite_rsc_react__ from "react";`);
+          }
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
@@ -1363,20 +1365,22 @@ export async function transformRscCssExport(options: {
 
   const result = transformWrapExport(options.code, options.ast, {
     runtime: (value, name) =>
-      `__vite_rsc_wrap_css(${value}, ${JSON.stringify(name)})`,
+      `__vite_rsc_wrap_css__(${value}, ${JSON.stringify(name)})`,
     filter: (name) => options.filter(name),
     ignoreExportAllDeclaration: true,
   });
   if (result.output.hasChanged()) {
+    if (!options.code.includes("__vite_rsc_react__")) {
+      result.output.prepend(`import __vite_rsc_react__ from "react";`);
+    }
     result.output.append(`
-import __vite_rsc_react_wrap_css from "react";
-function __vite_rsc_wrap_css(value, name) {
+function __vite_rsc_wrap_css__(value, name) {
   function __wrapper(props) {
-    return __vite_rsc_react_wrap_css.createElement(
-      __vite_rsc_react_wrap_css.Fragment,
+    return __vite_rsc_react__.createElement(
+      __vite_rsc_react__.Fragment,
       null,
       import.meta.viteRsc.loadCss(${options.id ? JSON.stringify(options.id) : ""}),
-      __vite_rsc_react_wrap_css.createElement(value, props),
+      __vite_rsc_react__.createElement(value, props),
     );
   }
   Object.defineProperty(__wrapper, "name", { value: name });

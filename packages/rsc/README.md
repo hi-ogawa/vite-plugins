@@ -263,7 +263,7 @@ export function ServerPage() {
 }
 ```
 
-Where specifying `loadCss(importer)`, it will collect css through the speicifed `importer` server module.
+Where specifying `loadCss(<id>)`, it will collect css through the server module resolved by `<id>`.
 
 ```tsx
 // virtual:my-framework-helper
