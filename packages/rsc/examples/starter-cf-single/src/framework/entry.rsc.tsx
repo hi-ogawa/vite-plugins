@@ -90,9 +90,9 @@ async function handler(request: Request): Promise<Response> {
 async function getRenderHTML(origin: string): Promise<RenderHTML> {
   // for build, ssr build is directly imported in the runtime.
   if (!import.meta.env.DEV) {
-    const module = await import.meta.viteRsc.loadSsrModule<
+    const module = await import.meta.viteRsc.loadModule<
       typeof import("./entry.ssr.tsx")
-    >("index");
+    >("ssr", "index");
     return module.renderHTML;
   }
 

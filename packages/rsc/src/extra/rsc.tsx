@@ -81,9 +81,10 @@ export async function renderRequest(
     });
   }
 
-  const ssrEntry = await import.meta.viteRsc.loadSsrModule<
-    typeof import("./ssr")
-  >("index");
+  const ssrEntry = await import.meta.viteRsc.loadModule<typeof import("./ssr")>(
+    "ssr",
+    "index",
+  );
   return ssrEntry.renderHtml({
     stream,
     formState,
