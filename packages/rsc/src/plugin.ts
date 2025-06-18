@@ -1119,10 +1119,10 @@ export function vitePluginRscCss(): Plugin[] {
           const value = query["vite-rsc-css-export"];
           const names = value.split(",");
           const ast = await parseAstAsync(code);
-          const result = await transformServerComponentCss({
+          const result = await transformRscCssExport({
             ast,
             code,
-            filterName: (name) =>
+            filter: (name) =>
               value ? names.includes(name) : /^[A-Z]/.test(name),
           });
           if (result) {
@@ -1351,11 +1351,11 @@ function parseIdQuery(id: string) {
   return { filename, query };
 }
 
-export async function transformServerComponentCss(options: {
+export async function transformRscCssExport(options: {
   ast: Awaited<ReturnType<typeof parseAstAsync>>;
   code: string;
   id?: string;
-  filterName: (name: string) => boolean;
+  filter: (name: string) => boolean;
 }): Promise<{ output: MagicString } | undefined> {
   if (hasDirective(options.ast.body, "use client")) {
     return;
@@ -1364,7 +1364,7 @@ export async function transformServerComponentCss(options: {
   const result = transformWrapExport(options.code, options.ast, {
     runtime: (value, name) =>
       `__vite_rsc_wrap_css(${value}, ${JSON.stringify(name)})`,
-    filter: (name) => options.filterName(name),
+    filter: (name) => options.filter(name),
     ignoreExportAllDeclaration: true,
   });
   if (result.output.hasChanged()) {

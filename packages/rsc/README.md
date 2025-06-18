@@ -336,7 +336,11 @@ export default defineConfig({
 });
 ```
 
-#### `transformServerComponentCss`
+#### `transformRscCssExport`
+
+TODO
+
+#### `?vite-rsc-css-export=<name>`
 
 TODO
 
