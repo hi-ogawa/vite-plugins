@@ -1322,19 +1322,35 @@ function evalValue<T = any>(rawValue: string): T {
 export async function transformServerComponentCss(options: {
   code: string;
   id: string;
+  filterName: (name: string) => boolean;
 }): Promise<{ output: MagicString } | undefined> {
   const ast = await parseAstAsync(options.code);
+
+  // client reference css is automatically code-split and injected
   if (hasDirective(ast.body, "use client")) {
     return;
   }
-  options.id;
+
   const result = transformWrapExport(options.code, ast, {
-    runtime: (value) => `__vite_rsc_wrap_css(${value})`,
+    runtime: (value, name) =>
+      `__vite_rsc_wrap_css(${value}, ${JSON.stringify(name)})`,
+    filter: (name) => options.filterName(name),
     ignoreExportAllDeclaration: true,
   });
   if (result.output.hasChanged()) {
     result.output.append(`
-const __vite_rsc_wrap_css = (value) => {
+import __vite_rsc_react from "react";
+const __vite_rsc_wrap_css = (value, name) => {
+  function __wrapper(props) {
+    return __vite_rsc_react.createElement(
+      __vite_rsc_react.Fragment,
+      null,
+      import.meta.viteRsc.loadCss(${JSON.stringify(options.id)}),
+      __vite_rsc_react.createElement(value, props),
+    );
+  }
+  Object.defineProperty(__wrapper, "name", { value: name } });
+  return __wrapper;
 }
 `);
     return { output: result.output };

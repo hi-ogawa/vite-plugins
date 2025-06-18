@@ -10,6 +10,7 @@ export function transformWrapExport(
     runtime: (value: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
+    filter?: (name: string) => boolean;
   },
 ): {
   exportNames: string[];
@@ -18,6 +19,7 @@ export function transformWrapExport(
   const output = new MagicString(input);
   const exportNames: string[] = [];
   const toAppend: string[] = [];
+  const filter = options.filter ?? (() => true);
 
   function wrapSimple(start: number, end: number, names: string[]) {
     // update code and move to preserve `registerServerReference` position
@@ -30,6 +32,7 @@ export function transformWrapExport(
     //   f = registerServerReference(f, ...)   << maps to original "export" token
     //   export { f }                          <<
     const newCode = names
+      .filter((name) => filter(name))
       .map(
         (name) =>
           `${name} = /* #__PURE__ */ ${options.runtime(name, name)};\n` +
@@ -41,6 +44,8 @@ export function transformWrapExport(
   }
 
   function wrapExport(name: string, exportName: string) {
+    if (!filter(exportName)) return;
+
     toAppend.push(
       `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName)}`,
       `export { $$wrap_${name} as ${exportName} }`,
