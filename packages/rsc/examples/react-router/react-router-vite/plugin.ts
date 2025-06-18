@@ -1,8 +1,14 @@
 import assert from "node:assert/strict";
 import path from "node:path";
+import { getExportNames } from "@hiogawa/transforms";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { type Plugin, createIdResolver, runnerImport } from "vite";
+import {
+  type Plugin,
+  createIdResolver,
+  parseAstAsync,
+  runnerImport,
+} from "vite";
 
 export function reactRouter(): Plugin[] {
   let idResolver: ReturnType<typeof createIdResolver>;
@@ -29,7 +35,50 @@ export function reactRouter(): Plugin[] {
         }
       },
     },
+    {
+      name: "react-router:route-css",
+      async transform(code, id) {
+        const { file, query } = parseIdQuery(id);
+        if ("vite-rsc-css" in query) {
+          const names = query["vite-rsc-css"].split(",");
+          const output = await wrapRscCss(code, file, names);
+          return { code: output, map: { mappings: "" } };
+        }
+      },
+    },
   ];
+}
+
+function parseIdQuery(id: string) {
+  const [file, rawQuery] = id.split(`?`, 2);
+  const query = Object.fromEntries(new URLSearchParams(rawQuery));
+  return { file, query };
+}
+
+async function wrapRscCss(code: string, file: string, names: string[]) {
+  const ast = await parseAstAsync(code);
+  const result = getExportNames(ast, {});
+  let output = `export * from ${JSON.stringify(file)};\n;`;
+  if (result.exportNames.includes("default")) {
+    output += `export { default } from ${JSON.stringify(file)};\n`;
+  }
+  for (const name of names) {
+    if (result.exportNames.includes(name)) {
+      output += `
+import { ${name} as __${name} } from ${JSON.stringify(file)};
+import __react from "react";
+export const ${name} = (props) => {
+  return __react.createElement(
+    __react.Fragment,
+    null,
+    import.meta.viteRsc.loadCss(${JSON.stringify(file)}),
+    __react.createElement(__${name}, props),
+  );
+};
+`;
+    }
+  }
+  return output;
 }
 
 async function readReactRouterConfig(
@@ -58,7 +107,7 @@ async function readReactRouterConfig(
     {
       id: "root",
       path: "",
-      file: rootFile,
+      file: rootFile + "?vite-rsc-css=Layout",
       children: routesImport.module.default,
     },
   ];
@@ -86,7 +135,6 @@ function generateRoutesCode(config: {
       continue;
     }
     code += "{";
-    // TODO: route-module transform
     code += `lazy: () => import(${JSON.stringify(path.resolve(config.appDirectory, route.file))}),`;
     code += `id: ${JSON.stringify(route.id || createRouteId(route.file, config.appDirectory))},`;
     if (typeof route.path === "string") {

@@ -3,7 +3,7 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import Inspect from "vite-plugin-inspect";
+import inspect from "vite-plugin-inspect";
 
 // log unhandled rejection to debug e2e failures
 if (!(globalThis as any).__debugHandlerRegisterd) {
@@ -30,7 +30,7 @@ export default defineConfig({
       },
     }),
     // avoid ecosystem CI fail due to vite-plugin-inspect compatibility
-    !process.env.ECOSYSTEM_CI && Inspect(),
+    !process.env.ECOSYSTEM_CI && inspect(),
     {
       name: "show-encryption-key",
       enforce: "post",
