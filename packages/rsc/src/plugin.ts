@@ -25,7 +25,6 @@ import {
   normalizePath,
   parseAstAsync,
 } from "vite";
-import type { ModuleRunner } from "vite/module-runner";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
 import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
@@ -35,8 +34,6 @@ import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 let serverReferences: Record<string, string> = {};
 let server: ViteDevServer;
 let config: ResolvedConfig;
-let viteSsrRunner: ModuleRunner;
-let viteRscRunner: ModuleRunner;
 let rscBundle: Rollup.OutputBundle;
 let buildAssetsManifest: AssetsManifest | undefined;
 const BUILD_ASSETS_MANIFEST_NAME = "__vite_rsc_assets_manifest.js";
@@ -60,8 +57,6 @@ const REACT_SERVER_DOM_NAME = `${PKG_NAME}/vendor/react-server-dom`;
 // dev-only wrapper virtual module of rollupOptions.input.index
 const VIRTUAL_ENTRIES = {
   browser: "virtual:vite-rsc/entry-browser",
-  rsc: "virtual:vite-rsc/entry-rsc",
-  ssr: "virtual:vite-rsc/entry-ssr",
 };
 
 const require = createRequire(import.meta.url);
@@ -197,19 +192,24 @@ export default function vitePluginRsc(
       },
       configureServer(server_) {
         server = server_;
-        viteSsrRunner = (server.environments.ssr as RunnableDevEnvironment)
-          .runner;
-        viteRscRunner = (server.environments.rsc as RunnableDevEnvironment)
-          .runner;
-        (globalThis as any).__viteSsrRunner = viteSsrRunner;
-        (globalThis as any).__viteRscRunner = viteRscRunner;
+        (globalThis as any).__viteRscDevServer = server;
 
         if (rscPluginOptions.disableServerHandler) return;
+
+        const environment = server.environments.rsc as RunnableDevEnvironment;
+        const source = getEntrySource(environment.config, "index");
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
             try {
-              const mod = await viteRscRunner.import(VIRTUAL_ENTRIES.rsc);
+              // resolve before `runner.import` to workaround https://github.com/vitejs/vite/issues/19975
+              const resolved =
+                await environment.pluginContainer.resolveId(source);
+              assert(
+                resolved,
+                `[vite-rsc] failed to resolve server handler '${source}'`,
+              );
+              const mod = await environment.runner.import(resolved.id);
               createRequestListener(mod.default)(req, res);
             } catch (e) {
               next(e);
@@ -320,68 +320,86 @@ export default function vitePluginRsc(
       },
     },
     {
-      // allow loading ssr entry module in rsc environment by
-      // - dev:   rewriting to `__viteSsrRunner.import(...)`
-      // - build: rewriting to external import of `import("../ssr/index.js")`
+      // backward compat: `loadSsrModule(name)` implemented as `loadModule("ssr", name)`
       name: "rsc:load-ssr-module",
       transform(code) {
-        if (code.includes("import.meta.viteRsc.loadSsrModule")) {
-          const s = new MagicString(code);
-          for (const match of code.matchAll(
-            /import\.meta\.viteRsc\.loadSsrModule\((?:"([^"]+)"|'([^']+)')\)/g,
-          )) {
-            const entryName = match[1] || match[2];
-            let replacement: string;
-            if (this.environment.mode === "dev") {
-              const source = getEntrySource(
-                config.environments.ssr!,
-                entryName,
-              );
-              replacement = `__viteSsrRunner.import(${JSON.stringify(source)})`;
-            } else {
-              replacement = JSON.stringify(
-                "__vite_rsc_load_ssr_entry:" + entryName,
-              );
-            }
-            s.overwrite(
-              match.index!,
-              match.index! + match[0].length,
-              replacement,
+        if (code.includes("import.meta.viteRsc.loadSsrModule(")) {
+          return code.replaceAll(
+            `import.meta.viteRsc.loadSsrModule(`,
+            `import.meta.viteRsc.loadModule("ssr", `,
+          );
+        }
+      },
+    },
+    {
+      // allow loading entry module in other environment by
+      // - (dev) rewriting to `server.environments[<env>].runner.import(<entry>)`
+      // - (build) rewriting to external `import("../<env>/<entry>.js")`
+      name: "rsc:load-environment-module",
+      async transform(code) {
+        if (!code.includes("import.meta.viteRsc.loadModule")) return;
+        const s = new MagicString(code);
+        for (const match of code.matchAll(
+          /import\.meta\.viteRsc\.loadModule\(([\s\S]*?)\)/dg,
+        )) {
+          const argCode = match[1]!.trim();
+          const [environmentName, entryName] = JSON.parse(`[${argCode}]`);
+          let replacement: string;
+          if (this.environment.mode === "dev") {
+            const environment = server.environments[environmentName]!;
+            const source = getEntrySource(environment.config, entryName);
+            const resolved =
+              await environment.pluginContainer.resolveId(source);
+            assert(resolved, `[vite-rsc] failed to resolve entry '${source}'`);
+            replacement =
+              `globalThis.__viteRscDevServer.environments[${JSON.stringify(environmentName)}]` +
+              `.runner.import(${JSON.stringify(resolved.id)})`;
+          } else {
+            replacement = JSON.stringify(
+              `__vite_rsc_load_module:${this.environment.name}:${environmentName}:${entryName}`,
             );
           }
-          if (s.hasChanged()) {
-            return {
-              code: s.toString(),
-              map: s.generateMap({ hires: "boundary" }),
-            };
-          }
+          const [start, end] = match.indices![0]!;
+          s.overwrite(start, end, replacement);
+        }
+        if (s.hasChanged()) {
+          return {
+            code: s.toString(),
+            map: s.generateMap({ hires: "boundary" }),
+          };
         }
       },
       renderChunk(code, chunk) {
-        if (code.includes("__vite_rsc_load_ssr_entry:")) {
-          assert(this.environment.name === "rsc");
-          code = code.replaceAll(
-            /['"]__vite_rsc_load_ssr_entry:(\w+)['"]/g,
-            (_match, name) => {
-              const replacement = normalizeRelativePath(
-                path.relative(
-                  path.join(
-                    config.environments.rsc!.build.outDir,
-                    chunk.fileName,
-                    "..",
-                  ),
-                  path.join(
-                    config.environments.ssr!.build.outDir,
-                    `${name}.js`,
-                  ),
-                ),
-              );
-              return `(import(${JSON.stringify(replacement)}))`;
-            },
+        if (!code.includes("__vite_rsc_load_module")) return;
+        const s = new MagicString(code);
+        for (const match of code.matchAll(
+          /['"]__vite_rsc_load_module:(\w+):(\w+):(\w+)['"]/dg,
+        )) {
+          const [fromEnv, toEnv, entryName] = match.slice(1);
+          const importPath = normalizeRelativePath(
+            path.relative(
+              path.join(
+                config.environments[fromEnv!]!.build.outDir,
+                chunk.fileName,
+                "..",
+              ),
+              path.join(
+                config.environments[toEnv!]!.build.outDir,
+                // TODO: this breaks when custom entyFileNames
+                `${entryName}.js`,
+              ),
+            ),
           );
-          return { code };
+          const replacement = `(import(${JSON.stringify(importPath)}))`;
+          const [start, end] = match.indices![0]!;
+          s.overwrite(start, end, replacement);
         }
-        return;
+        if (s.hasChanged()) {
+          return {
+            code: s.toString(),
+            map: s.generateMap({ hires: "boundary" }),
+          };
+        }
       },
     },
     {
@@ -509,7 +527,10 @@ export default function vitePluginRsc(
             window.__vite_plugin_react_preamble_installed__ = true;
           `;
         }
-        code += `await import("virtual:vite-rsc/entry-browser-inner");`;
+        const source = getEntrySource(this.environment.config, "index");
+        const resolvedEntry = await this.resolve(source);
+        assert(resolvedEntry, `[vite-rsc] failed to resolve entry '${source}'`);
+        code += `await import(${JSON.stringify(resolvedEntry.id)});`;
         // TODO
         // should remove only the ones we injected during ssr, which are duplicated by browser imports for HMR.
         // technically this doesn't have to wait for "vite:beforeUpdate" and should do it right after browser css import.
@@ -522,41 +543,6 @@ export default function vitePluginRsc(
         return code;
       },
     ),
-    {
-      // wrap module runner entry with virtual to avoid bugs such as
-      // https://github.com/vitejs/vite/issues/19975
-      name: "rsc:virtual-entries",
-      enforce: "pre",
-      async resolveId(source, _importer, options) {
-        if (source === "virtual:vite-rsc/entry-browser-inner") {
-          assert(this.environment.name === "client");
-          assert(this.environment.mode === "dev");
-          return this.resolve(
-            getEntrySource(this.environment.config),
-            undefined,
-            options,
-          );
-        }
-        if (source === VIRTUAL_ENTRIES.rsc) {
-          assert(this.environment.name === "rsc");
-          assert(this.environment.mode === "dev");
-          return this.resolve(
-            getEntrySource(this.environment.config),
-            undefined,
-            options,
-          );
-        }
-        if (source === VIRTUAL_ENTRIES.ssr) {
-          assert(this.environment.name === "ssr");
-          assert(this.environment.mode === "dev");
-          return this.resolve(
-            getEntrySource(this.environment.config),
-            undefined,
-            options,
-          );
-        }
-      },
-    },
     {
       // make `AsyncLocalStorage` available globally for React request context on edge build (e.g. React.cache, ssr preload)
       // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
