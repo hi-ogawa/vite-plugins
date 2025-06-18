@@ -288,6 +288,33 @@ export function UserApp() {
 }
 ```
 
+#### `<id>?vite-rsc-css-export=<name>`
+
+This special query convention provides automatic injection of `import.meta.viteRsc.loadCss`.
+
+For example,
+
+```tsx
+// my-route.tsx
+export function Page(props) {
+  return <div>...</div>
+}
+
+// my-route.css?vite-rsc-css-export=Page
+function Page(props) {
+  return <div>...</div>
+}
+
+function __Page(props) {
+  return <>
+    {import.meta.viteRsc.loadCss()}
+    <Page {...props} />
+  </>
+}
+
+export { __Page as Page }
+```
+
 ### `ssr` environment
 
 #### `virtual:vite-rsc/bootstrap-script-content`
@@ -312,7 +339,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [
     rsc({
-      // this is only a shorthand of specifying each
+      // this is only a shorthand of specifying each rollup input via
       // `environments[name].build.rollupOptions.input.index`
       entries: {
         rsc: "...",
@@ -335,14 +362,6 @@ export default defineConfig({
   },
 });
 ```
-
-#### `transformRscCssExport`
-
-TODO
-
-#### `?vite-rsc-css-export=<name>`
-
-TODO
 
 ## Higher level API
 
