@@ -1143,14 +1143,28 @@ export function vitePluginRscCss(): Plugin[] {
         output.prepend(`import __vite_rsc_react__ from "react";`);
 
         for (const match of code.matchAll(
-          /import\.meta\.viteRsc\.loadCss\(([\s\S]*?)\)/g,
+          /import\.meta\.viteRsc\.loadCss\(([\s\S]*?)\)/dg,
         )) {
+          const [start, end] = match.indices![0]!;
           const argCode = match[1]!.trim();
-          const importer = argCode || id;
+          let importer = id;
+          if (argCode) {
+            const argValue = evalValue<string>(argCode);
+            const resolved = await this.resolve(argValue, id);
+            if (resolved) {
+              importer = resolved.id;
+            } else {
+              this.warn(
+                `[vite-rsc] failed to transform 'import.meta.viteRsc.loadCss(${argCode})'`,
+              );
+              output.update(start, end, `null`);
+              continue;
+            }
+          }
           const importId = `virtual:vite-rsc/importer-resources?importer=${importer}`;
           output.update(
-            match.index!,
-            match.index! + match[0].length,
+            start,
+            end,
             `__vite_rsc_react__.createElement(async () => {
                const __m = await import(${JSON.stringify(importId)});
                return __vite_rsc_react__.createElement(__m.Resources);
@@ -1292,4 +1306,13 @@ function generateResourcesCode(depsCode: string) {
     import __vite_rsc_react__ from "react";
     export const Resources = (${ResourcesFn.toString()})(__vite_rsc_react__, ${depsCode});
   `;
+}
+
+// https://github.com/vitejs/vite/blob/ea9aed7ebcb7f4be542bd2a384cbcb5a1e7b31bd/packages/vite/src/node/utils.ts#L1469-L1475
+function evalValue<T = any>(rawValue: string): T {
+  const fn = new Function(`
+    var console, exports, global, module, process, require
+    return (\n${rawValue}\n)
+  `);
+  return fn();
 }
