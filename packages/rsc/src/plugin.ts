@@ -1136,17 +1136,29 @@ export function vitePluginRscCss(): Plugin[] {
     {
       name: "rsc:importer-resources",
       async transform(code, id) {
-        // TODO: use es-module-lexer
-        if (code.includes("import.meta.viteRsc.loadCss")) {
-          assert(this.environment.name === "rsc");
-          const output = new MagicString(code);
-          const importId = `virtual:vite-rsc/importer-resources?importer=${id}`;
-          output.prepend(`import __vite_rsc_react__ from "react";`);
-          output.replaceAll(
-            "import.meta.viteRsc.loadCss",
-            // wrap async component element
-            `(() => __vite_rsc_react__.createElement(() => import(${JSON.stringify(importId)}).then(m => __vite_rsc_react__.createElement(m.Resources))))`,
+        if (!code.includes("import.meta.viteRsc.loadCss")) return;
+
+        assert(this.environment.name === "rsc");
+        const output = new MagicString(code);
+        output.prepend(`import __vite_rsc_react__ from "react";`);
+
+        for (const match of code.matchAll(
+          /import\.meta\.viteRsc\.loadCss\(([\s\S]*?)\)/g,
+        )) {
+          const argCode = match[1]!.trim();
+          const importer = argCode || id;
+          const importId = `virtual:vite-rsc/importer-resources?importer=${importer}`;
+          output.update(
+            match.index!,
+            match.index! + match[0].length,
+            `__vite_rsc_react__.createElement(async () => {
+               const __m = await import(${JSON.stringify(importId)});
+               return __vite_rsc_react__.createElement(__m.Resources);
+             })`,
           );
+        }
+
+        if (output.hasChanged()) {
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
