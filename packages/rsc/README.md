@@ -315,6 +315,12 @@ function __Page(props) {
 export { __Page as Page }
 ```
 
+Underlying transform utility is available from `@hiogawa/vite-rsc/plugin`:
+
+```tsx
+import { transformRscCssExport } from "@hiogawa/vite-rsc/plugin";
+```
+
 ### `ssr` environment
 
 #### `virtual:vite-rsc/bootstrap-script-content`
