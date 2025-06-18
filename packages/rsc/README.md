@@ -303,6 +303,8 @@ renderToReadableStream(reactNode, { bootstrapScriptContent });
 
 ## Plugin API
 
+### `@hiogawa/vite-rsc/plugin`
+
 ```js
 import rsc from "@hiogawa/vite-rsc/plugin";
 import { defineConfig } from "vite";
@@ -333,6 +335,10 @@ export default defineConfig({
   },
 });
 ```
+
+#### `transformServerComponentCss`
+
+TODO
 
 ## Higher level API
 

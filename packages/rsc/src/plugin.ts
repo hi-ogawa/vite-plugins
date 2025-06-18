@@ -5,8 +5,10 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
+  hasDirective,
   transformDirectiveProxyExport,
   transformServerActionServer,
+  transformWrapExport,
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import MagicString from "magic-string";
@@ -1315,4 +1317,26 @@ function evalValue<T = any>(rawValue: string): T {
     return (\n${rawValue}\n)
   `);
   return fn();
+}
+
+export async function transformServerComponentCss(options: {
+  code: string;
+  id: string;
+}): Promise<{ output: MagicString } | undefined> {
+  const ast = await parseAstAsync(options.code);
+  if (hasDirective(ast.body, "use client")) {
+    return;
+  }
+  options.id;
+  const result = transformWrapExport(options.code, ast, {
+    runtime: (value) => `__vite_rsc_wrap_css(${value})`,
+    ignoreExportAllDeclaration: true,
+  });
+  if (result.output.hasChanged()) {
+    result.output.append(`
+const __vite_rsc_wrap_css = (value) => {
+}
+`);
+    return { output: result.output };
+  }
 }
