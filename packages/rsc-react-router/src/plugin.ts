@@ -3,7 +3,12 @@ import * as childProcess from "node:child_process";
 import path from "node:path";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { type Plugin, createIdResolver, runnerImport } from "vite";
+import {
+  type EnvironmentOptions,
+  type Plugin,
+  createIdResolver,
+  runnerImport,
+} from "vite";
 
 const PKG_NAME = "@hiogawa/vite-rsc-react-router";
 
@@ -16,6 +21,25 @@ export function reactRouter(options?: {
   return [
     {
       name: "react-router:config",
+      config() {
+        const toEnvironmentOption = (entry: string) =>
+          ({
+            build: {
+              rollupOptions: {
+                input: {
+                  index: `${PKG_NAME}/${entry}`,
+                },
+              },
+            },
+          }) satisfies EnvironmentOptions;
+        return {
+          environments: {
+            client: toEnvironmentOption("entry.browser"),
+            ssr: toEnvironmentOption("entry.ssr"),
+            rsc: toEnvironmentOption("entry.rsc.single"),
+          },
+        };
+      },
       configEnvironment(_name, _config, _env) {
         return {
           resolve: {
