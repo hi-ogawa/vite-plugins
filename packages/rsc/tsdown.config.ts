@@ -25,9 +25,8 @@ export default defineConfig({
   format: ["esm"],
   external: [/^virtual:/, new RegExp(`^${pkg.name}/`)],
   dts: {
-    sourceMap: process.argv.slice(2).includes("--sourcemap"),
+    sourcemap: process.argv.slice(2).includes("--sourcemap"),
   },
-  bundleDts: false,
   plugins: [
     {
       name: "vendor-react-server-dom",
