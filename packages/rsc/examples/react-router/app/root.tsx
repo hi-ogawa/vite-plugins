@@ -12,7 +12,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>React Router Vite</title>
-        {import.meta.viteRsc.loadCss()}
       </head>
       <body>
         <header className="container px-8 my-8 mx-auto">
@@ -28,6 +27,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <li className="flex items-center gap-2 text-gray-500">
                 <TestHydrated />
                 <TestClientState />
+                <span data-testid="root-style" className="text-[#0000ff]">
+                  [style]
+                </span>
               </li>
             </ul>
           </nav>
@@ -40,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Component() {
+export default function Component() {
   console.log("Root");
   return (
     <>

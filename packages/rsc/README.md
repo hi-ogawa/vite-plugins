@@ -263,7 +263,7 @@ export function ServerPage() {
 }
 ```
 
-Where specifying `loadCss(importer)`, it will collect css through the speicifed `importer` server module.
+Where specifying `loadCss(<id>)`, it will collect css through the server module resolved by `<id>`.
 
 ```tsx
 // virtual:my-framework-helper
@@ -288,6 +288,39 @@ export function UserApp() {
 }
 ```
 
+#### `<id>?vite-rsc-css-export=<name>`
+
+This special query convention provides automatic injection of `import.meta.viteRsc.loadCss`.
+
+For example,
+
+```tsx
+// my-route.tsx
+export function Page(props) {
+  return <div>...</div>
+}
+
+// my-route.css?vite-rsc-css-export=Page
+function Page(props) {
+  return <div>...</div>
+}
+
+function __Page(props) {
+  return <>
+    {import.meta.viteRsc.loadCss()}
+    <Page {...props} />
+  </>
+}
+
+export { __Page as Page }
+```
+
+Underlying transform utility is available from `@hiogawa/vite-rsc/plugin`:
+
+```tsx
+import { transformRscCssExport } from "@hiogawa/vite-rsc/plugin";
+```
+
 ### `ssr` environment
 
 #### `virtual:vite-rsc/bootstrap-script-content`
@@ -303,6 +336,8 @@ renderToReadableStream(reactNode, { bootstrapScriptContent });
 
 ## Plugin API
 
+### `@hiogawa/vite-rsc/plugin`
+
 ```js
 import rsc from "@hiogawa/vite-rsc/plugin";
 import { defineConfig } from "vite";
@@ -310,7 +345,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [
     rsc({
-      // this is only a shorthand of specifying each
+      // this is only a shorthand of specifying each rollup input via
       // `environments[name].build.rollupOptions.input.index`
       entries: {
         rsc: "...",

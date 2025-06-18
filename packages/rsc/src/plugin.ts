@@ -5,8 +5,10 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
+  hasDirective,
   transformDirectiveProxyExport,
   transformServerActionServer,
+  transformWrapExport,
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import MagicString from "magic-string";
@@ -1109,6 +1111,30 @@ export function vitePluginRscCss(): Plugin[] {
 
   return [
     {
+      name: "rsc:rsc-css-export-transform",
+      async transform(code, id) {
+        const { query } = parseIdQuery(id);
+        if ("vite-rsc-css-export" in query) {
+          assert(this.environment.name === "rsc");
+          const value = query["vite-rsc-css-export"];
+          const names = value.split(",");
+          const ast = await parseAstAsync(code);
+          const result = await transformRscCssExport({
+            ast,
+            code,
+            filter: (name) =>
+              value ? names.includes(name) : /^[A-Z]/.test(name),
+          });
+          if (result) {
+            return {
+              code: result.output.toString(),
+              map: result.output.generateMap({ hires: "boundary" }),
+            };
+          }
+        }
+      },
+    },
+    {
       name: "rsc:css/dev-ssr-virtual",
       resolveId(source) {
         if (source.startsWith("virtual:vite-rsc/css/dev-ssr/")) {
@@ -1140,7 +1166,6 @@ export function vitePluginRscCss(): Plugin[] {
 
         assert(this.environment.name === "rsc");
         const output = new MagicString(code);
-        output.prepend(`import __vite_rsc_react__ from "react";`);
 
         for (const match of code.matchAll(
           /import\.meta\.viteRsc\.loadCss\(([\s\S]*?)\)/dg,
@@ -1161,7 +1186,13 @@ export function vitePluginRscCss(): Plugin[] {
               continue;
             }
           }
-          const importId = `virtual:vite-rsc/importer-resources?importer=${importer}`;
+          // add basename as postfix to preserve chunk file name
+          const importId =
+            `virtual:vite-rsc/importer-resources` +
+            `?importer=${encodeURIComponent(importer)}` +
+            (this.environment.mode === "build"
+              ? `&basename=/${path.basename(importer)}`
+              : "");
           output.update(
             start,
             end,
@@ -1173,6 +1204,9 @@ export function vitePluginRscCss(): Plugin[] {
         }
 
         if (output.hasChanged()) {
+          if (!code.includes("__vite_rsc_react__")) {
+            output.prepend(`import __vite_rsc_react__ from "react";`);
+          }
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
@@ -1189,8 +1223,8 @@ export function vitePluginRscCss(): Plugin[] {
       },
       load(id) {
         if (id.startsWith("\0virtual:vite-rsc/importer-resources?importer=")) {
-          const importer = id.slice(
-            "\0virtual:vite-rsc/importer-resources?importer=".length,
+          const importer = decodeURIComponent(
+            parseIdQuery(id).query["importer"]!,
           );
           if (this.environment.mode === "dev") {
             const result = collectCss(server.environments.rsc!, importer);
@@ -1217,10 +1251,9 @@ export function vitePluginRscCss(): Plugin[] {
         ) {
           assert(this.environment.name === "client");
           assert(this.environment.mode === "dev");
-          let importer = id.slice(
-            "\0virtual:vite-rsc/importer-resources-browser?importer=".length,
+          const importer = decodeURIComponent(
+            parseIdQuery(id).query["importer"]!,
           );
-          importer = decodeURIComponent(importer);
           const result = collectCss(server.environments.rsc!, importer);
           let code = result.ids
             .map((id) => id.replace(/^\0/, ""))
@@ -1237,14 +1270,14 @@ export function vitePluginRscCss(): Plugin[] {
           const mods = collectModuleDependents(ctx.modules);
           for (const mod of mods) {
             if (mod.id) {
-              const importer = mod.id;
+              const importer = encodeURIComponent(mod.id);
               invalidteModuleById(
                 server.environments.rsc!,
                 `\0virtual:vite-rsc/importer-resources?importer=${importer}`,
               );
               invalidteModuleById(
                 server.environments.client,
-                `\0virtual:vite-rsc/importer-resources-browser?importer=${encodeURIComponent(importer)}`,
+                `\0virtual:vite-rsc/importer-resources-browser?importer=${importer}`,
               );
             }
           }
@@ -1315,4 +1348,50 @@ function evalValue<T = any>(rawValue: string): T {
     return (\n${rawValue}\n)
   `);
   return fn();
+}
+
+// https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
+function parseIdQuery(id: string) {
+  if (!id.includes("?")) return { filename: id, query: {} };
+  const [filename, rawQuery] = id.split(`?`, 2);
+  const query = Object.fromEntries(new URLSearchParams(rawQuery));
+  return { filename, query };
+}
+
+export async function transformRscCssExport(options: {
+  ast: Awaited<ReturnType<typeof parseAstAsync>>;
+  code: string;
+  id?: string;
+  filter: (name: string) => boolean;
+}): Promise<{ output: MagicString } | undefined> {
+  if (hasDirective(options.ast.body, "use client")) {
+    return;
+  }
+
+  const result = transformWrapExport(options.code, options.ast, {
+    runtime: (value, name) =>
+      `__vite_rsc_wrap_css__(${value}, ${JSON.stringify(name)})`,
+    filter: (name) => options.filter(name),
+    ignoreExportAllDeclaration: true,
+  });
+  if (result.output.hasChanged()) {
+    if (!options.code.includes("__vite_rsc_react__")) {
+      result.output.prepend(`import __vite_rsc_react__ from "react";`);
+    }
+    result.output.append(`
+function __vite_rsc_wrap_css__(value, name) {
+  function __wrapper(props) {
+    return __vite_rsc_react__.createElement(
+      __vite_rsc_react__.Fragment,
+      null,
+      import.meta.viteRsc.loadCss(${options.id ? JSON.stringify(options.id) : ""}),
+      __vite_rsc_react__.createElement(value, props),
+    );
+  }
+  Object.defineProperty(__wrapper, "name", { value: name });
+  return __wrapper;
+}
+`);
+    return { output: result.output };
+  }
 }

@@ -3,12 +3,16 @@ import { describe, expect, test } from "vitest";
 import { debugSourceMap } from "./test-utils";
 import { transformWrapExport } from "./wrap-export";
 
-async function testTransform(input: string) {
+async function testTransform(
+  input: string,
+  options?: { filter?: (name: string) => boolean },
+) {
   const ast = await parseAstAsync(input);
   const { output } = transformWrapExport(input, ast, {
     runtime: (value, name) =>
       `$$wrap(${value}, "<id>", ${JSON.stringify(name)})`,
     ignoreExportAllDeclaration: true,
+    ...options,
   });
   if (process.env["DEBUG_SOURCEMAP"]) {
     await debugSourceMap(output);
@@ -181,5 +185,36 @@ export { x as y }
   test("re-export all rename", async () => {
     const input = `export * as all from "./dep"`;
     expect(await testTransform(input)).toMatchInlineSnapshot(`false`);
+  });
+
+  test("filter", async () => {
+    const input = `
+export const a = 0;
+export const b = 0, b_no = 0;
+export { c } from "./c";
+export { a as aa };
+`;
+    const result = await testTransform(input, {
+      filter: (name) => !name.endsWith("no"),
+    });
+    expect(result).toMatchInlineSnapshot(`
+      "
+      let a = 0;
+      let b = 0, b_no = 0;
+
+
+      a = /* #__PURE__ */ $$wrap(a, "<id>", "a");
+      export { a };
+      b = /* #__PURE__ */ $$wrap(b, "<id>", "b");
+      export { b };
+      export { b_no };
+      ;
+      import { c as $$import_c } from "./c";
+      const $$wrap_$$import_c = /* #__PURE__ */ $$wrap($$import_c, "<id>", "c");
+      export { $$wrap_$$import_c as c };
+      const $$wrap_a = /* #__PURE__ */ $$wrap(a, "<id>", "aa");
+      export { $$wrap_a as aa };
+      "
+    `);
   });
 });

@@ -117,3 +117,12 @@ test("server css code split", async ({ page }) => {
     "rgb(250, 150, 0)",
   );
 });
+
+test("vite-rsc-css-export", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.getByTestId("root-style")).toHaveCSS(
+    "color",
+    "rgb(0, 0, 255)",
+  );
+});
