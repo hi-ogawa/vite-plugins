@@ -228,20 +228,29 @@ This module re-exports RSC runtime API provided by `react-server-dom/client.brow
 
 The plugin provides an additional helper for multi environment interaction.
 
-### `rsc` environment
+### available on `rsc` or `ssr` environment
 
-#### `import.meta.viteRsc.loadSsrModule`
+#### `import.meta.viteRsc.loadModule`
 
-- Type: `(entryName: string) => Promise<T>`
+- Type: `(environmentName: string, entryName: string) => Promise<T>`
 
-This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment. This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
-When that's not the case, the communication between two environments needs to be implemented on your own (e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
+This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment and vice versa.
+This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
+When that's not the case, the communication between two environments needs to be implemented on your own
+(e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
+
+For example,
 
 ```js
-// inside rsc environment
-const ssrModule = await import.meta.viteRsc.loadSsrModule("index");
-ssrModule.renderHtml(...)
+// ./entry.rsc.tsx
+const ssrModule = await import.meta.viteRsc.loadModule("ssr", "index");
+ssrModule.renderHTML(...);
+
+// ./entry.ssr.tsx (with environments.ssr.build.rollupOptions.input.index = "./entry.ssr.tsx")
+export function renderHTML(...) {}
 ```
+
+### available on `rsc` environment
 
 #### `import.meta.viteRsc.loadCss`
 
@@ -321,7 +330,7 @@ Underlying transform utility is available from `@hiogawa/vite-rsc/plugin`:
 import { transformRscCssExport } from "@hiogawa/vite-rsc/plugin";
 ```
 
-### `ssr` environment
+### available on `ssr` environment
 
 #### `virtual:vite-rsc/bootstrap-script-content`
 

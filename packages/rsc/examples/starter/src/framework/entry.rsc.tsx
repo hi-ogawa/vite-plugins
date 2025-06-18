@@ -80,9 +80,9 @@ export default async function handler(request: Request): Promise<Response> {
   // The plugin provides `loadSsrModule` helper to allow loading SSR environment entry module
   // in RSC environment. however this can be customized by implementing own runtime communication
   // e.g. `@cloudflare/vite-plugin`'s service binding.
-  const ssrEntryModule = await import.meta.viteRsc.loadSsrModule<
+  const ssrEntryModule = await import.meta.viteRsc.loadModule<
     typeof import("./entry.ssr.tsx")
-  >("index");
+  >("ssr", "index");
   const htmlStream = await ssrEntryModule.renderHTML({
     stream: rscStream,
     formState,
