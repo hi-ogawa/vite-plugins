@@ -27,6 +27,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <li className="flex items-center gap-2 text-gray-500">
                 <TestHydrated />
                 <TestClientState />
+                <span data-testid="root-style" className="text-[#0000ff]">
+                  [style]
+                </span>
               </li>
             </ul>
           </nav>
