@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import * as childProcess from "node:child_process";
+import { createRequire } from "node:module";
 import path from "node:path";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
@@ -11,6 +12,8 @@ import {
 } from "vite";
 
 const PKG_NAME = "@hiogawa/vite-rsc-react-router";
+
+const require = createRequire(import.meta.url);
 
 export function reactRouter(options?: {
   typegen?: boolean;
@@ -27,7 +30,10 @@ export function reactRouter(options?: {
             build: {
               rollupOptions: {
                 input: {
-                  index: `${PKG_NAME}/${entry}`,
+                  // TODO: specifying module runner entry as package entry breaks reload
+                  // https://github.com/vitejs/vite/issues/19975
+                  // so for now fully resolve it manually.
+                  index: require.resolve(`${PKG_NAME}/${entry}`),
                 },
               },
             },
