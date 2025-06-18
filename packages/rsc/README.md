@@ -265,6 +265,29 @@ export function ServerPage() {
 
 Where specifying `loadCss(importer)`, it will collect css through the speicifed `importer` server module.
 
+```tsx
+// virtual:my-framework-helper
+export function Assets() {
+  return <>
+    {import.meta.viteRsc.loadCss("/routes/home.tsx")}
+    {import.meta.viteRsc.loadCss("/routes/about.tsx")}
+    {...}
+  </>
+}
+
+// user-app.tsx
+import { Assets } from "virtual:my-framework-helper";
+
+export function UserApp() {
+  return <html>
+    <head>
+      <Assets />
+    </head>
+    <body>...</body>
+  </html>
+}
+```
+
 ### `ssr` environment
 
 #### `virtual:vite-rsc/bootstrap-script-content`
