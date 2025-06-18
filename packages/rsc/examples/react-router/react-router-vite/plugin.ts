@@ -86,10 +86,8 @@ function generateRoutesCode(config: {
       continue;
     }
     code += "{";
-    code +=
-      `lazy: ` +
-      transformRouteImport(path.resolve(config.appDirectory, route.file)) +
-      ",";
+    // TODO: route-module transform
+    code += `lazy: () => import(${JSON.stringify(path.resolve(config.appDirectory, route.file))}),`;
     code += `id: ${JSON.stringify(route.id || createRouteId(route.file, config.appDirectory))},`;
     if (typeof route.path === "string") {
       code += `path: ${JSON.stringify(route.path)},`;
@@ -111,27 +109,6 @@ function generateRoutesCode(config: {
   code += "];\n";
 
   return code;
-}
-
-function transformRouteImport(file: string) {
-  // auto inject `loadCss` for root Layout
-  return `\
-async () => {
-  const __m = { ...await import(${JSON.stringify(file)}) };
-  const __react = await import("react");
-  if (__m.Layout) {
-    const Layout = __m.Layout;
-    __m.Layout = (props) => {
-      return __react.createElement(
-        __react.Fragment,
-        null,
-        import.meta.viteRsc.loadCss(${JSON.stringify(file)}),
-        __react.createElement(Layout, props),
-      );
-    };
-  }
-  return __m;
-}`;
 }
 
 function createRouteId(file: string, appDirectory: string) {
