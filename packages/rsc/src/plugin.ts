@@ -1190,7 +1190,9 @@ export function vitePluginRscCss(): Plugin[] {
           const importId =
             `virtual:vite-rsc/importer-resources` +
             `?importer=${encodeURIComponent(importer)}` +
-            `&__name=/${path.basename(importer)}`;
+            (this.environment.mode === "build"
+              ? `&basename=/${path.basename(importer)}`
+              : "");
           output.update(
             start,
             end,
