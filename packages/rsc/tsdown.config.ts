@@ -24,6 +24,7 @@ export default defineConfig({
   ],
   format: ["esm"],
   external: [/^virtual:/, new RegExp(`^${pkg.name}/`)],
+  dts: true,
   plugins: [
     {
       name: "vendor-react-server-dom",
