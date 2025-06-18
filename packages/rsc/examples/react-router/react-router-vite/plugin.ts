@@ -1,14 +1,8 @@
 import assert from "node:assert/strict";
 import path from "node:path";
-import { transformServerComponentCss } from "@hiogawa/vite-rsc/plugin";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import {
-  type Plugin,
-  createIdResolver,
-  parseAstAsync,
-  runnerImport,
-} from "vite";
+import { type Plugin, createIdResolver, runnerImport } from "vite";
 
 export function reactRouter(): Plugin[] {
   let idResolver: ReturnType<typeof createIdResolver>;
@@ -32,25 +26,6 @@ export function reactRouter(): Plugin[] {
           this.addWatchFile(config.routesFile);
           const code = generateRoutesCode(config);
           return code;
-        }
-      },
-    },
-    {
-      name: "react-router:route-css",
-      async transform(code, id) {
-        if (id.endsWith("?vite-rsc-css")) {
-          const ast = await parseAstAsync(code);
-          const result = await transformServerComponentCss({
-            ast,
-            code,
-            filterName: (name) => name === "Layout",
-          });
-          if (result) {
-            return {
-              code: result.output.toString(),
-              map: result.output.generateMap({ hires: "boundary" }),
-            };
-          }
         }
       },
     },
@@ -83,7 +58,7 @@ async function readReactRouterConfig(
     {
       id: "root",
       path: "",
-      file: rootFile + "?vite-rsc-css",
+      file: rootFile + "?vite-rsc-css-export=Layout",
       children: routesImport.module.default,
     },
   ];

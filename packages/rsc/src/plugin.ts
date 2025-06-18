@@ -1111,6 +1111,30 @@ export function vitePluginRscCss(): Plugin[] {
 
   return [
     {
+      name: "rsc:rsc-css-export-transform",
+      async transform(code, id) {
+        const { query } = parseIdQuery(id);
+        if ("vite-rsc-css-export" in query) {
+          assert(this.environment.name === "rsc");
+          const value = query["vite-rsc-css-export"];
+          const names = value.split(",");
+          const ast = await parseAstAsync(code);
+          const result = await transformServerComponentCss({
+            ast,
+            code,
+            filterName: (name) =>
+              value ? names.includes(name) : /^[A-Z]/.test(name),
+          });
+          if (result) {
+            return {
+              code: result.output.toString(),
+              map: result.output.generateMap({ hires: "boundary" }),
+            };
+          }
+        }
+      },
+    },
+    {
       name: "rsc:css/dev-ssr-virtual",
       resolveId(source) {
         if (source.startsWith("virtual:vite-rsc/css/dev-ssr/")) {
@@ -1317,6 +1341,14 @@ function evalValue<T = any>(rawValue: string): T {
     return (\n${rawValue}\n)
   `);
   return fn();
+}
+
+// https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
+function parseIdQuery(id: string) {
+  if (!id.includes("?")) return { filename: id, query: {} };
+  const [filename, rawQuery] = id.split(`?`, 2);
+  const query = Object.fromEntries(new URLSearchParams(rawQuery));
+  return { filename, query };
 }
 
 export async function transformServerComponentCss(options: {
