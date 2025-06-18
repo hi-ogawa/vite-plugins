@@ -135,6 +135,7 @@ function generateRoutesCode(config: {
       continue;
     }
     code += "{";
+    // TODO: route-module transform
     code += `lazy: () => import(${JSON.stringify(path.resolve(config.appDirectory, route.file))}),`;
     code += `id: ${JSON.stringify(route.id || createRouteId(route.file, config.appDirectory))},`;
     if (typeof route.path === "string") {
