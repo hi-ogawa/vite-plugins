@@ -50,6 +50,9 @@ export function reactRouter(): Plugin[] {
 }
 
 function parseIdQuery(id: string) {
+  if (!id.includes("?")) {
+    return { file: id, query: {} };
+  }
   const [file, rawQuery] = id.split(`?`, 2);
   const query = Object.fromEntries(new URLSearchParams(rawQuery));
   return { file, query };
@@ -59,15 +62,12 @@ async function wrapRscCss(code: string, file: string, names: string[]) {
   const ast = await parseAstAsync(code);
   const result = getExportNames(ast, {});
   let output = `export * from ${JSON.stringify(file)};\n;`;
-  if (result.exportNames.includes("default")) {
-    output += `export { default } from ${JSON.stringify(file)};\n`;
-  }
   for (const name of names) {
     if (result.exportNames.includes(name)) {
       output += `
 import { ${name} as __${name} } from ${JSON.stringify(file)};
 import __react from "react";
-export const ${name} = (props) => {
+export ${name == "default" ? "default" : `const ${name} =`} (props) => {
   return __react.createElement(
     __react.Fragment,
     null,
@@ -77,6 +77,9 @@ export const ${name} = (props) => {
 };
 `;
     }
+  }
+  if (result.exportNames.includes("default") && !names.includes("default")) {
+    output += `export { default } from ${JSON.stringify(file)};\n`;
   }
   return output;
 }
