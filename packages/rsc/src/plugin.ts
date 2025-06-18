@@ -1263,14 +1263,14 @@ export function vitePluginRscCss(): Plugin[] {
           const mods = collectModuleDependents(ctx.modules);
           for (const mod of mods) {
             if (mod.id) {
-              const importer = mod.id;
+              const importer = encodeURIComponent(mod.id);
               invalidteModuleById(
                 server.environments.rsc!,
                 `\0virtual:vite-rsc/importer-resources?importer=${importer}`,
               );
               invalidteModuleById(
                 server.environments.client,
-                `\0virtual:vite-rsc/importer-resources-browser?importer=${encodeURIComponent(importer)}`,
+                `\0virtual:vite-rsc/importer-resources-browser?importer=${importer}`,
               );
             }
           }
