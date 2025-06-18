@@ -12,7 +12,6 @@ export default defineConfig({
   format: ["esm"],
   external: [/^virtual:/],
   dts: {
-    sourceMap: process.argv.slice(2).includes("--sourcemap"),
+    sourcemap: process.argv.slice(2).includes("--sourcemap"),
   },
-  bundleDts: false,
 }) as any;
