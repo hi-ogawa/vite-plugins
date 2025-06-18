@@ -1186,7 +1186,11 @@ export function vitePluginRscCss(): Plugin[] {
               continue;
             }
           }
-          const importId = `virtual:vite-rsc/importer-resources?importer=${encodeURIComponent(importer)}`;
+          // add basename as postfix to preserve chunk file name
+          const importId =
+            `virtual:vite-rsc/importer-resources` +
+            `?importer=${encodeURIComponent(importer)}` +
+            `&__name=/${path.basename(importer)}`;
           output.update(
             start,
             end,
@@ -1218,7 +1222,7 @@ export function vitePluginRscCss(): Plugin[] {
       load(id) {
         if (id.startsWith("\0virtual:vite-rsc/importer-resources?importer=")) {
           const importer = decodeURIComponent(
-            id.slice("\0virtual:vite-rsc/importer-resources?importer=".length),
+            parseIdQuery(id).query["importer"]!,
           );
           if (this.environment.mode === "dev") {
             const result = collectCss(server.environments.rsc!, importer);
@@ -1245,10 +1249,9 @@ export function vitePluginRscCss(): Plugin[] {
         ) {
           assert(this.environment.name === "client");
           assert(this.environment.mode === "dev");
-          let importer = id.slice(
-            "\0virtual:vite-rsc/importer-resources-browser?importer=".length,
+          const importer = decodeURIComponent(
+            parseIdQuery(id).query["importer"]!,
           );
-          importer = decodeURIComponent(importer);
           const result = collectCss(server.environments.rsc!, importer);
           let code = result.ids
             .map((id) => id.replace(/^\0/, ""))
