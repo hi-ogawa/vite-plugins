@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.2 (2025-06-18)
+
+- feat: support filter in `transformWrapExport` ([#1002](https://github.com/hi-ogawa/vite-plugins/pull/1002))
+
 ## v0.1.1 (2025-06-12)
 
 - feat: support encrypt closure bind ([#896](https://github.com/hi-ogawa/vite-plugins/pull/896))
