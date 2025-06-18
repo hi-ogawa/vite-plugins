@@ -15,7 +15,7 @@ export function reactRouter(options?: {
 
   return [
     {
-      name: "rsc-react-router",
+      name: "react-router:config",
       configEnvironment(_name, _config, _env) {
         return {
           resolve: {
@@ -26,9 +26,6 @@ export function reactRouter(options?: {
           },
         };
       },
-    },
-    {
-      name: "react-router:config",
       configResolved(config) {
         idResolver = createIdResolver(config);
       },
@@ -52,6 +49,7 @@ export function reactRouter(options?: {
       name: "react-router:typegen",
       apply: (_config, env) => env.command === "serve" && !!options?.typegen,
       buildStart() {
+        typegenProcess?.kill();
         typegenProcess = childProcess.spawn("react-router", [
           "typegen",
           "--watch",
@@ -59,7 +57,7 @@ export function reactRouter(options?: {
       },
       buildEnd() {
         typegenProcess?.kill();
-        typegenProcess = undefined!;
+        typegenProcess = undefined;
       },
     },
   ];
