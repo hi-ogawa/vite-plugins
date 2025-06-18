@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import * as childProcess from "node:child_process";
 import path from "node:path";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
@@ -6,8 +7,11 @@ import { type Plugin, createIdResolver, runnerImport } from "vite";
 
 const PKG_NAME = "@hiogawa/vite-rsc-react-router";
 
-export function reactRouter(): Plugin[] {
+export function reactRouter(options?: {
+  typegen?: boolean;
+}): Plugin[] {
   let idResolver: ReturnType<typeof createIdResolver>;
+  let typegenProcess: childProcess.ChildProcess | undefined;
 
   return [
     {
@@ -42,6 +46,20 @@ export function reactRouter(): Plugin[] {
           const code = generateRoutesCode(config);
           return code;
         }
+      },
+    },
+    {
+      name: "react-router:typegen",
+      apply: (_config, env) => env.command === "serve" && !!options?.typegen,
+      buildStart() {
+        typegenProcess = childProcess.spawn("react-router", [
+          "typegen",
+          "--watch",
+        ]);
+      },
+      buildEnd() {
+        typegenProcess?.kill();
+        typegenProcess = undefined!;
       },
     },
   ];
