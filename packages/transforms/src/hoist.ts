@@ -20,7 +20,10 @@ export function transformHoistInlineDirective(
     encode?: (value: string) => string;
     decode?: (value: string) => string;
   },
-) {
+): {
+  output: MagicString;
+  names: string[];
+} {
   const output = new MagicString(input);
 
   // re-export somehow confuses periscopic scopes so remove them before analysis

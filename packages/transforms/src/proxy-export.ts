@@ -13,7 +13,12 @@ export function transformDirectiveProxyExport(
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
   },
-) {
+):
+  | {
+      exportNames: string[];
+      output: MagicString;
+    }
+  | undefined {
   if (!hasDirective(ast.body, options.directive)) {
     return;
   }
@@ -28,7 +33,10 @@ export function transformProxyExport(
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
   },
-) {
+): {
+  exportNames: string[];
+  output: MagicString;
+} {
   const output = new MagicString(options.code ?? " ".repeat(ast.end));
   const exportNames: string[] = [];
 

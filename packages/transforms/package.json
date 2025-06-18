@@ -10,17 +10,14 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
+    ".": "./dist/index.js"
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch --sourcemap",
     "test": "vitest",
-    "prepack": "tsup --clean"
+    "prepack": "tsdown --clean"
   },
   "dependencies": {
     "estree-walker": "^3.0.3",

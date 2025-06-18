@@ -1,4 +1,5 @@
 import type { Program } from "estree";
+import type MagicString from "magic-string";
 import { transformHoistInlineDirective } from "./hoist";
 import { hasDirective } from "./utils";
 import { transformWrapExport } from "./wrap-export";
@@ -15,7 +16,15 @@ export function transformServerActionServer(
     encode?: (value: string) => string;
     decode?: (value: string) => string;
   },
-) {
+):
+  | {
+      exportNames: string[];
+      output: MagicString;
+    }
+  | {
+      output: MagicString;
+      names: string[];
+    } {
   // TODO: unify (generalize transformHoistInlineDirective to support top leve directive case)
   if (hasDirective(ast.body, "use server")) {
     return transformWrapExport(input, ast, options);

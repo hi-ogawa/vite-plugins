@@ -3,7 +3,7 @@ import { hashString } from "@hiogawa/utils";
 import { mkdir, writeFile } from "fs/promises";
 import type MagicString from "magic-string";
 
-export async function debugSourceMap(output: MagicString) {
+export async function debugSourceMap(output: MagicString): Promise<void> {
   // load it directly to https://evanw.github.io/source-map-visualization
   const code = output.toString();
   const map = output.generateMap({ includeContent: true, hires: "boundary" });

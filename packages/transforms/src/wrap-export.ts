@@ -11,7 +11,10 @@ export function transformWrapExport(
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
   },
-) {
+): {
+  exportNames: string[];
+  output: MagicString;
+} {
   const output = new MagicString(input);
   const exportNames: string[] = [];
   const toAppend: string[] = [];

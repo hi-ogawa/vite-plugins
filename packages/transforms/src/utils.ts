@@ -20,7 +20,9 @@ export function getExportNames(
   options: {
     ignoreExportAllDeclaration?: boolean;
   },
-) {
+): {
+  exportNames: string[];
+} {
   const exportNames: string[] = [];
 
   for (const node of ast.body) {
