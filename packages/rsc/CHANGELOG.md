@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.3 (2025-06-18)
+
+- feat: add rsc css export transform helper ([#1002](https://github.com/hi-ogawa/vite-plugins/pull/1002))
+- feat: support `loadCss(importer)` ([#1001](https://github.com/hi-ogawa/vite-plugins/pull/1001))
+
 ## v0.4.2 (2025-06-17)
 
 - fix: allow custom `outDir` + chore: cloudflare single worker setup ([#990](https://github.com/hi-ogawa/vite-plugins/pull/990))
