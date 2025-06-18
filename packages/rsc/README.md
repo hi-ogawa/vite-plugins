@@ -245,7 +245,7 @@ ssrModule.renderHtml(...)
 
 #### `import.meta.viteRsc.loadCss`
 
-- Type: `(options?: { id?: string }) => React.ReactNode`
+- Type: `(importer?: string) => React.ReactNode`
 
 This allows collecting css which is imported through a current server module and injecting them inside server components.
 
@@ -263,7 +263,7 @@ export function ServerPage() {
 }
 ```
 
-Where specifying `id` in `loadCss({ id: "..." })`, it will crawl css through given server module `id`.
+Where specifying `loadCss(importer)`, it will collect css through the speicifed `importer` server module.
 
 ### `ssr` environment
 
