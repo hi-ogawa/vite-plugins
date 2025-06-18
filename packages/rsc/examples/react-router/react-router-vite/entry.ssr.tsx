@@ -6,10 +6,10 @@ import {
   unstable_routeRSCServerRequest as routeRSCServerRequest,
 } from "react-router";
 
-export default async function handler(request: Request) {
-  const { callServer } = await import.meta.viteRsc.loadModule<
-    typeof import("./entry.rsc")
-  >("rsc", "index");
+export default async function handler(
+  request: Request,
+  callServer: (request: Request) => Promise<Response>,
+) {
   return routeRSCServerRequest({
     request,
     callServer,
