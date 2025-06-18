@@ -32,19 +32,23 @@ export function transformWrapExport(
     //   f = registerServerReference(f, ...)   << maps to original "export" token
     //   export { f }                          <<
     const newCode = names
-      .filter((name) => filter(name))
-      .map(
-        (name) =>
-          `${name} = /* #__PURE__ */ ${options.runtime(name, name)};\n` +
-          `export { ${name} };\n`,
-      )
+      .map((name) => [
+        filter(name) &&
+          `${name} = /* #__PURE__ */ ${options.runtime(name, name)};\n`,
+        `export { ${name} };\n`,
+      ])
+      .flat()
+      .filter(Boolean)
       .join("");
     output.update(start, end, newCode);
     output.move(start, end, input.length);
   }
 
   function wrapExport(name: string, exportName: string) {
-    if (!filter(exportName)) return;
+    if (!filter(exportName)) {
+      toAppend.push(`export { ${name} as ${exportName} }`);
+      return;
+    }
 
     toAppend.push(
       `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName)}`,

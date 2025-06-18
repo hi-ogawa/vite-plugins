@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import path from "node:path";
-import { getExportNames } from "@hiogawa/transforms";
+import { transformServerComponentCss } from "@hiogawa/vite-rsc/plugin";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
 import {
@@ -38,50 +38,23 @@ export function reactRouter(): Plugin[] {
     {
       name: "react-router:route-css",
       async transform(code, id) {
-        const { file, query } = parseIdQuery(id);
-        if ("vite-rsc-css" in query) {
-          const names = query["vite-rsc-css"].split(",");
-          const output = await wrapRscCss(code, file, names);
-          return { code: output, map: { mappings: "" } };
+        if (id.endsWith("?vite-rsc-css")) {
+          const ast = await parseAstAsync(code);
+          const result = await transformServerComponentCss({
+            ast,
+            code,
+            filterName: (name) => name === "Layout",
+          });
+          if (result) {
+            return {
+              code: result.output.toString(),
+              map: result.output.generateMap({ hires: "boundary" }),
+            };
+          }
         }
       },
     },
   ];
-}
-
-function parseIdQuery(id: string) {
-  if (!id.includes("?")) {
-    return { file: id, query: {} };
-  }
-  const [file, rawQuery] = id.split(`?`, 2);
-  const query = Object.fromEntries(new URLSearchParams(rawQuery));
-  return { file, query };
-}
-
-async function wrapRscCss(code: string, file: string, names: string[]) {
-  const ast = await parseAstAsync(code);
-  const result = getExportNames(ast, {});
-  let output = `export * from ${JSON.stringify(file)};\n;`;
-  for (const name of names) {
-    if (result.exportNames.includes(name)) {
-      output += `
-import { ${name} as __${name} } from ${JSON.stringify(file)};
-import __react from "react";
-export ${name == "default" ? "default" : `const ${name} =`} (props) => {
-  return __react.createElement(
-    __react.Fragment,
-    null,
-    import.meta.viteRsc.loadCss(${JSON.stringify(file)}),
-    __react.createElement(__${name}, props),
-  );
-};
-`;
-    }
-  }
-  if (result.exportNames.includes("default") && !names.includes("default")) {
-    output += `export { default } from ${JSON.stringify(file)};\n`;
-  }
-  return output;
 }
 
 async function readReactRouterConfig(
@@ -110,7 +83,7 @@ async function readReactRouterConfig(
     {
       id: "root",
       path: "",
-      file: rootFile + "?vite-rsc-css=Layout",
+      file: rootFile + "?vite-rsc-css",
       children: routesImport.module.default,
     },
   ];
