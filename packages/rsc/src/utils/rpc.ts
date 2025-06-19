@@ -1,4 +1,3 @@
-import { tinyassert } from "@hiogawa/utils";
 import { decode, encode } from "turbo-stream";
 
 type RequestPayload = {
@@ -13,12 +12,18 @@ type ResponsePayload = {
 
 export function createRpcServer<T extends object>(handlers: T) {
   return async (request: Request): Promise<Response> => {
-    tinyassert(request.body);
+    if (!request.body) {
+      throw new Error(`loadModuleDevProxy error: missing request body`);
+    }
     const reqPayload = await decode<RequestPayload>(
       request.body.pipeThrough(new TextDecoderStream()),
     );
     const handler = (handlers as any)[reqPayload.method];
-    tinyassert(handler);
+    if (!handler) {
+      throw new Error(
+        `loadModuleDevProxy error: unknown method ${reqPayload.method}`,
+      );
+    }
     const resPayload: ResponsePayload = { ok: true, data: undefined };
     try {
       resPayload.data = await handler(...reqPayload.args);
@@ -43,8 +48,11 @@ export function createRpcClient<T>(options: { endpoint: string }): T {
       // @ts-ignore undici compat
       duplex: "half",
     });
-    tinyassert(res.ok);
-    tinyassert(res.body);
+    if (!res.ok || !res.body) {
+      throw new Error(
+        `loadModuleDevProxy error: ${res.status} ${res.statusText}`,
+      );
+    }
     const resPayload = await decode<ResponsePayload>(
       res.body.pipeThrough(new TextDecoderStream()),
     );

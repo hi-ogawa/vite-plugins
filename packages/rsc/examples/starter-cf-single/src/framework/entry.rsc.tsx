@@ -67,7 +67,9 @@ async function handler(request: Request): Promise<Response> {
     });
   }
 
-  const { renderHTML } = await loadSsrModule(url.origin);
+  const { renderHTML } = await import.meta.viteRsc.loadModule<
+    typeof import("./entry.ssr.tsx")
+  >("ssr", "index");
   const htmlStream = await renderHTML(rscStream, {
     formState,
     options: {
@@ -83,22 +85,6 @@ async function handler(request: Request): Promise<Response> {
       vary: "accept",
     },
   });
-}
-
-// delegate html rendering to ssr environment.
-// how they are communicated differs between dev and build.
-async function loadSsrModule(
-  origin: string,
-): Promise<typeof import("./entry.ssr.tsx")> {
-  if (!import.meta.env.DEV) {
-    // for build, ssr module is directly imported in the runtime.
-    return import.meta.viteRsc.loadModule("ssr", "index");
-  } else {
-    // for dev, ssr environment runs on node and is proxied through special endpoint.
-    return createRpcClient({
-      endpoint: `${origin}/__vite_rsc_load_module_dev_proxy?environmentName=ssr&entryName=index`,
-    });
-  }
 }
 
 export default {
