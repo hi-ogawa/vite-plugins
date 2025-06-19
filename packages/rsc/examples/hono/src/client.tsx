@@ -1,4 +1,4 @@
-import { fetchRSC } from "@hiogawa/vite-rsc/extra/browser";
+import * as ReactClient from "@hiogawa/vite-rsc/browser";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
@@ -23,7 +23,7 @@ function FetchRsc() {
     <div>
       <button
         onClick={async () => {
-          setRsc(await fetchRSC("/api/rsc"));
+          setRsc(await ReactClient.createFromFetch(fetch("/api/rsc")));
         }}
       >
         fetchRsc

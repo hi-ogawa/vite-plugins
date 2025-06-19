@@ -19,7 +19,7 @@ export default defineConfig({
       entries: {
         client: "./react-router-vite/entry.browser.tsx",
       },
-      disableServerHandler: true,
+      serverHandler: false,
     }),
     inspect(),
     cloudflare({

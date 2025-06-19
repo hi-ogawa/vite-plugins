@@ -71,7 +71,11 @@ export default function vitePluginRsc(
      * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
      */
     entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
-    disableServerHandler?: boolean;
+    /**
+     * By default, the plugin setup request handler based on `default` export of `rsc` environment `rollupOptions.input.index`.
+     * This can be disabled by `serverHandler: false` or selectivly enable it for matched URL.
+     */
+    serverHandler?: false | ((url: string) => boolean);
   } = {},
 ): Plugin[] {
   return [
@@ -99,7 +103,7 @@ export default function vitePluginRsc(
         ];
 
         return {
-          appType: "custom",
+          appType: config.appType || "custom", // respect "spa" if set explicitly
           environments: {
             client: {
               build: {
@@ -194,13 +198,18 @@ export default function vitePluginRsc(
         server = server_;
         (globalThis as any).__viteRscDevServer = server;
 
-        if (rscPluginOptions.disableServerHandler) return;
+        if (rscPluginOptions.serverHandler === false) return;
+        const matchServerHandler =
+          rscPluginOptions.serverHandler ?? (() => true);
 
         const environment = server.environments.rsc as RunnableDevEnvironment;
         const source = getEntrySource(environment.config, "index");
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
+            if (!matchServerHandler(req.url ?? "/")) {
+              return next();
+            }
             try {
               // resolve before `runner.import` to workaround https://github.com/vitejs/vite/issues/19975
               const resolved =
@@ -218,7 +227,9 @@ export default function vitePluginRsc(
         };
       },
       async configurePreviewServer(server) {
-        if (rscPluginOptions.disableServerHandler) return;
+        if (rscPluginOptions.serverHandler === false) return;
+        const matchServerHandler =
+          rscPluginOptions.serverHandler ?? (() => true);
 
         const entryFile = path.join(
           config.environments.rsc!.build.outDir,
@@ -237,6 +248,9 @@ export default function vitePluginRsc(
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
+            if (!matchServerHandler(req.url ?? "/")) {
+              return next();
+            }
             try {
               handler(req, res);
             } catch (e) {
