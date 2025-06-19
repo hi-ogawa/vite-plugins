@@ -17,9 +17,8 @@
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "release": "pnpm publish --no-git-checks --access public"
+    "dev": "tsdown --watch",
+    "build": "tsdown"
   },
   "peerDependencies": {
     "vite": "*"
