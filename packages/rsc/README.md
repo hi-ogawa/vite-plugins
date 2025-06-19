@@ -343,6 +343,22 @@ import { renderToReadableStream } from "react-dom/server.edge";
 renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
 
+### available on `client` environment
+
+#### `rsc:update` event
+
+This event is fired when server modules are update, which can be used to trigger re-fetching and re-rendering of RSC components on browser.
+
+```js
+import * as ReactClient from "@hiogawa/vite-rsc/browser";
+
+import.meta.hot.on("rsc:update", async () => {
+  // re-fetch RSC stream
+  const rscPayload = await ReactClient.createFromFetch(fetch(window.location.href + ".rsc"))
+  // re-render ...
+});
+```
+
 ## Plugin API
 
 ### `@hiogawa/vite-rsc/plugin`
@@ -361,6 +377,14 @@ export default defineConfig({
         ssr: "...",
         client: "...",
       },
+
+      // by default, the plugin sets up middleware
+      // using `deafult` export of `rsc` environment `index` entry.
+      // this behavior can be customized by `serverHandler` option.
+      serverHandler: false,
+
+      // this allows `import.meta.viteRsc.loadModule` API to be proxied via HTTP RPC
+      loadModuleDevProxy: true,
     }),
   ],
   environments: {
