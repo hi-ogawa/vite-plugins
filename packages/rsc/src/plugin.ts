@@ -1473,3 +1473,26 @@ function __vite_rsc_wrap_css__(value, name) {
     return { output: result.output };
   }
 }
+
+export function __fix_cloudflare(): Plugin {
+  return {
+    name: "rsc:workaround-cloudflare",
+    enforce: "post",
+    config(config) {
+      // https://github.com/cloudflare/workers-sdk/issues/9538
+      const plugin = config
+        .plugins!.flat()
+        .find((p) => p && "name" in p && p.name === "vite-plugin-cloudflare");
+      const original = (plugin as any).configResolved;
+      (plugin as any).configResolved = function (this: any, ...args: any[]) {
+        try {
+          return original.apply(this, args);
+        } catch (e) {}
+      };
+
+      // workaround (fixed in Vite 7) https://github.com/vitejs/vite/pull/20077
+      (config.environments as any).ssr.resolve.noExternal = true;
+      (config.environments as any).rsc.resolve.noExternal = true;
+    },
+  };
+}
