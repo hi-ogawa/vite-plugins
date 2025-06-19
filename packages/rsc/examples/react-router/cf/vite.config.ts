@@ -66,13 +66,7 @@ export default defineConfig({
   environments: {
     ssr: {
       optimizeDeps: {
-        include: [
-          "react",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime",
-          "react-dom",
-          "react-dom/server.edge",
-        ],
+        include: ["react-router"],
       },
     },
     rsc: {

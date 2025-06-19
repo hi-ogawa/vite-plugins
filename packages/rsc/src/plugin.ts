@@ -71,7 +71,15 @@ export default function vitePluginRsc(
      * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
      */
     entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
+    /** @deprecated use `serverHandler: false` */
     disableServerHandler?: boolean;
+    /** @default { enviornmentName: "rsc", entryName: "index" } */
+    serverHandler?:
+      | {
+          environmentName: string;
+          entryName: string;
+        }
+      | false;
   } = {},
 ): Plugin[] {
   return [
@@ -195,9 +203,15 @@ export default function vitePluginRsc(
         (globalThis as any).__viteRscDevServer = server;
 
         if (rscPluginOptions.disableServerHandler) return;
-
-        const environment = server.environments.rsc as RunnableDevEnvironment;
-        const source = getEntrySource(environment.config, "index");
+        if (rscPluginOptions.serverHandler === false) return;
+        const options = rscPluginOptions.serverHandler ?? {
+          environmentName: "rsc",
+          entryName: "index",
+        };
+        const environment = server.environments[
+          options.environmentName
+        ] as RunnableDevEnvironment;
+        const source = getEntrySource(environment.config, options.entryName);
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
@@ -219,10 +233,15 @@ export default function vitePluginRsc(
       },
       async configurePreviewServer(server) {
         if (rscPluginOptions.disableServerHandler) return;
+        if (rscPluginOptions.serverHandler === false) return;
+        const options = rscPluginOptions.serverHandler ?? {
+          environmentName: "rsc",
+          entryName: "index",
+        };
 
         const entryFile = path.join(
-          config.environments.rsc!.build.outDir,
-          "index.js",
+          config.environments[options.environmentName]!.build.outDir,
+          `${options.entryName}.js`,
         );
         const entry = pathToFileURL(entryFile).href;
         const mod = await import(/* @vite-ignore */ entry);
