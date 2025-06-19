@@ -1,5 +1,5 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
-import rsc, { workaroundCloudflarePlugin } from "@hiogawa/vite-rsc/plugin";
+import rsc, { __fix_cloudflare } from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -21,7 +21,7 @@ export default defineConfig({
       },
       serverHandler: false,
     }),
-    workaroundCloudflarePlugin(),
+    __fix_cloudflare(),
     inspect(),
     cloudflare({
       configPath: "./cf/wrangler.ssr.jsonc",

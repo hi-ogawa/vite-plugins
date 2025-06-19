@@ -1474,7 +1474,7 @@ function __vite_rsc_wrap_css__(value, name) {
   }
 }
 
-export function workaroundCloudflarePlugin(): Plugin {
+export function __fix_cloudflare(): Plugin {
   return {
     name: "rsc:workaround-cloudflare",
     enforce: "post",
