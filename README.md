@@ -12,13 +12,6 @@ Framework-less Vite RSC plugin
 
 Next.js-like RSC framework on Vite
 
-### [`@hiogawa/vite-node-miniflare`](./packages/vite-node-miniflare)
-
-Plugin to run server side code on [`Worked (Miniflare)`](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare)
-during development via
-~[`vite-node`](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node)~
-[`ViteRuntime`](https://github.com/vitejs/vite/discussions/15774).
-
 ### [`@hiogawa/vite-plugin-ssr-middleware`](./packages/vite-plugin-ssr-middleware)
 
 Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
