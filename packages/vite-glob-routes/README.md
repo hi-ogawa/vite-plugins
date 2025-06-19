@@ -1,6 +1,1 @@
-# vite-glob-routes
-
-```sh
-pnpm build
-pnpm release
-```
+The code is moved to https://github.com/hi-ogawa/vite-plugin-glob-routes

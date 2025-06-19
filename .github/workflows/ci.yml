@@ -144,21 +144,6 @@ jobs:
       - uses: ./.github/actions/setup
       - run: pnpm -C packages/react-server test-package
 
-  test-vite-glob-routes:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - run: pnpm -C packages/vite-glob-routes/examples/demo test-e2e
-      - run: pnpm -C packages/vite-glob-routes/examples/demo build
-      - run: pnpm -C packages/vite-glob-routes/examples/demo test-e2e-preview
-      - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e
-      - run: pnpm -C packages/vite-glob-routes/examples/ssr build
-      - run: pnpm -C packages/vite-glob-routes/examples/ssr test-e2e-preview
-      - run: pnpm -C packages/vite-glob-routes/examples/spa test-e2e
-      - run: pnpm -C packages/vite-glob-routes/examples/spa build
-      - run: pnpm -C packages/vite-glob-routes/examples/spa test-e2e-preview
-
   test-pre-bundle-new-url:
     runs-on: ubuntu-latest
     steps:
