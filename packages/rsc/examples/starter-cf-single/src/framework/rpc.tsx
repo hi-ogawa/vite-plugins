@@ -40,6 +40,8 @@ export function createRpcClient<T>(options: { endpoint: string }): T {
     const res = await fetch(options.endpoint, {
       method: "POST",
       body,
+      // @ts-ignore undici compat
+      duplex: "half",
     });
     tinyassert(res.ok);
     tinyassert(res.body);

@@ -26,34 +26,39 @@ export default defineConfig((_env) => ({
       },
     }),
     {
-      name: "vite-rsc-ssr-proxy",
+      name: "vite-rsc-environment-rpc-proxy",
       configureServer(server) {
         // expose `renderHTML` of node ssr environment through
         // this special endpoint for cloudflare rsc environment during dev.
-        const ssrRunner = (server.environments.ssr as RunnableDevEnvironment)
-          .runner;
-        const ssrRunnerProxy = createRpcServer(
-          new Proxy(
-            {},
-            {
-              get(_target, p, _receiver) {
-                if (typeof p !== "string" || p === "then") {
-                  return;
-                }
-                return async (...args: any[]) => {
-                  const module = await ssrRunner.import(
-                    "./src/framework/entry.ssr.tsx",
-                  );
-                  return (module as any)[p](...args);
-                };
-              },
+        const environmentRunnerProxy = new Proxy(
+          {},
+          {
+            get(_target, p, _receiver) {
+              if (typeof p !== "string" || p === "then") {
+                return;
+              }
+              return async (...args: any[]) => {
+                // TODO: parametrize
+                // - environmentName
+                // - entryName
+                const ssrRunner = (
+                  server.environments.ssr as RunnableDevEnvironment
+                ).runner;
+                const module = await ssrRunner.import(
+                  "./src/framework/entry.ssr.tsx",
+                );
+                return (module as any)[p](...args);
+              };
             },
-          ),
+          },
+        );
+        const rpcHandler = createRequestListener(
+          createRpcServer(environmentRunnerProxy),
         );
 
         server.middlewares.use(async (req, res, next) => {
           if (req.url === "/__vite_rsc_environment_proxy") {
-            createRequestListener(ssrRunnerProxy)(req, res);
+            rpcHandler(req, res);
             return;
           }
           next();
