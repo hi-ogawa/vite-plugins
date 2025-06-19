@@ -236,7 +236,7 @@ The plugin provides an additional helper for multi environment interaction.
 
 This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment and vice versa.
 
-During development, this API assumes `rsc` and `ssr` environments executes modules under the main Vite process. When enabling `loadModuleDevProxy` plugin option, it will use `fetch` based RPC to load modules from the main Vite process, which allows `rsc` environment inside cloudflare workers to communicate with `ssr` environment on the main Vite process.
+During development, this API assumes `rsc` and `ssr` environments execute modules under the main Vite process. When enabling `loadModuleDevProxy` plugin option, it will use `fetch` based RPC to load modules from the main Vite process, which allows `rsc` environment inside cloudflare workers to communicate with `ssr` environment on the main Vite process.
 
 During production build, this API will be rewritten into a static import of the specified entry of other environment build and the module are executed inside the same runtime.
 
@@ -348,7 +348,7 @@ renderToReadableStream(reactNode, { bootstrapScriptContent });
 
 #### `rsc:update` event
 
-This event is fired when server modules are update, which can be used to trigger re-fetching and re-rendering of RSC components on browser.
+This event is fired when server modules are updated, which can be used to trigger re-fetching and re-rendering of RSC components on browser.
 
 ```js
 import * as ReactClient from "@hiogawa/vite-rsc/browser";
