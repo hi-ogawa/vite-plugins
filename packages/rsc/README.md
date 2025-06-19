@@ -232,9 +232,13 @@ The plugin provides an additional helper for multi environment interaction.
 
 #### `import.meta.viteRsc.loadModule`
 
-- Type: `(environmentName: string, entryName: string) => Promise<T>`
+- Type: `(environmentName: "ssr" | "rsc", entryName: string) => Promise<T>`
 
-This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment and vice versa. During development, this API assumes `rsc` and `ssr` environments executes modules under the main Vite process. When enabling `loadModuleDevProxy` plugin option, it will use `fetch` based RPC to load modules from the main Vite process, which allows `rsc` environment inside cloudflare workers to communicate with `ssr` environment on the main Vite process.
+This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment and vice versa.
+
+During development, this API assumes `rsc` and `ssr` environments executes modules under the main Vite process. When enabling `loadModuleDevProxy` plugin option, it will use `fetch` based RPC to load modules from the main Vite process, which allows `rsc` environment inside cloudflare workers to communicate with `ssr` environment on the main Vite process.
+
+During production build, this API will be rewritten into a static import of the specified entry of other environment build and the module are executed inside the same runtime.
 
 For example,
 
