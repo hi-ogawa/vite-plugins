@@ -383,7 +383,9 @@ export default defineConfig({
       // this behavior can be customized by `serverHandler` option.
       serverHandler: false,
 
-      // this allows `import.meta.viteRsc.loadModule` API to be proxied via HTTP RPC
+      // when `loadModuleDevProxy: true`, `import.meta.viteRsc.loadModule` is implemented
+      // through `fetch` based RPC, which allows, for example, rsc environment inside
+      // cloudflare workers to communicate with node ssr environment on main Vite process.
       loadModuleDevProxy: true,
     }),
   ],
