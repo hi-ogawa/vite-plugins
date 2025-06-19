@@ -71,9 +71,6 @@ type RscPluginOptions = {
    */
   entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
 
-  /** @deprecated use `serverHandler: false` */
-  disableServerHandler?: boolean;
-
   /** @default { enviornmentName: "rsc", entryName: "index" } */
   serverHandler?:
     | {
@@ -206,7 +203,6 @@ export default function vitePluginRsc(
         server = server_;
         (globalThis as any).__viteRscDevServer = server;
 
-        if (rscPluginOptions.disableServerHandler) return;
         if (rscPluginOptions.serverHandler === false) return;
         const options = rscPluginOptions.serverHandler ?? {
           environmentName: "rsc",
@@ -236,7 +232,6 @@ export default function vitePluginRsc(
         };
       },
       async configurePreviewServer(server) {
-        if (rscPluginOptions.disableServerHandler) return;
         if (rscPluginOptions.serverHandler === false) return;
         const options = rscPluginOptions.serverHandler ?? {
           environmentName: "rsc",
@@ -340,18 +335,6 @@ export default function vitePluginRsc(
             return code.replace("__vite_rsc_raw_import__", "import");
           }
         },
-      },
-    },
-    {
-      // backward compat: `loadSsrModule(name)` implemented as `loadModule("ssr", name)`
-      name: "rsc:load-ssr-module",
-      transform(code) {
-        if (code.includes("import.meta.viteRsc.loadSsrModule(")) {
-          return code.replaceAll(
-            `import.meta.viteRsc.loadSsrModule(`,
-            `import.meta.viteRsc.loadModule("ssr", `,
-          );
-        }
       },
     },
     {
