@@ -10,6 +10,8 @@ The difference from [examples/react-router](https://github.com/hi-ogawa/vite-plu
 - During development, SSR environment runs as Vite's deafult Node environment.
 - During production, SSR environment build output is directly imported into RSC environment build and both codes run on the same worker.
 
+Such communication mechanism is enabled via `rsc({ loadModuleDevProxy: true })` plugin option.
+
 ```sh
 # run dev server
 npm run dev
