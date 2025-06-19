@@ -1,7 +1,6 @@
 import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 import type { ReactFormState } from "react-dom/client";
 import { Root } from "../root.tsx";
-import { createRpcClient } from "./rpc.tsx";
 
 export type RscPayload = {
   root: React.ReactNode;
