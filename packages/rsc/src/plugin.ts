@@ -28,6 +28,7 @@ import {
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
 import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
+import { createRpcServer } from "./utils/rpc";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
 // state for build orchestration
@@ -81,6 +82,8 @@ type RscPluginOptions = {
         entryName: string;
       }
     | false;
+
+  loadModuleDevProxy?: boolean;
 };
 
 export default function vitePluginRsc(
@@ -368,7 +371,21 @@ export default function vitePluginRsc(
           const argCode = match[1]!.trim();
           const [environmentName, entryName] = JSON.parse(`[${argCode}]`);
           let replacement: string;
-          if (this.environment.mode === "dev") {
+          if (
+            this.environment.mode === "dev" &&
+            rscPluginOptions.loadModuleDevProxy
+          ) {
+            const origin = server.resolvedUrls?.local[0];
+            assert(origin, "[vite-rsc] no server for loadModueleDevProxy");
+            const endpoint =
+              origin +
+              "__vite_rsc_load_module_dev_proxy?" +
+              new URLSearchParams({ environmentName, entryName });
+            replacement = `__vite_rsc_rpc.createRpcClient(${JSON.stringify({ endpoint })})`;
+            s.prepend(
+              `import * as __vite_rsc_rpc from "@hiogawa/vite-rsc/__rpc";`,
+            );
+          } else if (this.environment.mode === "dev") {
             const environment = server.environments[environmentName]!;
             const source = getEntrySource(environment.config, entryName);
             const resolved =
@@ -423,6 +440,58 @@ export default function vitePluginRsc(
             map: s.generateMap({ hires: "boundary" }),
           };
         }
+      },
+    },
+    {
+      name: "vite-rsc-load-module-dev-proxy",
+      apply: () => !!rscPluginOptions.loadModuleDevProxy,
+      configureServer(server) {
+        async function createHandler(url: URL) {
+          const { environmentName, entryName } = Object.fromEntries(
+            url.searchParams,
+          );
+          assert(environmentName);
+          assert(entryName);
+          const environment = server.environments[
+            environmentName
+          ] as RunnableDevEnvironment;
+          const source = getEntrySource(environment.config, entryName);
+          const resolvedEntry =
+            await environment.pluginContainer.resolveId(source);
+          assert(
+            resolvedEntry,
+            `[vite-rsc] failed to resolve entry '${source}'`,
+          );
+          const runnerProxy = new Proxy(
+            {},
+            {
+              get(_target, p, _receiver) {
+                if (typeof p !== "string" || p === "then") {
+                  return;
+                }
+                return async (...args: any[]) => {
+                  const mod = await environment.runner.import(resolvedEntry.id);
+                  return (mod as any)[p](...args);
+                };
+              },
+            },
+          );
+          return createRpcServer(runnerProxy);
+        }
+
+        server.middlewares.use(async (req, res, next) => {
+          const url = new URL(req.url ?? "/", `http://localhost`);
+          if (url.pathname === "/__vite_rsc_load_module_dev_proxy") {
+            try {
+              const handler = await createHandler(url);
+              createRequestListener(handler)(req, res);
+            } catch (e) {
+              next(e);
+            }
+            return;
+          }
+          next();
+        });
       },
     },
     {

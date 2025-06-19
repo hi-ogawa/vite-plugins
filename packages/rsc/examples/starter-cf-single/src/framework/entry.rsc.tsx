@@ -1,7 +1,6 @@
 import * as ReactServer from "@hiogawa/vite-rsc/rsc";
 import type { ReactFormState } from "react-dom/client";
 import { Root } from "../root.tsx";
-import type { RenderHTML } from "./entry.ssr.tsx";
 
 export type RscPayload = {
   root: React.ReactNode;
@@ -67,7 +66,9 @@ async function handler(request: Request): Promise<Response> {
     });
   }
 
-  const renderHTML = await getRenderHTML(url.origin);
+  const { renderHTML } = await import.meta.viteRsc.loadModule<
+    typeof import("./entry.ssr.tsx")
+  >("ssr", "index");
   const htmlStream = await renderHTML(rscStream, {
     formState,
     options: {
@@ -83,35 +84,6 @@ async function handler(request: Request): Promise<Response> {
       vary: "accept",
     },
   });
-}
-
-// delegate html rendering to ssr environment.
-// how they are communicated differs between dev and build.
-async function getRenderHTML(origin: string): Promise<RenderHTML> {
-  // for build, ssr build is directly imported in the runtime.
-  if (!import.meta.env.DEV) {
-    const module = await import.meta.viteRsc.loadModule<
-      typeof import("./entry.ssr.tsx")
-    >("ssr", "index");
-    return module.renderHTML;
-  }
-
-  // for dev, ssr environment runs on node and is proxied through special endpoint.
-  // error handling is likely more complicated but that would be same for two workers setup.
-  return async (rscStream, options) => {
-    const proxyRequest = new Request(
-      new URL("/__vite_rsc_render_html", origin),
-      {
-        method: "POST",
-        body: rscStream,
-        headers: {
-          "x-vite-rsc-render-html": JSON.stringify(options),
-        },
-      },
-    );
-    const response = await fetch(proxyRequest);
-    return response.body!;
-  };
 }
 
 export default {
