@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
-import test, { type Page, expect } from "@playwright/test";
+import test, { expect, type Page } from "@playwright/test";
 
 export const testNoJs = test.extend({
   javaScriptEnabled: ({}, use) => use(false),

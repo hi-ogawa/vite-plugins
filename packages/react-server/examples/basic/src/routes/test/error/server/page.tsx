@@ -1,4 +1,4 @@
-import { type PageProps, createError } from "@hiogawa/react-server/server";
+import { createError, type PageProps } from "@hiogawa/react-server/server";
 
 declare module "@hiogawa/react-server/server" {
   interface ReactServerErrorContext {

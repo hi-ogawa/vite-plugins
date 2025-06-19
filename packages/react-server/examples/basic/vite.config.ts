@@ -13,7 +13,7 @@ import {
 import mdx from "@mdx-js/rollup";
 import react from "@vitejs/plugin-react";
 import unocss from "unocss/vite";
-import { type Plugin, defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 
 export default defineConfig({
   clearScreen: false,

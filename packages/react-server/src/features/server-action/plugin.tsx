@@ -6,10 +6,10 @@ import { createDebug, tinyassert } from "@hiogawa/utils";
 import { type Plugin, parseAstAsync } from "vite";
 import type { PluginStateManager } from "../../plugin";
 import {
-  USE_SERVER,
   applyPluginToClient,
   applyPluginToServer,
   createVirtualPlugin,
+  USE_SERVER,
 } from "../../plugin/utils";
 
 const debug = createDebug("react-server:plugin:server-action");

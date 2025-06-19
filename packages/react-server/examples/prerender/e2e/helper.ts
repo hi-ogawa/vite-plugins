@@ -1,4 +1,4 @@
-import test, { type Page, expect } from "@playwright/test";
+import test, { expect, type Page } from "@playwright/test";
 
 export async function waitForHydration(page: Page) {
   await expect(page.locator("#hydrated")).toHaveAttribute(

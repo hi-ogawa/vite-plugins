@@ -14,16 +14,16 @@ import { createRequestListener } from "@mjackson/node-fetch-server";
 import MagicString from "magic-string";
 import {
   type DevEnvironment,
+  defaultServerConditions,
   type EnvironmentModuleNode,
+  isCSSRequest,
+  normalizePath,
   type Plugin,
+  parseAstAsync,
   type ResolvedConfig,
   type Rollup,
   type RunnableDevEnvironment,
   type ViteDevServer,
-  defaultServerConditions,
-  isCSSRequest,
-  normalizePath,
-  parseAstAsync,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";

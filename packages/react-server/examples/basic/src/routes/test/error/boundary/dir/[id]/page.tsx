@@ -1,6 +1,6 @@
 import {
-  type PageProps,
   createError,
+  type PageProps,
   redirect,
 } from "@hiogawa/react-server/server";
 

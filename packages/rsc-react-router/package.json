@@ -13,7 +13,9 @@
     "./*": "./dist/*.js",
     "./package.json": "./package.json"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",

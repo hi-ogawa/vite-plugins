@@ -1,4 +1,4 @@
-import { type FilterPattern, type Plugin, createFilter } from "vite";
+import { createFilter, type FilterPattern, type Plugin } from "vite";
 import { name as packageName } from "../package.json";
 import { hmrTransform } from "./transform";
 
