@@ -1,6 +1,6 @@
 import { objectMapValues, typedBoolean, uniq } from "@hiogawa/utils";
 import type { RouteModuleKey } from "./server";
-import { type TreeNode, matchRouteTree } from "./tree";
+import { matchRouteTree, type TreeNode } from "./tree";
 
 export type RouteManifest = {
   routeTree: TreeNode<RouteAssetDeps>;

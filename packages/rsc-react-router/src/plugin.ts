@@ -4,17 +4,15 @@ import path from "node:path";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
 import {
+  createIdResolver,
   type EnvironmentOptions,
   type Plugin,
-  createIdResolver,
   runnerImport,
 } from "vite";
 
 const PKG_NAME = "@hiogawa/vite-rsc-react-router";
 
-export function reactRouter(options?: {
-  typegen?: boolean;
-}): Plugin[] {
+export function reactRouter(options?: { typegen?: boolean }): Plugin[] {
   let idResolver: ReturnType<typeof createIdResolver>;
   let typegenProcess: childProcess.ChildProcess | undefined;
 

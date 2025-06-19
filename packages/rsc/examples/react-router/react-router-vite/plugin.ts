@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import type { Config } from "@react-router/dev/config";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { type Plugin, createIdResolver, runnerImport } from "vite";
+import { createIdResolver, type Plugin, runnerImport } from "vite";
 
 export function reactRouter(): Plugin[] {
   let idResolver: ReturnType<typeof createIdResolver>;

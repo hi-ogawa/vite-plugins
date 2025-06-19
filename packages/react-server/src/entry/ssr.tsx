@@ -25,8 +25,8 @@ import {
 } from "../features/router/client";
 import { Router, RouterContext } from "../features/router/client/router";
 import {
-  type RouteManifest,
   emptyRouteManifest,
+  type RouteManifest,
 } from "../features/router/manifest";
 import type { FlightData } from "../features/router/utils";
 import { $__global } from "../global";

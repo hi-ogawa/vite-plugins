@@ -1,15 +1,14 @@
 import { memoize, tinyassert } from "@hiogawa/utils";
-import type { BundlerConfig, ImportManifestEntry, ModuleMap } from "../types";
-import {
-  SERVER_DECODE_CLIENT_PREFIX,
-  SERVER_REFERENCE_PREFIX,
-  createReferenceCacheTag,
-  removeReferenceCacheTag,
-  setInternalRequire,
-} from "./shared";
-
 // @ts-ignore
 import * as ReactServer from "@hiogawa/vite-rsc/vendor/react-server-dom/server.edge";
+import type { BundlerConfig, ImportManifestEntry, ModuleMap } from "../types";
+import {
+  createReferenceCacheTag,
+  removeReferenceCacheTag,
+  SERVER_DECODE_CLIENT_PREFIX,
+  SERVER_REFERENCE_PREFIX,
+  setInternalRequire,
+} from "./shared";
 
 let init = false;
 let requireModule!: (id: string) => unknown;

@@ -16,9 +16,9 @@ import {
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react-swc";
 import {
+  loadEnv,
   type Plugin,
   type PluginOption,
-  loadEnv,
   transformWithEsbuild,
 } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";

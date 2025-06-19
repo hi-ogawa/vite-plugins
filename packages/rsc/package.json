@@ -14,7 +14,10 @@
     "./__rpc": "./dist/utils/rpc.js",
     "./*": "./dist/*.js"
   },
-  "files": ["dist", "types"],
+  "files": [
+    "dist",
+    "types"
+  ],
   "scripts": {
     "test-package": "bash scripts/test-package.sh",
     "dev": "tsdown --sourcemap --watch src",

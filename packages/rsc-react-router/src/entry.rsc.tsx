@@ -1,3 +1,5 @@
+// @ts-ignore
+import routes from "virtual:react-router-routes";
 import {
   decodeAction,
   decodeReply,
@@ -9,9 +11,6 @@ import {
   type unstable_DecodeFormActionFunction as DecodeFormActionFunction,
   unstable_matchRSCServerRequest as matchRSCServerRequest,
 } from "react-router/rsc";
-
-// @ts-ignore
-import routes from "virtual:react-router-routes";
 
 const decodeCallServer: DecodeCallServerFunction = async (actionId, reply) => {
   const args = await decodeReply(reply);

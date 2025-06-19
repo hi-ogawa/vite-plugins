@@ -3,10 +3,10 @@
 import { useState } from "react";
 
 import double, {
-  inc,
   dec,
-  redirectAction,
   getHeaders,
+  inc,
+  redirectAction,
   renamed,
   slowInc,
 } from "./actions";

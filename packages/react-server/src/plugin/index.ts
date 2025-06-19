@@ -2,15 +2,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDebug, tinyassert, uniq } from "@hiogawa/utils";
 import {
-  type ConfigEnv,
-  type Plugin,
-  type ResolvedConfig,
-  type ViteDevServer,
   build,
+  type ConfigEnv,
   createBuilder,
   createServerModuleRunner,
   defaultServerConditions,
   isCSSRequest,
+  type Plugin,
+  type ResolvedConfig,
+  type ViteDevServer,
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
 import {
@@ -23,8 +23,8 @@ import {
   vitePluginServerUseClient,
 } from "../features/client-component/plugin";
 import {
-  OUTPUT_SERVER_JS_EXT,
   createServerPackageJson,
+  OUTPUT_SERVER_JS_EXT,
 } from "../features/next/plugin";
 import {
   type PrerenderFn,
@@ -42,14 +42,16 @@ import {
 } from "../features/server-action/plugin";
 import { $__global } from "../global";
 import {
+  createVirtualPlugin,
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
-  createVirtualPlugin,
   hashString,
   wrapClientPlugin,
   wrapServerPlugin,
 } from "./utils";
+
 export { wrapClientPlugin, wrapServerPlugin } from "./utils";
+
 import rscCore from "@hiogawa/vite-rsc/core/plugin";
 import { vitePluginFindSourceMapURL } from "@hiogawa/vite-rsc/plugin";
 
