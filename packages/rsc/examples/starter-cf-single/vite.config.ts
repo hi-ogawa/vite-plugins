@@ -30,18 +30,26 @@ export default defineConfig((_env) => ({
       configureServer(server) {
         // expose `renderHTML` of node ssr environment through
         // this special endpoint for cloudflare rsc environment during dev.
-        const ssrRunner = (server.environments.ssr as RunnableDevEnvironment).runner;
-        const ssrRunnerProxy = createRpcServer(new Proxy({}, {
-          get(_target, p, _receiver) {
-            if (typeof p !== "string" || p === "then") {
-              return;
-            }
-            return async (...args: any[]) => {
-              const module = await ssrRunner.import("./src/framework/entry.ssr.tsx");
-              return (module as any)[p](...args);
-            };
-          },
-        }));
+        const ssrRunner = (server.environments.ssr as RunnableDevEnvironment)
+          .runner;
+        const ssrRunnerProxy = createRpcServer(
+          new Proxy(
+            {},
+            {
+              get(_target, p, _receiver) {
+                if (typeof p !== "string" || p === "then") {
+                  return;
+                }
+                return async (...args: any[]) => {
+                  const module = await ssrRunner.import(
+                    "./src/framework/entry.ssr.tsx",
+                  );
+                  return (module as any)[p](...args);
+                };
+              },
+            },
+          ),
+        );
 
         server.middlewares.use(async (req, res, next) => {
           if (req.url === "/__vite_rsc_environment_proxy") {
