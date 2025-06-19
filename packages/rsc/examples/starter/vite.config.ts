@@ -10,7 +10,7 @@ export default defineConfig({
       //
       // by default, the plugin setup request handler based on `default export` of `rsc` environment `rollupOptions.input.index`.
       // This can be disabled when setting up own server handler e.g. `@cloudflare/vite-plugin`.
-      // > disableServerHandler: true
+      // > serverHandler: false
     }),
 
     // use any of react plugins https://github.com/vitejs/vite-plugin-react

@@ -16,7 +16,7 @@ export default defineConfig((_env) => ({
         client: "./src/framework/entry.browser.tsx",
         ssr: "./src/framework/entry.ssr.tsx",
       },
-      disableServerHandler: true,
+      serverHandler: false,
     }),
     cloudflare({
       configPath: "./wrangler.jsonc",
