@@ -17,9 +17,9 @@
   },
   "files": ["dist"],
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "prepack": "tsup --clean"
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "prepack": "tsdown --clean"
   },
   "dependencies": {
     "magic-string": "^0.30.17"
