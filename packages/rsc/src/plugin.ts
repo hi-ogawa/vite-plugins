@@ -65,22 +65,26 @@ function resolvePackage(name: string) {
   return pathToFileURL(require.resolve(name)).href;
 }
 
+type RscPluginOptions = {
+  /**
+   * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
+   */
+  entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
+
+  /** @deprecated use `serverHandler: false` */
+  disableServerHandler?: boolean;
+
+  /** @default { enviornmentName: "rsc", entryName: "index" } */
+  serverHandler?:
+    | {
+        environmentName: string;
+        entryName: string;
+      }
+    | false;
+};
+
 export default function vitePluginRsc(
-  rscPluginOptions: {
-    /**
-     * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
-     */
-    entries?: Partial<Record<"client" | "ssr" | "rsc", string>>;
-    /** @deprecated use `serverHandler: false` */
-    disableServerHandler?: boolean;
-    /** @default { enviornmentName: "rsc", entryName: "index" } */
-    serverHandler?:
-      | {
-          environmentName: string;
-          entryName: string;
-        }
-      | false;
-  } = {},
+  rscPluginOptions: RscPluginOptions = {},
 ): Plugin[] {
   return [
     {
