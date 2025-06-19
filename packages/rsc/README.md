@@ -235,7 +235,7 @@ The plugin provides an additional helper for multi environment interaction.
 - Type: `(environmentName: string, entryName: string) => Promise<T>`
 
 This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment and vice versa.
-This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
+During development, this API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
 When that's not the case, the communication between two environments needs to be implemented on your own
 (e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
 
