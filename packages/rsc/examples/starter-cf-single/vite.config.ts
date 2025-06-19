@@ -3,6 +3,7 @@ import rsc from "@hiogawa/vite-rsc/plugin";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import react from "@vitejs/plugin-react";
 import { RunnableDevEnvironment, defineConfig } from "vite";
+import { createRpcServer } from "./src/framework/rpc";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
@@ -29,19 +30,22 @@ export default defineConfig((_env) => ({
       configureServer(server) {
         // expose `renderHTML` of node ssr environment through
         // this special endpoint for cloudflare rsc environment during dev.
-        server.middlewares.use(async (req, res, next) => {
-          if (req.url === "/__vite_rsc_render_html") {
-            const ssrRunner = (
-              server.environments.ssr as RunnableDevEnvironment
-            ).runner;
-            try {
-              const module = await ssrRunner.import<
-                typeof import("./src/framework/entry.ssr")
-              >("./src/framework/entry.ssr.tsx");
-              createRequestListener(module.renderHTMLDevProxy)(req, res);
-            } catch (e) {
-              next(e);
+        const ssrRunner = (server.environments.ssr as RunnableDevEnvironment).runner;
+        const ssrRunnerProxy = createRpcServer(new Proxy({}, {
+          get(_target, p, _receiver) {
+            if (typeof p !== "string" || p === "then") {
+              return;
             }
+            return async (...args: any[]) => {
+              const module = await ssrRunner.import("./src/framework/entry.ssr.tsx");
+              return (module as any)[p](...args);
+            };
+          },
+        }));
+
+        server.middlewares.use(async (req, res, next) => {
+          if (req.url === "/__vite_rsc_environment_proxy") {
+            createRequestListener(ssrRunnerProxy)(req, res);
             return;
           }
           next();
