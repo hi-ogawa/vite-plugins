@@ -9,7 +9,7 @@ import type { RscPayload } from "./entry.rsc";
 export type RenderHTML = typeof renderHTML;
 
 export async function renderHTML(
-  rscStream: ReadableStream,
+  rscStream: ReadableStream<Uint8Array>,
   {
     formState,
     options,

@@ -17,7 +17,6 @@ export function createRpcServer<T extends object>(handlers: T) {
     const reqPayload = await decode<RequestPayload>(
       request.body.pipeThrough(new TextDecoderStream()),
     );
-    console.log("[rpc-server]", { reqPayload });
     const handler = (handlers as any)[reqPayload.method];
     tinyassert(handler);
     const resPayload: ResponsePayload = { ok: true, data: undefined };
@@ -37,10 +36,10 @@ export function createRpcClient<T>(options: { endpoint: string }): T {
       method,
       args,
     };
-    console.log("[rpc-client]", { reqPayload });
+    const body = encode(reqPayload).pipeThrough(new TextEncoderStream());
     const res = await fetch(options.endpoint, {
       method: "POST",
-      body: encode(reqPayload),
+      body,
     });
     tinyassert(res.ok);
     tinyassert(res.body);
