@@ -17,7 +17,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.5-nightly.81fdedb",
     "@hiogawa/utils": "^1.7.0",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.53.1",
     "@tsconfig/strictest": "^2.0.5",
     "@types/estree": "^1.0.7",
     "@types/node": "^22.14.1",
@@ -50,6 +50,7 @@
       "react-server-dom-webpack": "$react-server-dom-webpack",
       "@hiogawa/react-server": "workspace:*",
       "@hiogawa/vite-rsc": "workspace:*",
+      "@playwright/test": "$@playwright/test",
       "@types/react": "$@types/react",
       "@types/react-dom": "$@types/react-dom",
       "@vitejs/plugin-react": "$@vitejs/plugin-react"
