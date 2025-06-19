@@ -96,7 +96,7 @@ async function loadSsrModule(
   } else {
     // for dev, ssr environment runs on node and is proxied through special endpoint.
     return createRpcClient({
-      endpoint: `${origin}/__vite_rsc_environment_proxy`,
+      endpoint: `${origin}/__vite_rsc_load_module_dev_proxy?environmentName=ssr&entryName=index`,
     });
   }
 }

@@ -1,9 +1,7 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import rsc from "@hiogawa/vite-rsc/plugin";
-import { createRequestListener } from "@mjackson/node-fetch-server";
 import react from "@vitejs/plugin-react";
-import { RunnableDevEnvironment, defineConfig } from "vite";
-import { createRpcServer } from "./src/framework/rpc";
+import { defineConfig } from "vite";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
@@ -18,6 +16,7 @@ export default defineConfig((_env) => ({
         ssr: "./src/framework/entry.ssr.tsx",
       },
       serverHandler: false,
+      loadModuleDevProxy: true,
     }),
     cloudflare({
       configPath: "./wrangler.jsonc",
@@ -25,46 +24,6 @@ export default defineConfig((_env) => ({
         name: "rsc",
       },
     }),
-    {
-      name: "vite-rsc-environment-rpc-proxy",
-      configureServer(server) {
-        // expose `renderHTML` of node ssr environment through
-        // this special endpoint for cloudflare rsc environment during dev.
-        const environmentRunnerProxy = new Proxy(
-          {},
-          {
-            get(_target, p, _receiver) {
-              if (typeof p !== "string" || p === "then") {
-                return;
-              }
-              return async (...args: any[]) => {
-                // TODO: parametrize
-                // - environmentName
-                // - entryName
-                const ssrRunner = (
-                  server.environments.ssr as RunnableDevEnvironment
-                ).runner;
-                const module = await ssrRunner.import(
-                  "./src/framework/entry.ssr.tsx",
-                );
-                return (module as any)[p](...args);
-              };
-            },
-          },
-        );
-        const rpcHandler = createRequestListener(
-          createRpcServer(environmentRunnerProxy),
-        );
-
-        server.middlewares.use(async (req, res, next) => {
-          if (req.url === "/__vite_rsc_environment_proxy") {
-            rpcHandler(req, res);
-            return;
-          }
-          next();
-        });
-      },
-    },
     {
       name: "fix-up",
       enforce: "post",
