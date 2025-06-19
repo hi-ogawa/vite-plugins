@@ -83,6 +83,7 @@ type RscPluginOptions = {
       }
     | false;
 
+  /** @default false */
   loadModuleDevProxy?: boolean;
 };
 

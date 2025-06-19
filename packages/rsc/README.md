@@ -232,12 +232,13 @@ The plugin provides an additional helper for multi environment interaction.
 
 #### `import.meta.viteRsc.loadModule`
 
-- Type: `(environmentName: string, entryName: string) => Promise<T>`
+- Type: `(environmentName: "ssr" | "rsc", entryName: string) => Promise<T>`
 
 This allows importing `ssr` environment module specified by `environments.ssr.build.rollupOptions.input[entryName]` inside `rsc` environment and vice versa.
-This API assumes `rsc` and `ssr` environments executes modules under the main Vite process.
-When that's not the case, the communication between two environments needs to be implemented on your own
-(e.g. `@cloudflare/vite-plugin` provides service binding features to achieve a similar mechanism).
+
+During development, this API assumes `rsc` and `ssr` environments execute modules under the main Vite process. When enabling `loadModuleDevProxy` plugin option, it will use `fetch` based RPC to load modules from the main Vite process, which allows `rsc` environment inside cloudflare workers to communicate with `ssr` environment on the main Vite process.
+
+During production build, this API will be rewritten into a static import of the specified entry of other environment build and the module are executed inside the same runtime.
 
 For example,
 
@@ -343,6 +344,22 @@ import { renderToReadableStream } from "react-dom/server.edge";
 renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
 
+### available on `client` environment
+
+#### `rsc:update` event
+
+This event is fired when server modules are updated, which can be used to trigger re-fetching and re-rendering of RSC components on browser.
+
+```js
+import * as ReactClient from "@hiogawa/vite-rsc/browser";
+
+import.meta.hot.on("rsc:update", async () => {
+  // re-fetch RSC stream
+  const rscPayload = await ReactClient.createFromFetch(fetch(window.location.href + ".rsc"))
+  // re-render ...
+});
+```
+
 ## Plugin API
 
 ### `@hiogawa/vite-rsc/plugin`
@@ -361,6 +378,16 @@ export default defineConfig({
         ssr: "...",
         client: "...",
       },
+
+      // by default, the plugin sets up middleware
+      // using `default` export of `rsc` environment `index` entry.
+      // this behavior can be customized by `serverHandler` option.
+      serverHandler: false,
+
+      // when `loadModuleDevProxy: true`, `import.meta.viteRsc.loadModule` is implemented
+      // through `fetch` based RPC, which allows, for example, rsc environment inside
+      // cloudflare workers to communicate with node ssr environment on main Vite process.
+      loadModuleDevProxy: true,
     }),
   ],
   environments: {
