@@ -380,7 +380,7 @@ export default defineConfig({
       },
 
       // by default, the plugin sets up middleware
-      // using `deafult` export of `rsc` environment `index` entry.
+      // using `default` export of `rsc` environment `index` entry.
       // this behavior can be customized by `serverHandler` option.
       serverHandler: false,
 
