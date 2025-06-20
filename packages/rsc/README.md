@@ -6,7 +6,7 @@ Any feedback is welcome, please feel free to share an idea in [the discussion](h
 ## Features
 
 - **Framework-less RSC experience**: The plugin implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides low level `react-server-dom` runtime API without framework-specific abstractions.
-- **CSS support**: CSS is automatically code-split at client boundaries and injected upon rendering. For server components, CSS assets can be manually rendered via [`import.meta.viteRsc.loadCss`](#importmetaviterscloadcss) API based on your own server routing conventions.
+- **CSS support**: CSS is automatically code-split both at client and server components and they are injected upon rendering.
 - **HMR support**: Enables editing both client and server components without full page reloads.
 - **Runtime agnostic**: Built on [Vite environment API](https://vite.dev/guide/api-environment.html) and works with other runtimes (e.g., [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare)).
 
@@ -388,6 +388,10 @@ export default defineConfig({
       // through `fetch` based RPC, which allows, for example, rsc environment inside
       // cloudflare workers to communicate with node ssr environment on main Vite process.
       loadModuleDevProxy: true,
+
+      // by default, `loadCss()` helper is injected based on certain heuristics.
+      // if it breaks, it can be opt-out or selectively applied based on files.
+      rscCssTransform: { filter: id => id.includes("/my-app/") },
     }),
   ],
   environments: {
