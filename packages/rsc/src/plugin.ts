@@ -1217,7 +1217,7 @@ export function vitePluginRscCss(
     if (options?.filter && !options.filter(id)) return false;
     if (id.includes("/node_modules/")) return false;
 
-    // parse imports. if no css imports, skip transform.
+    // skip transform if no css imports
     let result: ReturnType<typeof esModuleLexer.parse>;
     try {
       result = esModuleLexer.parse(code);
