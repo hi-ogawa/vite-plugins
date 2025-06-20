@@ -1219,7 +1219,7 @@ export function vitePluginRscCss(
 
     // parse imports. if no css imports, skip transform.
     const [imports] = esModuleLexer.parse(code);
-    if (!imports.some((i) => i.t === 1 && i.n && i.n.endsWith(".css"))) {
+    if (!imports.some((i) => i.t === 1 && i.n && isCSSRequest(i.n))) {
       return false;
     }
     const filterName = options?.filterName;
