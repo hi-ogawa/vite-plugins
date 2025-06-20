@@ -58,7 +58,7 @@ async function readReactRouterConfig(
     {
       id: "root",
       path: "",
-      file: rootFile + "?vite-rsc-css-export=Layout",
+      file: rootFile,
       children: routesImport.module.default,
     },
   ];

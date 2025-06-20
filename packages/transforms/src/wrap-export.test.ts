@@ -1,11 +1,14 @@
 import { parseAstAsync } from "vite";
 import { describe, expect, test } from "vitest";
 import { debugSourceMap } from "./test-utils";
-import { transformWrapExport } from "./wrap-export";
+import {
+  type TransformWrapExportFilter,
+  transformWrapExport,
+} from "./wrap-export";
 
 async function testTransform(
   input: string,
-  options?: { filter?: (name: string) => boolean },
+  options?: { filter?: TransformWrapExportFilter },
 ) {
   const ast = await parseAstAsync(input);
   const { output } = transformWrapExport(input, ast, {
@@ -214,6 +217,37 @@ export { a as aa };
       export { $$wrap_$$import_c as c };
       const $$wrap_a = /* #__PURE__ */ $$wrap(a, "<id>", "aa");
       export { $$wrap_a as aa };
+      "
+    `);
+  });
+
+  test("filter meta", async () => {
+    const input = `
+export const a = 0;
+export const b = function() {}
+export const c = () => {}
+export default function d() {}
+export default () => {}
+`;
+    const result = await testTransform(input, {
+      filter: (_name, meta) => !!(meta.isFunction && meta.declName),
+    });
+    expect(result).toMatchInlineSnapshot(`
+      "
+      let a = 0;
+      let b = function() {}
+      let c = () => {}
+      function d() {}
+      const $$default = () => {}
+      export { a };
+      b = /* #__PURE__ */ $$wrap(b, "<id>", "b");
+      export { b };
+      c = /* #__PURE__ */ $$wrap(c, "<id>", "c");
+      export { c };
+      ;
+      const $$wrap_d = /* #__PURE__ */ $$wrap(d, "<id>", "default");
+      export { $$wrap_d as default };
+      export { $$default as default };
       "
     `);
   });

@@ -28,6 +28,7 @@ export default defineConfig({
         ssr: "./src/server.ssr.tsx",
         rsc: "./src/server.tsx",
       },
+      rscCssTransform: false,
     }),
     // avoid ecosystem CI fail due to vite-plugin-inspect compatibility
     !process.env.ECOSYSTEM_CI && inspect(),

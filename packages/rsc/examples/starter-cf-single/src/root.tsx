@@ -12,12 +12,6 @@ export function Root() {
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Vite + RSC</title>
-        {/*
-          This is the API to collect css assets which are imported through this module (i.e. `root.tsx`)
-          and render associated resources inside server components.
-          In this case, this will include `<link rel="stylesheet" />` for `index.css`.
-        */}
-        {import.meta.viteRsc.loadCss()}
       </head>
       <body>
         <App />
