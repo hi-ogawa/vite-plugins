@@ -388,7 +388,7 @@ export default function vitePluginRsc(
               new URLSearchParams({ environmentName, entryName });
             replacement = `__vite_rsc_rpc.createRpcClient(${JSON.stringify({ endpoint })})`;
             s.prepend(
-              `import * as __vite_rsc_rpc from "@hiogawa/vite-rsc/__rpc";`,
+              `import * as __vite_rsc_rpc from "@hiogawa/vite-rsc/utils/rpc";`,
             );
           } else if (this.environment.mode === "dev") {
             const environment = server.environments[environmentName]!;
