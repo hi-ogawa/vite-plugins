@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.3 (2025-06-20)
+
+- feat: refined filter for `transformWrapExport` ([#1030](https://github.com/hi-ogawa/vite-plugins/pull/1030))
+
 ## v0.1.2 (2025-06-18)
 
 - feat: support filter in `transformWrapExport` ([#1002](https://github.com/hi-ogawa/vite-plugins/pull/1002))
