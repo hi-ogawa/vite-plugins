@@ -88,12 +88,7 @@ type RscPluginOptions = {
   /** @default false */
   loadModuleDevProxy?: boolean;
 
-  rscCssTransform?:
-    | false
-    | {
-        filter?: (id: string) => boolean;
-        filterName?: (exportName: string, id: string) => boolean;
-      };
+  rscCssTransform?: false | { filter?: (id: string) => boolean };
 };
 
 export default function vitePluginRsc(
@@ -1228,12 +1223,8 @@ export function vitePluginRscCss(
     if (!result[0].some((i) => i.t === 1 && i.n && isCSSRequest(i.n))) {
       return false;
     }
-    const filterName = options?.filterName;
-    if (!filterName) {
-      return (_name: string, meta) =>
-        !!(meta.isFunction && meta.declName && /^[A-Z]/.test(meta.declName));
-    }
-    return (name: string) => filterName(name, id);
+    return (_name: string, meta) =>
+      !!(meta.isFunction && meta.declName && /^[A-Z]/.test(meta.declName));
   }
 
   return [
