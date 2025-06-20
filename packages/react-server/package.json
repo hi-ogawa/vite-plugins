@@ -33,9 +33,9 @@
   },
   "files": ["dist"],
   "scripts": {
-    "dev": "tsdown --watch",
-    "build": "tsdown",
-    "prepack": "tsdown --clean",
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "prepack": "tsup --clean",
     "test": "vitest",
     "test-e2e": "vitest -c vitest.config.e2e.ts",
     "test-package": "bash misc/test.sh"
