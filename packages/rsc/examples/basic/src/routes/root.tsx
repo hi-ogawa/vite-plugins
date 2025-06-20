@@ -33,6 +33,7 @@ export function Root(props: { url: URL }) {
     <html>
       <head>
         <title>vite-rsc</title>
+        {import.meta.viteRsc.loadCss("/src/routes/root.tsx")}
       </head>
       <body className="flex flex-col gap-2 items-start p-2">
         <h4 className="text-xl">Test</h4>
