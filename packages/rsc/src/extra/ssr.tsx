@@ -6,22 +6,21 @@ import { injectRSCPayload } from "rsc-html-stream/server";
 import { createFromReadableStream } from "../ssr";
 import type { RscPayload } from "./rsc";
 
-export async function renderHtml({
-  stream,
-  formState,
-  options,
-}: {
-  stream: ReadableStream;
-  formState?: ReactFormState;
-  options?: { nonce?: string; __nojs?: boolean };
-}): Promise<Response> {
-  const [stream1, stream2] = stream.tee();
+export async function renderHtml(
+  rscStream: ReadableStream<Uint8Array>,
+  options?: {
+    formState?: ReactFormState;
+    nonce?: string;
+    debugNoJs?: boolean;
+  },
+): Promise<Response> {
+  const [rscStream1, rscStream2] = rscStream.tee();
 
   // flight deserialization needs to be kicked off inside SSR context
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
   function SsrRoot() {
-    payload ??= createFromReadableStream<RscPayload>(stream1, {
+    payload ??= createFromReadableStream<RscPayload>(rscStream1, {
       nonce: options?.nonce,
     });
     const root = React.use(payload).root;
@@ -29,18 +28,18 @@ export async function renderHtml({
   }
 
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapScriptContent: options?.__nojs
+    bootstrapScriptContent: options?.debugNoJs
       ? undefined
       : bootstrapScriptContent,
     nonce: options?.nonce,
-    // @ts-expect-error no types
-    formState,
+    // no types
+    ...{ formState: options?.formState },
   });
 
-  let responseStream: ReadableStream = htmlStream;
-  if (!options?.__nojs) {
+  let responseStream: ReadableStream<Uint8Array> = htmlStream;
+  if (!options?.debugNoJs) {
     responseStream = responseStream.pipeThrough(
-      injectRSCPayload(stream2, {
+      injectRSCPayload(rscStream2, {
         nonce: options?.nonce,
       }),
     );

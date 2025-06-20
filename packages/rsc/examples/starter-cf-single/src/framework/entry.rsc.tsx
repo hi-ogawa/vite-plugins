@@ -71,10 +71,8 @@ async function handler(request: Request): Promise<Response> {
   >("ssr", "index");
   const htmlStream = await renderHTML(rscStream, {
     formState,
-    options: {
-      // allow quick simulation of javscript disabled browser
-      debugNojs: url.searchParams.has("__nojs"),
-    },
+    // allow quick simulation of javscript disabled browser
+    debugNojs: url.searchParams.has("__nojs"),
   });
 
   // respond html

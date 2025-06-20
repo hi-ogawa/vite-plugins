@@ -10,12 +10,10 @@ export type RenderHTML = typeof renderHTML;
 
 export async function renderHTML(
   rscStream: ReadableStream<Uint8Array>,
-  {
-    formState,
-    options,
-  }: {
+  options?: {
     formState?: ReactFormState;
-    options?: { nonce?: string; debugNojs?: boolean };
+    nonce?: string;
+    debugNojs?: boolean;
   },
 ) {
   // duplicate one RSC stream into two.
@@ -38,11 +36,11 @@ export async function renderHTML(
       ? undefined
       : bootstrapScriptContent,
     nonce: options?.nonce,
-    // @ts-expect-error no types
-    formState,
+    // no types
+    ...{ formState: options?.formState },
   });
 
-  let responseStream: ReadableStream = htmlStream;
+  let responseStream: ReadableStream<Uint8Array> = htmlStream;
   if (!options?.debugNojs) {
     // initial RSC stream is injected in HTML stream as <script>...FLIGHT_DATA...</script>
     responseStream = responseStream.pipeThrough(
@@ -53,10 +51,4 @@ export async function renderHTML(
   }
 
   return responseStream;
-}
-
-export async function renderHTMLDevProxy(request: Request) {
-  const meta = JSON.parse(request.headers.get("x-vite-rsc-render-html")!);
-  const htmlStream = await renderHTML(request.body!, meta);
-  return new Response(htmlStream);
 }

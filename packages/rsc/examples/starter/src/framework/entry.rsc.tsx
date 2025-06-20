@@ -83,13 +83,10 @@ export default async function handler(request: Request): Promise<Response> {
   const ssrEntryModule = await import.meta.viteRsc.loadModule<
     typeof import("./entry.ssr.tsx")
   >("ssr", "index");
-  const htmlStream = await ssrEntryModule.renderHTML({
-    stream: rscStream,
+  const htmlStream = await ssrEntryModule.renderHTML(rscStream, {
     formState,
-    options: {
-      // allow quick simulation of javscript disabled browser
-      debugNojs: url.searchParams.has("__nojs"),
-    },
+    // allow quick simulation of javscript disabled browser
+    debugNojs: url.searchParams.has("__nojs"),
   });
 
   // respond html

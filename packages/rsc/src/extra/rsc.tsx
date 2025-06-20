@@ -70,10 +70,10 @@ export async function renderRequest(
 
   const rscPayload: RscPayload = { root: <RscRoot />, formState, returnValue };
   const rscOptions = { temporaryReferences };
-  const stream = renderToReadableStream<RscPayload>(rscPayload, rscOptions);
+  const rscStream = renderToReadableStream<RscPayload>(rscPayload, rscOptions);
 
   if (isRscRequest) {
-    return new Response(stream, {
+    return new Response(rscStream, {
       headers: {
         "content-type": "text/x-component;charset=utf-8",
         vary: "accept",
@@ -85,12 +85,9 @@ export async function renderRequest(
     "ssr",
     "index",
   );
-  return ssrEntry.renderHtml({
-    stream,
+  return ssrEntry.renderHtml(rscStream, {
     formState,
-    options: {
-      nonce: options?.nonce,
-      __nojs: url.searchParams.has("__nojs"),
-    },
+    nonce: options?.nonce,
+    debugNoJs: url.searchParams.has("__nojs"),
   });
 }
