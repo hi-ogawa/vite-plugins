@@ -1511,6 +1511,7 @@ function __vite_rsc_wrap_css__(value, name) {
   }
 }
 
+/** temporary workaround for https://github.com/cloudflare/workers-sdk/issues/9538 */
 export function __fix_cloudflare(): Plugin {
   return {
     name: "rsc:workaround-cloudflare",
