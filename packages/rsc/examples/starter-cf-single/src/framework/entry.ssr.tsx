@@ -40,7 +40,7 @@ export async function renderHTML(
     ...{ formState: options?.formState },
   });
 
-  let responseStream: ReadableStream = htmlStream;
+  let responseStream: ReadableStream<Uint8Array> = htmlStream;
   if (!options?.debugNojs) {
     // initial RSC stream is injected in HTML stream as <script>...FLIGHT_DATA...</script>
     responseStream = responseStream.pipeThrough(

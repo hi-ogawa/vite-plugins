@@ -36,7 +36,7 @@ export async function renderHtml(
     ...{ formState: options?.formState },
   });
 
-  let responseStream: ReadableStream = htmlStream;
+  let responseStream: ReadableStream<Uint8Array> = htmlStream;
   if (!options?.debugNoJs) {
     responseStream = responseStream.pipeThrough(
       injectRSCPayload(rscStream2, {
