@@ -1224,7 +1224,7 @@ export function vitePluginRscCss(
     }
     const filterName = options?.filterName;
     if (!filterName) {
-      return (name: string) => name === "default" || /^[A-Z]/.test(name);
+      return (name: string) => /^[A-Z]/.test(name);
     }
     return (name: string) => filterName(name, id);
   }
@@ -1233,6 +1233,7 @@ export function vitePluginRscCss(
     {
       name: "rsc:rsc-css-export-transform",
       async transform(code, id) {
+        if (this.environment.name !== "rsc") return;
         await esModuleLexer.init;
         const filter = getRscCssTransformFilter({ id, code });
         if (!filter) return;
