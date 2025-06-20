@@ -14,13 +14,13 @@ export async function renderHtml(
     debugNoJs?: boolean;
   },
 ): Promise<Response> {
-  const [stream1, stream2] = rscStream.tee();
+  const [rscStream1, rscStream2] = rscStream.tee();
 
   // flight deserialization needs to be kicked off inside SSR context
   // for ReactDomServer preinit/preloading to work
   let payload: Promise<RscPayload>;
   function SsrRoot() {
-    payload ??= createFromReadableStream<RscPayload>(stream1, {
+    payload ??= createFromReadableStream<RscPayload>(rscStream1, {
       nonce: options?.nonce,
     });
     const root = React.use(payload).root;
@@ -39,7 +39,7 @@ export async function renderHtml(
   let responseStream: ReadableStream = htmlStream;
   if (!options?.debugNoJs) {
     responseStream = responseStream.pipeThrough(
-      injectRSCPayload(stream2, {
+      injectRSCPayload(rscStream2, {
         nonce: options?.nonce,
       }),
     );
