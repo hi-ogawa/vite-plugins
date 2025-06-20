@@ -1218,6 +1218,10 @@ export function vitePluginRscCss(
     if (!result[0].some((i) => i.t === 1 && i.n && isCSSRequest(i.n))) {
       return false;
     }
+    // transform only function exports with capital names, e.g.
+    //   export default function Page() {}
+    //   export function Page() {}
+    //   export const Page = () => {}
     return (_name: string, meta) =>
       !!(meta.isFunction && meta.declName && /^[A-Z]/.test(meta.declName));
   }
