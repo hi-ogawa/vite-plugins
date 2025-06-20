@@ -3,6 +3,13 @@ import type { Node, Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 
+type ExportMeta = { declName?: string; isFunction?: boolean };
+
+export type TransformWrapExportFilter = (
+  name: string,
+  meta: ExportMeta,
+) => boolean;
+
 export function transformWrapExport(
   input: string,
   ast: Program,
@@ -10,9 +17,7 @@ export function transformWrapExport(
     runtime: (value: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
-    // TODO: give more metadata to refine filtering
-    // filter?: (name: string, options: { declName: string, isFunction: boolean }) => boolean;
-    filter?: (name: string) => boolean;
+    filter?: TransformWrapExportFilter;
   },
 ): {
   exportNames: string[];
@@ -23,7 +28,11 @@ export function transformWrapExport(
   const toAppend: string[] = [];
   const filter = options.filter ?? (() => true);
 
-  function wrapSimple(start: number, end: number, names: string[]) {
+  function wrapSimple(
+    start: number,
+    end: number,
+    exports: { name: string; meta: ExportMeta }[],
+  ) {
     // update code and move to preserve `registerServerReference` position
     // e.g.
     // input
@@ -33,11 +42,11 @@ export function transformWrapExport(
     //   async function f() {}
     //   f = registerServerReference(f, ...)   << maps to original "export" token
     //   export { f }                          <<
-    const newCode = names
-      .map((name) => [
-        filter(name) &&
-          `${name} = /* #__PURE__ */ ${options.runtime(name, name)};\n`,
-        `export { ${name} };\n`,
+    const newCode = exports
+      .map((e) => [
+        filter(e.name, e.meta) &&
+          `${e.name} = /* #__PURE__ */ ${options.runtime(e.name, e.name)};\n`,
+        `export { ${e.name} };\n`,
       ])
       .flat()
       .filter(Boolean)
@@ -46,8 +55,8 @@ export function transformWrapExport(
     output.move(start, end, input.length);
   }
 
-  function wrapExport(name: string, exportName: string) {
-    if (!filter(exportName)) {
+  function wrapExport(name: string, exportName: string, meta: ExportMeta = {}) {
+    if (!filter(exportName, meta)) {
       toAppend.push(`export { ${name} as ${exportName} }`);
       return;
     }
@@ -82,8 +91,9 @@ export function transformWrapExport(
             node.declaration.type === "FunctionDeclaration" &&
               node.declaration.async,
           );
+          const name = node.declaration.id.name;
           wrapSimple(node.start, node.declaration.start, [
-            node.declaration.id.name,
+            { name, meta: { isFunction: true, declName: name } },
           ]);
         } else if (node.declaration.type === "VariableDeclaration") {
           /**
@@ -107,7 +117,23 @@ export function transformWrapExport(
           const names = node.declaration.declarations.flatMap((decl) =>
             extract_names(decl.id),
           );
-          wrapSimple(node.start, node.declaration.start, names);
+          // treat only simple single decl as function
+          let isFunction = false;
+          if (node.declaration.declarations.length === 1) {
+            const decl = node.declaration.declarations[0]!;
+            isFunction =
+              decl.id.type === "Identifier" &&
+              (decl.init?.type === "ArrowFunctionExpression" ||
+                decl.init?.type === "FunctionExpression");
+          }
+          wrapSimple(
+            node.start,
+            node.declaration.start,
+            names.map((name) => ({
+              name,
+              meta: { isFunction, declName: name },
+            })),
+          );
         } else {
           node.declaration satisfies never;
         }
@@ -170,6 +196,8 @@ export function transformWrapExport(
             node.declaration.async),
       );
       let localName: string;
+      let isFunction = false;
+      let declName: string | undefined;
       if (
         (node.declaration.type === "FunctionDeclaration" ||
           node.declaration.type === "ClassDeclaration") &&
@@ -178,12 +206,14 @@ export function transformWrapExport(
         // preserve name scope for `function foo() {}` and `class Foo {}`
         localName = node.declaration.id.name;
         output.remove(node.start, node.declaration.start);
+        isFunction = node.declaration.type === "FunctionDeclaration";
+        declName = node.declaration.id.name;
       } else {
         // otherwise we can introduce new variable
         localName = "$$default";
         output.update(node.start, node.declaration.start, "const $$default = ");
       }
-      wrapExport(localName, "default");
+      wrapExport(localName, "default", { isFunction, declName });
     }
   }
 

@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
+  type TransformWrapExportFilter,
   hasDirective,
   transformDirectiveProxyExport,
   transformServerActionServer,
@@ -1201,7 +1202,7 @@ export function vitePluginRscCss(
   function getRscCssTransformFilter({
     id,
     code,
-  }: { id: string; code: string }) {
+  }: { id: string; code: string }): false | TransformWrapExportFilter {
     const { query } = parseIdQuery(id);
     if ("vite-rsc-css-export" in query) {
       const value = query["vite-rsc-css-export"];
@@ -1229,7 +1230,8 @@ export function vitePluginRscCss(
     }
     const filterName = options?.filterName;
     if (!filterName) {
-      return (name: string) => /^[A-Z]/.test(name);
+      return (_name: string, meta) =>
+        !!(meta.isFunction && meta.declName && /^[A-Z]/.test(meta.declName));
     }
     return (name: string) => filterName(name, id);
   }
@@ -1484,7 +1486,7 @@ export async function transformRscCssExport(options: {
   ast: Awaited<ReturnType<typeof parseAstAsync>>;
   code: string;
   id?: string;
-  filter: (name: string) => boolean;
+  filter: TransformWrapExportFilter;
 }): Promise<{ output: MagicString } | undefined> {
   if (hasDirective(options.ast.body, "use client")) {
     return;
@@ -1493,7 +1495,7 @@ export async function transformRscCssExport(options: {
   const result = transformWrapExport(options.code, options.ast, {
     runtime: (value, name) =>
       `__vite_rsc_wrap_css__(${value}, ${JSON.stringify(name)})`,
-    filter: (name) => options.filter(name),
+    filter: options.filter,
     ignoreExportAllDeclaration: true,
   });
   if (result.output.hasChanged()) {
