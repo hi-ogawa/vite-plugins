@@ -1218,8 +1218,13 @@ export function vitePluginRscCss(
     if (id.includes("/node_modules/")) return false;
 
     // parse imports. if no css imports, skip transform.
-    const [imports] = esModuleLexer.parse(code);
-    if (!imports.some((i) => i.t === 1 && i.n && isCSSRequest(i.n))) {
+    let result: ReturnType<typeof esModuleLexer.parse>;
+    try {
+      result = esModuleLexer.parse(code);
+    } catch (e) {
+      return false;
+    }
+    if (!result[0].some((i) => i.t === 1 && i.n && isCSSRequest(i.n))) {
       return false;
     }
     const filterName = options?.filterName;
