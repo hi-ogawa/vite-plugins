@@ -37,9 +37,9 @@
   },
   "files": ["bin", "dist", "types"],
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "prepack": "tsup --clean"
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "prepack": "tsdown --clean"
   },
   "dependencies": {
     "@hiogawa/vite-plugin-server-asset": "workspace:*",

@@ -17,8 +17,7 @@
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
-    "release": "pnpm publish --no-git-checks --access public"
+    "build": "tsdown"
   },
   "dependencies": {
     "es-module-lexer": "^1.6.0"

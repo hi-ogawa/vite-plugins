@@ -17,10 +17,9 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "prepack": "tsup --clean",
-    "release": "pnpm publish --no-git-checks --access public"
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "prepack": "tsdown --clean"
   },
   "peerDependencies": {
     "vite": "*"

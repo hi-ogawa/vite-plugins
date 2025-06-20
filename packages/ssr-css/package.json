@@ -17,9 +17,9 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "prepack": "tsup --clean"
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "prepack": "tsdown --clean"
   },
   "peerDependencies": {
     "vite": "*"
