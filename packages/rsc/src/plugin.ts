@@ -11,6 +11,7 @@ import {
   transformWrapExport,
 } from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
+import * as esModuleLexer from "es-module-lexer";
 import MagicString from "magic-string";
 import {
   type DevEnvironment,
@@ -85,6 +86,13 @@ type RscPluginOptions = {
 
   /** @default false */
   loadModuleDevProxy?: boolean;
+
+  rscCssTransform?:
+    | false
+    | {
+        filter?: (id: string) => boolean;
+        filterName?: (exportName: string, id: string) => boolean;
+      };
 };
 
 export default function vitePluginRsc(
@@ -664,7 +672,7 @@ export default function vitePluginRsc(
     ...vitePluginUseClient(),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
-    ...vitePluginRscCss(),
+    ...vitePluginRscCss({ rscCssTransform: rscPluginOptions.rscCssTransform }),
   ];
 }
 
@@ -1153,7 +1161,9 @@ export async function findSourceMapURL(
 // css support
 //
 
-export function vitePluginRscCss(): Plugin[] {
+export function vitePluginRscCss(
+  rscCssOptions?: Pick<RscPluginOptions, "rscCssTransform">,
+): Plugin[] {
   function collectCss(environment: DevEnvironment, entryId: string) {
     const visited = new Set<string>();
     const cssIds = new Set<string>();
@@ -1188,28 +1198,55 @@ export function vitePluginRscCss(): Plugin[] {
     return { ids: [...cssIds], hrefs, visitedFiles: [...visitedFiles] };
   }
 
+  function getRscCssTransformFilter({
+    id,
+    code,
+  }: { id: string; code: string }) {
+    const { query } = parseIdQuery(id);
+    if ("vite-rsc-css-export" in query) {
+      const value = query["vite-rsc-css-export"];
+      if (value) {
+        const names = value.split(",");
+        return (name: string) => names.includes(name);
+      }
+      return (name: string) => /^[A-Z]/.test(name);
+    }
+
+    const options = rscCssOptions?.rscCssTransform;
+    if (options === false) return false;
+    if (options?.filter && !options.filter(id)) return false;
+    if (id.includes("/node_modules/")) return false;
+
+    // parse imports. if no css imports, skip transform.
+    const [imports] = esModuleLexer.parse(code);
+    if (!imports.some((i) => i.t === 1 && i.n && i.n.endsWith(".css"))) {
+      return false;
+    }
+    const filterName = options?.filterName;
+    if (!filterName) {
+      return (name: string) => name === "default" || /^[A-Z]/.test(name);
+    }
+    return (name: string) => filterName(name, id);
+  }
+
   return [
     {
       name: "rsc:rsc-css-export-transform",
       async transform(code, id) {
-        const { query } = parseIdQuery(id);
-        if ("vite-rsc-css-export" in query) {
-          assert(this.environment.name === "rsc");
-          const value = query["vite-rsc-css-export"];
-          const names = value.split(",");
-          const ast = await parseAstAsync(code);
-          const result = await transformRscCssExport({
-            ast,
-            code,
-            filter: (name) =>
-              value ? names.includes(name) : /^[A-Z]/.test(name),
-          });
-          if (result) {
-            return {
-              code: result.output.toString(),
-              map: result.output.generateMap({ hires: "boundary" }),
-            };
-          }
+        await esModuleLexer.init;
+        const filter = getRscCssTransformFilter({ id, code });
+        if (!filter) return;
+        const ast = await parseAstAsync(code);
+        const result = await transformRscCssExport({
+          ast,
+          code,
+          filter,
+        });
+        if (result) {
+          return {
+            code: result.output.toString(),
+            map: result.output.generateMap({ hires: "boundary" }),
+          };
         }
       },
     },

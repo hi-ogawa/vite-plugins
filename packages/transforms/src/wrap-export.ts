@@ -10,6 +10,7 @@ export function transformWrapExport(
     runtime: (value: string, name: string) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
+    // TODO: support declName for default export filtering
     filter?: (name: string) => boolean;
   },
 ): {
