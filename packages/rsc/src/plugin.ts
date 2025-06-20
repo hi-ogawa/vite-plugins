@@ -1197,10 +1197,7 @@ export function vitePluginRscCss(
   function getRscCssTransformFilter({
     id,
     code,
-    ctx,
-  }: { id: string; code: string; ctx: Rollup.TransformPluginContext }):
-    | false
-    | TransformWrapExportFilter {
+  }: { id: string; code: string }): false | TransformWrapExportFilter {
     const { query } = parseIdQuery(id);
     if ("vite-rsc-css-export" in query) {
       const value = query["vite-rsc-css-export"];
@@ -1214,16 +1211,10 @@ export function vitePluginRscCss(
     const options = rscCssOptions?.rscCssTransform;
     if (options === false) return false;
     if (options?.filter && !options.filter(id)) return false;
-    if (id.includes("/node_modules/") || /\.[tj]sx$/.test(id)) return false;
+    if (id.includes("/node_modules/") || !/\.[tj]sx$/.test(id)) return false;
 
     // skip transform if no css imports
-    let result: ReturnType<typeof esModuleLexer.parse>;
-    try {
-      result = esModuleLexer.parse(code);
-    } catch (e) {
-      ctx.warn(`[vite-rsc:css-export-transform] failed to parse '${id}'`);
-      return false;
-    }
+    const result = esModuleLexer.parse(code);
     if (!result[0].some((i) => i.t === 1 && i.n && isCSSRequest(i.n))) {
       return false;
     }
@@ -1237,7 +1228,7 @@ export function vitePluginRscCss(
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
         await esModuleLexer.init;
-        const filter = getRscCssTransformFilter({ id, code, ctx: this });
+        const filter = getRscCssTransformFilter({ id, code });
         if (!filter) return;
         const ast = await parseAstAsync(code);
         const result = await transformRscCssExport({
