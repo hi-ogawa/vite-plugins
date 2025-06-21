@@ -1,41 +1,43 @@
-import { type EnvironmentOptions, type Plugin } from "vite";
+import type { Plugin } from "vite";
 
-const PKG_NAME = "@hiogawa/vite-rsc-waku";
-
-export default function rscWakuPlugin(): Plugin[] {
+export function rscWaku(): Plugin[] {
   return [
     {
       name: "rsc:waku",
       config() {
-        const toEnvironmentOption = (entry: string) =>
-          ({
-            build: {
-              rollupOptions: {
-                input: {
-                  index: `${PKG_NAME}/${entry}`,
-                },
-              },
-            },
-          }) satisfies EnvironmentOptions;
         return {
-          environments: {
-            client: toEnvironmentOption("entry.browser"),
-            ssr: toEnvironmentOption("entry.ssr"),
-            rsc: toEnvironmentOption("entry.rsc"),
-          },
           define: {
             "import.meta.env.WAKU_CONFIG_BASE_PATH": JSON.stringify("/"),
             "import.meta.env.WAKU_CONFIG_RSC_BASE": JSON.stringify("RSC"),
           },
-        };
-      },
-      configEnvironment(_name, _config, _env) {
-        return {
-          resolve: {
-            noExternal: [PKG_NAME],
-          },
-          optimizeDeps: {
-            exclude: [PKG_NAME],
+          environments: {
+            client: {
+              build: {
+                rollupOptions: {
+                  input: {
+                    index: "./framework/entry.browser.tsx",
+                  },
+                },
+              },
+            },
+            ssr: {
+              build: {
+                rollupOptions: {
+                  input: {
+                    index: "./framework/entry.ssr.tsx",
+                  },
+                },
+              },
+            },
+            rsc: {
+              build: {
+                rollupOptions: {
+                  input: {
+                    index: "./framework/entry.rsc.tsx",
+                  },
+                },
+              },
+            },
           },
         };
       },
@@ -44,7 +46,7 @@ export default function rscWakuPlugin(): Plugin[] {
       // rewrite `react-server-dom-webpack` in `waku/minimal/client`
       name: "rsc:waku:patch-webpack",
       enforce: "pre",
-      resolveId(source) {
+      resolveId(source, importer, options) {
         if (source === "react-server-dom-webpack/client") {
           return "\0" + source;
         }
@@ -58,6 +60,17 @@ export default function rscWakuPlugin(): Plugin[] {
             `;
           }
           return `export default {}`;
+        }
+      },
+    },
+    {
+      name: "rsc:waku:user-entries",
+      resolveId(source, _importer, options) {
+        if (source === "virtual:vite-rsc-waku/server-entry") {
+          return this.resolve("/src/server-entry", undefined, options);
+        }
+        if (source === "virtual:vite-rsc-waku/client-entry") {
+          return this.resolve("/src/client-entry", undefined, options);
         }
       },
     },

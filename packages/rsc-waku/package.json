@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@hiogawa/vite-rsc": "workspace:*",
-    "waku": "0.23.2"
+    "waku": "^0.23.2"
   },
   "peerDependencies": {
     "@hiogawa/vite-rsc": "*",

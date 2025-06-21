@@ -1,15 +1,13 @@
-import * as ReactServer from '@hiogawa/vite-rsc/rsc';
-import wakuServerEntry from '../src/server-entry';
+import * as ReactServer from "@hiogawa/vite-rsc/rsc";
+import type { unstable_defineEntries } from "waku/minimal/server";
 
 export type RscElementsPayload = Record<string, unknown>;
 export type RscHtmlPayload = React.ReactNode;
 
-type HandleRequestInput = Parameters<
-  (typeof wakuServerEntry)['handleRequest']
->[0];
-
+type WakuServerEntry = ReturnType<typeof unstable_defineEntries>;
+type HandleRequestInput = Parameters<WakuServerEntry["handleRequest"]>[0];
 type HandleRequestImplementation = Parameters<
-  (typeof wakuServerEntry)['handleRequest']
+  WakuServerEntry["handleRequest"]
 >[1];
 
 type HandleReq = {
@@ -21,6 +19,10 @@ type HandleReq = {
 
 // cf. packages/waku/src/lib/middleware/handler.ts `handler`
 export default async function handler(request: Request): Promise<Response> {
+  const { default: wakuServerEntry } = await import(
+    "virtual:vite-rsc-waku/server-entry"
+  );
+
   const url = new URL(request.url);
   const req: HandleReq = {
     body: request.body,
@@ -33,7 +35,7 @@ export default async function handler(request: Request): Promise<Response> {
   const rscPathPrefix =
     import.meta.env.WAKU_CONFIG_BASE_PATH +
     import.meta.env.WAKU_CONFIG_RSC_BASE +
-    '/';
+    "/";
   let rscPath: string | undefined;
   let temporaryReferences: unknown | undefined;
   let wakuInput: HandleRequestInput;
@@ -44,15 +46,15 @@ export default async function handler(request: Request): Promise<Response> {
     // server action: js
     const actionId = decodeFuncId(rscPath);
     if (actionId) {
-      const contentType = request.headers.get('content-type');
-      const body = contentType?.startsWith('multipart/form-data')
+      const contentType = request.headers.get("content-type");
+      const body = contentType?.startsWith("multipart/form-data")
         ? await request.formData()
         : await request.text();
       temporaryReferences = ReactServer.createTemporaryReferenceSet();
       const args = await ReactServer.decodeReply(body, { temporaryReferences });
       const action = await ReactServer.loadServerAction(actionId);
       wakuInput = {
-        type: 'function',
+        type: "function",
         fn: action as any,
         args,
         req,
@@ -60,18 +62,18 @@ export default async function handler(request: Request): Promise<Response> {
     } else {
       // client RSC request
       wakuInput = {
-        type: 'component',
+        type: "component",
         rscPath,
         rscParams: url.searchParams,
         req,
       };
     }
-  } else if (request.method === 'POST') {
+  } else if (request.method === "POST") {
     // server action: no js (progressive enhancement)
     const formData = await request.formData();
     const decodedAction = await ReactServer.decodeAction(formData);
     wakuInput = {
-      type: 'action',
+      type: "action",
       fn: async () => {
         const result = await decodedAction();
         return await ReactServer.decodeFormState(result, formData);
@@ -82,7 +84,7 @@ export default async function handler(request: Request): Promise<Response> {
   } else {
     // SSR
     wakuInput = {
-      type: 'custom',
+      type: "custom",
       pathname: url.pathname,
       req,
     };
@@ -101,8 +103,8 @@ export default async function handler(request: Request): Promise<Response> {
       options?: { rscPath?: string; actionResult?: any },
     ) {
       const ssrEntryModule = await import.meta.viteRsc.loadModule<
-        typeof import('./entry.ssr.tsx')
-      >('ssr', 'index');
+        typeof import("./entry.ssr.tsx")
+      >("ssr", "index");
 
       const rscElementsStream =
         ReactServer.renderToReadableStream<RscElementsPayload>(elements);
@@ -114,14 +116,14 @@ export default async function handler(request: Request): Promise<Response> {
         rscElementsStream,
         rscHtmlStream,
         {
-          debugNojs: url.searchParams.has('__nojs'),
+          debugNojs: url.searchParams.has("__nojs"),
           formState: options?.actionResult,
           rscPath: options?.rscPath,
         },
       );
       return {
         body: htmlStream as any,
-        headers: { 'content-type': 'text/html' },
+        headers: { "content-type": "text/html" },
       };
     },
   };
@@ -141,38 +143,38 @@ export default async function handler(request: Request): Promise<Response> {
       });
     }
   }
-  response ??= new Response('[no-render-result]', { status: 404 });
+  response ??= new Response("[no-render-result]", { status: 404 });
   return response;
 }
 
 // cf. packages/waku/src/lib/renderers/utils.ts
 const decodeRscPath = (rscPath: string) => {
-  if (!rscPath.endsWith('.txt')) {
-    const err = new Error('Invalid encoded rscPath');
+  if (!rscPath.endsWith(".txt")) {
+    const err = new Error("Invalid encoded rscPath");
     (err as any).statusCode = 400;
     throw err;
   }
-  rscPath = rscPath.slice(0, -'.txt'.length);
-  if (rscPath.startsWith('_')) {
+  rscPath = rscPath.slice(0, -".txt".length);
+  if (rscPath.startsWith("_")) {
     rscPath = rscPath.slice(1);
   }
-  if (rscPath.endsWith('_')) {
+  if (rscPath.endsWith("_")) {
     rscPath = rscPath.slice(0, -1);
   }
   return rscPath;
 };
 
-const FUNC_PREFIX = 'F/';
+const FUNC_PREFIX = "F/";
 
 const decodeFuncId = (encoded: string) => {
   if (!encoded.startsWith(FUNC_PREFIX)) {
     return null;
   }
-  const index = encoded.lastIndexOf('/');
+  const index = encoded.lastIndexOf("/");
   const file = encoded.slice(FUNC_PREFIX.length, index);
   const name = encoded.slice(index + 1);
-  if (file.startsWith('_')) {
-    return file.slice(1) + '#' + name;
+  if (file.startsWith("_")) {
+    return file.slice(1) + "#" + name;
   }
-  return file + '#' + name;
+  return file + "#" + name;
 };

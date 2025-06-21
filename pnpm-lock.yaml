@@ -576,7 +576,7 @@ importers:
         specifier: workspace:*
         version: link:../rsc
       waku:
-        specifier: 0.23.2
+        specifier: ^0.23.2
         version: 0.23.2(@types/node@22.14.1)(@types/react@19.1.2)(jiti@2.4.2)(lightningcss@1.29.2)(react-dom@19.1.0(react@19.1.0))(react-server-dom-webpack@19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(@swc/core@1.11.31)(esbuild@0.24.2)))(react@19.1.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
 
   packages/rsc/examples/basic:

@@ -16,6 +16,7 @@ jobs:
             packages/react-server-next \
             packages/rsc \
             packages/rsc-react-router \
+            packages/rsc-waku \
             packages/transforms \
             packages/vite-plugin-ssr-middleware \
             packages/pre-bundle-new-url \

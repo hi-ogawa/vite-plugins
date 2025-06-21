@@ -1,11 +1,11 @@
-import bootstrapScriptContent from 'virtual:vite-rsc/bootstrap-script-content';
-import { injectRscStreamToHtml } from '@hiogawa/vite-rsc/rsc-html-stream/ssr';
-import * as ReactClient from '@hiogawa/vite-rsc/ssr';
-import React from 'react';
-import type { ReactFormState } from 'react-dom/client';
-import * as ReactDOMServer from 'react-dom/server.edge';
-import type { RscHtmlPayload, RscElementsPayload } from './entry.rsc';
-import { INTERNAL_ServerRoot } from 'waku/minimal/client';
+import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
+import { injectRscStreamToHtml } from "@hiogawa/vite-rsc/rsc-html-stream/ssr";
+import * as ReactClient from "@hiogawa/vite-rsc/ssr";
+import React from "react";
+import type { ReactFormState } from "react-dom/client";
+import * as ReactDOMServer from "react-dom/server.edge";
+import { INTERNAL_ServerRoot } from "waku/minimal/client";
+import type { RscElementsPayload, RscHtmlPayload } from "./entry.rsc";
 
 export async function renderHTML(
   rscStream: ReadableStream<Uint8Array>,
@@ -41,7 +41,7 @@ export async function renderHTML(
   const htmlStream = await ReactDOMServer.renderToReadableStream(<SsrRoot />, {
     bootstrapScriptContent: options?.debugNojs
       ? undefined
-      : getBootstrapPreamble({ rscPathForFakeFetch: options?.rscPath || '' }) +
+      : getBootstrapPreamble({ rscPathForFakeFetch: options?.rscPath || "" }) +
         bootstrapScriptContent,
     nonce: options?.nonce,
     // no types
