@@ -632,11 +632,16 @@ export default function vitePluginRsc(
             entryName,
             `[vite-rsc] expected 'loadBootstrapScriptContent("index")' but got ${argCode}`,
           );
-          let replacement: string = `(import("virtual:vite-rsc/assets-manifest").then(__m => __m.default.bootstrapScriptContent))`;
+          let replacement: string = `Promise.resolve(__vite_rsc_assets_manifest.bootstrapScriptContent)`;
           const [start, end] = match.indices![0]!;
           output.overwrite(start, end, replacement);
         }
         if (output.hasChanged()) {
+          if (!code.includes("__vite_rsc_assets_manifest")) {
+            output.prepend(
+              `import __vite_rsc_assets_manifest from "virtual:vite-rsc/assets-manifest";`,
+            );
+          }
           return {
             code: output.toString(),
             map: output.generateMap({ hires: "boundary" }),
