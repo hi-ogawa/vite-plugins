@@ -77,7 +77,6 @@ export default defineConfig() {
   ],
 
   // specify entry point for each environment.
-  // (currently the plugin assumes `rollupOptions.input.index` for some features.)
   environments: {
     // `rsc` environment loads modules with `react-server` condition.
     // this environment is responsible for:
