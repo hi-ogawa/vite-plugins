@@ -1,216 +1,219 @@
-import * as serverRoutes from "virtual:server-routes";
-import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
-import * as ReactServer from "@hiogawa/vite-rsc/react/rsc";
-import type { RenderToReadableStreamOptions } from "react-dom/server";
-import { DefaultNotFoundPage } from "../features/error/not-found";
-import {
-  DEFAULT_ERROR_CONTEXT,
-  ReactServerDigestError,
-  createError,
-  getErrorContext,
-  isRedirectStatus,
-} from "../features/error/shared";
-import { handleMiddleware } from "../features/next/middleware";
-import { RequestContext } from "../features/request-context/server";
-import { handleApiRoutes } from "../features/router/api-route";
-import {
-  generateRouteModuleTree,
-  getCachedRoutes,
-  renderRouteMap,
-} from "../features/router/server";
-import { type FlightData, handleTrailingSlash } from "../features/router/utils";
-import {
-  createActionRedirectResponse,
-  createFlightRedirectResponse,
-} from "../features/server-action/redirect";
-import {
-  type ActionResult,
-  initializeReactServer,
-} from "../features/server-action/server";
-import { unwrapStreamRequest } from "../features/server-component/utils";
+// import * as serverRoutes from "virtual:server-routes";
+// import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
+// // import * as ReactServer from "@hiogawa/vite-rsc/react/rsc";
+// import type { RenderToReadableStreamOptions } from "react-dom/server";
+// import { DefaultNotFoundPage } from "../features/error/not-found";
+// import {
+//   DEFAULT_ERROR_CONTEXT,
+//   ReactServerDigestError,
+//   createError,
+//   getErrorContext,
+//   isRedirectStatus,
+// } from "../features/error/shared";
+// import { handleMiddleware } from "../features/next/middleware";
+// import { RequestContext } from "../features/request-context/server";
+// import { handleApiRoutes } from "../features/router/api-route";
+// import {
+//   generateRouteModuleTree,
+//   getCachedRoutes,
+//   renderRouteMap,
+// } from "../features/router/server";
+// import { type FlightData, handleTrailingSlash } from "../features/router/utils";
+// import {
+//   createActionRedirectResponse,
+//   createFlightRedirectResponse,
+// } from "../features/server-action/redirect";
+// import {
+//   type ActionResult,
+//   initializeReactServer,
+// } from "../features/server-action/server";
+// import { unwrapStreamRequest } from "../features/server-component/utils";
 
-const debug = createDebug("react-server:rsc");
+// const debug = createDebug("react-server:rsc");
 
-export const router = generateRouteModuleTree({
-  "/not-found.js": { default: DefaultNotFoundPage },
-  ...serverRoutes.default,
-});
+// export const router = generateRouteModuleTree({
+//   "/not-found.js": { default: DefaultNotFoundPage },
+//   ...serverRoutes.default,
+// });
 
-export type ReactServerHandler = (
-  ctx: ReactServerHandlerContext,
-) => Promise<ReactServerHandlerResult>;
+// export type ReactServerHandler = (
+//   ctx: ReactServerHandlerContext,
+// ) => Promise<ReactServerHandlerResult>;
 
-// users can extend interface
-export interface ReactServerHandlerContext {
-  request: Request;
-}
+// // users can extend interface
+// export interface ReactServerHandlerContext {
+//   request: Request;
+// }
 
-export interface ReactServerHandlerStreamResult {
-  stream: ReadableStream<Uint8Array>;
-  status: number;
-  requestContext: RequestContext;
-  actionResult?: ActionResult;
-}
+export interface ReactServerHandlerStreamResult {};
+export const handler = {} as any;
 
-export type ReactServerHandlerResult =
-  | Response
-  | ReactServerHandlerStreamResult;
+// export interface ReactServerHandlerStreamResult {
+//   stream: ReadableStream<Uint8Array>;
+//   status: number;
+//   requestContext: RequestContext;
+//   actionResult?: ActionResult;
+// }
 
-export const handler: ReactServerHandler = async (ctx) => {
-  initializeReactServer();
+// // export type ReactServerHandlerResult =
+// //   | Response
+// //   | ReactServerHandlerStreamResult;
 
-  const handled = handleTrailingSlash(new URL(ctx.request.url));
-  if (handled) return handled;
+// export const handler: ReactServerHandler = async (ctx) => {
+//   initializeReactServer();
 
-  const requestContext = new RequestContext(ctx.request.headers);
+//   const handled = handleTrailingSlash(new URL(ctx.request.url));
+//   if (handled) return handled;
 
-  // normalize stream request and extract metadata
-  const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
+//   const requestContext = new RequestContext(ctx.request.headers);
 
-  if (serverRoutes.middleware) {
-    const response = await handleMiddleware(
-      serverRoutes.middleware,
-      request,
-      requestContext,
-    );
-    if (response) {
-      if (isStream && isRedirectStatus(response.status)) {
-        return createFlightRedirectResponse(response, requestContext);
-      }
-      return response;
-    }
-  }
+//   // normalize stream request and extract metadata
+//   const { request, isStream, streamParam } = unwrapStreamRequest(ctx.request);
 
-  const handledApi = await handleApiRoutes(
-    router.tree,
-    ctx.request,
-    requestContext,
-  );
-  if (handledApi) return handledApi;
+//   if (serverRoutes.middleware) {
+//     const response = await handleMiddleware(
+//       serverRoutes.middleware,
+//       request,
+//       requestContext,
+//     );
+//     if (response) {
+//       if (isStream && isRedirectStatus(response.status)) {
+//         return createFlightRedirectResponse(response, requestContext);
+//       }
+//       return response;
+//     }
+//   }
 
-  // action
-  let actionResult: ActionResult | undefined;
-  if (ctx.request.method === "POST") {
-    actionResult = await actionHandler({
-      request,
-      streamActionId: streamParam?.actionId,
-      requestContext,
-    });
-    // respond action redirect error directly
-    const redirectResponse = createActionRedirectResponse({
-      isStream,
-      actionResult,
-      requestContext,
-    });
-    if (redirectResponse) return redirectResponse;
-  }
+//   const handledApi = await handleApiRoutes(
+//     router.tree,
+//     ctx.request,
+//     requestContext,
+//   );
+//   if (handledApi) return handledApi;
 
-  // render flight stream
-  const result = await renderRouteMap(router.tree, request);
-  if (streamParam?.lastPathname) {
-    // skip rendering shared layout which are not revalidated
-    const cachedRoutes = getCachedRoutes(
-      router.tree,
-      streamParam.lastPathname,
-      [streamParam?.revalidate, requestContext.revalidate],
-    );
-    result.nodeMap = objectPickBy(
-      result.nodeMap,
-      (_v, k) => !cachedRoutes.includes(k),
-    );
-  }
-  const flightData: FlightData = {
-    nodeMap: result.nodeMap,
-    layoutContentMap: result.layoutContentMap,
-    metadata: result.metadata,
-    segments: result.segments,
-    url: request.url,
-    action: actionResult
-      ? objectPick(actionResult, ["data", "error"])
-      : undefined,
-  };
-  const stream = requestContext.run(() =>
-    ReactServer.renderToReadableStream<FlightData>(flightData, {
-      onError: reactServerOnError,
-    }),
-  );
+//   // action
+//   let actionResult: ActionResult | undefined;
+//   if (ctx.request.method === "POST") {
+//     actionResult = await actionHandler({
+//       request,
+//       streamActionId: streamParam?.actionId,
+//       requestContext,
+//     });
+//     // respond action redirect error directly
+//     const redirectResponse = createActionRedirectResponse({
+//       isStream,
+//       actionResult,
+//       requestContext,
+//     });
+//     if (redirectResponse) return redirectResponse;
+//   }
 
-  if (isStream) {
-    return new Response(stream, {
-      headers: {
-        ...requestContext.getResponseHeaders(),
-        "content-type": "text/x-component; charset=utf-8",
-      },
-    });
-  }
+//   // render flight stream
+//   const result = await renderRouteMap(router.tree, request);
+//   if (streamParam?.lastPathname) {
+//     // skip rendering shared layout which are not revalidated
+//     const cachedRoutes = getCachedRoutes(
+//       router.tree,
+//       streamParam.lastPathname,
+//       [streamParam?.revalidate, requestContext.revalidate],
+//     );
+//     result.nodeMap = objectPickBy(
+//       result.nodeMap,
+//       (_v, k) => !cachedRoutes.includes(k),
+//     );
+//   }
+//   const flightData: FlightData = {
+//     nodeMap: result.nodeMap,
+//     layoutContentMap: result.layoutContentMap,
+//     metadata: result.metadata,
+//     segments: result.segments,
+//     url: request.url,
+//     action: actionResult
+//       ? objectPick(actionResult, ["data", "error"])
+//       : undefined,
+//   };
+//   const stream = requestContext.run(() =>
+//     ReactServer.renderToReadableStream<FlightData>(flightData, {
+//       onError: reactServerOnError,
+//     }),
+//   );
 
-  return {
-    stream,
-    actionResult,
-    requestContext,
-    status: result.notFound ? 404 : 200,
-  };
-};
+//   if (isStream) {
+//     return new Response(stream, {
+//       headers: {
+//         ...requestContext.getResponseHeaders(),
+//         "content-type": "text/x-component; charset=utf-8",
+//       },
+//     });
+//   }
 
-const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
-  error,
-  errorInfo,
-) => {
-  debug("[reactServerDomServer.renderToReadableStream]", {
-    error,
-    errorInfo,
-  });
-  if (!(error instanceof ReactServerDigestError)) {
-    console.error("[react-server:renderToReadableStream]", error);
-  }
-  const serverError =
-    error instanceof ReactServerDigestError
-      ? error
-      : createError({ status: 500 });
-  return serverError.digest;
-};
+//   return {
+//     stream,
+//     actionResult,
+//     requestContext,
+//     status: result.notFound ? 404 : 200,
+//   };
+// };
 
-//
-// server action
-//
+// const reactServerOnError: RenderToReadableStreamOptions["onError"] = (
+//   error,
+//   errorInfo,
+// ) => {
+//   debug("[reactServerDomServer.renderToReadableStream]", {
+//     error,
+//     errorInfo,
+//   });
+//   if (!(error instanceof ReactServerDigestError)) {
+//     console.error("[react-server:renderToReadableStream]", error);
+//   }
+//   const serverError =
+//     error instanceof ReactServerDigestError
+//       ? error
+//       : createError({ status: 500 });
+//   return serverError.digest;
+// };
 
-// https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
-async function actionHandler({
-  request,
-  streamActionId,
-  requestContext,
-}: {
-  request: Request;
-  streamActionId?: string;
-  requestContext: RequestContext;
-}) {
-  let boundAction: Function;
-  if (streamActionId) {
-    const contentType = request.headers.get("content-type");
-    const body = contentType?.startsWith("multipart/form-data")
-      ? await request.formData()
-      : await request.text();
-    const args = await ReactServer.decodeReply(body);
-    const action = await ReactServer.loadServerAction(streamActionId);
-    boundAction = () => action.apply(null, args);
-  } else {
-    const formData = await request.formData();
-    const decodedAction = await ReactServer.decodeAction(formData);
-    boundAction = async () => {
-      const result = await decodedAction();
-      const formState = await ReactServer.decodeFormState(result, formData);
-      return formState;
-    };
-  }
+// //
+// // server action
+// //
 
-  const result: ActionResult = {};
-  try {
-    result.data = await requestContext.run(() => boundAction());
-  } catch (e) {
-    result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
-  }
-  if (result.error?.headers) {
-    requestContext.mergeResponseHeaders(new Headers(result.error?.headers));
-  }
-  return result;
-}
+// // https://github.com/facebook/react/blob/da69b6af9697b8042834644b14d0e715d4ace18a/fixtures/flight/server/region.js#L105
+// async function actionHandler({
+//   request,
+//   streamActionId,
+//   requestContext,
+// }: {
+//   request: Request;
+//   streamActionId?: string;
+//   requestContext: RequestContext;
+// }) {
+//   let boundAction: Function;
+//   if (streamActionId) {
+//     const contentType = request.headers.get("content-type");
+//     const body = contentType?.startsWith("multipart/form-data")
+//       ? await request.formData()
+//       : await request.text();
+//     const args = await ReactServer.decodeReply(body);
+//     const action = await ReactServer.loadServerAction(streamActionId);
+//     boundAction = () => action.apply(null, args);
+//   } else {
+//     const formData = await request.formData();
+//     const decodedAction = await ReactServer.decodeAction(formData);
+//     boundAction = async () => {
+//       const result = await decodedAction();
+//       const formState = await ReactServer.decodeFormState(result, formData);
+//       return formState;
+//     };
+//   }
+
+//   const result: ActionResult = {};
+//   try {
+//     result.data = await requestContext.run(() => boundAction());
+//   } catch (e) {
+//     result.error = getErrorContext(e) ?? DEFAULT_ERROR_CONTEXT;
+//   }
+//   if (result.error?.headers) {
+//     requestContext.mergeResponseHeaders(new Headers(result.error?.headers));
+//   }
+//   return result;
+// }
