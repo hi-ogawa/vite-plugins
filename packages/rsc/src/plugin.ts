@@ -1341,21 +1341,25 @@ export function vitePluginRscCss(
               continue;
             }
           }
-          // add basename as postfix to preserve chunk file name
-          const importId =
-            `virtual:vite-rsc/importer-resources` +
-            `?importer=${encodeURIComponent(importer)}` +
-            (this.environment.mode === "build"
-              ? `&basename=/${path.basename(importer)}`
-              : "");
-          output.update(
-            start,
-            end,
-            `__vite_rsc_react__.createElement(async () => {
-               const __m = await import(${JSON.stringify(importId)});
-               return __vite_rsc_react__.createElement(__m.Resources);
-             })`,
-          );
+          const importId = `virtual:vite-rsc/importer-resources?importer=${encodeURIComponent(importer)}`;
+
+          // use dynamic import during dev to delay crawling and discover css correctly.
+          let replacement: string;
+          if (this.environment.mode === "dev") {
+            replacement = `__vite_rsc_react__.createElement(async () => {
+              const __m = await import(${JSON.stringify(importId)});
+              return __vite_rsc_react__.createElement(__m.Resources);
+            })`;
+          } else {
+            const hash = hashString(importId);
+            if (!code.includes(`__vite_rsc_importer_resources_${hash}`)) {
+              output.prepend(
+                `import * as __vite_rsc_importer_resources_${hash} from ${JSON.stringify(importId)};`,
+              );
+            }
+            replacement = `__vite_rsc_react__.createElement(__vite_rsc_importer_resources_${hash}.Resources)`;
+          }
+          output.update(start, end, replacement);
         }
 
         if (output.hasChanged()) {
