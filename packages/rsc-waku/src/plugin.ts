@@ -1,6 +1,6 @@
 import type { EnvironmentOptions, Plugin } from "vite";
 
-const PKG_NAME = "@hiogawa/vite-rsc-react-router";
+const PKG_NAME = "@hiogawa/vite-rsc-waku";
 
 export function rscWaku(): Plugin[] {
   return [
