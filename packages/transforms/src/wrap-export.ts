@@ -18,7 +18,7 @@ export function transformWrapExport(
   input: string,
   ast: Program,
   options: {
-    runtime: (value: string, name: string) => string;
+    runtime: (value: string, name: string, meta: ExportMeta) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
     filter?: TransformWrapExportFilter;
@@ -49,7 +49,7 @@ export function transformWrapExport(
     const newCode = exports
       .map((e) => [
         filter(e.name, e.meta) &&
-          `${e.name} = /* #__PURE__ */ ${options.runtime(e.name, e.name)};\n`,
+          `${e.name} = /* #__PURE__ */ ${options.runtime(e.name, e.name, e.meta)};\n`,
         `export { ${e.name} };\n`,
       ])
       .flat()
@@ -66,7 +66,7 @@ export function transformWrapExport(
     }
 
     toAppend.push(
-      `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName)}`,
+      `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName, meta)}`,
       `export { $$wrap_${name} as ${exportName} }`,
     );
   }
