@@ -611,14 +611,20 @@ export default function vitePluginRsc(
     {
       name: "rsc:bootstrap-script-content",
       async transform(code) {
-        if (!code.includes("import.meta.viteRsc.loadBootstrapScriptContent"))
+        if (
+          !code.includes("loadBootstrapScriptContent") ||
+          !/import\s*\.\s*meta\s*\.\s*viteRsc\s*\.\s*loadBootstrapScriptContent/.test(
+            code,
+          )
+        ) {
           return;
+        }
 
         assert(this.environment.name !== "client");
         const output = new MagicString(code);
 
         for (const match of code.matchAll(
-          /import\.meta\.viteRsc\.loadBootstrapScriptContent\(([\s\S]*?)\)/dg,
+          /import\s*\.\s*meta\s*\.\s*viteRsc\s*\.\s*loadBootstrapScriptContent\(([\s\S]*?)\)/dg,
         )) {
           const argCode = match[1]!.trim();
           const entryName = JSON.parse(argCode);
