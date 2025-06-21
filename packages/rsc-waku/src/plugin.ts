@@ -46,7 +46,7 @@ export function rscWaku(): Plugin[] {
       // rewrite `react-server-dom-webpack` in `waku/minimal/client`
       name: "rsc:waku:patch-webpack",
       enforce: "pre",
-      resolveId(source, importer, options) {
+      resolveId(source, _importer, _options) {
         if (source === "react-server-dom-webpack/client") {
           return "\0" + source;
         }
