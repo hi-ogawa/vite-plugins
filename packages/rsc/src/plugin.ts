@@ -114,6 +114,8 @@ export default function vitePluginRsc(
         const noExternal = [
           "react",
           "react-dom",
+          "server-only",
+          "client-only",
           PKG_NAME,
           ...result.ssr.noExternal.sort(),
         ];
