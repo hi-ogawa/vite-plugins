@@ -3,7 +3,11 @@ import type { Node, Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 
-type ExportMeta = { declName?: string; isFunction?: boolean };
+type ExportMeta = {
+  declName?: string;
+  isFunction?: boolean;
+  defaultExportIdentifier?: string;
+};
 
 export type TransformWrapExportFilter = (
   name: string,
