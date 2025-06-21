@@ -21,16 +21,14 @@ See [`@hiogawa/vite-rsc`](https://github.com/hi-ogawa/vite-plugins/tree/main/pac
   - `@higoawa/vite-rsc/plugin`
 - [`./src/framework/entry.rsc.tsx`](./src/framework/entry.rsc.tsx)
   - `@hiogawa/vite-rsc/rsc`
+  - `import.meta.viteRsc.loadModule`
 - [`./src/framework/entry.ssr.tsx`](./src/framework/entry.ssr.tsx)
   - `@hiogawa/vite-rsc/ssr`
   - `@hiogawa/vite-rsc/rsc-html-stream/ssr`
-  - `virtual:vite-rsc/bootstrap-script-content`
+  - `import.meta.viteRsc.loadBootstrapScriptContent`
 - [`./src/framework/entry.browser.tsx`](./src/framework/entry.browser.tsx)
   - `@hiogawa/vite-rsc/browser`
-  - `@hiogawa/vite-rsc/rsc-html-stream/ssr`
   - `@hiogawa/vite-rsc/rsc-html-stream/browser`
-- [./src/root.tsx](./src/root.tsx)
-  - `import.meta.viteRsc.loadCss`
 
 ## Notes
 

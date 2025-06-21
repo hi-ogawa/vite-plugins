@@ -165,12 +165,13 @@ export default async function handler(request: Request): Promise<Response> {
 ```tsx
 import * as ReactClient from "@hiogawa/vite-rsc/ssr"; // re-export of react-server-dom/client.edge
 import * as ReactDOMServer from "react-dom/server.edge";
-// helper API to allow referencing browser entry content from SSR environment
-import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 
 export async function handleSsr(rscStream: ReadableStream) {
   // deserialize RSC stream back to React VDOM
   const root = await ReactClient.createFromReadableStream(rscStream);
+
+  // helper API to allow referencing browser entry content from SSR environment
+  const bootstrapScriptContent = await import.meta.viteRsc.loadBootstrapScriptContent("index");
 
   // render html (traditional SSR)
   const htmlStream = ReactDOMServer.renderToReadableStream(root, {
@@ -332,7 +333,7 @@ import { transformRscCssExport } from "@hiogawa/vite-rsc/plugin";
 
 ### available on `ssr` environment
 
-#### `virtual:vite-rsc/bootstrap-script-content`
+#### `import.meta.viteRsc.loadBootstrapScriptContent("index")`
 
 This provides a raw js code to execute a browser entry file specified by `environments.client.build.rollupOptions.input.index`. This is intended to be used with React DOM SSR API, such as [`renderToReadableStream`](https://react.dev/reference/react-dom/server/renderToReadableStream)
 
@@ -340,7 +341,8 @@ This provides a raw js code to execute a browser entry file specified by `enviro
 import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content"
 import { renderToReadableStream } from "react-dom/server.edge";
 
-renderToReadableStream(reactNode, { bootstrapScriptContent });
+const bootstrapScriptContent = await import.meta.viteRsc.loadBootstrapScriptContent("index")
+const htmlStream = await renderToReadableStream(reactNode, { bootstrapScriptContent });
 ```
 
 ### available on `client` environment
