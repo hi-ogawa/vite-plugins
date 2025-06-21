@@ -251,4 +251,24 @@ export default () => {}
       "
     `);
   });
+
+  test("filter defaultExportIdentifierName", async () => {
+    const input = `
+const Page = () => {}
+export default Page;
+`;
+    expect(
+      await testTransform(input, {
+        filter: (_name, meta) => meta.defaultExportIdentifierName === "Page",
+      }),
+    ).toMatchInlineSnapshot(`
+      "
+      const Page = () => {}
+      const $$default = Page;
+      ;
+      const $$wrap_$$default = /* #__PURE__ */ $$wrap($$default, "<id>", "default");
+      export { $$wrap_$$default as default };
+      "
+    `);
+  });
 });

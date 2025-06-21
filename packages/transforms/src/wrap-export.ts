@@ -6,7 +6,7 @@ import { extract_names } from "periscopic";
 type ExportMeta = {
   declName?: string;
   isFunction?: boolean;
-  defaultExportIdentifier?: string;
+  defaultExportIdentifierName?: string;
 };
 
 export type TransformWrapExportFilter = (
@@ -202,6 +202,7 @@ export function transformWrapExport(
       let localName: string;
       let isFunction = false;
       let declName: string | undefined;
+      let defaultExportIdentifierName: string | undefined;
       if (
         (node.declaration.type === "FunctionDeclaration" ||
           node.declaration.type === "ClassDeclaration") &&
@@ -216,8 +217,15 @@ export function transformWrapExport(
         // otherwise we can introduce new variable
         localName = "$$default";
         output.update(node.start, node.declaration.start, "const $$default = ");
+        if (node.declaration.type === "Identifier") {
+          defaultExportIdentifierName = node.declaration.name;
+        }
       }
-      wrapExport(localName, "default", { isFunction, declName });
+      wrapExport(localName, "default", {
+        isFunction,
+        declName,
+        defaultExportIdentifierName,
+      });
     }
   }
 
