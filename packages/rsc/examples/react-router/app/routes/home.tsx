@@ -13,7 +13,7 @@ export function loader({ request }: Route.LoaderArgs) {
   return { name: name || "Unknown" };
 }
 
-export function Component({ loaderData }: Route.ComponentProps) {
+const Component = ({ loaderData }: Route.ComponentProps) => {
   return (
     <main className="container my-8 px-8 mx-auto">
       <article className="paper prose max-w-none">
@@ -47,4 +47,6 @@ export function Component({ loaderData }: Route.ComponentProps) {
       </article>
     </main>
   );
-}
+};
+
+export default Component;
