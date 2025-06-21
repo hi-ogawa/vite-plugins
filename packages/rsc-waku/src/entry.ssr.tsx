@@ -16,7 +16,7 @@ export async function renderHTML(
     nonce?: string;
     debugNojs?: boolean;
   },
-) {
+): Promise<ReadableStream<Uint8Array>> {
   // cf. packages/waku/src/lib/renderers/html.ts `renderHtml`
 
   const [stream1, stream2] = rscStream.tee();
@@ -48,7 +48,7 @@ export async function renderHTML(
     ...{ formState: options?.formState },
   });
 
-  let responseStream: ReadableStream = htmlStream;
+  let responseStream: ReadableStream<Uint8Array> = htmlStream;
   if (!options?.debugNojs) {
     responseStream = responseStream.pipeThrough(
       injectRscStreamToHtml(stream2, {

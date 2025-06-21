@@ -9,6 +9,7 @@ export default defineConfig({
     "src/entry.ssr.tsx",
   ],
   format: ["esm"],
+  external: [/^virtual:/],
   dts: {
     sourcemap: process.argv.slice(2).includes("--sourcemap"),
   },
