@@ -3,7 +3,11 @@ import type { Node, Program } from "estree";
 import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 
-type ExportMeta = { declName?: string; isFunction?: boolean };
+type ExportMeta = {
+  declName?: string;
+  isFunction?: boolean;
+  defaultExportIdentifierName?: string;
+};
 
 export type TransformWrapExportFilter = (
   name: string,
@@ -14,7 +18,7 @@ export function transformWrapExport(
   input: string,
   ast: Program,
   options: {
-    runtime: (value: string, name: string) => string;
+    runtime: (value: string, name: string, meta: ExportMeta) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
     filter?: TransformWrapExportFilter;
@@ -45,7 +49,7 @@ export function transformWrapExport(
     const newCode = exports
       .map((e) => [
         filter(e.name, e.meta) &&
-          `${e.name} = /* #__PURE__ */ ${options.runtime(e.name, e.name)};\n`,
+          `${e.name} = /* #__PURE__ */ ${options.runtime(e.name, e.name, e.meta)};\n`,
         `export { ${e.name} };\n`,
       ])
       .flat()
@@ -62,7 +66,7 @@ export function transformWrapExport(
     }
 
     toAppend.push(
-      `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName)}`,
+      `const $$wrap_${name} = /* #__PURE__ */ ${options.runtime(name, exportName, meta)}`,
       `export { $$wrap_${name} as ${exportName} }`,
     );
   }
@@ -198,6 +202,7 @@ export function transformWrapExport(
       let localName: string;
       let isFunction = false;
       let declName: string | undefined;
+      let defaultExportIdentifierName: string | undefined;
       if (
         (node.declaration.type === "FunctionDeclaration" ||
           node.declaration.type === "ClassDeclaration") &&
@@ -212,8 +217,15 @@ export function transformWrapExport(
         // otherwise we can introduce new variable
         localName = "$$default";
         output.update(node.start, node.declaration.start, "const $$default = ");
+        if (node.declaration.type === "Identifier") {
+          defaultExportIdentifierName = node.declaration.name;
+        }
       }
-      wrapExport(localName, "default", { isFunction, declName });
+      wrapExport(localName, "default", {
+        isFunction,
+        declName,
+        defaultExportIdentifierName,
+      });
     }
   }
 

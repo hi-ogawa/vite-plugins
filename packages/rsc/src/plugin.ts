@@ -1266,7 +1266,11 @@ export function vitePluginRscCss(
     //   export function Page() {}
     //   export const Page = () => {}
     return (_name: string, meta) =>
-      !!(meta.isFunction && meta.declName && /^[A-Z]/.test(meta.declName));
+      !!(
+        (meta.isFunction && meta.declName && /^[A-Z]/.test(meta.declName)) ||
+        (meta.defaultExportIdentifierName &&
+          /^[A-Z]/.test(meta.defaultExportIdentifierName))
+      );
   }
 
   return [
@@ -1530,8 +1534,8 @@ export async function transformRscCssExport(options: {
   }
 
   const result = transformWrapExport(options.code, options.ast, {
-    runtime: (value, name) =>
-      `__vite_rsc_wrap_css__(${value}, ${JSON.stringify(name)})`,
+    runtime: (value, name, meta) =>
+      `__vite_rsc_wrap_css__(${value}, ${JSON.stringify(meta.defaultExportIdentifierName ?? name)})`,
     filter: options.filter,
     ignoreExportAllDeclaration: true,
   });
@@ -1541,6 +1545,8 @@ export async function transformRscCssExport(options: {
     }
     result.output.append(`
 function __vite_rsc_wrap_css__(value, name) {
+  if (typeof value !== 'function') return value;
+
   function __wrapper(props) {
     return __vite_rsc_react__.createElement(
       __vite_rsc_react__.Fragment,
