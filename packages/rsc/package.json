@@ -11,7 +11,6 @@
   "type": "module",
   "exports": {
     "./types": "./types/index.d.ts",
-    "./__rpc": "./dist/utils/rpc.js",
     "./*": "./dist/*.js"
   },
   "files": ["dist", "types"],
