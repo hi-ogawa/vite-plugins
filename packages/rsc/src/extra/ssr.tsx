@@ -1,4 +1,3 @@
-import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 import React from "react";
 import type { ReactFormState } from "react-dom/client";
 import ReactDomServer from "react-dom/server.edge";
@@ -27,6 +26,8 @@ export async function renderHtml(
     return root;
   }
 
+  const bootstrapScriptContent =
+    await import.meta.viteRsc.loadBootstrapScriptContent("index");
   const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
     bootstrapScriptContent: options?.debugNoJs
       ? undefined

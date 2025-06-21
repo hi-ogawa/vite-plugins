@@ -1,4 +1,3 @@
-import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 import { injectRscStreamToHtml } from "@hiogawa/vite-rsc/rsc-html-stream/ssr"; // helper API
 import * as ReactClient from "@hiogawa/vite-rsc/ssr"; // RSC API
 import React from "react";
@@ -29,6 +28,8 @@ export async function renderHTML(
   }
 
   // render html (traditional SSR)
+  const bootstrapScriptContent =
+    await import.meta.viteRsc.loadBootstrapScriptContent("index");
   const htmlStream = await ReactDOMServer.renderToReadableStream(<SsrRoot />, {
     bootstrapScriptContent: options?.debugNojs
       ? undefined
