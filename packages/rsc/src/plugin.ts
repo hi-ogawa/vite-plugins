@@ -1211,18 +1211,17 @@ export function vitePluginRscCss(
     const options = rscCssOptions?.rscCssTransform;
     if (options === false) return false;
     if (options?.filter && !options.filter(id)) return false;
-    if (id.includes("/node_modules/")) return false;
+    if (id.includes("/node_modules/") || !/\.[tj]sx$/.test(id)) return false;
 
     // skip transform if no css imports
-    let result: ReturnType<typeof esModuleLexer.parse>;
-    try {
-      result = esModuleLexer.parse(code);
-    } catch (e) {
-      return false;
-    }
+    const result = esModuleLexer.parse(code);
     if (!result[0].some((i) => i.t === 1 && i.n && isCSSRequest(i.n))) {
       return false;
     }
+    // transform only function exports with capital names, e.g.
+    //   export default function Page() {}
+    //   export function Page() {}
+    //   export const Page = () => {}
     return (_name: string, meta) =>
       !!(meta.isFunction && meta.declName && /^[A-Z]/.test(meta.declName));
   }
