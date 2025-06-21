@@ -1,43 +1,42 @@
-import type { Plugin } from "vite";
+import type { EnvironmentOptions, Plugin } from "vite";
+
+const PKG_NAME = "@hiogawa/vite-rsc-react-router";
 
 export function rscWaku(): Plugin[] {
   return [
     {
       name: "rsc:waku",
       config() {
+        const toEnvironmentOption = (entry: string) =>
+          ({
+            build: {
+              rollupOptions: {
+                input: {
+                  index: `${PKG_NAME}/${entry}`,
+                },
+              },
+            },
+          }) satisfies EnvironmentOptions;
+
         return {
           define: {
             "import.meta.env.WAKU_CONFIG_BASE_PATH": JSON.stringify("/"),
             "import.meta.env.WAKU_CONFIG_RSC_BASE": JSON.stringify("RSC"),
           },
           environments: {
-            client: {
-              build: {
-                rollupOptions: {
-                  input: {
-                    index: "./framework/entry.browser.tsx",
-                  },
-                },
-              },
-            },
-            ssr: {
-              build: {
-                rollupOptions: {
-                  input: {
-                    index: "./framework/entry.ssr.tsx",
-                  },
-                },
-              },
-            },
-            rsc: {
-              build: {
-                rollupOptions: {
-                  input: {
-                    index: "./framework/entry.rsc.tsx",
-                  },
-                },
-              },
-            },
+            client: toEnvironmentOption("entry.browser"),
+            ssr: toEnvironmentOption("entry.ssr"),
+            rsc: toEnvironmentOption("entry.rsc"),
+          },
+        };
+      },
+      configEnvironment(_name, _config, _env) {
+        return {
+          resolve: {
+            noExternal: [PKG_NAME],
+          },
+          optimizeDeps: {
+            exclude: [PKG_NAME],
           },
         };
       },
