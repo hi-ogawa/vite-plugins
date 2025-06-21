@@ -608,6 +608,47 @@ export default function vitePluginRsc(
         export default assetsManifest.bootstrapScriptContent;
       `;
     }),
+    {
+      name: "rsc:bootstrap-script-content",
+      async transform(code) {
+        if (
+          !code.includes("loadBootstrapScriptContent") ||
+          !/import\s*\.\s*meta\s*\.\s*viteRsc\s*\.\s*loadBootstrapScriptContent/.test(
+            code,
+          )
+        ) {
+          return;
+        }
+
+        assert(this.environment.name !== "client");
+        const output = new MagicString(code);
+
+        for (const match of code.matchAll(
+          /import\s*\.\s*meta\s*\.\s*viteRsc\s*\.\s*loadBootstrapScriptContent\(([\s\S]*?)\)/dg,
+        )) {
+          const argCode = match[1]!.trim();
+          const entryName = JSON.parse(argCode);
+          assert(
+            entryName,
+            `[vite-rsc] expected 'loadBootstrapScriptContent("index")' but got ${argCode}`,
+          );
+          let replacement: string = `Promise.resolve(__vite_rsc_assets_manifest.bootstrapScriptContent)`;
+          const [start, end] = match.indices![0]!;
+          output.overwrite(start, end, replacement);
+        }
+        if (output.hasChanged()) {
+          if (!code.includes("__vite_rsc_assets_manifest")) {
+            output.prepend(
+              `import __vite_rsc_assets_manifest from "virtual:vite-rsc/assets-manifest";`,
+            );
+          }
+          return {
+            code: output.toString(),
+            map: output.generateMap({ hires: "boundary" }),
+          };
+        }
+      },
+    },
     createVirtualPlugin(
       VIRTUAL_ENTRIES.browser.slice("virtual:".length),
       async function () {

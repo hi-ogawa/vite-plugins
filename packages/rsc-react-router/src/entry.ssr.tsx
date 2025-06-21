@@ -1,4 +1,3 @@
-import bootstrapScriptContent from "virtual:vite-rsc/bootstrap-script-content";
 import { createFromReadableStream } from "@hiogawa/vite-rsc/ssr";
 // @ts-ignore
 import * as ReactDomServer from "react-dom/server.edge";
@@ -11,6 +10,8 @@ export default async function handler(
   request: Request,
   callServer: (request: Request) => Promise<Response>,
 ): Promise<Response> {
+  const bootstrapScriptContent =
+    await import.meta.viteRsc.loadBootstrapScriptContent("index");
   return routeRSCServerRequest({
     request,
     callServer,
