@@ -118,7 +118,6 @@ export default { fetch: handler };
     minify: false,
   },
   optimizeDeps: {
-    // even if excluded, the module will be duplicated
-    exclude: ["@vitejs/test-dep-client-in-server/client"],
+    include: ["@vitejs/test-dep-client-in-server/client"],
   },
 }) as any;

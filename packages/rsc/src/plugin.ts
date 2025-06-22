@@ -776,13 +776,13 @@ function vitePluginUseClient(): Plugin[] {
             `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
           );
           id = id.split("?v=")[0]!;
-          // this doesn't seem entirely sound, but for now,
-          // copy over the hash from browser environment optimizer.
-          const hash =
-            server.environments.client.depsOptimizer?.metadata.browserHash;
-          if (hash) {
-            id += `?v=${hash}`;
-          }
+          // Copying over the hash from browser environment optimizer seems sound to avoid double modules,
+          // but this can cause stale hash when browser optimizer reloaded, so for now this is avoided.
+          // const hash =
+          //   server.environments.client.depsOptimizer?.metadata.browserHash;
+          // if (hash) {
+          //   id += `?v=${hash}`;
+          // }
         }
 
         let importId: string;
