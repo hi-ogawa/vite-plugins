@@ -89,6 +89,12 @@ type RscPluginOptions = {
   loadModuleDevProxy?: boolean;
 
   rscCssTransform?: false | { filter?: (id: string) => boolean };
+
+  /** should use `buildApp` hook on Vite 7. this is a temporary alternative on Vite 6. */
+  buildApp?: {
+    order?: "pre" | "post";
+    handler: () => void | Promise<void>;
+  };
 };
 
 export default function vitePluginRsc(
@@ -196,6 +202,10 @@ export default function vitePluginRsc(
             sharedPlugins: true,
             sharedConfigBuild: true,
             async buildApp(builder) {
+              const buildAppHook = rscPluginOptions.buildApp;
+              if (buildAppHook && buildAppHook.order === "pre") {
+                await buildAppHook.handler();
+              }
               builder.environments.rsc!.config.build.write = false;
               builder.environments.ssr!.config.build.write = false;
               await builder.build(builder.environments.rsc!);
@@ -205,6 +215,9 @@ export default function vitePluginRsc(
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
+              if (buildAppHook && buildAppHook.order !== "post") {
+                await buildAppHook.handler();
+              }
             },
           },
         };
