@@ -19,6 +19,7 @@ import {
 import { TestStyleClient2 } from "./client2";
 import ErrorBoundary from "./error-boundary";
 import "./server.css";
+import TestClientInServerDep from "@vitejs/test-dep-client-in-server";
 import {
   TestServerActionBindAction,
   TestServerActionBindClient,
@@ -81,6 +82,7 @@ export function Root(props: { url: URL }) {
         <TestServerActionBindClient />
         <TestServerActionBindAction />
         <TestSerializationServer />
+        <TestClientInServerDep />
       </body>
     </html>
   );
