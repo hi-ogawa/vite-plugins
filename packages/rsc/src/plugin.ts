@@ -764,6 +764,25 @@ function vitePluginUseClient(): Plugin[] {
         if (!code.includes("use client")) return;
 
         const ast = await parseAstAsync(code);
+        if (!hasDirective(ast.body, "use client")) return;
+
+        // If `?v=<hash>` reached here, it means client boundary is created
+        // by packages imported on server environment,
+        // which breaks the expectation on dependency optimizer on browser.
+        // https://github.com/hi-ogawa/vite-plugins/pull/384
+        if (id.includes("?v=")) {
+          assert(this.environment.mode === "dev");
+          id = id.replace(/\?v=*/, "?v=");
+          this.warn(
+            `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
+          );
+          // TODO: Does it help something if we copy over the hash from browser environment optimizer?
+          // const hash =
+          //   server.environments.client.depsOptimizer?.metadata.browserHash;
+          // if (hash) {
+          //   id += `?v=${hash}`;
+          // }
+        }
 
         let importId: string;
         let referenceKey: string;
