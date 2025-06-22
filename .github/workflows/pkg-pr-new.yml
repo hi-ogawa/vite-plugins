@@ -10,13 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+        with:
+          playwright: false
 
       # canary build
       - run: |
           pnpm i -w react@canary react-dom@canary react-server-dom-webpack@canary
           pnpm i --no-frozen-lockfile
           pnpm -C packages/rsc build
-          sed -i 's/"name": "@hiogawa/vite-rsc"/"name": "@hiogawa/vite-rsc-canary"/' packages/rsc/package.json
+          sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-canary"#' packages/rsc/package.json
           cp -rf packages/rsc packages/rsc-canary
 
       # experimental build
@@ -24,7 +26,7 @@ jobs:
           pnpm i -w react@experimental react-dom@experimental react-server-dom-webpack@experimental
           pnpm i --no-frozen-lockfile
           pnpm -C packages/rsc build
-          sed -i 's/"name": "@hiogawa/vite-rsc"/"name": "@hiogawa/vite-rsc-experimental"/' packages/rsc/package.json
+          sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-experimental"#' packages/rsc/package.json
           cp -rf packages/rsc packages/rsc-experimental
 
       - run: |
