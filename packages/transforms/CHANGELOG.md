@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.4 (2025-06-22)
+
+- feat: rsc css transform for default export identifier ([#1046](https://github.com/hi-ogawa/vite-plugins/pull/1046))
+
 ## v0.1.3 (2025-06-20)
 
 - feat: refined filter for `transformWrapExport` ([#1030](https://github.com/hi-ogawa/vite-plugins/pull/1030))
