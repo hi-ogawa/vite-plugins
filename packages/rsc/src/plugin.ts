@@ -764,11 +764,25 @@ function vitePluginUseClient(): Plugin[] {
         if (!code.includes("use client")) return;
 
         const ast = await parseAstAsync(code);
+        if (!hasDirective(ast.body, "use client")) return;
 
         let importId: string;
         let referenceKey: string;
         const packageSource = packageSources.get(id);
-        if (packageSource) {
+        if (!packageSource && id.includes("?v=")) {
+          assert(this.environment.mode === "dev");
+          // If non package source `?v=<hash>` reached here, this is a client boundary
+          // created by a package imported on server environment, which breaks the
+          // expectation on dependency optimizer on browser. Directly copying over
+          // "?v=<hash>" from client optimizer in client reference can make a hashed
+          // module stale, so we use another virtual module wrapper to delay such process.
+          // TODO: suggest `optimizeDeps.exclude` and skip warning if that's already the case.
+          this.warn(
+            `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
+          );
+          importId = `/@id/__x00__virtual:vite-rsc/client-in-server-package-proxy/${encodeURIComponent(id.split("?v=")[0]!)}`;
+          referenceKey = importId;
+        } else if (packageSource) {
           if (this.environment.mode === "dev") {
             importId = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${packageSource}`;
             referenceKey = importId;
@@ -839,6 +853,28 @@ function vitePluginUseClient(): Plugin[] {
       code = `export default {${code}};\n`;
       return { code, map: null };
     }),
+    {
+      name: "rsc:virtual-client-in-server-package",
+      async load(id) {
+        if (
+          id.startsWith("\0virtual:vite-rsc/client-in-server-package-proxy/")
+        ) {
+          assert.equal(this.environment.mode, "dev");
+          assert.notEqual(this.environment.name, "rsc");
+          id = decodeURIComponent(
+            id.slice(
+              "\0virtual:vite-rsc/client-in-server-package-proxy/".length,
+            ),
+          );
+          // TODO: avoid `export default undefined`
+          return `
+            export * from ${JSON.stringify(id)};
+            import * as __all__ from ${JSON.stringify(id)};
+            export default __all__.default;
+          `;
+        }
+      },
+    },
     {
       name: "rsc:virtual-client-package",
       resolveId: {

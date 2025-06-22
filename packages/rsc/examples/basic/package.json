@@ -23,6 +23,8 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
+    "@vitejs/test-dep-client-in-server": "file:./test-dep/client-in-server",
+    "@vitejs/test-dep-client-in-server2": "file:./test-dep/client-in-server2",
     "tailwindcss": "^4.1.4",
     "vite": "latest",
     "vite-plugin-inspect": "^11.2.0"

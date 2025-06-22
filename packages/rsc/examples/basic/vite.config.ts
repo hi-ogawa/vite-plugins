@@ -117,4 +117,10 @@ export default { fetch: handler };
   build: {
     minify: false,
   },
+  optimizeDeps: {
+    exclude: [
+      "@vitejs/test-dep-client-in-server/client",
+      "@vitejs/test-dep-client-in-server2/client",
+    ],
+  },
 }) as any;

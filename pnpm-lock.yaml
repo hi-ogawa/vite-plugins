@@ -584,6 +584,12 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.5.0
         version: 4.5.0(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+      '@vitejs/test-dep-client-in-server':
+        specifier: file:./test-dep/client-in-server
+        version: file:packages/rsc/examples/basic/test-dep/client-in-server(react@19.1.0)
+      '@vitejs/test-dep-client-in-server2':
+        specifier: file:./test-dep/client-in-server2
+        version: file:packages/rsc/examples/basic/test-dep/client-in-server2(react@19.1.0)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.1.4
@@ -2265,6 +2271,16 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^6.3.5
+
+  '@vitejs/test-dep-client-in-server2@file:packages/rsc/examples/basic/test-dep/client-in-server2':
+    resolution: {directory: packages/rsc/examples/basic/test-dep/client-in-server2, type: directory}
+    peerDependencies:
+      react: ^19.1.0
+
+  '@vitejs/test-dep-client-in-server@file:packages/rsc/examples/basic/test-dep/client-in-server':
+    resolution: {directory: packages/rsc/examples/basic/test-dep/client-in-server, type: directory}
+    peerDependencies:
+      react: ^19.1.0
 
   '@vitest/expect@3.2.3':
     resolution: {integrity: sha512-W2RH2TPWVHA1o7UmaFKISPvdicFJH+mjykctJFoAkUw+SPTJTGjUNdKscFBrqM7IPnCVu6zihtKYa7TkZS1dkQ==}
@@ -5852,6 +5868,14 @@ snapshots:
       vite: 6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
     transitivePeerDependencies:
       - supports-color
+
+  '@vitejs/test-dep-client-in-server2@file:packages/rsc/examples/basic/test-dep/client-in-server2(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+
+  '@vitejs/test-dep-client-in-server@file:packages/rsc/examples/basic/test-dep/client-in-server(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
 
   '@vitest/expect@3.2.3':
     dependencies:

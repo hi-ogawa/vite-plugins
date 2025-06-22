@@ -620,3 +620,13 @@ test("test serialization @js", async ({ page }) => {
   await page.getByTestId("serialization").click();
   await expect(page.getByTestId("serialization")).toHaveText("ok");
 });
+
+test("client-in-server package", async ({ page }) => {
+  await page.goto("./");
+  await expect(page.getByTestId("client-in-server")).toHaveText(
+    "[test-client-in-server-dep: true]",
+  );
+  await expect(page.getByTestId("provider-in-server")).toHaveText(
+    "[test-provider-in-server-dep: true]",
+  );
+});
