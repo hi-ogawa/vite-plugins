@@ -866,6 +866,7 @@ function vitePluginUseClient(): Plugin[] {
               "\0virtual:vite-rsc/client-in-server-package-proxy/".length,
             ),
           );
+          // TODO: avoid `export default undefined`
           return `
             export * from ${JSON.stringify(id)};
             import * as __all__ from ${JSON.stringify(id)};
