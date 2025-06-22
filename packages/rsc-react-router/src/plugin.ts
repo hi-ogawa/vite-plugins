@@ -12,7 +12,7 @@ import {
 
 const PKG_NAME = "@hiogawa/vite-rsc-react-router";
 
-export function reactRouter(options?: {
+export default function rscReactRouter(options?: {
   typegen?: boolean;
 }): Plugin[] {
   let idResolver: ReturnType<typeof createIdResolver>;
@@ -113,7 +113,7 @@ async function readReactRouterConfig(
     {
       id: "root",
       path: "",
-      file: rootFile + "?vite-rsc-css-export=Layout",
+      file: rootFile,
       children: routesImport.module.default,
     },
   ];

@@ -1,0 +1,1 @@
+# vite rsc ssg example

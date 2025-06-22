@@ -3,6 +3,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 
+// TODO: auto-inject in layout
 export function ServerHmr() {
   if (import.meta.hot) {
     const navigate = useNavigate();
