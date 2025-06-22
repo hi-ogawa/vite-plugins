@@ -118,7 +118,9 @@ export default { fetch: handler };
     minify: false,
   },
   optimizeDeps: {
-    // TODO: test no double modules
-    exclude: ["@vitejs/test-dep-client-in-server/client"],
+    exclude: [
+      "@vitejs/test-dep-client-in-server/client",
+      "@vitejs/test-dep-client-in-server2/client",
+    ],
   },
 }) as any;

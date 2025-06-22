@@ -1,6 +1,8 @@
 "use client";
 
 // @ts-ignore
-import TestClientInServerDepClient from "@vitejs/test-dep-client-in-server/client";
+import { TestContextValue } from "@vitejs/test-dep-client-in-server2/client";
 
-export { TestClientInServerDepClient };
+export function TestContextValueIndirect() {
+  return <TestContextValue />;
+}

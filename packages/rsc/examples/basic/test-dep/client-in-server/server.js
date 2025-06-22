@@ -1,6 +1,6 @@
 import React from "react";
-import TestClient from "./client.js";
+import { TestClient } from "./client.js";
 
-export default async function TestClientInServer() {
+export async function TestClientInServerDep() {
   return React.createElement(TestClient);
 }

@@ -626,7 +626,7 @@ test("client-in-server package", async ({ page }) => {
   await expect(page.getByTestId("client-in-server")).toHaveText(
     "[test-client-in-server-dep: true]",
   );
-  await expect(page.getByTestId("client-in-server-client")).toHaveText(
-    "[test-client-in-server-dep-direct-client: true]",
+  await expect(page.getByTestId("provider-in-server")).toHaveText(
+    "[test-provider-in-server-dep: true]",
   );
 });

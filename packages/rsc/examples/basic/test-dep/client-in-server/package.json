@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./server": "./server.js",
-    "./client": "./client.js"
+    "./server": "./server.js"
   },
   "peerDependencies": {
     "react": "*"
