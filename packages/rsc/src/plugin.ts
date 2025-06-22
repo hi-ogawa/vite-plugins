@@ -776,7 +776,8 @@ function vitePluginUseClient(): Plugin[] {
             `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
           );
           id = id.split("?v=")[0]!;
-          // Not sure if this is good or bad, but for now, copy over the hash from browser environment optimizer.
+          // this doesn't seem entirely sound, but for now,
+          // copy over the hash from browser environment optimizer.
           const hash =
             server.environments.client.depsOptimizer?.metadata.browserHash;
           if (hash) {

@@ -4,11 +4,7 @@ import React from "react";
 
 export default function TestClient() {
   const hydrated = useHydrated();
-  return React.createElement(
-    "span",
-    { "data-testid": "client-in-server" },
-    `[test-client-in-server: ${String(hydrated)}]`,
-  );
+  return React.createElement("span", null, String(hydrated));
 }
 
 const noop = () => {};
