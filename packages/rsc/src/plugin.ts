@@ -766,11 +766,11 @@ function vitePluginUseClient(): Plugin[] {
         const ast = await parseAstAsync(code);
         if (!hasDirective(ast.body, "use client")) return;
 
-        // If `?v=<hash>` reached here, it means this is a client boundary created
-        // by a package imported on server environment,
-        // which breaks the expectation on dependency optimizer on browser.
+        // If non package source `?v=<hash>` reached here, it means this is a client boundary created
+        // by a package imported on server environment, which breaks the expectation on dependency optimizer on browser.
         // https://github.com/hi-ogawa/vite-plugins/pull/384
-        if (id.includes("?v=")) {
+        const packageSource = packageSources.get(id);
+        if (!packageSource && id.includes("?v=")) {
           assert(this.environment.mode === "dev");
           this.warn(
             `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
@@ -787,7 +787,6 @@ function vitePluginUseClient(): Plugin[] {
 
         let importId: string;
         let referenceKey: string;
-        const packageSource = packageSources.get(id);
         if (packageSource) {
           if (this.environment.mode === "dev") {
             importId = `/@id/__x00__virtual:vite-rsc/client-package-proxy/${packageSource}`;
