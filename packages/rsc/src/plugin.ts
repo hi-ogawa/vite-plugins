@@ -771,10 +771,11 @@ function vitePluginUseClient(): Plugin[] {
         const packageSource = packageSources.get(id);
         if (!packageSource && id.includes("?v=")) {
           assert(this.environment.mode === "dev");
-          // If non package source `?v=<hash>` reached here, this is a client boundary created
-          // by a package imported on server environment, which breaks the expectation on dependency optimizer on browser.
-          // Directory copying over "?v=<hash>" from client optimizer in client reference can make a hashed module stale.
-          // we use another virtual module wrapper to delay such process.
+          // If non package source `?v=<hash>` reached here, this is a client boundary
+          // created by a package imported on server environment, which breaks the
+          // expectation on dependency optimizer on browser. Directly copying over
+          // "?v=<hash>" from client optimizer in client reference can make a hashed
+          // module stale, so we use another virtual module wrapper to delay such process.
           // TODO: suggest `optimizeDeps.exclude` and skip warning if that's already the case.
           this.warn(
             `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
