@@ -118,6 +118,7 @@ export default { fetch: handler };
     minify: false,
   },
   optimizeDeps: {
-    include: ["@vitejs/test-dep-client-in-server/client"],
+    // TODO: test no double modules
+    exclude: ["@vitejs/test-dep-client-in-server/client"],
   },
 }) as any;
