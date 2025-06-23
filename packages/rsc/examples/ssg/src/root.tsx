@@ -57,6 +57,7 @@ export async function Root({ url }: { url: URL }) {
             <a href="/">RSC + MDX + SSG</a>
           </h1>
           <Counter />
+          <span>Rendered at {new Date().toISOString()}</span>
         </header>
         <main>
           <RootContent />
