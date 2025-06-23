@@ -786,7 +786,7 @@ function vitePluginUseClient(
           // node_modules/
           const ignored =
             useClientPluginOptions.ignoredClientInServerPackageWarning?.some(
-              (pkg) => id.endsWith(`node_modules/${pkg}/`),
+              (pkg) => id.includes(`node_modules/${pkg}/`),
             );
           if (!ignored) {
             this.warn(
