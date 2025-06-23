@@ -1,12 +1,34 @@
-export function Root(props: { request: Request }) {
+export async function Root(props: { request: Request }) {
   const url = new URL(props.request.url);
-  url.pathname;
 
-  const posts = import.meta.glob("./posts/*.mdx", { eager: true });
-  console.log(posts);
+  let posts = import.meta.glob("./posts/*.mdx");
+  posts = Object.fromEntries(
+    Object.entries(posts).map(([k, v]) => [
+      k.slice("./posts/".length, -".mdx".length),
+      v,
+    ]),
+  );
 
-  // formatter
-  // - title
+  async function Router() {
+    if (url.pathname === "/") {
+      return <ul>
+        {Object.keys(posts).map((key) => (
+          <li key={key}>
+            <a href={`/${key}`} style={{ textTransform: 'capitalize' }}>{key}</a>
+          </li>
+        ))}
+      </ul>
+    }
+
+    const post = posts[url.pathname.slice(1)];
+    if (!!post) {
+      const mod: any = await post();
+      return <mod.default />;
+    }
+
+    // TODO: 404
+    return <p>Not found</p>
+  }
 
   return (
     <html lang="en">
@@ -16,15 +38,10 @@ export function Root(props: { request: Request }) {
         <title>RSC MDX SSG</title>
       </head>
       <body>
-        <h1>RSC + MDX + SSG</h1>
-        <ul>
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li>
-            <a href="/about">About</a>
-          </li>
-        </ul>
+        <h1>
+          <a href="/">RSC + MDX + SSG</a>
+        </h1>
+        <Router />
       </body>
     </html>
   );
