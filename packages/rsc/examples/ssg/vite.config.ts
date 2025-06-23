@@ -31,6 +31,13 @@ function rscSsgPlugin(): Plugin[] {
   return [
     {
       name: "rsc-ssg",
+      config(_config, env) {
+        if (env.isPreview) {
+          return {
+            appType: "mpa",
+          };
+        }
+      },
       // Use post ssr writeBundle to wait for app is fully built.
       // On Vite 7, you can use `buildApp` hook instead.
       writeBundle: {
@@ -41,14 +48,6 @@ function rscSsgPlugin(): Plugin[] {
             await renderStatic(config);
           }
         },
-      },
-
-      config(_config, env) {
-        if (env.isPreview) {
-          return {
-            appType: "mpa",
-          };
-        }
       },
     },
   ];
