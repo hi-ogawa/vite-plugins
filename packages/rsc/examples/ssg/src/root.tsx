@@ -13,7 +13,7 @@ async function getPosts() {
 
 export async function getStaticPaths() {
   const posts = await getPosts();
-  return Object.keys(posts);
+  return ["/", ...Object.keys(posts)];
 }
 
 export async function Root({ url }: { url: URL }) {

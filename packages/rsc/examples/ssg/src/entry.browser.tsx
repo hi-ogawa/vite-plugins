@@ -2,12 +2,12 @@ import * as ReactClient from "@hiogawa/vite-rsc/browser";
 import { getRscStreamFromHtml } from "@hiogawa/vite-rsc/rsc-html-stream/browser";
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import type { RscPayload } from "./entry.rsc";
+import { RSC_POSTFIX, type RscPayload } from "./entry.shared";
 
 async function hydrate(): Promise<void> {
   async function onNavigation() {
     const url = new URL(window.location.href);
-    url.pathname = url.pathname + ".rsc";
+    url.pathname = url.pathname + RSC_POSTFIX;
     const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url));
     setPayload(payload);
   }

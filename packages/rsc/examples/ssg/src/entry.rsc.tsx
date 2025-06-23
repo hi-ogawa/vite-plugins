@@ -1,18 +1,15 @@
 import * as ReactServer from "@hiogawa/vite-rsc/rsc";
+import { RSC_POSTFIX, type RscPayload } from "./entry.shared";
 import { Root } from "./root";
 
 export { getStaticPaths } from "./root";
 
-export type RscPayload = {
-  root: React.ReactNode;
-};
-
 export default async function handler(request: Request): Promise<Response> {
   let url = new URL(request.url);
   let isRscRequest = false;
-  if (url.pathname.endsWith(".rsc")) {
+  if (url.pathname.endsWith(RSC_POSTFIX)) {
     isRscRequest = true;
-    url.pathname = url.pathname.slice(0, -4);
+    url.pathname = url.pathname.slice(0, -RSC_POSTFIX.length);
   }
 
   const rscPayload: RscPayload = { root: <Root url={url} /> };
