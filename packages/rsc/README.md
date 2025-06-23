@@ -393,20 +393,15 @@ export default defineConfig({
       // by default, `loadCss()` helper is injected based on certain heuristics.
       // if it breaks, it can be opt-out or selectively applied based on files.
       rscCssTransform: { filter: id => id.includes("/my-app/") },
+
+      // by default, the plugin uses a build-time generated encryption key for
+      // "use server" closure argument binding.
+      // This can be overwritten by configuring `defineEncryptionKey` option,
+      // for example, to obtain a key through environment variable during runtime.
+      // cf. https://nextjs.org/docs/app/guides/data-security#overwriting-encryption-keys-advanced
+      defineEncryptionKey: "process.env.MY_ENCRYPTION_KEY",
     }),
   ],
-  environments: {
-    rsc: {
-      define: {
-        // The plugin uses an encryption key for "use server" closure argument binding,
-        // which is generated at build time by default (and it makes rsc build non-deterministic).
-        // This can be overwritten by configuring `define.__VITE_RSC_ENCRYPTION_KEY__`,
-        // for example, to obtain a key through envrionment variable during runtime.
-        // cf. https://nextjs.org/docs/app/guides/data-security#overwriting-encryption-keys-advanced
-        __VITE_RSC_ENCRYPTION_KEY__: "process.env.MY_ENCRYPTION_KEY",
-      }
-    }
-  },
 });
 ```
 
