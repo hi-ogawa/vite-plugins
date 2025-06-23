@@ -21,8 +21,8 @@ importers:
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.9.5-nightly.81fdedb
-        version: 1.9.5-nightly.81fdedb
+        specifier: 1.9.5-nightly.ff02a0b
+        version: 1.9.5-nightly.ff02a0b
       '@hiogawa/utils':
         specifier: ^1.7.0
         version: 1.7.0
@@ -968,55 +968,55 @@ packages:
     resolution: {integrity: sha512-ETyHEk2VHHvl9b9jZP5IHPavHYk57EhanlRRuae9XCpb/j5bDCbPPMOBfCWhnl/7EDJz0jEMCi/RhccCE8r1+Q==}
     engines: {node: '>=6.9.0'}
 
-  '@biomejs/biome@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-pKBxq0lT1SXPTN04i+52Zh3ncD84YTv3HKoz2CUusS+Eida6b+0Kb2dgPKcfC15z9IxtVx2EIShhpjPtwPYAXw==}
+  '@biomejs/biome@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-fzsEmn4O2Z0KzHE5mcoX0Vtw0S+jMRRlk/Un52UXZW0FVmq8vlr+luEVDg0dvGJUFFCbxMQiI8bG4V4KmFeAKw==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-5P5Bl2EalSCIVaspoZk+J5yNS4UFyRE7AQT7bOaugJVSxiSRXFZvj5qNc67hLK0crt7SOBxK6AmHv01D6v3vPQ==}
+  '@biomejs/cli-darwin-arm64@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-jyGURwt28edB/nP06cRsjkhAJJ1tnkxwEfywV3/uMuRXYB+x8qk95EvvpLSO74MYx7uEguLFO2Uqvjsi90FclQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-5dyYFDWoshBCLFtxdOuOhPRH20X0ND9djcx2IYhI5KEWyyaBxig3DK+ktCiApOYbq9Vm4VaUosUgdBxGXuXgsQ==}
+  '@biomejs/cli-darwin-x64@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-S/4FpRobJAorPMq6ranfGrayhSEY8JB4K/Tn2TqejunXt/WRSbYHvZr3VCtKWpT/tvex9L+hyicJe4EPyAqgOQ==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-E6TqGZILHE2iLkv++JswQqr02fhpaOy94V4GN2VL84+NnOMzFOsZk4KgAysQPs6U6vaorkdQNgrSSadTdEG8yg==}
+  '@biomejs/cli-linux-arm64-musl@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-FEmo/0GI/ni75OxJb1JJICCH580gxedXdGGVKP+pxZxCKh31Nk2NxegB/Ww4sOa2jfyxKUNUUVhKyc0oxKu7uw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-arm64@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-umsZ1LDK20FEEi0CySpZJKfgf4CApJz/8/j8RSECYGMa7dBqVXWdpJu+2j6D/2lkrcSQYPJmFO0uTpvFd/9isw==}
+  '@biomejs/cli-linux-arm64@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-UxFcxSvWmh+jZ9b0qxTFcdu+kK4wQYRlnbs7wVpWZdMIbMtUk01PXgl9mQHmBbds11zIoXQA1lhFSgWffMS43A==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64-musl@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-p9u8UDj6/ZcDTGDxOP+ryqQQBcwMcr1Ye09Bg06XOXiJVynizHJkpV3ZTmyOKsghMjTAkkrufXZcss49LVV0/w==}
+  '@biomejs/cli-linux-x64-musl@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-JM+Fca8tcSLTQglLWa6SicEEgsrLOII2fbZolYwpi8dUMdiaIGXGrh6PleDrQEmQwkOq3ESLDK0Xf6UltZ/feQ==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-9vqY6AE8dfFB/QBmnnjHLL4bAhKxl1ttKK0yrza9oxr19ZYRC5zf4G95ie/V1k3wuzVnbh6D0kDhEkUaIwM9sQ==}
+  '@biomejs/cli-linux-x64@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-0qyK8Ma+LMVzV4iOy7CV4aDOfVM3MCRpzGhccq2yoeO1VNg8Q7c7rLxsUmahabdvs/CGXsF3N+lf5W7upLh1/Q==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-win32-arm64@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-KersSrVxD1jw7INrOJ48bWdSX6UqC2peLkVQNERkGrGopqGgpv34clvZd28p3nfeBjTc3JjVEbWFrcjREA7Yeg==}
+  '@biomejs/cli-win32-arm64@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-9nMSGGXysUw6EQ8qwkIcBM2btJThZT1yVICNJ7OluwEM77G7tEy1tgcMwoXt8XZ/LCmXGYgxEy0fKdSGOXtLrQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@1.9.5-nightly.81fdedb':
-    resolution: {integrity: sha512-O7gWo2/V6zF8NhhtKm2sZdLpVfoAMGrVpWuhyKgHJjnOUvuiarUPQgG8pjaq6d3pNFNZrPDCl9cI2StiQjeDZA==}
+  '@biomejs/cli-win32-x64@1.9.5-nightly.ff02a0b':
+    resolution: {integrity: sha512-Uv+Ztn9jrglXN7KlHq2gpOIDHXjOvZogs3r9f99YP98Vf/YQlmR6J1XJzlsyWAgDUpPgLk1D3+0A85Udivu1PQ==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
@@ -4703,39 +4703,39 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
-  '@biomejs/biome@1.9.5-nightly.81fdedb':
+  '@biomejs/biome@1.9.5-nightly.ff02a0b':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 1.9.5-nightly.81fdedb
-      '@biomejs/cli-darwin-x64': 1.9.5-nightly.81fdedb
-      '@biomejs/cli-linux-arm64': 1.9.5-nightly.81fdedb
-      '@biomejs/cli-linux-arm64-musl': 1.9.5-nightly.81fdedb
-      '@biomejs/cli-linux-x64': 1.9.5-nightly.81fdedb
-      '@biomejs/cli-linux-x64-musl': 1.9.5-nightly.81fdedb
-      '@biomejs/cli-win32-arm64': 1.9.5-nightly.81fdedb
-      '@biomejs/cli-win32-x64': 1.9.5-nightly.81fdedb
+      '@biomejs/cli-darwin-arm64': 1.9.5-nightly.ff02a0b
+      '@biomejs/cli-darwin-x64': 1.9.5-nightly.ff02a0b
+      '@biomejs/cli-linux-arm64': 1.9.5-nightly.ff02a0b
+      '@biomejs/cli-linux-arm64-musl': 1.9.5-nightly.ff02a0b
+      '@biomejs/cli-linux-x64': 1.9.5-nightly.ff02a0b
+      '@biomejs/cli-linux-x64-musl': 1.9.5-nightly.ff02a0b
+      '@biomejs/cli-win32-arm64': 1.9.5-nightly.ff02a0b
+      '@biomejs/cli-win32-x64': 1.9.5-nightly.ff02a0b
 
-  '@biomejs/cli-darwin-arm64@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-darwin-arm64@1.9.5-nightly.ff02a0b':
     optional: true
 
-  '@biomejs/cli-darwin-x64@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-darwin-x64@1.9.5-nightly.ff02a0b':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-linux-arm64-musl@1.9.5-nightly.ff02a0b':
     optional: true
 
-  '@biomejs/cli-linux-arm64@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-linux-arm64@1.9.5-nightly.ff02a0b':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-linux-x64-musl@1.9.5-nightly.ff02a0b':
     optional: true
 
-  '@biomejs/cli-linux-x64@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-linux-x64@1.9.5-nightly.ff02a0b':
     optional: true
 
-  '@biomejs/cli-win32-arm64@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-win32-arm64@1.9.5-nightly.ff02a0b':
     optional: true
 
-  '@biomejs/cli-win32-x64@1.9.5-nightly.81fdedb':
+  '@biomejs/cli-win32-x64@1.9.5-nightly.ff02a0b':
     optional: true
 
   '@cloudflare/kv-asset-handler@0.4.0':
