@@ -92,7 +92,7 @@ type RscPluginOptions = {
 };
 
 export default function vitePluginRsc(
-  rscPluginOptions: RscPluginOptions = {},
+  rscPluginOptions: RscPluginOptions & UseClientPluginOptions = {},
 ): Plugin[] {
   return [
     {
@@ -708,7 +708,7 @@ export default function vitePluginRsc(
       },
     },
     ...vitePluginRscCore(),
-    ...vitePluginUseClient(),
+    ...vitePluginUseClient(rscPluginOptions),
     ...vitePluginUseServer(),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ rscCssTransform: rscPluginOptions.rscCssTransform }),
@@ -750,7 +750,13 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
-function vitePluginUseClient(): Plugin[] {
+type UseClientPluginOptions = {
+  ignoredClientInServerPackageWarning?: string[];
+};
+
+function vitePluginUseClient(
+  useClientPluginOptions: UseClientPluginOptions,
+): Plugin[] {
   const packageSources = new Map<string, string>();
 
   // https://github.com/vitejs/vite/blob/4bcf45863b5f46aa2b41f261283d08f12d3e8675/packages/vite/src/node/utils.ts#L175
@@ -777,9 +783,15 @@ function vitePluginUseClient(): Plugin[] {
           // "?v=<hash>" from client optimizer in client reference can make a hashed
           // module stale, so we use another virtual module wrapper to delay such process.
           // TODO: suggest `optimizeDeps.exclude` and skip warning if that's already the case.
-          this.warn(
-            `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
-          );
+          const ignored =
+            useClientPluginOptions.ignoredClientInServerPackageWarning?.some(
+              (pkg) => id.includes(`/node_modules/${pkg}/`),
+            );
+          if (!ignored) {
+            this.warn(
+              `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
+            );
+          }
           importId = `/@id/__x00__virtual:vite-rsc/client-in-server-package-proxy/${encodeURIComponent(id.split("?v=")[0]!)}`;
           referenceKey = importId;
         } else if (packageSource) {
