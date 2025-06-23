@@ -10,7 +10,7 @@ import { type Plugin, type ResolvedConfig, defineConfig } from "vite";
 import inspect from "vite-plugin-inspect";
 import { RSC_POSTFIX } from "./src/entry.shared";
 
-export default defineConfig({
+export default defineConfig((env) => ({
   plugins: [
     mdx(),
     react(),
@@ -20,11 +20,12 @@ export default defineConfig({
         rsc: "./src/entry.rsc.tsx",
         ssr: "./src/entry.ssr.tsx",
       },
+      serverHandler: env.isPreview ? false : undefined,
     }),
     rscSsgPlugin(),
     inspect(),
   ],
-});
+}));
 
 function rscSsgPlugin(): Plugin[] {
   return [
@@ -40,6 +41,14 @@ function rscSsgPlugin(): Plugin[] {
             await renderStatic(config);
           }
         },
+      },
+
+      config(_config, env) {
+        if (env.isPreview) {
+          return {
+            appType: "mpa",
+          };
+        }
       },
     },
   ];
