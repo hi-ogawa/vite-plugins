@@ -376,7 +376,7 @@ export default function vitePluginRsc(
           /import\.meta\.viteRsc\.loadModule\(([\s\S]*?)\)/dg,
         )) {
           const argCode = match[1]!.trim();
-          const [environmentName, entryName] = JSON.parse(`[${argCode}]`);
+          const [environmentName, entryName] = evalValue(`[${argCode}]`);
           let replacement: string;
           if (
             this.environment.mode === "dev" &&
@@ -629,7 +629,7 @@ export default function vitePluginRsc(
           /import\s*\.\s*meta\s*\.\s*viteRsc\s*\.\s*loadBootstrapScriptContent\(([\s\S]*?)\)/dg,
         )) {
           const argCode = match[1]!.trim();
-          const entryName = JSON.parse(argCode);
+          const entryName = evalValue(argCode);
           assert(
             entryName,
             `[vite-rsc] expected 'loadBootstrapScriptContent("index")' but got ${argCode}`,
