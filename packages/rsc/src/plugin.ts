@@ -782,6 +782,7 @@ function vitePluginUseClient(
           // expectation on dependency optimizer on browser. Directly copying over
           // "?v=<hash>" from client optimizer in client reference can make a hashed
           // module stale, so we use another virtual module wrapper to delay such process.
+          // TODO: suggest `optimizeDeps.exclude` and skip warning if that's already the case.
           const ignored =
             useClientPluginOptions.ignoredClientInServerPackageWarning?.some(
               (pkg) => id.includes(`/node_modules/${pkg}/`),
