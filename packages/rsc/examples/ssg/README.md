@@ -1,10 +1,10 @@
-# ssg + mdx example
+# SSG + MDX example
 
 This example demonstrates:
 
-- mdx hmr
-- client component inside mdx
-- static site generation
+- Client component inside MDX
+- MDX HMR
+- Static site generation
 
 ## usage
 
