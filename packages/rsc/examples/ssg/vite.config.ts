@@ -8,7 +8,7 @@ import mdx from "@mdx-js/rollup";
 import react from "@vitejs/plugin-react";
 import { type Plugin, type ResolvedConfig, defineConfig } from "vite";
 import inspect from "vite-plugin-inspect";
-import { RSC_POSTFIX } from "./src/entry.shared";
+import { RSC_POSTFIX } from "./src/framework/shared";
 
 export default defineConfig((env) => ({
   plugins: [
@@ -16,9 +16,9 @@ export default defineConfig((env) => ({
     react(),
     rsc({
       entries: {
-        client: "./src/entry.browser.tsx",
-        rsc: "./src/entry.rsc.tsx",
-        ssr: "./src/entry.ssr.tsx",
+        client: "./src/framework/entry.browser.tsx",
+        rsc: "./src/framework/entry.rsc.tsx",
+        ssr: "./src/framework/entry.ssr.tsx",
       },
       serverHandler: env.isPreview ? false : undefined,
     }),
@@ -56,7 +56,7 @@ function rscSsgPlugin(): Plugin[] {
 async function renderStatic(config: ResolvedConfig) {
   // import server entry
   const entryPath = path.join(config.environments.rsc.build.outDir, "index.js");
-  const entry: typeof import("./src/entry.rsc") = await import(
+  const entry: typeof import("./src/framework/entry.rsc") = await import(
     pathToFileURL(entryPath).href
   );
 

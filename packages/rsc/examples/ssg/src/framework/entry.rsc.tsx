@@ -1,8 +1,8 @@
 import * as ReactServer from "@hiogawa/vite-rsc/rsc";
-import { RSC_POSTFIX, type RscPayload } from "./entry.shared";
-import { Root } from "./root";
+import { Root, getStaticPaths } from "../root";
+import { RSC_POSTFIX, type RscPayload } from "./shared";
 
-export { getStaticPaths } from "./root";
+export { getStaticPaths };
 
 export default async function handler(request: Request): Promise<Response> {
   let url = new URL(request.url);

@@ -2,7 +2,7 @@ import * as ReactClient from "@hiogawa/vite-rsc/browser";
 import { getRscStreamFromHtml } from "@hiogawa/vite-rsc/rsc-html-stream/browser";
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import { RSC_POSTFIX, type RscPayload } from "./entry.shared";
+import { RSC_POSTFIX, type RscPayload } from "./shared";
 
 async function hydrate(): Promise<void> {
   async function onNavigation() {

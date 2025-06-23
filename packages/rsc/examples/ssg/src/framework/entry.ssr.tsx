@@ -2,7 +2,7 @@ import { injectRscStreamToHtml } from "@hiogawa/vite-rsc/rsc-html-stream/ssr";
 import * as ReactClient from "@hiogawa/vite-rsc/ssr";
 import React from "react";
 import * as ReactDomServer from "react-dom/server.edge";
-import type { RscPayload } from "./entry.shared";
+import type { RscPayload } from "./shared";
 
 export async function renderHtml(rscStream: ReadableStream<Uint8Array>) {
   const [rscStream1, rscStream2] = rscStream.tee();
