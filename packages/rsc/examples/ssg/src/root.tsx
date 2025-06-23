@@ -1,24 +1,32 @@
 import { Counter } from "./counter";
 
-export async function Root(props: { request: Request }) {
-  const url = new URL(props.request.url);
-
-  let globPosts = import.meta.glob("./posts/*.mdx", { eager: true });
-  globPosts = Object.fromEntries(
-    Object.entries(globPosts).map(([k, v]) => [
-      k.slice("./posts/".length, -".mdx".length),
+async function getPosts() {
+  let glob = import.meta.glob("./posts/*.mdx", { eager: true });
+  glob = Object.fromEntries(
+    Object.entries(glob).map(([k, v]) => [
+      k.slice("./posts".length, -".mdx".length),
       v,
     ]),
   );
+  return glob;
+}
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return Object.keys(posts);
+}
+
+export async function Root({ url }: { url: URL }) {
+  const posts = await getPosts();
 
   async function RootContent() {
     if (url.pathname === "/") {
       return (
         <ul>
-          {Object.entries(globPosts).map(([key, value]) => (
+          {Object.entries(posts).map(([key, value]) => (
             <li key={key}>
-              <a href={`/${key}`} style={{ textTransform: "capitalize" }}>
-                {(value as any).title ?? key}
+              <a href={key} style={{ textTransform: "capitalize" }}>
+                {(value as any).title ?? key.slice(1)}
               </a>
             </li>
           ))}
@@ -26,13 +34,13 @@ export async function Root(props: { request: Request }) {
       );
     }
 
-    const module = globPosts[url.pathname.slice(1)];
+    const module = posts[url.pathname];
     if (!!module) {
       const Component = (module as any).default;
       return <Component />;
     }
 
-    // TODO: 404
+    // TODO: how to 404?
     return <p>Not found</p>;
   }
 
