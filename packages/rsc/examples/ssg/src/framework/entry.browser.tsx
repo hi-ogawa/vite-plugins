@@ -1,42 +1,20 @@
+import * as ReactClient from "@hiogawa/vite-rsc/browser";
+import { getRscStreamFromHtml } from "@hiogawa/vite-rsc/rsc-html-stream/browser";
 import React from "react";
 import ReactDomClient from "react-dom/client";
-import { rscStream } from "rsc-html-stream/client";
-import {
-  type CallServerCallback,
-  createFromFetch,
-  createFromReadableStream,
-  createTemporaryReferenceSet,
-  encodeReply,
-  setServerCallback,
-} from "../browser";
-import type { RscPayload } from "./rsc";
+import { RSC_POSTFIX, type RscPayload } from "./shared";
 
-export async function hydrate(): Promise<void> {
-  const callServer: CallServerCallback = async (id, args) => {
-    const url = new URL(window.location.href);
-    const temporaryReferences = createTemporaryReferenceSet();
-    const payload = await createFromFetch<RscPayload>(
-      fetch(url, {
-        method: "POST",
-        body: await encodeReply(args, { temporaryReferences }),
-        headers: {
-          "x-rsc-action": id,
-        },
-      }),
-      { temporaryReferences },
-    );
-    setPayload(payload);
-    return payload.returnValue;
-  };
-  setServerCallback(callServer);
-
+async function hydrate(): Promise<void> {
   async function onNavigation() {
     const url = new URL(window.location.href);
-    const payload = await createFromFetch<RscPayload>(fetch(url));
+    url.pathname = url.pathname + RSC_POSTFIX;
+    const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url));
     setPayload(payload);
   }
 
-  const initialPayload = await createFromReadableStream<RscPayload>(rscStream);
+  const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(
+    getRscStreamFromHtml(),
+  );
 
   let setPayload: (v: RscPayload) => void;
 
@@ -60,22 +38,13 @@ export async function hydrate(): Promise<void> {
     </React.StrictMode>
   );
 
-  ReactDomClient.hydrateRoot(document, browserRoot, {
-    formState: initialPayload.formState,
-  });
+  ReactDomClient.hydrateRoot(document, browserRoot);
 
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", () => {
       window.history.replaceState({}, "", window.location.href);
     });
   }
-}
-
-export async function fetchRSC(
-  request: string | URL | Request,
-): Promise<RscPayload["root"]> {
-  const payload = await createFromFetch<RscPayload>(fetch(request));
-  return payload.root;
 }
 
 function listenNavigation(onNavigation: () => void): () => void {
@@ -124,3 +93,5 @@ function listenNavigation(onNavigation: () => void): () => void {
     window.history.replaceState = oldReplaceState;
   };
 }
+
+hydrate();
