@@ -765,7 +765,7 @@ function scanBuildStripPlugin(): Plugin {
         .flat()
         .filter(Boolean)
         .join("");
-      return { code: output, map: { mappings: '' } };
+      return { code: output, map: { mappings: "" } };
     },
   };
 }
