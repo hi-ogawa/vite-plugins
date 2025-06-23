@@ -78,7 +78,7 @@ export async function fetchRSC(
   return payload.root;
 }
 
-export function listenNavigation(onNavigation: () => void): () => void {
+function listenNavigation(onNavigation: () => void): () => void {
   window.addEventListener("popstate", onNavigation);
 
   const oldPushState = window.history.pushState;
