@@ -579,6 +579,12 @@ export default function vitePluginRsc(
             clientReferenceDeps,
             serverResources,
           };
+        } else {
+          this.emitFile({
+            type: "asset",
+            fileName: BUILD_ASSETS_MANIFEST_NAME,
+            source: "export deafult __assets_manifest_placeholder__",
+          });
         }
       },
       // non-client builds can load assets manifest as external
