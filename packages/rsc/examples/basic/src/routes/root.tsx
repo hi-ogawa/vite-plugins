@@ -26,6 +26,7 @@ import {
   TestServerActionBindSimple,
 } from "./action-bind/server";
 import { TestClientInServer } from "./deps/client-in-server/server";
+import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
 import { TestSerializationServer } from "./serialization/server";
 import styles from "./server.module.css";
@@ -85,6 +86,7 @@ export function Root(props: { url: URL }) {
         <TestSerializationServer />
         <TestClientInServer />
         <TestServerInServer />
+        <TestServerInClient />
       </body>
     </html>
   );

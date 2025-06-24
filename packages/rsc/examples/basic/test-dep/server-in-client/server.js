@@ -1,6 +1,12 @@
-import React from "react";
-import { TestClient } from "./client.js";
+"use server";
 
-export async function TestClientInServerDep() {
-  return React.createElement(TestClient);
+let counter = 0;
+
+export async function getCounter() {
+  return counter;
+}
+
+export async function changeCounter(change) {
+  counter += change;
+  return counter;
 }

@@ -129,6 +129,7 @@ export default { fetch: handler };
     exclude: [
       "@vitejs/test-dep-client-in-server/client",
       "@vitejs/test-dep-client-in-server2/client",
+      "@vitejs/test-dep-server-in-client/client",
     ],
   },
 }) as any;
