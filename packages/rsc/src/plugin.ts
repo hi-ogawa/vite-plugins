@@ -90,6 +90,8 @@ type RscPluginOptions = {
 
   rscCssTransform?: false | { filter?: (id: string) => boolean };
 
+  ignoredPackageWarnings?: (string | RegExp)[];
+
   /**
    * This option allows customizing how client build copies assets from server build.
    * By default, it copies only ".css" files for security reasons.
@@ -100,7 +102,7 @@ type RscPluginOptions = {
 };
 
 export default function vitePluginRsc(
-  rscPluginOptions: RscPluginOptions & UseClientPluginOptions = {},
+  rscPluginOptions: RscPluginOptions = {},
 ): Plugin[] {
   return [
     {
@@ -720,7 +722,7 @@ export default function vitePluginRsc(
     },
     ...vitePluginRscCore(),
     ...vitePluginUseClient(rscPluginOptions),
-    ...vitePluginUseServer(),
+    ...vitePluginUseServer(rscPluginOptions),
     ...vitePluginDefineEncryptionKey(rscPluginOptions),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ rscCssTransform: rscPluginOptions.rscCssTransform }),
@@ -762,12 +764,8 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
-type UseClientPluginOptions = {
-  ignoredClientInServerPackageWarning?: string[];
-};
-
 function vitePluginUseClient(
-  useClientPluginOptions: UseClientPluginOptions,
+  useClientPluginOptions: Pick<RscPluginOptions, "ignoredPackageWarnings">,
 ): Plugin[] {
   const packageSources = new Map<string, string>();
 
@@ -795,10 +793,12 @@ function vitePluginUseClient(
           // "?v=<hash>" from client optimizer in client reference can make a hashed
           // module stale, so we use another virtual module wrapper to delay such process.
           // TODO: suggest `optimizeDeps.exclude` and skip warning if that's already the case.
-          const ignored =
-            useClientPluginOptions.ignoredClientInServerPackageWarning?.some(
-              (pkg) => id.includes(`/node_modules/${pkg}/`),
-            );
+          const ignored = useClientPluginOptions.ignoredPackageWarnings?.some(
+            (pattern) =>
+              pattern instanceof RegExp
+                ? pattern.test(id)
+                : id.includes(`/node_modules/${pattern}/`),
+          );
           if (!ignored) {
             this.warn(
               `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
@@ -1008,7 +1008,9 @@ function vitePluginDefineEncryptionKey(
   ];
 }
 
-function vitePluginUseServer(): Plugin[] {
+function vitePluginUseServer(
+  useServerPluginOptions: Pick<RscPluginOptions, "ignoredPackageWarnings">,
+): Plugin[] {
   return [
     {
       name: "rsc:use-server",
@@ -1021,9 +1023,18 @@ function vitePluginUseServer(): Plugin[] {
           if (!normalizedId_) {
             if (id.includes("?v=")) {
               assert(this.environment.mode === "dev");
-              this.warn(
-                `[vite-rsc] detected an internal server function created by a package imported on ${this.environment.name} environment`,
-              );
+              const ignored =
+                useServerPluginOptions.ignoredPackageWarnings?.some(
+                  (pattern) =>
+                    pattern instanceof RegExp
+                      ? pattern.test(id)
+                      : id.includes(`/node_modules/${pattern}/`),
+                );
+              if (!ignored) {
+                this.warn(
+                  `[vite-rsc] detected an internal server function created by a package imported on ${this.environment.name} environment`,
+                );
+              }
               // module runner has additional resolution step and it's not strict about
               // module identity of `import(id)` like browser, so we simply strip it off.
               id = id.split("?v=")[0]!;

@@ -30,6 +30,7 @@ export default defineConfig({
       },
       // disable auto css injection to manually test `loadCss` feature.
       rscCssTransform: false,
+      ignoredPackageWarnings: [/@vitejs\/test-dep-/],
     }),
     // avoid ecosystem CI fail due to vite-plugin-inspect compatibility
     !process.env.ECOSYSTEM_CI && inspect(),
