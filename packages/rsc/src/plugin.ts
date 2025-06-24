@@ -995,17 +995,13 @@ function vitePluginDefineEncryptionKey(
           return { code };
         }
       },
-      writeBundle() {
+      generateBundle() {
         if (this.environment.name === "rsc" && emitEncryptionKey) {
-          // TODO: emitFile during generateBundle somehow duplciates file to dist/client?
-          // (which is extremetly bad for security)
-          fs.writeFileSync(
-            path.join(
-              this.environment.config.build.outDir,
-              "__vite_rsc_encryption_key.js",
-            ),
-            `export default ${defineEncryptionKey};`,
-          );
+          this.emitFile({
+            type: "asset",
+            fileName: "__vite_rsc_encryption_key.js",
+            source: `export default ${defineEncryptionKey};`,
+          });
         }
       },
     },
