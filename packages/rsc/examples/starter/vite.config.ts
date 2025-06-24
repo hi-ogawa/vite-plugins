@@ -21,6 +21,19 @@ export default defineConfig({
     // use https://github.com/antfu-collective/vite-plugin-inspect
     // to understand internal transforms required for RSC.
     // inspect(),
+
+    {
+      name: "repro",
+      generateBundle() {
+        if (this.environment.name === "rsc") {
+          this.emitFile({
+            type: "asset",
+            fileName: "__repro.txt",
+            source: "this is secret!",
+          });
+        }
+      },
+    },
   ],
 
   // specify entry point for each environment.
