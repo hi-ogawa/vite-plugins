@@ -73,6 +73,25 @@ export default defineConfig({
       },
     },
     {
+      name: "test-server-emitFile-security",
+      buildStart() {
+        if (this.environment.name === "rsc") {
+          this.emitFile({
+            type: "asset",
+            fileName: "__server_secret.txt",
+            source: "__server_secret",
+          });
+        }
+      },
+      writeBundle(_options, bundle) {
+        if (this.environment.name === "rsc") {
+          assert(Object.keys(bundle).includes("__server_secret.txt"));
+        } else {
+          assert(!Object.keys(bundle).includes("__server_secret.txt"));
+        }
+      },
+    },
+    {
       name: "cf-build",
       enforce: "post",
       apply: () => !!process.env.CF_BUILD,
