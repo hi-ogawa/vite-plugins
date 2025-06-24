@@ -630,3 +630,35 @@ test("client-in-server package", async ({ page }) => {
     "[test-provider-in-server-dep: true]",
   );
 });
+
+test("server-in-server package", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.getByTestId("server-in-server")).toHaveText(
+    "[server-in-server: 0]",
+  );
+  await page.getByTestId("server-in-server").click();
+  await expect(page.getByTestId("server-in-server")).toHaveText(
+    "[server-in-server: 1]",
+  );
+  await page.reload();
+  await expect(page.getByTestId("server-in-server")).toHaveText(
+    "[server-in-server: 1]",
+  );
+});
+
+test("server-in-client package", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.getByTestId("server-in-client")).toHaveText(
+    "[server-in-client: 0]",
+  );
+  await page.getByTestId("server-in-client").click();
+  await expect(page.getByTestId("server-in-client")).toHaveText(
+    "[server-in-client: 1]",
+  );
+  await page.reload();
+  await expect(page.getByTestId("server-in-client")).toHaveText(
+    "[server-in-client: 1]",
+  );
+});

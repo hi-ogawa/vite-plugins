@@ -18,6 +18,7 @@ export function TestClient() {
   return h(
     "button",
     {
+      "data-testid": "server-in-client",
       onClick: async () => {
         setCount(await changeCounter(1));
       },

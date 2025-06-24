@@ -8,6 +8,7 @@ export function ServerCounter() {
   return h(
     "form",
     {
+      "data-testid": "server-in-server",
       action: async () => {
         "use server";
         counter++;
