@@ -89,6 +89,12 @@ type RscPluginOptions = {
   loadModuleDevProxy?: boolean;
 
   rscCssTransform?: false | { filter?: (id: string) => boolean };
+
+  /**
+   * This option allows customizing how client build copies assets from server build.
+   * By default, it copies only ".css" files for security reasons.
+   */
+  copyServerAssetsToClient?: (fileName: string) => boolean;
 };
 
 export default function vitePluginRsc(
@@ -531,8 +537,11 @@ export default function vitePluginRsc(
         }
 
         if (this.environment.name === "client") {
+          const filterAssets =
+            rscPluginOptions.copyServerAssetsToClient ??
+            ((id) => id.endsWith(".css"));
           for (const asset of Object.values(rscBundle)) {
-            if (asset.type === "asset") {
+            if (asset.type === "asset" && filterAssets(asset.fileName)) {
               this.emitFile({
                 type: "asset",
                 fileName: asset.fileName,
