@@ -90,6 +90,8 @@ type RscPluginOptions = {
 
   rscCssTransform?: false | { filter?: (id: string) => boolean };
 
+  ignoredPackageWarnings?: (string | RegExp)[];
+
   /**
    * This option allows customizing how client build copies assets from server build.
    * By default, it copies only ".css" files for security reasons.
@@ -100,7 +102,7 @@ type RscPluginOptions = {
 };
 
 export default function vitePluginRsc(
-  rscPluginOptions: RscPluginOptions & UseClientPluginOptions = {},
+  rscPluginOptions: RscPluginOptions = {},
 ): Plugin[] {
   return [
     {
@@ -720,7 +722,7 @@ export default function vitePluginRsc(
     },
     ...vitePluginRscCore(),
     ...vitePluginUseClient(rscPluginOptions),
-    ...vitePluginUseServer(),
+    ...vitePluginUseServer(rscPluginOptions),
     ...vitePluginDefineEncryptionKey(rscPluginOptions),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ rscCssTransform: rscPluginOptions.rscCssTransform }),
@@ -762,12 +764,8 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
   return normalizeViteImportAnalysisUrl(environment, id);
 }
 
-type UseClientPluginOptions = {
-  ignoredClientInServerPackageWarning?: string[];
-};
-
 function vitePluginUseClient(
-  useClientPluginOptions: UseClientPluginOptions,
+  useClientPluginOptions: Pick<RscPluginOptions, "ignoredPackageWarnings">,
 ): Plugin[] {
   const packageSources = new Map<string, string>();
 
@@ -795,10 +793,12 @@ function vitePluginUseClient(
           // "?v=<hash>" from client optimizer in client reference can make a hashed
           // module stale, so we use another virtual module wrapper to delay such process.
           // TODO: suggest `optimizeDeps.exclude` and skip warning if that's already the case.
-          const ignored =
-            useClientPluginOptions.ignoredClientInServerPackageWarning?.some(
-              (pkg) => id.includes(`/node_modules/${pkg}/`),
-            );
+          const ignored = useClientPluginOptions.ignoredPackageWarnings?.some(
+            (pattern) =>
+              pattern instanceof RegExp
+                ? pattern.test(id)
+                : id.includes(`/node_modules/${pattern}/`),
+          );
           if (!ignored) {
             this.warn(
               `[vite-rsc] detected an internal client boundary created by a package imported on rsc environment`,
@@ -1008,14 +1008,42 @@ function vitePluginDefineEncryptionKey(
   ];
 }
 
-function vitePluginUseServer(): Plugin[] {
+function vitePluginUseServer(
+  useServerPluginOptions: Pick<RscPluginOptions, "ignoredPackageWarnings">,
+): Plugin[] {
   return [
     {
       name: "rsc:use-server",
       async transform(code, id) {
         if (!code.includes("use server")) return;
         const ast = await parseAstAsync(code);
-        const normalizedId = normalizeReferenceId(id, "rsc");
+
+        let normalizedId_: string | undefined;
+        const getNormalizedId = () => {
+          if (!normalizedId_) {
+            if (id.includes("?v=")) {
+              assert(this.environment.mode === "dev");
+              const ignored =
+                useServerPluginOptions.ignoredPackageWarnings?.some(
+                  (pattern) =>
+                    pattern instanceof RegExp
+                      ? pattern.test(id)
+                      : id.includes(`/node_modules/${pattern}/`),
+                );
+              if (!ignored) {
+                this.warn(
+                  `[vite-rsc] detected an internal server function created by a package imported on ${this.environment.name} environment`,
+                );
+              }
+              // module runner has additional resolution step and it's not strict about
+              // module identity of `import(id)` like browser, so we simply strip it off.
+              id = id.split("?v=")[0]!;
+            }
+            normalizedId_ = normalizeReferenceId(id, "rsc");
+          }
+          return normalizedId_;
+        };
+
         if (this.environment.name === "rsc") {
           const transformServerActionServer_ = withRollupError(
             this,
@@ -1023,14 +1051,14 @@ function vitePluginUseServer(): Plugin[] {
           );
           const { output } = transformServerActionServer_(code, ast, {
             runtime: (value, name) =>
-              `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(normalizedId)}, ${JSON.stringify(name)})`,
+              `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(getNormalizedId())}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
             encode: (value) => `$$ReactServer.encryptActionBoundArgs(${value})`,
             decode: (value) =>
               `await $$ReactServer.decryptActionBoundArgs(${value})`,
           });
           if (!output.hasChanged()) return;
-          serverReferences[normalizedId] = id;
+          serverReferences[getNormalizedId()] = id;
           const importSource = resolvePackage(`${PKG_NAME}/rsc`);
           output.prepend(`import * as $$ReactServer from "${importSource}";\n`);
           return {
@@ -1038,6 +1066,7 @@ function vitePluginUseServer(): Plugin[] {
             map: output.generateMap({ hires: "boundary" }),
           };
         } else {
+          if (!hasDirective(ast.body, "use server")) return;
           const transformDirectiveProxyExport_ = withRollupError(
             this,
             transformDirectiveProxyExport,
@@ -1046,7 +1075,7 @@ function vitePluginUseServer(): Plugin[] {
             code,
             runtime: (name) =>
               `$$ReactClient.createServerReference(` +
-              `${JSON.stringify(normalizedId + "#" + name)},` +
+              `${JSON.stringify(getNormalizedId() + "#" + name)},` +
               `$$ReactClient.callServer, ` +
               `undefined, ` +
               `$$ReactClient.findSourceMapURL, ` +
@@ -1056,7 +1085,7 @@ function vitePluginUseServer(): Plugin[] {
           });
           const output = result?.output;
           if (!output?.hasChanged()) return;
-          serverReferences[normalizedId] = id;
+          serverReferences[getNormalizedId()] = id;
           const name = this.environment.name === "client" ? "browser" : "ssr";
           const importSource = resolvePackage(`${PKG_NAME}/react/${name}`);
           output.prepend(`import * as $$ReactClient from "${importSource}";\n`);

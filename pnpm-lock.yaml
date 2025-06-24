@@ -590,6 +590,12 @@ importers:
       '@vitejs/test-dep-client-in-server2':
         specifier: file:./test-dep/client-in-server2
         version: file:packages/rsc/examples/basic/test-dep/client-in-server2(react@19.1.0)
+      '@vitejs/test-dep-server-in-client':
+        specifier: file:./test-dep/server-in-client
+        version: file:packages/rsc/examples/basic/test-dep/server-in-client(react@19.1.0)
+      '@vitejs/test-dep-server-in-server':
+        specifier: file:./test-dep/server-in-server
+        version: file:packages/rsc/examples/basic/test-dep/server-in-server(react@19.1.0)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.1.4
@@ -2310,6 +2316,16 @@ packages:
 
   '@vitejs/test-dep-client-in-server@file:packages/rsc/examples/basic/test-dep/client-in-server':
     resolution: {directory: packages/rsc/examples/basic/test-dep/client-in-server, type: directory}
+    peerDependencies:
+      react: ^19.1.0
+
+  '@vitejs/test-dep-server-in-client@file:packages/rsc/examples/basic/test-dep/server-in-client':
+    resolution: {directory: packages/rsc/examples/basic/test-dep/server-in-client, type: directory}
+    peerDependencies:
+      react: ^19.1.0
+
+  '@vitejs/test-dep-server-in-server@file:packages/rsc/examples/basic/test-dep/server-in-server':
+    resolution: {directory: packages/rsc/examples/basic/test-dep/server-in-server, type: directory}
     peerDependencies:
       react: ^19.1.0
 
@@ -5905,6 +5921,14 @@ snapshots:
       react: 19.1.0
 
   '@vitejs/test-dep-client-in-server@file:packages/rsc/examples/basic/test-dep/client-in-server(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+
+  '@vitejs/test-dep-server-in-client@file:packages/rsc/examples/basic/test-dep/server-in-client(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+
+  '@vitejs/test-dep-server-in-server@file:packages/rsc/examples/basic/test-dep/server-in-server(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
