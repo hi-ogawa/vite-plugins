@@ -28,6 +28,6 @@ export default defineConfig({
     inspect(),
   ],
   optimizeDeps: {
-    exclude: ["react-router", "react-router/internal/react-server-client"],
+    include: ["react-router", "react-router/internal/react-server-client"],
   },
 }) as any;
