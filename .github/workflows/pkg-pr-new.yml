@@ -35,9 +35,9 @@ jobs:
 
       # strip prepack to avoid duplicate builds
       - run: |
-          sed -i 's#"prepack"#"x-prepack"#' packages/rsc-stable/package.json
-          sed -i 's#"prepack"#"x-prepack"#' packages/rsc-canary/package.json
-          sed -i 's#"prepack"#"x-prepack"#' packages/rsc-experimental/package.json
+          for pkg in packages/*/package.json; do
+            sed -i 's#"prepack"#"x-prepack"#' "$pkg"
+          done
 
       - run: |
           pnpx pkg-pr-new publish --comment=off \
