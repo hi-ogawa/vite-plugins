@@ -95,6 +95,8 @@ type RscPluginOptions = {
    * By default, it copies only ".css" files for security reasons.
    */
   copyServerAssetsToClient?: (fileName: string) => boolean;
+
+  defineEncryptionKey?: string;
 };
 
 export default function vitePluginRsc(
@@ -695,7 +697,7 @@ export default function vitePluginRsc(
     {
       // make `AsyncLocalStorage` available globally for React request context on edge build (e.g. React.cache, ssr preload)
       // https://github.com/facebook/react/blob/f14d7f0d2597ea25da12bcf97772e8803f2a394c/packages/react-server/src/forks/ReactFlightServerConfig.dom-edge.js#L16-L19
-      name: "inject-async-local-storage",
+      name: "rsc:inject-async-local-storage",
       async configureServer() {
         const __viteRscAyncHooks = await import("node:async_hooks");
         (globalThis as any).AsyncLocalStorage =
@@ -719,6 +721,7 @@ export default function vitePluginRsc(
     ...vitePluginRscCore(),
     ...vitePluginUseClient(rscPluginOptions),
     ...vitePluginUseServer(),
+    ...vitePluginDefineEncryptionKey(rscPluginOptions),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ rscCssTransform: rscPluginOptions.rscCssTransform }),
   ];
@@ -943,23 +946,72 @@ function vitePluginUseClient(
   ];
 }
 
+function vitePluginDefineEncryptionKey(
+  useServerPluginOptions: Pick<RscPluginOptions, "defineEncryptionKey">,
+): Plugin[] {
+  let defineEncryptionKey: string;
+  let emitEncryptionKey = false;
+
+  return [
+    {
+      name: "rsc:encryption-key",
+      async configEnvironment(name, _config, env) {
+        if (name === "rsc" && !env.isPreview) {
+          defineEncryptionKey =
+            useServerPluginOptions.defineEncryptionKey ??
+            JSON.stringify(toBase64(await generateEncryptionKey()));
+        }
+      },
+      resolveId(source) {
+        if (source === "virtual:vite-rsc/encryption-key") {
+          // encryption logic can be tree-shaken if action bind is not used.
+          return { id: "\0" + source, moduleSideEffects: false };
+        }
+      },
+      load(id) {
+        if (id === "\0virtual:vite-rsc/encryption-key") {
+          if (this.environment.mode === "build") {
+            // during build, load key from an external file to make chunks stable.
+            return `export default () => __vite_rsc_define_encryption_key`;
+          }
+          return `export default () => (${defineEncryptionKey})`;
+        }
+      },
+      renderChunk(code, chunk) {
+        if (code.includes("__vite_rsc_define_encryption_key")) {
+          assert.equal(this.environment.name, "rsc");
+          emitEncryptionKey = true;
+          const normalizedPath = normalizeRelativePath(
+            path.relative(
+              path.join(chunk.fileName, ".."),
+              "__vite_rsc_encryption_key.js",
+            ),
+          );
+          const replacement = `import(${JSON.stringify(normalizedPath)}).then(__m => __m.default)`;
+          code = code.replaceAll(
+            "__vite_rsc_define_encryption_key",
+            () => replacement,
+          );
+          return { code };
+        }
+      },
+      generateBundle() {
+        if (this.environment.name === "rsc" && emitEncryptionKey) {
+          this.emitFile({
+            type: "asset",
+            fileName: "__vite_rsc_encryption_key.js",
+            source: `export default ${defineEncryptionKey};`,
+          });
+        }
+      },
+    },
+  ];
+}
+
 function vitePluginUseServer(): Plugin[] {
   return [
     {
       name: "rsc:use-server",
-      async configEnvironment(name, config, env) {
-        if (name === "rsc" && !env.isPreview) {
-          // define default encryption key at build time.
-          // users can override e.g. by { define: { __VITE_RSC_ENCRYPTION_KEY__: 'process.env.MY_KEY' } }
-          config.define ??= {};
-          if (!config.define["__VITE_RSC_ENCRYPTION_KEY__"]) {
-            const encryptionKey = await generateEncryptionKey();
-            config.define["__VITE_RSC_ENCRYPTION_KEY__"] = JSON.stringify(
-              toBase64(encryptionKey),
-            );
-          }
-        }
-      },
       async transform(code, id) {
         if (!code.includes("use server")) return;
         const ast = await parseAstAsync(code);
