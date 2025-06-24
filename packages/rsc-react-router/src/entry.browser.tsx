@@ -7,10 +7,10 @@ import * as React from "react";
 import { hydrateRoot } from "react-dom/client";
 import {
   unstable_RSCHydratedRouter as RSCHydratedRouter,
+  type unstable_ServerPayload as ServerPayload,
   unstable_createCallServer as createCallServer,
   unstable_getServerStream as getServerStream,
 } from "react-router";
-import type { unstable_ServerPayload as ServerPayload } from "react-router/rsc";
 
 setServerCallback(
   createCallServer({
