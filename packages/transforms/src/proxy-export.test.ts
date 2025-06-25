@@ -8,7 +8,12 @@ async function testTransform(input: string, options?: { keep?: boolean }) {
   const ast = await parseAstAsync(input);
   const result = transformProxyExport(ast, {
     code: input,
-    runtime: (name) => `$$proxy("<id>", ${JSON.stringify(name)})`,
+    runtime: (name, meta) => {
+      if (meta?.value) {
+        return `$$proxy(${meta.value}, "<id>", ${JSON.stringify(name)})`;
+      }
+      return `$$proxy("<id>", ${JSON.stringify(name)})`;
+    },
     ...options,
   });
   if (process.env["DEBUG_SOURCEMAP"]) {
@@ -227,11 +232,9 @@ export const MyClientComp = () => { throw new Error('...') }
       import { atom } from 'jotai/vanilla';
 
       const local1 = 1;
-      export const countAtom = /* #__PURE__ */ $$proxy("<id>", "countAtom");
+      export const countAtom = /* #__PURE__ */ $$proxy(todo, "<id>", "countAtom");
 
-
-      export const MyClientComp = /* #__PURE__ */ $$proxy("<id>", "MyClientComp");
-
+      export const MyClientComp = /* #__PURE__ */ $$proxy(todo, "<id>", "MyClientComp");
       ",
       }
     `);

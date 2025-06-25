@@ -6,9 +6,13 @@ import { hasDirective } from "./utils";
 
 export type TransformProxyExportOptions = {
   code?: string;
-  runtime: (name: string, value?: string) => string;
+  runtime: (name: string, meta?: { value: string }) => string;
   ignoreExportAllDeclaration?: boolean;
   rejectNonAsyncFunction?: boolean;
+  /**
+   * escape hatch for Waku's `allowServer`
+   * @default false
+   */
   keep?: boolean;
 };
 
@@ -41,6 +45,14 @@ export function transformProxyExport(
 
   function createExport(node: Node, names: string[]) {
     exportNames.push(...names);
+    if (options.keep) {
+      const name = names[0]!;
+      node.type === "ExportDefaultDeclaration";
+      const value = "todo";
+      const newCode = `export const ${name} = /* #__PURE__ */ ${options.runtime(name, { value })};`;
+      output.update(node.start, node.end, newCode);
+      return;
+    }
     const newCode = names
       .map(
         (name) =>
