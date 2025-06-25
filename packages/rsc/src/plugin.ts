@@ -841,6 +841,7 @@ function vitePluginUseClient(
         );
         const result = transformDirectiveProxyExport_(ast, {
           directive: "use client",
+          code,
           keep: !!useClientPluginOptions.keepUseCientProxy,
           runtime: (name, meta) => {
             let proxyValue =
