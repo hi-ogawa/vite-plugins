@@ -846,7 +846,7 @@ function vitePluginUseClient(
             let proxyValue =
               `() => { throw new Error("Unexpectedly client reference export '" + ` +
               JSON.stringify(name) +
-              `"' is called on server") }`;
+              ` + "' is called on server") }`;
             if (
               meta?.value &&
               useClientPluginOptions.keepUseCientProxy?.(meta.value)
