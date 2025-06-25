@@ -4,16 +4,19 @@ import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 import { hasDirective } from "./utils";
 
+export type TransformProxyExportOptions = {
+  code?: string;
+  runtime: (name: string, value?: string) => string;
+  ignoreExportAllDeclaration?: boolean;
+  rejectNonAsyncFunction?: boolean;
+  keep?: boolean;
+};
+
 export function transformDirectiveProxyExport(
   ast: Program,
   options: {
     directive: string;
-    code?: string;
-    runtime: (name: string) => string;
-    ignoreExportAllDeclaration?: boolean;
-    rejectNonAsyncFunction?: boolean;
-    keep?: boolean;
-  },
+  } & TransformProxyExportOptions,
 ):
   | {
       exportNames: string[];
@@ -28,13 +31,7 @@ export function transformDirectiveProxyExport(
 
 export function transformProxyExport(
   ast: Program,
-  options: {
-    code?: string;
-    runtime: (name: string, value?: string) => string;
-    ignoreExportAllDeclaration?: boolean;
-    rejectNonAsyncFunction?: boolean;
-    keep?: boolean;
-  },
+  options: TransformProxyExportOptions,
 ): {
   exportNames: string[];
   output: MagicString;
