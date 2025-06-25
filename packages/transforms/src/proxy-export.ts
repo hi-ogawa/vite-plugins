@@ -96,8 +96,10 @@ export function transformProxyExport(
               const decl = node.declaration.declarations[0]!;
               if (decl.id.type === "Identifier" && decl.init) {
                 const name = decl.id.name;
-                let value = options.code.slice(decl.init.start, decl.init.end);
-                value = `(${value})`;
+                const value = options.code.slice(
+                  decl.init.start,
+                  decl.init.end,
+                );
                 const newCode = `export const ${name} = /* #__PURE__ */ ${options.runtime(name, { value })};`;
                 output.update(node.start, node.end, newCode);
                 continue;

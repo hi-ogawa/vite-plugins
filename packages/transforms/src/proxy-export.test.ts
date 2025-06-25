@@ -229,9 +229,9 @@ export const MyClientComp = () => { throw new Error('...') }
       import { atom } from 'jotai/vanilla';
 
       const local1 = 1;
-      export const countAtom = /* #__PURE__ */ $$proxy((atom(local1)), "<id>", "countAtom");
+      export const countAtom = /* #__PURE__ */ $$proxy(atom(local1), "<id>", "countAtom");
 
-      export const MyClientComp = /* #__PURE__ */ $$proxy((() => { throw new Error('...') }), "<id>", "MyClientComp");
+      export const MyClientComp = /* #__PURE__ */ $$proxy(() => { throw new Error('...') }, "<id>", "MyClientComp");
       ",
       }
     `);

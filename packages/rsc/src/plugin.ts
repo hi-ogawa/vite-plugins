@@ -99,6 +99,9 @@ type RscPluginOptions = {
   copyServerAssetsToClient?: (fileName: string) => boolean;
 
   defineEncryptionKey?: string;
+
+  /** Escape hatch for Waku's `allowServer` */
+  keepUseCientProxy?: boolean;
 };
 
 export default function vitePluginRsc(
@@ -765,7 +768,10 @@ function normalizeReferenceId(id: string, name: "client" | "rsc") {
 }
 
 function vitePluginUseClient(
-  useClientPluginOptions: Pick<RscPluginOptions, "ignoredPackageWarnings">,
+  useClientPluginOptions: Pick<
+    RscPluginOptions,
+    "ignoredPackageWarnings" | "keepUseCientProxy"
+  >,
 ): Plugin[] {
   const packageSources = new Map<string, string>();
 
@@ -835,11 +841,22 @@ function vitePluginUseClient(
         );
         const result = transformDirectiveProxyExport_(ast, {
           directive: "use client",
-          runtime: (name) =>
-            `$$ReactServer.registerClientReference(` +
-            `() => { throw new Error("Unexpectedly client reference export '" + ${JSON.stringify(name)} + "' is called on server") },` +
-            `${JSON.stringify(referenceKey)},` +
-            `${JSON.stringify(name)})`,
+          keep: useClientPluginOptions.keepUseCientProxy,
+          runtime: (name, meta) => {
+            let proxyValue =
+              `() => { throw new Error("Unexpectedly client reference export '" + ` +
+              JSON.stringify(name) +
+              `"' is called on server") }`;
+            if (meta?.value) {
+              proxyValue = `(${meta.value})`;
+            }
+            return (
+              `$$ReactServer.registerClientReference(` +
+              `  ${proxyValue},` +
+              `  ${JSON.stringify(referenceKey)},` +
+              `  ${JSON.stringify(name)})`
+            );
+          },
         });
         if (!result) return;
         const { output, exportNames } = result;
