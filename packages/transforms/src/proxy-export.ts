@@ -5,6 +5,7 @@ import { extract_names } from "periscopic";
 import { hasDirective } from "./utils";
 
 export type TransformProxyExportOptions = {
+  /** Required for source map and `keep` options */
   code?: string;
   runtime: (name: string, meta?: { value: string }) => string;
   ignoreExportAllDeclaration?: boolean;
@@ -40,6 +41,9 @@ export function transformProxyExport(
   exportNames: string[];
   output: MagicString;
 } {
+  if (options.keep && typeof options.code !== "string") {
+    throw new Error("`keep` option requires `code`");
+  }
   const output = new MagicString(options.code ?? " ".repeat(ast.end));
   const exportNames: string[] = [];
 
