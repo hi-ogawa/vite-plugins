@@ -101,7 +101,7 @@ type RscPluginOptions = {
   defineEncryptionKey?: string;
 
   /** Escape hatch for Waku's `allowServer` */
-  keepUseCientProxy?: (value: string) => boolean;
+  keepUseCientProxy?: boolean;
 };
 
 export default function vitePluginRsc(
@@ -848,10 +848,7 @@ function vitePluginUseClient(
               `() => { throw new Error("Unexpectedly client reference export '" + ` +
               JSON.stringify(name) +
               ` + "' is called on server") }`;
-            if (
-              meta?.value &&
-              useClientPluginOptions.keepUseCientProxy?.(meta.value)
-            ) {
+            if (meta?.value) {
               proxyValue = `(${meta.value})`;
             }
             return (
