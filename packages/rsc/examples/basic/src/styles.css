@@ -1,6 +1,4 @@
-/* css imported by rsc environment */
-
-@import "tailwindcss";
+@import "tailwindcss" source("./");
 
 button {
   @apply bg-gray-100 mx-1 px-2 border hover:bg-gray-200 active:bg-gray-300;
