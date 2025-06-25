@@ -224,7 +224,10 @@ export const MyClientComp = () => { throw new Error('...') }
     `);
     expect(await testTransform(input, { keep: true })).toMatchInlineSnapshot(`
       {
-        "exportNames": [],
+        "exportNames": [
+          "countAtom",
+          "MyClientComp",
+        ],
         "output": ""use client"
       import { atom } from 'jotai/vanilla';
 
