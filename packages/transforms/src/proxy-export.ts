@@ -32,6 +32,7 @@ export function transformProxyExport(
     runtime: (name: string) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
+    noRemove?: boolean;
   },
 ): {
   exportNames: string[];
