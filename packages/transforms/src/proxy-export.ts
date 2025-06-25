@@ -4,15 +4,24 @@ import MagicString from "magic-string";
 import { extract_names } from "periscopic";
 import { hasDirective } from "./utils";
 
+export type TransformProxyExportOptions = {
+  /** Required for source map and `keep` options */
+  code?: string;
+  runtime: (name: string, meta?: { value: string }) => string;
+  ignoreExportAllDeclaration?: boolean;
+  rejectNonAsyncFunction?: boolean;
+  /**
+   * escape hatch for Waku's `allowServer`
+   * @default false
+   */
+  keep?: boolean;
+};
+
 export function transformDirectiveProxyExport(
   ast: Program,
   options: {
     directive: string;
-    code?: string;
-    runtime: (name: string) => string;
-    ignoreExportAllDeclaration?: boolean;
-    rejectNonAsyncFunction?: boolean;
-  },
+  } & TransformProxyExportOptions,
 ):
   | {
       exportNames: string[];
@@ -27,16 +36,14 @@ export function transformDirectiveProxyExport(
 
 export function transformProxyExport(
   ast: Program,
-  options: {
-    code?: string;
-    runtime: (name: string) => string;
-    ignoreExportAllDeclaration?: boolean;
-    rejectNonAsyncFunction?: boolean;
-  },
+  options: TransformProxyExportOptions,
 ): {
   exportNames: string[];
   output: MagicString;
 } {
+  if (options.keep && typeof options.code !== "string") {
+    throw new Error("`keep` option requires `code`");
+  }
   const output = new MagicString(options.code ?? " ".repeat(ast.end));
   const exportNames: string[] = [];
 
@@ -88,6 +95,21 @@ export function transformProxyExport(
                 decl.init.async,
             ),
           );
+          if (options.keep && options.code) {
+            if (node.declaration.declarations.length === 1) {
+              const decl = node.declaration.declarations[0]!;
+              if (decl.id.type === "Identifier" && decl.init) {
+                const name = decl.id.name;
+                const value = options.code.slice(
+                  decl.init.start,
+                  decl.init.end,
+                );
+                const newCode = `export const ${name} = /* #__PURE__ */ ${options.runtime(name, { value })};`;
+                output.update(node.start, node.end, newCode);
+                continue;
+              }
+            }
+          }
           const names = node.declaration.declarations.flatMap((decl) =>
             extract_names(decl.id),
           );
@@ -135,6 +157,8 @@ export function transformProxyExport(
       createExport(node, ["default"]);
       continue;
     }
+
+    if (options.keep) continue;
 
     // remove all other nodes
     output.remove(node.start, node.end);
