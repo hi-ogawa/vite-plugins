@@ -4,11 +4,12 @@ import { transformProxyExport } from "./proxy-export";
 import { debugSourceMap } from "./test-utils";
 import { transformWrapExport } from "./wrap-export";
 
-async function testTransform(input: string) {
+async function testTransform(input: string, options?: { keep?: boolean }) {
   const ast = await parseAstAsync(input);
   const result = transformProxyExport(ast, {
     code: input,
     runtime: (name) => `$$proxy("<id>", ${JSON.stringify(name)})`,
+    ...options,
   });
   if (process.env["DEBUG_SOURCEMAP"]) {
     await debugSourceMap(result.output);
@@ -183,6 +184,54 @@ export { x as y }
           "y",
         ],
         "output": "export const y = /* #__PURE__ */ $$proxy("<id>", "y");
+      ",
+      }
+    `);
+  });
+
+  test("keep", async () => {
+    const input = `\
+"use client"
+import { atom } from 'jotai/vanilla';
+
+const local1 = 1;
+export const countAtom = atom(local1);
+
+export const MyClientComp = () => { throw new Error('...') }
+`;
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      {
+        "exportNames": [
+          "countAtom",
+          "MyClientComp",
+        ],
+        "output": "
+
+
+
+      export const countAtom = /* #__PURE__ */ $$proxy("<id>", "countAtom");
+
+
+      export const MyClientComp = /* #__PURE__ */ $$proxy("<id>", "MyClientComp");
+
+      ",
+      }
+    `);
+    expect(await testTransform(input, { keep: true })).toMatchInlineSnapshot(`
+      {
+        "exportNames": [
+          "countAtom",
+          "MyClientComp",
+        ],
+        "output": ""use client"
+      import { atom } from 'jotai/vanilla';
+
+      const local1 = 1;
+      export const countAtom = /* #__PURE__ */ $$proxy("<id>", "countAtom");
+
+
+      export const MyClientComp = /* #__PURE__ */ $$proxy("<id>", "MyClientComp");
+
       ",
       }
     `);

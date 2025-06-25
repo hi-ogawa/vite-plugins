@@ -12,6 +12,7 @@ export function transformDirectiveProxyExport(
     runtime: (name: string) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
+    keep?: boolean;
   },
 ):
   | {
@@ -29,10 +30,10 @@ export function transformProxyExport(
   ast: Program,
   options: {
     code?: string;
-    runtime: (name: string) => string;
+    runtime: (name: string, value?: string) => string;
     ignoreExportAllDeclaration?: boolean;
     rejectNonAsyncFunction?: boolean;
-    noRemove?: boolean;
+    keep?: boolean;
   },
 ): {
   exportNames: string[];
@@ -136,6 +137,8 @@ export function transformProxyExport(
       createExport(node, ["default"]);
       continue;
     }
+
+    if (options.keep) continue;
 
     // remove all other nodes
     output.remove(node.start, node.end);
