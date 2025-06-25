@@ -45,14 +45,6 @@ export function transformProxyExport(
 
   function createExport(node: Node, names: string[]) {
     exportNames.push(...names);
-    if (options.keep) {
-      const name = names[0]!;
-      node.type === "ExportDefaultDeclaration";
-      const value = "todo";
-      const newCode = `export const ${name} = /* #__PURE__ */ ${options.runtime(name, { value })};`;
-      output.update(node.start, node.end, newCode);
-      return;
-    }
     const newCode = names
       .map(
         (name) =>
@@ -99,6 +91,19 @@ export function transformProxyExport(
                 decl.init.async,
             ),
           );
+          if (options.keep && options.code) {
+            if (node.declaration.declarations.length === 1) {
+              const decl = node.declaration.declarations[0]!;
+              if (decl.id.type === "Identifier" && decl.init) {
+                const name = decl.id.name;
+                let value = options.code.slice(decl.init.start, decl.init.end);
+                value = `(${value})`;
+                const newCode = `export const ${name} = /* #__PURE__ */ ${options.runtime(name, { value })};`;
+                output.update(node.start, node.end, newCode);
+                continue;
+              }
+            }
+          }
           const names = node.declaration.declarations.flatMap((decl) =>
             extract_names(decl.id),
           );
