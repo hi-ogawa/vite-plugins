@@ -745,24 +745,12 @@ function scanBuildStripPlugin(): Plugin {
     enforce: "post",
     transform(code, _id, _options) {
       if (!isScanBuild) return;
-
-      // During server scan, we strip every modules to only keep imports/exports
+      // During server scan, we strip all code but imports to only discover client/server references.
       //   import "x"
       //   import "y"
-      //   export const f = 0;
-      //   export const g = 0;
-
-      // emptify all exports while keeping import statements as side effects
-      const [imports, exports] = esModuleLexer.parse(code);
-      const output = [
-        imports.map((e) => e.n && `import ${JSON.stringify(e.n)};\n`),
-        exports.map((e) =>
-          e.n === "default"
-            ? `export default 0;\n`
-            : `export const ${e.n} = 0;\n`,
-        ),
-      ]
-        .flat()
+      const [imports] = esModuleLexer.parse(code);
+      const output = imports
+        .map((e) => e.n && `import ${JSON.stringify(e.n)};\n`)
         .filter(Boolean)
         .join("");
       return { code: output, map: { mappings: "" } };
