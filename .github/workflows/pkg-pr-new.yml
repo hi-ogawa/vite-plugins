@@ -33,6 +33,12 @@ jobs:
           cp -rf packages/rsc packages/rsc-experimental
           sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-experimental"#' packages/rsc-experimental/package.json
 
+      # strip prepack to avoid duplicate builds
+      - run: |
+          for pkg in packages/*/package.json; do
+            sed -i 's#"prepack"#"x-prepack"#' "$pkg"
+          done
+
       - run: |
           pnpx pkg-pr-new publish --comment=off \
             packages/react-server \

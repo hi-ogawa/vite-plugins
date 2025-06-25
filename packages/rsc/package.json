@@ -17,7 +17,8 @@
   "scripts": {
     "test-package": "bash scripts/test-package.sh",
     "dev": "tsdown --sourcemap --watch src",
-    "build": "tsdown"
+    "build": "tsdown",
+    "prepack": "tsdown --clean"
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
