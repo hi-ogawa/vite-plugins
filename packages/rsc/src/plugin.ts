@@ -746,8 +746,6 @@ function scanBuildStripPlugin(): Plugin {
     transform(code, _id, _options) {
       if (!isScanBuild) return;
       // During server scan, we strip all code but imports to only discover client/server references.
-      //   import "x"
-      //   import "y"
       const [imports] = esModuleLexer.parse(code);
       const output = imports
         .map((e) => e.n && `import ${JSON.stringify(e.n)};\n`)
