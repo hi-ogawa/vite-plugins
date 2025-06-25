@@ -39,6 +39,7 @@ let server: ViteDevServer;
 let config: ResolvedConfig;
 let rscBundle: Rollup.OutputBundle;
 let buildAssetsManifest: AssetsManifest | undefined;
+let isScanBuild = false;
 const BUILD_ASSETS_MANIFEST_NAME = "__vite_rsc_assets_manifest.js";
 
 type ClientReferenceMeta = {
@@ -111,6 +112,8 @@ export default function vitePluginRsc(
     {
       name: "rsc",
       async config(config, env) {
+        await esModuleLexer.init;
+
         // crawl packages with "react" in "peerDependencies" to bundle react deps on server
         // see https://github.com/svitejs/vitefu/blob/d8d82fa121e3b2215ba437107093c77bde51b63b/src/index.js#L95-L101
         const result = await crawlFrameworkPkgs({
@@ -209,10 +212,12 @@ export default function vitePluginRsc(
             sharedPlugins: true,
             sharedConfigBuild: true,
             async buildApp(builder) {
+              isScanBuild = true;
               builder.environments.rsc!.config.build.write = false;
               builder.environments.ssr!.config.build.write = false;
               await builder.build(builder.environments.rsc!);
               await builder.build(builder.environments.ssr!);
+              isScanBuild = false;
               builder.environments.rsc!.config.build.write = true;
               builder.environments.ssr!.config.build.write = true;
               await builder.build(builder.environments.rsc!);
@@ -729,7 +734,26 @@ export default function vitePluginRsc(
     ...vitePluginDefineEncryptionKey(rscPluginOptions),
     ...vitePluginFindSourceMapURL(),
     ...vitePluginRscCss({ rscCssTransform: rscPluginOptions.rscCssTransform }),
+    scanBuildStripPlugin(),
   ];
+}
+
+function scanBuildStripPlugin(): Plugin {
+  return {
+    name: "rsc:scan-strip",
+    apply: "build",
+    enforce: "post",
+    transform(code, _id, _options) {
+      if (!isScanBuild) return;
+      // During server scan, we strip all code but imports to only discover client/server references.
+      const [imports] = esModuleLexer.parse(code);
+      const output = imports
+        .map((e) => e.n && `import ${JSON.stringify(e.n)};\n`)
+        .filter(Boolean)
+        .join("");
+      return { code: output, map: { mappings: "" } };
+    },
+  };
 }
 
 function normalizeRelativePath(s: string) {
@@ -1434,7 +1458,6 @@ export function vitePluginRscCss(
       name: "rsc:rsc-css-export-transform",
       async transform(code, id) {
         if (this.environment.name !== "rsc") return;
-        await esModuleLexer.init;
         const filter = getRscCssTransformFilter({ id, code });
         if (!filter) return;
         const ast = await parseAstAsync(code);
