@@ -106,6 +106,7 @@ export function transformProxyExport(
                 );
                 const newCode = `export const ${name} = /* #__PURE__ */ ${options.runtime(name, { value })};`;
                 output.update(node.start, node.end, newCode);
+                exportNames.push(name);
                 continue;
               }
             }
