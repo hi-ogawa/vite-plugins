@@ -19,7 +19,7 @@ initialize();
 function initialize(): void {
   setRequireModule({
     load: async (id) => {
-      if (import.meta.env.DEV) {
+      if (!import.meta.viteRsc.isBuild) {
         return import(/* @vite-ignore */ id);
       } else {
         const import_ = serverReferences[id];
