@@ -2,10 +2,13 @@
 
 import React from "react";
 
-export function TestActionStateClient({
-  action,
-}: { action: () => Promise<React.ReactNode> }) {
-  const [state, formAction, isPending] = React.useActionState(action, null);
+export function TestActionStateClient(props: {
+  action: () => Promise<React.ReactNode>;
+}) {
+  const [state, formAction, isPending] = React.useActionState(
+    props.action,
+    null,
+  );
 
   return (
     <form action={formAction}>
