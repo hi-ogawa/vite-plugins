@@ -101,6 +101,12 @@ type RscPluginOptions = {
 
   defineEncryptionKey?: string;
 
+  /**
+   * Allows enabling action closure encryption for debugging purpose.
+   * @default true
+   */
+  enableActionEncryption?: boolean;
+
   /** Escape hatch for Waku's `allowServer` */
   keepUseCientProxy?: boolean;
 };
@@ -1056,7 +1062,10 @@ function vitePluginDefineEncryptionKey(
 }
 
 function vitePluginUseServer(
-  useServerPluginOptions: Pick<RscPluginOptions, "ignoredPackageWarnings">,
+  useServerPluginOptions: Pick<
+    RscPluginOptions,
+    "ignoredPackageWarnings" | "enableActionEncryption"
+  >,
 ): Plugin[] {
   return [
     {
@@ -1100,9 +1109,13 @@ function vitePluginUseServer(
             runtime: (value, name) =>
               `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(getNormalizedId())}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
-            encode: (value) => `$$ReactServer.encryptActionBoundArgs(${value})`,
-            decode: (value) =>
-              `await $$ReactServer.decryptActionBoundArgs(${value})`,
+            encode: useServerPluginOptions.enableActionEncryption
+              ? (value) => `$$ReactServer.encryptActionBoundArgs(${value})`
+              : undefined,
+            decode: useServerPluginOptions.enableActionEncryption
+              ? (value) =>
+                  `await $$ReactServer.decryptActionBoundArgs(${value})`
+              : undefined,
           });
           if (!output.hasChanged()) return;
           serverReferences[getNormalizedId()] = id;
