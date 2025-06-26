@@ -1105,14 +1105,16 @@ function vitePluginUseServer(
             this,
             transformServerActionServer,
           );
+          const enableEncryption =
+            useServerPluginOptions.enableActionEncryption ?? true;
           const { output } = transformServerActionServer_(code, ast, {
             runtime: (value, name) =>
               `$$ReactServer.registerServerReference(${value}, ${JSON.stringify(getNormalizedId())}, ${JSON.stringify(name)})`,
             rejectNonAsyncFunction: true,
-            encode: useServerPluginOptions.enableActionEncryption
+            encode: enableEncryption
               ? (value) => `$$ReactServer.encryptActionBoundArgs(${value})`
               : undefined,
-            decode: useServerPluginOptions.enableActionEncryption
+            decode: enableEncryption
               ? (value) =>
                   `await $$ReactServer.decryptActionBoundArgs(${value})`
               : undefined,
