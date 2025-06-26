@@ -138,6 +138,11 @@ export default function vitePluginRsc(
 
         return {
           appType: "custom",
+          define: {
+            "import.meta.viteRsc.isBuild": JSON.stringify(
+              env.command === "build",
+            ),
+          },
           environments: {
             client: {
               build: {
