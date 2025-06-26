@@ -3,7 +3,7 @@
 import React from "react";
 
 export function TestActionStateClient(props: {
-  action: () => Promise<React.ReactNode>;
+  action: (prev: React.ReactNode) => Promise<React.ReactNode>;
 }) {
   const [state, formAction, isPending] = React.useActionState(
     props.action,
@@ -11,11 +11,9 @@ export function TestActionStateClient(props: {
   );
 
   return (
-    <form action={formAction}>
-      <button type="submit">
-        Log on server{isPending ? " (pending)" : null}
-      </button>
-      {state}
+    <form data-testid="use-action-state-react-node" action={formAction}>
+      <button>test-useActionState-with-ReactNode</button>
+      {isPending ? "pending..." : state}
     </form>
   );
 }
