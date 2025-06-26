@@ -25,6 +25,7 @@ import {
   TestServerActionBindReset,
   TestServerActionBindSimple,
 } from "./action-bind/server";
+import { TestActionStateServer } from "./action-state/server";
 import { TestClientInServer } from "./deps/client-in-server/server";
 import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
@@ -87,6 +88,7 @@ export function Root(props: { url: URL }) {
         <TestClientInServer />
         <TestServerInServer />
         <TestServerInClient />
+        <TestActionStateServer />
       </body>
     </html>
   );
