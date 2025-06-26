@@ -8,7 +8,7 @@ initialize();
 function initialize(): void {
   setRequireModule({
     load: async (id) => {
-      if (import.meta.env.DEV) {
+      if (!import.meta.env.__vite_rsc_build__) {
         // @ts-ignore
         return __vite_rsc_raw_import__(import.meta.env.BASE_URL + id.slice(1));
       } else {

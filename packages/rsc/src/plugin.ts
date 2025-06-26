@@ -138,6 +138,11 @@ export default function vitePluginRsc(
 
         return {
           appType: "custom",
+          define: {
+            "import.meta.env.__vite_rsc_build__": JSON.stringify(
+              env.command === "build",
+            ),
+          },
           environments: {
             client: {
               build: {
@@ -1120,7 +1125,9 @@ function vitePluginUseServer(
               `${JSON.stringify(getNormalizedId() + "#" + name)},` +
               `$$ReactClient.callServer, ` +
               `undefined, ` +
-              `$$ReactClient.findSourceMapURL, ` +
+              (this.environment.mode === "dev"
+                ? `$$ReactClient.findSourceMapURL,`
+                : "undefined,") +
               `${JSON.stringify(name)})`,
             directive: "use server",
             rejectNonAsyncFunction: true,

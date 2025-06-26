@@ -10,6 +10,10 @@ declare global {
       loadBootstrapScriptContent: (entryName: string) => Promise<string>;
     };
   }
+
+  interface ImportMetaEnv {
+    readonly __vite_rsc_build__: boolean;
+  }
 }
 
 export {};
