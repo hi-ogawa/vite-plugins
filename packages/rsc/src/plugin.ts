@@ -1125,7 +1125,9 @@ function vitePluginUseServer(
               `${JSON.stringify(getNormalizedId() + "#" + name)},` +
               `$$ReactClient.callServer, ` +
               `undefined, ` +
-              `$$ReactClient.findSourceMapURL, ` +
+              (this.environment.mode === "dev"
+                ? `$$ReactClient.findSourceMapURL,`
+                : "undefined,") +
               `${JSON.stringify(name)})`,
             directive: "use server",
             rejectNonAsyncFunction: true,

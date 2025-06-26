@@ -56,7 +56,6 @@ export function findSourceMapURL(
   filename: string,
   environmentName: string,
 ): string | null {
-  if (import.meta.viteRsc.isBuild) return null;
   // TODO: respect config.server.origin and config.base?
   const url = new URL("/__vite_rsc_findSourceMapURL", window.location.origin);
   url.searchParams.set("filename", filename);
