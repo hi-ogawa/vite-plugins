@@ -3,9 +3,9 @@
 import React from "react";
 
 export function TestActionStateClient({
-  fn,
-}: { fn: () => Promise<React.ReactNode> }) {
-  const [state, formAction, isPending] = React.useActionState(fn, null);
+  action,
+}: { action: () => Promise<React.ReactNode> }) {
+  const [state, formAction, isPending] = React.useActionState(action, null);
 
   return (
     <form action={formAction}>
