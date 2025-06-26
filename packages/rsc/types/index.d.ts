@@ -11,6 +11,10 @@ declare global {
       isBuild: boolean;
     };
   }
+
+  interface ImportMetaEnv {
+    readonly __vite_rsc_build__: boolean;
+  }
 }
 
 export {};

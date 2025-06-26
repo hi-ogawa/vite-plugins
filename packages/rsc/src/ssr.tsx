@@ -13,7 +13,7 @@ initialize();
 function initialize(): void {
   setRequireModule({
     load: async (id) => {
-      if (!import.meta.viteRsc.isBuild) {
+      if (!import.meta.env.__vite_rsc_build__) {
         const mod = await import(/* @vite-ignore */ id);
         const modCss = await import(
           /* @vite-ignore */ "/@id/__x00__virtual:vite-rsc/css/dev-ssr/" + id
