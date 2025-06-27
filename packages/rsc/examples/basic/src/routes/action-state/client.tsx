@@ -11,7 +11,7 @@ export function TestActionStateClient(props: {
   );
 
   return (
-    <form data-testid="use-action-state-react-node" action={formAction}>
+    <form data-testid="use-action-state-jsx" action={formAction}>
       <button>test-useActionState-with-ReactNode</button>
       {isPending ? "pending..." : state}
     </form>

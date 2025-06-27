@@ -12,7 +12,7 @@ export function TestActionStateServer() {
         await new Promise((resolve) => setTimeout(resolve, 500));
         return (
           <span>
-            [ok (time: {time})] {prev}
+            [(ok) (time: {time})] {prev}
           </span>
         );
       }}
