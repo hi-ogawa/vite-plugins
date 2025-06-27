@@ -63,6 +63,40 @@ async function testUseActionState(page: Page) {
   await expect(page.getByTestId("use-action-state")).toContainText(
     "test-useActionState: 1",
   );
+  await page.getByTestId("use-action-state").click();
+  await expect(page.getByTestId("use-action-state")).toContainText(
+    "test-useActionState: 2",
+  );
+}
+
+test("useActionState with jsx @js", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await using _ = await expectNoReload(page);
+  await testUseActionStateJsx(page);
+});
+
+testNoJs("useActionState with jsx @nojs", async ({ page }) => {
+  await page.goto("./");
+  await testUseActionStateJsx(page, { js: false });
+});
+
+async function testUseActionStateJsx(page: Page, options?: { js?: boolean }) {
+  await page.getByTestId("use-action-state-jsx").getByRole("button").click();
+  await expect(page.getByTestId("use-action-state-jsx")).toContainText(
+    /\(ok\)/,
+  );
+
+  // 1st call "works" but it shows an error during reponse and it breaks 2nd call.
+  //   Failed to serialize an action for progressive enhancement:
+  //   Error: React Element cannot be passed to Server Functions from the Client without a temporary reference set. Pass a TemporaryReferenceSet to the options.
+  //     [Promise, <span/>]
+  if (!options?.js) return;
+
+  await page.getByTestId("use-action-state-jsx").getByRole("button").click();
+  await expect(page.getByTestId("use-action-state-jsx")).toContainText(
+    /\(ok\).*\(ok\)/,
+  );
 }
 
 testNoJs("module preload on ssr @build", async ({ page }) => {
