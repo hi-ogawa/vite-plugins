@@ -76,20 +76,23 @@ test("useActionState with jsx @js", async ({ page }) => {
   await testUseActionStateJsx(page);
 });
 
-// TODO: this case seems to break with closure encryption
-//   Failed to serialize an action for progressive enhancement:
-//   Error: React Element cannot be passed to Server Functions from the Client without a temporary reference set. Pass a TemporaryReferenceSet to the options.
-//     [Promise, <span/>]
-testNoJs.skip("useActionState with jsx @nojs", async ({ page }) => {
+testNoJs("useActionState with jsx @nojs", async ({ page }) => {
   await page.goto("./");
-  await testUseActionStateJsx(page);
+  await testUseActionStateJsx(page, { js: false });
 });
 
-async function testUseActionStateJsx(page: Page) {
+async function testUseActionStateJsx(page: Page, options?: { js?: boolean }) {
   await page.getByTestId("use-action-state-jsx").getByRole("button").click();
   await expect(page.getByTestId("use-action-state-jsx")).toContainText(
     /\(ok\)/,
   );
+
+  // 1st call "works" but it shows an error during reponse and it breaks 2nd call.
+  //   Failed to serialize an action for progressive enhancement:
+  //   Error: React Element cannot be passed to Server Functions from the Client without a temporary reference set. Pass a TemporaryReferenceSet to the options.
+  //     [Promise, <span/>]
+  if (!options?.js) return;
+
   await page.getByTestId("use-action-state-jsx").getByRole("button").click();
   await expect(page.getByTestId("use-action-state-jsx")).toContainText(
     /\(ok\).*\(ok\)/,
