@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.5 (2025-06-27)
+
+- fix: fix `exportNames` with `transformProxyExport` `keep` ([#1079](https://github.com/hi-ogawa/vite-plugins/pull/1079))
+- feat: support preserving client reference original value ([#1078](https://github.com/hi-ogawa/vite-plugins/pull/1078))
+
 ## v0.1.4 (2025-06-22)
 
 - feat: rsc css transform for default export identifier ([#1046](https://github.com/hi-ogawa/vite-plugins/pull/1046))
