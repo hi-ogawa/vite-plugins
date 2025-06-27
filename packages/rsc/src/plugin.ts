@@ -637,10 +637,10 @@ export default function vitePluginRsc(
     },
     createVirtualPlugin("vite-rsc/bootstrap-script-content", function () {
       assert(this.environment.name !== "client");
-      return `
-        import assetsManifest from "virtual:vite-rsc/assets-manifest";
-        export default assetsManifest.bootstrapScriptContent;
-      `;
+      return `\
+import assetsManifest from "virtual:vite-rsc/assets-manifest";
+export default assetsManifest.bootstrapScriptContent;
+`;
     }),
     {
       name: "rsc:bootstrap-script-content",
@@ -692,12 +692,12 @@ export default function vitePluginRsc(
         const resolved = await this.resolve("/@react-refresh");
         if (resolved) {
           code += `
-            import RefreshRuntime from "/@react-refresh";
-            RefreshRuntime.injectIntoGlobalHook(window);
-            window.$RefreshReg$ = () => {};
-            window.$RefreshSig$ = () => (type) => type;
-            window.__vite_plugin_react_preamble_installed__ = true;
-          `;
+import RefreshRuntime from "/@react-refresh";
+RefreshRuntime.injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;
+window.__vite_plugin_react_preamble_installed__ = true;
+`;
         }
         const source = getEntrySource(this.environment.config, "index");
         const resolvedEntry = await this.resolve(source);
@@ -709,9 +709,9 @@ export default function vitePluginRsc(
         // TODO: there migth be a clever way to let Vite deduplicate itself.
         // cf. https://github.com/withastro/astro/blob/acb9b302f56e38833a1ab01147f7fde0bf967889/packages/astro/src/vite-plugin-astro-server/pipeline.ts#L133-L135
         code += `
-          const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
-          import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
-        `;
+const ssrCss = document.querySelectorAll("link[rel='stylesheet']");
+import.meta.hot.on("vite:beforeUpdate", () => ssrCss.forEach(node => node.remove()));
+`;
         return code;
       },
     ),
@@ -732,9 +732,9 @@ export default function vitePluginRsc(
           chunk.isEntry
         ) {
           return `\
-            import * as __viteRscAyncHooks from "node:async_hooks";
-            globalThis.AsyncLocalStorage = __viteRscAyncHooks.AsyncLocalStorage;
-          `;
+import * as __viteRscAyncHooks from "node:async_hooks";
+globalThis.AsyncLocalStorage = __viteRscAyncHooks.AsyncLocalStorage;
+`;
         }
         return "";
       },
