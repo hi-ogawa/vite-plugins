@@ -731,4 +731,22 @@ test("use cache function", async ({ page }) => {
 test("use cache component", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
+  const static1 = await page
+    .getByTestId("test-use-cache-component-static")
+    .textContent();
+  const dynamic1 = await page
+    .getByTestId("test-use-cache-component-dynamic")
+    .textContent();
+  await page.waitForTimeout(100);
+  await page.reload();
+  const static2 = await page
+    .getByTestId("test-use-cache-component-static")
+    .textContent();
+  const dynamic2 = await page
+    .getByTestId("test-use-cache-component-dynamic")
+    .textContent();
+  expect({ static2, dynamic2 }).toEqual({
+    static2: expect.stringMatching(static1!),
+    dynamic2: expect.not.stringMatching(dynamic1!),
+  });
 });

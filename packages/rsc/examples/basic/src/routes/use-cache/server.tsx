@@ -39,8 +39,13 @@ async function TestComponent(props: { children?: React.ReactNode }) {
   "use cache";
   return (
     <div data-testid="test-use-cache-component">
-      [test-use-cache-component] (static: {new Date().toISOString()}) (dynamic:{" "}
-      {props.children})
+      [test-use-cache-component]{" "}
+      <span data-testid="test-use-cache-component-static">
+        (static: {new Date().toISOString()})
+      </span>{" "}
+      <span data-testid="test-use-cache-component-dynamic">
+        (dynamic: {props.children})
+      </span>
     </div>
   );
 }
