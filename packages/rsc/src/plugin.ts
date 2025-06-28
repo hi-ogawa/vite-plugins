@@ -1787,3 +1787,19 @@ export function __fix_cloudflare(): Plugin {
     },
   };
 }
+
+export function vitePluginNextDynamic(): Plugin[] {
+  // if (import.meta.env.SSR) { }
+  //
+  // import.meta.viteRsc.dynamic(() => import("./foo"), { loading: () => ... })
+  return [];
+}
+
+// const ClientOnly = dynamic(() => import("./foo").then(m => m.Foo), { ssr: false })
+/*
+const inner = React.lazy(() => ...)
+
+<React.Suspense fallback={...}>
+  <Inner {...props}/>
+</React.Suspense>
+*/
