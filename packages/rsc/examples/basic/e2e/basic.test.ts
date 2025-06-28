@@ -702,7 +702,7 @@ test("server-in-client package", async ({ page }) => {
   );
 });
 
-test.only("use cache function", async ({ page }) => {
+test("use cache function", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   const locator = page.getByTestId("test-use-cache-fn");
