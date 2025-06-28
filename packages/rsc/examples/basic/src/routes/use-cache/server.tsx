@@ -4,22 +4,38 @@ export function TestUseCache() {
       <form
         action={async (formData) => {
           "use server";
-          // TODO: "use server" and "use cache" together breaks?
-          const arg = formData.get("arg");
-          console.log("[testFn:before]", { arg });
-          const result = await testFn(arg);
-          console.log("[testFn:after]", { result });
+          await testFn(formData.get("argument"));
         }}
       >
-        <button>[test-use-cache]</button>
-        <input className="w-20" name="arg" placeholder="arg" />
+        <button>[test-use-cache-fn]</button>
+        <input className="w-25" name="argument" placeholder="argument" />
+        (testFnCount: {testFnCount})
       </form>
+      <TestComponent>
+        {/*
+          NOTE: warpping with `span` is crucial because
+          raw string `children` would get included as cache key
+          and thus causes `TestComponent` to be evaluated in each render.
+        */}
+        <span>{new Date().toISOString()}</span>
+      </TestComponent>
     </div>
   );
 }
 
-async function testFn(...args: unknown[]) {
+let testFnCount = 0;
+
+async function testFn(..._args: unknown[]) {
   "use cache";
-  console.log("[testFn]", args);
-  return args;
+  testFnCount++;
+}
+
+async function TestComponent(props: { children?: React.ReactNode }) {
+  "use cache";
+  return (
+    <div>
+      [test-use-cache-component] (static: {new Date().toISOString()}) (dynamic:{" "}
+      {props.children})
+    </div>
+  );
 }

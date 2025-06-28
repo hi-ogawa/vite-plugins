@@ -67,6 +67,11 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
   return cachedFn;
 }
 
+// TODO
+export function revalidate(fn: Function) {
+  fn;
+}
+
 class StreamCacher {
   constructor(private stream: ReadableStream<Uint8Array>) {}
   get(): ReadableStream<Uint8Array> {
