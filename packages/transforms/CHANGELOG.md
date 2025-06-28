@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.6 (2025-06-28)
+
+- feat: add `noExport` option in `transformHoistInlineDirective` ([#1089](https://github.com/hi-ogawa/vite-plugins/pull/1089))
+
 ## v0.1.5 (2025-06-27)
 
 - fix: fix `exportNames` with `transformProxyExport` `keep` ([#1079](https://github.com/hi-ogawa/vite-plugins/pull/1079))
