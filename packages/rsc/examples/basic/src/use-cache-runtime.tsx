@@ -26,8 +26,6 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
 
     // cache `fn` result as stream
     const entryPromise = (cacheEntries[serializedCacheKey] ??= (async () => {
-      // handle cache miss
-
       // TODO: why not use `args` directly?
       const temporaryReferences = ReactRsc.createTemporaryReferenceSet();
       const decodedArgs = await ReactRsc.decodeReply(encodedArguments, {
