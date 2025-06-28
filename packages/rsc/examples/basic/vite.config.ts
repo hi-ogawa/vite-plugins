@@ -178,7 +178,7 @@ export default { fetch: handler };
           const vendorChunks: Rollup.OutputChunk[] = [];
           for (const chunk of Object.values(bundle)) {
             if (chunk.type === "chunk") {
-              if (chunk.facadeModuleId === "\0virtual:vite-rsc/entry-browser") {
+              if (chunk.name === "index") {
                 entryChunks.push(chunk);
               } else if (chunk.name === "lib-react") {
                 vendorChunks.push(chunk);
@@ -187,7 +187,7 @@ export default { fetch: handler };
           }
 
           // react vendor chunk has no import
-          assert(vendorChunks.length === 1);
+          assert.equal(vendorChunks.length, 1);
           assert.deepEqual(
             vendorChunks[0].imports.filter(
               (f) => !f.includes("rolldown-runtime"),
@@ -197,7 +197,7 @@ export default { fetch: handler };
           assert.deepEqual(vendorChunks[0].dynamicImports, []);
 
           // entry chunk has no export
-          assert(entryChunks.length === 1);
+          assert.equal(entryChunks.length, 1);
           assert.deepEqual(entryChunks[0].exports, []);
         }
       },
