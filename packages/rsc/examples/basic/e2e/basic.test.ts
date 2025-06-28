@@ -681,7 +681,7 @@ test("server-in-server package", async ({ page }) => {
   );
 });
 
-test.only("server-in-client package", async ({ page }) => {
+test("server-in-client package", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await expect(page.getByTestId("server-in-client")).toHaveText(
