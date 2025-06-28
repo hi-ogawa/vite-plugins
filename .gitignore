@@ -11,3 +11,4 @@ test-results
 *.tsbuildinfo
 .debug
 .vite-inspect
+.claude
