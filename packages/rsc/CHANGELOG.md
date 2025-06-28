@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.7 (2025-06-28)
+
+- feat: re-export `encodeReply` and `createTemporaryReferenceSet` from `react-server-dom/client` in `rsc` ([#1089](https://github.com/hi-ogawa/vite-plugins/pull/1089))
+- chore: add `use cache` example ([#1089](https://github.com/hi-ogawa/vite-plugins/pull/1089))
+- refactor: output code without indent ([#1087](https://github.com/hi-ogawa/vite-plugins/pull/1087))
+
 ## v0.4.6 (2025-06-27)
 
 - fix: correctly resolve server function created by 3rd party package during dev ([#1067](https://github.com/hi-ogawa/vite-plugins/pull/1067))
