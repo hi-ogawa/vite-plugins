@@ -685,14 +685,19 @@ test("server-in-client package", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await expect(page.getByTestId("server-in-client")).toHaveText(
-    "[server-in-client: 0]",
+    "[server-in-client: ?]",
   );
   await page.getByTestId("server-in-client").click();
   await expect(page.getByTestId("server-in-client")).toHaveText(
     "[server-in-client: 1]",
   );
   await page.reload();
+  await waitForHydration(page);
   await expect(page.getByTestId("server-in-client")).toHaveText(
-    "[server-in-client: 1]",
+    "[server-in-client: ?]",
+  );
+  await page.getByTestId("server-in-client").click();
+  await expect(page.getByTestId("server-in-client")).toHaveText(
+    "[server-in-client: 2]",
   );
 });
