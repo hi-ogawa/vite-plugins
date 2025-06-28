@@ -346,7 +346,7 @@ describe("use cache", () => {
   async function testTransform(input: string) {
     const ast = await parseAstAsync(input);
     const { output } = transformHoistInlineDirective(input, ast, {
-      runtime: (value) => `$$regsiter(${value})`,
+      runtime: (value) => `__cache_wrapper(${value})`,
       directive: "use cache",
       rejectNonAsyncFunction: true,
       noExport: true,
@@ -354,18 +354,6 @@ describe("use cache", () => {
     if (!output.hasChanged()) {
       return;
     }
-    //     output.prepend(`
-    // const $$regsiter_cache_fn = (fn) => {
-    //   let __cache;
-    //   return async function __wrapper(...args) {
-    //     const __cache_key = await __serialize(args);
-    //     if (__cache_key in __cache) {
-    //       return __cache[__cache_key];
-    //     }
-    //     return __cache[__cache_key] = fn(...args);
-    //   }
-    // }
-    // `);
     return output.toString();
   }
 
@@ -378,7 +366,7 @@ export async function test(x) {
 `;
 
     expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const test = /* #__PURE__ */ $$regsiter($$hoist_0_test);
+      "export const test = /* #__PURE__ */ __cache_wrapper($$hoist_0_test);
 
       ;async function $$hoist_0_test(x) {
         "use cache";
@@ -401,7 +389,7 @@ export async function test(x) {
 
     expect(await testTransform(input)).toMatchInlineSnapshot(`
       "export async function test(x) {
-        const inner = /* #__PURE__ */ $$regsiter($$hoist_0_inner).bind(null, x);
+        const inner = /* #__PURE__ */ __cache_wrapper($$hoist_0_inner).bind(null, x);
       }
 
       ;async function $$hoist_0_inner(x, y) {
