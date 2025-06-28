@@ -2,14 +2,18 @@ export function TestUseCache() {
   return (
     <div>
       <form
+        data-testid="test-use-cache-fn"
         action={async (formData) => {
           "use server";
+          actionCount++;
           await testFn(formData.get("argument"));
         }}
       >
         <button>[test-use-cache-fn]</button>
         <input className="w-25" name="argument" placeholder="argument" />
-        (testFnCount: {testFnCount})
+        <span>
+          (actionCount: {actionCount}, cacheFnCount: {cacheFnCount})
+        </span>
       </form>
       <TestComponent>
         {/*
@@ -23,17 +27,18 @@ export function TestUseCache() {
   );
 }
 
-let testFnCount = 0;
+let actionCount = 0;
+let cacheFnCount = 0;
 
 async function testFn(..._args: unknown[]) {
   "use cache";
-  testFnCount++;
+  cacheFnCount++;
 }
 
 async function TestComponent(props: { children?: React.ReactNode }) {
   "use cache";
   return (
-    <div>
+    <div data-testid="test-use-cache-component">
       [test-use-cache-component] (static: {new Date().toISOString()}) (dynamic:{" "}
       {props.children})
     </div>
