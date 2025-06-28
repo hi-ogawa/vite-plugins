@@ -9,8 +9,11 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
   const cacheEntries: Record<string, Promise<StreamCacher>> = {};
 
   async function cachedFn(...args: any[]) {
-    // serialize arguments to a cache key via `encodeReply` from `react-server-dom/client`
-    // TODO: why not use `renderToReadableStream` to serialize instead?
+    // Serialize arguments to a cache key via `encodeReply` from `react-server-dom/client`.
+    // NOTE: using `renderToReadableStream` here instead would end up serializing react elements arguments
+    // (e.g. children props), which causes those arguments to become a cache key and
+    // breaks "use cache static shell + dynamic children props" pattern.
+    // cf. https://nextjs.org/docs/app/api-reference/directives/use-cache#non-serializable-arguments
     const clientTemporaryReferences =
       ReactRsc.createClientTemporaryReferenceSet();
     const encodedArguments = await ReactRsc.encodeReply(args, {
@@ -26,7 +29,6 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
 
     // cache `fn` result as stream
     const entryPromise = (cacheEntries[serializedCacheKey] ??= (async () => {
-      // TODO: why not use `args` directly?
       const temporaryReferences = ReactRsc.createTemporaryReferenceSet();
       const decodedArgs = await ReactRsc.decodeReply(encodedArguments, {
         temporaryReferences,
