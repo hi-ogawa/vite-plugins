@@ -75,3 +75,11 @@ export function decodeFormState(
 
 export const createTemporaryReferenceSet: () => unknown =
   ReactServer.createTemporaryReferenceSet;
+
+export const encodeReply: (
+  v: unknown[],
+  options?: unknown,
+) => Promise<string | FormData> = ReactClient.encodeReply;
+
+export const createClientTemporaryReferenceSet: () => unknown =
+  ReactClient.createTemporaryReferenceSet;

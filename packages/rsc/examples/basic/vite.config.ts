@@ -1,8 +1,9 @@
 import assert from "node:assert";
+import { transformHoistInlineDirective } from "@hiogawa/transforms";
 import rsc from "@hiogawa/vite-rsc/plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { type Plugin, defineConfig, parseAstAsync } from "vite";
 import inspect from "vite-plugin-inspect";
 
 // log unhandled rejection to debug e2e failures
@@ -22,6 +23,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
+    vitePluginUseCache(),
     rsc({
       entries: {
         client: "./src/client.tsx",
@@ -134,3 +136,29 @@ export default { fetch: handler };
     ],
   },
 }) as any;
+
+function vitePluginUseCache(): Plugin[] {
+  return [
+    {
+      name: "use-cache",
+      async transform(code) {
+        if (!code.includes("use cache")) return;
+        const ast = await parseAstAsync(code);
+        const result = transformHoistInlineDirective(code, ast, {
+          runtime: (value) => `__vite_rsc_cache(${value})`,
+          directive: "use cache",
+          rejectNonAsyncFunction: true,
+          noExport: true,
+        });
+        if (!result.output.hasChanged()) return;
+        result.output.prepend(
+          `import __vite_rsc_cache from "/src/use-cache-runtime";`,
+        );
+        return {
+          code: result.output.toString(),
+          map: result.output.generateMap({ hires: "boundary" }),
+        };
+      },
+    },
+  ];
+}

@@ -4,14 +4,18 @@ import { transformHoistInlineDirective } from "./hoist";
 import { debugSourceMap } from "./test-utils";
 
 describe(transformHoistInlineDirective, () => {
-  async function testTransform(input: string, options?: { encode?: boolean }) {
+  async function testTransform(
+    input: string,
+    options?: { encode?: boolean; noExport?: boolean; directive?: string },
+  ) {
     const ast = await parseAstAsync(input);
     const { output } = transformHoistInlineDirective(input, ast, {
       runtime: (value, name) =>
         `$$register(${value}, "<id>", ${JSON.stringify(name)})`,
-      directive: "use server",
+      directive: options?.directive ?? "use server",
       encode: options?.encode ? (v) => `__enc(${v})` : undefined,
       decode: options?.encode ? (v) => `__dec(${v})` : undefined,
+      noExport: options?.noExport,
     });
     if (!output.hasChanged()) {
       return;
@@ -337,6 +341,31 @@ export default () => {
           throw redirect();
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_redirectOnServer, "name", { value: "redirectOnServer" });
+      "
+    `);
+  });
+
+  it("noExport", async () => {
+    const input = `
+export async function test() {
+  "use cache";
+  return "test";
+}
+`;
+    expect(
+      await testTransform(input, {
+        directive: "use cache",
+        noExport: true,
+      }),
+    ).toMatchInlineSnapshot(`
+      "
+      export const test = /* #__PURE__ */ $$register($$hoist_0_test, "<id>", "$$hoist_0_test");
+
+      ;async function $$hoist_0_test() {
+        "use cache";
+        return "test";
+      };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_test, "name", { value: "test" });
       "
     `);
   });
