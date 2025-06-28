@@ -1,11 +1,16 @@
 import * as ReactRsc from "@hiogawa/vite-rsc/rsc";
-import React from "react";
 
 // based on
 // https://github.com/vercel/next.js/pull/70435
 // https://github.com/vercel/next.js/blob/09a2167b0a970757606b7f91ff2d470f77f13f8c/packages/next/src/server/use-cache/use-cache-wrapper.ts
 
+const cachedFnMap = new WeakMap<Function, unknown>();
+
 export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
+  if (cachedFnMap.has(fn)) {
+    return cachedFnMap.get(fn)!;
+  }
+
   const cacheEntries: Record<string, Promise<StreamCacher>> = {};
 
   async function cachedFn(...args: any[]) {
@@ -57,7 +62,9 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
     return result;
   }
 
-  return React.cache(cachedFn);
+  cachedFnMap.set(fn, cachedFn);
+
+  return cachedFn;
 }
 
 class StreamCacher {
