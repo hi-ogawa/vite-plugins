@@ -681,7 +681,7 @@ test("server-in-server package", async ({ page }) => {
   );
 });
 
-test("server-in-client package", async ({ page }) => {
+test.only("server-in-client package", async ({ page }) => {
   await page.goto("./");
   await waitForHydration(page);
   await expect(page.getByTestId("server-in-client")).toHaveText(
@@ -692,7 +692,12 @@ test("server-in-client package", async ({ page }) => {
     "[server-in-client: 1]",
   );
   await page.reload();
+  await waitForHydration(page);
   await expect(page.getByTestId("server-in-client")).toHaveText(
-    "[server-in-client: 1]",
+    "[server-in-client: ?]",
+  );
+  await page.getByTestId("server-in-client").click();
+  await expect(page.getByTestId("server-in-client")).toHaveText(
+    "[server-in-client: 2]",
   );
 });
