@@ -4,14 +4,18 @@ import { transformHoistInlineDirective } from "./hoist";
 import { debugSourceMap } from "./test-utils";
 
 describe(transformHoistInlineDirective, () => {
-  async function testTransform(input: string, options?: { encode?: boolean }) {
+  async function testTransform(
+    input: string,
+    options?: { encode?: boolean; noExport?: boolean; directive?: string },
+  ) {
     const ast = await parseAstAsync(input);
     const { output } = transformHoistInlineDirective(input, ast, {
       runtime: (value, name) =>
         `$$register(${value}, "<id>", ${JSON.stringify(name)})`,
-      directive: "use server",
+      directive: options?.directive ?? "use server",
       encode: options?.encode ? (v) => `__enc(${v})` : undefined,
       decode: options?.encode ? (v) => `__dec(${v})` : undefined,
+      noExport: options?.noExport,
     });
     if (!output.hasChanged()) {
       return;
@@ -340,63 +344,28 @@ export default () => {
       "
     `);
   });
-});
 
-describe("use cache", () => {
-  async function testTransform(input: string) {
-    const ast = await parseAstAsync(input);
-    const { output } = transformHoistInlineDirective(input, ast, {
-      runtime: (value) => `__cache_wrapper(${value})`,
-      directive: "use cache",
-      rejectNonAsyncFunction: true,
-      noExport: true,
-    });
-    if (!output.hasChanged()) {
-      return;
-    }
-    return output.toString();
-  }
-
-  it("basic", async () => {
-    const input = `\
-export async function test(x) {
+  it("noExport", async () => {
+    const input = `
+export async function test() {
   "use cache";
-  return x * 2;
+  return "test";
 }
 `;
+    expect(
+      await testTransform(input, {
+        directive: "use cache",
+        noExport: true,
+      }),
+    ).toMatchInlineSnapshot(`
+      "
+      export const test = /* #__PURE__ */ $$register($$hoist_0_test, "<id>", "$$hoist_0_test");
 
-    expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export const test = /* #__PURE__ */ __cache_wrapper($$hoist_0_test);
-
-      ;async function $$hoist_0_test(x) {
+      ;async function $$hoist_0_test() {
         "use cache";
-        return x * 2;
+        return "test";
       };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_test, "name", { value: "test" });
-      "
-    `);
-  });
-
-  it("closure", async () => {
-    const input = `\
-export async function test(x) {
-  async function inner(y) {
-    "use cache";
-    return x * y;
-  }
-}
-`;
-
-    expect(await testTransform(input)).toMatchInlineSnapshot(`
-      "export async function test(x) {
-        const inner = /* #__PURE__ */ __cache_wrapper($$hoist_0_inner).bind(null, x);
-      }
-
-      ;async function $$hoist_0_inner(x, y) {
-          "use cache";
-          return x * y;
-        };
-      /* #__PURE__ */ Object.defineProperty($$hoist_0_inner, "name", { value: "inner" });
       "
     `);
   });
