@@ -68,19 +68,19 @@ export default function w() {
       const w = /* #__PURE__ */ $$register($$hoist_2_w, "<id>", "$$hoist_2_w");
       export default w;
 
-      ;export async function $$hoist_0_f() {
+      ;async function $$hoist_0_f() {
         "use server";
         return x;
       };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_f, "name", { value: "f" });
 
-      ;export async function $$hoist_1_h(formData) {
+      ;async function $$hoist_1_h(formData) {
         "use server";
         return formData.get(x);
       };
       /* #__PURE__ */ Object.defineProperty($$hoist_1_h, "name", { value: "h" });
 
-      ;export function $$hoist_2_w() {
+      ;function $$hoist_2_w() {
         "use server";
       };
       /* #__PURE__ */ Object.defineProperty($$hoist_2_w, "name", { value: "w" });
@@ -120,7 +120,7 @@ function Counter() {
         return "something";
       }
 
-      ;export async function $$hoist_0_changeCount(name, formData) {
+      ;async function $$hoist_0_changeCount(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -163,13 +163,13 @@ function Counter() {
         return "something";
       }
 
-      ;export async function $$hoist_0_changeCount(name, formData) {
+      ;async function $$hoist_0_changeCount(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_changeCount, "name", { value: "changeCount" });
 
-      ;export async function $$hoist_1_changeCount2(name, formData) {
+      ;async function $$hoist_1_changeCount2(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -207,7 +207,7 @@ function Counter() {
         }
       }
 
-      ;export function $$hoist_0_anonymous_server_function(name, formData) {
+      ;function $$hoist_0_anonymous_server_function(name, formData) {
             "use server";
             count += Number(formData.get(name));
           };
@@ -228,7 +228,7 @@ function Counter() {
         }
       }
 
-      ;export function $$hoist_0_anonymous_server_function($$hoist_encoded, formData) {
+      ;function $$hoist_0_anonymous_server_function($$hoist_encoded, formData) {
             const [name] = __dec($$hoist_encoded);
       "use server";
             count += Number(formData.get(name));
@@ -268,13 +268,13 @@ function validator(action) {
         return /* #__PURE__ */ $$register($$hoist_1_anonymous_server_function, "<id>", "$$hoist_1_anonymous_server_function").bind(null, action);
       }
 
-      ;export async function $$hoist_0_anonymous_server_function(x, y) {
+      ;async function $$hoist_0_anonymous_server_function(x, y) {
           "use server";
           return x + y;
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
 
-      ;export async function $$hoist_1_anonymous_server_function(action, arg) {
+      ;async function $$hoist_1_anonymous_server_function(action, arg) {
           "use server";
           return action(arg);
         };
@@ -293,14 +293,14 @@ function validator(action) {
         return /* #__PURE__ */ $$register($$hoist_1_anonymous_server_function, "<id>", "$$hoist_1_anonymous_server_function").bind(null, __enc([action]));
       }
 
-      ;export async function $$hoist_0_anonymous_server_function($$hoist_encoded, y) {
+      ;async function $$hoist_0_anonymous_server_function($$hoist_encoded, y) {
           const [x] = __dec($$hoist_encoded);
       "use server";
           return x + y;
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
 
-      ;export async function $$hoist_1_anonymous_server_function($$hoist_encoded, arg) {
+      ;async function $$hoist_1_anonymous_server_function($$hoist_encoded, arg) {
           const [action] = __dec($$hoist_encoded);
       "use server";
           return action(arg);
@@ -332,11 +332,83 @@ export default () => {
         const redirectOnServer = /* #__PURE__ */ $$register($$hoist_0_redirectOnServer, "<id>", "$$hoist_0_redirectOnServer");
       }
 
-      ;export async function $$hoist_0_redirectOnServer() {
+      ;async function $$hoist_0_redirectOnServer() {
           "use server";
           throw redirect();
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_redirectOnServer, "name", { value: "redirectOnServer" });
+      "
+    `);
+  });
+});
+
+describe("use cache", () => {
+  async function testTransform(input: string) {
+    const ast = await parseAstAsync(input);
+    const { output } = transformHoistInlineDirective(input, ast, {
+      runtime: (value) => `$$regsiter(${value})`,
+      directive: "use cache",
+      rejectNonAsyncFunction: true,
+      export: false,
+    });
+    if (!output.hasChanged()) {
+      return;
+    }
+    //     output.prepend(`
+    // const $$regsiter_cache_fn = (fn) => {
+    //   let __cache;
+    //   return async function __wrapper(...args) {
+    //     const __cache_key = await __serialize(args);
+    //     if (__cache_key in __cache) {
+    //       return __cache[__cache_key];
+    //     }
+    //     return __cache[__cache_key] = fn(...args);
+    //   }
+    // }
+    // `);
+    return output.toString();
+  }
+
+  it("basic", async () => {
+    const input = `\
+export async function test(x) {
+  "use cache";
+  return x * 2;
+}
+`;
+
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      "export const test = /* #__PURE__ */ $$regsiter($$hoist_0_test);
+
+      ;async function $$hoist_0_test(x) {
+        "use cache";
+        return x * 2;
+      };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_test, "name", { value: "test" });
+      "
+    `);
+  });
+
+  it("closure", async () => {
+    const input = `\
+export async function test(x) {
+  async function inner(y) {
+    "use cache";
+    return x * y;
+  }
+}
+`;
+
+    expect(await testTransform(input)).toMatchInlineSnapshot(`
+      "export async function test(x) {
+        const inner = /* #__PURE__ */ $$regsiter($$hoist_0_inner).bind(null, x);
+      }
+
+      ;async function $$hoist_0_inner(x, y) {
+          "use cache";
+          return x * y;
+        };
+      /* #__PURE__ */ Object.defineProperty($$hoist_0_inner, "name", { value: "inner" });
       "
     `);
   });

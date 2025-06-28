@@ -19,6 +19,7 @@ export function transformHoistInlineDirective(
     rejectNonAsyncFunction?: boolean;
     encode?: (value: string) => string;
     decode?: (value: string) => string;
+    export?: boolean;
   },
 ): {
   output: MagicString;
@@ -100,7 +101,7 @@ export function transformHoistInlineDirective(
         output.update(
           node.start,
           node.body.start,
-          `\n;export ${node.async ? "async " : ""}function ${newName}(${newParams}) `,
+          `\n;${options.export ? "export " : ""}${node.async ? "async " : ""}function ${newName}(${newParams}) `,
         );
         output.appendLeft(
           node.end,
