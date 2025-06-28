@@ -36,7 +36,7 @@ async function testFn(..._args: unknown[]) {
 }
 
 function TestUseCacheComponent() {
-  // NOTE: warpping with `span` (or any jsx) is crucial because
+  // NOTE: wrapping with `span` (or any jsx) is crucial because
   // raw string `children` would get included as cache key
   // and thus causes `TestComponent` to be evaluated in each render.
   return (

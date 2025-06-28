@@ -17,7 +17,7 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
     // Serialize arguments to a cache key via `encodeReply` from `react-server-dom/client`.
     // NOTE: using `renderToReadableStream` here for arguments serialization would end up
     // serializing react elements (e.g. children props), which causes
-    // those arguments to be includes as a cache key and it doesn't achive
+    // those arguments to be included as a cache key and it doesn't achieve
     // "use cache static shell + dynamic children props" pattern.
     // cf. https://nextjs.org/docs/app/api-reference/directives/use-cache#non-serializable-arguments
     const clientTemporaryReferences =
