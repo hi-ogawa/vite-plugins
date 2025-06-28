@@ -178,7 +178,7 @@ export default { fetch: handler };
           const vendorChunks: Rollup.OutputChunk[] = [];
           for (const chunk of Object.values(bundle)) {
             if (chunk.type === "chunk") {
-              if (chunk.name === "index") {
+              if (chunk.facadeModuleId?.endsWith("/src/client.tsx")) {
                 entryChunks.push(chunk);
               } else if (chunk.name === "lib-react") {
                 vendorChunks.push(chunk);
