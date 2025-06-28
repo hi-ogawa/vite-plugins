@@ -1,3 +1,5 @@
+import { revalidateCache } from "../../use-cache-runtime";
+
 export function TestUseCache() {
   return (
     <>
@@ -15,7 +17,11 @@ function TestUseCacheFn() {
       action={async (formData) => {
         "use server";
         actionCount++;
-        await testFn(formData.get("argument"));
+        const argument = formData.get("argument");
+        await testFn(argument);
+        if (argument === "revalidate") {
+          revalidateCache(testFn);
+        }
       }}
     >
       <button>test-use-cache-fn</button>

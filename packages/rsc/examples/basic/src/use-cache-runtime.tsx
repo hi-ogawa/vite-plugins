@@ -5,15 +5,23 @@ import * as ReactRsc from "@hiogawa/vite-rsc/rsc";
 // https://github.com/vercel/next.js/blob/09a2167b0a970757606b7f91ff2d470f77f13f8c/packages/next/src/server/use-cache/use-cache-wrapper.ts
 
 const cachedFnMap = new WeakMap<Function, unknown>();
+const cachedFnCacheEntries = new WeakMap<
+  Function,
+  Record<string, Promise<StreamCacher>>
+>();
 
 export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
   if (cachedFnMap.has(fn)) {
     return cachedFnMap.get(fn)!;
   }
 
-  const cacheEntries: Record<string, Promise<StreamCacher>> = {};
-
   async function cachedFn(...args: any[]): Promise<unknown> {
+    let cacheEntries = cachedFnCacheEntries.get(cachedFn);
+    if (!cacheEntries) {
+      cacheEntries = {};
+      cachedFnCacheEntries.set(cachedFn, cacheEntries);
+    }
+
     // Serialize arguments to a cache key via `encodeReply` from `react-server-dom/client`.
     // NOTE: using `renderToReadableStream` here for arguments serialization would end up
     // serializing react elements (e.g. children props), which causes
@@ -61,9 +69,8 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
   return cachedFn;
 }
 
-// TODO
-export function revalidate(fn: Function) {
-  fn;
+export function revalidateCache(cachedFn: Function) {
+  cachedFnCacheEntries.delete(cachedFn);
 }
 
 class StreamCacher {
