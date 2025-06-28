@@ -51,9 +51,9 @@ type ClientReferenceMeta = {
   exportNames: string[];
   renderedExports: string[];
 };
-const clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
+let clientReferenceMetaMap: Record</* id */ string, ClientReferenceMeta> = {};
 
-const serverResourcesMetaMap: Record<string, { key: string }> = {};
+let serverResourcesMetaMap: Record<string, { key: string }> = {};
 
 const PKG_NAME = "@hiogawa/vite-rsc";
 const REACT_SERVER_DOM_NAME = `${PKG_NAME}/vendor/react-server-dom`;
@@ -232,6 +232,9 @@ export default function vitePluginRsc(
               builder.environments.rsc!.config.build.write = true;
               builder.environments.ssr!.config.build.write = true;
               await builder.build(builder.environments.rsc!);
+              // sort for stable build
+              clientReferenceMetaMap = sortObject(clientReferenceMetaMap);
+              serverResourcesMetaMap = sortObject(serverResourcesMetaMap);
               await builder.build(builder.environments.client!);
               await builder.build(builder.environments.ssr!);
             },
@@ -1786,4 +1789,10 @@ export function __fix_cloudflare(): Plugin {
       (config.environments as any).rsc.resolve.noExternal = true;
     },
   };
+}
+
+function sortObject<T extends object>(o: T) {
+  return Object.fromEntries(
+    Object.entries(o).sort(([a], [b]) => a.localeCompare(b)),
+  ) as T;
 }

@@ -127,6 +127,7 @@ export default { fetch: handler };
   ],
   build: {
     minify: false,
+    manifest: true,
   },
   optimizeDeps: {
     exclude: [
