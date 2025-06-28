@@ -722,6 +722,7 @@ test("use cache function", async ({ page }) => {
   await expect(locator.locator("span")).toHaveText(
     "(actionCount: 3, cacheFnCount: 2)",
   );
+  await locator.getByRole("textbox").fill("test");
   await locator.getByRole("button").click();
   await expect(locator.locator("span")).toHaveText(
     "(actionCount: 4, cacheFnCount: 2)",
@@ -749,4 +750,53 @@ test("use cache component", async ({ page }) => {
     static2: expect.stringMatching(static1!),
     dynamic2: expect.not.stringMatching(dynamic1!),
   });
+});
+
+test("use cache closure", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  const locator = page.getByTestId("test-use-cache-closure");
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 0, innerFnCount: 0)",
+  );
+
+  // (x, y)
+  await locator.getByPlaceholder("outer").fill("x");
+  await locator.getByPlaceholder("inner").fill("y");
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 1, innerFnCount: 1)",
+  );
+
+  // (x, y)
+  await locator.getByPlaceholder("outer").fill("x");
+  await locator.getByPlaceholder("inner").fill("y");
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 2, innerFnCount: 1)",
+  );
+
+  // (xx, y)
+  await locator.getByPlaceholder("outer").fill("xx");
+  await locator.getByPlaceholder("inner").fill("y");
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 3, innerFnCount: 2)",
+  );
+
+  // (xx, y)
+  await locator.getByPlaceholder("outer").fill("xx");
+  await locator.getByPlaceholder("inner").fill("y");
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 4, innerFnCount: 2)",
+  );
+
+  // (xx, yy)
+  await locator.getByPlaceholder("outer").fill("xx");
+  await locator.getByPlaceholder("inner").fill("yy");
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 5, innerFnCount: 3)",
+  );
 });

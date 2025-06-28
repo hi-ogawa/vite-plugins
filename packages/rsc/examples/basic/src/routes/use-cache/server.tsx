@@ -18,7 +18,7 @@ function TestUseCacheFn() {
         await testFn(formData.get("argument"));
       }}
     >
-      <button>[test-use-cache-fn]</button>
+      <button>test-use-cache-fn</button>
       <input className="w-25" name="argument" placeholder="argument" />
       <span>
         (actionCount: {actionCount}, cacheFnCount: {cacheFnCount})
@@ -62,41 +62,35 @@ async function TestComponent(props: { children?: React.ReactNode }) {
 }
 
 async function TestUseCacheClosure() {
-  function outerFn(outer: string) {
-    async function innerFn(inner: string) {
-      "use cache";
-      innerFnCount++;
-      return (
-        <span>
-          (outer: {outer}, inner: {inner})
-        </span>
-      );
-    }
-    return innerFn;
-  }
-
-  const result = await outerFn(outerFnArg)(innerFnArg);
-
   return (
-    <div className="flex gap-1">
+    <div data-testid="test-use-cache-closure" className="flex gap-1">
       <form
         action={async (formData) => {
           "use server";
           actionCount2++;
           outerFnArg = formData.get("outer") as string;
           innerFnArg = formData.get("inner") as string;
+          await outerFn(outerFnArg)(innerFnArg);
         }}
       >
-        <button>[test-use-cache-closure]</button>
+        <button>test-use-cache-closure</button>
         <input className="w-15" name="outer" placeholder="outer" />
         <input className="w-15" name="inner" placeholder="inner" />
       </form>
-      <span>{result}</span>
       <span>
-        (actionCount2: {actionCount2}, innerFnCount: {innerFnCount})
+        (actionCount: {actionCount2}, innerFnCount: {innerFnCount})
       </span>
     </div>
   );
+}
+
+function outerFn(outer: string) {
+  async function innerFn(inner: string) {
+    "use cache";
+    innerFnCount++;
+    console.log({ outer, inner });
+  }
+  return innerFn;
 }
 
 let outerFnArg = "";
