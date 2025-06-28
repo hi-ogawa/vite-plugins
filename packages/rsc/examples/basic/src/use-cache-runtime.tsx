@@ -13,7 +13,7 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
 
   const cacheEntries: Record<string, Promise<StreamCacher>> = {};
 
-  async function cachedFn(...args: any[]) {
+  async function cachedFn(...args: any[]): Promise<unknown> {
     // Serialize arguments to a cache key via `encodeReply` from `react-server-dom/client`.
     // NOTE: using `renderToReadableStream` here for arguments serialization would end up
     // serializing react elements (e.g. children props), which causes
@@ -25,13 +25,7 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
     const encodedArguments = await ReactRsc.encodeReply(args, {
       temporaryReferences: clientTemporaryReferences,
     });
-    const serializedCacheKey =
-      typeof encodedArguments === "string"
-        ? "a:" + encodedArguments
-        : "b:" +
-          arrayBufferToString(
-            await new Response(encodedArguments).arrayBuffer(),
-          );
+    const serializedCacheKey = await replyToCacheKey(encodedArguments);
 
     // cache `fn` result as stream
     // (cache value is promise so that it dedupes concurrent async calls)
@@ -81,15 +75,13 @@ class StreamCacher {
   }
 }
 
-function arrayBufferToString(buffer: ArrayBuffer | Uint8Array): string {
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  if (len < 65535) {
-    return String.fromCharCode.apply(null, bytes as unknown as number[]);
+async function replyToCacheKey(reply: string | FormData) {
+  if (typeof reply === "string") {
+    return reply;
   }
-  let binary = "";
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]!);
-  }
-  return binary;
+  const buffer = await crypto.subtle.digest(
+    "SHA-256",
+    await new Response(reply).arrayBuffer(),
+  );
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
 }
