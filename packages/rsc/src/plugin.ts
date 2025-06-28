@@ -739,6 +739,7 @@ globalThis.AsyncLocalStorage = __viteRscAyncHooks.AsyncLocalStorage;
         return "";
       },
     },
+    ...vitePluginBrowserOnlyImport(),
     ...vitePluginRscCore(),
     ...vitePluginUseClient(rscPluginOptions),
     ...vitePluginUseServer(rscPluginOptions),
@@ -1788,18 +1789,54 @@ export function __fix_cloudflare(): Plugin {
   };
 }
 
-export function vitePluginNextDynamic(): Plugin[] {
-  // if (import.meta.env.SSR) { }
-  //
-  // import.meta.viteRsc.dynamic(() => import("./foo"), { loading: () => ... })
-  return [];
+export function vitePluginBrowserOnlyImport(): Plugin[] {
+  return [
+    {
+      name: "rsc:browser-only-import",
+      transform(code, id) {
+        // transform importer (encode import attributes to custom query)
+        // this is necessary since Vite currently strips off import attributes
+        // https://github.com/vitejs/vite/blob/ac528a44c384fefb6f10c3f531df93b5ac39324c/packages/vite/src/node/plugins/importAnalysis.ts#L504-L507
+        // https://github.com/vitejs/vite/discussions/18534
+        if (!id.includes("/node_modules/")) {
+          const parsed = esModuleLexer.parse(code);
+          let output: MagicString | undefined;
+          for (const importSpecifier of parsed[0]) {
+            const { e: end, se: expEnd, a: attributeIndex } = importSpecifier;
+            if (attributeIndex > -1) {
+              const attributesCode = code.slice(attributeIndex, expEnd);
+              const attributes = evalValue(attributesCode);
+              if ("vite-rsc" in attributes) {
+                output ??= new MagicString(code);
+                output.appendLeft(end, "?" + new URLSearchParams(attributes));
+                output.remove(end + 1, expEnd);
+              }
+            }
+          }
+          if (output) {
+            return {
+              code: output.toString(),
+              map: output.generateMap({ hires: "boundary" }),
+            };
+          }
+        }
+
+        // transform importee (module with custom query)
+        const { query } = parseIdQuery(id);
+        if (query["vite-rsc"] === "browser-only") {
+          if (this.environment.name === "ssr") {
+            const parsed = esModuleLexer.parse(code);
+            const newCode = parsed[1]
+              .map((e) =>
+                e.n === "default"
+                  ? `export default null`
+                  : `export const ${e.n} = null`,
+              )
+              .join("\n");
+            return newCode;
+          }
+        }
+      },
+    },
+  ];
 }
-
-// const ClientOnly = dynamic(() => import("./foo").then(m => m.Foo), { ssr: false })
-/*
-const inner = React.lazy(() => ...)
-
-<React.Suspense fallback={...}>
-  <Inner {...props}/>
-</React.Suspense>
-*/
