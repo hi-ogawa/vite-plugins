@@ -26,12 +26,10 @@ export function createFromFetch<T>(
   });
 }
 
-export function encodeReply(
+export const encodeReply: (
   v: unknown[],
   options?: unknown,
-): Promise<string | FormData> {
-  return ReactClient.encodeReply(v, options);
-}
+) => Promise<string | FormData> = ReactClient.encodeReply;
 
 export const createServerReference: (...args: any[]) => unknown =
   ReactClient.createServerReference;
