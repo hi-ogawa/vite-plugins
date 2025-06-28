@@ -2,8 +2,6 @@
 import * as ReactClient from "@hiogawa/vite-rsc/vendor/react-server-dom/client.edge";
 // @ts-ignore
 import * as ReactServer from "@hiogawa/vite-rsc/vendor/react-server-dom/server.edge";
-// @ts-ignore
-// import * as ReactStatic from "@hiogawa/vite-rsc/vendor/react-server-dom/static.edge";
 
 import type { ReactFormState } from "react-dom/client";
 import {
@@ -88,12 +86,3 @@ export const encodeReply: (
 
 export const createClientTemporaryReferenceSet: () => unknown =
   ReactClient.createTemporaryReferenceSet;
-
-// export function unstable_prerender<T>(
-//   data: T,
-//   options?: object,
-// ): Promise<{
-//   prelude: ReadableStream<Uint8Array>;
-// }> {
-//   return ReactStatic.unstable_prerender(data, createClientManifest(), options);
-// }
