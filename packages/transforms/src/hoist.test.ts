@@ -68,19 +68,19 @@ export default function w() {
       const w = /* #__PURE__ */ $$register($$hoist_2_w, "<id>", "$$hoist_2_w");
       export default w;
 
-      ;async function $$hoist_0_f() {
+      ;export async function $$hoist_0_f() {
         "use server";
         return x;
       };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_f, "name", { value: "f" });
 
-      ;async function $$hoist_1_h(formData) {
+      ;export async function $$hoist_1_h(formData) {
         "use server";
         return formData.get(x);
       };
       /* #__PURE__ */ Object.defineProperty($$hoist_1_h, "name", { value: "h" });
 
-      ;function $$hoist_2_w() {
+      ;export function $$hoist_2_w() {
         "use server";
       };
       /* #__PURE__ */ Object.defineProperty($$hoist_2_w, "name", { value: "w" });
@@ -120,7 +120,7 @@ function Counter() {
         return "something";
       }
 
-      ;async function $$hoist_0_changeCount(name, formData) {
+      ;export async function $$hoist_0_changeCount(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -163,13 +163,13 @@ function Counter() {
         return "something";
       }
 
-      ;async function $$hoist_0_changeCount(name, formData) {
+      ;export async function $$hoist_0_changeCount(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_changeCount, "name", { value: "changeCount" });
 
-      ;async function $$hoist_1_changeCount2(name, formData) {
+      ;export async function $$hoist_1_changeCount2(name, formData) {
           "use server";
           count += Number(formData.get(name));
         };
@@ -207,7 +207,7 @@ function Counter() {
         }
       }
 
-      ;function $$hoist_0_anonymous_server_function(name, formData) {
+      ;export function $$hoist_0_anonymous_server_function(name, formData) {
             "use server";
             count += Number(formData.get(name));
           };
@@ -228,7 +228,7 @@ function Counter() {
         }
       }
 
-      ;function $$hoist_0_anonymous_server_function($$hoist_encoded, formData) {
+      ;export function $$hoist_0_anonymous_server_function($$hoist_encoded, formData) {
             const [name] = __dec($$hoist_encoded);
       "use server";
             count += Number(formData.get(name));
@@ -268,13 +268,13 @@ function validator(action) {
         return /* #__PURE__ */ $$register($$hoist_1_anonymous_server_function, "<id>", "$$hoist_1_anonymous_server_function").bind(null, action);
       }
 
-      ;async function $$hoist_0_anonymous_server_function(x, y) {
+      ;export async function $$hoist_0_anonymous_server_function(x, y) {
           "use server";
           return x + y;
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
 
-      ;async function $$hoist_1_anonymous_server_function(action, arg) {
+      ;export async function $$hoist_1_anonymous_server_function(action, arg) {
           "use server";
           return action(arg);
         };
@@ -293,14 +293,14 @@ function validator(action) {
         return /* #__PURE__ */ $$register($$hoist_1_anonymous_server_function, "<id>", "$$hoist_1_anonymous_server_function").bind(null, __enc([action]));
       }
 
-      ;async function $$hoist_0_anonymous_server_function($$hoist_encoded, y) {
+      ;export async function $$hoist_0_anonymous_server_function($$hoist_encoded, y) {
           const [x] = __dec($$hoist_encoded);
       "use server";
           return x + y;
         };
       /* #__PURE__ */ Object.defineProperty($$hoist_0_anonymous_server_function, "name", { value: "anonymous_server_function" });
 
-      ;async function $$hoist_1_anonymous_server_function($$hoist_encoded, arg) {
+      ;export async function $$hoist_1_anonymous_server_function($$hoist_encoded, arg) {
           const [action] = __dec($$hoist_encoded);
       "use server";
           return action(arg);
@@ -332,7 +332,7 @@ export default () => {
         const redirectOnServer = /* #__PURE__ */ $$register($$hoist_0_redirectOnServer, "<id>", "$$hoist_0_redirectOnServer");
       }
 
-      ;async function $$hoist_0_redirectOnServer() {
+      ;export async function $$hoist_0_redirectOnServer() {
           "use server";
           throw redirect();
         };
@@ -349,7 +349,7 @@ describe("use cache", () => {
       runtime: (value) => `$$regsiter(${value})`,
       directive: "use cache",
       rejectNonAsyncFunction: true,
-      export: false,
+      noExport: true,
     });
     if (!output.hasChanged()) {
       return;
