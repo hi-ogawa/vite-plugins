@@ -28,6 +28,7 @@ export default function cacheWrapper(fn: (...args: any[]) => Promise<unknown>) {
           );
 
     // cache `fn` result as stream
+    // (cache value is promise so that it dedupes concurrent async calls)
     const entryPromise = (cacheEntries[serializedCacheKey] ??= (async () => {
       const temporaryReferences = ReactRsc.createTemporaryReferenceSet();
       const decodedArgs = await ReactRsc.decodeReply(encodedArguments, {
