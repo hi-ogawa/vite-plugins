@@ -31,6 +31,7 @@ import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
 import { TestSerializationServer } from "./serialization/server";
 import styles from "./server.module.css";
+import { TestUseCache } from "./use-cache/server";
 
 export function Root(props: { url: URL }) {
   return (
@@ -89,6 +90,7 @@ export function Root(props: { url: URL }) {
         <TestServerInServer />
         <TestServerInClient />
         <TestActionStateServer />
+        <TestUseCache />
       </body>
     </html>
   );
