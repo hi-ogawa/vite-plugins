@@ -2,7 +2,6 @@
 import * as ReactClient from "@hiogawa/vite-rsc/vendor/react-server-dom/client.edge";
 // @ts-ignore
 import * as ReactServer from "@hiogawa/vite-rsc/vendor/react-server-dom/server.edge";
-
 import type { ReactFormState } from "react-dom/client";
 import {
   createClientManifest,
@@ -77,8 +76,6 @@ export function decodeFormState(
 export const createTemporaryReferenceSet: () => unknown =
   ReactServer.createTemporaryReferenceSet;
 
-// this seems necessary for "use cache"
-// https://github.com/vercel/next.js/blob/09a2167b0a970757606b7f91ff2d470f77f13f8c/packages/next/src/server/use-cache/use-cache-wrapper.ts
 export const encodeReply: (
   v: unknown[],
   options?: unknown,
