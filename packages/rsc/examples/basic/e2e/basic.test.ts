@@ -701,3 +701,34 @@ test("server-in-client package", async ({ page }) => {
     "[server-in-client: 2]",
   );
 });
+
+test("use cache function", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  const locator = page.getByTestId("test-use-cache-fn");
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 0, cacheFnCount: 0)",
+  );
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 1, cacheFnCount: 1)",
+  );
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 2, cacheFnCount: 1)",
+  );
+  await locator.getByRole("textbox").fill("test");
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 3, cacheFnCount: 2)",
+  );
+  await locator.getByRole("button").click();
+  await expect(locator.locator("span")).toHaveText(
+    "(actionCount: 4, cacheFnCount: 2)",
+  );
+});
+
+test("use cache component", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+});
