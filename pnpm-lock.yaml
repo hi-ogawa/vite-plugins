@@ -551,11 +551,11 @@ importers:
         specifier: workspace:*
         version: link:../rsc
       '@react-router/dev':
-        specifier: 0.0.0-experimental-7db49e8d4
-        version: 0.0.0-experimental-7db49e8d4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)
+        specifier: 0.0.0-experimental-b65537812
+        version: 0.0.0-experimental-b65537812(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)
       react-router:
-        specifier: 0.0.0-experimental-7db49e8d4
-        version: 0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.0.0-experimental-b65537812
+        version: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
   packages/rsc/examples/basic:
     dependencies:
@@ -627,15 +627,15 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: 0.0.0-experimental-7db49e8d4
-        version: 0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.0.0-experimental-b65537812
+        version: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       '@cloudflare/vite-plugin':
         specifier: ^1.6.0
         version: 1.6.0(rollup@4.38.0)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250604.0)(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))
       '@react-router/dev':
-        specifier: 0.0.0-experimental-7db49e8d4
-        version: 0.0.0-experimental-7db49e8d4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)
+        specifier: 0.0.0-experimental-b65537812
+        version: 0.0.0-experimental-b65537812(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.4)
@@ -1721,13 +1721,13 @@ packages:
     resolution: {integrity: sha512-ezIadUb1aFhwJLd++WVqVpi9rnlX8vnd4ju7saPhwLHJN1mJgOv0puePTGV+FbtSnWtwoHDT8lAm4kagDZmpCg==}
     engines: {node: '>=20.0.0'}
 
-  '@react-router/dev@0.0.0-experimental-7db49e8d4':
-    resolution: {integrity: sha512-ybT7W3w8D45pgTnuyvLmxQHxzz6mWjM95IZpWDkkN7W9X5r89LVQBHi9JO4aXf+7BSJ/ugsf/BdmIM055iBEOQ==}
+  '@react-router/dev@0.0.0-experimental-b65537812':
+    resolution: {integrity: sha512-8B7rOQ3GMyTWZHTJoflPXSJpIAT+9RxiU8XTuRpRwXv/gqCcRfe+LWzrhTpWggT0pIsZtadmQjhhZYcIJrjLPw==}
     engines: {node: '>=20.0.0'}
     hasBin: true
     peerDependencies:
-      '@react-router/serve': ^0.0.0-experimental-7db49e8d4
-      react-router: ^0.0.0-experimental-7db49e8d4
+      '@react-router/serve': ^0.0.0-experimental-b65537812
+      react-router: ^0.0.0-experimental-b65537812
       typescript: ^5.1.0
       vite: ^6.3.5
       wrangler: ^3.28.2 || ^4.0.0
@@ -1739,11 +1739,11 @@ packages:
       wrangler:
         optional: true
 
-  '@react-router/node@0.0.0-experimental-7db49e8d4':
-    resolution: {integrity: sha512-AZJ/KSYn5j69dSA1hgiQFpj8m/TkBFqgqkx4fSckBqsN9GK1sJk2EDq8t+Xjb3EGhX3DyQlXJd6AVf8VflxOnQ==}
+  '@react-router/node@0.0.0-experimental-b65537812':
+    resolution: {integrity: sha512-x8qYTRpNFJkromX//qIe3yyWVjboRtKjsOt9qZCYcyVr1bhA4O+gFJbcGbQ+bpXtW6dgPczjq0RVpBSt8NrcVQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
-      react-router: 0.0.0-experimental-7db49e8d4
+      react-router: 0.0.0-experimental-b65537812
       typescript: ^5.1.0
     peerDependenciesMeta:
       typescript:
@@ -2963,10 +2963,6 @@ packages:
     resolution: {integrity: sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==}
     engines: {node: '>=14'}
 
-  fs-extra@10.1.0:
-    resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
-    engines: {node: '>=12'}
-
   fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -3174,9 +3170,6 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
-
-  jsonfile@6.1.0:
-    resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
 
   kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
@@ -3705,8 +3698,8 @@ packages:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
 
-  react-router@0.0.0-experimental-7db49e8d4:
-    resolution: {integrity: sha512-7LNNQ6DQmewph4/DLitj/B9bCiaoFiDAa+ON4JGu4lUiutfTmInYTAT5Ettif07xsB9jn/+huw+CuwxG000M2A==}
+  react-router@0.0.0-experimental-b65537812:
+    resolution: {integrity: sha512-GKSBunl/zm2ZVgu4j6ZcY0FV+49K1Cl67CXsXUT7tSUSDrvGwuCSlOPXzNT+ZYOAvgjOjRJGEGqICdPJS14mdg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.1.0
@@ -3942,9 +3935,6 @@ packages:
     resolution: {integrity: sha512-KXDYZ9dszj6bzvnEMRYvxgeTHU74QBFL54XKtP3nyMuJ81CFYtABZ3bAzL2EdFUaEwJOBOgENyFj3R7oTzDyyw==}
     engines: {node: '>=4', npm: '>=6'}
 
-  stream-slice@0.1.2:
-    resolution: {integrity: sha512-QzQxpoacatkreL6jsxnVb7X5R/pGw9OUv2qWTYWnmLpg4NdN31snPy/f3TdQE1ZUXaThRvj1Zw4/OGg0ZkaLMA==}
-
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
@@ -4162,10 +4152,6 @@ packages:
     resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
     engines: {node: '>=14.0'}
 
-  undici@6.21.3:
-    resolution: {integrity: sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==}
-    engines: {node: '>=18.17'}
-
   unenv@2.0.0-rc.17:
     resolution: {integrity: sha512-B06u0wXkEd+o5gOCMl/ZHl5cfpYbDZKAT+HWTL+Hws6jWu7dCiqBBXXXzMFcFVJb8D4ytAnYmxJA83uwOQRSsg==}
 
@@ -4192,10 +4178,6 @@ packages:
 
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
-
-  universalify@2.0.1:
-    resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
-    engines: {node: '>= 10.0.0'}
 
   unocss@66.2.1:
     resolution: {integrity: sha512-omA9to1Vyr0fsvP37QXErlJYspBHUF1fLsIRgDXnnsynIG88+WuEuY+o3wuDStqDSOLrorHCgLa6LYjJ7IKaFg==}
@@ -5243,7 +5225,7 @@ snapshots:
     dependencies:
       quansync: 0.2.10
 
-  '@react-router/dev@0.0.0-experimental-7db49e8d4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)':
+  '@react-router/dev@0.0.0-experimental-b65537812(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))(yaml@2.7.0)':
     dependencies:
       '@babel/core': 7.26.10
       '@babel/generator': 7.27.5
@@ -5254,23 +5236,23 @@ snapshots:
       '@babel/traverse': 7.27.0
       '@babel/types': 7.27.6
       '@npmcli/package-json': 4.0.1
-      '@react-router/node': 0.0.0-experimental-7db49e8d4(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
+      '@react-router/node': 0.0.0-experimental-b65537812(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
       arg: 5.0.2
       babel-dead-code-elimination: 1.0.10
       chokidar: 4.0.3
       dedent: 1.5.3
       es-module-lexer: 1.7.0
       exit-hook: 2.2.1
-      fs-extra: 10.1.0
       jsesc: 3.0.2
       lodash: 4.17.21
       pathe: 1.1.2
       picocolors: 1.1.1
       prettier: 2.8.8
       react-refresh: 0.14.2
-      react-router: 0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-router: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       semver: 7.7.2
       set-cookie-parser: 2.7.1
+      tinyglobby: 0.2.14
       valibot: 0.41.0(typescript@5.8.3)
       vite: 6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
       vite-node: 3.2.3(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -5293,13 +5275,10 @@ snapshots:
       - tsx
       - yaml
 
-  '@react-router/node@0.0.0-experimental-7db49e8d4(react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)':
+  '@react-router/node@0.0.0-experimental-b65537812(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
-      react-router: 0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      source-map-support: 0.5.21
-      stream-slice: 0.1.2
-      undici: 6.21.3
+      react-router: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     optionalDependencies:
       typescript: 5.8.3
 
@@ -6528,12 +6507,6 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  fs-extra@10.1.0:
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 6.1.0
-      universalify: 2.0.1
-
   fsevents@2.3.2:
     optional: true
 
@@ -6745,12 +6718,6 @@ snapshots:
   json-schema-traverse@1.0.0: {}
 
   json5@2.2.3: {}
-
-  jsonfile@6.1.0:
-    dependencies:
-      universalify: 2.0.1
-    optionalDependencies:
-      graceful-fs: 4.2.11
 
   kolorist@1.8.0: {}
 
@@ -7436,7 +7403,7 @@ snapshots:
 
   react-refresh@0.17.0: {}
 
-  react-router@0.0.0-experimental-7db49e8d4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       cookie: 1.0.2
       react: 19.1.0
@@ -7770,8 +7737,6 @@ snapshots:
 
   stoppable@1.1.0: {}
 
-  stream-slice@0.1.2: {}
-
   string-width@4.2.3:
     dependencies:
       emoji-regex: 8.0.0
@@ -7990,8 +7955,6 @@ snapshots:
     dependencies:
       '@fastify/busboy': 2.1.1
 
-  undici@6.21.3: {}
-
   unenv@2.0.0-rc.17:
     dependencies:
       defu: 6.1.4
@@ -8041,8 +8004,6 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
-
-  universalify@2.0.1: {}
 
   unocss@66.2.1(postcss@8.5.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.16(typescript@5.8.3)):
     dependencies:
