@@ -1007,6 +1007,8 @@ function vitePluginDefineEncryptionKey(
 ): Plugin[] {
   let defineEncryptionKey: string;
   let emitEncryptionKey = false;
+  const KEY_PLACEHOLDER = "__vite_rsc_define_encryption_key";
+  const KEY_FILE = "__vite_rsc_encryption_key.js";
 
   return [
     {
@@ -1028,36 +1030,27 @@ function vitePluginDefineEncryptionKey(
         if (id === "\0virtual:vite-rsc/encryption-key") {
           if (this.environment.mode === "build") {
             // during build, load key from an external file to make chunks stable.
-            return `export default () => __vite_rsc_define_encryption_key`;
+            return `export default () => ${KEY_PLACEHOLDER}`;
           }
           return `export default () => (${defineEncryptionKey})`;
         }
       },
       renderChunk(code, chunk) {
-        if (code.includes("__vite_rsc_define_encryption_key")) {
+        if (code.includes(KEY_PLACEHOLDER)) {
           assert.equal(this.environment.name, "rsc");
           emitEncryptionKey = true;
           const normalizedPath = normalizeRelativePath(
-            path.relative(
-              path.join(chunk.fileName, ".."),
-              "__vite_rsc_encryption_key.js",
-            ),
+            path.relative(path.join(chunk.fileName, ".."), KEY_FILE),
           );
           const replacement = `import(${JSON.stringify(normalizedPath)}).then(__m => __m.default)`;
-          code = code.replaceAll(
-            "__vite_rsc_define_encryption_key",
-            () => replacement,
-          );
+          code = code.replaceAll(KEY_PLACEHOLDER, () => replacement);
           return { code };
         }
       },
       writeBundle() {
         if (this.environment.name === "rsc" && emitEncryptionKey) {
           fs.writeFileSync(
-            path.join(
-              this.environment.config.build.outDir,
-              "__vite_rsc_encryption_key.js",
-            ),
+            path.join(this.environment.config.build.outDir, KEY_FILE),
             `export default ${defineEncryptionKey};\n`,
           );
         }
