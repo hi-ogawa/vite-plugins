@@ -18,7 +18,7 @@
     "react-dom": "latest"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.6.0",
+    "@cloudflare/vite-plugin": "https://pkg.pr.new/@cloudflare/vite-plugin@45e97e8",
     "@mjackson/node-fetch-server": "^0.6.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
