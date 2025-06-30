@@ -134,3 +134,21 @@ export function transformHoistInlineDirective(
     names,
   };
 }
+
+export function hasInlineDirective(ast: Program, directive: string): boolean {
+  let found = false;
+  walk(ast, {
+    enter(node) {
+      if (
+        (node.type === "FunctionExpression" ||
+          node.type === "FunctionDeclaration" ||
+          node.type === "ArrowFunctionExpression") &&
+        node.body.type === "BlockStatement" &&
+        hasDirective(node.body.body, directive)
+      ) {
+        found = true;
+      }
+    },
+  });
+  return found;
+}
