@@ -1051,13 +1051,15 @@ function vitePluginDefineEncryptionKey(
           return { code };
         }
       },
-      generateBundle() {
+      writeBundle() {
         if (this.environment.name === "rsc" && emitEncryptionKey) {
-          this.emitFile({
-            type: "asset",
-            fileName: "__vite_rsc_encryption_key.js",
-            source: `export default ${defineEncryptionKey};`,
-          });
+          fs.writeFileSync(
+            path.join(
+              this.environment.config.build.outDir,
+              "__vite_rsc_encryption_key.js",
+            ),
+            `export default ${defineEncryptionKey};\n`,
+          );
         }
       },
     },
