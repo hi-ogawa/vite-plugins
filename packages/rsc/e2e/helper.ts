@@ -4,6 +4,7 @@ import { tinyassert } from "@hiogawa/utils";
 import test, { type Page, expect } from "@playwright/test";
 import { x } from "tinyexec";
 
+// TODO: separate to fixture.ts
 export type FixtureHelper = {
   mode: "dev" | "build";
   url: () => string;
