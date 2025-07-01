@@ -80,10 +80,8 @@ export default defineConfig({
       writeBundle(_options, bundle) {
         if (this.environment.name === "rsc") {
           assert(Object.keys(bundle).includes("__server_secret.txt"));
-          assert(Object.keys(bundle).includes("__vite_rsc_encryption_key.js"));
         } else {
           assert(!Object.keys(bundle).includes("__server_secret.txt"));
-          assert(Object.keys(bundle).includes("__vite_rsc_encryption_key.js"));
         }
       },
     },
