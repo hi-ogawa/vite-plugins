@@ -13,15 +13,15 @@ const root = "examples/starter";
 
 test.describe("dev", () => {
   const f = setupFixtureDev({ root });
-  defineTest("dev", f);
+  defineTest(f);
 });
 
 test.describe("build", () => {
   const f = setupFixtureBuild({ root });
-  defineTest("build", f);
+  defineTest(f);
 });
 
-function defineTest(mode: "dev" | "build", f: FixtureHelper) {
+function defineTest(f: FixtureHelper) {
   test("basic", async ({ page }) => {
     await page.goto(f.url());
     await waitForHydration(page);
@@ -54,8 +54,9 @@ function defineTest(mode: "dev" | "build", f: FixtureHelper) {
     ).toBeVisible();
   });
 
-  const testDev = mode === "build" ? test.skip : test;
-  testDev("client hmr", async ({ page }) => {
+  test("client hmr", async ({ page }) => {
+    test.skip(f.mode === "build");
+
     await page.goto(f.url());
     await waitForHydration(page);
     await page.getByRole("button", { name: "Client Counter: 0" }).click();

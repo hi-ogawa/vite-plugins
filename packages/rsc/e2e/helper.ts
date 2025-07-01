@@ -5,6 +5,7 @@ import test, { type Page, expect } from "@playwright/test";
 import { x } from "tinyexec";
 
 export type FixtureHelper = {
+  mode: "dev" | "build";
   url: () => string;
 };
 
@@ -59,6 +60,7 @@ export function setupFixtureDev(options: {
   });
 
   return {
+    mode: "dev",
     url: () => baseURL,
   };
 }
@@ -93,6 +95,7 @@ export function setupFixtureBuild(options: {
   });
 
   return {
+    mode: "build",
     url: () => baseURL,
   };
 }
