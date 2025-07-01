@@ -44,60 +44,48 @@ async function waitClosed(proc: ReturnType<typeof runCli>) {
   });
 }
 
-export function setupFixtureDev(options: {
+export function useFixture(options: {
+  mode: "dev" | "build";
   root: string;
 }): FixtureHelper {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
 
-  test.beforeAll(async () => {
-    const proc = runCli(
-      `pnpm -C ${options.root} dev`,
-      `[fixture:dev:${options.root}]`,
-    );
-    const closed = waitClosed(proc);
-    const port = await findPort(proc);
-    baseURL = `http://localhost:${port}`;
-    cleanup = async () => {
-      proc.kill();
-      await closed;
-    };
-  });
-
-  test.afterAll(async () => {
-    await cleanup?.();
-  });
-
-  return {
-    mode: "dev",
-    url: () => baseURL,
-  };
-}
-
-export function setupFixtureBuild(options: {
-  root: string;
-}): FixtureHelper {
-  let cleanup: (() => Promise<void>) | undefined;
-  let baseURL!: string;
+  options.mode === "dev";
 
   test.beforeAll(async () => {
-    if (!process.env.TEST_SKIP_BUILD) {
-      await runCli(
-        `pnpm -C ${options.root} build`,
-        `[fixture:build:${options.root}]`,
+    if (options.mode === "dev") {
+      const proc = runCli(
+        `pnpm -C ${options.root} dev`,
+        `[fixture:dev:${options.root}]`,
       );
+      const closed = waitClosed(proc);
+      const port = await findPort(proc);
+      baseURL = `http://localhost:${port}`;
+      cleanup = async () => {
+        proc.kill();
+        await closed;
+      };
     }
-    const proc = runCli(
-      `pnpm -C ${options.root} preview`,
-      `[fixture:preview:${options.root}]`,
-    );
-    const closed = waitClosed(proc);
-    const port = await findPort(proc);
-    baseURL = `http://localhost:${port}`;
-    cleanup = async () => {
-      proc.kill();
-      await closed;
-    };
+    if (options.mode === "build") {
+      if (!process.env.TEST_SKIP_BUILD) {
+        await runCli(
+          `pnpm -C ${options.root} build`,
+          `[fixture:build:${options.root}]`,
+        );
+      }
+      const proc = runCli(
+        `pnpm -C ${options.root} preview`,
+        `[fixture:preview:${options.root}]`,
+      );
+      const closed = waitClosed(proc);
+      const port = await findPort(proc);
+      baseURL = `http://localhost:${port}`;
+      cleanup = async () => {
+        proc.kill();
+        await closed;
+      };
+    }
   });
 
   test.afterAll(async () => {
@@ -105,7 +93,7 @@ export function setupFixtureBuild(options: {
   });
 
   return {
-    mode: "build",
+    mode: options.mode,
     url: () => baseURL,
   };
 }

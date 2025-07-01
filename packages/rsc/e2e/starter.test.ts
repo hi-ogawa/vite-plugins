@@ -3,21 +3,20 @@ import {
   type FixtureHelper,
   createEditor,
   expectNoReload,
-  setupFixtureBuild,
-  setupFixtureDev,
   testNoJs,
+  useFixture,
   waitForHydration,
 } from "./helper";
 
 const root = "examples/starter";
 
 test.describe("dev", () => {
-  const f = setupFixtureDev({ root });
+  const f = useFixture({ mode: "dev", root });
   defineTest(f);
 });
 
 test.describe("build", () => {
-  const f = setupFixtureBuild({ root });
+  const f = useFixture({ mode: "build", root });
   defineTest(f);
 });
 

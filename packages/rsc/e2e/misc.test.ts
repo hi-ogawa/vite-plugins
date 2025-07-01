@@ -1,20 +1,17 @@
 import { expect, test } from "@playwright/test";
-import {
-  type FixtureHelper,
-  setupFixtureBuild,
-  setupFixtureDev,
-  waitForHydration,
-} from "./helper";
+import { type FixtureHelper, useFixture, waitForHydration } from "./helper";
 
 test.describe("ssg dev", () => {
-  const f = setupFixtureDev({
+  const f = useFixture({
+    mode: "dev",
     root: "examples/ssg",
   });
   defineTestSsg(f);
 });
 
 test.describe("ssg build", () => {
-  const f = setupFixtureBuild({
+  const f = useFixture({
+    mode: "build",
     root: "examples/ssg",
   });
   defineTestSsg(f);
