@@ -95,7 +95,8 @@ type RscPluginOptions = {
 
   /**
    * This option allows customizing how client build copies assets from server build.
-   * By default, it copies only ".css" files for security reasons.
+   * By default, all assets are copied, but frameworks might want to establish some convention
+   * to tighten security based on this option.
    */
   copyServerAssetsToClient?: (fileName: string) => boolean;
 
@@ -564,8 +565,7 @@ export default function vitePluginRsc(
 
         if (this.environment.name === "client") {
           const filterAssets =
-            rscPluginOptions.copyServerAssetsToClient ??
-            ((id) => id.endsWith(".css"));
+            rscPluginOptions.copyServerAssetsToClient ?? (() => true);
           for (const asset of Object.values(rscBundle)) {
             if (asset.type === "asset" && filterAssets(asset.fileName)) {
               this.emitFile({
@@ -1051,13 +1051,15 @@ function vitePluginDefineEncryptionKey(
           return { code };
         }
       },
-      generateBundle() {
+      writeBundle() {
         if (this.environment.name === "rsc" && emitEncryptionKey) {
-          this.emitFile({
-            type: "asset",
-            fileName: "__vite_rsc_encryption_key.js",
-            source: `export default ${defineEncryptionKey};`,
-          });
+          fs.writeFileSync(
+            path.join(
+              this.environment.config.build.outDir,
+              "__vite_rsc_encryption_key.js",
+            ),
+            `export default ${defineEncryptionKey};\n`,
+          );
         }
       },
     },

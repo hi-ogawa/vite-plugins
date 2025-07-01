@@ -33,6 +33,8 @@ export default defineConfig({
       // disable auto css injection to manually test `loadCss` feature.
       rscCssTransform: false,
       ignoredPackageWarnings: [/@vitejs\/test-dep-/],
+      copyServerAssetsToClient: (fileName) =>
+        fileName !== "__server_secret.txt",
     }),
     // avoid ecosystem CI fail due to vite-plugin-inspect compatibility
     !process.env.ECOSYSTEM_CI && inspect(),
@@ -65,7 +67,7 @@ export default defineConfig({
       },
     },
     {
-      name: "test-server-emitFile-security",
+      name: "test-server-assets-security",
       buildStart() {
         if (this.environment.name === "rsc") {
           this.emitFile({
