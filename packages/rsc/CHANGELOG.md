@@ -2,7 +2,6 @@
 
 ## v0.4.8 (2025-07-01)
 
-- refactor: minor ([#1103](https://github.com/hi-ogawa/vite-plugins/pull/1103))
 - fix: copy all server assets to client by default and output `__vite_rsc_encryption_key` to fs directly ([#1102](https://github.com/hi-ogawa/vite-plugins/pull/1102))
 - fix: stable client build ([#1094](https://github.com/hi-ogawa/vite-plugins/pull/1094))
 
