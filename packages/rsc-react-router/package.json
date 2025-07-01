@@ -4,7 +4,7 @@
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/rsc-react-router",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hi-ogawa/vite-plugins",
+    "url": "git+https://github.com/hi-ogawa/vite-plugins.git",
     "directory": "packages/rsc-react-router"
   },
   "license": "MIT",
