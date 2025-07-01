@@ -58,3 +58,16 @@ test("client hmr @dev", async ({ page }) => {
   editor.reset();
   await page.getByRole("button", { name: "Client Counter: 0" }).click();
 });
+
+test("image assets", async ({ page }) => {
+  await page.goto("./");
+  await waitForHydration(page);
+  await expect(page.getByAltText("Vite logo")).not.toHaveJSProperty(
+    "naturalWidth",
+    0,
+  );
+  await expect(page.getByAltText("React logo")).not.toHaveJSProperty(
+    "naturalWidth",
+    0,
+  );
+});
