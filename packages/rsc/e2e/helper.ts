@@ -107,7 +107,7 @@ export const testNoJs = test.extend({
 export async function waitForHydration(page: Page) {
   await page.waitForFunction(
     () => {
-      const el = document.querySelector(".card");
+      const el = document.querySelector("body");
       if (el) {
         const keys = Object.keys(el);
         return keys.some((key) => key.startsWith("__reactFiber"));

@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   type FixtureHelper,
   setupFixtureBuild,
@@ -26,8 +26,12 @@ function defineTestSsg(f: FixtureHelper) {
     await waitForHydration(page);
 
     if (f.mode === "build") {
+      const t1 = await page.getByTestId("timestamp").textContent();
+      await page.waitForTimeout(100);
       await page.reload();
       await waitForHydration(page);
+      const t2 = await page.getByTestId("timestamp").textContent();
+      expect(t2).toBe(t1);
     }
   });
 }
