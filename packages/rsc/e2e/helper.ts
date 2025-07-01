@@ -1,6 +1,101 @@
 import { readFileSync, writeFileSync } from "node:fs";
+import { stripVTControlCharacters } from "node:util";
 import { tinyassert } from "@hiogawa/utils";
 import test, { type Page, expect } from "@playwright/test";
+import { x } from "tinyexec";
+
+export type FixtureHelper = {
+  url: () => string;
+};
+
+function runCli(command: string, label: string) {
+  const [name, ...args] = command.split(" ");
+  const proc = x(name!, args);
+  if (process.env.TEST_PIPE_STDIN) {
+    proc.process!.stdout!.on("data", (data) => {
+      console.log(label, data.toString());
+    });
+  }
+  proc.process!.stderr!.on("data", (data) => {
+    console.error(label, data.toString());
+  });
+  return proc;
+}
+
+async function findPort(proc: ReturnType<typeof runCli>): Promise<number> {
+  let output = "";
+  return new Promise((resolve) => {
+    proc.process!.stdout!.on("data", (data) => {
+      output += stripVTControlCharacters(String(data));
+      const match = output.match(/http:\/\/localhost:(\d+)/);
+      if (match) {
+        resolve(Number(match[1]));
+      }
+    });
+  });
+}
+
+export function setupFixtureDev(options: {
+  root: string;
+}): FixtureHelper {
+  let cleanup: (() => Promise<void>) | undefined;
+  let baseURL!: string;
+
+  test.beforeAll(async () => {
+    const proc = runCli(
+      `pnpm -C ${options.root} dev`,
+      `[fixture:dev:${options.root}]`,
+    );
+    const port = await findPort(proc);
+    baseURL = `http://localhost:${port}`;
+    cleanup = async () => {
+      proc.kill();
+      await proc;
+    };
+  });
+
+  test.afterAll(async () => {
+    await cleanup?.();
+  });
+
+  return {
+    url: () => baseURL,
+  };
+}
+
+export function setupFixtureBuild(options: {
+  root: string;
+}): FixtureHelper {
+  let cleanup: (() => Promise<void>) | undefined;
+  let baseURL!: string;
+
+  test.beforeAll(async () => {
+    if (!process.env.TEST_SKIP_BUILD) {
+      await runCli(
+        `pnpm -C ${options.root} build`,
+        `[fixture:build:${options.root}]`,
+      );
+    }
+    const proc = runCli(
+      `pnpm -C ${options.root} preview`,
+      `[fixture:preview:${options.root}]`,
+    );
+    const port = await findPort(proc);
+    baseURL = `http://localhost:${port}`;
+    cleanup = async () => {
+      proc.kill();
+      await proc;
+    };
+  });
+
+  test.afterAll(async () => {
+    await cleanup?.();
+  });
+
+  return {
+    url: () => baseURL,
+  };
+}
 
 export const testNoJs = test.extend({
   javaScriptEnabled: ({}, use) => use(false),

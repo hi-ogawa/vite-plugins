@@ -540,6 +540,9 @@ importers:
       rsc-html-stream:
         specifier: ^0.0.6
         version: 0.0.6
+      tinyexec:
+        specifier: ^1.0.1
+        version: 1.0.1
 
   packages/rsc-react-router:
     dependencies:

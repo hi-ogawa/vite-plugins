@@ -15,7 +15,7 @@
   },
   "files": ["dist", "types"],
   "scripts": {
-    "test-e2e": "playwrite test",
+    "test-e2e": "playwright test",
     "test-package": "bash scripts/test-package.sh",
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
@@ -33,7 +33,8 @@
     "@playwright/test": "^1.53.1",
     "@types/node": "^22.14.1",
     "react-server-dom-webpack": "*",
-    "rsc-html-stream": "^0.0.6"
+    "rsc-html-stream": "^0.0.6",
+    "tinyexec": "^1.0.1"
   },
   "peerDependencies": {
     "react": "*",
