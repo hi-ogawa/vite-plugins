@@ -36,6 +36,14 @@ async function findPort(proc: ReturnType<typeof runCli>): Promise<number> {
   });
 }
 
+async function waitClosed(proc: ReturnType<typeof runCli>) {
+  return new Promise<void>((resolve) => {
+    proc.process!.on("close", () => {
+      resolve();
+    });
+  });
+}
+
 export function setupFixtureDev(options: {
   root: string;
 }): FixtureHelper {
@@ -47,11 +55,12 @@ export function setupFixtureDev(options: {
       `pnpm -C ${options.root} dev`,
       `[fixture:dev:${options.root}]`,
     );
+    const closed = waitClosed(proc);
     const port = await findPort(proc);
     baseURL = `http://localhost:${port}`;
     cleanup = async () => {
       proc.kill();
-      await proc;
+      await closed;
     };
   });
 
@@ -82,11 +91,12 @@ export function setupFixtureBuild(options: {
       `pnpm -C ${options.root} preview`,
       `[fixture:preview:${options.root}]`,
     );
+    const closed = waitClosed(proc);
     const port = await findPort(proc);
     baseURL = `http://localhost:${port}`;
     cleanup = async () => {
       proc.kill();
-      await proc;
+      await closed;
     };
   });
 
