@@ -62,7 +62,11 @@ export function useFixture(options: {
       const port = await findPort(proc);
       baseURL = `http://localhost:${port}`;
       cleanup = async () => {
-        proc.kill();
+        if (process.platform === "win32") {
+          proc.kill("SIGKILL");
+        } else {
+          proc.kill();
+        }
         await closed;
       };
     }
@@ -81,7 +85,11 @@ export function useFixture(options: {
       const port = await findPort(proc);
       baseURL = `http://localhost:${port}`;
       cleanup = async () => {
-        proc.kill();
+        if (process.platform === "win32") {
+          proc.kill("SIGKILL");
+        } else {
+          proc.kill();
+        }
         await closed;
       };
     }
