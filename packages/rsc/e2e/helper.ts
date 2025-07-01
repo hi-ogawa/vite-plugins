@@ -1,8 +1,8 @@
+import { spawn } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { stripVTControlCharacters } from "node:util";
 import { tinyassert } from "@hiogawa/utils";
-import test, { type Page, expect } from "@playwright/test";
-import { x } from "tinyexec";
+import { type Page, expect, test } from "@playwright/test";
 
 export type FixtureHelper = {
   mode: "dev" | "build";
@@ -11,13 +11,15 @@ export type FixtureHelper = {
 
 function runCli(command: string, label: string) {
   const [name, ...args] = command.split(" ");
-  const proc = x(name!, args);
+  const proc = spawn(name!, args, {
+    stdio: ["ignore", "pipe", "pipe"],
+  });
   if (process.env.TEST_PIPE_STDIN) {
-    proc.process!.stdout!.on("data", (data) => {
+    proc.stdout!.on("data", (data) => {
       console.log(label, data.toString());
     });
   }
-  proc.process!.stderr!.on("data", (data) => {
+  proc.stderr!.on("data", (data) => {
     console.error(label, data.toString());
   });
   return proc;
@@ -26,7 +28,7 @@ function runCli(command: string, label: string) {
 async function findPort(proc: ReturnType<typeof runCli>): Promise<number> {
   let output = "";
   return new Promise((resolve) => {
-    proc.process!.stdout!.on("data", (data) => {
+    proc.stdout!.on("data", (data) => {
       output += stripVTControlCharacters(String(data));
       const match = output.match(/http:\/\/localhost:(\d+)/);
       if (match) {
@@ -38,7 +40,7 @@ async function findPort(proc: ReturnType<typeof runCli>): Promise<number> {
 
 async function waitClosed(proc: ReturnType<typeof runCli>) {
   return new Promise<void>((resolve) => {
-    proc.process!.on("close", () => {
+    proc.on("close", () => {
       resolve();
     });
   });
@@ -82,10 +84,11 @@ export function setupFixtureBuild(options: {
 
   test.beforeAll(async () => {
     if (!process.env.TEST_SKIP_BUILD) {
-      await runCli(
+      const proc = runCli(
         `pnpm -C ${options.root} build`,
         `[fixture:build:${options.root}]`,
       );
+      await waitClosed(proc);
     }
     const proc = runCli(
       `pnpm -C ${options.root} preview`,
