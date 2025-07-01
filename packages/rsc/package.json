@@ -15,6 +15,7 @@
   },
   "files": ["dist", "types"],
   "scripts": {
+    "test-e2e": "playwrite test",
     "test-package": "bash scripts/test-package.sh",
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
@@ -29,6 +30,8 @@
     "vitefu": "^1.0.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.53.1",
+    "@types/node": "^22.14.1",
     "react-server-dom-webpack": "*",
     "rsc-html-stream": "^0.0.6"
   },
