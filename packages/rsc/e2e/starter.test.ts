@@ -11,12 +11,12 @@ import {
 const root = "examples/starter";
 
 test.describe("dev", () => {
-  const f = useFixture({ mode: "dev", root });
+  const f = useFixture({ root, mode: "dev" });
   defineTest(f);
 });
 
 test.describe("build", () => {
-  const f = useFixture({ mode: "build", root });
+  const f = useFixture({ root, mode: "build" });
   defineTest(f);
 });
 

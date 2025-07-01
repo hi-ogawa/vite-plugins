@@ -3,16 +3,16 @@ import { type FixtureHelper, useFixture, waitForHydration } from "./helper";
 
 test.describe("ssg dev", () => {
   const f = useFixture({
-    mode: "dev",
     root: "examples/ssg",
+    mode: "dev",
   });
   defineTestSsg(f);
 });
 
 test.describe("ssg build", () => {
   const f = useFixture({
-    mode: "build",
     root: "examples/ssg",
+    mode: "build",
   });
   defineTestSsg(f);
 });
