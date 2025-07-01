@@ -1,25 +1,25 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { stripVTControlCharacters } from "node:util";
+import { stripVTControlCharacters, styleText } from "node:util";
 import { tinyassert } from "@hiogawa/utils";
 import test, { type Page, expect } from "@playwright/test";
 import { x } from "tinyexec";
 
-// TODO: separate to fixture.ts
+// TODO: separate to fixture.ts?
 export type FixtureHelper = {
   mode: "dev" | "build";
   url: () => string;
 };
 
-function runCli(command: string, label: string) {
+function runCli({ command, label }: { command: string; label: string }) {
   const [name, ...args] = command.split(" ");
   const proc = x(name!, args);
   if (process.env.TEST_PIPE_STDIN) {
     proc.process!.stdout!.on("data", (data) => {
-      console.log(label, data.toString());
+      console.log(styleText("blue", label), data.toString());
     });
   }
   proc.process!.stderr!.on("data", (data) => {
-    console.error(label, data.toString());
+    console.error(styleText("red", label), data.toString());
   });
   return proc;
 }
@@ -52,14 +52,12 @@ export function useFixture(options: {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
 
-  options.mode === "dev";
-
   test.beforeAll(async () => {
     if (options.mode === "dev") {
-      const proc = runCli(
-        `pnpm -C ${options.root} dev`,
-        `[fixture:dev:${options.root}]`,
-      );
+      const proc = runCli({
+        command: `pnpm -C ${options.root} dev`,
+        label: `[fixture:dev:${options.root}]`,
+      });
       const closed = waitClosed(proc);
       const port = await findPort(proc);
       baseURL = `http://localhost:${port}`;
@@ -70,15 +68,15 @@ export function useFixture(options: {
     }
     if (options.mode === "build") {
       if (!process.env.TEST_SKIP_BUILD) {
-        await runCli(
-          `pnpm -C ${options.root} build`,
-          `[fixture:build:${options.root}]`,
-        );
+        await runCli({
+          command: `pnpm -C ${options.root} build`,
+          label: `[fixture:build:${options.root}]`,
+        });
       }
-      const proc = runCli(
-        `pnpm -C ${options.root} preview`,
-        `[fixture:preview:${options.root}]`,
-      );
+      const proc = runCli({
+        command: `pnpm -C ${options.root} preview`,
+        label: `[fixture:preview:${options.root}]`,
+      });
       const closed = waitClosed(proc);
       const port = await findPort(proc);
       baseURL = `http://localhost:${port}`;
