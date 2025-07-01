@@ -39,12 +39,20 @@ async function findPort(proc: ReturnType<typeof runCli>): Promise<number> {
   });
 }
 
-async function waitClosed(proc: ReturnType<typeof runCli>) {
+async function waitCliDone(proc: ReturnType<typeof runCli>) {
   return new Promise<void>((resolve) => {
-    proc.process!.on("close", () => {
+    proc.process!.on("exit", () => {
       resolve();
     });
   });
+}
+
+function killProcess(proc: ReturnType<typeof runCli>) {
+  if (process.platform === "win32") {
+    proc.kill("SIGKILL");
+  } else {
+    proc.kill();
+  }
 }
 
 export function useFixture(options: {
@@ -63,16 +71,12 @@ export function useFixture(options: {
         label: `[fixture:dev:${options.root}]`,
         cwd,
       });
-      const closed = waitClosed(proc);
+      const done = waitCliDone(proc);
       const port = await findPort(proc);
       baseURL = `http://localhost:${port}`;
       cleanup = async () => {
-        if (process.platform === "win32") {
-          proc.kill("SIGKILL");
-        } else {
-          proc.kill();
-        }
-        await closed;
+        killProcess(proc);
+        await done;
       };
     }
     if (options.mode === "build") {
@@ -88,16 +92,12 @@ export function useFixture(options: {
         label: `[fixture:preview:${options.root}]`,
         cwd,
       });
-      const closed = waitClosed(proc);
+      const done = waitCliDone(proc);
       const port = await findPort(proc);
       baseURL = `http://localhost:${port}`;
       cleanup = async () => {
-        if (process.platform === "win32") {
-          proc.kill("SIGKILL");
-        } else {
-          proc.kill();
-        }
-        await closed;
+        killProcess(proc);
+        await done;
       };
     }
   });
