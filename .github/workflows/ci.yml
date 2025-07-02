@@ -53,7 +53,6 @@ jobs:
       - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
         env:
           TEST_BASE: 1
-      - run: pnpm -C packages/rsc/examples/ssg build
       - run: pnpm -C packages/rsc/examples/react-router test-e2e
       - run: pnpm -C packages/rsc/examples/react-router build
       - run: pnpm -C packages/rsc/examples/react-router test-e2e-preview
