@@ -7,12 +7,12 @@ import {
   waitForHydration,
 } from "./helper";
 
-test.describe("dev default", () => {
+test.describe("dev node", () => {
   const f = useFixture({ root: "examples/starter", mode: "dev" });
   defineTest(f);
 });
 
-test.describe("build default", () => {
+test.describe("build node", () => {
   const f = useFixture({ root: "examples/starter", mode: "build" });
   defineTest(f);
 });

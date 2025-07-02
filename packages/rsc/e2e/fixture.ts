@@ -2,8 +2,6 @@ import { type SpawnOptions, spawn } from "node:child_process";
 import { stripVTControlCharacters, styleText } from "node:util";
 import test from "@playwright/test";
 
-// TODO: refactor
-
 export type Fixture = {
   mode?: "dev" | "build";
   root: string;
@@ -70,6 +68,7 @@ export function useFixture(options: {
         cwd: options.root,
       });
       const port = await proc.findPort();
+      // TODO: use `test.extend` to set `baseURL`?
       baseURL = `http://localhost:${port}`;
       cleanup = async () => {
         proc.kill();
@@ -100,7 +99,6 @@ export function useFixture(options: {
   });
 
   test.afterAll(async () => {
-    test.setTimeout(5000);
     await cleanup?.();
   });
 
