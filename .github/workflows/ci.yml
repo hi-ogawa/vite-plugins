@@ -44,7 +44,9 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           build: false
+          playwright: false
       - run: pnpm vite-ecosystem-ci:build
+      - run: pnpm exec playwright install ${{ matrix.browser }}
       - run: pnpm -C packages/rsc test-e2e-ci --project=${{ matrix.browser }}
         env:
           TEST_ISOLATED: true
