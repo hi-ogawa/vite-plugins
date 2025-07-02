@@ -562,12 +562,12 @@ function defineTest(f: Fixture) {
     await expect(page.locator(".test-tw-client")).toHaveCSS(
       "color",
       // blue-500
-      "oklch(0.623 0.214 259.815)",
+      "rgb(0, 0, 255)",
     );
     await expect(page.locator(".test-tw-server")).toHaveCSS(
       "color",
       // red-500
-      "oklch(0.637 0.237 25.331)",
+      "rgb(255, 0, 0)",
     );
   }
 
@@ -582,27 +582,27 @@ function defineTest(f: Fixture) {
       await using _ = await expectNoReload(page);
 
       const clientFile = f.createEditor("src/routes/client.tsx");
-      clientFile.edit((s) => s.replaceAll("text-blue-500", "text-blue-600"));
+      clientFile.edit((s) => s.replaceAll("text-[#00f]", "text-[#88f]"));
       await expect(page.locator(".test-tw-client")).toHaveCSS(
         "color",
-        "oklch(0.546 0.245 262.881)",
+        "rgb(136, 136, 255)",
       );
       clientFile.reset();
       await expect(page.locator(".test-tw-client")).toHaveCSS(
         "color",
-        "oklch(0.623 0.214 259.815)",
+        "rgb(0, 0, 255)",
       );
 
       const serverFile = f.createEditor("src/routes/root.tsx");
-      serverFile.edit((s) => s.replaceAll("text-red-500", "text-red-600"));
+      serverFile.edit((s) => s.replaceAll("text-[#f00]", "text-[#f88]"));
       await expect(page.locator(".test-tw-server")).toHaveCSS(
         "color",
-        "oklch(0.577 0.245 27.325)",
+        "rgb(255, 136, 136)",
       );
       serverFile.reset();
       await expect(page.locator(".test-tw-server")).toHaveCSS(
         "color",
-        "oklch(0.637 0.237 25.331)",
+        "rgb(255, 0, 0)",
       );
     });
 

@@ -64,7 +64,7 @@ export function Root(props: { url: URL }) {
           )}
         </div>
         <TestTailwindClient />
-        <div className="test-tw-server text-red-500">test-tw-server</div>
+        <div className="test-tw-server text-[#f00]">test-tw-server</div>
         <TestTemporaryReference
           action={async (node: React.ReactNode) => {
             "use server";
