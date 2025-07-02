@@ -201,7 +201,7 @@ function defineTest(f: Fixture) {
     test.skip(f.mode !== "dev");
 
     test("client hmr", async ({ page }) => {
-      await page.goto("./");
+      await page.goto(f.url());
       await waitForHydration(page);
       await page.getByRole("button", { name: "Client Counter: 0" }).click();
       await expect(
@@ -575,10 +575,10 @@ function defineTest(f: Fixture) {
     });
 
     testNoJs("no FOUC after server restart @nojs", async ({ page }) => {
-      const res = await page.request.get("/__test_restart");
+      const res = await page.request.get(f.url("/__test_restart"));
       expect(await res.text()).toBe("ok");
       await new Promise((r) => setTimeout(r, 100));
-      await page.goto("./");
+      await page.goto(f.url("./"));
       await testCss(page);
       await testTailwind(page);
     });
