@@ -8,15 +8,23 @@ import {
   waitForHydration,
 } from "./helper";
 
-const root = "examples/starter";
-
-test.describe("dev", () => {
-  const f = useFixture({ root, mode: "dev" });
+test.describe("dev default", () => {
+  const f = useFixture({ root: "examples/starter", mode: "dev" });
   defineTest(f);
 });
 
-test.describe("build", () => {
-  const f = useFixture({ root, mode: "build" });
+test.describe("build default", () => {
+  const f = useFixture({ root: "examples/starter", mode: "build" });
+  defineTest(f);
+});
+
+test.describe("dev cloudflare", () => {
+  const f = useFixture({ root: "examples/starter-cf-single", mode: "dev" });
+  defineTest(f);
+});
+
+test.describe("build cloudflare", () => {
+  const f = useFixture({ root: "examples/starter-cf-single", mode: "build" });
   defineTest(f);
 });
 
@@ -63,7 +71,7 @@ function defineTest(f: FixtureHelper) {
       page.getByRole("button", { name: "Client Counter: 1" }),
     ).toBeVisible();
 
-    const editor = createEditor(`${root}/src/client.tsx`);
+    const editor = createEditor(`${f.root}/src/client.tsx`);
     editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
     await expect(
       page.getByRole("button", { name: "Client [edit] Counter: 1" }),

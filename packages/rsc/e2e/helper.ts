@@ -1,6 +1,5 @@
 import type { SpawnOptions } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
-import path from "node:path";
 import { stripVTControlCharacters, styleText } from "node:util";
 import { tinyassert } from "@hiogawa/utils";
 import test, { type Page, expect } from "@playwright/test";
@@ -9,6 +8,7 @@ import { x } from "tinyexec";
 // TODO: separate to fixture.ts?
 export type FixtureHelper = {
   mode?: "dev" | "build";
+  root: string;
   url: () => string;
 };
 
@@ -62,14 +62,12 @@ export function useFixture(options: {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
 
-  const cwd = path.resolve(options.root);
-
   test.beforeAll(async () => {
     if (options.mode === "dev") {
       const proc = runCli({
-        command: `pnpm -C ${options.root} dev`,
+        command: `pnpm dev`,
         label: `[fixture:dev:${options.root}]`,
-        cwd,
+        cwd: options.root,
       });
       const done = waitCliDone(proc);
       const port = await findPort(proc);
@@ -82,15 +80,15 @@ export function useFixture(options: {
     if (options.mode === "build") {
       if (!process.env.TEST_SKIP_BUILD) {
         await runCli({
-          command: `pnpm -C ${options.root} build`,
+          command: `pnpm build`,
           label: `[fixture:build:${options.root}]`,
-          cwd,
+          cwd: options.root,
         });
       }
       const proc = runCli({
-        command: `pnpm -C ${options.root} preview`,
+        command: `pnpm preview`,
         label: `[fixture:preview:${options.root}]`,
-        cwd,
+        cwd: options.root,
       });
       const done = waitCliDone(proc);
       const port = await findPort(proc);
@@ -109,6 +107,7 @@ export function useFixture(options: {
 
   return {
     mode: options.mode,
+    root: options.root,
     url: () => baseURL,
   };
 }
