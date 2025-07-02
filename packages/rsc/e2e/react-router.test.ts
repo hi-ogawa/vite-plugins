@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
-import { expect, test } from "@playwright/test";
+import { type Page, expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
 import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
@@ -165,6 +165,19 @@ function defineTest(f: Fixture) {
     await expect(page.getByTestId("root-style")).toHaveCSS(
       "color",
       "rgb(0, 0, 255)",
+    );
+  });
+
+  test("useActionState", async ({ page }) => {
+    await page.goto(f.url());
+    await waitForHydration(page);
+    await page.getByTestId("use-action-state-jsx").getByRole("button").click();
+    await expect(page.getByTestId("use-action-state-jsx")).toContainText(
+      /\(ok\)/,
+    );
+    await page.getByTestId("use-action-state-jsx").getByRole("button").click();
+    await expect(page.getByTestId("use-action-state-jsx")).toContainText(
+      /\(ok\).*\(ok\)/,
     );
   });
 }

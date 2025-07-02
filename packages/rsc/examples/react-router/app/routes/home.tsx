@@ -6,6 +6,7 @@ namespace Route {
 import { sayHello } from "./home.actions.ts";
 import { PendingButton } from "./home.client.tsx";
 import "./home.css";
+import { TestActionStateServer } from "./test-action-state/server.tsx";
 
 export function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -44,6 +45,9 @@ const Component = ({ loaderData }: Route.ComponentProps) => {
             <PendingButton />
           </div>
         </form>
+        <div className="mt-4">
+          <TestActionStateServer message={`${new Date().toISOString()}`} />
+        </div>
       </article>
     </main>
   );
