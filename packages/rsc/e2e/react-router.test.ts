@@ -1,12 +1,7 @@
 import { createHash } from "node:crypto";
 import { expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
-import {
-  createEditor,
-  expectNoReload,
-  testNoJs,
-  waitForHydration,
-} from "./helper";
+import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
 test.describe("dev node", () => {
   const f = useFixture({ root: "examples/react-router", mode: "dev" });
@@ -96,7 +91,7 @@ function defineTest(f: Fixture) {
         page.getByRole("button", { name: "Client counter: 1" }),
       ).toBeVisible();
 
-      const editor = createEditor(f.root + "/app/routes/about.tsx");
+      const editor = f.createEditor("app/routes/about.tsx");
       editor.edit((s) =>
         s.replace("Client counter:", "Client [edit] counter:"),
       );
@@ -113,7 +108,7 @@ function defineTest(f: Fixture) {
 
       await page.getByText("This is the home page.").click();
 
-      const editor = createEditor(f.root + "/app/routes/home.tsx");
+      const editor = f.createEditor("app/routes/home.tsx");
       editor.edit((s) =>
         s.replace("This is the home page.", "This is the home [edit] page."),
       );

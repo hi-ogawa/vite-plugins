@@ -1,12 +1,11 @@
+import assert from "node:assert";
 import { type SpawnOptions, spawn } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import { stripVTControlCharacters, styleText } from "node:util";
 import test from "@playwright/test";
 
-export type Fixture = {
-  mode?: "dev" | "build";
-  root: string;
-  url: () => string;
-};
+export type Fixture = ReturnType<typeof useFixture>;
 
 function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const [name, ...args] = options.command.split(" ");
@@ -56,7 +55,7 @@ function runCli(options: { command: string; label?: string } & SpawnOptions) {
 export function useFixture(options: {
   root: string;
   mode?: "dev" | "build";
-}): Fixture {
+}) {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
 
@@ -102,9 +101,36 @@ export function useFixture(options: {
     await cleanup?.();
   });
 
+  const originalFiles: Record<string, string> = {};
+
+  function createEditor(filepath: string) {
+    filepath = path.resolve(options.root, filepath);
+    const init = fs.readFileSync(filepath, "utf-8");
+    originalFiles[filepath] ??= init;
+    let current = init;
+    return {
+      edit(editFn: (data: string) => string): void {
+        const next = editFn(current);
+        assert(next !== current, "Edit function did not change the content");
+        current = next;
+        fs.writeFileSync(filepath, next);
+      },
+      reset(): void {
+        fs.writeFileSync(filepath, init);
+      },
+    };
+  }
+
+  test.afterAll(async () => {
+    for (const [filepath, content] of Object.entries(originalFiles)) {
+      fs.writeFileSync(filepath, content);
+    }
+  });
+
   return {
     mode: options.mode,
     root: options.root,
     url: () => baseURL,
+    createEditor,
   };
 }
