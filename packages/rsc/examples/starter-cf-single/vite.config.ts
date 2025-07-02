@@ -1,5 +1,5 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
-import rsc, { __fix_cloudflare } from "@hiogawa/vite-rsc/plugin";
+import rsc from "@hiogawa/vite-rsc/plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -18,7 +18,6 @@ export default defineConfig((_env) => ({
       serverHandler: false,
       loadModuleDevProxy: true,
     }),
-    __fix_cloudflare(),
     cloudflare({
       configPath: "./wrangler.jsonc",
       viteEnvironment: {

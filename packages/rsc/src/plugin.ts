@@ -1762,7 +1762,11 @@ function __vite_rsc_wrap_css__(value, name) {
   }
 }
 
-/** temporary workaround for https://github.com/cloudflare/workers-sdk/issues/9538 */
+/**
+ * temporary workaround for
+ * - https://github.com/cloudflare/workers-sdk/issues/9538 (fixed in @cloudflare/vite-plugin@1.8.0)
+ * - https://github.com/vitejs/vite/pull/20077 (fixed in vite@7.0.0)
+ */
 export function __fix_cloudflare(): Plugin {
   return {
     name: "rsc:workaround-cloudflare",

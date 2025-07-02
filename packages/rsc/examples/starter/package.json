@@ -1,7 +1,7 @@
 {
   "name": "@hiogawa/vite-rsc-examples-starter",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
