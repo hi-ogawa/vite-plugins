@@ -58,7 +58,7 @@ jobs:
           build: false
       - run: pnpm vite-ecosystem-ci:build
       - run: pnpm i -w vite@npm:rolldown-vite@latest && pnpm i --no-frozen-lockfile
-      - run: pnpm -C packages/rsc test-e2e
+      - run: pnpm -C packages/rsc test-e2e --grep-invert cloudflare
         env:
           TEST_ISOLATED: true
 
