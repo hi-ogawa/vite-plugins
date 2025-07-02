@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { type FixtureHelper, useFixture, waitForHydration } from "./helper";
+import { type Fixture, useFixture } from "./fixture";
+import { waitForHydration } from "./helper";
 
 test.describe("ssg dev", () => {
   const f = useFixture({
@@ -17,7 +18,7 @@ test.describe("ssg build", () => {
   defineTestSsg(f);
 });
 
-function defineTestSsg(f: FixtureHelper) {
+function defineTestSsg(f: Fixture) {
   test("basic", async ({ page }) => {
     await page.goto(f.url());
     await waitForHydration(page);

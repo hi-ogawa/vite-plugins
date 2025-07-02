@@ -1,10 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { type Fixture, useFixture } from "./fixture";
 import {
-  type FixtureHelper,
   createEditor,
   expectNoReload,
   testNoJs,
-  useFixture,
   waitForHydration,
 } from "./helper";
 
@@ -28,7 +27,7 @@ test.describe("build cloudflare", () => {
   defineTest(f);
 });
 
-function defineTest(f: FixtureHelper) {
+function defineTest(f: Fixture) {
   test("basic", async ({ page }) => {
     await page.goto(f.url());
     await waitForHydration(page);
