@@ -249,6 +249,7 @@ function defineTest(f: Fixture) {
       // check next ssr is also updated
       const res = await page.goto(f.url());
       expect(await res?.text()).toContain("Client [edit] Counter");
+      await waitForHydration(page);
       editor.reset();
       await page.getByRole("button", { name: "Client Counter: 0" }).click();
     });
