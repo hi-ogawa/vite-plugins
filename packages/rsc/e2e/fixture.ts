@@ -1,7 +1,6 @@
-import type { SpawnOptions } from "node:child_process";
+import { type SpawnOptions, spawn } from "node:child_process";
 import { stripVTControlCharacters, styleText } from "node:util";
 import test from "@playwright/test";
-import { x } from "tinyexec";
 
 // TODO: refactor
 
@@ -13,45 +12,47 @@ export type Fixture = {
 
 function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const [name, ...args] = options.command.split(" ");
-  const proc = x(name!, args, { nodeOptions: options });
-  if (process.env.TEST_PIPE_STDIN) {
-    proc.process!.stdout!.on("data", (data) => {
-      console.log(styleText("gray", options.label ?? "[cli]"), data.toString());
-    });
-  }
-  proc.process!.stderr!.on("data", (data) => {
-    console.error(styleText("red", options.label ?? "[cli]"), data.toString());
+  const child = spawn(name!, args, options);
+  const label = `[${options.label ?? "cli"}]`;
+  child.stdout!.on("data", (data) => {
+    if (process.env.TEST_PIPE_STDIN) {
+      console.log(styleText("gray", label), data.toString());
+    }
   });
-  return proc;
-}
-
-async function findPort(proc: ReturnType<typeof runCli>): Promise<number> {
-  let output = "";
-  return new Promise((resolve) => {
-    proc.process!.stdout!.on("data", (data) => {
-      output += stripVTControlCharacters(String(data));
-      const match = output.match(/http:\/\/localhost:(\d+)/);
-      if (match) {
-        resolve(Number(match[1]));
+  child.stderr!.on("data", (data) => {
+    console.log(styleText("red", label), data.toString());
+  });
+  const done = new Promise<void>((resolve) => {
+    child.on("exit", (code) => {
+      if (code !== 0) {
+        console.log(styleText("red", `${label} exited with code ${code}`));
       }
-    });
-  });
-}
-
-async function waitCliDone(proc: ReturnType<typeof runCli>) {
-  return new Promise<void>((resolve) => {
-    proc.process!.on("exit", () => {
       resolve();
     });
   });
-}
 
-function killProcess(proc: ReturnType<typeof runCli>) {
-  if (process.platform === "win32") {
-    x("taskkill", ["/pid", String(proc.process!.pid), "/t", "/f"]);
-  } else {
-    proc.kill();
+  async function findPort(): Promise<number> {
+    let stdout = "";
+    return new Promise((resolve) => {
+      child.stdout!.on("data", (data) => {
+        stdout += stripVTControlCharacters(String(data));
+        const match = stdout.match(/http:\/\/localhost:(\d+)/);
+        if (match) {
+          resolve(Number(match[1]));
+        }
+      });
+    });
   }
+
+  function kill() {
+    if (process.platform === "win32") {
+      spawn("taskkill", ["/pid", String(child.pid), "/t", "/f"]);
+    } else {
+      child.kill();
+    }
+  }
+
+  return { proc: child, done, findPort, kill };
 }
 
 export function useFixture(options: {
@@ -68,33 +69,32 @@ export function useFixture(options: {
         label: `[fixture:dev:${options.root}]`,
         cwd: options.root,
       });
-      const done = waitCliDone(proc);
-      const port = await findPort(proc);
+      const port = await proc.findPort();
       baseURL = `http://localhost:${port}`;
       cleanup = async () => {
-        killProcess(proc);
-        await done;
+        proc.kill();
+        await proc.done;
       };
     }
     if (options.mode === "build") {
       if (!process.env.TEST_SKIP_BUILD) {
-        await runCli({
+        const proc = runCli({
           command: `pnpm build`,
           label: `[fixture:build:${options.root}]`,
           cwd: options.root,
         });
+        await proc.done;
       }
       const proc = runCli({
         command: `pnpm preview`,
         label: `[fixture:preview:${options.root}]`,
         cwd: options.root,
       });
-      const done = waitCliDone(proc);
-      const port = await findPort(proc);
+      const port = await proc.findPort();
       baseURL = `http://localhost:${port}`;
       cleanup = async () => {
-        killProcess(proc);
-        await done;
+        proc.kill();
+        await proc.done;
       };
     }
   });
