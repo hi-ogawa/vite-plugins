@@ -4,10 +4,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { stripVTControlCharacters, styleText } from "node:util";
 import test from "@playwright/test";
+import { x } from "tinyexec";
 
 function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const [name, ...args] = options.command.split(" ");
-  const child = spawn(name!, args, options);
+  const child = x(name!, args, { nodeOptions: options }).process!;
   const label = `[${options.label ?? "cli"}]`;
   child.stdout!.on("data", (data) => {
     if (process.env.TEST_PIPE_STDOUT) {
