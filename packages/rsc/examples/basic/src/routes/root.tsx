@@ -29,6 +29,7 @@ import { TestActionStateServer } from "./action-state/server";
 import { TestClientInServer } from "./deps/client-in-server/server";
 import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
+import { TestModuleInvalidationServer } from "./module-invalidation/server";
 import { TestSerializationServer } from "./serialization/server";
 import styles from "./server.module.css";
 import { TestUseCache } from "./use-cache/server";
@@ -91,6 +92,7 @@ export function Root(props: { url: URL }) {
         <TestServerInClient />
         <TestActionStateServer />
         <TestUseCache />
+        <TestModuleInvalidationServer />
       </body>
     </html>
   );
