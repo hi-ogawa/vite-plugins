@@ -11,7 +11,7 @@ function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const child = x(name!, args, { nodeOptions: options }).process!;
   const label = `[${options.label ?? "cli"}]`;
   child.stdout!.on("data", (data) => {
-    if (process.env.TEST_PIPE_STDOUT) {
+    if (process.env.TEST_DEBUG) {
       console.log(styleText("cyan", label), data.toString());
     }
   });
@@ -170,16 +170,10 @@ export async function setupIsolatedFixture(options: {
   });
 
   // install
-  await x("pnpm", "i @playwright/test".split(" "), {
+  await x("pnpm", ["i"], {
     nodeOptions: {
       cwd: options.dest,
-      stdio: process.env.TEST_ISOALTED_DEBUG ? "inherit" : undefined,
-    },
-  });
-  await x("pnpm", "exec playwright install chromium".split(" "), {
-    nodeOptions: {
-      cwd: options.dest,
-      stdio: process.env.TEST_ISOALTED_DEBUG ? "inherit" : undefined,
+      stdio: process.env.TEST_DEBUG ? "inherit" : undefined,
     },
   });
 }
