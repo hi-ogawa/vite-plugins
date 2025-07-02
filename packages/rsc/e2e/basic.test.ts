@@ -17,16 +17,31 @@ test.describe("build", () => {
   defineTest(f);
 });
 
-// TODO: TEST_BASE=1
-// test.describe("dev base", () => {
-//   const f = useFixture({ root: "examples/basic", mode: "dev" });
-//   defineTest(f);
-// });
+test.describe("dev base", () => {
+  const f = useFixture({
+    root: "examples/basic",
+    mode: "dev",
+    cliOptions: {
+      env: {
+        TEST_BASE: "true",
+      },
+    },
+  });
+  defineTest(f);
+});
 
-// test.describe("build base", () => {
-//   const f = useFixture({ root: "examples/basic", mode: "build" });
-//   defineTest(f);
-// });
+test.describe("build base", () => {
+  const f = useFixture({
+    root: "examples/basic",
+    mode: "build",
+    cliOptions: {
+      env: {
+        TEST_BASE: "true",
+      },
+    },
+  });
+  defineTest(f);
+});
 
 // TODO: isolate
 // test.describe("dev isolate", () => {

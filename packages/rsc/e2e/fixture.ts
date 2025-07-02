@@ -60,6 +60,7 @@ export function useFixture(options: {
   buildCommand?: string;
   // TODO: test in isolated direcotry with `file:` dependency
   isolate?: boolean;
+  cliOptions?: SpawnOptions;
 }) {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
@@ -72,6 +73,7 @@ export function useFixture(options: {
         command: options.command ?? `pnpm dev`,
         label: `${options.root}:dev`,
         cwd,
+        ...options.cliOptions,
       });
       const port = await proc.findPort();
       // TODO: use `test.extend` to set `baseURL`?
@@ -87,6 +89,7 @@ export function useFixture(options: {
           command: options.buildCommand ?? `pnpm build`,
           label: `${options.root}:build`,
           cwd,
+          ...options.cliOptions,
         });
         await proc.done;
       }
@@ -94,6 +97,7 @@ export function useFixture(options: {
         command: options.command ?? `pnpm preview`,
         label: `${options.root}:preview`,
         cwd,
+        ...options.cliOptions,
       });
       const port = await proc.findPort();
       baseURL = `http://localhost:${port}`;
