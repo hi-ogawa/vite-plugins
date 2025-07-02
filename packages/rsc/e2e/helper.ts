@@ -1,5 +1,3 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import { tinyassert } from "@hiogawa/utils";
 import test, { type Page, expect } from "@playwright/test";
 
 export const testNoJs = test.extend({
@@ -42,28 +40,3 @@ export async function expectNoReload(page: Page) {
     },
   };
 }
-
-export function createEditor(filepath: string) {
-  const init = readFileSync(filepath, "utf-8");
-  originalFiles[filepath] ??= init;
-  let current = init;
-  return {
-    edit(editFn: (data: string) => string): void {
-      const next = editFn(current);
-      tinyassert(next !== current);
-      current = next;
-      writeFileSync(filepath, next);
-    },
-    reset(): void {
-      writeFileSync(filepath, init);
-    },
-  };
-}
-
-const originalFiles: Record<string, string> = {};
-
-test.afterAll(() => {
-  for (const [filepath, content] of Object.entries(originalFiles)) {
-    writeFileSync(filepath, content);
-  }
-});

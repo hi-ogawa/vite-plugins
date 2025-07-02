@@ -5,8 +5,6 @@ import path from "node:path";
 import { stripVTControlCharacters, styleText } from "node:util";
 import test from "@playwright/test";
 
-export type Fixture = ReturnType<typeof useFixture>;
-
 function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const [name, ...args] = options.command.split(" ");
   const child = spawn(name!, args, options);
@@ -51,6 +49,8 @@ function runCli(options: { command: string; label?: string } & SpawnOptions) {
 
   return { proc: child, done, findPort, kill };
 }
+
+export type Fixture = ReturnType<typeof useFixture>;
 
 export function useFixture(options: {
   root: string;

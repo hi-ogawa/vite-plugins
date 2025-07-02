@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
-import {
-  createEditor,
-  expectNoReload,
-  testNoJs,
-  waitForHydration,
-} from "./helper";
+import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
 test.describe("dev node", () => {
   const f = useFixture({ root: "examples/starter", mode: "dev" });
@@ -70,7 +65,7 @@ function defineTest(f: Fixture) {
       page.getByRole("button", { name: "Client Counter: 1" }),
     ).toBeVisible();
 
-    const editor = createEditor(`${f.root}/src/client.tsx`);
+    const editor = f.createEditor(`src/client.tsx`);
     editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
     await expect(
       page.getByRole("button", { name: "Client [edit] Counter: 1" }),
