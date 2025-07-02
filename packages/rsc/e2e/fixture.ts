@@ -3,7 +3,8 @@ import { stripVTControlCharacters, styleText } from "node:util";
 import test from "@playwright/test";
 import { x } from "tinyexec";
 
-// TODO: separate to fixture.ts?
+// TODO: refactor
+
 export type Fixture = {
   mode?: "dev" | "build";
   root: string;
