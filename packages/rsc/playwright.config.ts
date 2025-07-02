@@ -5,6 +5,7 @@ export default defineConfig({
   use: {
     trace: "on-first-retry",
   },
+  timeout: 10000,
   expect: {
     toPass: { timeout: 5000 },
   },

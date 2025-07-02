@@ -49,7 +49,7 @@ async function waitCliDone(proc: ReturnType<typeof runCli>) {
 
 function killProcess(proc: ReturnType<typeof runCli>) {
   if (process.platform === "win32") {
-    proc.kill("SIGKILL");
+    x("taskkill", ["/pid", String(proc.process!.pid), "/t", "/f"]);
   } else {
     proc.kill();
   }
@@ -103,6 +103,7 @@ export function useFixture(options: {
   });
 
   test.afterAll(async () => {
+    test.setTimeout(5000);
     await cleanup?.();
   });
 
