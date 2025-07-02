@@ -45,7 +45,7 @@ jobs:
         with:
           build: false
       - run: pnpm vite-ecosystem-ci:build
-      - run: pnpm -C packages/rsc test-e2e-ci --project ${{ matrix.browser }}
+      - run: pnpm -C packages/rsc test-e2e-ci --project=${{ matrix.browser }}
         env:
           TEST_ISOLATED: true
       - uses: actions/upload-artifact@v4
