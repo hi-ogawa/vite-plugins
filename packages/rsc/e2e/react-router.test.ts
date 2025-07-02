@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import path from "node:path";
 import { expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
 import { expectNoReload, testNoJs, waitForHydration } from "./helper";
@@ -68,7 +69,7 @@ function defineTest(f: Fixture) {
           elements.map((el) => el.getAttribute("href")),
         );
       const { default: manifest } = await import(
-        "../dist/ssr/__vite_rsc_assets_manifest.js" as any
+        path.resolve(f.root, "dist/ssr/__vite_rsc_assets_manifest.js")
       );
       const hashString = (v: string) =>
         createHash("sha256").update(v).digest().toString("hex").slice(0, 12);

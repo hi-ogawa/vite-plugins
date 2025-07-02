@@ -63,7 +63,7 @@ export function useFixture(options: {
     if (options.mode === "dev") {
       const proc = runCli({
         command: `pnpm dev`,
-        label: `[fixture:dev:${options.root}]`,
+        label: `${options.root}:dev`,
         cwd: options.root,
       });
       const port = await proc.findPort();
@@ -78,14 +78,14 @@ export function useFixture(options: {
       if (!process.env.TEST_SKIP_BUILD) {
         const proc = runCli({
           command: `pnpm build`,
-          label: `[fixture:build:${options.root}]`,
+          label: `${options.root}:build`,
           cwd: options.root,
         });
         await proc.done;
       }
       const proc = runCli({
         command: `pnpm preview`,
-        label: `[fixture:preview:${options.root}]`,
+        label: `${options.root}:preview`,
         cwd: options.root,
       });
       const port = await proc.findPort();
