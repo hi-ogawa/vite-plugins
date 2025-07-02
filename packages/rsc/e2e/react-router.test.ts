@@ -26,14 +26,14 @@ test.describe("build node", () => {
 
 function defineTest(f: Fixture) {
   test("loader", async ({ page }) => {
-    await page.goto(f.url() + "/");
+    await page.goto(f.url());
     await expect(
       page.getByText(`loaderData: {"name":"Unknown"}`),
     ).toBeVisible();
   });
 
   test("client", async ({ page }) => {
-    await page.goto(f.url() + "/about");
+    await page.goto(f.url("./about"));
     await waitForHydration(page);
     await page.getByRole("button", { name: "Client counter: 0" }).click();
     await expect(
@@ -42,18 +42,18 @@ function defineTest(f: Fixture) {
   });
 
   test("navigation", async ({ page }) => {
-    await page.goto(f.url() + "/");
+    await page.goto(f.url());
     await waitForHydration(page);
     await using _ = await expectNoReload(page);
 
     await page.getByText("This is the home page.").click();
 
     await page.getByRole("link", { name: "About" }).click();
-    await page.waitForURL(f.url() + "/about");
+    await page.waitForURL(f.url("./about"));
     await page.getByText("This is the about page.").click();
 
     await page.getByRole("link", { name: "Home" }).click();
-    await page.waitForURL(f.url() + "/");
+    await page.waitForURL(f.url());
     await page.getByText("This is the home page.").click();
   });
 
@@ -61,7 +61,7 @@ function defineTest(f: Fixture) {
     test.skip(f.mode !== "build");
 
     testNoJs("ssr modulepreload", async ({ page }) => {
-      await page.goto(f.url() + "/");
+      await page.goto(f.url());
       const srcs = await page
         .locator(`head >> link[rel="modulepreload"]`)
         .evaluateAll((elements) =>
@@ -82,7 +82,7 @@ function defineTest(f: Fixture) {
     test.skip(f.mode !== "dev");
 
     test("client hmr", async ({ page }) => {
-      await page.goto(f.url() + "/about");
+      await page.goto(f.url("./about"));
       await waitForHydration(page);
       await using _ = await expectNoReload(page);
 
@@ -102,7 +102,7 @@ function defineTest(f: Fixture) {
     });
 
     test("server hmr @dev", async ({ page }) => {
-      await page.goto(f.url() + "/");
+      await page.goto(f.url("/"));
       await waitForHydration(page);
       await using _ = await expectNoReload(page);
 
@@ -118,7 +118,7 @@ function defineTest(f: Fixture) {
   });
 
   test("server css code split", async ({ page }) => {
-    await page.goto(f.url() + "/");
+    await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.locator(".test-style-home")).toHaveCSS(
       "color",
@@ -127,14 +127,14 @@ function defineTest(f: Fixture) {
 
     // client side navigation to "/about" keeps "/" styles
     await page.getByRole("link", { name: "About" }).click();
-    await page.waitForURL(f.url() + "/about");
+    await page.waitForURL(f.url("./about"));
     await expect(page.locator(".test-style-home")).toHaveCSS(
       "color",
       "rgb(250, 150, 0)",
     );
 
     // SSR of "/about" doesn't include "/" styles
-    await page.goto(f.url() + "/about");
+    await page.goto(f.url("./about"));
     await waitForHydration(page);
     await expect(page.locator(".test-style-home")).not.toHaveCSS(
       "color",
@@ -143,7 +143,7 @@ function defineTest(f: Fixture) {
 
     // client side navigation to "/" loads "/" styles
     await page.getByRole("link", { name: "Home" }).click();
-    await page.waitForURL(f.url() + "/");
+    await page.waitForURL(f.url());
     await expect(page.locator(".test-style-home")).toHaveCSS(
       "color",
       "rgb(250, 150, 0)",
@@ -151,7 +151,7 @@ function defineTest(f: Fixture) {
   });
 
   test("vite-rsc-css-export", async ({ page }) => {
-    await page.goto(f.url() + "/");
+    await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.getByTestId("root-style")).toHaveCSS(
       "color",

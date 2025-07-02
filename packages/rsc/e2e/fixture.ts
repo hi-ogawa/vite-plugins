@@ -19,8 +19,8 @@ function runCli(options: { command: string; label?: string } & SpawnOptions) {
   });
   const done = new Promise<void>((resolve) => {
     child.on("exit", (code) => {
-      if (code !== 0) {
-        console.log(styleText("red", `${label} exited with code ${code}`));
+      if (code !== 0 && code !== 143) {
+        console.log(styleText("red", `${label}`), `exit code ${code}`);
       }
       resolve();
     });
@@ -130,7 +130,7 @@ export function useFixture(options: {
   return {
     mode: options.mode,
     root: options.root,
-    url: () => baseURL,
+    url: (url: string = "./") => new URL(url, baseURL).href,
     createEditor,
   };
 }
