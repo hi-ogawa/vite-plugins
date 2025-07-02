@@ -61,12 +61,14 @@ export function useFixture(options: {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
 
+  const cwd = path.resolve(options.root);
+
   test.beforeAll(async () => {
     if (options.mode === "dev") {
       const proc = runCli({
         command: options.command ?? `pnpm dev`,
         label: `${options.root}:dev`,
-        cwd: options.root,
+        cwd,
       });
       const port = await proc.findPort();
       // TODO: use `test.extend` to set `baseURL`?
@@ -81,14 +83,14 @@ export function useFixture(options: {
         const proc = runCli({
           command: options.buildCommand ?? `pnpm build`,
           label: `${options.root}:build`,
-          cwd: options.root,
+          cwd,
         });
         await proc.done;
       }
       const proc = runCli({
         command: options.command ?? `pnpm preview`,
         label: `${options.root}:preview`,
-        cwd: options.root,
+        cwd,
       });
       const port = await proc.findPort();
       baseURL = `http://localhost:${port}`;
