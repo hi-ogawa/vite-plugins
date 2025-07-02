@@ -1,5 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "schedule:weekly"],
-  "ignoreDeps": ["react-rotuer", "@react-router/dev"]
+  "extends": ["config:recommended", "schedule:weekly", "group:allNonMajor"],
+  "ignoreDeps": ["react", "react-rotuer", "@react-router/dev"]
 }
