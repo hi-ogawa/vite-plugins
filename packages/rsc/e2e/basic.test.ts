@@ -1,24 +1,24 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
-import { type Fixture, useFixture } from "./fixture";
+import { type Fixture, setupIsolatedFixture, useFixture } from "./fixture";
 import { expectNoReload, testNoJs } from "./helper";
 
 async function waitForHydration(page: Page) {
   await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
 }
 
-test.describe("dev", () => {
+test.describe("dev-default", () => {
   const f = useFixture({ root: "examples/basic", mode: "dev" });
   defineTest(f);
 });
 
-test.describe("build", () => {
+test.describe("build-default", () => {
   const f = useFixture({ root: "examples/basic", mode: "build" });
   defineTest(f);
 });
 
-test.describe("dev base", () => {
+test.describe("dev-base", () => {
   const f = useFixture({
     root: "examples/basic",
     mode: "dev",
@@ -31,7 +31,7 @@ test.describe("dev base", () => {
   defineTest(f);
 });
 
-test.describe("build base", () => {
+test.describe("build-base", () => {
   const f = useFixture({
     root: "examples/basic",
     mode: "build",
@@ -44,16 +44,23 @@ test.describe("build base", () => {
   defineTest(f);
 });
 
-// TODO: isolate
-// test.describe("dev isolate", () => {
-//   const f = useFixture({ root: "examples/basic", mode: "dev", isolate: true });
-//   defineTest(f);
-// });
+// disabled by default
+if (process.env.TEST_ISOLATED) {
+  let tmpRoot = "/tmp/test-vite-rsc";
+  test.beforeAll(async () => {
+    await setupIsolatedFixture({ src: "examples/basic", dest: tmpRoot });
+  });
 
-// test.describe("build isolate", () => {
-//   const f = useFixture({ root: "examples/basic", mode: "build", isolate: true });
-//   defineTest(f);
-// });
+  test.describe("dev-isolated", () => {
+    const f = useFixture({ root: tmpRoot, mode: "dev" });
+    defineTest(f);
+  });
+
+  test.describe("build-isolated", () => {
+    const f = useFixture({ root: tmpRoot, mode: "build" });
+    defineTest(f);
+  });
+}
 
 function defineTest(f: Fixture) {
   test("basic", async ({ page }) => {

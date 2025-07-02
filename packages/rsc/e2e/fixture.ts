@@ -58,8 +58,6 @@ export function useFixture(options: {
   mode?: "dev" | "build";
   command?: string;
   buildCommand?: string;
-  // TODO: test in isolated direcotry with `file:` dependency
-  isolate?: boolean;
   cliOptions?: SpawnOptions;
 }) {
   let cleanup: (() => Promise<void>) | undefined;
@@ -67,6 +65,8 @@ export function useFixture(options: {
 
   const cwd = path.resolve(options.root);
 
+  // TODO: `beforeAll` is called again on any test failure.
+  // https://playwright.dev/docs/test-retries
   test.beforeAll(async () => {
     if (options.mode === "dev") {
       const proc = runCli({
@@ -144,4 +144,53 @@ export function useFixture(options: {
     url: (url: string = "./") => new URL(url, baseURL).href,
     createEditor,
   };
+}
+
+export async function setupIsolatedFixture(options: {
+  src: string;
+  dest: string;
+}) {
+  // copy fixture
+  fs.rmSync(options.dest, { recursive: true, force: true });
+  fs.cpSync(options.src, options.dest, { recursive: true });
+  fs.rmSync(path.join(options.dest, "node_modules"), {
+    recursive: true,
+    force: true,
+  });
+
+  // setup package.json overrides
+  const packagesDir = path.join(import.meta.dirname, "..", "..");
+  const overrides = {
+    "@hiogawa/transforms": `file:${path.join(packagesDir, "transforms")}`,
+    "@hiogawa/vite-rsc": `file:${path.join(packagesDir, "rsc")}`,
+  };
+  editFileJson(path.join(options.dest, "package.json"), (pkg: any) => {
+    Object.assign(((pkg.pnpm ??= {}).overrides ??= {}), overrides);
+    return pkg;
+  });
+
+  // install
+  await x("pnpm", "i @playwright/test".split(" "), {
+    nodeOptions: {
+      cwd: options.dest,
+      stdio: "inherit",
+    },
+  });
+  await x("pnpm", "exec playwright install chromium".split(" "), {
+    nodeOptions: {
+      cwd: options.dest,
+      stdio: "inherit",
+    },
+  });
+}
+
+function editFileJson(filepath: string, edit: (s: string) => string) {
+  fs.writeFileSync(
+    filepath,
+    JSON.stringify(
+      edit(JSON.parse(fs.readFileSync(filepath, "utf-8"))),
+      null,
+      2,
+    ),
+  );
 }
