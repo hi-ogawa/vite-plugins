@@ -12,16 +12,16 @@ function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const label = `[${options.label ?? "cli"}]`;
   child.stdout!.on("data", (data) => {
     if (process.env.TEST_PIPE_STDOUT) {
-      console.log(styleText("gray", label), data.toString());
+      console.log(styleText("cyan", label), data.toString());
     }
   });
   child.stderr!.on("data", (data) => {
-    console.log(styleText("red", label), data.toString());
+    console.log(styleText("magenta", label), data.toString());
   });
   const done = new Promise<void>((resolve) => {
     child.on("exit", (code) => {
       if (code !== 0 && code !== 143) {
-        console.log(styleText("red", `${label}`), `exit code ${code}`);
+        console.log(styleText("magenta", `${label}`), `exit code ${code}`);
       }
       resolve();
     });
