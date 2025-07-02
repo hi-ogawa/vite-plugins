@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
 import { waitForHydration } from "./helper";
 
-test.describe("ssg dev", () => {
+test.describe("dev", () => {
   const f = useFixture({
     root: "examples/ssg",
     mode: "dev",
@@ -10,7 +10,7 @@ test.describe("ssg dev", () => {
   defineTestSsg(f);
 });
 
-test.describe("ssg build", () => {
+test.describe("build", () => {
   const f = useFixture({
     root: "examples/ssg",
     mode: "build",
