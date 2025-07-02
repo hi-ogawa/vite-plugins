@@ -528,12 +528,21 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.53.1
+        version: 1.53.1
+      '@types/node':
+        specifier: ^22.14.1
+        version: 22.14.1
       react-server-dom-webpack:
         specifier: ^19.1.0
         version: 19.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(webpack@5.93.0(esbuild@0.24.2))
       rsc-html-stream:
         specifier: ^0.0.6
         version: 0.0.6
+      tinyexec:
+        specifier: ^1.0.1
+        version: 1.0.1
 
   packages/rsc-react-router:
     dependencies:
@@ -738,9 +747,6 @@ importers:
       '@cloudflare/vite-plugin':
         specifier: ^1.6.0
         version: 1.6.0(rollup@4.38.0)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250604.0)(wrangler@4.19.1(@cloudflare/workers-types@4.20250607.0))
-      '@mjackson/node-fetch-server':
-        specifier: ^0.6.1
-        version: 0.6.1
       '@types/react':
         specifier: ^19.1.2
         version: 19.1.2
@@ -753,8 +759,6 @@ importers:
       vite:
         specifier: ^6.3.5
         version: 6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
-
-  packages/rsc/examples/starter-e2e: {}
 
   packages/server-asset:
     dependencies:

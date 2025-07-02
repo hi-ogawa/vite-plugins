@@ -1,16 +1,14 @@
 {
   "name": "@hiogawa/vite-rsc-examples-starter-cf-single",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "release": "wrangler deploy",
-    "test-e2e": "playwright test",
-    "test-e2e-preview": "E2E_PREVIEW=1 playwright test"
+    "release": "wrangler deploy"
   },
   "dependencies": {
     "@hiogawa/vite-rsc": "latest",
@@ -19,7 +17,6 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.6.0",
-    "@mjackson/node-fetch-server": "^0.6.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",

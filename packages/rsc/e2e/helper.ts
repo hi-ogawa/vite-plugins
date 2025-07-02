@@ -1,5 +1,3 @@
-import { readFileSync, writeFileSync } from "fs";
-import { tinyassert } from "@hiogawa/utils";
 import test, { type Page, expect } from "@playwright/test";
 
 export const testNoJs = test.extend({
@@ -9,7 +7,7 @@ export const testNoJs = test.extend({
 export async function waitForHydration(page: Page) {
   await page.waitForFunction(
     () => {
-      const el = document.querySelector(".card");
+      const el = document.querySelector("body");
       if (el) {
         const keys = Object.keys(el);
         return keys.some((key) => key.startsWith("__reactFiber"));
@@ -28,7 +26,8 @@ export async function expectNoReload(page: Page) {
     document.head.append(el);
   });
 
-  // TODO: playwright prints a weird error on dispose error, so maybe we should avoid this pattern :(
+  // TODO: playwright prints a weird error on dispose error,
+  // so maybe we shouldn't abuse this pattern :(
   return {
     [Symbol.asyncDispose]: async () => {
       // check if meta is preserved
@@ -41,28 +40,3 @@ export async function expectNoReload(page: Page) {
     },
   };
 }
-
-export function createEditor(filepath: string) {
-  const init = readFileSync(filepath, "utf-8");
-  originalFiles[filepath] ??= init;
-  let current = init;
-  return {
-    edit(editFn: (data: string) => string) {
-      const next = editFn(current);
-      tinyassert(next !== current);
-      current = next;
-      writeFileSync(filepath, next);
-    },
-    reset() {
-      writeFileSync(filepath, init);
-    },
-  };
-}
-
-const originalFiles: Record<string, string> = {};
-
-test.afterAll(() => {
-  for (const [filepath, content] of Object.entries(originalFiles)) {
-    writeFileSync(filepath, content);
-  }
-});
