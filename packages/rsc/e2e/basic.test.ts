@@ -44,8 +44,10 @@ test.describe("build-base", () => {
   defineTest(f);
 });
 
-// disabled by default
-if (process.env.TEST_ISOLATED) {
+test.describe(() => {
+  // disabled by default
+  if (!process.env.TEST_ISOLATED) return;
+
   let tmpRoot = "/tmp/test-vite-rsc";
   test.beforeAll(async () => {
     await setupIsolatedFixture({ src: "examples/basic", dest: tmpRoot });
@@ -60,7 +62,7 @@ if (process.env.TEST_ISOLATED) {
     const f = useFixture({ root: tmpRoot, mode: "build" });
     defineTest(f);
   });
-}
+});
 
 function defineTest(f: Fixture) {
   test("basic", async ({ page }) => {
