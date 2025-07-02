@@ -1,7 +1,11 @@
 import { createHash } from "node:crypto";
 import { type Page, expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
-import { expectNoReload, testNoJs, waitForHydration } from "./helper";
+import { expectNoReload, testNoJs } from "./helper";
+
+async function waitForHydration(page: Page) {
+  await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
+}
 
 test.describe("dev", () => {
   const f = useFixture({ root: "examples/basic", mode: "dev" });
