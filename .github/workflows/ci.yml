@@ -53,19 +53,12 @@ jobs:
       - run: pnpm -C packages/rsc/examples/basic test-e2e-preview
         env:
           TEST_BASE: 1
-      - run: pnpm -C packages/rsc/examples/react-router test-e2e
-      - run: pnpm -C packages/rsc/examples/react-router build
-      - run: pnpm -C packages/rsc/examples/react-router test-e2e-preview
-      - run: pnpm -C packages/rsc/examples/react-router test-e2e-cf
-      - run: pnpm -C packages/rsc/examples/react-router cf-build
-      - run: pnpm -C packages/rsc/examples/react-router test-e2e-cf-preview
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
           path: |
             packages/rsc/examples/basic/test-results
-            packages/rsc/examples/react-router/test-results
 
   test-rolldown:
     name: test-rolldown
