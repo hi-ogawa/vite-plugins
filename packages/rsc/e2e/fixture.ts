@@ -109,7 +109,7 @@ export function useFixture(options: {
   const originalFiles: Record<string, string> = {};
 
   function createEditor(filepath: string) {
-    filepath = path.resolve(options.root, filepath);
+    filepath = path.resolve(cwd, filepath);
     const init = fs.readFileSync(filepath, "utf-8");
     originalFiles[filepath] ??= init;
     let current = init;
@@ -134,7 +134,7 @@ export function useFixture(options: {
 
   return {
     mode: options.mode,
-    root: options.root,
+    root: cwd,
     url: (url: string = "./") => new URL(url, baseURL).href,
     createEditor,
   };
