@@ -173,13 +173,13 @@ export async function setupIsolatedFixture(options: {
   await x("pnpm", "i @playwright/test".split(" "), {
     nodeOptions: {
       cwd: options.dest,
-      stdio: "inherit",
+      stdio: process.env.TEST_ISOALTED_DEBUG ? "inherit" : undefined,
     },
   });
   await x("pnpm", "exec playwright install chromium".split(" "), {
     nodeOptions: {
       cwd: options.dest,
-      stdio: "inherit",
+      stdio: process.env.TEST_ISOALTED_DEBUG ? "inherit" : undefined,
     },
   });
 }
