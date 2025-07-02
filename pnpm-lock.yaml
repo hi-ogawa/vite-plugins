@@ -560,11 +560,11 @@ importers:
         specifier: workspace:*
         version: link:../rsc
       '@react-router/dev':
-        specifier: 0.0.0-experimental-b65537812
-        version: 0.0.0-experimental-b65537812(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.22.0(@cloudflare/workers-types@4.20250702.0))(yaml@2.7.0)
+        specifier: 0.0.0-experimental-23decd7bc
+        version: 0.0.0-experimental-23decd7bc(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.22.0(@cloudflare/workers-types@4.20250702.0))(yaml@2.7.0)
       react-router:
-        specifier: 0.0.0-experimental-b65537812
-        version: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.0.0-experimental-23decd7bc
+        version: 0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
   packages/rsc/examples/basic:
     dependencies:
@@ -636,15 +636,15 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: 0.0.0-experimental-b65537812
-        version: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 0.0.0-experimental-23decd7bc
+        version: 0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       '@cloudflare/vite-plugin':
         specifier: ^1.8.0
         version: 1.8.0(rollup@4.44.1)(vite@7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workerd@1.20250617.0)(wrangler@4.22.0(@cloudflare/workers-types@4.20250702.0))
       '@react-router/dev':
-        specifier: 0.0.0-experimental-b65537812
-        version: 0.0.0-experimental-b65537812(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.22.0(@cloudflare/workers-types@4.20250702.0))(yaml@2.7.0)
+        specifier: 0.0.0-experimental-23decd7bc
+        version: 0.0.0-experimental-23decd7bc(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.22.0(@cloudflare/workers-types@4.20250702.0))(yaml@2.7.0)
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.4)
@@ -1690,13 +1690,13 @@ packages:
     resolution: {integrity: sha512-ezIadUb1aFhwJLd++WVqVpi9rnlX8vnd4ju7saPhwLHJN1mJgOv0puePTGV+FbtSnWtwoHDT8lAm4kagDZmpCg==}
     engines: {node: '>=20.0.0'}
 
-  '@react-router/dev@0.0.0-experimental-b65537812':
-    resolution: {integrity: sha512-8B7rOQ3GMyTWZHTJoflPXSJpIAT+9RxiU8XTuRpRwXv/gqCcRfe+LWzrhTpWggT0pIsZtadmQjhhZYcIJrjLPw==}
+  '@react-router/dev@0.0.0-experimental-23decd7bc':
+    resolution: {integrity: sha512-iY4WgHNv/7mDbExXQA35u7H54ihPJTrm20Z42Ni2G+Hgz3X4A0ZmeT7CtpfuBzC3UIrqdmNZT3nQOSoKNwJlWA==}
     engines: {node: '>=20.0.0'}
     hasBin: true
     peerDependencies:
-      '@react-router/serve': ^0.0.0-experimental-b65537812
-      react-router: ^0.0.0-experimental-b65537812
+      '@react-router/serve': ^0.0.0-experimental-23decd7bc
+      react-router: ^0.0.0-experimental-23decd7bc
       typescript: ^5.1.0
       vite: ^7.0.0
       wrangler: ^3.28.2 || ^4.0.0
@@ -1708,11 +1708,11 @@ packages:
       wrangler:
         optional: true
 
-  '@react-router/node@0.0.0-experimental-b65537812':
-    resolution: {integrity: sha512-x8qYTRpNFJkromX//qIe3yyWVjboRtKjsOt9qZCYcyVr1bhA4O+gFJbcGbQ+bpXtW6dgPczjq0RVpBSt8NrcVQ==}
+  '@react-router/node@0.0.0-experimental-23decd7bc':
+    resolution: {integrity: sha512-y9tOT+jEzBGXrwBjCq2obqKe+N6znsT+I02R/SDFTqTcXrdTJ7aK0iRnWGHxUw/FrOxoPeGkA0v5dWoJI0jBew==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
-      react-router: 0.0.0-experimental-b65537812
+      react-router: 0.0.0-experimental-23decd7bc
       typescript: ^5.1.0
     peerDependenciesMeta:
       typescript:
@@ -3750,8 +3750,8 @@ packages:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
 
-  react-router@0.0.0-experimental-b65537812:
-    resolution: {integrity: sha512-GKSBunl/zm2ZVgu4j6ZcY0FV+49K1Cl67CXsXUT7tSUSDrvGwuCSlOPXzNT+ZYOAvgjOjRJGEGqICdPJS14mdg==}
+  react-router@0.0.0-experimental-23decd7bc:
+    resolution: {integrity: sha512-oTDa74rdP6WACxX8wihI71TiwQa+3aAXNjGGm20OAyA4hGdfe0VBEbJvuIT0vxR+LKsJisI4rpaq0boBGY3m+g==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.1.0
@@ -5242,7 +5242,7 @@ snapshots:
     dependencies:
       quansync: 0.2.10
 
-  '@react-router/dev@0.0.0-experimental-b65537812(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.22.0(@cloudflare/workers-types@4.20250702.0))(yaml@2.7.0)':
+  '@react-router/dev@0.0.0-experimental-23decd7bc(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(react-router@0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(wrangler@4.22.0(@cloudflare/workers-types@4.20250702.0))(yaml@2.7.0)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/generator': 7.27.5
@@ -5253,7 +5253,7 @@ snapshots:
       '@babel/traverse': 7.27.7
       '@babel/types': 7.27.7
       '@npmcli/package-json': 4.0.1
-      '@react-router/node': 0.0.0-experimental-b65537812(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
+      '@react-router/node': 0.0.0-experimental-23decd7bc(react-router@0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
       arg: 5.0.2
       babel-dead-code-elimination: 1.0.10
       chokidar: 4.0.3
@@ -5266,7 +5266,7 @@ snapshots:
       picocolors: 1.1.1
       prettier: 2.8.8
       react-refresh: 0.14.2
-      react-router: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-router: 0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       semver: 7.7.2
       set-cookie-parser: 2.7.1
       tinyglobby: 0.2.14
@@ -5292,10 +5292,10 @@ snapshots:
       - tsx
       - yaml
 
-  '@react-router/node@0.0.0-experimental-b65537812(react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)':
+  '@react-router/node@0.0.0-experimental-23decd7bc(react-router@0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
-      react-router: 0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-router: 0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     optionalDependencies:
       typescript: 5.8.3
 
@@ -7470,7 +7470,7 @@ snapshots:
 
   react-refresh@0.17.0: {}
 
-  react-router@0.0.0-experimental-b65537812(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-router@0.0.0-experimental-23decd7bc(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       cookie: 1.0.2
       react: 19.1.0

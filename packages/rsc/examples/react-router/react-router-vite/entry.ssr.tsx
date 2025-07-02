@@ -7,14 +7,14 @@ import {
 
 export default async function handler(
   request: Request,
-  callServer: (request: Request) => Promise<Response>,
-) {
+  fetchServer: (request: Request) => Promise<Response>,
+): Promise<Response> {
   const bootstrapScriptContent =
     await import.meta.viteRsc.loadBootstrapScriptContent("index");
   return routeRSCServerRequest({
     request,
-    callServer,
-    decode: (body) => createFromReadableStream(body),
+    fetchServer,
+    createFromReadableStream: (body) => createFromReadableStream(body),
     renderHTML(getPayload) {
       return ReactDomServer.renderToReadableStream(
         <RSCStaticRouter getPayload={getPayload} />,

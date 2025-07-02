@@ -1,5 +1,4 @@
 import { createFromReadableStream } from "@hiogawa/vite-rsc/ssr";
-// @ts-ignore
 import * as ReactDomServer from "react-dom/server.edge";
 import {
   unstable_RSCStaticRouter as RSCStaticRouter,
@@ -8,14 +7,14 @@ import {
 
 export default async function handler(
   request: Request,
-  callServer: (request: Request) => Promise<Response>,
+  fetchServer: (request: Request) => Promise<Response>,
 ): Promise<Response> {
   const bootstrapScriptContent =
     await import.meta.viteRsc.loadBootstrapScriptContent("index");
   return routeRSCServerRequest({
     request,
-    callServer,
-    decode: (body) => createFromReadableStream(body),
+    fetchServer,
+    createFromReadableStream: (body) => createFromReadableStream(body),
     renderHTML(getPayload) {
       return ReactDomServer.renderToReadableStream(
         <RSCStaticRouter getPayload={getPayload} />,

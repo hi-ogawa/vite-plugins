@@ -21,8 +21,8 @@
   },
   "devDependencies": {
     "@hiogawa/vite-rsc": "workspace:*",
-    "@react-router/dev": "0.0.0-experimental-b65537812",
-    "react-router": "0.0.0-experimental-b65537812"
+    "@react-router/dev": "0.0.0-experimental-23decd7bc",
+    "react-router": "0.0.0-experimental-23decd7bc"
   },
   "peerDependencies": {
     "@hiogawa/vite-rsc": "*",
