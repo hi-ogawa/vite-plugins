@@ -4,17 +4,17 @@ import { expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
 import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
-test.describe("@dev @node", () => {
+test.describe("dev-default", () => {
   const f = useFixture({ root: "examples/react-router", mode: "dev" });
   defineTest(f);
 });
 
-test.describe("@build @node", () => {
+test.describe("build-default", () => {
   const f = useFixture({ root: "examples/react-router", mode: "build" });
   defineTest(f);
 });
 
-test.describe("@dev @cloudflare", () => {
+test.describe("dev-cloudflare", () => {
   const f = useFixture({
     root: "examples/react-router",
     mode: "dev",
@@ -23,7 +23,7 @@ test.describe("@dev @cloudflare", () => {
   defineTest(f);
 });
 
-test.describe("@build @cloudflare", () => {
+test.describe("build-cloudflare", () => {
   const f = useFixture({
     root: "examples/react-router",
     mode: "build",
@@ -110,7 +110,7 @@ function defineTest(f: Fixture) {
       ).toBeVisible();
     });
 
-    test("server hmr @dev", async ({ page }) => {
+    test("server hmr", async ({ page }) => {
       await page.goto(f.url("/"));
       await waitForHydration(page);
       await using _ = await expectNoReload(page);
