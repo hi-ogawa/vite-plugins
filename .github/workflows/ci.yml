@@ -25,8 +25,8 @@ jobs:
       - run: pnpm tsc
       - run: pnpm test
 
-  test-rsc-core:
-    name: test-rsc-core (${{ matrix.os }})
+  test-rsc:
+    name: test-rsc (${{ matrix.os }} / ${{ matrix.browser }})
     runs-on: ${{ matrix.os }}
     strategy:
       # TODO: shard?
