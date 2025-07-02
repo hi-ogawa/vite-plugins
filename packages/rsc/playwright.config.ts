@@ -17,8 +17,18 @@ export default defineConfig({
         deviceScaleFactor: undefined,
       },
     },
+    {
+      name: "firefox",
+      use: devices["Desktop Firefox"],
+    },
+    {
+      name: "webkit",
+      use: devices["Desktop Safari"],
+    },
   ],
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? "github" : "list",
+  reporter: ["list", process.env.CI && "github"]
+    .filter(Boolean)
+    .map((name) => [name] as any),
 }) as any;

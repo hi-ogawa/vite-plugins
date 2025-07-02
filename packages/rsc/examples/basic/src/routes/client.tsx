@@ -36,7 +36,7 @@ export function TestStyleClient() {
 }
 
 export function TestTailwindClient() {
-  return <div className="test-tw-client text-blue-500">test-tw-client</div>;
+  return <div className="test-tw-client text-[#00f]">test-tw-client</div>;
 }
 
 export function TestTemporaryReference(props: {

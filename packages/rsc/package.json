@@ -15,7 +15,8 @@
   },
   "files": ["dist", "types"],
   "scripts": {
-    "test-e2e": "playwright test",
+    "test-e2e": "playwright test --project=chromium",
+    "test-e2e-ci": "playwright test",
     "test-package": "bash scripts/test-package.sh",
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
