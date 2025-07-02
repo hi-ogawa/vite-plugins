@@ -294,6 +294,12 @@ function defineTest(f: Fixture) {
         page.getByRole("button", { name: "Server Counter: 0" }),
       ).toBeVisible();
     });
+
+    test.skip("server module invalidation", async ({ page }) => {
+      // verify server module change only invalidates modules through importer chain
+      // due to having `import.meta.hot.accept()` at the server entry.
+      page;
+    });
   });
 
   test("css @js", async ({ page }) => {
