@@ -58,6 +58,8 @@ export function useFixture(options: {
   mode?: "dev" | "build";
   command?: string;
   buildCommand?: string;
+  // TODO: test in isolated direcotry with `file:` dependency
+  isolate?: boolean;
 }) {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
