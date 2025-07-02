@@ -10,7 +10,7 @@
     "test": "pnpm -r --sequential test run",
     "vite-ecosystem-ci:build": "pnpm -r --filter '@hiogawa/vite-rsc...' build",
     "vite-ecosystem-ci:before-test": "playwright install chromium",
-    "vite-ecosystem-ci:test": "bash scripts/vite-ecosystem-ci.sh",
+    "vite-ecosystem-ci:test": "pnpm -C packages/rsc test-e2e",
     "lint": "biome check --write .",
     "lint-check": "biome check ."
   },
