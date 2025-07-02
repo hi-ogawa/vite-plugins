@@ -14,16 +14,24 @@ test.describe("build node", () => {
   defineTest(f);
 });
 
-// TODO:
-// test.describe("dev cloudflare", () => {
-//   const f = useFixture({ root: "examples/react-router", mode: "dev" });
-//   defineTest(f);
-// });
+test.describe("dev cloudflare", () => {
+  const f = useFixture({
+    root: "examples/react-router",
+    mode: "dev",
+    command: "pnpm cf-dev",
+  });
+  defineTest(f);
+});
 
-// test.describe("build cloudflare", () => {
-//   const f = useFixture({ root: "examples/react-router", mode: "build" });
-//   defineTest(f);
-// });
+test.describe("build cloudflare", () => {
+  const f = useFixture({
+    root: "examples/react-router",
+    mode: "build",
+    buildCommand: "pnpm cf-build",
+    command: "pnpm cf-preview",
+  });
+  defineTest(f);
+});
 
 function defineTest(f: Fixture) {
   test("loader", async ({ page }) => {

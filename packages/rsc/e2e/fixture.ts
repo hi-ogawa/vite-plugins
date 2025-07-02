@@ -10,7 +10,7 @@ function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const child = spawn(name!, args, options);
   const label = `[${options.label ?? "cli"}]`;
   child.stdout!.on("data", (data) => {
-    if (process.env.TEST_PIPE_STDIN) {
+    if (process.env.TEST_PIPE_STDOUT) {
       console.log(styleText("gray", label), data.toString());
     }
   });
@@ -55,6 +55,8 @@ export type Fixture = ReturnType<typeof useFixture>;
 export function useFixture(options: {
   root: string;
   mode?: "dev" | "build";
+  command?: string;
+  buildCommand?: string;
 }) {
   let cleanup: (() => Promise<void>) | undefined;
   let baseURL!: string;
@@ -62,7 +64,7 @@ export function useFixture(options: {
   test.beforeAll(async () => {
     if (options.mode === "dev") {
       const proc = runCli({
-        command: `pnpm dev`,
+        command: options.command ?? `pnpm dev`,
         label: `${options.root}:dev`,
         cwd: options.root,
       });
@@ -77,14 +79,14 @@ export function useFixture(options: {
     if (options.mode === "build") {
       if (!process.env.TEST_SKIP_BUILD) {
         const proc = runCli({
-          command: `pnpm build`,
+          command: options.buildCommand ?? `pnpm build`,
           label: `${options.root}:build`,
           cwd: options.root,
         });
         await proc.done;
       }
       const proc = runCli({
-        command: `pnpm preview`,
+        command: options.command ?? `pnpm preview`,
         label: `${options.root}:preview`,
         cwd: options.root,
       });
