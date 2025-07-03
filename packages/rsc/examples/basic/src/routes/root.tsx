@@ -11,12 +11,7 @@ import {
 } from "./action-from-client/client";
 import { TestActionStateServer } from "./action-state/server";
 import { ServerCounter } from "./action/server";
-import {
-  ClientCounter,
-  Hydrated,
-  TestTailwindClient,
-  TestTemporaryReference,
-} from "./client";
+import { ClientCounter, Hydrated, TestTailwindClient } from "./client";
 import { TestClientInServer } from "./deps/client-in-server/server";
 import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
@@ -28,6 +23,7 @@ import { TestSerializationServer } from "./serialization/server";
 import { TestCssClientNoSsr } from "./style-client-no-ssr/server";
 import { TestStyleClient } from "./style-client/client";
 import { TestStyleServer } from "./style-server/server";
+import { TestTemporaryReference } from "./temporary-reference/client";
 import { TestUseCache } from "./use-cache/server";
 
 export function Root(props: { url: URL }) {
@@ -50,16 +46,7 @@ export function Root(props: { url: URL }) {
         <TestTailwindClient />
         <div className="test-tw-server text-[#f00]">test-tw-server</div>
         <TestHmrClientDep />
-        <TestTemporaryReference
-          action={async (node: React.ReactNode) => {
-            "use server";
-            return (
-              <span>
-                [server <span>{node}</span>]
-              </span>
-            );
-          }}
-        />
+        <TestTemporaryReference />
         <TestServerActionError />
         <TestReplayConsoleLogs url={props.url} />
         <TestSuspense url={props.url} />
