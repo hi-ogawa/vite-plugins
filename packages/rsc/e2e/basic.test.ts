@@ -296,10 +296,29 @@ function defineTest(f: Fixture) {
       ).toBeVisible();
     });
 
-    test.skip("server module invalidation", async ({ page }) => {
-      // verify server module change only invalidates modules through importer chain
-      // due to having `import.meta.hot.accept()` at the server entry.
-      page;
+    test("module invalidation", async ({ page }) => {
+      // changing `module-invalidtaion/server.tsx` should not invalidate
+      // it's dependency `module-invalidation/server-dep.tsx`
+      await page.goto(f.url());
+      await waitForHydration(page);
+      await using _ = await expectNoReload(page);
+
+      // change child module state
+      const locator = page.getByTestId("test-module-invalidation-server");
+      await expect(locator).toContainText("[dep: 0]");
+      locator.getByRole("button").click();
+      await expect(locator).toContainText("[dep: 1]");
+
+      // change parent module
+      const editor = f.createEditor(
+        "src/routes/module-invalidation/server.tsx",
+      );
+      editor.edit((s) => s.replace("[dep:", "[dep-edit:"));
+
+      // preserve child module state
+      await expect(locator).toContainText("[dep-edit: 1]");
+      editor.reset();
+      await expect(locator).toContainText("[dep: 1]");
     });
   });
 

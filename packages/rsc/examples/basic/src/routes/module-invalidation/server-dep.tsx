@@ -1,3 +1,3 @@
-export const counter = {
+export const dep = {
   value: 0,
 };
