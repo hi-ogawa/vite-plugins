@@ -16,6 +16,6 @@ export function TestClient() {
         setCount(await changeCounter(1));
       },
     },
-    `[server-in-client: ${count}]`,
+    `server-in-client: ${count}`,
   );
 }

@@ -127,7 +127,7 @@ export function useFixture(options: {
         fs.writeFileSync(filepath, next);
       },
       reset(): void {
-        fs.writeFileSync(filepath, init);
+        fs.writeFileSync(filepath, originalFiles[filepath]!);
       },
     };
   }

@@ -2,11 +2,9 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
 import { type Fixture, setupIsolatedFixture, useFixture } from "./fixture";
-import { expectNoReload, testNoJs } from "./helper";
+import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
-async function waitForHydration(page: Page) {
-  await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
-}
+// TODO: parallel?
 
 test.describe("dev-default", () => {
   const f = useFixture({ root: "examples/basic", mode: "dev" });
@@ -73,8 +71,8 @@ function defineTest(f: Fixture) {
   test("client component", async ({ page }) => {
     await page.goto(f.url());
     await waitForHydration(page);
-    await page.getByRole("button", { name: "Client Counter: 0" }).click();
-    await page.getByRole("button", { name: "Client Counter: 1" }).click();
+    await page.getByRole("button", { name: "client-counter: 0" }).click();
+    await page.getByRole("button", { name: "client-counter: 1" }).click();
   });
 
   test("server action @js", async ({ page }) => {
@@ -90,14 +88,14 @@ function defineTest(f: Fixture) {
   });
 
   async function testAction(page: Page) {
-    await page.getByRole("button", { name: "Server Counter: 0" }).click();
-    await page.getByRole("button", { name: "Server Counter: 1" }).click();
+    await page.getByRole("button", { name: "server-counter: 0" }).click();
+    await page.getByRole("button", { name: "server-counter: 1" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 2" }),
+      page.getByRole("button", { name: "server-counter: 2" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Server Reset" }).click();
+    await page.getByRole("button", { name: "server-counter-reset" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 0" }),
+      page.getByRole("button", { name: "server-counter: 0" }),
     ).toBeVisible();
   }
 
@@ -198,33 +196,33 @@ function defineTest(f: Fixture) {
   });
 
   async function testServerActionUpdate(page: Page, options: { js: boolean }) {
-    await page.getByRole("button", { name: "Server Counter: 0" }).click();
+    await page.getByRole("button", { name: "server-counter: 0" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 1" }),
+      page.getByRole("button", { name: "server-counter: 1" }),
     ).toBeVisible();
 
     // update server code
-    const editor = f.createEditor("src/routes/action.tsx");
+    const editor = f.createEditor("src/routes/action/action.tsx");
     editor.edit((s) =>
       s.replace("const TEST_UPDATE = 1;", "const TEST_UPDATE = 10;"),
     );
     await expect(async () => {
       if (!options.js) await page.goto(f.url());
       await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
+        page.getByRole("button", { name: "server-counter: 0" }),
       ).toBeVisible({ timeout: 10 });
     }).toPass();
 
-    await page.getByRole("button", { name: "Server Counter: 0" }).click();
+    await page.getByRole("button", { name: "server-counter: 0" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 10" }),
+      page.getByRole("button", { name: "server-counter: 10" }),
     ).toBeVisible();
 
     editor.reset();
     await expect(async () => {
       if (!options.js) await page.goto(f.url());
       await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
+        page.getByRole("button", { name: "server-counter: 0" }),
       ).toBeVisible({ timeout: 10 });
     }).toPass();
   }
@@ -235,64 +233,59 @@ function defineTest(f: Fixture) {
     test("client hmr", async ({ page }) => {
       await page.goto(f.url());
       await waitForHydration(page);
-      await page.getByRole("button", { name: "Client Counter: 0" }).click();
+      await page.getByRole("button", { name: "client-counter: 0" }).click();
       await expect(
-        page.getByRole("button", { name: "Client Counter: 1" }),
+        page.getByRole("button", { name: "client-counter: 1" }),
       ).toBeVisible();
 
       const editor = f.createEditor("src/routes/client.tsx");
-      editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
+      editor.edit((s) => s.replace("client-counter", "client-[edit]-counter"));
       await expect(
-        page.getByRole("button", { name: "Client [edit] Counter: 1" }),
+        page.getByRole("button", { name: "client-[edit]-counter: 1" }),
       ).toBeVisible();
 
       // check next ssr is also updated
       const res = await page.goto(f.url());
-      expect(await res?.text()).toContain("Client [edit] Counter");
+      expect(await res?.text()).toContain("client-[edit]-counter");
       await waitForHydration(page);
       editor.reset();
-      await page.getByRole("button", { name: "Client Counter: 0" }).click();
+      await page.getByRole("button", { name: "client-counter: 0" }).click();
     });
 
     test("non-boundary client hmr", async ({ page }) => {
       await page.goto(f.url());
       await waitForHydration(page);
 
-      await page
-        .getByRole("textbox", { name: "test-client-dep-state" })
-        .fill("test");
+      const locator = page.getByTestId("test-hmr-client-dep");
+      await expect(locator).toHaveText("test-hmr-client-dep: 0[ok]");
+      await locator.locator("button").click();
+      await expect(locator).toHaveText("test-hmr-client-dep: 1[ok]");
 
-      const editor = f.createEditor("src/routes/client-dep.tsx");
-      editor.edit((s) =>
-        s.replace("test-client-dep-state", "test-client-[edit]-dep-state"),
-      );
-      await expect(
-        page.getByRole("textbox", { name: "test-client-[edit]-dep-state" }),
-      ).toHaveValue("test");
+      const editor = f.createEditor("src/routes/hmr-client-dep/client-dep.tsx");
+      editor.edit((s) => s.replace("[ok]", "[ok-edit]"));
+      await expect(locator).toHaveText("test-hmr-client-dep: 1[ok-edit]");
 
       // check next ssr is also updated
-      const res = await page.goto(f.url());
-      expect(await res?.text()).toContain("test-client-[edit]-dep-state");
+      const res = await page.reload();
+      expect(await res?.text()).toContain("[ok-edit]");
 
       await waitForHydration(page);
       editor.reset();
-      await expect(
-        page.getByRole("textbox", { name: "test-client-dep-state" }),
-      ).toBeVisible();
+      await expect(locator).toHaveText("test-hmr-client-dep: 0[ok]");
     });
 
     test("server hmr", async ({ page }) => {
       await page.goto(f.url());
       await waitForHydration(page);
       await using _ = await expectNoReload(page);
-      const editor = f.createEditor("src/routes/root.tsx");
-      editor.edit((s) => s.replace("Server Counter", "Server [edit] Counter"));
+      const editor = f.createEditor("src/routes/action/server.tsx");
+      editor.edit((s) => s.replace("server-counter", "server-[edit]-counter"));
       await expect(
-        page.getByRole("button", { name: "Server [edit] Counter: 0" }),
+        page.getByRole("button", { name: "server-[edit]-counter: 0" }),
       ).toBeVisible();
       editor.reset();
       await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
+        page.getByRole("button", { name: "server-counter: 0" }),
       ).toBeVisible();
     });
 
@@ -344,7 +337,7 @@ function defineTest(f: Fixture) {
       await waitForHydration(page);
 
       await using _ = await expectNoReload(page);
-      const editor = f.createEditor("src/routes/client.css");
+      const editor = f.createEditor("src/routes/style-client/client.css");
       editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
       await expect(page.locator(".test-style-client")).toHaveCSS(
         "color",
@@ -360,6 +353,8 @@ function defineTest(f: Fixture) {
         "color",
         "rgb(0, 0, 0)",
       );
+      // wait longer for multiple edits
+      await page.waitForTimeout(100);
       editor.reset();
       await expect(page.locator(".test-style-client")).toHaveCSS(
         "color",
@@ -389,7 +384,7 @@ function defineTest(f: Fixture) {
       );
 
       // remove css import
-      const editor = f.createEditor("src/routes/client-dep.tsx");
+      const editor = f.createEditor("src/routes/style-client/client-dep.tsx");
       editor.edit((s) =>
         s.replaceAll(
           `import "./client-dep.css";`,
@@ -424,7 +419,7 @@ function defineTest(f: Fixture) {
       await waitForHydration(page);
 
       await using _ = await expectNoReload(page);
-      const editor = f.createEditor("src/routes/server.css");
+      const editor = f.createEditor("src/routes/style-server/server.css");
       editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
       await expect(page.locator(".test-style-server")).toHaveCSS(
         "color",
@@ -470,7 +465,7 @@ function defineTest(f: Fixture) {
       );
 
       // remove css import
-      const editor = f.createEditor("src/routes/root.tsx");
+      const editor = f.createEditor("src/routes/style-server/server.tsx");
       editor.edit((s) =>
         s.replaceAll(`import "./server.css";`, `/* import "./server.css"; */`),
       );
@@ -502,8 +497,8 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await using _ = await expectNoReload(page);
-    await page.getByRole("link", { name: "test-client-style-no-ssr" }).click();
-    await expect(page.locator(".test-style-client-2")).toHaveCSS(
+    await page.locator("a[href='?test-client-style-no-ssr']").click();
+    await expect(page.locator(".test-style-client-no-ssr")).toHaveCSS(
       "color",
       "rgb(0, 200, 100)",
     );
@@ -521,7 +516,7 @@ function defineTest(f: Fixture) {
 
     // test client css module HMR
     await using _ = await expectNoReload(page);
-    const editor = f.createEditor("src/routes/client.module.css");
+    const editor = f.createEditor("src/routes/style-client/client.module.css");
     editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
     await expect(page.getByTestId("css-module-client")).toHaveCSS(
       "color",
@@ -546,7 +541,7 @@ function defineTest(f: Fixture) {
 
     // test server css module HMR
     await using _ = await expectNoReload(page);
-    const editor = f.createEditor("src/routes/server.module.css");
+    const editor = f.createEditor("src/routes/style-server/server.module.css");
     editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
     await expect(page.getByTestId("css-module-server")).toHaveCSS(
       "color",
@@ -605,7 +600,7 @@ function defineTest(f: Fixture) {
 
       await using _ = await expectNoReload(page);
 
-      const clientFile = f.createEditor("src/routes/client.tsx");
+      const clientFile = f.createEditor("src/routes/tailwind/client.tsx");
       clientFile.edit((s) => s.replaceAll("text-[#00f]", "text-[#88f]"));
       await expect(page.locator(".test-tw-client")).toHaveCSS(
         "color",
@@ -617,7 +612,7 @@ function defineTest(f: Fixture) {
         "rgb(0, 0, 255)",
       );
 
-      const serverFile = f.createEditor("src/routes/root.tsx");
+      const serverFile = f.createEditor("src/routes/tailwind/server.tsx");
       serverFile.edit((s) => s.replaceAll("text-[#f00]", "text-[#f88]"));
       await expect(page.locator(".test-tw-server")).toHaveCSS(
         "color",
@@ -651,16 +646,18 @@ function defineTest(f: Fixture) {
     );
   });
 
-  test("findSourceMapURL @js", async ({ page }) => {
+  test("server action error @js", async ({ page }) => {
     // it doesn't seem possible to assert react error stack mapping on playwright.
     // this need to be verified manually on browser devtools console.
     await page.goto(f.url());
     await waitForHydration(page);
-    await page.getByRole("button", { name: "test-findSourceMapURL" }).click();
+    await page
+      .getByRole("button", { name: "test-server-action-error" })
+      .click();
     await expect(page.getByText("ErrorBoundary caught")).toBeVisible();
-    await page.getByRole("button", { name: "Reset Error" }).click();
+    await page.getByRole("button", { name: "reset-error" }).click();
     await expect(
-      page.getByRole("button", { name: "test-findSourceMapURL" }),
+      page.getByRole("button", { name: "test-server-action-error" }),
     ).toBeVisible();
   });
 
@@ -680,13 +677,13 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.getByTestId("ssr-rsc-payload")).toHaveText(
-      "test-payload: test1: true, test2: true, test3: false, test4: true",
+      "test1: true, test2: true, test3: false, test4: true",
     );
 
-    await page.goto(f.url("./?test-binary"));
+    await page.goto(f.url("./?test-payload-binary"));
     await waitForHydration(page);
     await expect(page.getByTestId("ssr-rsc-payload")).toHaveText(
-      "test-payload: test1: true, test2: true, test3: true, test4: true",
+      "test1: true, test2: true, test3: true, test4: true",
     );
   });
 
@@ -794,15 +791,15 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.getByTestId("server-in-server")).toHaveText(
-      "[server-in-server: 0]",
+      "server-in-server: 0",
     );
     await page.getByTestId("server-in-server").click();
     await expect(page.getByTestId("server-in-server")).toHaveText(
-      "[server-in-server: 1]",
+      "server-in-server: 1",
     );
     await page.reload();
     await expect(page.getByTestId("server-in-server")).toHaveText(
-      "[server-in-server: 1]",
+      "server-in-server: 1",
     );
   });
 
@@ -810,20 +807,20 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: ?]",
+      "server-in-client: ?",
     );
     await page.getByTestId("server-in-client").click();
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: 1]",
+      "server-in-client: 1",
     );
     await page.reload();
     await waitForHydration(page);
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: ?]",
+      "server-in-client: ?",
     );
     await page.getByTestId("server-in-client").click();
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: 2]",
+      "server-in-client: 2",
     );
   });
 
