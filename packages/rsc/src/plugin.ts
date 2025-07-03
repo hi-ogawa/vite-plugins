@@ -22,13 +22,13 @@ import {
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
-import { transformDirectiveProxyExport } from "./transforms/proxy-export";
-import { transformServerActionServer } from "./transforms/server-action";
-import { hasDirective } from "./transforms/utils";
 import {
   type TransformWrapExportFilter,
+  hasDirective,
+  transformDirectiveProxyExport,
+  transformServerActionServer,
   transformWrapExport,
-} from "./transforms/wrap-export";
+} from "./transforms";
 import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
 import { createRpcServer } from "./utils/rpc";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
