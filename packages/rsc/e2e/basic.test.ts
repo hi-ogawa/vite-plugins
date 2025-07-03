@@ -678,13 +678,13 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.getByTestId("ssr-rsc-payload")).toHaveText(
-      "test-payload: test1: true, test2: true, test3: false, test4: true",
+      "test1: true, test2: true, test3: false, test4: true",
     );
 
-    await page.goto(f.url("./?test-binary"));
+    await page.goto(f.url("./?test-payload-binary"));
     await waitForHydration(page);
     await expect(page.getByTestId("ssr-rsc-payload")).toHaveText(
-      "test-payload: test1: true, test2: true, test3: true, test4: true",
+      "test1: true, test2: true, test3: true, test4: true",
     );
   });
 

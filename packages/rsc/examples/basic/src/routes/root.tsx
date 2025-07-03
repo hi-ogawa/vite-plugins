@@ -14,7 +14,6 @@ import { ServerCounter } from "./action/server";
 import {
   ClientCounter,
   Hydrated,
-  TestPayloadClient,
   TestStyleClient,
   TestTailwindClient,
   TestTemporaryReference,
@@ -24,6 +23,7 @@ import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
 import ErrorBoundary from "./error-boundary";
 import { TestModuleInvalidationServer } from "./module-invalidation/server";
+import { TestPayloadServer } from "./payload/server";
 import { TestSerializationServer } from "./serialization/server";
 import { TestCssClientNoSsr } from "./style-client-no-ssr/server";
 import { TestStyleServer } from "./style-server/server";
@@ -63,7 +63,7 @@ export function Root(props: { url: URL }) {
         <TestSuspense url={props.url} />
         <TestActionFromClient />
         <TestUseActionState />
-        <TestPayload testBinary={props.url.searchParams.has("test-binary")} />
+        <TestPayloadServer url={props.url} />
         <TestServerActionBindReset />
         <TestServerActionBindSimple />
         <TestServerActionBindClient />
@@ -118,21 +118,4 @@ function TestSuspense(props: { url: URL }) {
     );
   }
   return <a href="?test-suspense=1000">test-suspense</a>;
-}
-
-function TestPayload(props: { testBinary?: boolean }) {
-  return (
-    <div data-testid="ssr-rsc-payload">
-      test-payload:{" "}
-      <TestPayloadClient
-        test1={"🙂"}
-        test2={"<script>throw new Error('boom')</script>"}
-        // reverse to have non-utf8 binary data
-        test3={
-          props.testBinary ? new TextEncoder().encode("🔥").reverse() : null
-        }
-        test4={"&><\u2028\u2029"}
-      />
-    </div>
-  );
 }
