@@ -12,6 +12,7 @@
   "exports": {
     "./package.json": "./package.json",
     "./types": "./types/index.d.ts",
+    ".": "./dist/index.js",
     "./*": "./dist/*.js"
   },
   "files": ["dist", "types"],
