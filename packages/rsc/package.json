@@ -15,6 +15,7 @@
   },
   "files": ["dist", "types"],
   "scripts": {
+    "test": "vitest",
     "test-e2e": "playwright test --project=chromium",
     "test-e2e-ci": "playwright test",
     "test-package": "bash scripts/test-package.sh",
@@ -23,15 +24,17 @@
     "prepack": "tsdown --clean"
   },
   "dependencies": {
-    "@hiogawa/transforms": "workspace:*",
     "@mjackson/node-fetch-server": "^0.6.1",
     "es-module-lexer": "^1.6.0",
+    "estree-walker": "^3.0.3",
     "magic-string": "^0.30.17",
+    "periscopic": "^4.0.2",
     "turbo-stream": "^3.1.0",
     "vitefu": "^1.0.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.53.1",
+    "@types/estree": "^1.0.8",
     "@types/node": "^22.14.1",
     "react-server-dom-webpack": "*",
     "rsc-html-stream": "^0.0.6",
