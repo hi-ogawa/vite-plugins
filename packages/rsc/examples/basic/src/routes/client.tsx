@@ -9,14 +9,15 @@ export function ClientCounter(): React.ReactElement {
   const [count, setCount] = React.useState(0);
   return (
     <button onClick={() => setCount((c) => c + 1)}>
-      Client Counter: {count}
+      client-counter: {count}
     </button>
   );
 }
 
+const noop = () => () => {};
 export function Hydrated() {
   const hydrated = React.useSyncExternalStore(
-    React.useCallback(() => () => {}, []),
+    noop,
     () => true,
     () => false,
   );

@@ -1,10 +1,5 @@
 import React from "react";
 import {
-  changeServerCounter,
-  getServerCounter,
-  resetServerCounter,
-} from "./action";
-import {
   TestActionFromClient,
   TestUseActionState,
 } from "./action-from-client/client";
@@ -26,6 +21,7 @@ import {
   TestServerActionBindSimple,
 } from "./action-bind/server";
 import { TestActionStateServer } from "./action-state/server";
+import { ServerCounter } from "./action/server";
 import { TestClientInServer } from "./deps/client-in-server/server";
 import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
@@ -42,17 +38,12 @@ export function Root(props: { url: URL }) {
         {import.meta.viteRsc.loadCss("/src/routes/root.tsx")}
       </head>
       <body className="flex flex-col gap-2 items-start p-2">
-        <h4 className="text-xl">Test</h4>
         <div>
           <Hydrated />
-          <input data-testid="client-state" placeholder="client-state" />
+          <input placeholder="test-client-state" />
         </div>
         <ClientCounter />
-        <form action={changeServerCounter}>
-          <input type="hidden" name="change" value="1" />
-          <button>Server Counter: {getServerCounter()}</button>
-          <button formAction={resetServerCounter}>Server Reset</button>
-        </form>
+        <ServerCounter />
         <TestStyleClient />
         <div className="test-style-server">test-style-server</div>
         <div data-testid="css-module-server" className={styles.server}>

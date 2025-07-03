@@ -2,11 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { type Page, expect, test } from "@playwright/test";
 import { type Fixture, setupIsolatedFixture, useFixture } from "./fixture";
-import { expectNoReload, testNoJs } from "./helper";
-
-async function waitForHydration(page: Page) {
-  await expect(page.getByTestId("hydrated")).toHaveText("[hydrated: 1]");
-}
+import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
 test.describe("dev-default", () => {
   const f = useFixture({ root: "examples/basic", mode: "dev" });
@@ -73,8 +69,8 @@ function defineTest(f: Fixture) {
   test("client component", async ({ page }) => {
     await page.goto(f.url());
     await waitForHydration(page);
-    await page.getByRole("button", { name: "Client Counter: 0" }).click();
-    await page.getByRole("button", { name: "Client Counter: 1" }).click();
+    await page.getByRole("button", { name: "client-counter: 0" }).click();
+    await page.getByRole("button", { name: "client-counter: 1" }).click();
   });
 
   test("server action @js", async ({ page }) => {
@@ -90,14 +86,14 @@ function defineTest(f: Fixture) {
   });
 
   async function testAction(page: Page) {
-    await page.getByRole("button", { name: "Server Counter: 0" }).click();
-    await page.getByRole("button", { name: "Server Counter: 1" }).click();
+    await page.getByRole("button", { name: "server-counter: 0" }).click();
+    await page.getByRole("button", { name: "server-counter: 1" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 2" }),
+      page.getByRole("button", { name: "server-counter: 2" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Server Reset" }).click();
+    await page.getByRole("button", { name: "server-counter-reset" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 0" }),
+      page.getByRole("button", { name: "server-counter: 0" }),
     ).toBeVisible();
   }
 
@@ -198,33 +194,33 @@ function defineTest(f: Fixture) {
   });
 
   async function testServerActionUpdate(page: Page, options: { js: boolean }) {
-    await page.getByRole("button", { name: "Server Counter: 0" }).click();
+    await page.getByRole("button", { name: "server-counter: 0" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 1" }),
+      page.getByRole("button", { name: "server-counter: 1" }),
     ).toBeVisible();
 
     // update server code
-    const editor = f.createEditor("src/routes/action.tsx");
+    const editor = f.createEditor("src/routes/action/action.tsx");
     editor.edit((s) =>
       s.replace("const TEST_UPDATE = 1;", "const TEST_UPDATE = 10;"),
     );
     await expect(async () => {
       if (!options.js) await page.goto(f.url());
       await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
+        page.getByRole("button", { name: "server-counter: 0" }),
       ).toBeVisible({ timeout: 10 });
     }).toPass();
 
-    await page.getByRole("button", { name: "Server Counter: 0" }).click();
+    await page.getByRole("button", { name: "server-counter: 0" }).click();
     await expect(
-      page.getByRole("button", { name: "Server Counter: 10" }),
+      page.getByRole("button", { name: "server-counter: 10" }),
     ).toBeVisible();
 
     editor.reset();
     await expect(async () => {
       if (!options.js) await page.goto(f.url());
       await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
+        page.getByRole("button", { name: "server-counter: 0" }),
       ).toBeVisible({ timeout: 10 });
     }).toPass();
   }
@@ -235,23 +231,23 @@ function defineTest(f: Fixture) {
     test("client hmr", async ({ page }) => {
       await page.goto(f.url());
       await waitForHydration(page);
-      await page.getByRole("button", { name: "Client Counter: 0" }).click();
+      await page.getByRole("button", { name: "client-counter: 0" }).click();
       await expect(
-        page.getByRole("button", { name: "Client Counter: 1" }),
+        page.getByRole("button", { name: "client-counter: 1" }),
       ).toBeVisible();
 
       const editor = f.createEditor("src/routes/client.tsx");
-      editor.edit((s) => s.replace("Client Counter", "Client [edit] Counter"));
+      editor.edit((s) => s.replace("client-counter", "client-[edit]-counter"));
       await expect(
-        page.getByRole("button", { name: "Client [edit] Counter: 1" }),
+        page.getByRole("button", { name: "client-[edit]-counter: 1" }),
       ).toBeVisible();
 
       // check next ssr is also updated
       const res = await page.goto(f.url());
-      expect(await res?.text()).toContain("Client [edit] Counter");
+      expect(await res?.text()).toContain("client-[edit]-counter");
       await waitForHydration(page);
       editor.reset();
-      await page.getByRole("button", { name: "Client Counter: 0" }).click();
+      await page.getByRole("button", { name: "client-counter: 0" }).click();
     });
 
     test("non-boundary client hmr", async ({ page }) => {
@@ -285,14 +281,14 @@ function defineTest(f: Fixture) {
       await page.goto(f.url());
       await waitForHydration(page);
       await using _ = await expectNoReload(page);
-      const editor = f.createEditor("src/routes/root.tsx");
-      editor.edit((s) => s.replace("Server Counter", "Server [edit] Counter"));
+      const editor = f.createEditor("src/routes/action/server.tsx");
+      editor.edit((s) => s.replace("server-counter", "server-[edit]-counter"));
       await expect(
-        page.getByRole("button", { name: "Server [edit] Counter: 0" }),
+        page.getByRole("button", { name: "server-[edit]-counter: 0" }),
       ).toBeVisible();
       editor.reset();
       await expect(
-        page.getByRole("button", { name: "Server Counter: 0" }),
+        page.getByRole("button", { name: "server-counter: 0" }),
       ).toBeVisible();
     });
 

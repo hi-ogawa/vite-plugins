@@ -5,17 +5,19 @@ export const testNoJs = test.extend({
 });
 
 export async function waitForHydration(page: Page) {
-  await page.waitForFunction(
-    () => {
-      const el = document.querySelector("body");
-      if (el) {
-        const keys = Object.keys(el);
-        return keys.some((key) => key.startsWith("__reactFiber"));
-      }
-    },
-    null,
-    { timeout: 3000 },
-  );
+  await expect
+    .poll(
+      () =>
+        page
+          .locator("body")
+          .evaluate(
+            (el) =>
+              el &&
+              Object.keys(el).some((key) => key.startsWith("__reactFiber")),
+          ),
+      { timeout: 3000 },
+    )
+    .toBeTruthy();
 }
 
 export async function expectNoReload(page: Page) {
