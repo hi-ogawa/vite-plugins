@@ -256,27 +256,22 @@ function defineTest(f: Fixture) {
       await page.goto(f.url());
       await waitForHydration(page);
 
-      await page
-        .getByRole("textbox", { name: "test-client-dep-state" })
-        .fill("test");
+      const locator = page.getByTestId("test-hmr-client-dep");
+      await expect(locator).toHaveText("test-hmr-client-dep: 0[ok]");
+      await locator.locator("button").click();
+      await expect(locator).toHaveText("test-hmr-client-dep: 1[ok]");
 
-      const editor = f.createEditor("src/routes/client-dep.tsx");
-      editor.edit((s) =>
-        s.replace("test-client-dep-state", "test-client-[edit]-dep-state"),
-      );
-      await expect(
-        page.getByRole("textbox", { name: "test-client-[edit]-dep-state" }),
-      ).toHaveValue("test");
+      const editor = f.createEditor("src/routes/hmr-client-dep/client-dep.tsx");
+      editor.edit((s) => s.replace("[ok]", "[ok-edit]"));
+      await expect(locator).toHaveText("test-hmr-client-dep: 1[ok-edit]");
 
       // check next ssr is also updated
-      const res = await page.goto(f.url());
-      expect(await res?.text()).toContain("test-client-[edit]-dep-state");
+      const res = await page.reload();
+      expect(await res?.text()).toContain("[ok-edit]");
 
       await waitForHydration(page);
       editor.reset();
-      await expect(
-        page.getByRole("textbox", { name: "test-client-dep-state" }),
-      ).toBeVisible();
+      await expect(locator).toHaveText("test-hmr-client-dep: 0[ok]");
     });
 
     test("server hmr", async ({ page }) => {
@@ -342,7 +337,7 @@ function defineTest(f: Fixture) {
       await waitForHydration(page);
 
       await using _ = await expectNoReload(page);
-      const editor = f.createEditor("src/routes/client.css");
+      const editor = f.createEditor("src/routes/style-client/client.css");
       editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
       await expect(page.locator(".test-style-client")).toHaveCSS(
         "color",
@@ -358,6 +353,8 @@ function defineTest(f: Fixture) {
         "color",
         "rgb(0, 0, 0)",
       );
+      // wait longer for multiple edits
+      await page.waitForTimeout(100);
       editor.reset();
       await expect(page.locator(".test-style-client")).toHaveCSS(
         "color",
@@ -387,7 +384,7 @@ function defineTest(f: Fixture) {
       );
 
       // remove css import
-      const editor = f.createEditor("src/routes/client-dep.tsx");
+      const editor = f.createEditor("src/routes/style-client/client-dep.tsx");
       editor.edit((s) =>
         s.replaceAll(
           `import "./client-dep.css";`,
@@ -519,7 +516,7 @@ function defineTest(f: Fixture) {
 
     // test client css module HMR
     await using _ = await expectNoReload(page);
-    const editor = f.createEditor("src/routes/client.module.css");
+    const editor = f.createEditor("src/routes/style-client/client.module.css");
     editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
     await expect(page.getByTestId("css-module-client")).toHaveCSS(
       "color",

@@ -1,9 +1,6 @@
 "use client";
 
 import React from "react";
-import "./client.css";
-import { TestClientDep } from "./client-dep";
-import styles from "./client.module.css";
 
 export function ClientCounter(): React.ReactElement {
   const [count, setCount] = React.useState(0);
@@ -22,18 +19,6 @@ export function Hydrated() {
     () => false,
   );
   return <span data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</span>;
-}
-
-export function TestStyleClient() {
-  return (
-    <>
-      <div className="test-style-client">test-style-client</div>
-      <div data-testid="css-module-client" className={styles.client}>
-        test-css-module-client
-      </div>
-      <TestClientDep />
-    </>
-  );
 }
 
 export function TestTailwindClient() {
