@@ -9,7 +9,7 @@ import { unstable_matchRSCServerRequest as matchRSCServerRequest } from "react-r
 
 import routes from "virtual:react-router-routes";
 
-export async function callServer(request: Request): Promise<Response> {
+export async function fetchServer(request: Request): Promise<Response> {
   return await matchRSCServerRequest({
     createTemporaryReferenceSet,
     decodeReply,
