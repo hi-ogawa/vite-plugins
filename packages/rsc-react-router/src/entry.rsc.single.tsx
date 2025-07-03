@@ -1,8 +1,8 @@
-import { callServer } from "./entry.rsc";
+import { fetchServer } from "./entry.rsc";
 
 export default async function handler(requrest: Request): Promise<Response> {
-  const entrySsr = await import.meta.viteRsc.loadModule<
+  const ssr = await import.meta.viteRsc.loadModule<
     typeof import("./entry.ssr")
   >("ssr", "index");
-  return entrySsr.default(requrest, callServer);
+  return ssr.default(requrest, fetchServer);
 }

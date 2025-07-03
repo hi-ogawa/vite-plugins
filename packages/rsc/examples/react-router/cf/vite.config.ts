@@ -36,16 +36,36 @@ export default defineConfig({
         },
       ],
     }),
+    {
+      name: "react-router-fixup",
+      transform(code) {
+        if (code.includes(`import { AsyncLocalStorage } from 'async_hooks';`)) {
+          code = code.replaceAll("async_hooks", "node:async_hooks");
+          code = code.replaceAll(
+            `global.___reactRouterServerStorage___`,
+            `globalThis.___reactRouterServerStorage___`,
+          );
+          return code;
+        }
+      },
+    },
   ],
   environments: {
+    client: {
+      optimizeDeps: {
+        include: ["react-router", "react-router/internal/react-server-client"],
+      },
+    },
     ssr: {
       optimizeDeps: {
-        include: ["react-router"],
+        include: ["react-router > cookie", "react-router > set-cookie-parser"],
+        exclude: ["react-router"],
       },
     },
     rsc: {
       optimizeDeps: {
-        include: ["react-router"],
+        include: ["react-router > cookie", "react-router > set-cookie-parser"],
+        exclude: ["react-router"],
       },
     },
   },

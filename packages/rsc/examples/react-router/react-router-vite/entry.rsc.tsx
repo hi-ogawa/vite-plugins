@@ -1,36 +1,24 @@
 import {
+  createTemporaryReferenceSet,
   decodeAction,
   decodeReply,
   loadServerAction,
   renderToReadableStream,
 } from "@hiogawa/vite-rsc/rsc";
-import {
-  type unstable_DecodeCallServerFunction as DecodeCallServerFunction,
-  type unstable_DecodeFormActionFunction as DecodeFormActionFunction,
-  unstable_matchRSCServerRequest as matchRSCServerRequest,
-} from "react-router/rsc";
+import { unstable_matchRSCServerRequest as matchRSCServerRequest } from "react-router";
 
-// @ts-ignore
 import routes from "virtual:react-router-routes";
 
-const decodeCallServer: DecodeCallServerFunction = async (actionId, reply) => {
-  const args = await decodeReply(reply);
-  const action = await loadServerAction(actionId);
-  return action.bind(null, ...args);
-};
-
-const decodeFormAction: DecodeFormActionFunction = async (formData) => {
-  return await decodeAction(formData);
-};
-
-export async function callServer(request: Request) {
+export async function fetchServer(request: Request): Promise<Response> {
   return await matchRSCServerRequest({
-    decodeCallServer,
-    decodeFormAction,
+    createTemporaryReferenceSet,
+    decodeReply,
+    decodeAction,
+    loadServerAction,
     request,
     routes,
-    generateResponse(match) {
-      return new Response(renderToReadableStream(match.payload), {
+    generateResponse(match, options) {
+      return new Response(renderToReadableStream(match.payload, options), {
         status: match.statusCode,
         headers: match.headers,
       });

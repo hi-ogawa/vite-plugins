@@ -27,4 +27,7 @@ export default defineConfig({
     }),
     inspect(),
   ],
+  optimizeDeps: {
+    include: ["react-router", "react-router/internal/react-server-client"],
+  },
 }) as any;
