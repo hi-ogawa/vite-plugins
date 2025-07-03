@@ -4,6 +4,8 @@ import { type Page, expect, test } from "@playwright/test";
 import { type Fixture, setupIsolatedFixture, useFixture } from "./fixture";
 import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
+// TODO: parallel?
+
 test.describe("dev-default", () => {
   const f = useFixture({ root: "examples/basic", mode: "dev" });
   defineTest(f);
@@ -420,7 +422,7 @@ function defineTest(f: Fixture) {
       await waitForHydration(page);
 
       await using _ = await expectNoReload(page);
-      const editor = f.createEditor("src/routes/server.css");
+      const editor = f.createEditor("src/routes/style-server/server.css");
       editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
       await expect(page.locator(".test-style-server")).toHaveCSS(
         "color",
@@ -466,7 +468,7 @@ function defineTest(f: Fixture) {
       );
 
       // remove css import
-      const editor = f.createEditor("src/routes/root.tsx");
+      const editor = f.createEditor("src/routes/style-server/server.tsx");
       editor.edit((s) =>
         s.replaceAll(`import "./server.css";`, `/* import "./server.css"; */`),
       );
@@ -542,7 +544,7 @@ function defineTest(f: Fixture) {
 
     // test server css module HMR
     await using _ = await expectNoReload(page);
-    const editor = f.createEditor("src/routes/server.module.css");
+    const editor = f.createEditor("src/routes/style-server/server.module.css");
     editor.edit((s) => s.replaceAll("rgb(255, 165, 0)", "rgb(0, 165, 255)"));
     await expect(page.getByTestId("css-module-server")).toHaveCSS(
       "color",

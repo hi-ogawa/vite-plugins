@@ -1,8 +1,16 @@
 import React from "react";
 import {
+  TestServerActionBindAction,
+  TestServerActionBindClient,
+  TestServerActionBindReset,
+  TestServerActionBindSimple,
+} from "./action-bind/server";
+import {
   TestActionFromClient,
   TestUseActionState,
 } from "./action-from-client/client";
+import { TestActionStateServer } from "./action-state/server";
+import { ServerCounter } from "./action/server";
 import {
   ClientCounter,
   Hydrated,
@@ -11,23 +19,14 @@ import {
   TestTailwindClient,
   TestTemporaryReference,
 } from "./client";
-import ErrorBoundary from "./error-boundary";
-import "./server.css";
-import {
-  TestServerActionBindAction,
-  TestServerActionBindClient,
-  TestServerActionBindReset,
-  TestServerActionBindSimple,
-} from "./action-bind/server";
-import { TestActionStateServer } from "./action-state/server";
-import { ServerCounter } from "./action/server";
 import { TestClientInServer } from "./deps/client-in-server/server";
 import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
+import ErrorBoundary from "./error-boundary";
 import { TestModuleInvalidationServer } from "./module-invalidation/server";
 import { TestSerializationServer } from "./serialization/server";
-import styles from "./server.module.css";
 import { TestCssClientNoSsr } from "./style-client-no-ssr/server";
+import { TestStyleServer } from "./style-server/server";
 import { TestUseCache } from "./use-cache/server";
 
 export function Root(props: { url: URL }) {
@@ -45,10 +44,7 @@ export function Root(props: { url: URL }) {
         <ClientCounter />
         <ServerCounter />
         <TestStyleClient />
-        <div className="test-style-server">test-style-server</div>
-        <div data-testid="css-module-server" className={styles.server}>
-          test-css-module-server
-        </div>
+        <TestStyleServer />
         <TestCssClientNoSsr url={props.url} />
         <TestTailwindClient />
         <div className="test-tw-server text-[#f00]">test-tw-server</div>
