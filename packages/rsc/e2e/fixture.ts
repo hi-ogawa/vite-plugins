@@ -161,6 +161,7 @@ export async function setupIsolatedFixture(options: {
   // setup package.json overrides
   const packagesDir = path.join(import.meta.dirname, "..", "..");
   const overrides = {
+    "@hiogawa/transforms": `file:${path.join(packagesDir, "transforms")}`,
     "@hiogawa/vite-rsc": `file:${path.join(packagesDir, "rsc")}`,
   };
   editFileJson(path.join(options.dest, "package.json"), (pkg: any) => {
