@@ -11,7 +11,6 @@ import {
   TestTailwindClient,
   TestTemporaryReference,
 } from "./client";
-import { TestStyleClient2 } from "./client2";
 import ErrorBoundary from "./error-boundary";
 import "./server.css";
 import {
