@@ -28,6 +28,7 @@ import { TestServerInServer } from "./deps/server-in-server/server";
 import { TestModuleInvalidationServer } from "./module-invalidation/server";
 import { TestSerializationServer } from "./serialization/server";
 import styles from "./server.module.css";
+import { TestCssClientNoSsr } from "./style-client-no-ssr/server";
 import { TestUseCache } from "./use-cache/server";
 
 export function Root(props: { url: URL }) {
@@ -39,8 +40,8 @@ export function Root(props: { url: URL }) {
       </head>
       <body className="flex flex-col gap-2 items-start p-2">
         <div>
-          <Hydrated />
           <input placeholder="test-client-state" />
+          <Hydrated />
         </div>
         <ClientCounter />
         <ServerCounter />
@@ -49,12 +50,7 @@ export function Root(props: { url: URL }) {
         <div data-testid="css-module-server" className={styles.server}>
           test-css-module-server
         </div>
-        <div>
-          <a href="?test-client-style-no-ssr">test-client-style-no-ssr</a>{" "}
-          {props.url.search.includes("test-client-style-no-ssr") && (
-            <TestStyleClient2 />
-          )}
-        </div>
+        <TestCssClientNoSsr url={props.url} />
         <TestTailwindClient />
         <div className="test-tw-server text-[#f00]">test-tw-server</div>
         <TestTemporaryReference

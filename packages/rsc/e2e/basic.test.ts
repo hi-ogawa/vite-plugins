@@ -498,8 +498,8 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await using _ = await expectNoReload(page);
-    await page.getByRole("link", { name: "test-client-style-no-ssr" }).click();
-    await expect(page.locator(".test-style-client-2")).toHaveCSS(
+    await page.locator("a[href='?test-client-style-no-ssr']").click();
+    await expect(page.locator(".test-style-client-no-ssr")).toHaveCSS(
       "color",
       "rgb(0, 200, 100)",
     );
