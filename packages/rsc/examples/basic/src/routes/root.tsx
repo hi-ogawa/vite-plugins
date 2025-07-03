@@ -91,8 +91,8 @@ export function Root(props: { url: URL }) {
         <TestServerInServer />
         <TestServerInClient />
         <TestActionStateServer />
-        <TestUseCache />
         <TestModuleInvalidationServer />
+        <TestUseCache />
       </body>
     </html>
   );
