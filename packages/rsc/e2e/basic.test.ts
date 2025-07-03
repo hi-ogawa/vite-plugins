@@ -297,8 +297,6 @@ function defineTest(f: Fixture) {
     });
 
     test("module invalidation", async ({ page }) => {
-      // changing `module-invalidtaion/server.tsx` should not invalidate
-      // it's dependency `module-invalidation/server-dep.tsx`
       await page.goto(f.url());
       await waitForHydration(page);
       await using _ = await expectNoReload(page);
