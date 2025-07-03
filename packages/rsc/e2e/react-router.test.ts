@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
-import { type Page, expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
 import { expectNoReload, testNoJs, waitForHydration } from "./helper";
 
