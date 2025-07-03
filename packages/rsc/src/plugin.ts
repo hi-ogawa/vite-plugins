@@ -566,7 +566,13 @@ export default function vitePluginRsc(
         if (this.environment.name === "client") {
           const filterAssets =
             rscPluginOptions.copyServerAssetsToClient ?? (() => true);
+          const rscBuildOptions = config.environments.rsc!.build;
+          const rscViteManifest =
+            typeof rscBuildOptions.manifest === "string"
+              ? rscBuildOptions.manifest
+              : rscBuildOptions.manifest && ".vite/manifest.json";
           for (const asset of Object.values(rscBundle)) {
+            if (asset.fileName === rscViteManifest) continue;
             if (asset.type === "asset" && filterAssets(asset.fileName)) {
               this.emitFile({
                 type: "asset",

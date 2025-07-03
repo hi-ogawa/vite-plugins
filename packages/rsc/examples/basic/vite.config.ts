@@ -83,6 +83,18 @@ export default defineConfig({
         } else {
           assert(!Object.keys(bundle).includes("__server_secret.txt"));
         }
+
+        const viteManifest = bundle[".vite/manifest.json"];
+        assert(viteManifest.type === "asset");
+        assert(typeof viteManifest.source === "string");
+        if (this.environment.name === "rsc") {
+          assert(viteManifest.source.includes("src/server.tsx"));
+          assert(!viteManifest.source.includes("src/client.tsx"));
+        }
+        if (this.environment.name === "client") {
+          assert(!viteManifest.source.includes("src/server.tsx"));
+          assert(viteManifest.source.includes("src/client.tsx"));
+        }
       },
     },
     {
