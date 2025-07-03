@@ -5,6 +5,7 @@ import {
   TestServerActionBindReset,
   TestServerActionBindSimple,
 } from "./action-bind/server";
+import { TestServerActionError } from "./action-error/server";
 import {
   TestActionFromClient,
   TestUseActionState,
@@ -15,7 +16,6 @@ import { ClientCounter, Hydrated, TestTailwindClient } from "./client";
 import { TestClientInServer } from "./deps/client-in-server/server";
 import { TestServerInClient } from "./deps/server-in-client/client";
 import { TestServerInServer } from "./deps/server-in-server/server";
-import ErrorBoundary from "./error-boundary";
 import { TestHmrClientDep } from "./hmr-client-dep/client";
 import { TestModuleInvalidationServer } from "./module-invalidation/server";
 import { TestPayloadServer } from "./payload/server";
@@ -66,21 +66,6 @@ export function Root(props: { url: URL }) {
         <TestUseCache />
       </body>
     </html>
-  );
-}
-
-function TestServerActionError() {
-  return (
-    <ErrorBoundary>
-      <form
-        action={async () => {
-          "use server";
-          throw new Error("boom!");
-        }}
-      >
-        <button>test-findSourceMapURL</button>
-      </form>
-    </ErrorBoundary>
   );
 }
 
