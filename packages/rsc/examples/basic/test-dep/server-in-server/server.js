@@ -14,6 +14,6 @@ export function ServerCounter() {
         counter++;
       },
     },
-    h("button", null, `[server-in-server: ${counter}]`),
+    h("button", null, `server-in-server: ${counter}`),
   );
 }

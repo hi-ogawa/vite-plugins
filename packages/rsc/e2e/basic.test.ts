@@ -791,15 +791,15 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.getByTestId("server-in-server")).toHaveText(
-      "[server-in-server: 0]",
+      "server-in-server: 0",
     );
     await page.getByTestId("server-in-server").click();
     await expect(page.getByTestId("server-in-server")).toHaveText(
-      "[server-in-server: 1]",
+      "server-in-server: 1",
     );
     await page.reload();
     await expect(page.getByTestId("server-in-server")).toHaveText(
-      "[server-in-server: 1]",
+      "server-in-server: 1",
     );
   });
 
@@ -807,20 +807,20 @@ function defineTest(f: Fixture) {
     await page.goto(f.url());
     await waitForHydration(page);
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: ?]",
+      "server-in-client: ?",
     );
     await page.getByTestId("server-in-client").click();
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: 1]",
+      "server-in-client: 1",
     );
     await page.reload();
     await waitForHydration(page);
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: ?]",
+      "server-in-client: ?",
     );
     await page.getByTestId("server-in-client").click();
     await expect(page.getByTestId("server-in-client")).toHaveText(
-      "[server-in-client: 2]",
+      "server-in-client: 2",
     );
   });
 
