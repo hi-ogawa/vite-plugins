@@ -72,7 +72,7 @@ function resolvePackage(name: string) {
   return pathToFileURL(require.resolve(name)).href;
 }
 
-type RscPluginOptions = {
+export type RscPluginOptions = {
   /**
    * shorthand for configuring `environments.(name).build.rollupOptions.input.index`
    */
