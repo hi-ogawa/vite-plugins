@@ -40,12 +40,16 @@ export function reactRouter(options?: {
           },
         };
       },
-      configEnvironment(_name, _config, _env) {
+      configEnvironment(name, _config, _env) {
         return {
           resolve: {
             noExternal: [PKG_NAME],
           },
           optimizeDeps: {
+            include:
+              name === "client"
+                ? ["react-router", "react-router/internal/react-server-client"]
+                : [],
             exclude: [PKG_NAME],
           },
         };
