@@ -5,7 +5,7 @@
   "scripts": {
     "build": "pnpm -r '--filter=!*example*' build",
     "changelog": "pnpm dlx @hiogawa/changelog --repo https://github.com/hi-ogawa/vite-plugins --dir",
-    "tsc": "tsc -b packages/*/tsconfig.json packages/*/examples/*/tsconfig.json",
+    "tsc": "tsc -b packages/*/tsconfig.json packages/*/e2e/tsconfig.json packages/*/examples/*/tsconfig.json",
     "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
     "test": "pnpm -r --sequential test run",
     "vite-ecosystem-ci:build": "pnpm -r --filter '@hiogawa/vite-rsc...' build",
