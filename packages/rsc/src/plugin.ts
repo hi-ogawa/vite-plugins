@@ -33,6 +33,9 @@ import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
 import { createRpcServer } from "./utils/rpc";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
 
+// utility exported for "use cache" demo in examples/basic
+export { transformHoistInlineDirective } from "@hiogawa/transforms";
+
 // state for build orchestration
 let serverReferences: Record<string, string> = {};
 let server: ViteDevServer;
