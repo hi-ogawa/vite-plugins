@@ -500,18 +500,21 @@ importers:
 
   packages/rsc:
     dependencies:
-      '@hiogawa/transforms':
-        specifier: workspace:*
-        version: link:../transforms
       '@mjackson/node-fetch-server':
         specifier: ^0.6.1
         version: 0.6.1
       es-module-lexer:
         specifier: ^1.6.0
         version: 1.7.0
+      estree-walker:
+        specifier: ^3.0.3
+        version: 3.0.3
       magic-string:
         specifier: ^0.30.17
         version: 0.30.17
+      periscopic:
+        specifier: ^4.0.2
+        version: 4.0.2
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -531,6 +534,9 @@ importers:
       '@playwright/test':
         specifier: ^1.53.1
         version: 1.53.1
+      '@types/estree':
+        specifier: ^1.0.8
+        version: 1.0.8
       '@types/node':
         specifier: ^22.14.1
         version: 22.16.0

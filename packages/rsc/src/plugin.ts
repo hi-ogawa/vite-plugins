@@ -4,13 +4,6 @@ import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import {
-  type TransformWrapExportFilter,
-  hasDirective,
-  transformDirectiveProxyExport,
-  transformServerActionServer,
-  transformWrapExport,
-} from "@hiogawa/transforms";
 import { createRequestListener } from "@mjackson/node-fetch-server";
 import * as esModuleLexer from "es-module-lexer";
 import MagicString from "magic-string";
@@ -29,6 +22,13 @@ import {
 } from "vite";
 import { crawlFrameworkPkgs } from "vitefu";
 import vitePluginRscCore from "./core/plugin";
+import { transformDirectiveProxyExport } from "./transforms/proxy-export";
+import { transformServerActionServer } from "./transforms/server-action";
+import { hasDirective } from "./transforms/utils";
+import {
+  type TransformWrapExportFilter,
+  transformWrapExport,
+} from "./transforms/wrap-export";
 import { generateEncryptionKey, toBase64 } from "./utils/encryption-utils";
 import { createRpcServer } from "./utils/rpc";
 import { normalizeViteImportAnalysisUrl } from "./vite-utils";
