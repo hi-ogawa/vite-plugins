@@ -7,3 +7,7 @@ export default {
     return fetchServer(request);
   },
 };
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}

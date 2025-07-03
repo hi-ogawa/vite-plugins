@@ -89,3 +89,7 @@ export default {
     return handler(request);
   },
 };
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}

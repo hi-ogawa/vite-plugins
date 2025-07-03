@@ -25,3 +25,7 @@ export async function fetchServer(request: Request): Promise<Response> {
     },
   });
 }
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}

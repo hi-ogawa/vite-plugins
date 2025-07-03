@@ -249,6 +249,7 @@ function defineTest(f: Fixture) {
       // check next ssr is also updated
       const res = await page.goto(f.url());
       expect(await res?.text()).toContain("Client [edit] Counter");
+      await waitForHydration(page);
       editor.reset();
       await page.getByRole("button", { name: "Client Counter: 0" }).click();
     });
@@ -293,6 +294,29 @@ function defineTest(f: Fixture) {
       await expect(
         page.getByRole("button", { name: "Server Counter: 0" }),
       ).toBeVisible();
+    });
+
+    test("module invalidation", async ({ page }) => {
+      await page.goto(f.url());
+      await waitForHydration(page);
+      await using _ = await expectNoReload(page);
+
+      // change child module state
+      const locator = page.getByTestId("test-module-invalidation-server");
+      await expect(locator).toContainText("[dep: 0]");
+      locator.getByRole("button").click();
+      await expect(locator).toContainText("[dep: 1]");
+
+      // change parent module
+      const editor = f.createEditor(
+        "src/routes/module-invalidation/server.tsx",
+      );
+      editor.edit((s) => s.replace("[dep:", "[dep-edit:"));
+
+      // preserve child module state
+      await expect(locator).toContainText("[dep-edit: 1]");
+      editor.reset();
+      await expect(locator).toContainText("[dep: 1]");
     });
   });
 
