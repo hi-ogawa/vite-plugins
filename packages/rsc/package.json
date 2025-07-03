@@ -10,6 +10,7 @@
   "license": "MIT",
   "type": "module",
   "exports": {
+    "./package.json": "./package.json",
     "./types": "./types/index.d.ts",
     "./*": "./dist/*.js"
   },
