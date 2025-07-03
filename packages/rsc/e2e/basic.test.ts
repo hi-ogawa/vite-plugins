@@ -600,7 +600,7 @@ function defineTest(f: Fixture) {
 
       await using _ = await expectNoReload(page);
 
-      const clientFile = f.createEditor("src/routes/client.tsx");
+      const clientFile = f.createEditor("src/routes/tailwind/client.tsx");
       clientFile.edit((s) => s.replaceAll("text-[#00f]", "text-[#88f]"));
       await expect(page.locator(".test-tw-client")).toHaveCSS(
         "color",
@@ -612,7 +612,7 @@ function defineTest(f: Fixture) {
         "rgb(0, 0, 255)",
       );
 
-      const serverFile = f.createEditor("src/routes/root.tsx");
+      const serverFile = f.createEditor("src/routes/tailwind/server.tsx");
       serverFile.edit((s) => s.replaceAll("text-[#f00]", "text-[#f88]"));
       await expect(page.locator(".test-tw-server")).toHaveCSS(
         "color",

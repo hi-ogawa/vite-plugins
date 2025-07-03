@@ -21,10 +21,6 @@ export function Hydrated() {
   return <span data-testid="hydrated">[hydrated: {hydrated ? 1 : 0}]</span>;
 }
 
-export function TestTailwindClient() {
-  return <div className="test-tw-client text-[#00f]">test-tw-client</div>;
-}
-
 export function UnusedClientReference() {
   console.log("__unused_client_reference__");
 }
