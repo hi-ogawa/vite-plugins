@@ -5,10 +5,10 @@ on:
   # workflow_dispatch:
   push:
 
-permissions:
-  contents: write
-  # pull-requests: write
-  # repository-projects: write
+# permissions:
+#   contents: write
+#   pull-requests: write
+#   repository-projects: write
 
 jobs:
   trigger-nightly:
