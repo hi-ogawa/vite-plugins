@@ -420,3 +420,11 @@ This is a wrapper of `react-server-dom` API and helper API to setup a minimal RS
 ### `@hiogawa/vite-rsc/extra/browser`
 
 - `hydrate`
+
+## Credits
+
+- Waku
+- Lazarv
+- Jacob
+- React router
+- Parcel
