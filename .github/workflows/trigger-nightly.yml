@@ -1,8 +1,9 @@
 name: trigger-nightly
 on:
-  schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+  # schedule:
+  #   - cron: '0 0 * * *'
+  # workflow_dispatch:
+  push:
 jobs:
   update-pr:
     runs-on: ubuntu-latest
