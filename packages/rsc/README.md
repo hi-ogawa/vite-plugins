@@ -1,7 +1,8 @@
 # @hiogawa/vite-rsc
 
 This package provides [React Server Components](https://react.dev/reference/rsc/server-components) (RSC) support for Vite.
-Any feedback is welcome, please feel free to share an idea in [the discussion](https://github.com/hi-ogawa/vite-plugins/discussions/979).
+
+TODO: say experimental. link to roadmap.
 
 ## Features
 
@@ -423,8 +424,10 @@ This is a wrapper of `react-server-dom` API and helper API to setup a minimal RS
 
 ## Credits
 
-- Waku
-- Lazarv
-- Jacob
-- React router
-- Parcel
+TODO
+
+- [Waku](https://github.com/wakujs/waku)
+- [@lazarv/react-server](https://github.com/lazarv/react-server)
+- [@jacob-ebey/vite-react-server-dom](https://github.com/jacob-ebey/vite-plugins/tree/main/packages/vite-react-server-dom)
+- [React Router RSC](https://remix.run/blog/rsc-preview)
+- [Parcel RSC](https://parceljs.org/recipes/rsc)
