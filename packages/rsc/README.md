@@ -2,8 +2,6 @@
 
 This package provides [React Server Components](https://react.dev/reference/rsc/server-components) (RSC) support for Vite.
 
-TODO: say experimental. link to roadmap.
-
 ## Features
 
 - **Framework-less RSC experience**: The plugin implements [RSC conventions](https://react.dev/reference/rsc/server-components) and provides low level `react-server-dom` runtime API without framework-specific abstractions.
@@ -71,7 +69,7 @@ graph TD
 - [`vite.config.ts`](./examples/starter/vite.config.ts)
 
 ```js
-import rsc from "@hiogawa/vite-rsc/plugin";
+import rsc from "@hiogawa/vite-rsc";
 
 export default defineConfig() {
   plugins: [
@@ -328,12 +326,6 @@ function __Page(props) {
 export { __Page as Page }
 ```
 
-Underlying transform utility is available from `@hiogawa/vite-rsc/plugin`:
-
-```tsx
-import { transformRscCssExport } from "@hiogawa/vite-rsc/plugin";
-```
-
 ### available on `ssr` environment
 
 #### `import.meta.viteRsc.loadBootstrapScriptContent("index")`
@@ -366,10 +358,10 @@ import.meta.hot.on("rsc:update", async () => {
 
 ## Plugin API
 
-### `@hiogawa/vite-rsc/plugin`
+### `@hiogawa/vite-rsc`
 
 ```js
-import rsc from "@hiogawa/vite-rsc/plugin";
+import rsc from "@hiogawa/vite-rsc";
 import { defineConfig } from "vite";
 
 export default defineConfig({
