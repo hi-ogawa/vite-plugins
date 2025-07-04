@@ -18,9 +18,10 @@ jobs:
       - run: gh pr checkout canary
         env:
           GITHUB_TOKEN: ${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}
-      - run: |
-          # git config --local user.email "action@github.com"
-          # git config --local user.name "GitHub Action"
+      - name: push commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
           git push https://x-access-token:${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}@github.com/${{ github.repository }}.git
