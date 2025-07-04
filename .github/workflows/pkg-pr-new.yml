@@ -41,14 +41,6 @@ jobs:
 
       - run: |
           pnpx pkg-pr-new publish --comment=off \
-            packages/react-server \
-            packages/react-server-next \
             packages/rsc-stable \
             packages/rsc-canary \
             packages/rsc-experimental \
-            packages/rsc-react-router \
-            packages/transforms \
-            packages/vite-plugin-ssr-middleware \
-            packages/pre-bundle-new-url \
-            packages/server-asset \
-            packages/ssr-css
