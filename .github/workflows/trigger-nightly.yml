@@ -24,4 +24,4 @@ jobs:
           git config --local user.name "GitHub Action"
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
-          git push https://x-access-token:${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}@github.com/${{ github.repository }}.git
+          git push https://oauth2:${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}@github.com/${{ github.repository }}.git
