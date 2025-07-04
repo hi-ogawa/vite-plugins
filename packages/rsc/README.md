@@ -1,5 +1,5 @@
 > [!important]
-> `@hiogawa/vite-rsc` is now maintained as Vite's official package [`@vitejs/plugin-rsc`](https://github.com/hi-ogawa/vite-plugin-react/blob/main/packages/plugin-rsc/README.md).
+> `@hiogawa/vite-rsc` is now maintained as Vite's official package [`@vitejs/plugin-rsc`](https://github.com/hi-ogawa/vite-plugin-react/blob/main/packages/plugin-rsc).
 
 # @hiogawa/vite-rsc
 
