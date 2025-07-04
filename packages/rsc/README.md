@@ -23,12 +23,14 @@ npx degit hi-ogawa/vite-plugins/packages/rsc/examples/starter my-app
 
 - [`./examples/starter`](./examples/starter)
   - This example provides an in-depth overview of API with inline comments to explain how they function within RSC-powered React application.
-- [`./examples/starter-cf-single`](./examples/starter-cf-single)
-  - [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare) integration example with a single worker setup.
 - [`./examples/react-router`](./examples/react-router)
-  - This demonstrates how to integrate [experimental React Router RSC API](https://remix.run/blog/rsc-preview) with this plugin. It also includes `@cloudflare/vite-plugin` integration with multi workers setup.
+  - This demonstrates how to integrate [experimental React Router RSC API](https://remix.run/blog/rsc-preview) with this plugin.
+    It also includes `@cloudflare/vite-plugin` integration.
 - [`./examples/basic`](./examples/basic)
-  - This is mainly used for e2e testing and include various edge cases. It also uses a high level `@hiogawa/vite-rsc/extra/{rsc,ssr,browser}` API for quick setup.
+  - This is mainly used for e2e testing and include various advanced RSC usages (e.g. `"use cache"` example).
+    It also uses a high level `@hiogawa/vite-rsc/extra/{rsc,ssr,browser}` API for quick setup.
+- [`./examples/ssg`](./examples/basic)
+  - Static site generation (SSG) example with MDX and client components for interactivity.
 
 ## Basic Concepts
 
