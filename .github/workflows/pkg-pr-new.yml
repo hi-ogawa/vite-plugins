@@ -11,28 +11,27 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          build: false
           playwright: false
 
-      # # stable
-      # - run: |
-      #     cp -rf packages/rsc packages/rsc-stable
+      # stable
+      - run: |
+          cp -rf packages/rsc packages/rsc-stable
 
       # canary
       - run: |
           pnpm i -w react@canary react-dom@canary react-server-dom-webpack@canary
           pnpm i --no-frozen-lockfile
-          pnpm -r --filter '@hiogawa/vite-rsc...' build
-        # cp -rf packages/rsc packages/rsc-canary
-        # sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-canary"#' packages/rsc-canary/package.json
+          pnpm -C packages/rsc build
+          cp -rf packages/rsc packages/rsc-canary
+          sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-canary"#' packages/rsc-canary/package.json
 
       # experimental
-      # - run: |
-      #     pnpm i -w react@experimental react-dom@experimental react-server-dom-webpack@experimental
-      #     pnpm i --no-frozen-lockfile
-      #     pnpm -C packages/rsc build
-      #     cp -rf packages/rsc packages/rsc-experimental
-      #     sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-experimental"#' packages/rsc-experimental/package.json
+      - run: |
+          pnpm i -w react@experimental react-dom@experimental react-server-dom-webpack@experimental
+          pnpm i --no-frozen-lockfile
+          pnpm -C packages/rsc build
+          cp -rf packages/rsc packages/rsc-experimental
+          sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-experimental"#' packages/rsc-experimental/package.json
 
       # strip prepack to avoid duplicate builds
       - run: |
@@ -42,5 +41,14 @@ jobs:
 
       - run: |
           pnpx pkg-pr-new publish --comment=off \
-            packages/rsc \
+            packages/react-server \
+            packages/react-server-next \
+            packages/rsc-stable \
+            packages/rsc-canary \
+            packages/rsc-experimental \
+            packages/rsc-react-router \
             packages/transforms \
+            packages/vite-plugin-ssr-middleware \
+            packages/pre-bundle-new-url \
+            packages/server-asset \
+            packages/ssr-css
