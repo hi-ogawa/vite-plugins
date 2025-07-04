@@ -18,6 +18,8 @@ jobs:
         with:
           token: ${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}
       - run: gh pr checkout canary
+        env:
+          GITHUB_TOKEN: ${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}
       - name: push commit
         run: |
           git config --local user.email "action@github.com"
