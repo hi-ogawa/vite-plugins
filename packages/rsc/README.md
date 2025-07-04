@@ -27,7 +27,7 @@ npx degit hi-ogawa/vite-plugins/packages/rsc/examples/starter my-app
 - [`./examples/basic`](./examples/basic)
   - This is mainly used for e2e testing and include various advanced RSC usages (e.g. `"use cache"` example).
     It also uses a high level `@hiogawa/vite-rsc/extra/{rsc,ssr,browser}` API for quick setup.
-- [`./examples/ssg`](./examples/basic)
+- [`./examples/ssg`](./examples/ssg)
   - Static site generation (SSG) example with MDX and client components for interactivity.
 
 ## Basic Concepts
@@ -70,8 +70,9 @@ graph TD
 
 ```js
 import rsc from "@hiogawa/vite-rsc";
+import { defineConfig } from "vite";
 
-export default defineConfig() {
+export default defineConfig({
   plugins: [
     // add plugin
     rsc(),
@@ -124,7 +125,7 @@ export default defineConfig() {
       },
     },
   },
-}
+});
 ```
 
 - [`entry.rsc.tsx`](./examples/starter/src/framework/entry.rsc.tsx)
@@ -142,14 +143,14 @@ export default async function handler(request: Request): Promise<Response> {
   if (request.url.endsWith(".rsc")) {
     return new Response(rscStream, {
       headers: {
-        'Content-type': 'text/html'
+        'Content-type': 'text/x-component;charset=utf-8'
       }
-    })
+    });
   }
 
   // delegate to SSR environment for html rendering
-  // `loadSsrModule` is a helper API provided by the plugin for multi environment interaction.
-  const ssrEntry = await import.meta.viteRsc.loadSsrModule<typeof import("./entry.ssr.tsx")>();
+  // `loadModule` is a helper API provided by the plugin for multi environment interaction.
+  const ssrEntry = await import.meta.viteRsc.loadModule<typeof import("./entry.ssr.tsx")>("ssr", "index");
   const htmlStream = await ssrEntry.handleSsr(rscStream);
 
   // respond html
@@ -177,7 +178,7 @@ export async function handleSsr(rscStream: ReadableStream) {
   // render html (traditional SSR)
   const htmlStream = ReactDOMServer.renderToReadableStream(root, {
     bootstrapScriptContent,
-  })
+  });
 
   return htmlStream;
 }
@@ -191,7 +192,7 @@ import * as ReactDOMClient from "react-dom/client";
 
 async function main() {
   // fetch and deserialize RSC stream back to React VDOM
-  const rscResponse = await fetch(window.location.href + ".rsc");
+  const rscResponse = await fetch(window.location.href + ".rsc);
   const root = await ReactClient.createFromReadableStream(rscResponse.body);
 
   // hydration (traditional CSR)
