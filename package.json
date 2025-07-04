@@ -15,7 +15,7 @@
     "lint-check": "biome check ."
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.5-nightly.81fdedb",
+    "@biomejs/biome": "1.9.5-nightly.ff02a0b",
     "@hiogawa/utils": "^1.7.0",
     "@playwright/test": "^1.53.1",
     "@tsconfig/strictest": "^2.0.5",
@@ -25,7 +25,7 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitejs/plugin-react-swc": "^3.10.2",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.25.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-server-dom-webpack": "^19.1.0",
@@ -36,9 +36,9 @@
     "vitest": "^3.2.4",
     "wrangler": "^4.22.0"
   },
-  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac",
+  "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184",
   "volta": {
-    "node": "22.14.0"
+    "node": "22.17.0"
   },
   "pnpm": {
     "overrides": {
