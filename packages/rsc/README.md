@@ -418,7 +418,8 @@ This is a wrapper of `react-server-dom` API and helper API to setup a minimal RS
 
 ## Credits
 
-TODO
+This project builds on fundamental techniques and insights from pioneering Vite RSC implementations.
+Additionally, Parcel and React Router's work on standardizing the RSC bundler/app responsibility has guided this plugin's API design:
 
 - [Waku](https://github.com/wakujs/waku)
 - [@lazarv/react-server](https://github.com/lazarv/react-server)
