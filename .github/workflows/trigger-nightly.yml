@@ -4,6 +4,12 @@ on:
   #   - cron: '0 0 * * *'
   # workflow_dispatch:
   push:
+
+permissions:
+  contents: write
+  # pull-requests: write
+  # repository-projects: write
+
 jobs:
   update-pr:
     runs-on: ubuntu-latest
