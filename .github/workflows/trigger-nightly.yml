@@ -11,7 +11,7 @@ permissions:
   # repository-projects: write
 
 jobs:
-  update-pr:
+  trigger-nightly:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,4 +23,4 @@ jobs:
           git config --local user.name "GitHub Action"
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
-          git push
+          git push https://x-access-token:${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}@github.com/${{ github.repository }}.git
