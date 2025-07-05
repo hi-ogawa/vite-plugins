@@ -18,10 +18,12 @@ jobs:
           repository: hi-ogawa/vite-plugin-react
           ref: chore-rsc-nightly
           token: ${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}
-      - name: push commit
+      - name: update branch and push commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git merge origin/main
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
           git push
