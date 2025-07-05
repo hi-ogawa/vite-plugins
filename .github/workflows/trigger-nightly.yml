@@ -1,0 +1,27 @@
+# workflow to push an empty commit and trigger pkg.pr.new on @vitejs/plugin-rsc PR
+# https://github.com/vitejs/vite-plugin-react/pull/524
+# cf. React nightly workflow
+# https://github.com/facebook/react/blob/5d87cd224452c68d09bef99656b6261e9772a210/.github/workflows/runtime_prereleases_nightly.yml#L12
+
+name: trigger-nightly
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger-nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: hi-ogawa/vite-plugin-react
+          ref: chore-rsc-nightly
+          token: ${{ secrets.REACT_NIGHTLY_TRIGGER_TOKEN }}
+      - name: push commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
+          git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
+          git push
