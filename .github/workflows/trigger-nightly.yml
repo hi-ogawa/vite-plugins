@@ -27,4 +27,4 @@ jobs:
           git reset --hard upstream/main
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
-          git push
+          git push --force
