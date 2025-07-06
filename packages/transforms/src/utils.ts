@@ -15,6 +15,10 @@ export function hasDirective(
   );
 }
 
+export function hasModuleDirective(ast: Program, directive: string): boolean {
+  return hasDirective(ast.body, directive);
+}
+
 export function getExportNames(
   ast: Program,
   options: {
