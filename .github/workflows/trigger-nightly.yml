@@ -8,6 +8,8 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
+  # temporary for testing
+  push:
 
 jobs:
   trigger-nightly:
@@ -24,7 +26,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote add upstream https://github.com/vitejs/vite-plugin-react.git
           git fetch upstream main
-          git reset --hard upstream/main
+          git merge upstream/main --ff-only
+          # git reset --hard upstream/main
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
-          git push --force
+          git push
