@@ -15,7 +15,7 @@
     "lint-check": "biome check ."
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.5-nightly.81fdedb",
+    "@biomejs/biome": "2.1.1",
     "@hiogawa/utils": "^1.7.0",
     "@playwright/test": "^1.53.1",
     "@tsconfig/strictest": "^2.0.5",
