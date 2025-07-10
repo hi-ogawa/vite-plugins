@@ -96,6 +96,18 @@ importers:
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
 
+  packages/import-attributes:
+    dependencies:
+      es-module-lexer:
+        specifier: ^1.6.0
+        version: 1.7.0
+      magic-string:
+        specifier: ^0.30.17
+        version: 0.30.17
+      vite:
+        specifier: ^7.0.0
+        version: 7.0.0(@types/node@22.16.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+
   packages/pre-bundle-new-url:
     dependencies:
       magic-string:

@@ -48,6 +48,7 @@ jobs:
             packages/rsc-experimental \
             packages/rsc-react-router \
             packages/transforms \
+            packages/import-attributes \
             packages/vite-plugin-ssr-middleware \
             packages/pre-bundle-new-url \
             packages/server-asset \
