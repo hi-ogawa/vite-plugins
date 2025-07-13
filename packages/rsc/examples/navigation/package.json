@@ -1,0 +1,29 @@
+{
+  "name": "navigation",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --app",
+    "preview": "vite preview",
+    "cf-build": "CF_BUILD=1 pnpm build",
+    "cf-preview": "wrangler dev",
+    "cf-release": "wrangler deploy"
+  },
+  "dependencies": {
+    "@hiogawa/vite-rsc": "latest",
+    "navigation": "^6.3.0",
+    "navigation-react": "^4.12.0",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "vite-plugin-inspect": "^11.2.0"
+  }
+}
