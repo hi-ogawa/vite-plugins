@@ -8,10 +8,14 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
+  # test temporary
+  push:
 
 jobs:
   trigger-nightly:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
         with:
