@@ -44,8 +44,6 @@ jobs:
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: 'Nightly trigger workflow failed',
-              body: `The nightly trigger workflow failed.
-              
-              **Github Actions URL:** ${context.payload.repository.html_url}/actions/runs/${context.runId}
+              title: `Nightly trigger workflow failed - ${context.runId}`,
+              body: `**Github Actions URL:** ${context.payload.repository.html_url}/actions/runs/${context.runId}`
             })
