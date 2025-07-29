@@ -12,6 +12,8 @@ on:
 jobs:
   trigger-nightly:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,3 +33,14 @@ jobs:
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
           git push
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Nightly trigger workflow failed - ${context.runId}`,
+              body: `**Github Actions URL:** ${context.payload.repository.html_url}/actions/runs/${context.runId}`
+            })
