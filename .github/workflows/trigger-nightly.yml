@@ -47,9 +47,5 @@ jobs:
               title: 'Nightly trigger workflow failed',
               body: `The nightly trigger workflow failed.
               
-              **Run ID:** ${context.runId}
-              **Workflow:** ${context.workflow}
-              **Run URL:** ${context.payload.repository.html_url}/actions/runs/${context.runId}
-              
-              This is likely due to PAT expiration or other authentication issues.`
+              **Github Actions URL:** ${context.payload.repository.html_url}/actions/runs/${context.runId}
             })
