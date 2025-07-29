@@ -21,6 +21,7 @@ jobs:
           fetch-depth: 0
       - name: git
         run: |
+          false
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
@@ -31,3 +32,20 @@ jobs:
           NIGHTLY_VERSION=$(npm view react dist-tags.canary --json | jq -r 'split("-") | .[-2:] | join("-")')
           git commit --allow-empty -m "chore: nightly ${NIGHTLY_VERSION}"
           git push
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Nightly trigger workflow failed',
+              body: `The nightly trigger workflow failed.
+              
+              **Run ID:** ${context.runId}
+              **Workflow:** ${context.workflow}
+              **Run URL:** ${context.payload.repository.html_url}/actions/runs/${context.runId}
+              
+              This is likely due to PAT expiration or other authentication issues.`
+            })
