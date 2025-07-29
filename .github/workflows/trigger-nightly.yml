@@ -8,8 +8,6 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
-  # test temporary
-  push:
 
 jobs:
   trigger-nightly:
@@ -25,7 +23,6 @@ jobs:
           fetch-depth: 0
       - name: git
         run: |
-          false
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
