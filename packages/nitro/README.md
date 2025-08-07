@@ -4,6 +4,8 @@ Vite plugin for cross platform build using [`Nitro`](https://nitro.build/). This
 
 ## Example
 
+See also [vite-plugin-rsc-deploy-example](https://github.com/hi-ogawa/vite-plugin-rsc-deploy-example)
+
 ```js
 // vite.config.ts
 import { defineConfig } from "vite";
@@ -18,7 +20,9 @@ export default defineConfig({
         environmentName: "rsc",
       },
       config: {
-        preset: "vercel",
+        // Nitro automatically chooses a preset based on deployed environment,
+        // but it can be explicitly specified if needed. e.g.
+        // preset: 'vercel',
       },
     }),
   ],
