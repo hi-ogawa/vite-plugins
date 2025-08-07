@@ -12,7 +12,7 @@ export type NitroPluginOptions = {
 
 export default function nitroBuildPlugin(
   nitroPluginOptions?: NitroPluginOptions &
-    Pick<BuildAppOptions, "publicDir" | "renderer">,
+    Omit<BuildAppOptions, "publicDir" | "renderer">,
 ): Plugin[] {
   const client = nitroPluginOptions?.client ?? { environmentName: "client" };
   const server = nitroPluginOptions?.server ?? { environmentName: "ssr" };
