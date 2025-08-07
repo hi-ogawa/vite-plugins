@@ -12,6 +12,7 @@ import {
 } from "nitropack";
 import type { PresetName } from "nitropack/presets";
 import { joinURL, withBase, withoutBase } from "ufo";
+import { mergeConfig } from "vite";
 
 // Using Nitro as post-build to target deployment platform. Inspired by Tanstack Start's approach.
 // https://github.com/TanStack/router/blob/5fd079e482b1252b8b11a936f1524a0dee368cae/packages/start-plugin-core/src/nitro-plugin/plugin.ts
@@ -20,6 +21,7 @@ import { joinURL, withBase, withoutBase } from "ufo";
 // https://github.com/hi-ogawa/waku/blob/084c71a6d2450b4a69146e97b0005d59ee9394cd/packages/waku/src/vite-rsc/deploy/vercel/plugin.ts
 
 export type BuildAppOptions = {
+  config?: NitroConfig;
   preset?: PresetName;
   publicDir?: string;
   renderer: string;
@@ -29,7 +31,7 @@ export type BuildAppOptions = {
 export async function buildApp(
   nitroPluginOptions: BuildAppOptions,
 ): Promise<void> {
-  const nitroConfig: NitroConfig = {
+  const defaultConfig: NitroConfig = {
     // ===
     // === essential features
     // ===
@@ -100,6 +102,10 @@ export default defineEventHandler((event) => handler(toWebRequest(event)))
       // Should we define the ones for TanStack Start's here as well?
     },
   };
+  const nitroConfig = mergeConfig(
+    defaultConfig,
+    nitroPluginOptions.config ?? {},
+  );
 
   const nitro = await createNitro(nitroConfig);
   await prepare(nitro);
