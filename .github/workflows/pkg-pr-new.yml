@@ -51,4 +51,5 @@ jobs:
             packages/vite-plugin-ssr-middleware \
             packages/pre-bundle-new-url \
             packages/server-asset \
+            packages/nitro \
             packages/ssr-css
