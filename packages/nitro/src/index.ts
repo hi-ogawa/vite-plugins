@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import path from "node:path";
 import type { Plugin, Rollup } from "vite";
-import { buildApp } from "./utils";
+import { type BuildAppOptions, buildApp } from "./utils";
 
 export type NitroPluginOptions = {
   /** @default { environmentName: 'client' } */
@@ -11,7 +11,8 @@ export type NitroPluginOptions = {
 };
 
 export default function nitroBuildPlugin(
-  nitroPluginOptions?: NitroPluginOptions,
+  nitroPluginOptions?: NitroPluginOptions &
+    Pick<BuildAppOptions, "preset" | "prerender">,
 ): Plugin[] {
   const client = nitroPluginOptions?.client ?? { environmentName: "client" };
   const server = nitroPluginOptions?.server ?? { environmentName: "ssr" };
@@ -52,6 +53,7 @@ export default function nitroBuildPlugin(
           );
 
           await buildApp({
+            ...nitroPluginOptions,
             publicDir,
             renderer,
           });
