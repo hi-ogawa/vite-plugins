@@ -15,9 +15,9 @@ export default defineConfig({
     rsc(),
     nitro({
       server: {
-        environmentName: 'rsc',
-        entryName: 'index',
-      }
+        environmentName: "rsc",
+      },
+      preset: "node-server",
     }),
   ],
 });
