@@ -17,7 +17,9 @@ export default defineConfig({
       server: {
         environmentName: "rsc",
       },
-      preset: "node-server",
+      config: {
+        preset: "vercel",
+      },
     }),
   ],
 });

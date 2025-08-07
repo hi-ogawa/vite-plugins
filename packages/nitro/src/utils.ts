@@ -10,7 +10,6 @@ import {
   createNitro,
   prepare,
 } from "nitropack";
-import type { PresetName } from "nitropack/presets";
 import { joinURL, withBase, withoutBase } from "ufo";
 import { mergeConfig } from "vite";
 
@@ -22,7 +21,6 @@ import { mergeConfig } from "vite";
 
 export type BuildAppOptions = {
   config?: NitroConfig;
-  preset?: PresetName;
   publicDir?: string;
   renderer: string;
   prerender?: string[];
@@ -35,7 +33,6 @@ export async function buildApp(
     // ===
     // === essential features
     // ===
-    preset: nitroPluginOptions.preset,
     publicAssets: nitroPluginOptions.publicDir
       ? [
           {
