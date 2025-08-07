@@ -1,0 +1,31 @@
+{
+  "name": "@hiogawa/vite-plugin-nitro",
+  "version": "0.0.1",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/nitro",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hi-ogawa/vite-plugins.git",
+    "directory": "packages/nitro"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist/index.js",
+    "./*": "./dist/*.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsdown --sourcemap --watch src",
+    "build": "tsdown",
+    "prepack": "tsdown --clean"
+  },
+  "dependencies": {
+    "h3": "^1.15.4",
+    "nitropack": "^2.12.4",
+    "ufo": "^1.6.1"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}
