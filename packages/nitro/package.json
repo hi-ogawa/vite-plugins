@@ -21,11 +21,10 @@
     "prepack": "tsdown --clean"
   },
   "dependencies": {
-    "h3": "^1.15.3",
-    "nitropack": "^2.11.13",
+    "h3": "^1.15.4",
+    "nitropack": "^2.12.4",
     "ufo": "^1.6.1"
   },
-  "devDependencies": {},
   "peerDependencies": {
     "vite": "*"
   }
