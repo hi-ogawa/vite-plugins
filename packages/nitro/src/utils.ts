@@ -50,6 +50,7 @@ export async function buildApp(
                     "/" +
                     nitroPluginOptions.assetsDir,
                   baseURL: "/" + nitroPluginOptions.assetsDir,
+                  maxAge: 31536000, // cache immutable
                 },
               ]
             : []),
