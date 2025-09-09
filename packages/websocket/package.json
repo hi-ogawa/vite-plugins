@@ -1,0 +1,36 @@
+{
+  "name": "@hiogawa/vite-plugin-websocket",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/websocket",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hi-ogawa/vite-plugins.git",
+    "directory": "packages/websocket"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist/index.js",
+    "./*": "./dist/*.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsdown --sourcemap --watch src",
+    "build": "tsdown",
+    "prepack": "tsdown --clean"
+  },
+  "dependencies": {
+    "@remix-run/node-fetch-server": "^0.8.0",
+    "ws": "^8.18.3"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/ws": "^8.18.1"
+  }
+}
