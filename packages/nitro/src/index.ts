@@ -52,7 +52,8 @@ export default function nitroBuildPlugin(
             ? builder.environments[client.environmentName]!.config.build.outDir
             : undefined;
           const assetsDir = client
-            ? builder.environments[client.environmentName]!.config.build.assetsDir
+            ? builder.environments[client.environmentName]!.config.build
+                .assetsDir
             : undefined;
           await buildApp({
             ...nitroPluginOptions,
