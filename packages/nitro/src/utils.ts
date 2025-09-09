@@ -22,6 +22,7 @@ import { mergeConfig } from "vite";
 export type BuildAppOptions = {
   config?: NitroConfig;
   publicDir?: string;
+  assetsDir?: string;
   renderer: string;
   prerender?: string[];
 };
@@ -29,17 +30,29 @@ export type BuildAppOptions = {
 export async function buildApp(
   nitroPluginOptions: BuildAppOptions,
 ): Promise<void> {
+  nitroPluginOptions.assetsDir;
   const defaultConfig: NitroConfig = {
     // ===
     // === essential features
     // ===
+    noPublicDir: true, // vite client build already copies public dir
     publicAssets: nitroPluginOptions.publicDir
       ? [
           {
             dir: nitroPluginOptions.publicDir,
             baseURL: "/",
-            maxAge: 31536000, // 1 year
           },
+          ...(nitroPluginOptions.assetsDir
+            ? [
+                {
+                  dir:
+                    nitroPluginOptions.publicDir +
+                    "/" +
+                    nitroPluginOptions.assetsDir,
+                  baseURL: "/" + nitroPluginOptions.assetsDir,
+                },
+              ]
+            : []),
         ]
       : undefined,
     renderer: "virtual:renderer-entry",

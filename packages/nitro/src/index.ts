@@ -12,7 +12,7 @@ export type NitroPluginOptions = {
 
 export default function nitroBuildPlugin(
   nitroPluginOptions?: NitroPluginOptions &
-    Omit<BuildAppOptions, "publicDir" | "renderer">,
+    Pick<BuildAppOptions, "config" | "prerender">,
 ): Plugin[] {
   const client = nitroPluginOptions?.client ?? { environmentName: "client" };
   const server = nitroPluginOptions?.server ?? { environmentName: "ssr" };
@@ -29,10 +29,6 @@ export default function nitroBuildPlugin(
       buildApp: {
         order: "post",
         handler: async (builder) => {
-          const publicDir = client
-            ? builder.environments[client.environmentName]!.config.build.outDir
-            : undefined;
-
           assert(serverBundle);
           const serverEntryChunks: Record<string, Rollup.OutputChunk> = {};
           for (const chunk of Object.values(serverBundle)) {
@@ -52,9 +48,16 @@ export default function nitroBuildPlugin(
             selected.fileName,
           );
 
+          const publicDir = client
+            ? builder.environments[client.environmentName]!.config.build.outDir
+            : undefined;
+          const assetsDir = client
+            ? builder.environments[client.environmentName]!.config.build.assetsDir
+            : undefined;
           await buildApp({
             ...nitroPluginOptions,
             publicDir,
+            assetsDir,
             renderer,
           });
         },
