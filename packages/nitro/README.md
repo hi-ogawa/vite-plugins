@@ -1,16 +1,16 @@
 # @hiogawa/vite-plugin-nitro
 
-Vite plugin for cross platform build using [`Nitro`](https://nitro.build/). This is a temporary solution until we figure out integration of [official Nitro plugin](https://github.com/nitrojs/nitro/issues/3461) with [`@vitejs/plugin-rsc`](https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-rsc).
+Vite plugin for cross platform build using [`Nitro`](https://nitro.build/).
 
-## Example
+## Example with [`@vitejs/plugin-rsc`](https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-rsc)
 
 See also [vite-plugin-rsc-deploy-example](https://github.com/hi-ogawa/vite-plugin-rsc-deploy-example)
 
 ```js
 // vite.config.ts
 import { defineConfig } from "vite";
-import rsc from "@hiogawa/vite-plugin-nitro"
 import nitro from "@vitejs/vite-plugin-rsc"
+import rsc from "@hiogawa/vite-plugin-nitro"
 
 export default defineConfig({
   plugins: [
@@ -28,3 +28,7 @@ export default defineConfig({
   ],
 });
 ```
+
+## Related
+
+- [official Nitro plugin](https://github.com/nitrojs/nitro/issues/3461)
