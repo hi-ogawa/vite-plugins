@@ -25,115 +25,117 @@ jobs:
       - run: pnpm tsc
       - run: pnpm test
 
-  test-rsc:
-    name: test-rsc (${{ matrix.os }} / ${{ matrix.browser }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      # TODO: shard?
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        browser: [chromium]
-        include:
-          - os: ubuntu-latest
-            browser: firefox
-          - os: macos-latest
-            browser: webkit
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          build: false
-          playwright: false
-      - run: pnpm vite-ecosystem-ci:build
-      - run: pnpm exec playwright install ${{ matrix.browser }}
-      - run: pnpm -C packages/rsc test-e2e-ci --project=${{ matrix.browser }}
-        env:
-          TEST_ISOLATED: true
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-${{ matrix.os }}-${{ matrix.browser }}
-          path: |
-            packages/rsc/test-results
+  # superseded by @vitejs/plugin-rsc
+  # https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-rsc
+  # test-rsc:
+  #   name: test-rsc (${{ matrix.os }} / ${{ matrix.browser }})
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     # TODO: shard?
+  #     matrix:
+  #       os: [ubuntu-latest, macos-latest, windows-latest]
+  #       browser: [chromium]
+  #       include:
+  #         - os: ubuntu-latest
+  #           browser: firefox
+  #         - os: macos-latest
+  #           browser: webkit
+  #     fail-fast: false
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #       with:
+  #         build: false
+  #         playwright: false
+  #     - run: pnpm vite-ecosystem-ci:build
+  #     - run: pnpm exec playwright install ${{ matrix.browser }}
+  #     - run: pnpm -C packages/rsc test-e2e-ci --project=${{ matrix.browser }}
+  #       env:
+  #         TEST_ISOLATED: true
+  #     - uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: test-results-${{ matrix.os }}-${{ matrix.browser }}
+  #         path: |
+  #           packages/rsc/test-results
 
-  test-rolldown:
-    name: test-rolldown
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          build: false
-      - run: pnpm vite-ecosystem-ci:build
-      - run: pnpm i -w vite@npm:rolldown-vite@latest && pnpm i --no-frozen-lockfile
-      - run: pnpm -C packages/rsc test-e2e --grep-invert cloudflare
-        env:
-          TEST_ISOLATED: true
+  # test-rolldown:
+  #   name: test-rolldown
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #       with:
+  #         build: false
+  #     - run: pnpm vite-ecosystem-ci:build
+  #     - run: pnpm i -w vite@npm:rolldown-vite@latest && pnpm i --no-frozen-lockfile
+  #     - run: pnpm -C packages/rsc test-e2e --grep-invert cloudflare
+  #       env:
+  #         TEST_ISOLATED: true
 
-  test-react-server-basic:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - run: pnpm -C packages/react-server/examples/basic test-e2e
-      - run: pnpm -C packages/react-server/examples/basic build
-      - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
-      - run: pnpm -C packages/react-server/examples/basic cf-build
-      - run: pnpm -C packages/react-server/examples/basic test-e2e-cf-preview
-      - run: pnpm -C packages/react-server/examples/basic deno-build
+  # test-react-server-basic:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #     - run: pnpm -C packages/react-server/examples/basic test-e2e
+  #     - run: pnpm -C packages/react-server/examples/basic build
+  #     - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
+  #     - run: pnpm -C packages/react-server/examples/basic cf-build
+  #     - run: pnpm -C packages/react-server/examples/basic test-e2e-cf-preview
+  #     - run: pnpm -C packages/react-server/examples/basic deno-build
 
-  test-react-server-basic-swc:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - run: USE_SWC=1 pnpm -C packages/react-server/examples/basic test-e2e
-      - run: USE_SWC=1 pnpm -C packages/react-server/examples/basic build
-      - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
+  # test-react-server-basic-swc:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #     - run: USE_SWC=1 pnpm -C packages/react-server/examples/basic test-e2e
+  #     - run: USE_SWC=1 pnpm -C packages/react-server/examples/basic build
+  #     - run: pnpm -C packages/react-server/examples/basic test-e2e-preview
 
-  test-react-server-others:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - run: pnpm -C packages/react-server test-e2e
-      - run: pnpm -C packages/react-server/examples/next test-e2e
-      - run: pnpm -C packages/react-server/examples/next build
-      - run: pnpm -C packages/react-server/examples/next test-e2e-preview
-      - run: pnpm -C packages/react-server/examples/next cf-build
-      - run: pnpm -C packages/react-server/examples/next test-e2e-cf-preview
-      - run: pnpm -C packages/react-server/examples/next vc-build
-      - run: pnpm -C packages/react-server/examples/prerender test-e2e
-      - run: pnpm -C packages/react-server/examples/prerender build
-      - run: pnpm -C packages/react-server/examples/prerender test-e2e-preview
-      - run: pnpm -C packages/react-server/examples/prerender cf-build
-      - run: pnpm -C packages/react-server/examples/prerender vc-build
-      - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e
-      - run: pnpm -C packages/react-server/examples/custom-out-dir build
-      - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e-preview
-      - run: pnpm -C packages/react-server/examples/custom-out-dir cf-build
-      - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e-cf-preview
-      - run: pnpm -C packages/react-server/examples/custom-out-dir vc-build
-      - run: pnpm -C packages/react-server/examples/postcss-tailwind test-e2e
-      - run: pnpm -C packages/react-server/examples/postcss-tailwind build
-      - run: pnpm -C packages/react-server/examples/postcss-tailwind test-e2e-preview
-      - run: pnpm -C packages/react-server/examples/cloudflare test-e2e
-      - run: pnpm -C packages/react-server/examples/cloudflare build
-      - run: pnpm -C packages/react-server/examples/cloudflare test-e2e-preview
+  # test-react-server-others:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #     - run: pnpm -C packages/react-server test-e2e
+  #     - run: pnpm -C packages/react-server/examples/next test-e2e
+  #     - run: pnpm -C packages/react-server/examples/next build
+  #     - run: pnpm -C packages/react-server/examples/next test-e2e-preview
+  #     - run: pnpm -C packages/react-server/examples/next cf-build
+  #     - run: pnpm -C packages/react-server/examples/next test-e2e-cf-preview
+  #     - run: pnpm -C packages/react-server/examples/next vc-build
+  #     - run: pnpm -C packages/react-server/examples/prerender test-e2e
+  #     - run: pnpm -C packages/react-server/examples/prerender build
+  #     - run: pnpm -C packages/react-server/examples/prerender test-e2e-preview
+  #     - run: pnpm -C packages/react-server/examples/prerender cf-build
+  #     - run: pnpm -C packages/react-server/examples/prerender vc-build
+  #     - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e
+  #     - run: pnpm -C packages/react-server/examples/custom-out-dir build
+  #     - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e-preview
+  #     - run: pnpm -C packages/react-server/examples/custom-out-dir cf-build
+  #     - run: pnpm -C packages/react-server/examples/custom-out-dir test-e2e-cf-preview
+  #     - run: pnpm -C packages/react-server/examples/custom-out-dir vc-build
+  #     - run: pnpm -C packages/react-server/examples/postcss-tailwind test-e2e
+  #     - run: pnpm -C packages/react-server/examples/postcss-tailwind build
+  #     - run: pnpm -C packages/react-server/examples/postcss-tailwind test-e2e-preview
+  #     - run: pnpm -C packages/react-server/examples/cloudflare test-e2e
+  #     - run: pnpm -C packages/react-server/examples/cloudflare build
+  #     - run: pnpm -C packages/react-server/examples/cloudflare test-e2e-preview
 
-  test-react-server-package:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - run: pnpm -C packages/react-server test-package
+  # test-react-server-package:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #     - run: pnpm -C packages/react-server test-package
 
-  test-pre-bundle-new-url:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - run: pnpm -C packages/pre-bundle-new-url/examples/basic test-e2e
-      - run: pnpm -C packages/pre-bundle-new-url/examples/basic build
-      - run: pnpm -C packages/pre-bundle-new-url/examples/basic test-e2e-preview
+  # test-pre-bundle-new-url:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #     - run: pnpm -C packages/pre-bundle-new-url/examples/basic test-e2e
+  #     - run: pnpm -C packages/pre-bundle-new-url/examples/basic build
+  #     - run: pnpm -C packages/pre-bundle-new-url/examples/basic test-e2e-preview
