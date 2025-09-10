@@ -30,8 +30,8 @@
     "react-dom": "^19.1.0",
     "react-server-dom-webpack": "^19.1.0",
     "tsdown": "^0.12.9",
-    "typescript": "^5.8.3",
-    "vite": "^7.0.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
     "vite-plugin-inspect": "^11.3.0",
     "vitest": "^3.2.4",
     "wrangler": "^4.22.0"
