@@ -48,17 +48,13 @@ export default function nitroBuildPlugin(
             selected.fileName,
           );
 
-          const publicDir = client
-            ? builder.environments[client.environmentName]!.config.build.outDir
-            : undefined;
-          const assetsDir = client
-            ? builder.environments[client.environmentName]!.config.build
-                .assetsDir
+          const clientConfig = client
+            ? builder.environments[client.environmentName]?.config
             : undefined;
           await buildApp({
             ...nitroPluginOptions,
-            publicDir,
-            assetsDir,
+            publicDir: clientConfig?.build.outDir,
+            assetsDir: clientConfig?.build.assetsDir,
             renderer,
           });
         },
