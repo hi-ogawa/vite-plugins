@@ -25,7 +25,10 @@ jobs:
       - run: pnpm tsc
       - run: pnpm test
 
+  # superseded by @vitejs/plugin-rsc
+  # https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-rsc
   test-rsc:
+    if: false
     name: test-rsc (${{ matrix.os }} / ${{ matrix.browser }})
     runs-on: ${{ matrix.os }}
     strategy:
