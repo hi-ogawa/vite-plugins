@@ -18,12 +18,16 @@
   "scripts": {
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
-    "prepack": "tsdown --clean"
+    "prepack": "tsdown --clean",
+    "test-e2e": "playwright test"
   },
   "dependencies": {
     "h3": "^1.15.4",
     "nitropack": "^2.12.4",
     "ufo": "^1.6.1"
+  },
+  "devDependencies": {
+    "tinyexec": "^1.0.1"
   },
   "peerDependencies": {
     "vite": "*"

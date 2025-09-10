@@ -3,6 +3,9 @@ import path from "node:path";
 import type { Plugin, Rollup } from "vite";
 import { type BuildAppOptions, buildApp } from "./utils";
 
+// TODO:
+// - default `dist` directory conflicts with "netlify" preset output
+
 export type NitroPluginOptions = {
   /** @default { environmentName: 'client' } */
   client?: { environmentName: string } | false;
@@ -12,7 +15,7 @@ export type NitroPluginOptions = {
 
 export default function nitroBuildPlugin(
   nitroPluginOptions?: NitroPluginOptions &
-    Omit<BuildAppOptions, "publicDir" | "renderer">,
+    Pick<BuildAppOptions, "config" | "prerender">,
 ): Plugin[] {
   const client = nitroPluginOptions?.client ?? { environmentName: "client" };
   const server = nitroPluginOptions?.server ?? { environmentName: "ssr" };
@@ -29,10 +32,6 @@ export default function nitroBuildPlugin(
       buildApp: {
         order: "post",
         handler: async (builder) => {
-          const publicDir = client
-            ? builder.environments[client.environmentName]!.config.build.outDir
-            : undefined;
-
           assert(serverBundle);
           const serverEntryChunks: Record<string, Rollup.OutputChunk> = {};
           for (const chunk of Object.values(serverBundle)) {
@@ -52,9 +51,13 @@ export default function nitroBuildPlugin(
             selected.fileName,
           );
 
+          const clientConfig = client
+            ? builder.environments[client.environmentName]?.config
+            : undefined;
           await buildApp({
             ...nitroPluginOptions,
-            publicDir,
+            publicDir: clientConfig?.build.outDir,
+            assetsDir: clientConfig?.build.assetsDir,
             renderer,
           });
         },

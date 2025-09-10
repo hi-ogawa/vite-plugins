@@ -22,6 +22,7 @@ import { mergeConfig } from "vite";
 export type BuildAppOptions = {
   config?: NitroConfig;
   publicDir?: string;
+  assetsDir?: string;
   renderer: string;
   prerender?: string[];
 };
@@ -38,8 +39,19 @@ export async function buildApp(
           {
             dir: nitroPluginOptions.publicDir,
             baseURL: "/",
-            maxAge: 31536000, // 1 year
           },
+          ...(nitroPluginOptions.assetsDir
+            ? [
+                {
+                  dir:
+                    nitroPluginOptions.publicDir +
+                    "/" +
+                    nitroPluginOptions.assetsDir,
+                  baseURL: "/" + nitroPluginOptions.assetsDir,
+                  maxAge: 31536000, // cache immutable
+                },
+              ]
+            : []),
         ]
       : undefined,
     renderer: "virtual:renderer-entry",
