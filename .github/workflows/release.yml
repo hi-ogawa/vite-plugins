@@ -1,0 +1,29 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*@*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          registry-url: 'https://registry.npmjs.org'
+      - run: corepack enable
+      - run: pnpm install
+      - run: pnpm build
+      - run: npm i -g npm@latest
+      - name: release
+        run: |
+          pkgName=${GITHUB_REF_NAME%@*}
+          releaseTag=$([[ $GITHUB_REF_NAME =~ alpha ]] && echo "alpha" || echo "latest")
+          pnpm publish packages/$pkgName --tag $releaseTag
