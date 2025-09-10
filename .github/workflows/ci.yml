@@ -27,38 +27,37 @@ jobs:
 
   # superseded by @vitejs/plugin-rsc
   # https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-rsc
-  test-rsc:
-    if: false
-    name: test-rsc (${{ matrix.os }} / ${{ matrix.browser }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      # TODO: shard?
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        browser: [chromium]
-        include:
-          - os: ubuntu-latest
-            browser: firefox
-          - os: macos-latest
-            browser: webkit
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          build: false
-          playwright: false
-      - run: pnpm vite-ecosystem-ci:build
-      - run: pnpm exec playwright install ${{ matrix.browser }}
-      - run: pnpm -C packages/rsc test-e2e-ci --project=${{ matrix.browser }}
-        env:
-          TEST_ISOLATED: true
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-${{ matrix.os }}-${{ matrix.browser }}
-          path: |
-            packages/rsc/test-results
+  # test-rsc:
+  #   name: test-rsc (${{ matrix.os }} / ${{ matrix.browser }})
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     # TODO: shard?
+  #     matrix:
+  #       os: [ubuntu-latest, macos-latest, windows-latest]
+  #       browser: [chromium]
+  #       include:
+  #         - os: ubuntu-latest
+  #           browser: firefox
+  #         - os: macos-latest
+  #           browser: webkit
+  #     fail-fast: false
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+  #       with:
+  #         build: false
+  #         playwright: false
+  #     - run: pnpm vite-ecosystem-ci:build
+  #     - run: pnpm exec playwright install ${{ matrix.browser }}
+  #     - run: pnpm -C packages/rsc test-e2e-ci --project=${{ matrix.browser }}
+  #       env:
+  #         TEST_ISOLATED: true
+  #     - uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: test-results-${{ matrix.os }}-${{ matrix.browser }}
+  #         path: |
+  #           packages/rsc/test-results
 
   test-rolldown:
     name: test-rolldown
