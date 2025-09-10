@@ -70,24 +70,27 @@ export default defineConfig((_env) => ({
         outputBundles[this.environment.name] = bundle;
       },
       resolveId(source) {
-        if (source === 'virtual:assets-manifest') {
-          return '\0' + source;
+        if (source === "virtual:assets-manifest") {
+          return "\0" + source;
         }
       },
       load(id) {
-        if (id === '\0virtual:assets-manifest') {
-          if (this.environment.mode === 'dev') {
+        if (id === "\0virtual:assets-manifest") {
+          if (this.environment.mode === "dev") {
             const manifest = { entry: entries.client };
             return `export default ${JSON.stringify(manifest)}`;
           }
-          const clientBundle = outputBundles['client'];
-          assert(clientBundle, 'client bundle not found');
+          const clientBundle = outputBundles["client"];
+          assert(clientBundle, "client bundle not found");
           const entryChunk = Object.values(clientBundle).find(
-            (chunk) => chunk.type === 'chunk' && chunk.isEntry,
+            (chunk) => chunk.type === "chunk" && chunk.isEntry,
           );
-          assert(entryChunk && entryChunk.type === 'chunk', 'entry chunk not found');
+          assert(
+            entryChunk && entryChunk.type === "chunk",
+            "entry chunk not found",
+          );
           const manifest = {
-            entry: '/' + entryChunk.fileName,
+            entry: "/" + entryChunk.fileName,
           };
           return `export default ${JSON.stringify(manifest)}`;
         }

@@ -30,12 +30,10 @@ export type BuildAppOptions = {
 export async function buildApp(
   nitroPluginOptions: BuildAppOptions,
 ): Promise<void> {
-  nitroPluginOptions.assetsDir;
   const defaultConfig: NitroConfig = {
     // ===
     // === essential features
     // ===
-    noPublicDir: true, // vite client build already copies public dir
     publicAssets: nitroPluginOptions.publicDir
       ? [
           {

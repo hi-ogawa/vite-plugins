@@ -1,5 +1,5 @@
+import assetsManifest from "virtual:assets-manifest";
 import { renderToString } from "react-dom/server";
-import assetsManifest from "virtual:assets-manifest"
 
 export default async function handler(_request: Request): Promise<Response> {
   const html = renderToString(<Root />);
@@ -9,7 +9,7 @@ export default async function handler(_request: Request): Promise<Response> {
 }
 
 function Root() {
-  assetsManifest.entry
+  assetsManifest.entry;
   return (
     <html>
       <head>

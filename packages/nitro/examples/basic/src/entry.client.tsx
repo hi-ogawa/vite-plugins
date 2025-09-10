@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { hydrateRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 
 function main() {
   const domRoot = document.getElementById("client-app")!;
-  hydrateRoot(domRoot, <App />);
+  createRoot(domRoot).render(<App />);
 }
 
 function App() {
