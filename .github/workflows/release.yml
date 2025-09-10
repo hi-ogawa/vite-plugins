@@ -1,16 +1,16 @@
-name: Release
+name: release
 
 on:
   push:
     tags:
-      - 'v*'
+      - '*@*'
 
 jobs:
   release:
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: write
-    runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -22,4 +22,7 @@ jobs:
       - run: pnpm install
       - run: pnpm build
       - run: npm i -g npm@latest
-      - run: pnpm publish packages/nitro
+      - name: release
+        run: |
+          pkgName=${GITHUB_REF_NAME%@*}
+          pnpm publish packages/$pkgName
