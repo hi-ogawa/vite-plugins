@@ -1,4 +1,4 @@
-// Usage:
+// Example usage:
 //   node scripts/release.js nitro
 
 import { execSync } from "node:child_process";
