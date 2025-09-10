@@ -1,0 +1,15 @@
+{
+  "name": "@hiogawa/vite-plugin-nitro-examples-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "node .output/server/index.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@hiogawa/vite-plugin-nitro": "latest",
+    "srvx": "^0.8.7"
+  }
+}

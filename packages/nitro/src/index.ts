@@ -3,6 +3,9 @@ import path from "node:path";
 import type { Plugin, Rollup } from "vite";
 import { type BuildAppOptions, buildApp } from "./utils";
 
+// TODO:
+// - default `dist` directory conflicts with "netlify" preset output
+
 export type NitroPluginOptions = {
   /** @default { environmentName: 'client' } */
   client?: { environmentName: string } | false;
