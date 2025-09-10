@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import nitro from "@hiogawa/vite-plugin-nitro";
 import { toNodeHandler } from "srvx/node";
-import { Rollup, defineConfig, isRunnableDevEnvironment } from "vite";
+import { type Rollup, defineConfig, isRunnableDevEnvironment } from "vite";
 
 const entries = {
   client: "./src/entry.client.tsx",
