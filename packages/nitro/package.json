@@ -1,6 +1,6 @@
 {
   "name": "@hiogawa/vite-plugin-nitro",
-  "version": "0.0.2-alpha.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/nitro",
   "repository": {
     "type": "git",
