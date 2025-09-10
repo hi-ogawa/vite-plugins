@@ -9,7 +9,7 @@ function main() {
 function App() {
   const [count, setCount] = useState(0);
   return (
-    <button onClick={() => setCount((c) => c + 1)}>
+    <button data-testid="client" onClick={() => setCount((c) => c + 1)}>
       Client counter: {count}
     </button>
   );

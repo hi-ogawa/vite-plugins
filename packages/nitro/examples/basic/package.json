@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "node .output/server/index.mjs"
+    "preview": "NITRO_HOST=127.0.0.1 node .output/server/index.mjs"
   },
   "dependencies": {},
   "devDependencies": {
