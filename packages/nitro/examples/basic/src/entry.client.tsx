@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createRoot, hydrateRoot } from "react-dom/client";
+import { createRoot } from "react-dom/client";
 
 function main() {
   const domRoot = document.getElementById("client-app")!;
