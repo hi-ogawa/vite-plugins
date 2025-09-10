@@ -25,4 +25,5 @@ jobs:
       - name: release
         run: |
           pkgName=${GITHUB_REF_NAME%@*}
-          pnpm publish packages/$pkgName
+          pkgTag=$([[ $GITHUB_REF_NAME =~ alpha ]] && echo "alpha" || echo "latest")
+          pnpm publish packages/$pkgName --tag $pkgTag
