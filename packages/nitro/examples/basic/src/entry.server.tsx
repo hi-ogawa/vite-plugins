@@ -1,4 +1,5 @@
 import { renderToString } from "react-dom/server";
+import assetsManifest from "virtual:assets-manifest"
 
 export default async function handler(_request: Request): Promise<Response> {
   const html = renderToString(<Root />);
@@ -8,13 +9,12 @@ export default async function handler(_request: Request): Promise<Response> {
 }
 
 function Root() {
+  assetsManifest.entry
   return (
     <html>
       <head>
         <title>Vite SSR</title>
-        {import.meta.env.DEV && (
-          <script type="module" src="/src/entry.client.tsx" />
-        )}
+        <script type="module" src={assetsManifest.entry} />
       </head>
       <body>
         <div>SSR at {new Date().toISOString()}</div>
