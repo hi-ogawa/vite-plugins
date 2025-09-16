@@ -44,7 +44,7 @@ jobs:
               repo: context.repo.repo,
               title: `Nightly trigger workflow failed - ${context.runId}`,
               body: `
+            **Nightly PR:** https://github.com/vitejs/vite-plugin-react/pull/524
             **Failed Run:** ${context.payload.repository.html_url}/actions/runs/${context.runId}
-            **PR:** https://github.com/vitejs/vite-plugin-react/pull/524
             `
             })
