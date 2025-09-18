@@ -28,8 +28,8 @@ export default function nitroBuildPlugin(
         return {
           build: {
             outDir: `.nitro/vite/dist/${name}`,
-          }
-        }
+          },
+        };
       },
       writeBundle(_options, bundle) {
         if (this.environment.name === server.environmentName) {
