@@ -24,6 +24,13 @@ export default function nitroBuildPlugin(
     {
       name: "nitro",
       apply: "build",
+      configEnvironment(name, _config, _env) {
+        return {
+          build: {
+            outDir: `.nitro/vite/dist/${name}`,
+          }
+        }
+      },
       writeBundle(_options, bundle) {
         if (this.environment.name === server.environmentName) {
           serverBundle = bundle;
