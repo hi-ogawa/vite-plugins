@@ -98,7 +98,7 @@ export default defineConfig((_env) => ({
     },
     nitro({
       config: {
-        preset: "node-server",
+        preset: process.env["NITRO_PRESET"] || "node-server",
       },
     }),
   ],
