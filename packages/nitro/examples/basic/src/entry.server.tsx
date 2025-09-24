@@ -9,7 +9,6 @@ export default async function handler(_request: Request): Promise<Response> {
 }
 
 function Root() {
-  assetsManifest.entry;
   return (
     <html>
       <head>
