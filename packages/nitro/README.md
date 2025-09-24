@@ -1,6 +1,6 @@
 # @hiogawa/vite-plugin-nitro
 
-Vite plugin for cross platform build using [`Nitro`](https://nitro.build/).
+Vite plugin for cross platform build using [Nitro](https://nitro.build/).
 This is an intermediate solution based on Nitro v2. In the future, it's planned to be superseded by official Vite plugin provided by [Nitro v3](https://github.com/nitrojs/nitro/issues/3461).
 
 ## Example with [`@vitejs/plugin-rsc`](https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-rsc)
