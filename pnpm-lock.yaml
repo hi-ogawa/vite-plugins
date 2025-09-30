@@ -96,6 +96,12 @@ importers:
         specifier: latest
         version: link:../../../vite-plugin-ssr-middleware
 
+  packages/fullstack:
+    dependencies:
+      vite:
+        specifier: ^7.1.5
+        version: 7.1.5(@types/node@22.16.0)(jiti@2.5.1)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+
   packages/nitro:
     dependencies:
       h3:
