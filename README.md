@@ -22,11 +22,11 @@ and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/ma
 
 ## Development
 
-### How to release
+### How to release a package
 
 Example: `packages/nitro`
 
 1. Manually bump `packages/nitro/package.json` version
 2. Update changelog via `pnpm changelog packages/nitro`
-3. Create a PR and merge.
+3. Create a PR and merge to main
 4. Locally run `node scripts/release.js nitro`
