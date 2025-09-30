@@ -60,3 +60,9 @@ export default defineConfig({
 ## API
 
 TODO
+- handle css on server
+- access client asset on server runtime
+  - js and css dependencies (e.g. modulepreload)
+- cjs module runner
+- request handle convention (same as nitro)
+- multi platform deployment (delgate to nitro)
