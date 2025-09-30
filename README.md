@@ -19,3 +19,14 @@ Next.js-like RSC framework on Vite
 
 Minimal version of [`@vavite/connet`](https://github.com/cyco130/vavite/tree/main/packages/connect)
 and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/main/packages/expose-vite-dev-server)
+
+## Development
+
+### How to release a package
+
+Example: `packages/rsc`
+
+1. Manually bump `packages/rsc/package.json` version
+2. Update changelog via `pnpm changelog packages/rsc`
+3. Create a PR and merge to main
+4. Locally run `node scripts/release.js rsc`
