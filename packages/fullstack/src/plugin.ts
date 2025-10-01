@@ -63,8 +63,8 @@ export default function vitePluginFullstack(
           )) {
             const [start, end] = match.indices![0]!;
 
-            // TODO: what to do on client?
-            // wouldn't it be necessary for handling preloading assets on client side navigation?
+            // No-op on client since vite build handles preload/css for dynamic import on client.
+            // https://vite.dev/guide/features.html#async-chunk-loading-optimization
             if (this.environment.name === "client") {
               const replacement = `(${JSON.stringify(emptyResult)})`;
               output.update(start, end, replacement);
