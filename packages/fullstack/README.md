@@ -1,6 +1,8 @@
 # @hiogawa/vite-plugin-fullstack
 
-This plugin provides primitives to make building fullstack application on Vite simpler.
+WIP
+
+This plugin provides primitives to make building ssr application on Vite simpler.
 
 ## Features
 
@@ -50,20 +52,180 @@ import fullstack from "@hiogawa/vite-plugin-fullstack"
 export default defineConfig({
   plugins: [
     nitro(),
-    fullstack({
-      serverHandler: false,
-    }),
+    fullstack(),
   ],
 });
 ```
 
 ## API
 
-TODO
 - handle css on server
 - access client asset on server runtime
   - js and css dependencies (e.g. modulepreload)
 - `transformIndexHtml` compat/alternative
 - cjs module runner
+- "use client-entry"?
 - request handle convention (same as nitro)
+- logger
+- ssg primitive (may delegate to nitro?)
 - multi platform deployment (delgate to nitro)
+
+## Brainstorming
+
+- design
+
+```js
+import.meta.vite.ssrAssets("/page.tsx");
+import.meta.vite.ssrAssets(); // self-referencing
+import.meta.vite.entryAssets("index"); // by entry name
+
+import.meta.assetDeps("ssr", { entryName: "index" });
+import.meta.assetDeps("entry:index", { environment: "ssr", entry });
+import.meta.assetDeps("entry:index", { environment: "client" });
+import.meta.assetsManifest();
+
+type SsrAssetsInfo = {
+  js: string[];
+  css: string[];
+}
+type ClientEntry = {
+  entry: string;
+  js: string[];
+  css: string[];
+}
+type ClientAssetsInfo = {
+  entry: string;
+  js: string[];
+  css: string[];
+}
+
+// separate by environments?
+type AssetsInfo = {
+  css: string[];
+  environments: {
+    ssr?: {
+      css: string[];
+    },
+    client?: {
+      entry: string;
+      js: string[];
+      css: string[];
+    },
+  }
+}
+
+// use cases
+// - entry.server.js references entry.client.js
+import.meta.vite.assets({ import: "/entry.client.js", clientOnly: true })
+
+// - universal route file references its assets
+import.meta.vite.assets({ ssrOnly: true })
+
+// - island references its assets
+import.meta.vite.assets({ import: "", clientOnly: true })
+```
+
+## Questions
+
+- doesn't this handle only initial render (ssr)?
+  how about preloading assets on client side navigation?
+
+
+## Initial assumptions
+
+- environments: client, ssr
+
+## Target 1
+
+ssr/client universal route (e.g. React router, Vue router, etc.)
+
+- routes.js
+  - framework plugin can auto generate with server loader splitting etc.
+
+```js
+const routes = {
+  "/": () => import("routes/index.js"),
+  "/about": () => import("routes/about.js"),
+}
+```
+
+- entry.server.js 
+
+```js
+import.meta.vite.entryAssets("/entry.client.js")
+handleRequest(request, routes)
+```
+
+- entry.client.js
+
+```js
+hydrate(document, routes);
+```
+
+- routes/index.js
+
+```js
+export default function Page() {
+  // ...
+}
+
+// manually or automatically inject by framework plugin
+export const assets = import.meta.vite.ssrAssets();
+```
+
+## Target 2
+
+ssr only route + client (ssr-optional) island (e.g. Astro, Fresh)
+
+- routes.js
+
+```js
+const routes = {
+  "/": () => import("routes/index.js"),
+  "/about": () => import("routes/about.js"),
+}
+```
+
+- entry.server.js
+
+```js
+handleRequest(request, routes)
+```
+
+- routes/index.js
+
+```js
+export default function Page() {
+  // framework specific head injection
+  const assets = import.meta.vite.ssrAssets();
+}
+```
+
+- island.js
+  - framework can apply transform to implement island
+
+```js
+export function Island() {
+}
+```
+
+## Stages
+
+- migrate minimal DIY examples
+  - https://github.com/bluwy/create-vite-extra/
+  - https://github.com/nitrojs/vite-examples
+- custom integration of framework
+  - react router
+  - vue router
+- integrate with ecosystem plugins
+  - `@cloudflare/vite-plugin`
+  - `fresh`
+
+## Examples
+
+- `create-vite-extra` https://github.com/bluwy/create-vite-extra/
+- `@cloudflare/vite-plugin`
+- `nitro/vite`
+- react router
+- vue router
+- `@remix-run/fetch-router` https://github.com/remix-run/remix/tree/main/packages/fetch-router
