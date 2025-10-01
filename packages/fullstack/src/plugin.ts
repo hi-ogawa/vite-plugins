@@ -150,7 +150,7 @@ export default function vitePluginFullstack(
           if (!parsed) return;
 
           // TODO: shouldn't resolve in different environment?
-          // we can avoid this by another virtual but only dev.
+          // we can avoid this by another virtual but it's possible only for dev?
           const resolved = await this.resolve(parsed.import, parsed.importer);
           assert(resolved, `Failed to resolve: ${parsed.import}`);
 
@@ -170,16 +170,26 @@ export default function vitePluginFullstack(
             }
             if (environment.name !== "client") {
               const collected = collectCss(environment, resolved.id);
-              result.css = collected.hrefs;
+              // TODO: handle data-vite-dev-id
+              result.css = collected.hrefs.map((href) => ({ href }));
             }
             return `export default ${JSON.stringify(result)}`;
           } else {
             // TODO: build
+            resolved.id;
           }
         },
       },
     },
+    patchViteClientPlugin(),
   ];
+}
+
+// TODO: Test this idea https://github.com/vitejs/vite/pull/20767
+function patchViteClientPlugin(): Plugin {
+  return {
+    name: "fullstack:patch-vite-client",
+  };
 }
 
 function collectCss(environment: DevEnvironment, entryId: string) {

@@ -12,6 +12,11 @@ export type ImportAssetsOptions = {
 
 export type ImportAssetsResult = {
   entry?: string;
-  js: string[];
-  css: string[];
+  js: { href: string }[];
+  css: CssLinkAttributes[];
+};
+
+type CssLinkAttributes = {
+  href: string;
+  "data-vite-dev-id"?: string;
 };
