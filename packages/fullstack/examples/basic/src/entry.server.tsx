@@ -25,13 +25,14 @@ function Root() {
     <html>
       <head>
         <title>Vite Fullstack</title>
-        {assets.css.map((href) => (
+        {/* TODO: dedupe style via data-vite-dev-id https://github.com/vitejs/vite/pull/20767 */}
+        {[...assets.css, ...serverAssets.css].map((href) => (
           <link key={href} rel="stylesheet" href={href} crossOrigin="" />
         ))}
-        {assets.js.map((href) => (
+        {[...assets.js, ...serverAssets.js].map((href) => (
           <link key={href} rel="modulepreload" href={href} crossOrigin="" />
         ))}
-        {assets.entry && <script type="module" src={assets.entry}></script>}
+        <script type="module" src={assets.entry}></script>
       </head>
       <body>
         <div>SSR at {new Date().toISOString()}</div>

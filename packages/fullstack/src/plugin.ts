@@ -1,11 +1,24 @@
 import assert from "node:assert";
 import MagicString from "magic-string";
 import { toNodeHandler } from "srvx/node";
-import { type Plugin, isRunnableDevEnvironment } from "vite";
+import {
+  DevEnvironment,
+  type Plugin,
+  type ViteDevServer,
+  isCSSRequest,
+  isRunnableDevEnvironment,
+} from "vite";
 import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
-import { getEntrySource } from "./plugins/utils";
-import { evalValue } from "./plugins/vite-utils";
+import { parseAssetsVirtual, toAssetsVirtual } from "./plugins/shared";
+import { getEntrySource, hashString } from "./plugins/utils";
+import {
+  evalValue,
+  normalizeViteImportAnalysisUrl,
+} from "./plugins/vite-utils";
 
+// TODO: split plugins?
+// - assets
+// - server handler
 type FullstackPluginOptions = {
   serverHandler?: boolean;
 };
@@ -14,6 +27,8 @@ export default function vitePluginFullstack(
   customOptions?: FullstackPluginOptions,
 ): Plugin[] {
   customOptions;
+  let server: ViteDevServer;
+
   return [
     {
       name: "fullstack",
@@ -25,7 +40,8 @@ export default function vitePluginFullstack(
           },
         };
       },
-      configureServer(server) {
+      configureServer(server_) {
+        server = server_;
         if (customOptions?.serverHandler === false) return;
         assert(isRunnableDevEnvironment(server.environments.ssr));
         const environment = server.environments.ssr;
@@ -45,18 +61,26 @@ export default function vitePluginFullstack(
     },
     {
       name: "fullstack:assets",
+      /**
+       * [Transform input]
+       *   const assets = import.meta.vite.assets(...)
+       *
+       * [Transform output]
+       *   import __assets_xxx from "virtual:fullstack/assets?..."
+       *   const assets = __assets_xxx
+       */
       transform: {
         async handler(code, id, _options) {
           if (!code.includes("import.meta.vite.assets")) return;
 
           const output = new MagicString(code);
-          // let importAdded = false;
 
           const emptyResult: ImportAssetsResult = {
-            entry: undefined,
             js: [],
             css: [],
           };
+
+          const newImports = new Set<string>();
 
           for (const match of code.matchAll(
             /import\.meta\.vite\.assets\(([\s\S]*?)\)/dg,
@@ -86,44 +110,26 @@ export default function vitePluginFullstack(
               }
             }
 
-            // const importId = toCssVirtual({ id: importer, type: "rsc" });
-
-            // // use dynamic import during dev to delay crawling and discover css correctly.
-            // let replacement: string;
-            // if (this.environment.mode === "dev") {
-            //   replacement = `__vite_rsc_react__.createElement(async () => {
-            //     const __m = await import(${JSON.stringify(importId)});
-            //     return __vite_rsc_react__.createElement(__m.Resources);
-            //   })`;
-            // } else {
-            //   const hash = hashString(importId);
-            //   if (
-            //     !importAdded &&
-            //     !code.includes(`__vite_rsc_importer_resources_${hash}`)
-            //   ) {
-            //     importAdded = true;
-            //     output.prepend(
-            //       `import * as __vite_rsc_importer_resources_${hash} from ${JSON.stringify(
-            //         importId,
-            //       )};`,
-            //     );
-            //   }
-            //   replacement = `__vite_rsc_react__.createElement(__vite_rsc_importer_resources_${hash}.Resources)`;
-            // }
-
-            const result: ImportAssetsResult = {
-              entry: undefined,
-              js: [],
-              css: [],
-            };
-            const replacement = `(${JSON.stringify(result)})`;
-            output.update(start, end, replacement);
+            const importSource = toAssetsVirtual({
+              import: options.import,
+              importer: id,
+              environment: options.environment,
+            });
+            const hash = hashString(importSource);
+            const importedName = `__assets_${hash}`;
+            newImports.add(
+              `;import ${importedName} from ${JSON.stringify(importSource)};\n`,
+            );
+            output.update(start, end, `(${importedName})`);
           }
 
           if (output.hasChanged()) {
-            // if (!code.includes("__vite_rsc_react__")) {
-            //   output.prepend(`import __vite_rsc_react__ from "react";`);
-            // }
+            // add virtual imports at the end so that other imports are already processed
+            // and css already exists in server module graph.
+            // TODO: forgot to do this on `@vitejs/plugin-rsc`
+            for (const newImport of newImports) {
+              output.append(newImport);
+            }
             return {
               code: output.toString(),
               map: output.generateMap({ hires: "boundary" }),
@@ -131,41 +137,88 @@ export default function vitePluginFullstack(
           }
         },
       },
+      resolveId: {
+        handler(source) {
+          if (source.startsWith("virtual:fullstack/assets?")) {
+            return "\0" + source;
+          }
+        },
+      },
       load: {
         async handler(id) {
-          id;
-          // const { server } = manager;
-          // const parsed = parseCssVirtual(id);
-          // if (parsed?.type === "rsc") {
-          //   assert(this.environment.name === "rsc");
-          //   const importer = parsed.id;
-          //   if (this.environment.mode === "dev") {
-          //     const result = collectCss(server.environments.rsc!, importer);
-          //     for (const file of [importer, ...result.visitedFiles]) {
-          //       this.addWatchFile(file);
-          //     }
-          //     const cssHrefs = result.hrefs.map((href) => href.slice(1));
-          //     const deps = assetsURLOfDeps({ css: cssHrefs, js: [] }, manager);
-          //     return generateResourcesCode(
-          //       serializeValueWithRuntime(deps),
-          //       manager,
-          //     );
-          //   } else {
-          //     const key = manager.toRelativeId(importer);
-          //     manager.serverResourcesMetaMap[importer] = { key };
-          //     return `
-          //     import __vite_rsc_assets_manifest__ from "virtual:vite-rsc/assets-manifest";
-          //     ${generateResourcesCode(
-          //       `__vite_rsc_assets_manifest__.serverResources[${JSON.stringify(
-          //         key,
-          //       )}]`,
-          //       manager,
-          //     )}
-          //   `;
-          //   }
-          // }
+          const parsed = parseAssetsVirtual(id);
+          if (!parsed) return;
+
+          // TODO: shouldn't resolve in different environment?
+          // we can avoid this by another virtual but only dev.
+          const resolved = await this.resolve(parsed.import, parsed.importer);
+          assert(resolved, `Failed to resolve: ${parsed.import}`);
+
+          if (this.environment.mode === "dev") {
+            const result: ImportAssetsResult = {
+              entry: undefined, // defined only on client
+              js: [], // always empty
+              css: [], // defined only on server
+            };
+            const environment = server.environments[parsed.environment];
+            assert(environment, `Unknown environment: ${parsed.environment}`);
+            if (parsed.environment === "client") {
+              result.entry = normalizeViteImportAnalysisUrl(
+                environment,
+                resolved.id,
+              );
+            }
+            if (environment.name !== "client") {
+              const collected = collectCss(environment, resolved.id);
+              result.css = collected.hrefs;
+            }
+            return `export default ${JSON.stringify(result)}`;
+          } else {
+            // TODO: build
+          }
         },
       },
     },
   ];
+}
+
+function collectCss(environment: DevEnvironment, entryId: string) {
+  const visited = new Set<string>();
+  const cssIds = new Set<string>();
+  const visitedFiles = new Set<string>();
+
+  function recurse(id: string) {
+    if (visited.has(id)) {
+      return;
+    }
+    visited.add(id);
+    const mod = environment.moduleGraph.getModuleById(id);
+    if (mod?.file) {
+      visitedFiles.add(mod.file);
+    }
+    for (const next of mod?.importedModules ?? []) {
+      if (next.id) {
+        if (isCSSRequest(next.id)) {
+          if (hasSpecialCssQuery(next.id)) {
+            continue;
+          }
+          cssIds.add(next.id);
+        } else {
+          recurse(next.id);
+        }
+      }
+    }
+  }
+
+  recurse(entryId);
+
+  // this doesn't include ?t= query so that RSC <link /> won't keep adding styles.
+  const hrefs = [...cssIds].map((id) =>
+    normalizeViteImportAnalysisUrl(environment, id),
+  );
+  return { ids: [...cssIds], hrefs, visitedFiles: [...visitedFiles] };
+}
+
+function hasSpecialCssQuery(id: string): boolean {
+  return /[?&](url|inline|raw)(\b|=|&|$)/.test(id);
 }

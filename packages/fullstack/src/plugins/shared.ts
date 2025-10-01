@@ -1,20 +1,3 @@
-type CssVirtual = {
-  id: string;
-  type: "ssr" | "rsc";
-};
-
-export function toCssVirtual({ id, type }: CssVirtual) {
-  // ensure other plugins treat it as a plain js file
-  // e.g. https://github.com/vitejs/rolldown-vite/issues/372#issuecomment-3193401601
-  return `virtual:vite-rsc/css?type=${type}&id=${encodeURIComponent(id)}&lang.js`;
-}
-
-export function parseCssVirtual(id: string): CssVirtual | undefined {
-  if (id.startsWith("\0virtual:vite-rsc/css?")) {
-    return parseIdQuery(id).query as any;
-  }
-}
-
 // https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
 export function parseIdQuery(id: string): {
   filename: string;
@@ -26,4 +9,20 @@ export function parseIdQuery(id: string): {
   const [filename, rawQuery] = id.split(`?`, 2) as [string, string];
   const query = Object.fromEntries(new URLSearchParams(rawQuery));
   return { filename, query };
+}
+
+type AssetsVirtual = {
+  import: string;
+  importer: string;
+  environment: string;
+};
+
+export function toAssetsVirtual(options: AssetsVirtual) {
+  return `virtual:fullstack/assets?${new URLSearchParams(options)}&lang.js`;
+}
+
+export function parseAssetsVirtual(id: string): AssetsVirtual | undefined {
+  if (id.startsWith("\0virtual:fullstack/assets?")) {
+    return parseIdQuery(id).query as any;
+  }
 }
