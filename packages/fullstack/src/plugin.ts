@@ -1,13 +1,10 @@
 import assert from "node:assert";
-import { createHash } from "node:crypto";
 import MagicString from "magic-string";
 import { toNodeHandler } from "srvx/node";
-import {
-  type Plugin,
-  type ResolvedConfig,
-  isRunnableDevEnvironment,
-} from "vite";
+import { type Plugin, isRunnableDevEnvironment } from "vite";
 import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
+import { getEntrySource } from "./plugins/utils";
+import { evalValue } from "./plugins/vite-utils";
 
 type FullstackPluginOptions = {
   serverHandler?: boolean;
@@ -171,36 +168,4 @@ export default function vitePluginFullstack(
       },
     },
   ];
-}
-
-function getEntrySource(
-  config: Pick<ResolvedConfig, "build">,
-  name: string = "index",
-): string {
-  const input = config.build.rollupOptions.input;
-  if (typeof input === "string") {
-    return input;
-  }
-  assert(
-    typeof input === "object" &&
-      !Array.isArray(input) &&
-      name in input &&
-      typeof input[name] === "string",
-    `[vite-rsc:getEntrySource] expected 'build.rollupOptions.input' to be an object with a '${name}' property that is a string, but got ${JSON.stringify(input)}`,
-  );
-  return input[name];
-}
-
-// https://github.com/vitejs/vite/blob/ea9aed7ebcb7f4be542bd2a384cbcb5a1e7b31bd/packages/vite/src/node/utils.ts#L1469-L1475
-function evalValue<T = any>(rawValue: string): T {
-  const fn = new Function(`
-    var console, exports, global, module, process, require
-    return (\n${rawValue}\n)
-  `);
-  return fn();
-}
-
-hashString;
-function hashString(v: string): string {
-  return createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
 }
