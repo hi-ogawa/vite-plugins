@@ -11,6 +11,7 @@
   "type": "module",
   "exports": {
     "./package.json": "./package.json",
+    "./types": "./types/index.d.ts",
     ".": "./dist/index.js",
     "./*": "./dist/*.js"
   },
@@ -21,7 +22,10 @@
     "prepack": "tsdown --clean",
     "test-e2e": "playwright test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "magic-string": "^0.30.17",
+    "srvx": "^0.8.7"
+  },
   "devDependencies": {},
   "peerDependencies": {
     "vite": "*"

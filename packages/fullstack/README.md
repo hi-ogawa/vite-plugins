@@ -211,14 +211,15 @@ export function Island() {
 
 ## Stages
 
-- migrate minimal DIY examples
+- migrate minimal examples
   - https://github.com/bluwy/create-vite-extra/
   - https://github.com/nitrojs/vite-examples
-- custom integration of framework
+- create custom integration of router libraries
   - react router
   - vue router
 - integrate with ecosystem plugins
   - `@cloudflare/vite-plugin`
+  - `nitro/vite`
   - `fresh`
 
 ## Examples
@@ -229,3 +230,8 @@ export function Island() {
 - react router
 - vue router
 - `@remix-run/fetch-router` https://github.com/remix-run/remix/tree/main/packages/fetch-router
+
+## References
+
+- https://github.com/vitejs/vite/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22feat%3A%20ssr%22
+  - https://github.com/vitejs/vite/issues/16515
