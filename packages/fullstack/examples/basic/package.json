@@ -7,8 +7,8 @@
     "build": "vite build",
     "preview": "srvx --prod -s ../client dist/ssr/index.js"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.8.0",
     "@hiogawa/vite-plugin-fullstack": "latest",
     "srvx": "^0.8.7"
   }

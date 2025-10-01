@@ -1,10 +1,21 @@
 import fullstack from "@hiogawa/vite-plugin-fullstack";
 import { defineConfig } from "vite";
-import inspect from "vite-plugin-inspect";
+// import inspect from "vite-plugin-inspect";
+// import { cloudflare } from "@cloudflare/vite-plugin";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
-  plugins: [inspect(), fullstack()],
+  plugins: [
+    // inspect(),
+    fullstack({
+      serverHandler: false,
+    }),
+    // cloudflare({
+    //   viteEnvironment: {
+    //     name: "ssr",
+    //   }
+    // }),
+  ],
   environments: {
     client: {
       build: {
