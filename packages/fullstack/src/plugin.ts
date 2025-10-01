@@ -55,10 +55,25 @@ export default function vitePluginFullstack(
           const output = new MagicString(code);
           // let importAdded = false;
 
+          const emptyResult: ImportAssetsResult = {
+            entry: undefined,
+            js: [],
+            css: [],
+          };
+
           for (const match of code.matchAll(
             /import\.meta\.vite\.assets\(([\s\S]*?)\)/dg,
           )) {
             const [start, end] = match.indices![0]!;
+
+            // TODO: what to do on client?
+            // wouldn't it be necessary for handling preloading assets on client side navigation?
+            if (this.environment.name === "client") {
+              const replacement = `(${JSON.stringify(emptyResult)})`;
+              output.update(start, end, replacement);
+              continue;
+            }
+
             const argCode = match[1]!.trim();
             const options: Required<ImportAssetsOptions> = {
               import: id,

@@ -28,6 +28,6 @@
   },
   "devDependencies": {},
   "peerDependencies": {
-    "vite": "*"
+    "vite": "^6.0.0 || ^7.0.0"
   }
 }
