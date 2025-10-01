@@ -10,7 +10,7 @@ async function handler(_request: Request): Promise<Response> {
 
 function Root() {
   const assets = import.meta.vite.assets({
-    import: "/src/entry.client.tsx",
+    import: "./entry.client.tsx",
     environment: "client",
   });
 
@@ -18,8 +18,6 @@ function Root() {
   // current module and current environment, which in this case is,
   // { import: "./entry.server.tsx", environment: "ssr" }
   const serverAssets = import.meta.vite.assets();
-
-  console.log({ assets, serverAssets });
 
   return (
     <html>
