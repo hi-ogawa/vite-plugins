@@ -57,7 +57,7 @@ export default defineConfig({
 });
 ```
 
-## API
+## Ideas
 
 - handle css on server
 - access client asset on server runtime
@@ -65,6 +65,7 @@ export default defineConfig({
 - `transformIndexHtml` compat/alternative
 - cjs module runner
 - "use client-entry"?
+- dynamic entry injection?
 - request handle convention (same as nitro)
 - logger
 - ssg primitive (may delegate to nitro?)

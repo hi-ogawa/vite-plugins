@@ -11,7 +11,7 @@ export function parseIdQuery(id: string): {
   return { filename, query };
 }
 
-type AssetsVirtual = {
+export type AssetsVirtual = {
   import: string;
   importer: string;
   environment: string;

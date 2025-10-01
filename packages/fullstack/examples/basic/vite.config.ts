@@ -19,6 +19,7 @@ export default defineConfig((_env) => ({
     ssr: {
       build: {
         outDir: "./dist/ssr",
+        emitAssets: true,
         rollupOptions: {
           input: {
             index: "./src/entry.server.tsx",
@@ -28,13 +29,8 @@ export default defineConfig((_env) => ({
     },
   },
   builder: {
-    // NOTE: fullstack plugin doesn't depend on specific builder config
-    // sharedConfigBuild: true,
-    // sharedPlugins: true,
     async buildApp(builder) {
-      // TODO: not mandatory but building ssr first allows
-      //   import.meta.vite.assets({ import: "...", environment: "client" })
-      // to dynamically add entries to client build.
+      // NOTE: support any build order
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
     },
