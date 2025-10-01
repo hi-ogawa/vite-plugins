@@ -2,12 +2,12 @@ export type ImportAssetsOptions = {
   import?: string;
   environment?: string;
   // TODO
-  dev?: {
-    eager: boolean;
-  };
-  build?: {
-    addEntry: boolean;
-  };
+  // dev?: {
+  //   eager: boolean;
+  // };
+  // build?: {
+  //   addEntry: boolean;
+  // };
 };
 
 export type ImportAssetsResult = {

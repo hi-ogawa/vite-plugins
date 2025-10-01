@@ -185,6 +185,7 @@ function evalValue<T = any>(rawValue: string): T {
   return fn();
 }
 
+hashString;
 function hashString(v: string): string {
   return createHash("sha256").update(v).digest().toString("hex").slice(0, 12);
 }
