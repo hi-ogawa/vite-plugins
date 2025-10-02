@@ -1,4 +1,5 @@
 import "./styles/server.css";
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { renderToReadableStream } from "react-dom/server.edge";
 
 async function handler(_request: Request): Promise<Response> {
@@ -9,31 +10,21 @@ async function handler(_request: Request): Promise<Response> {
 }
 
 function Root() {
-  // Impot client entry assets on server.
-  // It doesn't support dynamically adding build entry,
-  // so `build.rollupOption.input` still needs to be manually written.
-  // This will include client js entry and its dependencies.
-  // > { entry: string, js: { href: string, ... }[], css: { href: string, ... }[] }
-  const assets = import.meta.vite.assets({
+  const clientAssets = import.meta.vite.assets({
     import: "./entry.client.tsx",
     environment: "client",
   });
-
-  // By default, `import` and `environment` are inferred as
-  // current module and current environment, which in this case is,
-  // > { import: "./entry.server.tsx", environment: "ssr" }
-  // This will include only server css assets.
-  // > { css: { href: string, ... }[] }
   const serverAssets = import.meta.vite.assets();
+  const assets = mergeAssets(clientAssets, serverAssets);
 
   return (
     <html>
       <head>
         <title>Vite Fullstack</title>
-        {[...assets.css, ...serverAssets.css].map((attrs) => (
+        {assets.css.map((attrs) => (
           <link key={attrs.href} {...attrs} rel="stylesheet" crossOrigin="" />
         ))}
-        {[...assets.js, ...serverAssets.js].map((attrs) => (
+        {assets.js.map((attrs) => (
           <link
             key={attrs.href}
             {...attrs}
@@ -41,7 +32,7 @@ function Root() {
             crossOrigin=""
           />
         ))}
-        <script type="module" src={assets.entry}></script>
+        <script type="module" src={clientAssets.entry}></script>
       </head>
       <body>
         <div style={{ border: "2px solid lightseagreen", padding: "1rem" }}>

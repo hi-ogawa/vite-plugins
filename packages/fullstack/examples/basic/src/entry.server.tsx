@@ -1,6 +1,7 @@
 import { renderToReadableStream } from "react-dom/server.edge";
 import { App } from "./App";
 import "./index.css";
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 
 async function handler(_request: Request): Promise<Response> {
   const html = await renderToReadableStream(<Root />);
@@ -15,7 +16,7 @@ function Root() {
   // so `build.rollupOption.input` still needs to be manually written.
   // This will include client js entry and its dependencies.
   // > { entry: string, js: { href: string, ... }[], css: { href: string, ... }[] }
-  const assets = import.meta.vite.assets({
+  const clientAssets = import.meta.vite.assets({
     import: "./entry.client.tsx",
     environment: "client",
   });
@@ -26,15 +27,16 @@ function Root() {
   // This will include only server css assets.
   // > { css: { href: string, ... }[] }
   const serverAssets = import.meta.vite.assets();
+  const assets = mergeAssets(clientAssets, serverAssets);
 
   return (
     <html>
       <head>
         <title>Vite Fullstack</title>
-        {[...assets.css, ...serverAssets.css].map((attrs) => (
+        {assets.css.map((attrs) => (
           <link key={attrs.href} {...attrs} rel="stylesheet" crossOrigin="" />
         ))}
-        {[...assets.js, ...serverAssets.js].map((attrs) => (
+        {assets.js.map((attrs) => (
           <link
             key={attrs.href}
             {...attrs}
@@ -42,7 +44,7 @@ function Root() {
             crossOrigin=""
           />
         ))}
-        <script type="module" src={assets.entry}></script>
+        <script type="module" src={clientAssets.entry}></script>
       </head>
       <body>
         <div id="root">
