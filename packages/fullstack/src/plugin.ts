@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import MagicString from "magic-string";
 import { toNodeHandler } from "srvx/node";
 import {
@@ -11,6 +12,7 @@ import {
   type ViteDevServer,
   isCSSRequest,
   isRunnableDevEnvironment,
+  normalizePath,
 } from "vite";
 import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
 import { parseAssetsVirtual, toAssetsVirtual } from "./plugins/shared";
@@ -424,14 +426,51 @@ function collectAssetDepsInner(
   };
 }
 
-// TODO: Test this idea https://github.com/vitejs/vite/pull/20767
+// TODO: patch @vite/client for https://github.com/vitejs/vite/pull/20767
 function patchViteClientPlugin(): Plugin {
+  const viteClientPath = normalizePath(
+    fileURLToPath(import.meta.resolve("vite/dist/client/client.mjs")),
+  );
+
+  function endIndexOf(code: string, searchValue: string) {
+    const i = code.lastIndexOf(searchValue);
+    return i === -1 ? i : i + searchValue.length;
+  }
+
   return {
     name: "fullstack:patch-vite-client",
     transform: {
       handler(code, id) {
-        code;
-        id;
+        if (id === viteClientPath) {
+          const s = new MagicString(code);
+          s.prependLeft(
+            code.indexOf("const sheetsMap"),
+            `\
+const linkSheetsMap = new Map();
+document
+  .querySelectorAll('link[rel="stylesheet"][data-vite-dev-id]')
+  .forEach((el) => {
+    linkSheetsMap.set(el.getAttribute('data-vite-dev-id'), el)
+  });
+`,
+          );
+          s.appendLeft(
+            endIndexOf(code, `function updateStyle(id, content) {`),
+            `if (linkSheetsMap.has(id)) { return }`,
+          );
+          s.appendLeft(
+            endIndexOf(code, `function removeStyle(id) {`),
+            `
+const link = linkSheetsMap.get(id);
+if (link) {
+  document.head.removeChild(link)
+  linkSheetsMap.delete(id)
+  return;
+}
+`,
+          );
+          return s.toString();
+        }
       },
     },
   };
