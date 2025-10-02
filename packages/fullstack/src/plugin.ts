@@ -111,6 +111,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
         async handler(code, id, _options) {
           if (!code.includes("import.meta.vite.assets")) return;
 
+          // TODO: strip comments
           const output = new MagicString(code);
 
           const emptyResult: ImportAssetsResult = {
