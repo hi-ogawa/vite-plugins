@@ -1,7 +1,8 @@
 import type { ImportAssetsResult } from "@hiogawa/vite-plugin-fullstack/types";
 import type { RouteObject } from "react-router";
 
-// custom framework may employ convention and transform plugin to reduce boilerplace
+// custom framework may employ some convention and transform plugin
+// to reduce boilerplace
 export const routes: RouteObject[] = [
   {
     id: "root",

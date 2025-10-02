@@ -28,7 +28,7 @@ async function handler(request: Request): Promise<Response> {
   }
 
   const htmlStream = await renderToReadableStream(<SsrRoot />, {
-    bootstrapScriptContent: `import(${JSON.stringify(assets.entry)})`,
+    bootstrapModules: [assets.entry!],
   });
 
   return new Response(htmlStream, {

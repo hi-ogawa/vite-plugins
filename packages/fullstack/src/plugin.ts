@@ -208,7 +208,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
               );
             }
             if (environment.name !== "client") {
-              const collected = collectCss(environment, resolved.id);
+              const collected = await collectCss(environment, resolved.id);
               for (const file of [resolved.id, ...collected.visitedFiles]) {
                 this.addWatchFile(file);
               }
@@ -324,17 +324,26 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
 
 const BUILD_ASSETS_MANIFEST_NAME = "__fullstack_assets_manifest.js";
 
-function collectCss(environment: DevEnvironment, entryId: string) {
+async function collectCss(environment: DevEnvironment, entryId: string) {
   const visited = new Set<string>();
   const cssIds = new Set<string>();
   const visitedFiles = new Set<string>();
 
-  function recurse(id: string) {
+  async function recurse(id: string) {
     if (visited.has(id)) {
       return;
     }
     visited.add(id);
     const mod = environment.moduleGraph.getModuleById(id);
+    // TODO: it's not ideal, but eagerly transforming module is required
+    // for the pattern like packages/fullstack/examples/react-router/src/routes.ts
+    if (!mod?.transformResult) {
+      try {
+        await environment.transformRequest(id);
+      } catch (e) {
+        console.error(`[collectCss] Failed to transform '${id}'`, e);
+      }
+    }
     if (mod?.file) {
       visitedFiles.add(mod.file);
     }
@@ -352,7 +361,7 @@ function collectCss(environment: DevEnvironment, entryId: string) {
     }
   }
 
-  recurse(entryId);
+  await recurse(entryId);
 
   // this doesn't include ?t= query so that RSC <link /> won't keep adding styles.
   const hrefs = [...cssIds].map((id) =>
