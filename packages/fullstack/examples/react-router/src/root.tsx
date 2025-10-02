@@ -1,23 +1,27 @@
-import { Link, Outlet } from "react-router";
-import "./styles.css";
+import { NavLink, Outlet } from "react-router";
 import { Links } from "./framework/lib";
+import "./styles.css";
 
 export function Component() {
   return (
     <html lang="en">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>React Router Custom Framework</title>
         <Links />
       </head>
       <body>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-        </ul>
+        <nav>
+          <ul>
+            <li>
+              <NavLink to="/">Home</NavLink>
+            </li>
+            <li>
+              <NavLink to="/about">About</NavLink>
+            </li>
+          </ul>
+        </nav>
         <Outlet />
       </body>
     </html>
