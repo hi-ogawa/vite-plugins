@@ -11,6 +11,23 @@ export default defineConfig((_env) => ({
     vue(),
     devtoolsJson(),
     fullstack(),
+    // TODO: upstream?
+    // Vite client HMR requests scoped css link stylesheet with `lang.css=` instead of `lang.css`,
+    // which seems to cause response to be `text/javascript` even though response text is raw css.
+    {
+      name: "fix-vue-scoped-css-hmr",
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (
+            req.headers.accept?.includes("text/css") &&
+            req.url?.includes("&lang.css=")
+          ) {
+            req.url = req.url.replace("&lang.css=", "?lang.css");
+          }
+          next();
+        });
+      },
+    },
   ],
   environments: {
     client: {

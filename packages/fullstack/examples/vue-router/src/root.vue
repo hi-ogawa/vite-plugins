@@ -37,7 +37,6 @@ nav ul {
 nav a {
   color: #666;
   text-decoration: none;
-  font-weight: 500;
 }
 
 nav a:hover {
