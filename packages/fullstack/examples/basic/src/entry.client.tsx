@@ -1,12 +1,18 @@
 // @ts-ignore
 import "virtual:react-hmr-preamble";
-import "./styles/client.css";
-import { createRoot } from "react-dom/client";
-import { Counter } from "./components/counter";
+import { StrictMode, startTransition } from "react";
+import { hydrateRoot } from "react-dom/client";
+import { App } from "./App";
 
 function main() {
-  const domRoot = document.getElementById("client-app")!;
-  createRoot(domRoot).render(<App />);
+  startTransition(() => {
+    hydrateRoot(
+      document.getElementById("root")!,
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    );
+  });
 
   if (import.meta.hot) {
     // TODO
@@ -15,15 +21,6 @@ function main() {
       window.location.reload();
     });
   }
-}
-
-function App() {
-  return (
-    <div>
-      <Counter />
-      <div className="test-client-style">test-client-style</div>
-    </div>
-  );
 }
 
 main();

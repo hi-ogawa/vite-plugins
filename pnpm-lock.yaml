@@ -120,6 +120,15 @@ importers:
         specifier: ^0.8.7
         version: 0.8.7
 
+  packages/fullstack/examples/island:
+    devDependencies:
+      '@hiogawa/vite-plugin-fullstack':
+        specifier: latest
+        version: link:../..
+      srvx:
+        specifier: ^0.8.7
+        version: 0.8.7
+
   packages/nitro:
     dependencies:
       h3:

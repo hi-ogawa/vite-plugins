@@ -1,18 +1,23 @@
+import { cloudflare } from "@cloudflare/vite-plugin";
 import fullstack, {
   reactHmrPreamblePlugin,
 } from "@hiogawa/vite-plugin-fullstack";
-// import inspect from "vite-plugin-inspect";
-// import { cloudflare } from "@cloudflare/vite-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
-    // inspect(),
     react(),
     reactHmrPreamblePlugin(),
-    fullstack(),
+    fullstack({
+      serverHandler: false,
+    }),
+    cloudflare({
+      viteEnvironment: {
+        name: "ssr",
+      },
+    }),
   ],
   environments: {
     client: {
@@ -39,7 +44,7 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      // NOTE: the plugin supports any build order
+      // NOTE: support any build order
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
     },
