@@ -40,7 +40,6 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      // NOTE: the plugin supports any build order
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
     },
