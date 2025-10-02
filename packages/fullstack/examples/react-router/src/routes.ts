@@ -11,6 +11,7 @@ export const routes: RouteObject[] = [
     handle: {
       assets: {
         client: mergeImportAssetsResult(
+          // include client entry for ssr modulepreload
           import.meta.vite.assets({
             import: "./entry.client",
             environment: "client",
@@ -33,6 +34,7 @@ export const routes: RouteObject[] = [
         lazy: () => import("./routes/index"),
         handle: {
           assets: {
+            // TODO: API to just merge them by default?
             client: import.meta.vite.assets({
               import: "./routes/index",
               environment: "client",
