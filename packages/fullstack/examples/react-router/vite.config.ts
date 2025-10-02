@@ -2,9 +2,9 @@ import fullstack, {
   reactHmrPreamblePlugin,
 } from "@hiogawa/vite-plugin-fullstack";
 // import inspect from "vite-plugin-inspect";
-// import { cloudflare } from "@cloudflare/vite-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import devtoolsJson from "vite-plugin-devtools-json";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
@@ -12,6 +12,7 @@ export default defineConfig((_env) => ({
     // inspect(),
     react(),
     reactHmrPreamblePlugin(),
+    devtoolsJson(),
     fullstack(),
   ],
   environments: {

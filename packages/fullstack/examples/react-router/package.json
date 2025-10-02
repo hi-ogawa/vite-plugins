@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-fullstack": "latest",
-    "srvx": "^0.8.7"
+    "srvx": "^0.8.7",
+    "vite-plugin-devtools-json": "^1.0.0"
   },
   "dependencies": {
     "react-router": "7.9.3"
