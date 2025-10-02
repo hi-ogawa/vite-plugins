@@ -12,6 +12,8 @@ function Root() {
   // Impot client entry assets on server.
   // It doesn't support dynamically adding build entry,
   // so `build.rollupOption.input` still needs to be manually written.
+  // This will include client js entry and its dependencies.
+  // > { entry: string, js: { href: string, ... }[], css: { href: string, ... }[] }
   const assets = import.meta.vite.assets({
     import: "./entry.client.tsx",
     environment: "client",
@@ -19,7 +21,9 @@ function Root() {
 
   // By default, `import` and `environment` are inferred as
   // current module and current environment, which in this case is,
-  // { import: "./entry.server.tsx", environment: "ssr" }
+  // > { import: "./entry.server.tsx", environment: "ssr" }
+  // This will include only server css assets.
+  // > { css: { href: string, ... }[] }
   const serverAssets = import.meta.vite.assets();
 
   return (

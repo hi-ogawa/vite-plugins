@@ -203,8 +203,10 @@ export default function vitePluginFullstack(
               for (const file of [resolved.id, ...collected.visitedFiles]) {
                 this.addWatchFile(file);
               }
-              // TODO: add data-vite-dev-id
-              result.css = collected.hrefs.map((href) => ({ href }));
+              result.css = collected.hrefs.map((href, i) => ({
+                href,
+                "data-vite-dev-id": collected.ids[i],
+              }));
             }
             return `export default ${JSON.stringify(result)}`;
           } else {
