@@ -38,12 +38,10 @@ async function handler(request: Request): Promise<Response> {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vue Router Custom Framework</title>
+  <script type="module" src=${JSON.stringify(assets.entry)}></script>
 </head>
 <body>
   <div id="root">${ssrStream}</div>
-  <script type="module">
-    import('${assets.entry}');
-  </script>
 </body>
 </html>
 `;
