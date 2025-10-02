@@ -24,9 +24,6 @@ import {
   normalizeViteImportAnalysisUrl,
 } from "./plugins/vite-utils";
 
-// TODO: split plugins?
-// - serverAssetsPlugin
-// - serverHandlerPlugin
 type FullstackPluginOptions = {
   serverHandler?: boolean;
 };
