@@ -4,7 +4,7 @@ import {
 } from "@hiogawa/vite-plugin-fullstack/runtime";
 import type { RouteObject } from "react-router";
 
-// custom framework may employ some convention and transform plugin
+// custom framework may employ fs router convention and/or transform plugin
 // to reduce boilerplace
 export const routes: RouteObject[] = [
   {
@@ -23,7 +23,7 @@ export const routes: RouteObject[] = [
         }),
         // include client entry for ssr modulepreload
         import.meta.vite.assets({
-          import: "./entry.client.tsx",
+          import: "./framework/entry.client.tsx",
           environment: "client",
         }),
       ),

@@ -21,7 +21,7 @@ export default defineConfig((_env) => ({
         outDir: "./dist/client",
         rollupOptions: {
           input: {
-            index: "./src/entry.client.tsx",
+            index: "./src/framework/entry.client.tsx",
           },
         },
       },
@@ -32,7 +32,7 @@ export default defineConfig((_env) => ({
         emitAssets: true,
         rollupOptions: {
           input: {
-            index: "./src/entry.server.tsx",
+            index: "./src/framework/entry.server.tsx",
           },
         },
       },
