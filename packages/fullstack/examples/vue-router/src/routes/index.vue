@@ -16,7 +16,6 @@ function increment() {
     </div>
     
     <div class="card counter-card">
-      <h2>Counter Demo</h2>
       <p>Count: {{ count }}</p>
       <button @click="increment">
         Increment
