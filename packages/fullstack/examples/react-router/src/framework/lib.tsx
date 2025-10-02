@@ -5,7 +5,7 @@ import type { CustomHandle } from "../routes";
 export function Links() {
   const matches = useMatches();
   const handles = matches.map((m) => m.handle as CustomHandle);
-  const assets = mergeAssets(...handles.map((h) => h.assets));
+  const assets = mergeAssets(...handles.flatMap((h) => h.assets));
   return (
     <>
       {assets.js.map((attrs) => (
