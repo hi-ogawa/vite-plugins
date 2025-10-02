@@ -463,7 +463,15 @@ document
             `
 const link = linkSheetsMap.get(id);
 if (link) {
-  document.head.removeChild(link)
+  document
+    .querySelectorAll(
+      'link[rel="stylesheet"][data-vite-dev-id]',
+    )
+    .forEach((el) => {
+      if (el.getAttribute('data-vite-dev-id') === id) {
+        el.remove()
+      }
+    })
   linkSheetsMap.delete(id)
   return;
 }
