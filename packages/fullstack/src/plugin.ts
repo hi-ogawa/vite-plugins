@@ -15,7 +15,11 @@ import {
   normalizePath,
 } from "vite";
 import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
-import { parseAssetsVirtual, toAssetsVirtual } from "./plugins/shared";
+import {
+  type AssetsVirtual,
+  parseAssetsVirtual,
+  toAssetsVirtual,
+} from "./plugins/shared";
 import {
   getEntrySource,
   hashString,
@@ -34,6 +38,7 @@ type ImportAssetsMeta = {
   id: string;
   key: string;
   importerEnvironment: string;
+  virtual: AssetsVirtual;
 };
 
 export default function vitePluginFullstack(
@@ -144,6 +149,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
               import: options.import,
               importer: id,
               environment: options.environment,
+              entry: options.clientEntry ? "1" : "",
             });
             const hash = hashString(importSource);
             const importedName = `__assets_${hash}`;
@@ -185,7 +191,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
           if (!parsed) return;
           assert.notEqual(this.environment.name, "client");
 
-          // TODO: shouldn't resolve client file on other environment?
+          // TODO: we probably shouldn't resolve client file on other environment.
           // we could avoid this by another virtual but it's possible only for dev.
           const resolved = await this.resolve(parsed.import, parsed.importer);
           assert(resolved, `Failed to resolve: ${parsed.import}`);
@@ -221,6 +227,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
               // normalize to have machine-independent build output
               key: path.relative(resolvedConfig.root, resolved.id),
               importerEnvironment: this.environment.name,
+              virtual: parsed,
             };
             (importAssetsMetaMap[parsed.environment] ??= {})[meta.id] = meta;
             return `\
@@ -250,6 +257,27 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
       writeBundle(_options, bundle) {
         bundleMap[this.environment.name] = bundle;
       },
+      buildStart() {
+        // dynamically add client entry during build
+        // TODO: this still requires having at least one `rollupOptions.input`
+        // since Vite expects `index.html` by default
+        if (
+          this.environment.mode == "build" &&
+          this.environment.name === "client"
+        ) {
+          const metas = importAssetsMetaMap["client"];
+          if (metas) {
+            for (const meta of Object.values(importAssetsMetaMap["client"]!)) {
+              if (meta.virtual.entry) {
+                this.emitFile({
+                  type: "chunk",
+                  id: meta.id,
+                });
+              }
+            }
+          }
+        }
+      },
       buildApp: {
         order: "post",
         async handler(builder) {
@@ -263,7 +291,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
             for (const [id, meta] of Object.entries(metas)) {
               const found = assetDepsMap[id];
               if (!found) {
-                this.error(
+                return this.error(
                   `[vite-plugin-fullstack] failed to find built chunk for ${meta.id} imported by ${meta.importerEnvironment} environment`,
                 );
               }
@@ -332,9 +360,11 @@ async function collectCss(environment: DevEnvironment, entryId: string) {
     }
     visited.add(id);
     const mod = environment.moduleGraph.getModuleById(id);
-    // TODO: it's not ideal, but eagerly transforming module is required
-    // for the pattern like packages/fullstack/examples/react-router/src/routes.ts
-    if (!mod?.transformResult) {
+    if (!mod) return;
+    // TODO: this is not ideal.
+    // We eagerly transforming module is required
+    // to allow patterns like packages/fullstack/examples/react-router/src/routes.ts
+    if (!mod.transformResult && !parseAssetsVirtual(id)) {
       try {
         await environment.transformRequest(id);
       } catch (e) {

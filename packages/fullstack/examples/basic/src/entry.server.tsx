@@ -18,7 +18,6 @@ function Root() {
   const assets = import.meta.vite.assets({
     import: "./entry.client.tsx",
     environment: "client",
-    clientEntry: true,
   });
 
   // By default, `import` and `environment` are inferred as

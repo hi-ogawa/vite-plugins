@@ -15,6 +15,7 @@ export type AssetsVirtual = {
   import: string;
   importer: string;
   environment: string;
+  entry: string;
 };
 
 export function toAssetsVirtual(options: AssetsVirtual) {

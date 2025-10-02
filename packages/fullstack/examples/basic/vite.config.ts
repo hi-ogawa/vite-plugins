@@ -39,7 +39,8 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      // NOTE: the plugin supports any build order
+      // NOTE:
+      // dynamically adding entry is supported only when building ssr -> client.
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
     },
