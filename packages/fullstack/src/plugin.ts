@@ -132,15 +132,12 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
             const options: Required<ImportAssetsOptions> = {
               import: id,
               environment: this.environment.name,
+              clientEntry: false,
+              universal: false,
             };
             if (argCode) {
               const argValue = evalValue<ImportAssetsOptions>(argCode);
-              if (argValue.import) {
-                options.import = argValue.import;
-              }
-              if (argValue.environment) {
-                options.environment = argValue.environment;
-              }
+              Object.assign(options, argValue);
             }
 
             const importSource = toAssetsVirtual({
