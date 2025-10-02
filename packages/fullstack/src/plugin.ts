@@ -345,6 +345,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
     },
     patchViteClientPlugin(),
+    patchVueScopeCssHmr(),
   ];
 }
 
@@ -516,6 +517,27 @@ if (link) {
           return s.toString();
         }
       },
+    },
+  };
+}
+
+// TODO: upstream?
+// Vite client HMR requests scoped css link stylesheet with `lang.css=` instead of `lang.css`,
+// which seems to cause response to be `content-type: text/javascript` even though response text is raw css.
+// This middleware rewrites url so that Vite will add `text/css`.
+function patchVueScopeCssHmr(): Plugin {
+  return {
+    name: "fullstack:patch-vue-scoped-css-hmr",
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        if (
+          req.headers.accept?.includes("text/css") &&
+          req.url?.includes("&lang.css=")
+        ) {
+          req.url = req.url.replace("&lang.css=", "?lang.css");
+        }
+        next();
+      });
     },
   };
 }
