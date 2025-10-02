@@ -1,4 +1,7 @@
-import type { ImportAssetsResult } from "@hiogawa/vite-plugin-fullstack/types";
+import {
+  type ImportAssetsResult,
+  mergeAssets,
+} from "@hiogawa/vite-plugin-fullstack/runtime";
 import type { RouteObject } from "react-router";
 
 // custom framework may employ some convention and transform plugin
@@ -9,7 +12,7 @@ export const routes: RouteObject[] = [
     path: "/",
     lazy: () => import("./root"),
     handle: {
-      assets: mergeImportAssets(
+      assets: mergeAssets(
         import.meta.vite.assets({
           import: "./root",
           environment: "client",
@@ -24,15 +27,14 @@ export const routes: RouteObject[] = [
           environment: "client",
         }),
       ),
-    },
+    } satisfies CustomHandle,
     children: [
       {
         id: "index",
         index: true,
         lazy: () => import("./routes/index"),
         handle: {
-          // TODO: API to just merge them by default?
-          assets: mergeImportAssets(
+          assets: mergeAssets(
             import.meta.vite.assets({
               import: "./routes/index",
               environment: "client",
@@ -42,14 +44,14 @@ export const routes: RouteObject[] = [
               environment: "ssr",
             }),
           ),
-        },
+        } satisfies CustomHandle,
       },
       {
         id: "about",
         path: "about",
         lazy: () => import("./routes/about"),
         handle: {
-          assets: mergeImportAssets(
+          assets: mergeAssets(
             import.meta.vite.assets({
               import: "./routes/about",
               environment: "client",
@@ -59,7 +61,7 @@ export const routes: RouteObject[] = [
               environment: "ssr",
             }),
           ),
-        },
+        } satisfies CustomHandle,
       },
     ],
   },
@@ -68,10 +70,3 @@ export const routes: RouteObject[] = [
 export type CustomHandle = {
   assets: ImportAssetsResult;
 };
-
-function mergeImportAssets(...args: ImportAssetsResult[]): ImportAssetsResult {
-  return {
-    js: args.flatMap((a) => a.js),
-    css: args.flatMap((a) => a.css),
-  };
-}

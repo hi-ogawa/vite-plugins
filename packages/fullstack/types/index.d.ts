@@ -13,5 +13,3 @@ declare global {
     readonly BUILD: boolean;
   }
 }
-
-export { ImportAssetsResult };
