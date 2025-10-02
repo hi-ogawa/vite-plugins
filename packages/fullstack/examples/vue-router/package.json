@@ -1,0 +1,21 @@
+{
+  "name": "@hiogawa/vite-plugin-fullstack-examples-react-router",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "srvx -s ../client dist/ssr/index.js"
+  },
+  "devDependencies": {
+    "@hiogawa/vite-plugin-fullstack": "latest",
+    "@unhead/vue": "^2.0.17",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "srvx": "^0.8.7",
+    "vite-plugin-devtools-json": "^1.0.0"
+  },
+  "dependencies": {
+    "vue": "^3.5.22",
+    "vue-router": "^4.5.1"
+  }
+}

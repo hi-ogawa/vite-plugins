@@ -1,8 +1,6 @@
-import fullstack, {
-  reactHmrPreamblePlugin,
-} from "@hiogawa/vite-plugin-fullstack";
+import fullstack from "@hiogawa/vite-plugin-fullstack";
 // import inspect from "vite-plugin-inspect";
-import react from "@vitejs/plugin-react";
+import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
 
@@ -10,8 +8,7 @@ export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
     // inspect(),
-    react(),
-    reactHmrPreamblePlugin(),
+    vue(),
     devtoolsJson(),
     fullstack(),
   ],

@@ -1,7 +1,4 @@
-import {
-  type ImportAssetsResult,
-  mergeAssets,
-} from "@hiogawa/vite-plugin-fullstack/runtime";
+import type { ImportAssetsResult } from "@hiogawa/vite-plugin-fullstack/runtime";
 import type { RouteObject } from "react-router";
 
 // custom framework may employ fs router convention and/or transform plugin
@@ -12,7 +9,7 @@ export const routes: RouteObject[] = [
     path: "/",
     lazy: () => import("./root"),
     handle: {
-      assets: mergeAssets(
+      assets: [
         import.meta.vite.assets({
           import: "./root",
           environment: "client",
@@ -26,7 +23,7 @@ export const routes: RouteObject[] = [
           import: "./framework/entry.client.tsx",
           environment: "client",
         }),
-      ),
+      ],
     } satisfies CustomHandle,
     children: [
       {
@@ -34,7 +31,7 @@ export const routes: RouteObject[] = [
         index: true,
         lazy: () => import("./routes/index"),
         handle: {
-          assets: mergeAssets(
+          assets: [
             import.meta.vite.assets({
               import: "./routes/index",
               environment: "client",
@@ -43,7 +40,7 @@ export const routes: RouteObject[] = [
               import: "./routes/index",
               environment: "ssr",
             }),
-          ),
+          ],
         } satisfies CustomHandle,
       },
       {
@@ -51,7 +48,7 @@ export const routes: RouteObject[] = [
         path: "about",
         lazy: () => import("./routes/about"),
         handle: {
-          assets: mergeAssets(
+          assets: [
             import.meta.vite.assets({
               import: "./routes/about",
               environment: "client",
@@ -60,7 +57,7 @@ export const routes: RouteObject[] = [
               import: "./routes/about",
               environment: "ssr",
             }),
-          ),
+          ],
         } satisfies CustomHandle,
       },
     ],
@@ -68,5 +65,5 @@ export const routes: RouteObject[] = [
 ];
 
 export type CustomHandle = {
-  assets: ImportAssetsResult;
+  assets: ImportAssetsResult[];
 };
