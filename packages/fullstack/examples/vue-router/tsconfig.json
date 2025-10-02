@@ -1,6 +1,6 @@
 {
   "extends": "../../../../tsconfig.base.json",
-  "include": ["src", "*.ts"],
+  "include": ["src", "*.ts", "src/**/*.vue"],
   "compilerOptions": {
     "types": ["vite/client", "@hiogawa/vite-plugin-fullstack/types"],
     "jsx": "react-jsx"
