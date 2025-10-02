@@ -1,20 +1,26 @@
-import fullstack from "@hiogawa/vite-plugin-fullstack";
-import { defineConfig } from "vite";
+import fullstack, {
+  reactHmrPreamblePlugin,
+} from "@hiogawa/vite-plugin-fullstack";
 // import inspect from "vite-plugin-inspect";
 // import { cloudflare } from "@cloudflare/vite-plugin";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
     // inspect(),
-    fullstack({
-      serverHandler: false,
-    }),
+    fullstack(),
+    // fullstack({
+    //   serverHandler: false,
+    // }),
     // cloudflare({
     //   viteEnvironment: {
     //     name: "ssr",
     //   }
     // }),
+    react(),
+    reactHmrPreamblePlugin(),
   ],
   environments: {
     client: {
