@@ -145,6 +145,16 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
               Object.assign(options, argValue);
             }
 
+            if (options.universal) {
+              const importSource = toAssetsVirtual({
+                import: options.import,
+                importer: id,
+                environment: options.environment,
+                entry: options.clientEntry ? "1" : "",
+              });
+              importSource;
+              ["client", this.environment.name];
+            }
             const importSource = toAssetsVirtual({
               import: options.import,
               importer: id,

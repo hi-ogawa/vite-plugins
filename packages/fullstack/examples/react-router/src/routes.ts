@@ -9,23 +9,17 @@ export const routes: RouteObject[] = [
     path: "/",
     lazy: () => import("./root"),
     handle: {
-      assets: {
-        client: mergeImportAssetsResult(
-          // include client entry for ssr modulepreload
-          import.meta.vite.assets({
-            import: "./entry.client",
-            environment: "client",
-          }),
-          import.meta.vite.assets({
-            import: "./root",
-            environment: "client",
-          }),
-        ),
-        server: import.meta.vite.assets({
+      assets: mergeImportAssetsResult(
+        import.meta.vite.assets({
           import: "./root",
-          environment: "ssr",
+          universal: true,
         }),
-      },
+        // always include client entry for ssr modulepreload
+        import.meta.vite.assets({
+          import: "./entry.client",
+          environment: "client",
+        }),
+      ),
     },
     children: [
       {
@@ -33,17 +27,10 @@ export const routes: RouteObject[] = [
         index: true,
         lazy: () => import("./routes/index"),
         handle: {
-          assets: {
-            // TODO: API to just merge them by default?
-            client: import.meta.vite.assets({
-              import: "./routes/index",
-              environment: "client",
-            }),
-            server: import.meta.vite.assets({
-              import: "./routes/index",
-              environment: "ssr",
-            }),
-          },
+          assets: import.meta.vite.assets({
+            import: "./routes/index",
+            universal: true,
+          }),
         },
       },
       {
@@ -51,27 +38,18 @@ export const routes: RouteObject[] = [
         path: "about",
         lazy: () => import("./routes/about"),
         handle: {
-          assets: {
-            client: import.meta.vite.assets({
-              import: "./routes/about",
-              environment: "client",
-            }),
-            server: import.meta.vite.assets({
-              import: "./routes/about",
-              environment: "ssr",
-            }),
-          },
+          assets: import.meta.vite.assets({
+            import: "./routes/about",
+            universal: true,
+          }),
         },
       },
     ],
   },
 ];
 
-export type AssetsHandle = {
-  assets: {
-    client: ImportAssetsResult;
-    server: ImportAssetsResult;
-  };
+export type Handle = {
+  assets: ImportAssetsResult;
 };
 
 function mergeImportAssetsResult(
