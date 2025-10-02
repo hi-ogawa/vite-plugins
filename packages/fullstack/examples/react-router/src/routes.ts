@@ -32,6 +32,7 @@ export const routes: RouteObject[] = [
         lazy: () => import("./routes/index"),
         handle: {
           assets: [
+            // TODO: we don't need to repeated if we eagerly transform client on dev.
             import.meta.vite.assets({
               import: "./routes/index",
               environment: "client",

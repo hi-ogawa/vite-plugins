@@ -164,6 +164,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
             // add virtual imports at the end so that other imports are already processed
             // and css already exists in server module graph.
             // TODO: forgot to do this on `@vitejs/plugin-rsc`
+            // TODO: nop, we probably want to eagerly transform anyways.
             for (const newImport of newImports) {
               output.append(newImport);
             }
@@ -230,6 +231,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
               importerEnvironment: this.environment.name,
               virtual: parsed,
             };
+            // TODO: don't overwrite entry=true to entry=false
             (importAssetsMetaMap[parsed.environment] ??= {})[meta.id] = meta;
             return `\
               import __assets_manifest from "virtual:fullstack/assets-manifest";
