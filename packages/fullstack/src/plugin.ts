@@ -38,30 +38,24 @@ type ImportAssetsMeta = {
 };
 
 export default function vitePluginFullstack(
-  customOptions?: FullstackPluginOptions,
+  pluginOpts?: FullstackPluginOptions,
 ): Plugin[] {
-  let server: ViteDevServer;
-  let resolvedConfig: ResolvedConfig;
-  // build metadata
-  const importAssetsMetaMap: {
-    [environment: string]: { [id: string]: ImportAssetsMeta };
-  } = {};
-  const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
+  return [...serverHandlerPlugin(pluginOpts), ...assetsPlugin(pluginOpts)];
+}
 
+export function serverHandlerPlugin(
+  pluginOpts?: FullstackPluginOptions,
+): Plugin[] {
   return [
     {
       name: "fullstack:server-handler",
       config(userConfig, _env) {
         return {
           appType: userConfig.appType ?? "custom",
-          // define: {
-          //   "import.meta.env.BUILD": JSON.stringify(env.command === "build"),
-          // },
         };
       },
-      configureServer(server_) {
-        server = server_;
-        if (customOptions?.serverHandler === false) return;
+      configureServer(server) {
+        if (pluginOpts?.serverHandler === false) return;
         assert(isRunnableDevEnvironment(server.environments.ssr));
         const environment = server.environments.ssr;
         const runner = environment.runner;
@@ -70,6 +64,7 @@ export default function vitePluginFullstack(
             try {
               const source = getEntrySource(environment.config);
               const mod = await runner.import(source);
+              req.url = req.originalUrl ?? req.url;
               await toNodeHandler(mod.default.fetch)(req, res);
             } catch (e) {
               next(e);
@@ -78,10 +73,25 @@ export default function vitePluginFullstack(
         };
       },
     },
+  ];
+}
+
+export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
+  let server: ViteDevServer;
+  let resolvedConfig: ResolvedConfig;
+  const importAssetsMetaMap: {
+    [environment: string]: { [id: string]: ImportAssetsMeta };
+  } = {};
+  const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
+
+  return [
     {
       name: "fullstack:assets",
       // TODO: support non shared build?
       sharedDuringBuild: true,
+      configureServer(server_) {
+        server = server_;
+      },
       configResolved(config) {
         resolvedConfig = config;
       },
@@ -315,13 +325,6 @@ export default function vitePluginFullstack(
 
 const BUILD_ASSETS_MANIFEST_NAME = "__fullstack_assets_manifest.js";
 
-// TODO: Test this idea https://github.com/vitejs/vite/pull/20767
-function patchViteClientPlugin(): Plugin {
-  return {
-    name: "fullstack:patch-vite-client",
-  };
-}
-
 function collectCss(environment: DevEnvironment, entryId: string) {
   const visited = new Set<string>();
   const cssIds = new Set<string>();
@@ -421,5 +424,18 @@ function collectAssetDepsInner(
   return {
     js: [...visited],
     css: [...new Set(css)],
+  };
+}
+
+// TODO: Test this idea https://github.com/vitejs/vite/pull/20767
+function patchViteClientPlugin(): Plugin {
+  return {
+    name: "fullstack:patch-vite-client",
+    transform: {
+      handler(code, id) {
+        code;
+        id;
+      },
+    },
   };
 }

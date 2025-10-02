@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "srvx --prod -s ../client dist/ssr/index.js"
+    "preview": "srvx -s ../client dist/ssr/index.js"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.8.0",
