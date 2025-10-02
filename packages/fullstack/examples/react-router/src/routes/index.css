@@ -17,9 +17,3 @@
   text-align: center;
   margin-bottom: 2rem;
 }
-
-.hero h1 {
-  background: linear-gradient(to right, #646cff, #535bf2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
