@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/vite-plugin-fullstack-examples-island",
+  "name": "@hiogawa/vite-plugin-fullstack-examples-react-router",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,5 +10,8 @@
   "devDependencies": {
     "@hiogawa/vite-plugin-fullstack": "latest",
     "srvx": "^0.8.7"
+  },
+  "dependencies": {
+    "react-router": "7.9.3"
   }
 }
