@@ -473,7 +473,6 @@ if (link) {
       }
     })
   linkSheetsMap.delete(id)
-  return;
 }
 `,
           );
