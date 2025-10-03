@@ -4,7 +4,7 @@
 
 This is a proposal to introduce a new API to allow non-client environment to access assets information commonly required for SSR.
 
-Currently, it is prototyped in my package `@hiogawa/vite-plugin-fullstack` and it provides `import.meta.vite.assets` function with a following signature:
+Currently, it is prototyped in my package `@hiogawa/vite-plugin-fullstack`, which provides `import.meta.vite.assets` function with a following signature:
 
 ```ts
 function assets({
