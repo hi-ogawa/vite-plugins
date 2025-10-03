@@ -36,10 +36,10 @@ type FullstackPluginOptions = {
    * @default true
    */
   serverHandler?: boolean;
-  // /**
-  //  * @default ["ssr"]
-  //  */
-  // serverEnvironments?: string[];
+  /**
+   * @default ["ssr"]
+   */
+  serverEnvironments?: string[];
 };
 
 type ImportAssetsMeta = {
@@ -68,8 +68,9 @@ export function serverHandlerPlugin(
         };
       },
       configureServer(server) {
-        assert(isRunnableDevEnvironment(server.environments.ssr));
-        const environment = server.environments.ssr;
+        const name = (pluginOpts?.serverEnvironments ?? ["ssr"])[0]!;
+        const environment = server.environments[name]!;
+        assert(isRunnableDevEnvironment(environment));
         const runner = environment.runner;
         return () => {
           server.middlewares.use(async (req, res, next) => {
@@ -88,7 +89,7 @@ export function serverHandlerPlugin(
   ];
 }
 
-export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
+export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   let server: ViteDevServer;
   let resolvedConfig: ResolvedConfig;
   const importAssetsMetaMap: {
@@ -106,6 +107,15 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       configResolved(config) {
         resolvedConfig = config;
+      },
+      configEnvironment(name) {
+        if (pluginOpts?.serverEnvironments?.includes(name)) {
+          return {
+            build: {
+              emitAssets: true,
+            },
+          };
+        }
       },
       /**
        * [Transform input]

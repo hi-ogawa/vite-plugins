@@ -2,7 +2,6 @@ import fullstack, {
   reactHmrPreamblePlugin,
 } from "@hiogawa/vite-plugin-fullstack";
 // import inspect from "vite-plugin-inspect";
-// import { cloudflare } from "@cloudflare/vite-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -20,7 +19,7 @@ export default defineConfig((_env) => ({
         outDir: "./dist/client",
       },
       // excplit rollupOptions.input is not necessary,
-      // but `optimizeDeps.entries` is desired to set.
+      // but `optimizeDeps.entries` is still desired to set.
       optimizeDeps: {
         entries: ["./src/entry.client.tsx"],
       },
@@ -28,7 +27,6 @@ export default defineConfig((_env) => ({
     ssr: {
       build: {
         outDir: "./dist/ssr",
-        emitAssets: true,
         rollupOptions: {
           input: {
             index: "./src/entry.server.tsx",
@@ -39,8 +37,6 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      // NOTE
-      // dynamically adding entry is supported only when building ssr -> client
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
     },
