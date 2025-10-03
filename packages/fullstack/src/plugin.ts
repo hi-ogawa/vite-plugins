@@ -21,6 +21,7 @@ import {
   toAssetsVirtual,
 } from "./plugins/shared";
 import {
+  createVirtualPlugin,
   getEntrySource,
   hashString,
   normalizeRelativePath,
@@ -31,7 +32,14 @@ import {
 } from "./plugins/vite-utils";
 
 type FullstackPluginOptions = {
+  /**
+   * @default true
+   */
   serverHandler?: boolean;
+  // /**
+  //  * @default ["ssr"]
+  //  */
+  // serverEnvironments?: string[];
 };
 
 type ImportAssetsMeta = {
@@ -53,13 +61,13 @@ export function serverHandlerPlugin(
   return [
     {
       name: "fullstack:server-handler",
+      apply: () => pluginOpts?.serverHandler !== false,
       config(userConfig, _env) {
         return {
           appType: userConfig.appType ?? "custom",
         };
       },
       configureServer(server) {
-        if (pluginOpts?.serverHandler === false) return;
         assert(isRunnableDevEnvironment(server.environments.ssr));
         const environment = server.environments.ssr;
         const runner = environment.runner;
@@ -138,7 +146,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
             const options: Required<ImportAssetsOptions> = {
               import: id,
               environment: this.environment.name,
-              clientEntry: false,
+              asEntry: false,
               universal: false,
             };
             if (argCode) {
@@ -150,7 +158,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
               import: options.import,
               importer: id,
               environment: options.environment,
-              entry: options.clientEntry ? "1" : "",
+              entry: options.asEntry ? "1" : "",
             });
             const hash = hashString(importSource);
             const importedName = `__assets_${hash}`;
@@ -262,9 +270,6 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       buildStart() {
         // dynamically add client entry during build
-        // TODO: this still requires having at least one `rollupOptions.input`
-        // since Vite expects `index.html` by default
-        // (just add empty virtual by default)
         if (
           this.environment.mode == "build" &&
           this.environment.name === "client"
@@ -342,6 +347,29 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
                 fs.mkdirSync(path.dirname(destFile), { recursive: true });
                 fs.copyFileSync(srcFile, destFile);
               }
+            }
+          }
+        },
+      },
+    },
+    // ensure at least one client build input to prevent Vite
+    // from looking for index.html and breaking build
+    {
+      ...createVirtualPlugin("fullstack/client-fallback", () => "export {}"),
+      configEnvironment: {
+        order: "post",
+        handler(name, config, _env) {
+          if (name === "client") {
+            if (!config.build?.rollupOptions?.input) {
+              return {
+                build: {
+                  rollupOptions: {
+                    input: {
+                      __fallback: "virtual:fullstack/client-fallback",
+                    },
+                  },
+                },
+              };
             }
           }
         },

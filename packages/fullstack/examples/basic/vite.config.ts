@@ -18,11 +18,11 @@ export default defineConfig((_env) => ({
     client: {
       build: {
         outDir: "./dist/client",
-        rollupOptions: {
-          input: {
-            index: "./src/entry.client.tsx",
-          },
-        },
+      },
+      // excplit rollupOptions.input is not necessary,
+      // but `optimizeDeps.entries` is desired to set.
+      optimizeDeps: {
+        entries: ["./src/entry.client.tsx"],
       },
     },
     ssr: {
@@ -39,8 +39,8 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      // NOTE:
-      // dynamically adding entry is supported only when building ssr -> client.
+      // NOTE
+      // dynamically adding entry is supported only when building ssr -> client
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
     },
