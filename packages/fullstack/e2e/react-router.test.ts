@@ -104,7 +104,7 @@ async function testCss(page: Page) {
     "background-color",
     "rgb(83, 91, 242)",
   );
-  // index.vue (scoped css)
+  // index.css
   await expect(
     page.getByRole("heading", { name: "React Router Custom Framework" }),
   ).toHaveCSS("color", "rgb(100, 108, 255)");
