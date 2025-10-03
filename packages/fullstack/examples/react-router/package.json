@@ -9,10 +9,14 @@
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-fullstack": "latest",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "latest",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "7.9.3",
     "srvx": "^0.8.7",
+    "vite": "^7.1.5",
     "vite-plugin-devtools-json": "^1.0.0"
-  },
-  "dependencies": {
-    "react-router": "7.9.3"
   }
 }
