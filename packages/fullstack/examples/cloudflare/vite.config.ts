@@ -19,15 +19,13 @@ export default defineConfig((_env) => ({
       },
     }),
   ],
+  optimizeDeps: {
+    entries: ["./src/entry.client.tsx"],
+  },
   environments: {
     client: {
       build: {
         outDir: "./dist/client",
-        rollupOptions: {
-          input: {
-            index: "./src/entry.client.tsx",
-          },
-        },
       },
     },
     ssr: {

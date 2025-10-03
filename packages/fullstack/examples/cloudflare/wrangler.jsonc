@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.unpkg.com/wrangler@4.22.0/config-schema.json",
-  "name": "__vite-fullstack-basic",
+  "name": "vite-fullstack-basic",
   "main": "./src/entry.server.tsx",
   "assets": {
     "directory": "dist/client"

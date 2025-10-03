@@ -1,19 +1,20 @@
 {
-  "name": "@hiogawa/vite-plugin-fullstack-examples-basic",
+  "name": "@hiogawa/vite-plugin-fullstack-examples-cloudflare",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "srvx -s ../client dist/ssr/index.js"
+    "preview": "wrangler dev"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.13.9",
     "@hiogawa/vite-plugin-fullstack": "latest",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "srvx": "^0.8.7",
-    "vite": "^7.1.5"
+    "vite": "^7.1.5",
+    "wrangler": "^4.41.0"
   }
 }
