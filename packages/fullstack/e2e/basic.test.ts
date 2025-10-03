@@ -61,7 +61,7 @@ function defineTest(f: Fixture) {
       );
 
       // modulepreload
-      if (f.mode === 'build') {
+      if (f.mode === "build") {
         await expect(page.locator("link[rel='modulepreload']")).toBeAttached();
       }
     });
@@ -113,7 +113,7 @@ function defineTest(f: Fixture) {
         "color",
         "rgb(36, 36, 36)",
       );
-      cssFile.reset()
+      cssFile.reset();
       await expect(page.locator(".read-the-docs")).toHaveCSS(
         "color",
         "rgb(136, 136, 136)",
@@ -122,6 +122,6 @@ function defineTest(f: Fixture) {
       await expect(
         page.getByRole("button", { name: "count is 1" }),
       ).toBeVisible();
-    })
+    });
   }
 }
