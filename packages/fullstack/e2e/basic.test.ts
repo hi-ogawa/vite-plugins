@@ -12,6 +12,16 @@ test.describe("build", () => {
   defineTest(f);
 });
 
+test.describe("cloudflare dev", () => {
+  const f = useFixture({ root: "examples/cloudflare", mode: "dev" });
+  defineTest(f);
+});
+
+test.describe("cloudflare build", () => {
+  const f = useFixture({ root: "examples/cloudflare", mode: "build" });
+  defineTest(f);
+});
+
 function defineTest(f: Fixture) {
   test("basic", async ({ page }) => {
     await page.goto(f.url());
