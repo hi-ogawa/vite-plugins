@@ -1,3 +1,3 @@
 # React Router Custom Framework
 
-- https://reactrouter.com/start/data/custom
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router)

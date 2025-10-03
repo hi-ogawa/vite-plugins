@@ -24,6 +24,7 @@ async function handler(request: Request): Promise<Response> {
   const app = createSSRApp(Root);
   app.use(router);
 
+  // https://unhead.unjs.io/docs/vue/head/guides/get-started/installation
   const head = createHead();
   app.use(head);
 

@@ -12,9 +12,8 @@
     "@unhead/vue": "^2.0.17",
     "@vitejs/plugin-vue": "^6.0.1",
     "srvx": "^0.8.7",
-    "vite-plugin-devtools-json": "^1.0.0"
-  },
-  "dependencies": {
+    "vite": "^7.1.5",
+    "vite-plugin-devtools-json": "^1.0.0",
     "vue": "^3.5.22",
     "vue-router": "^4.5.1"
   }

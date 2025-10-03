@@ -12,6 +12,7 @@
     "@hiogawa/vite-plugin-fullstack": "latest",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "latest",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "vite": "^7.1.5",
