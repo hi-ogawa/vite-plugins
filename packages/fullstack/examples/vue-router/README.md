@@ -1,3 +1,3 @@
 # Vue Router Custom Framework
 
-- https://unhead.unjs.io/docs/vue/head/guides/get-started/installation
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router)
