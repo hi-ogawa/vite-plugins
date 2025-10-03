@@ -51,7 +51,9 @@ function defineTest(f: Fixture) {
       await expect(page.locator(".counter-card")).toContainText("Count: 0");
       await testCss(page);
       if (f.mode === "build") {
-        await expect(page.locator("link[rel='modulepreload']").first()).toBeAttached();
+        await expect(
+          page.locator("link[rel='modulepreload']").first(),
+        ).toBeAttached();
       }
     });
   });
@@ -89,10 +91,9 @@ function defineTest(f: Fixture) {
       cssFile.edit((s) =>
         s.replace("color: rgb(100, 108, 255);", "color: rgb(0, 0, 255);"),
       );
-      await expect(page.getByRole("heading", { name: "Vue Router Custom Framework" })).toHaveCSS(
-        "color",
-        "rgb(0, 0, 255)",
-      );
+      await expect(
+        page.getByRole("heading", { name: "Vue Router Custom Framework" }),
+      ).toHaveCSS("color", "rgb(0, 0, 255)");
       cssFile.reset();
 
       // css is restored
@@ -120,7 +121,7 @@ async function testCss(page: Page) {
 }
 
 async function testNavigation(page: Page) {
-  await page.getByRole('link', { name: 'About' }).click();
-  await page.waitForURL('**/about');
-  await expect(page.getByRole('heading', { name: 'About' })).toBeVisible();
+  await page.getByRole("link", { name: "About" }).click();
+  await page.waitForURL("**/about");
+  await expect(page.getByRole("heading", { name: "About" })).toBeVisible();
 }
