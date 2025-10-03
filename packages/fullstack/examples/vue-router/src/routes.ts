@@ -12,6 +12,7 @@ export const routes: RouteRecordRaw[] = [
     path: "/",
     name: "home",
     component: () => import("./routes/index.vue"),
+    // TODO: use route meta
     beforeEnter: (_from, _to, next) => {
       useAssets(
         import.meta.vite.assets({
