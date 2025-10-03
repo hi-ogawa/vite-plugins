@@ -12,9 +12,9 @@
 //
 export type ImportAssetsOptions = {
   import?: string;
-  environment?: string; // TODO: can remove?
-  universal?: boolean;
+  environment?: string; // TODO: can we remove in favor of asEntry and universal?
   asEntry?: boolean;
+  // universal?: boolean;
 };
 
 export type ImportAssetsResult = {

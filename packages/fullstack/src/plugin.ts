@@ -157,7 +157,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               import: id,
               environment: this.environment.name,
               asEntry: false,
-              universal: false,
             };
             if (argCode) {
               const argValue = evalValue<ImportAssetsOptions>(argCode);
