@@ -25,6 +25,16 @@ jobs:
       - run: pnpm tsc
       - run: pnpm test
 
+  test-fullstack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          build: false
+      - run: pnpm -C packages/fullstack build
+      - run: pnpm -C packages/fullstack test-e2e
+
   # superseded by @vitejs/plugin-rsc
   # https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-rsc
   # test-rsc:

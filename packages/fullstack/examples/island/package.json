@@ -1,0 +1,14 @@
+{
+  "name": "@hiogawa/vite-plugin-fullstack-examples-island",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "srvx -s ../client dist/ssr/index.js"
+  },
+  "devDependencies": {
+    "@hiogawa/vite-plugin-fullstack": "latest",
+    "srvx": "^0.8.7"
+  }
+}
