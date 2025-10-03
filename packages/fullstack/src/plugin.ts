@@ -109,7 +109,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         resolvedConfig = config;
       },
       configEnvironment(name) {
-        if (pluginOpts?.serverEnvironments?.includes(name)) {
+        const serverEnvironments = pluginOpts?.serverEnvironments ?? ["ssr"];
+        if (serverEnvironments.includes(name)) {
           return {
             build: {
               emitAssets: true,

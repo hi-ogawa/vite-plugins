@@ -46,10 +46,17 @@ function defineTest(f: Fixture) {
     ).toBeVisible();
 
     // css
+    // - App.css
     await expect(page.locator(".read-the-docs")).toHaveCSS(
       "color",
       "rgb(136, 136, 136)",
     );
+    // - index.css
+    await expect(page.locator("button")).toHaveCSS(
+      "background-color",
+      "rgb(249, 249, 249)",
+    );
+
     expect(errors).toEqual([]);
   });
 
