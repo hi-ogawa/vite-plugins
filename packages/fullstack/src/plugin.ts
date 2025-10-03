@@ -264,6 +264,7 @@ export function assetsPlugin(_pluginOpts?: FullstackPluginOptions): Plugin[] {
         // dynamically add client entry during build
         // TODO: this still requires having at least one `rollupOptions.input`
         // since Vite expects `index.html` by default
+        // (just add empty virtual by default)
         if (
           this.environment.mode == "build" &&
           this.environment.name === "client"
