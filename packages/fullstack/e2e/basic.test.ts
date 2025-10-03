@@ -87,6 +87,7 @@ function defineTest(f: Fixture) {
   if (f.mode === "dev") {
     test("hmr react", async ({ page }) => {
       await page.goto(f.url());
+      await waitForHydration(page, "main");
       await using _ = await expectNoReload(page);
 
       await expect(
@@ -112,6 +113,7 @@ function defineTest(f: Fixture) {
 
     test("hmr css", async ({ page }) => {
       await page.goto(f.url());
+      await waitForHydration(page, "main");
       await using _ = await expectNoReload(page);
 
       await expect(
