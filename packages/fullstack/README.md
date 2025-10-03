@@ -4,7 +4,7 @@
 
 This is a proposal to introduce a new API to allow non-client environment to access assets information commonly required for SSR.
 
-Currently, it is prototyped in my package `@hiogawa/vite-plugin-fullstack` and it provides `import.meta.vite.assets` function with a following signature:
+Currently, it is prototyped in my package `@hiogawa/vite-plugin-fullstack`, which provides `import.meta.vite.assets` function with a following signature:
 
 ```ts
 function assets({
@@ -134,7 +134,7 @@ See [./examples](./examples) for concrete usages.
 | --- | --- |
 | [Basic](./examples/basic/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/basic) |
 | [React Router](./examples/react-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router) |
-| [Vue Router](./examples/vue-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router) |
+| [Vue Router / SSG](./examples/vue-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router) |
 | [Nitro](https://github.com/hi-ogawa/nitro-vite-examples/tree/10-02-feat_add_vue-router-ssr_example/examples/vue-router-ssr) | [stackblitz](https://stackblitz.com/github/hi-ogawa/nitro-vite-examples/tree/10-02-feat_add_vue-router-ssr_example/examples/vue-router-ssr) |
 | [Cloudflare](./examples/cloudflare/) | - |
 

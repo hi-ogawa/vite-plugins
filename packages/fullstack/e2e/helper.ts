@@ -13,7 +13,11 @@ export async function waitForHydration(page: Page, selector = "body") {
           .evaluate(
             (el) =>
               el &&
-              Object.keys(el).some((key) => key.startsWith("__reactFiber")),
+              Object.keys(el).some(
+                (key) =>
+                  key.startsWith("__reactFiber") ||
+                  key.startsWith("__vue_app__"),
+              ),
           ),
       { timeout: 3000 },
     )

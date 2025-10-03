@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "srvx -s ../client dist/ssr/index.js"
+    "preview": "srvx --prod -s ../client dist/ssr/index.js"
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-fullstack": "latest",
