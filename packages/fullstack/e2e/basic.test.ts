@@ -43,17 +43,6 @@ function defineTest(f: Fixture) {
     expect(errors).toEqual([]);
   });
 
-  // TODO
-  if (f.mode === "dev") {
-    test("hmr js", async ({ page }) => {
-      page;
-    });
-
-    test("hmr css", async ({ page }) => {
-      page;
-    });
-  }
-
   test.describe(() => {
     test.use({ javaScriptEnabled: false });
 
@@ -72,7 +61,67 @@ function defineTest(f: Fixture) {
       );
 
       // modulepreload
-      // TODO
+      if (f.mode === "build") {
+        await expect(page.locator("link[rel='modulepreload']")).toBeAttached();
+      }
     });
   });
+
+  if (f.mode === "dev") {
+    test("hmr react", async ({ page }) => {
+      await page.goto(f.url());
+      await using _ = await expectNoReload(page);
+
+      await expect(
+        page.getByRole("button", { name: "count is 0" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "count is 0" }).click();
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+
+      const jsFile = f.createEditor("src/App.tsx");
+      jsFile.edit((s) => s.replace("count is", "count (edit) is"));
+
+      await expect(
+        page.getByRole("button", { name: "count (edit) is 1" }),
+      ).toBeVisible();
+
+      jsFile.reset();
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+    });
+
+    test("hmr css", async ({ page }) => {
+      await page.goto(f.url());
+      await using _ = await expectNoReload(page);
+
+      await expect(
+        page.getByRole("button", { name: "count is 0" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "count is 0" }).click();
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+
+      const cssFile = f.createEditor("src/App.css");
+      cssFile.edit((s) =>
+        s.replace("color: rgb(136, 136, 136);", "color: rgb(36, 36, 36);"),
+      );
+      await expect(page.locator(".read-the-docs")).toHaveCSS(
+        "color",
+        "rgb(36, 36, 36)",
+      );
+      cssFile.reset();
+      await expect(page.locator(".read-the-docs")).toHaveCSS(
+        "color",
+        "rgb(136, 136, 136)",
+      );
+
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+    });
+  }
 }
