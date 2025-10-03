@@ -68,8 +68,9 @@ export function serverHandlerPlugin(
         };
       },
       configureServer(server) {
-        assert(isRunnableDevEnvironment(server.environments.ssr));
-        const environment = server.environments.ssr;
+        const name = (pluginOpts?.serverEnvironments ?? ["ssr"])[0]!;
+        const environment = server.environments[name]!;
+        assert(isRunnableDevEnvironment(environment));
         const runner = environment.runner;
         return () => {
           server.middlewares.use(async (req, res, next) => {
