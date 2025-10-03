@@ -15,9 +15,10 @@ export default defineConfig((_env) => ({
     vue(),
     devtoolsJson(),
     fullstack(),
-    !!process.env.TEST_SSG && ssgPlugin({
-      paths: ["/", "/about"],
-    }),
+    !!process.env.TEST_SSG &&
+      ssgPlugin({
+        paths: ["/", "/about"],
+      }),
   ],
   environments: {
     client: {
@@ -69,7 +70,7 @@ async function renderStatic(
   pluginOpts: SsgPluginOptions,
   config: ResolvedConfig,
 ) {
-  console.log("[ssg] started")
+  console.log("[ssg] started");
 
   // import server entry
   const entryPath = path.join(config.environments.ssr.build.outDir, "index.js");
@@ -89,7 +90,7 @@ async function renderStatic(
       response.body!,
     );
   }
-  console.log("[ssg] finished in TODO ms")
+  console.log("[ssg] finished in (TODO) ms");
 }
 
 async function writeFileStream(filePath: string, stream: ReadableStream) {
