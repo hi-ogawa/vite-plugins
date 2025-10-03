@@ -1,2 +1,4 @@
-.nitro
-.output
+node_modules
+dist
+*.tsbuildinfop
+.wrangler
