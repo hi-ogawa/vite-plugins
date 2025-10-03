@@ -14,7 +14,7 @@ export type ImportAssetsOptions = {
   import?: string;
   environment?: string; // TODO: can remove?
   universal?: boolean;
-  clientEntry?: boolean; // TODO: dynamically add entry during build
+  asEntry?: boolean;
 };
 
 export type ImportAssetsResult = {

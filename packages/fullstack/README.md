@@ -7,7 +7,11 @@ This is a proposal to introduce a new API to allow non-client environment to acc
 Currently, it is prototyped in my package `@hiogawa/vite-plugin-fullstack` and it provides `import.meta.vite.assets` function with a following signature:
 
 ```ts
-function assets({ import?: string, environment?: string }): {
+function assets({
+  import?: string,
+  environment?: string,
+  asEntry?: boolean,
+}): {
   entry?: string;               // script for <script type="module" src=...>
   js: { href: string, ... }[];  // dependency chunks for <link rel="modulepreload" href=... />
   css: { href: string, ... }[]; // dependency css for <link rel="stylesheet" href=... />
@@ -24,6 +28,7 @@ function renderHtml() {
   const assets = import.meta.vite.assets({
     entry: "./client.js",
     environment: "client",
+    asEntry: true,
   });
   const head = `
     <script type="module" src=${JSON.stringify(assets.entry)}></script>
@@ -99,11 +104,6 @@ export default defineConfig({
     client: {
       build: {
         outDir: "./dist/client",
-        rollupOptions: {
-          input: {
-            index: "./src/entry.client.tsx",
-          },
-        },
       },
     },
     ssr: {
