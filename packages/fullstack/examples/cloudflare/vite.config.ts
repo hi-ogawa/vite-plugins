@@ -31,7 +31,6 @@ export default defineConfig((_env) => ({
     ssr: {
       build: {
         outDir: "./dist/ssr",
-        emitAssets: true,
         rollupOptions: {
           input: {
             index: "./src/entry.server.tsx",
