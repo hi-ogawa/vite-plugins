@@ -1,10 +1,11 @@
 import assert from "node:assert";
-import { type SpawnOptions, spawn } from "node:child_process";
+import { type SpawnOptions } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { stripVTControlCharacters, styleText } from "node:util";
 import test from "@playwright/test";
 import { x } from "tinyexec";
+import treeKill from "tree-kill"; // need to kill srvx's worker process
 
 function runCli(options: { command: string; label?: string } & SpawnOptions) {
   const [name, ...args] = options.command.split(" ");
@@ -43,11 +44,7 @@ function runCli(options: { command: string; label?: string } & SpawnOptions) {
   }
 
   function kill() {
-    if (process.platform === "win32") {
-      spawn("taskkill", ["/pid", String(child.pid), "/t", "/f"]);
-    } else {
-      child.kill();
-    }
+    treeKill(child.pid!);
   }
 
   return { proc: child, done, findPort, kill };
