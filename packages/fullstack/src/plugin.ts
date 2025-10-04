@@ -16,11 +16,7 @@ import {
   normalizePath,
 } from "vite";
 import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
-import {
-  type AssetsVirtual,
-  parseAssetsVirtual,
-  toAssetsVirtual,
-} from "./plugins/shared";
+import { parseAssetsVirtual, toAssetsVirtual } from "./plugins/shared";
 import {
   createVirtualPlugin,
   getEntrySource,
@@ -48,7 +44,7 @@ type ImportAssetsMeta = {
   id: string;
   key: string;
   importerEnvironment: string;
-  virtual: AssetsVirtual;
+  entry: boolean;
 };
 
 export default function vitePluginFullstack(
@@ -274,15 +270,17 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
             return `export default ${JSON.stringify(result)}`;
           } else {
+            const id = resolved.id;
+            const map = (importAssetsMetaMap[parsed.environment] ??= {});
             const meta: ImportAssetsMeta = {
-              id: resolved.id,
-              // normalize to have machine-independent build output
+              id,
+              // normalize key to have machine-independent build output
               key: path.relative(resolvedConfig.root, resolved.id),
               importerEnvironment: this.environment.name,
-              virtual: parsed,
+              // merge `entry`
+              entry: map[id]?.entry || !!parsed.entry,
             };
-            // TODO: don't overwrite entry=true to entry=false
-            (importAssetsMetaMap[parsed.environment] ??= {})[meta.id] = meta;
+            map[id] = meta;
             return `\
               import __assets_manifest from "virtual:fullstack/assets-manifest";
               export default __assets_manifest[${JSON.stringify(parsed.environment)}][${JSON.stringify(meta.key)}];
@@ -319,7 +317,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           const metas = importAssetsMetaMap["client"];
           if (metas) {
             for (const meta of Object.values(importAssetsMetaMap["client"]!)) {
-              if (meta.virtual.entry) {
+              if (meta.entry) {
                 this.emitFile({
                   type: "chunk",
                   id: meta.id,
