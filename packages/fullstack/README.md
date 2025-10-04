@@ -40,7 +40,7 @@ function renderHtml() {
 ```
 
 - for universal route to access assets within its route
-  - see [`examples/react-rotuer`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for concrete integrations.
+  - see [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for concrete integrations.
 
 ```js
 // [routes.js] hypothetical router library's routes declaration
