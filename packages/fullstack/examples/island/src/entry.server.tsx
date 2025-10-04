@@ -1,6 +1,8 @@
 import "./styles/server.css";
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { renderToReadableStream } from "react-dom/server.edge";
+import clientAssets from "./entry.client.tsx?assets=client";
+import serverAssets from "./entry.client.tsx?assets=ssr";
 
 async function handler(_request: Request): Promise<Response> {
   const html = await renderToReadableStream(<Root />);
@@ -10,14 +12,6 @@ async function handler(_request: Request): Promise<Response> {
 }
 
 function Root() {
-  const clientAssets = import.meta.vite.assets({
-    import: "./entry.client.tsx",
-    environment: "client",
-    asEntry: true,
-  });
-  const serverAssets = import.meta.vite.assets({
-    environment: "ssr",
-  });
   const assets = mergeAssets(clientAssets, serverAssets);
 
   return (

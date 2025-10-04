@@ -3,12 +3,7 @@ import { createSSRApp } from "vue";
 import { RouterView, createMemoryHistory, createRouter } from "vue-router";
 import { renderToString } from "vue/server-renderer";
 import { routes } from "../routes";
-
-const clientEntry = import.meta.vite.assets({
-  import: "./entry.client.ts",
-  environment: "client",
-  asEntry: true,
-});
+import clientEntry from "./entry.client.ts?assets=client";
 
 async function handler(request: Request): Promise<Response> {
   // setup app

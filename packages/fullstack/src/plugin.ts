@@ -401,11 +401,12 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       load: {
         handler(id) {
           const { filename, query } = parseIdQuery(id);
-          // TODO: parse query properly?
           const value = query["assets"];
           if (typeof value !== "undefined") {
             const options: ImportAssetsOptions = {
               import: filename,
+              environment: value,
+              asEntry: value === "client",
             };
             return `export default import.meta.vite.assets(${JSON.stringify(options)})`;
           }
