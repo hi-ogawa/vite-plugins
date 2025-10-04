@@ -1,8 +1,9 @@
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
+import { useHead } from "@unhead/vue";
 import { createHead, transformHtmlTemplate } from "@unhead/vue/server";
 import { createSSRApp } from "vue";
-import { createMemoryHistory, createRouter } from "vue-router";
+import { RouterView, createMemoryHistory, createRouter } from "vue-router";
 import { renderToString } from "vue/server-renderer";
-import Root from "../root.vue";
 import { routes } from "../routes";
 
 const assets = import.meta.vite.assets({
@@ -12,7 +13,7 @@ const assets = import.meta.vite.assets({
 
 async function handler(request: Request): Promise<Response> {
   // setup app
-  const app = createSSRApp(Root);
+  const app = createSSRApp(RouterView);
 
   // setup unhead
   // https://unhead.unjs.io/docs/vue/head/guides/get-started/installation
@@ -26,6 +27,21 @@ async function handler(request: Request): Promise<Response> {
     routes,
   });
   app.use(router);
+
+  // setup route change handler to inject head for route meta assets
+  router.beforeEach((to, _from, next) => {
+    const assets = mergeAssets(
+      ...to.matched.flatMap((to) => to.meta.assets ?? []),
+    );
+    useHead({
+      link: [
+        ...assets.css.map((attrs) => ({ rel: "stylesheet", ...attrs })),
+        ...assets.js.map((attrs) => ({ rel: "modulepreload", ...attrs })),
+      ],
+    });
+    next();
+  });
+
   const url = new URL(request.url);
   const href = url.href.slice(url.origin.length);
   await router.push(href);
