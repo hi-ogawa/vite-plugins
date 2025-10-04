@@ -31,7 +31,7 @@ async function handler(request: Request): Promise<Response> {
     ...context.matches
       .map((m) => m.route.handle as CustomHandle)
       .filter(Boolean)
-      .flatMap((h) => h.assets),
+      .map((h) => h.assets),
   );
 
   function SsrRoot() {

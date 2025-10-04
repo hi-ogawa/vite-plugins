@@ -8,11 +8,9 @@ export const routes: RouteObject[] = [
     path: "/",
     lazy: () => import("./root"),
     handle: {
-      assets: [
-        import.meta.vite.assets({
-          import: "./root",
-        }),
-      ],
+      assets: import.meta.vite.assets({
+        import: "./root",
+      }),
     } satisfies CustomHandle,
     children: [
       {
@@ -20,11 +18,9 @@ export const routes: RouteObject[] = [
         index: true,
         lazy: () => import("./routes/index"),
         handle: {
-          assets: [
-            import.meta.vite.assets({
-              import: "./routes/index",
-            }),
-          ],
+          assets: import.meta.vite.assets({
+            import: "./routes/index",
+          }),
         } satisfies CustomHandle,
       },
       {
@@ -32,11 +28,9 @@ export const routes: RouteObject[] = [
         path: "about",
         lazy: () => import("./routes/about"),
         handle: {
-          assets: [
-            import.meta.vite.assets({
-              import: "./routes/about",
-            }),
-          ],
+          assets: import.meta.vite.assets({
+            import: "./routes/about",
+          }),
         } satisfies CustomHandle,
       },
     ],
@@ -44,5 +38,5 @@ export const routes: RouteObject[] = [
 ];
 
 export type CustomHandle = {
-  assets: ImportAssetsResult[];
+  assets: ImportAssetsResult;
 };
