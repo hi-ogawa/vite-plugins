@@ -11,25 +11,27 @@ const assets = import.meta.vite.assets({
 });
 
 async function handler(request: Request): Promise<Response> {
-  // setup router
-  const router = createRouter({
-    history: createMemoryHistory(),
-    routes,
-  });
-  const url = new URL(request.url);
-  const href = url.href.slice(url.origin.length);
-  router.push(href);
-
   // setup app
   const app = createSSRApp(Root);
-  app.use(router);
 
+  // setup unhead
   // https://unhead.unjs.io/docs/vue/head/guides/get-started/installation
   const head = createHead();
   app.use(head);
 
-  // render
+  // setup vue-router
+  // https://github.com/nuxt/nuxt/blob/766806c8d90015873f86c3f103b09803bd214258/packages/nuxt/src/pages/runtime/plugins/router.ts
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes,
+  });
+  app.use(router);
+  const url = new URL(request.url);
+  const href = url.href.slice(url.origin.length);
+  await router.push(href);
   await router.isReady();
+
+  // render
   const ssrStream = await renderToString(app);
 
   let htmlStream = `\
