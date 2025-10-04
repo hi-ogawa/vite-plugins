@@ -14,6 +14,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "sirv-cli": "^3.0.1",
     "srvx": "^0.8.7",
+    "unhead": "^2.0.17",
     "vite": "^7.1.5",
     "vite-plugin-devtools-json": "^1.0.0",
     "vue": "^3.5.22",

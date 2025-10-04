@@ -1,4 +1,5 @@
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
+import { createHead, transformHtmlTemplate } from "unhead/server";
 import { createSSRApp } from "vue";
 import { RouterView, createMemoryHistory, createRouter } from "vue-router";
 import { renderToString } from "vue/server-renderer";
@@ -32,37 +33,33 @@ async function handler(request: Request): Promise<Response> {
         .map((fn) => fn!().then((m) => m.default)),
     )),
   );
-  const head = [
-    ...assets.css.map((attrs) => {
-      return `<link rel="stylesheet" ${Object.entries(attrs)
-        .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
-        .join(" ")} />`;
-    }),
-    ...assets.js.map((attrs) => {
-      return `<link rel="modulepreload" ${Object.entries(attrs)
-        .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
-        .join(" ")} />`;
-    }),
-    `<script type="module" src=${JSON.stringify(clientEntry.entry)}></script>`,
-  ];
+  const head = createHead();
+  head.push({
+    link: [
+      ...assets.css.map((attrs) => ({ rel: "stylesheet", ...attrs })),
+      ...assets.js.map((attrs) => ({ rel: "modulepreload", ...attrs })),
+    ],
+    script: [{ type: "module", src: clientEntry.entry }],
+  });
 
-  // render
+  // SSR
   const ssrStream = await renderToString(app);
 
-  const htmlStream = `\
+  // inject to HTML shell with head tags
+  let htmlStream = `\
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vue Router Custom Framework</title>
-${head.map((s) => "  " + s).join("\n")}
 </head>
 <body>
   <div id="root">${ssrStream}</div>
 </body>
 </html>
 `;
+  htmlStream = await transformHtmlTemplate(head, htmlStream);
 
   return new Response(htmlStream, {
     headers: {
