@@ -1,2 +1,1 @@
-export { default, assetsPlugin } from "./plugin.ts";
-export { reactHmrPreamblePlugin } from "./plugins/react.ts";
+export { default, serverHandlerPlugin, assetsPlugin } from "./plugin.ts";
