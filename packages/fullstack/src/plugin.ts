@@ -15,6 +15,7 @@ import {
   normalizePath,
 } from "vite";
 import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
+import { serverTransformIndexHtmlPlugin } from "./plugins/html";
 import {
   type AssetsVirtual,
   parseAssetsVirtual,
@@ -98,6 +99,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
 
   return [
+    ...serverTransformIndexHtmlPlugin(),
     {
       name: "fullstack:assets",
       // TODO: support non shared build?
