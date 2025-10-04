@@ -386,6 +386,14 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           }
         },
       },
+      generateBundle(_optoins, bundle) {
+        if (this.environment.name !== "client") return;
+        for (const [k, v] of Object.entries(bundle)) {
+          if (v.type === "chunk" && v.name === "__fallback") {
+            delete bundle[k];
+          }
+        }
+      },
     },
     patchViteClientPlugin(),
     patchVueScopeCssHmr(),
