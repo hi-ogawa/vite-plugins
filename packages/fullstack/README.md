@@ -148,11 +148,7 @@ export default defineConfig({
 
 ## Helper API
 
-The plugin provides utility functions to work with assets:
-
-### `mergeAssets`
-
-Combines multiple assets objects into a single deduplicated assets object.
+The plugin provides utility function `mergeAssets` to combines multiple assets objects into a single deduplicated assets object.
 
 ```js
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
