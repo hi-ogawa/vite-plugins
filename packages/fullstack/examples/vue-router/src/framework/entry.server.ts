@@ -30,9 +30,12 @@ async function handler(request: Request): Promise<Response> {
   // collect assets from current route
   const assets = mergeAssets(
     clientEntry,
-    ...router.currentRoute.value.matched
-      .map((to) => to.meta.assets!)
-      .filter(Boolean),
+    ...(await Promise.all(
+      router.currentRoute.value.matched
+        .map((to) => to.meta.assets)
+        .filter(Boolean)
+        .map((fn) => fn!().then((m) => m.default)),
+    )),
   );
   const head = [
     ...assets.css.map((attrs) => {

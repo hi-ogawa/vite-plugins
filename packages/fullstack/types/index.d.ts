@@ -1,3 +1,5 @@
+/// <reference path="./query.d.ts" />
+
 import type { ImportAssetsOptions, ImportAssetsResult } from "./shared.ts";
 
 declare global {

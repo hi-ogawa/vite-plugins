@@ -1,4 +1,3 @@
-import type { ImportAssetsResult } from "@hiogawa/vite-plugin-fullstack/runtime";
 import type { RouteObject } from "react-router";
 
 // custom framework may employ fs router convention to reduce boilerplace
@@ -8,35 +7,25 @@ export const routes: RouteObject[] = [
     path: "/",
     lazy: () => import("./root"),
     handle: {
-      assets: import.meta.vite.assets({
-        import: "./root",
-      }),
-    } satisfies CustomHandle,
+      assets: () => import("./root?assets"),
+    },
     children: [
       {
         id: "index",
         index: true,
         lazy: () => import("./routes/index"),
         handle: {
-          assets: import.meta.vite.assets({
-            import: "./routes/index",
-          }),
-        } satisfies CustomHandle,
+          assets: () => import("./routes/index?assets"),
+        },
       },
       {
         id: "about",
         path: "about",
         lazy: () => import("./routes/about"),
         handle: {
-          assets: import.meta.vite.assets({
-            import: "./routes/about",
-          }),
-        } satisfies CustomHandle,
+          assets: () => import("./routes/about?assets"),
+        },
       },
     ],
   },
 ];
-
-export type CustomHandle = {
-  assets: ImportAssetsResult;
-};

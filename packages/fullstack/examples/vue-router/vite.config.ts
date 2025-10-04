@@ -12,7 +12,7 @@ export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
     // inspect(),
-    vue(),
+    patchVueExclude(vue(), /\?assets/),
     devtoolsJson(),
     fullstack(),
     !!process.env.TEST_SSG &&
@@ -47,6 +47,16 @@ export default defineConfig((_env) => ({
     },
   },
 }));
+
+// workaround https://github.com/vitejs/vite-plugin-vue/issues/677
+function patchVueExclude(plugin: Plugin, exclude: RegExp) {
+  const original = (plugin.transform as any).handler;
+  (plugin.transform as any).handler = function (this: any, ...args: any[]) {
+    if (exclude.test(args[1])) return;
+    return original.call(this, ...args);
+  };
+  return plugin;
+}
 
 type SsgPluginOptions = {
   paths: string[];

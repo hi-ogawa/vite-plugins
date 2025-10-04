@@ -5,7 +5,7 @@ import {
   createStaticHandler,
   createStaticRouter,
 } from "react-router";
-import { type CustomHandle, routes } from "../routes";
+import { routes } from "../routes";
 
 const { query, dataRoutes } = createStaticHandler(routes);
 
@@ -28,10 +28,16 @@ async function handler(request: Request): Promise<Response> {
   // collect assets from matched routes
   const assets = mergeAssets(
     clientEntry,
-    ...context.matches
-      .map((m) => m.route.handle as CustomHandle)
-      .filter(Boolean)
-      .map((h) => h.assets),
+    ...(await Promise.all(
+      context.matches
+        .map(
+          (m) =>
+            m.route.handle
+              ?.assets?.()
+              .then((v: typeof import("*?assets")) => v.default)!,
+        )
+        .filter(Boolean),
+    )),
   );
 
   function SsrRoot() {

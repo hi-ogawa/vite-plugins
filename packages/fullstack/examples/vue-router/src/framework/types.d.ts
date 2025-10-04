@@ -5,6 +5,6 @@ export {};
 
 declare module "vue-router" {
   interface RouteMeta {
-    assets?: import("@hiogawa/vite-plugin-fullstack/runtime").ImportAssetsResult;
+    assets?: () => Promise<typeof import("*?assets")>;
   }
 }
