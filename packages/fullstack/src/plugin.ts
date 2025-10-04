@@ -462,16 +462,6 @@ async function collectCss(environment: DevEnvironment, entryId: string) {
     visited.add(id);
     const mod = environment.moduleGraph.getModuleById(id);
     if (!mod) return;
-    // TODO: this is not ideal.
-    // We eagerly transforming module is required
-    // to allow patterns like packages/fullstack/examples/react-router/src/routes.ts
-    if (!mod.transformResult) {
-      try {
-        await environment.transformRequest(id);
-      } catch (e) {
-        console.error(`[collectCss] Failed to transform '${id}'`, e);
-      }
-    }
     if (mod?.file) {
       visitedFiles.add(mod.file);
     }
