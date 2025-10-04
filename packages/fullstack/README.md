@@ -1,10 +1,8 @@
-# @hiogawa/vite-plugin-fullstack
-
-## SSR Assets API Proposal
+# SSR Assets API Proposal
 
 This proposal introduces a new API that enables SSR environments to access client assets information required for server-side rendering. This feature is currently prototyped in the package `@hiogawa/vite-plugin-fullstack`.
 
-### `?assets` Query Import
+## `?assets` Query Import
 
 The plugin provides a new query import `?assets` to access assets information of the module. There are three variations of the import:
 
@@ -92,7 +90,7 @@ export function renderHtml() {
 }
 ```
 
-### Configuration
+## Configuration
 
 The API is enabled by adding the plugin and minimal build configuration:
 
@@ -139,7 +137,7 @@ export default defineConfig({
 })
 ```
 
-### Helper API
+## Helper API
 
 The plugin provides utility function `mergeAssets` to combines multiple assets objects into a single deduplicated assets object.
 
@@ -155,7 +153,7 @@ const mergedAssets = mergeAssets(route1Assets, route2Assets);
 ```
 
 
-### TypeScript Support
+## TypeScript Support
 
 TypeScript support for `?assets` imports can be enabled by adding the following to your `tsconfig.json`:
 
