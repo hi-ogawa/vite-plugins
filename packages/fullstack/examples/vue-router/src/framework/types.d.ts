@@ -5,6 +5,6 @@ export {};
 
 declare module "vue-router" {
   interface RouteMeta {
-    assets?: (() => Promise<typeof import("*?assets")>)[];
+    assets?: () => Promise<typeof import("*?assets")>;
   }
 }
