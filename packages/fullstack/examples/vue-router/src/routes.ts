@@ -14,7 +14,7 @@ export const routes: RouteRecordRaw[] = [
         }),
         // include client entry for ssr modulepreload
         import.meta.vite.assets({
-          import: "./framework/entry.client.tsx",
+          import: "./framework/entry.client.ts",
           environment: "client",
         }),
       ],

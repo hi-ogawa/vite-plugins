@@ -21,7 +21,7 @@ export default defineConfig((_env) => ({
       }),
   ],
   optimizeDeps: {
-    entries: ["src/framework/entry.client.tsx"],
+    entries: ["src/framework/entry.client.ts"],
   },
   environments: {
     client: {
@@ -34,7 +34,7 @@ export default defineConfig((_env) => ({
         outDir: "./dist/ssr",
         rollupOptions: {
           input: {
-            index: "./src/framework/entry.server.tsx",
+            index: "./src/framework/entry.server.ts",
           },
         },
       },
