@@ -16,7 +16,11 @@ import {
   normalizePath,
 } from "vite";
 import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
-import { parseAssetsVirtual, toAssetsVirtual } from "./plugins/shared";
+import {
+  parseAssetsVirtual,
+  parseIdQuery,
+  toAssetsVirtual,
+} from "./plugins/shared";
 import {
   createVirtualPlugin,
   getEntrySource,
@@ -390,6 +394,22 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
           }
         },
+      },
+    },
+    {
+      name: "fullstack:assets-query",
+      load(id) {
+        const { filename, query } = parseIdQuery(id);
+        // TODO: parse query properly?
+        // for now `?assets` and `?assets=client` are supported.
+        const value = query["assets"];
+        if (typeof value !== "undefined") {
+          const options: ImportAssetsOptions = {
+            import: filename,
+            environment: value === "client" ? "client" : undefined,
+          };
+          return `export default import.meta.vite.assets(${JSON.stringify(options)})`;
+        }
       },
     },
     // ensure at least one client build input to prevent Vite
