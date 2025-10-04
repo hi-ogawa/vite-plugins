@@ -14,10 +14,10 @@ import assets from "./index.js?assets=client";
 import assets from "./index.js?assets=ssr";
 ```
 
-The deafult import of `?assets` import has a following type:
+The deafult export of `?assets` module has a following type:
 
 ```ts
-const assets: {
+type Assets = {
   entry?: string;               // script for <script type="module" src=...>
   js: { href: string, ... }[];  // preload chunks for <link rel="modulepreload" href=... />
   css: { href: string, ... }[]; // css for <link rel="stylesheet" href=... />
