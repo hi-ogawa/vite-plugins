@@ -12,9 +12,7 @@ export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
     // inspect(),
-    // avoid vue plugin to process "xxx.vue?assets"
-    // TODO: not working for build?
-    vue({ exclude: /\?assets/ }),
+    vue(),
     devtoolsJson(),
     fullstack(),
     !!process.env.TEST_SSG &&

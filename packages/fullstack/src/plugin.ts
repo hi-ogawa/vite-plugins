@@ -398,13 +398,27 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     },
     {
       name: "fullstack:assets-query",
+      async resolveId(source, importer) {
+        // TODO: vue doesn't seem to support "xxx.vue?assets".
+        // for now, we allow users to workaround by "xxx.vue$?assets"
+        const { filename, query } = parseIdQuery(source);
+        if (filename.endsWith("$") && "assets" in query) {
+          const resolved = await this.resolve(
+            source.replace("$?", "?"),
+            importer,
+          );
+          if (resolved) {
+            return resolved.id.replace("?", "$?");
+          }
+        }
+      },
       load(id) {
         const { filename, query } = parseIdQuery(id);
         // TODO: parse query properly?
         const value = query["assets"];
         if (typeof value !== "undefined") {
           const options: ImportAssetsOptions = {
-            import: filename,
+            import: filename.replace(/\$$/, ""),
           };
           return `export default import.meta.vite.assets(${JSON.stringify(options)})`;
         }
