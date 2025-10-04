@@ -26,7 +26,7 @@ The goal of the API is to cover following use cases in SSR application:
 // [server.js] server entry injecting client entry during SSR
 function renderHtml() {
   const assets = import.meta.vite.assets({
-    entry: "./client.js",
+    import: "./client.js",
     environment: "client",
     asEntry: true,
   });
@@ -40,7 +40,7 @@ function renderHtml() {
 ```
 
 - for universal route to access assets within its route
-  - see [`examples/react-rotuer`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for concrete integrations.
+  - see [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for concrete integrations.
 
 ```js
 // [routes.js] hypothetical router library's routes declaration
@@ -50,11 +50,11 @@ export const routes = [
     route: () => import("./pages/about.js"),
     routeAssets: mergeAssets(
       import.meta.vite.assets({
-        entry: "./pages/about.js",
+        import: "./pages/about.js",
         environment: "client",
       }),
       import.meta.vite.assets({
-        entry: "./pages/about.js",
+        import: "./pages/about.js",
         environment: "ssr",
       }),
     )
