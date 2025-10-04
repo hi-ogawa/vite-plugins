@@ -20,7 +20,7 @@ function assets({
 
 The goal of the API is to cover following use cases in SSR application:
 
-- for server entry to access client entry
+- Server entry accessing client entry
 
 ```js
 // [server.js] server entry injecting client entry during SSR
@@ -39,7 +39,7 @@ function renderHtml() {
 }
 ```
 
-- for universal route to access assets within its route
+- Universal route (CSR and SSR) accessing dependencies for its route
   - see [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for concrete integrations.
 
 ```js
@@ -48,22 +48,13 @@ export const routes = [
   {
     path: "/about"
     route: () => import("./pages/about.js"),
-    routeAssets: mergeAssets(
-      import.meta.vite.assets({
-        import: "./pages/about.js",
-        environment: "client",
-      }),
-      import.meta.vite.assets({
-        import: "./pages/about.js",
-        environment: "ssr",
-      }),
-    )
+    routeAssets: import.meta.vite.assets({ import: "./pages/about.js" })
   },
   ...
 ]
 ```
 
-- server only app to access css
+- Server only page accessing css dependencies
 
 ```js
 // [server.js]
@@ -71,9 +62,9 @@ import "./styles.css" // this will be included in `assets.css` below
 
 function renderHtml() {
   const assets = import.meta.vite.assets({
-    // both `import` and `environment` is optional and they are default to current module and environment
+    // `import` is optional and they are default to current module
     // import: "./server.js",
-    // environment: "ssr",
+    environment: "ssr",
   });
   const head = `
     <link type="stylesheet" href=${JSON.stringify(assets.css[0].href)}></script>
