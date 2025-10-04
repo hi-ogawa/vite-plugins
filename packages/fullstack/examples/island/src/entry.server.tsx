@@ -13,8 +13,11 @@ function Root() {
   const clientAssets = import.meta.vite.assets({
     import: "./entry.client.tsx",
     environment: "client",
+    asEntry: true,
   });
-  const serverAssets = import.meta.vite.assets();
+  const serverAssets = import.meta.vite.assets({
+    environment: "ssr",
+  });
   const assets = mergeAssets(clientAssets, serverAssets);
 
   return (
