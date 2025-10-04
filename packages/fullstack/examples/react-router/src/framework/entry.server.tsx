@@ -25,6 +25,7 @@ async function handler(request: Request): Promise<Response> {
   const context = queryResult;
   const router = createStaticRouter(dataRoutes, context);
 
+  // collect assets from matched routes
   const assets = mergeAssets(
     clientEntry,
     ...context.matches
@@ -36,19 +37,17 @@ async function handler(request: Request): Promise<Response> {
   function SsrRoot() {
     return (
       <>
-        <>
-          {assets.js.map((attrs) => (
-            <link
-              {...attrs}
-              rel="modulepreload"
-              key={attrs.href}
-              crossOrigin=""
-            />
-          ))}
-          {assets.css.map((attrs) => (
-            <link {...attrs} rel="stylesheet" key={attrs.href} crossOrigin="" />
-          ))}
-        </>
+        {assets.js.map((attrs) => (
+          <link
+            {...attrs}
+            rel="modulepreload"
+            key={attrs.href}
+            crossOrigin=""
+          />
+        ))}
+        {assets.css.map((attrs) => (
+          <link {...attrs} rel="stylesheet" key={attrs.href} crossOrigin="" />
+        ))}
         <StaticRouterProvider router={router} context={context} />
       </>
     );
