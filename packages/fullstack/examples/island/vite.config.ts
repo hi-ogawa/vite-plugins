@@ -12,15 +12,13 @@ export default defineConfig((_env) => ({
     react(),
     reactHmrPreamblePlugin(),
   ],
+  optimizeDeps: {
+    entries: ["./src/entry.client.tsx"],
+  },
   environments: {
     client: {
       build: {
         outDir: "./dist/client",
-        rollupOptions: {
-          input: {
-            index: "./src/entry.client.tsx",
-          },
-        },
       },
     },
     ssr: {

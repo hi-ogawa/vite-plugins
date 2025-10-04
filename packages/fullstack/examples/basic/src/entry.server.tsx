@@ -16,7 +16,9 @@ function Root() {
     environment: "client",
     asEntry: true,
   });
-  const serverAssets = import.meta.vite.assets();
+  const serverAssets = import.meta.vite.assets({
+    environment: "ssr",
+  });
   const assets = mergeAssets(clientAssets, serverAssets);
 
   return (

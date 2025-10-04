@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import MagicString from "magic-string";
 import { toNodeHandler } from "srvx/node";
+import { stripLiteral } from "strip-literal";
 import {
   DevEnvironment,
   type Plugin,
@@ -131,8 +132,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         async handler(code, id, _options) {
           if (!code.includes("import.meta.vite.assets")) return;
 
-          // TODO: strip comments
           const output = new MagicString(code);
+          const strippedCode = stripLiteral(code);
 
           const emptyResult: ImportAssetsResult = {
             js: [],
@@ -146,6 +147,15 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           )) {
             const [start, end] = match.indices![0]!;
 
+            // skip if inside comment or string literal
+            if (
+              !strippedCode
+                .slice(start, end)
+                .includes("import.meta.vite.assets")
+            ) {
+              continue;
+            }
+
             // No-op on client since vite build handles preload/css for dynamic import on client.
             // https://vite.dev/guide/features.html#async-chunk-loading-optimization
             if (this.environment.name === "client") {
@@ -155,28 +165,44 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
 
             const argCode = match[1]!.trim();
-            const options: Required<ImportAssetsOptions> = {
+            const options = {
               import: id,
-              environment: this.environment.name,
+              environment: undefined,
               asEntry: false,
-            };
+            } satisfies ImportAssetsOptions;
             if (argCode) {
               const argValue = evalValue<ImportAssetsOptions>(argCode);
               Object.assign(options, argValue);
             }
 
-            const importSource = toAssetsVirtual({
-              import: options.import,
-              importer: id,
-              environment: options.environment,
-              entry: options.asEntry ? "1" : "",
-            });
-            const hash = hashString(importSource);
-            const importedName = `__assets_${hash}`;
-            newImports.add(
-              `;import ${importedName} from ${JSON.stringify(importSource)};\n`,
-            );
-            output.update(start, end, `(${importedName})`);
+            // when `environment` is omitted, import both client and
+            // current environment (i.e. treat is as universal route)
+            const environments = options.environment
+              ? [options.environment]
+              : ["client", this.environment.name];
+            const importedNames: string[] = [];
+            for (const environment of environments) {
+              const importSource = toAssetsVirtual({
+                import: options.import,
+                importer: id,
+                environment,
+                entry: options.asEntry ? "1" : "",
+              });
+              const hash = hashString(importSource);
+              const importedName = `__assets_${hash}`;
+              newImports.add(
+                `;import ${importedName} from ${JSON.stringify(importSource)};\n`,
+              );
+              importedNames.push(importedName);
+            }
+            let replacement = importedNames[0]!;
+            if (importedNames.length > 1) {
+              newImports.add(
+                `;import * as __assets_runtime from "@hiogawa/vite-plugin-fullstack/runtime";\n`,
+              );
+              replacement = `__assets_runtime.mergeAssets(${importedNames.join(", ")})`;
+            }
+            output.update(start, end, `(${replacement})`);
           }
 
           if (output.hasChanged()) {

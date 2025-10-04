@@ -12,11 +12,6 @@ export const routes: RouteObject[] = [
       assets: [
         import.meta.vite.assets({
           import: "./root",
-          environment: "client",
-        }),
-        import.meta.vite.assets({
-          import: "./root",
-          environment: "ssr",
         }),
         // include client entry for ssr modulepreload
         import.meta.vite.assets({
@@ -32,14 +27,8 @@ export const routes: RouteObject[] = [
         lazy: () => import("./routes/index"),
         handle: {
           assets: [
-            // TODO: we don't need to repeated if we eagerly transform client on dev.
             import.meta.vite.assets({
               import: "./routes/index",
-              environment: "client",
-            }),
-            import.meta.vite.assets({
-              import: "./routes/index",
-              environment: "ssr",
             }),
           ],
         } satisfies CustomHandle,
@@ -52,11 +41,6 @@ export const routes: RouteObject[] = [
           assets: [
             import.meta.vite.assets({
               import: "./routes/about",
-              environment: "client",
-            }),
-            import.meta.vite.assets({
-              import: "./routes/about",
-              environment: "ssr",
             }),
           ],
         } satisfies CustomHandle,

@@ -17,11 +17,6 @@ export const routes: RouteRecordRaw[] = [
       useAssets(
         import.meta.vite.assets({
           import: "./routes/index.vue",
-          environment: "client",
-        }),
-        import.meta.vite.assets({
-          import: "./routes/index.vue",
-          environment: "ssr",
         }),
       );
       next();
@@ -35,11 +30,6 @@ export const routes: RouteRecordRaw[] = [
       useAssets(
         import.meta.vite.assets({
           import: "./routes/about.vue",
-          environment: "client",
-        }),
-        import.meta.vite.assets({
-          import: "./routes/about.vue",
-          environment: "ssr",
         }),
       );
       next();
@@ -53,11 +43,6 @@ export const routes: RouteRecordRaw[] = [
       useAssets(
         import.meta.vite.assets({
           import: "./routes/not-found.vue",
-          environment: "client",
-        }),
-        import.meta.vite.assets({
-          import: "./routes/not-found.vue",
-          environment: "ssr",
         }),
       );
       next();
@@ -68,11 +53,6 @@ export const routes: RouteRecordRaw[] = [
 const rootAssets = [
   import.meta.vite.assets({
     import: "./root.vue",
-    environment: "client",
-  }),
-  import.meta.vite.assets({
-    import: "./root.vue",
-    environment: "ssr",
   }),
   import.meta.vite.assets({
     import: "./framework/entry.client.tsx",
