@@ -5,16 +5,16 @@ import type { RouteRecordRaw } from "vue-router";
 export const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    name: "root",
-    component: () => import("./root.vue"),
+    name: "app",
+    component: () => import("./app.vue"),
     meta: {
       assets: [
         import.meta.vite.assets({
-          import: "./root.vue",
+          import: "./app.vue",
         }),
         // include client entry for ssr modulepreload
         import.meta.vite.assets({
-          import: "./framework/entry.client.tsx",
+          import: "./framework/entry.client.ts",
           environment: "client",
         }),
       ],
@@ -23,11 +23,11 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "/",
         name: "home",
-        component: () => import("./routes/index.vue"),
+        component: () => import("./pages/index.vue"),
         meta: {
           assets: [
             import.meta.vite.assets({
-              import: "./routes/index.vue",
+              import: "./pages/index.vue",
             }),
           ],
         },
@@ -35,11 +35,11 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "/about",
         name: "client",
-        component: () => import("./routes/about.vue"),
+        component: () => import("./pages/about.vue"),
         meta: {
           assets: [
             import.meta.vite.assets({
-              import: "./routes/about.vue",
+              import: "./pages/about.vue",
             }),
           ],
         },
@@ -47,11 +47,11 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "/:catchAll(.*)",
         name: "not-found",
-        component: () => import("./routes/not-found.vue"),
+        component: () => import("./pages/not-found.vue"),
         meta: {
           assets: [
             import.meta.vite.assets({
-              import: "./routes/not-found.vue",
+              import: "./pages/not-found.vue",
             }),
           ],
         },

@@ -7,8 +7,9 @@ import { renderToString } from "vue/server-renderer";
 import { routes } from "../routes";
 
 const assets = import.meta.vite.assets({
-  import: "./entry.client.tsx",
+  import: "./entry.client.ts",
   environment: "client",
+  asEntry: true,
 });
 
 async function handler(request: Request): Promise<Response> {

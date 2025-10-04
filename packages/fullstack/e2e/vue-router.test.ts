@@ -66,7 +66,7 @@ function defineTest(f: Fixture) {
 
       await testClient(page);
 
-      const jsFile = f.createEditor("src/routes/index.vue");
+      const jsFile = f.createEditor("src/pages/index.vue");
       jsFile.edit((s) => s.replace("Count:", "Count-edit:"));
 
       await expect(page.locator(".counter-card")).toContainText(
@@ -87,7 +87,7 @@ function defineTest(f: Fixture) {
       await testClient(page);
 
       // scoped css
-      const cssFile = f.createEditor("src/routes/index.vue");
+      const cssFile = f.createEditor("src/pages/index.vue");
       cssFile.edit((s) =>
         s.replace("color: rgb(100, 108, 255);", "color: rgb(0, 0, 255);"),
       );
