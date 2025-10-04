@@ -2,6 +2,11 @@ import type { DefaultTreeAdapterMap } from "parse5";
 import type { HtmlTagDescriptor, Plugin, ViteDevServer } from "vite";
 import { createVirtualPlugin } from "./utils";
 
+// the idea is:
+// - run `transformIndexHtml` to empty html
+// - parse output
+// - extract <script> and <link> and turn them back to `transformIndexHtml` descriptors
+
 export function serverTransformIndexHtmlPlugin(): Plugin[] {
   let server: ViteDevServer;
 
@@ -20,9 +25,6 @@ export function serverTransformIndexHtmlPlugin(): Plugin[] {
     createVirtualPlugin(
       "fullstack/server-transform-index-html",
       async function () {
-        // - run `transformIndexHtml` to empty html
-        // - parse output
-        // - extract <script> and <link> and turn them back to descriptors
         const html = await server.transformIndexHtml(
           "/",
           "<!DOCTYPE html><html><head></head><body></body></html>",
@@ -52,8 +54,8 @@ export async function processHtml(html: string): Promise<{
   let injectTo: HtmlTagDescriptor["injectTo"] = "head";
   traverseNodes(ast, (node) => {
     if (nodeIsElement(node)) {
-      if (node.tagName === 'body') {
-        injectTo = 'body';
+      if (node.tagName === "body") {
+        injectTo = "body";
       }
       if (node.tagName === "script" || node.tagName === "link") {
         const descriptor: HtmlTagDescriptor = {
