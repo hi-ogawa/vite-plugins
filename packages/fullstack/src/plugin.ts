@@ -28,6 +28,7 @@ import {
   normalizeRelativePath,
 } from "./plugins/utils";
 import {
+  cleanUrl,
   evalValue,
   normalizeViteImportAnalysisUrl,
 } from "./plugins/vite-utils";
@@ -258,7 +259,10 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
             if (environment.name !== "client") {
               const collected = await collectCss(environment, resolved.id);
-              for (const file of [resolved.id, ...collected.visitedFiles]) {
+              for (const file of [
+                cleanUrl(resolved.id),
+                ...collected.visitedFiles,
+              ]) {
                 if (fs.existsSync(file)) {
                   this.addWatchFile(file);
                 }
@@ -411,6 +415,14 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
           }
         },
+      },
+      generateBundle(_optoins, bundle) {
+        if (this.environment.name !== "client") return;
+        for (const [k, v] of Object.entries(bundle)) {
+          if (v.type === "chunk" && v.name === "__fallback") {
+            delete bundle[k];
+          }
+        }
       },
     },
     patchViteClientPlugin(),
