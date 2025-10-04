@@ -1,4 +1,3 @@
-import { createHead } from "@unhead/vue/client";
 import { createSSRApp } from "vue";
 import { RouterView, createRouter, createWebHistory } from "vue-router";
 import { routes } from "../routes";
@@ -11,9 +10,6 @@ async function main() {
     routes,
   });
   app.use(router);
-
-  const head = createHead();
-  app.use(head);
 
   await router.isReady();
   app.mount("#root");

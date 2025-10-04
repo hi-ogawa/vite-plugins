@@ -1,23 +1,13 @@
 import type { RouteRecordRaw } from "vue-router";
 
-// custom framework may employ fs router convention and/or transform plugin
-// to reduce boilerplace
+// custom framework may employ fs router convention to reduce boilerplace.
 export const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "app",
     component: () => import("./app.vue"),
     meta: {
-      assets: [
-        import.meta.vite.assets({
-          import: "./app.vue",
-        }),
-        // include client entry for ssr modulepreload
-        import.meta.vite.assets({
-          import: "./framework/entry.client.ts",
-          environment: "client",
-        }),
-      ],
+      assets: import.meta.vite.assets({ import: "./app.vue" }),
     },
     children: [
       {
@@ -25,23 +15,15 @@ export const routes: RouteRecordRaw[] = [
         name: "home",
         component: () => import("./pages/index.vue"),
         meta: {
-          assets: [
-            import.meta.vite.assets({
-              import: "./pages/index.vue",
-            }),
-          ],
+          assets: import.meta.vite.assets({ import: "./pages/index.vue" }),
         },
       },
       {
         path: "/about",
-        name: "client",
+        name: "about",
         component: () => import("./pages/about.vue"),
         meta: {
-          assets: [
-            import.meta.vite.assets({
-              import: "./pages/about.vue",
-            }),
-          ],
+          assets: import.meta.vite.assets({ import: "./pages/about.vue" }),
         },
       },
       {
@@ -49,11 +31,7 @@ export const routes: RouteRecordRaw[] = [
         name: "not-found",
         component: () => import("./pages/not-found.vue"),
         meta: {
-          assets: [
-            import.meta.vite.assets({
-              import: "./pages/not-found.vue",
-            }),
-          ],
+          assets: import.meta.vite.assets({ import: "./pages/not-found.vue" }),
         },
       },
     ],
