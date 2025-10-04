@@ -233,7 +233,9 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             if (environment.name !== "client") {
               const collected = await collectCss(environment, resolved.id);
               for (const file of [resolved.id, ...collected.visitedFiles]) {
-                this.addWatchFile(file);
+                if (fs.existsSync(file)) {
+                  this.addWatchFile(file);
+                }
               }
               result.css = collected.hrefs.map((href, i) => ({
                 href,
