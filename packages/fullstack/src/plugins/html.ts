@@ -108,6 +108,7 @@ export function serverTransformIndexHtmlPlugin(): Plugin[] {
         async handler(_options, bundle) {
           if (this.environment.name === "ssr") {
             const placeholder = bundle["__transform_placeholder.html"];
+            if (!placeholder) return;
             delete bundle["__transform_placeholder.html"];
             assert(placeholder?.type === "asset");
             assert(typeof placeholder.source === "string");
