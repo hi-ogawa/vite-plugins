@@ -27,6 +27,7 @@ import {
   normalizeRelativePath,
 } from "./plugins/utils";
 import {
+  cleanUrl,
   evalValue,
   normalizeViteImportAnalysisUrl,
 } from "./plugins/vite-utils";
@@ -232,7 +233,10 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
             if (environment.name !== "client") {
               const collected = await collectCss(environment, resolved.id);
-              for (const file of [resolved.id, ...collected.visitedFiles]) {
+              for (const file of [
+                cleanUrl(resolved.id),
+                ...collected.visitedFiles,
+              ]) {
                 if (fs.existsSync(file)) {
                   this.addWatchFile(file);
                 }
