@@ -3,6 +3,10 @@ import { App } from "./App";
 import "./index.css";
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 
+// @ts-ignore
+import mod from "virtual:fullstack/server-transform-index-html";
+console.log(mod.descriptors);
+
 async function handler(_request: Request): Promise<Response> {
   const html = await renderToReadableStream(<Root />);
   return new Response(html, {

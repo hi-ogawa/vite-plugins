@@ -1,11 +1,17 @@
+import assert from "node:assert";
+import path from "node:path";
 import type { DefaultTreeAdapterMap } from "parse5";
 import type { HtmlTagDescriptor, Plugin, ViteDevServer } from "vite";
-import { createVirtualPlugin } from "./utils";
+import { normalizeRelativePath } from "./utils";
 
 // the idea is:
 // - run `transformIndexHtml` to empty html
 // - parse output
 // - extract <script> and <link> and turn them back to `transformIndexHtml` descriptors
+
+// for build, we exploit `vite:build-html` plugin's behavior:
+// - `transform` takes any `.html` module
+// - `generateBundle` calls `emitFile` to output html
 
 export function serverTransformIndexHtmlPlugin(): Plugin[] {
   let server: ViteDevServer;
@@ -13,31 +19,122 @@ export function serverTransformIndexHtmlPlugin(): Plugin[] {
   return [
     {
       name: "fullstack:server-transform-index-html",
-      configEnvironment(name, _config, env) {
-        if (name === "client" && env.command === "build") {
-          // TODO: use virtual index.html during build
-        }
-      },
       configureServer(server_) {
         server = server_;
       },
+      // buildStart() {
+      //   if (this.environment.mode === 'build' && this.environment.name === 'ssr') {
+      //     this.emitFile({
+      //       type: 'chunk',
+      //       id: '__transform_placeholder.html',
+      //     })
+      //   }
+      // },
+      // buildApp: {
+      //   order: "post",
+      //   async handler(builder) {
+      //     builder;
+      //   },
+      // },
     },
-    createVirtualPlugin(
-      "fullstack/server-transform-index-html",
-      async function () {
-        const html = await server.transformIndexHtml(
-          "/",
-          "<!DOCTYPE html><html><head></head><body></body></html>",
-        );
-        const result = await processHtml(html);
-        return `\
-export const descriptors = ${JSON.stringify(result.descriptors)};
-export const head = ${JSON.stringify(result.head)}
-export const body = ${JSON.stringify(result.body)};
-export const html = ${JSON.stringify(html)};
-`;
+    {
+      name: "fullstack/server-transform-index-html/virtual",
+      resolveId: {
+        order: "pre",
+        async handler(id) {
+          if (id === "virtual:fullstack/server-transform-index-html") {
+            if (this.environment.mode === "build") {
+              // For build, trigger html generation and replace the placeholder later
+              const resolved = await this.resolve(
+                "__transform_placeholder.html",
+              );
+              await this.load({ id: resolved!.id });
+              return {
+                id: "\0virtual:fullstack/server-transform-index-html",
+                external: true,
+              };
+            }
+            return "\0" + id;
+          }
+        },
       },
-    ),
+      load: {
+        order: "pre",
+        async handler(id) {
+          if (id === "\0virtual:fullstack/server-transform-index-html") {
+            // For dev, directly call dev server `transformIndexHtml`
+            assert(this.environment.mode === "dev");
+            const html = await server.transformIndexHtml(
+              "/",
+              "<!DOCTYPE html><html><head></head><body></body></html>",
+            );
+            const result = await processHtml(html);
+            return `export default ${JSON.stringify(result)}`;
+          }
+        },
+      },
+      renderChunk(code, chunk) {
+        if (code.includes("\0virtual:fullstack/server-transform-index-html")) {
+          const replacement = normalizeRelativePath(
+            path.relative(
+              path.join(chunk.fileName, ".."),
+              "__transform_index_html_manifest.mjs",
+            ),
+          );
+          code = code.replaceAll(
+            "\0virtual:fullstack/server-transform-index-html",
+            () => replacement,
+          );
+          return { code };
+        }
+      },
+    },
+    {
+      name: "fullstack:server-transform-index-html/build-placeholder",
+      resolveId: {
+        order: "pre",
+        handler(id) {
+          // this virtual cannot use `\0virtual` convenion since
+          // it breaks `emitFile` used by `vite:build-html` plugin
+          if (id === "__transform_placeholder.html") {
+            return id;
+          }
+        },
+      },
+      load: {
+        order: "pre",
+        async handler(id) {
+          if (id === "__transform_placeholder.html") {
+            return `<!DOCTYPE html><html><head></head><body></body></html>`;
+          }
+        },
+      },
+      transformIndexHtml() {
+        return [
+          {
+            tag: "link",
+            attrs: { rel: "stylesheet", href: "/style.css" },
+          },
+        ];
+      },
+      generateBundle: {
+        order: "post",
+        async handler(_options, bundle) {
+          if (this.environment.name === "ssr") {
+            const placeholder = bundle["__transform_placeholder.html"];
+            delete bundle["__transform_placeholder.html"];
+            assert(placeholder?.type === "asset");
+            assert(typeof placeholder.source === "string");
+            const result = await processHtml(placeholder.source);
+            this.emitFile({
+              type: "asset",
+              fileName: "__transform_index_html_manifest.mjs",
+              source: `export default ${JSON.stringify(result)}`,
+            });
+          }
+        },
+      },
+    },
   ];
 }
 
