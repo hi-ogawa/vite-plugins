@@ -20,13 +20,14 @@
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
     "prepack": "tsdown --clean",
+    "test": "vitest",
     "test-e2e": "playwright test"
   },
   "dependencies": {
     "magic-string": "^0.30.17",
+    "parse5": "^8.0.0",
     "srvx": "^0.8.7"
   },
-  "devDependencies": {},
   "peerDependencies": {
     "vite": "^6.0.0 || ^7.0.0"
   }
