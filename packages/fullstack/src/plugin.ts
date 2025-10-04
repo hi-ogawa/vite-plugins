@@ -400,7 +400,7 @@ async function collectCss(environment: DevEnvironment, entryId: string) {
   const visitedFiles = new Set<string>();
 
   async function recurse(id: string) {
-    if (visited.has(id)) {
+    if (visited.has(id) || parseAssetsVirtual(id)) {
       return;
     }
     visited.add(id);
@@ -409,7 +409,7 @@ async function collectCss(environment: DevEnvironment, entryId: string) {
     // TODO: this is not ideal.
     // We eagerly transforming module is required
     // to allow patterns like packages/fullstack/examples/react-router/src/routes.ts
-    if (!mod.transformResult && !parseAssetsVirtual(id)) {
+    if (!mod.transformResult) {
       try {
         await environment.transformRequest(id);
       } catch (e) {
