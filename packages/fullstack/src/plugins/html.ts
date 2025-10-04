@@ -22,20 +22,6 @@ export function serverTransformIndexHtmlPlugin(): Plugin[] {
       configureServer(server_) {
         server = server_;
       },
-      // buildStart() {
-      //   if (this.environment.mode === 'build' && this.environment.name === 'ssr') {
-      //     this.emitFile({
-      //       type: 'chunk',
-      //       id: '__transform_placeholder.html',
-      //     })
-      //   }
-      // },
-      // buildApp: {
-      //   order: "post",
-      //   async handler(builder) {
-      //     builder;
-      //   },
-      // },
     },
     {
       name: "fullstack/server-transform-index-html/virtual",
