@@ -68,6 +68,7 @@ import "./styles.css" // this will be included in `assets.css` below
 function renderHtml() {
   const assets = import.meta.vite.assets({
     // `import` is optional and the default is current module, which is `./server.js` in this case:
+    // import: "./server.js",
     environment: "ssr",
   });
   const head = `
