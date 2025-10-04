@@ -398,16 +398,18 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     },
     {
       name: "fullstack:assets-query",
-      load(id) {
-        const { filename, query } = parseIdQuery(id);
-        // TODO: parse query properly?
-        const value = query["assets"];
-        if (typeof value !== "undefined") {
-          const options: ImportAssetsOptions = {
-            import: filename,
-          };
-          return `export default import.meta.vite.assets(${JSON.stringify(options)})`;
-        }
+      load: {
+        handler(id) {
+          const { filename, query } = parseIdQuery(id);
+          // TODO: parse query properly?
+          const value = query["assets"];
+          if (typeof value !== "undefined") {
+            const options: ImportAssetsOptions = {
+              import: filename,
+            };
+            return `export default import.meta.vite.assets(${JSON.stringify(options)})`;
+          }
+        },
       },
     },
     // ensure at least one client build input to prevent Vite
