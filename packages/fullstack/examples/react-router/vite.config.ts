@@ -13,15 +13,13 @@ export default defineConfig((_env) => ({
     devtoolsJson(),
     fullstack(),
   ],
+  optimizeDeps: {
+    entries: ["src/framework/entry.client.tsx"],
+  },
   environments: {
     client: {
       build: {
         outDir: "./dist/client",
-        rollupOptions: {
-          input: {
-            index: "./src/framework/entry.client.tsx",
-          },
-        },
       },
     },
     ssr: {
