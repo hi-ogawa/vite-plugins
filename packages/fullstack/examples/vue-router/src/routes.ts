@@ -7,7 +7,7 @@ export const routes: RouteRecordRaw[] = [
     name: "app",
     component: () => import("./app.vue"),
     meta: {
-      assets: () => import("./app.vue$?assets"),
+      assets: () => import("./app.vue?assets"),
     },
     children: [
       {
@@ -15,7 +15,7 @@ export const routes: RouteRecordRaw[] = [
         name: "home",
         component: () => import("./pages/index.vue"),
         meta: {
-          assets: () => import("./pages/index.vue$?assets"),
+          assets: () => import("./pages/index.vue?assets"),
         },
       },
       {
@@ -23,7 +23,7 @@ export const routes: RouteRecordRaw[] = [
         name: "about",
         component: () => import("./pages/about.vue"),
         meta: {
-          assets: () => import("./pages/about.vue$?assets"),
+          assets: () => import("./pages/about.vue?assets"),
         },
       },
       {
@@ -31,7 +31,7 @@ export const routes: RouteRecordRaw[] = [
         name: "not-found",
         component: () => import("./pages/not-found.vue"),
         meta: {
-          assets: () => import("./pages/not-found.vue$?assets"),
+          assets: () => import("./pages/not-found.vue?assets"),
         },
       },
     ],
