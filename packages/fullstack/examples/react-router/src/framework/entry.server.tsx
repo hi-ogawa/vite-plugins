@@ -6,14 +6,9 @@ import {
   createStaticRouter,
 } from "react-router";
 import { routes } from "../routes";
+import clientEntry from "./entry.client.tsx?assets=client";
 
 const { query, dataRoutes } = createStaticHandler(routes);
-
-const clientEntry = import.meta.vite.assets({
-  import: "./entry.client.tsx",
-  environment: "client",
-  asEntry: true,
-});
 
 async function handler(request: Request): Promise<Response> {
   const queryResult = await query(request);
