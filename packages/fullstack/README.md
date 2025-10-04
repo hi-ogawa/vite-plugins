@@ -1,10 +1,10 @@
 # @hiogawa/vite-plugin-fullstack
 
-## SSR Assets API proposal
+## SSR Assets API Proposal
 
-This is a proposal to introduce a new API to allow ssr environment to access client assets information required for SSR. This feature is currently prototyped in the package `@hiogawa/vite-plugin-fullstack`.
+This proposal introduces a new API that enables SSR environments to access client assets information required for server-side rendering. This feature is currently prototyped in the package `@hiogawa/vite-plugin-fullstack`.
 
-### `?assets` query import
+### `?assets` Query Import
 
 The plugin provides a new query import `?assets` to access assets information of the module. There are three variations of the import:
 
@@ -14,83 +14,108 @@ import assets from "./index.js?assets=client";
 import assets from "./index.js?assets=ssr";
 ```
 
-The deafult export of `?assets` module has a following type:
+The default export of the `?assets` module has the following type:
 
 ```ts
 type Assets = {
-  entry?: string;               // script for <script type="module" src=...>
-  js: { href: string, ... }[];  // preload chunks for <link rel="modulepreload" href=... />
-  css: { href: string, ... }[]; // css for <link rel="stylesheet" href=... />
+  entry?: string;               // Entry script for <script type="module" src=...>
+  js: { href: string, ... }[];  // Preload chunks for <link rel="modulepreload" href=... />
+  css: { href: string, ... }[]; // CSS files for <link rel="stylesheet" href=... />
 }
 ```
 
-The goal of the API is to cover following use cases in SSR application:
+The goal of this API is to cover the following use cases in SSR applications:
 
-- Server entry can access client entry
+- **Server entry accessing client entry**: Enables the server to inject client-side assets during SSR
 
 ```js
-// [server.js] server entry injecting client entry script during SSR
-import assets from "./client.js?assets=client"
+// server.js - Server entry injecting client assets during SSR
+import clientAssets from "./client.js?assets=client";
 
-function renderHtml() {
-  const head = `
-    <script type="module" src=${JSON.stringify(assets.entry)}></script>
-    <link type="modulepreload" href=${JSON.stringify(assets.js[0].href)}></script>
-    ...
+export function renderHtml(content) {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        ${clientAssets.css.map(css => 
+          `<link rel="stylesheet" href="${css.href}" />`
+        ).join('\n')}
+        ${clientAssets.js.map(js => 
+          `<link rel="modulepreload" href="${js.href}" />`
+        ).join('\n')}
+      </head>
+      <body>
+        <div id="root">${content}</div>
+        <script type="module" src="${clientAssets.entry}"></script>
+      </body>
+    </html>
   `;
 }
 ```
 
-- Universal route (shared by CSR and SSR) can access assets for its route
-  - see [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for detailed integrations.
+- **Universal routes accessing their assets**: Routes shared by CSR and SSR can retrieve their associated assets
+  - See [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for detailed integrations
 
 ```js
-// [routes.js] hypothetical router library's routes declaration
+// routes.js - Router configuration with assets preloading
 export const routes = [
   {
-    path: "/"
+    path: "/",
     route: () => import("./pages/index.js"),
     assets: () => import("./pages/index.js?assets"),
-  },,
+  },
   {
-    path: "/about"
+    path: "/about",
     route: () => import("./pages/about.js"),
     assets: () => import("./pages/about.js?assets"),
   },
-  ...
-]
+  {
+    path: "/products/:id",
+    route: () => import("./pages/product.js"),
+    assets: () => import("./pages/product.js?assets"),
+  },
+];
 ```
 
-- Server only page can access its css dependencies
+- **Server-only pages accessing CSS dependencies**: Server-side components can retrieve their CSS assets
 
 ```js
-// [server.js]
-import "./styles.css" // this will be included in `assets`
-import assets from "./server.js?assets=ssr" // self import with query
+// server.js - Server-side component with CSS dependencies
+import "./styles.css"; // This CSS will be included in assets
+import "./components/header.css";
+import serverAssets from "./server.js?assets=ssr"; // Self-import with query
 
-function renderHtml() {
-  const head = `
-    <link type="stylesheet" href=${JSON.stringify(assets.css[0].href)}></script>
-    ...
+export function renderServerComponent() {
+  // All imported CSS files are available in serverAssets.css
+  const cssLinks = serverAssets.css
+    .map(css => `<link rel="stylesheet" href="${css.href}" />`)
+    .join('\n');
+  
+  return `
+    <head>
+      ${cssLinks}
+    </head>
   `;
 }
 ```
 
-The API is enabled by adding a plugin and minimal build configuration, for example:
+## Configuration
+
+The API is enabled by adding the plugin and minimal build configuration:
 
 ```js
-// [vite.config.ts]
-import { defineConfig } from "vite"
-import fullstack from "@hiogawa/vite-plugin-fullstack"
+// vite.config.ts
+import { defineConfig } from "vite";
+import fullstack from "@hiogawa/vite-plugin-fullstack";
 
 export default defineConfig({
   plugins: [
     fullstack({
-      // [serverHandler: boolean]
-      // Ths plugin also provides server middleware using `export default { fetch }`
-      // of `ssr.build.rollupOptions.input` entry.
-      // This can be disabled by `serverHandler: false`
-      // and use `@cloudflare/vite-plugin`, `nitro/vite`, etc. instead.
+      // serverHandler: boolean (default: true)
+      // This plugin also provides server middleware using `export default { fetch }`
+      // from the `ssr.build.rollupOptions.input` entry.
+      // This can be disabled by setting `serverHandler: false`
+      // to use alternative server plugins like `@cloudflare/vite-plugin`, `nitro/vite`, etc.
     })
   ],
   environments: {
@@ -112,8 +137,8 @@ export default defineConfig({
   },
   builder: {
     async buildApp(builder) {
-      // currently the plugin relies on this build order
-      // to allow dynamically adding client entry
+      // Currently, the plugin requires this specific build order
+      // to dynamically add client entries
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
     }
@@ -121,25 +146,31 @@ export default defineConfig({
 })
 ```
 
-### Helper API
+## Helper API
 
-...todo.... For example,
+The plugin provides utility functions to work with assets:
+
+### `mergeAssets`
+
+Combines multiple assets objects into a single deduplicated assets object.
 
 ```js
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 
-const matchedRoutes = /* ...(route library API)... */;
-const assets = mergeAssets(...matchedRoutes.map(route => route.assets));
+// Example: Merging assets from multiple route components
+const route1Assets = await import("./pages/layout.js?assets");
+const route2Assets = await import("./pages/home.js?assets");
 
-assets.js;
-assets.css;
+const mergedAssets = mergeAssets(route1Assets, route2Assets);
+// Result: { js: [...], css: [...] } with deduplicated entries
 ```
 
-### Typescript
 
-Type for `?assets` import can be enabled by adding following to `tsconfig.json`:
+## TypeScript Support
 
-```js
+TypeScript support for `?assets` imports can be enabled by adding the following to your `tsconfig.json`:
+
+```json
 {
   "compilerOptions": {
     "types": ["@hiogawa/vite-plugin-fullstack/types"]
@@ -160,7 +191,8 @@ Type for `?assets` import can be enabled by adding following to `tsconfig.json`:
 
 ## Feedback
 
-Feedback is appreciated! I'm especially curious about opinions from framework authors, who have likely implemented own solutions without such abstract API. For example,
+Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
 
-- Is the API powerful enough?
-- Is there anything to watch out when implementing this type of API?
+- Is the API sufficiently powerful for various use cases?
+- Are there any implementation considerations or edge cases to be aware of?
+- How can this API be improved to better serve framework needs?
