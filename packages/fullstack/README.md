@@ -43,12 +43,10 @@ export function renderHtml(content) {
         ${clientAssets.js.map(js => 
           `<link rel="modulepreload" href="${js.href}" />`
         ).join('\n')}
+        <script type="module" src="${clientAssets.entry}"></script>
       </head>
       <body>
-        <div id="root">${content}</div>
-        <script type="module" src="${clientAssets.entry}"></script>
-      </body>
-    </html>
+        ...
   `;
 }
 ```
@@ -85,17 +83,12 @@ import "./styles.css"; // This CSS will be included in assets
 import "./components/header.css";
 import serverAssets from "./server.js?assets=ssr"; // Self-import with query
 
-export function renderPage() {
+export function renderHtml() {
   // All imported CSS files are available in serverAssets.css
   const cssLinks = serverAssets.css
     .map(css => `<link rel="stylesheet" href="${css.href}" />`)
     .join('\n');
-  
-  return `
-    <head>
-      ${cssLinks}
-    </head>
-  `;
+  // ...
 }
 ```
 
