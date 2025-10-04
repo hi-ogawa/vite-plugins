@@ -26,7 +26,7 @@ The goal of the API is to cover following use cases in SSR application:
 // [server.js] server entry injecting client entry during SSR
 function renderHtml() {
   const assets = import.meta.vite.assets({
-    entry: "./client.js",
+    import: "./client.js",
     environment: "client",
     asEntry: true,
   });
@@ -50,11 +50,11 @@ export const routes = [
     route: () => import("./pages/about.js"),
     routeAssets: mergeAssets(
       import.meta.vite.assets({
-        entry: "./pages/about.js",
+        import: "./pages/about.js",
         environment: "client",
       }),
       import.meta.vite.assets({
-        entry: "./pages/about.js",
+        import: "./pages/about.js",
         environment: "ssr",
       }),
     )
