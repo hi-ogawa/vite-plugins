@@ -77,15 +77,15 @@ export const routes = [
 ];
 ```
 
-- **Server-only pages accessing CSS dependencies**: Server-side components can retrieve their CSS assets
+- **Server-only pages accessing CSS dependencies**: Server-rendered pages can retrieve their CSS assets
 
 ```js
-// server.js - Server-side component with CSS dependencies
+// server.js - Server-side page with CSS dependencies
 import "./styles.css"; // This CSS will be included in assets
 import "./components/header.css";
 import serverAssets from "./server.js?assets=ssr"; // Self-import with query
 
-export function renderServerComponent() {
+export function renderPage() {
   // All imported CSS files are available in serverAssets.css
   const cssLinks = serverAssets.css
     .map(css => `<link rel="stylesheet" href="${css.href}" />`)
