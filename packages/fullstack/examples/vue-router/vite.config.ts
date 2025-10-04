@@ -7,7 +7,6 @@ import fullstack from "@hiogawa/vite-plugin-fullstack";
 import vue from "@vitejs/plugin-vue";
 import { type Plugin, type ResolvedConfig, defineConfig } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
-// import { fil} from "@rolldown/pluginutils"
 
 export default defineConfig((_env) => ({
   clearScreen: false,

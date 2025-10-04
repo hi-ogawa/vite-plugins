@@ -15,8 +15,6 @@ export type ImportAssetsOptions = {
   environment?: string; // TODO: can we remove in favor of asEntry and universal?
   asEntry?: boolean;
   // universal?: boolean;
-  // TODO
-  // async?: boolean;
 };
 
 export type ImportAssetsResult = {
