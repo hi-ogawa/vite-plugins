@@ -1,14 +1,15 @@
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { renderToReadableStream } from "react-dom/server.edge";
 import {
   StaticRouterProvider,
   createStaticHandler,
   createStaticRouter,
 } from "react-router";
-import { routes } from "../routes";
+import { type CustomHandle, routes } from "../routes";
 
 const { query, dataRoutes } = createStaticHandler(routes);
 
-const assets = import.meta.vite.assets({
+const clientEntry = import.meta.vite.assets({
   import: "./entry.client.tsx",
   environment: "client",
   asEntry: true,
@@ -24,12 +25,36 @@ async function handler(request: Request): Promise<Response> {
   const context = queryResult;
   const router = createStaticRouter(dataRoutes, context);
 
+  // collect assets from matched routes
+  const assets = mergeAssets(
+    clientEntry,
+    ...context.matches
+      .map((m) => m.route.handle as CustomHandle)
+      .filter(Boolean)
+      .map((h) => h.assets),
+  );
+
   function SsrRoot() {
-    return <StaticRouterProvider router={router} context={context} />;
+    return (
+      <>
+        {assets.js.map((attrs) => (
+          <link
+            {...attrs}
+            rel="modulepreload"
+            key={attrs.href}
+            crossOrigin=""
+          />
+        ))}
+        {assets.css.map((attrs) => (
+          <link {...attrs} rel="stylesheet" key={attrs.href} crossOrigin="" />
+        ))}
+        <StaticRouterProvider router={router} context={context} />
+      </>
+    );
   }
 
   const htmlStream = await renderToReadableStream(<SsrRoot />, {
-    bootstrapScriptContent: `import(${JSON.stringify(assets.entry)})`,
+    bootstrapScriptContent: `import(${JSON.stringify(clientEntry.entry)})`,
   });
 
   return new Response(htmlStream, {

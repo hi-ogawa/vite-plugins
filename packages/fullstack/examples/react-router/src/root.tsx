@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from "react-router";
-import { Links } from "./framework/lib";
 import "./styles.css";
 
 export function Component() {
@@ -9,7 +8,6 @@ export function Component() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>React Router Custom Framework</title>
-        <Links />
       </head>
       <body>
         <nav>
