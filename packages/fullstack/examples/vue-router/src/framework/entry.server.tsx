@@ -9,6 +9,7 @@ import { routes } from "../routes";
 const assets = import.meta.vite.assets({
   import: "./entry.client.tsx",
   environment: "client",
+  asEntry: true,
 });
 
 async function handler(request: Request): Promise<Response> {
