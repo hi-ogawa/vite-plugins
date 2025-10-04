@@ -401,12 +401,10 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       load(id) {
         const { filename, query } = parseIdQuery(id);
         // TODO: parse query properly?
-        // for now `?assets` and `?assets=client` are supported.
         const value = query["assets"];
         if (typeof value !== "undefined") {
           const options: ImportAssetsOptions = {
             import: filename,
-            environment: value === "client" ? "client" : undefined,
           };
           return `export default import.meta.vite.assets(${JSON.stringify(options)})`;
         }
