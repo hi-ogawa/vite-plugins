@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.0.0-alpha.3 (2025-10-04)
+
+- feat(fullstack): support `?assets=client` and `?assets=ssr` ([#1214](https://github.com/hi-ogawa/vite-plugins/pull/1214))
+- feat(fullstack): support `?assets` query ([#1208](https://github.com/hi-ogawa/vite-plugins/pull/1208))
+- fix(fullstack): remove `transformeRequest` during `collectCss` ([#1212](https://github.com/hi-ogawa/vite-plugins/pull/1212))
+- docs(fullstack): `?assets` import ([#1215](https://github.com/hi-ogawa/vite-plugins/pull/1215))
+- chore(fullstack): use unhead to simplify vue-router ([#1216](https://github.com/hi-ogawa/vite-plugins/pull/1216))
+- chore(fullstack): simplify vue-router ssr head example ([#1210](https://github.com/hi-ogawa/vite-plugins/pull/1210))
+- chore(fullstack): simplify react-router ssr head example ([#1209](https://github.com/hi-ogawa/vite-plugins/pull/1209))
+- chore(fullstack): tweak vue-router example ([#1205](https://github.com/hi-ogawa/vite-plugins/pull/1205))
+
 ## v0.0.0-alpha.2 (2025-10-04)
 
 - feat(fullstack)!: universal route assets as default ([#1196](https://github.com/hi-ogawa/vite-plugins/pull/1196))
