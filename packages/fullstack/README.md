@@ -2,20 +2,26 @@
 
 ## SSR Assets API proposal
 
-This is a proposal to introduce a new API to allow non-client environment to access assets information commonly required for SSR.
+This is a proposal to introduce a new API to allow ssr environment to access client assets information required for SSR. This feature is currently prototyped in the package `@hiogawa/vite-plugin-fullstack`.
 
-Currently, it is prototyped in my package `@hiogawa/vite-plugin-fullstack`, which provides `import.meta.vite.assets` function with a following signature:
+### `?assets` query import
+
+The plugin provides a new query import `?assets` to access assets information of the module. There are three variations of the import:
+
+```js
+import assets from "./index.js?assets";
+import assets from "./index.js?assets=client";
+import assets from "./index.js?assets=ssr";
+```
+
+The deafult import of `?assets` import has a following type:
 
 ```ts
-function assets({
-  import?: string,
-  environment?: string,
-  asEntry?: boolean,
-}): {
+const assets: {
   entry?: string;               // script for <script type="module" src=...>
-  js: { href: string, ... }[];  // dependency chunks for <link rel="modulepreload" href=... />
-  css: { href: string, ... }[]; // dependency css for <link rel="stylesheet" href=... />
-};
+  js: { href: string, ... }[];  // preload chunks for <link rel="modulepreload" href=... />
+  css: { href: string, ... }[]; // css for <link rel="stylesheet" href=... />
+}
 ```
 
 The goal of the API is to cover following use cases in SSR application:
@@ -23,24 +29,20 @@ The goal of the API is to cover following use cases in SSR application:
 - Server entry can access client entry
 
 ```js
-// [server.js] server entry injecting client entry during SSR
+// [server.js] server entry injecting client entry script during SSR
+import assets from "./client.js?assets=client"
+
 function renderHtml() {
-  const assets = import.meta.vite.assets({
-    import: "./client.js",
-    environment: "client",
-    asEntry: true,
-  });
   const head = `
     <script type="module" src=${JSON.stringify(assets.entry)}></script>
     <link type="modulepreload" href=${JSON.stringify(assets.js[0].href)}></script>
     ...
   `;
-  ...
 }
 ```
 
-- Universal route (CSR and SSR) can access assets for its route
-  - see [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for concrete integrations.
+- Universal route (shared by CSR and SSR) can access assets for its route
+  - see [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for detailed integrations.
 
 ```js
 // [routes.js] hypothetical router library's routes declaration
@@ -48,12 +50,12 @@ export const routes = [
   {
     path: "/"
     route: () => import("./pages/index.js"),
-    routeAssets: import.meta.vite.assets({ import: "./pages/index.js" })
+    assets: () => import("./pages/index.js?assets"),
   },,
   {
     path: "/about"
     route: () => import("./pages/about.js"),
-    routeAssets: import.meta.vite.assets({ import: "./pages/about.js" })
+    assets: () => import("./pages/about.js?assets"),
   },
   ...
 ]
@@ -63,19 +65,14 @@ export const routes = [
 
 ```js
 // [server.js]
-import "./styles.css" // this will be included in `assets.css` below
+import "./styles.css" // this will be included in `assets`
+import assets from "./server.js?assets=ssr" // self import with query
 
 function renderHtml() {
-  const assets = import.meta.vite.assets({
-    // `import` is optional and the default is current module, which is `./server.js` in this case:
-    // import: "./server.js",
-    environment: "ssr",
-  });
   const head = `
     <link type="stylesheet" href=${JSON.stringify(assets.css[0].href)}></script>
     ...
   `;
-  ...
 }
 ```
 
@@ -89,11 +86,11 @@ import fullstack from "@hiogawa/vite-plugin-fullstack"
 export default defineConfig({
   plugins: [
     fullstack({
+      // [serverHandler: boolean]
       // Ths plugin also provides server middleware using `export default { fetch }`
       // of `ssr.build.rollupOptions.input` entry.
       // This can be disabled by `serverHandler: false`
-      // in favor of `@cloudflare/vite-plugin`, `nitro/vite`, etc.
-      // > serverHandler: false,
+      // and use `@cloudflare/vite-plugin`, `nitro/vite`, etc. instead.
     })
   ],
   environments: {
@@ -124,7 +121,33 @@ export default defineConfig({
 })
 ```
 
-See [./examples](./examples) for concrete usages.
+### Helper API
+
+...todo.... For example,
+
+```js
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
+
+const matchedRoutes = /* ...(route library API)... */;
+const assets = mergeAssets(...matchedRoutes.map(route => route.assets));
+
+assets.js;
+assets.css;
+```
+
+### Typescript
+
+Type for `?assets` import can be enabled by adding following to `tsconfig.json`:
+
+```js
+{
+  "compilerOptions": {
+    "types": ["@hiogawa/vite-plugin-fullstack/types"]
+  }
+}
+```
+
+## Examples
 
 | Example | Playground |
 | --- | --- |
