@@ -7,7 +7,7 @@ import "./styles.css";
   <nav>
     <ul>
       <li>
-        <RouterLink to="/" active-class="active">Home</RouterLink>
+        <RouterLink to="/" exact-active-class="active">Home</RouterLink>
       </li>
       <li>
         <RouterLink to="/about" active-class="active">About</RouterLink>
