@@ -39,6 +39,15 @@ nav a.active {
   color: #646cff;
 }
 
+a {
+  color: #646cff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 main {
   max-width: 800px;
   margin: 0 auto;
@@ -76,4 +85,14 @@ button:hover {
   color: #666;
   font-size: 1.1rem;
   margin-bottom: 2rem;
+}
+
+.post-date {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.post-meta {
+  color: #666;
+  font-size: 0.9rem;
 }

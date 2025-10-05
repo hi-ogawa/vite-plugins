@@ -16,11 +16,9 @@ export function Component() {
       {posts.map((post) => (
         <div key={post.slug} className="card">
           <h3>
-            <Link to={`/blog/${post.slug}`} style={{ color: "#646cff" }}>
-              {post.title}
-            </Link>
+            <Link to={`/blog/${post.slug}`}>{post.title}</Link>
           </h3>
-          <p style={{ color: "#666", fontSize: "0.9rem" }}>{post.date}</p>
+          <p className="post-meta">{post.date}</p>
         </div>
       ))}
     </main>
