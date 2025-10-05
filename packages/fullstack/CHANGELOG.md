@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.0 (2025-10-05)
+
+- docs(fullstack): tweak heading ([#1218](https://github.com/hi-ogawa/vite-plugins/pull/1218))
+
 ## v0.0.0-alpha.3 (2025-10-04)
 
 - feat(fullstack): support `?assets=client` and `?assets=ssr` ([#1214](https://github.com/hi-ogawa/vite-plugins/pull/1214))
