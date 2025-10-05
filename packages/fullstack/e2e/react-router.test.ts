@@ -114,4 +114,14 @@ async function testNavigation(page: Page) {
   await page.getByRole("link", { name: "About" }).click();
   await page.waitForURL("**/about");
   await expect(page.getByRole("heading", { name: "About" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Blog" }).click();
+  await page.waitForURL("**/blog");
+  await expect(page.getByRole("heading", { name: "Blog" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Hello World" }).click();
+  await page.waitForURL("**/blog/hello-world");
+  await expect(
+    page.getByRole("heading", { name: "Hello World" }),
+  ).toBeVisible();
 }
