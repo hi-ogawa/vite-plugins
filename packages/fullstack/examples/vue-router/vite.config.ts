@@ -26,7 +26,6 @@ export default defineConfig((_env) => ({
   environments: {
     client: {
       build: {
-        minify: false,
         outDir: "./dist/client",
       },
     },
