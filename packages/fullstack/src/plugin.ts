@@ -393,8 +393,23 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     },
     {
       name: "fullstack:assets-query",
+      resolveId: {
+        order: 'pre',
+        handler(source) {
+          const { query } = parseIdQuery(source);
+          const value = query["assets"];
+          if (typeof value !== "undefined") {
+            if (this.environment.name === "client") {
+              return `\0virtual:fullstack/empty-assets`;
+            }
+          }
+        },
+      },
       load: {
         handler(id) {
+          if (id === "\0virtual:fullstack/empty-assets") {
+            return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
+          }
           const { filename, query } = parseIdQuery(id);
           const value = query["assets"];
           if (typeof value !== "undefined") {
@@ -403,9 +418,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               environment: value,
               asEntry: value === "client",
             };
-            if (this.environment.name === "client") {
-              return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
-            }
             const result = `export default import.meta.vite.assets(${JSON.stringify(options)})`;
             return {
               code: result,
