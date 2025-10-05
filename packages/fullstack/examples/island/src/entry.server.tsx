@@ -1,11 +1,11 @@
 import "./styles/server.css";
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
-import { renderToReadableStream } from "react-dom/server.edge";
+import { renderToStringAsync } from "preact-render-to-string";
 import clientAssets from "./entry.client.tsx?assets=client";
 import serverAssets from "./entry.client.tsx?assets=ssr";
 
 async function handler(_request: Request): Promise<Response> {
-  const html = await renderToReadableStream(<Root />);
+  const html = await renderToStringAsync(<Root />);
   return new Response(html, {
     headers: { "Content-Type": "text/html;charset=utf-8" },
   });
@@ -19,14 +19,19 @@ function Root() {
       <head>
         <title>Vite Fullstack</title>
         {assets.css.map((attrs) => (
-          <link key={attrs.href} {...attrs} rel="stylesheet" crossOrigin="" />
+          <link
+            key={attrs.href}
+            {...attrs}
+            rel="stylesheet"
+            crossOrigin="anonymous"
+          />
         ))}
         {assets.js.map((attrs) => (
           <link
             key={attrs.href}
             {...attrs}
             rel="modulepreload"
-            crossOrigin=""
+            crossOrigin="anonymous"
           />
         ))}
         <script type="module" src={clientAssets.entry}></script>
