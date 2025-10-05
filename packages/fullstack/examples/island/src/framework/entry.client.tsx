@@ -1,6 +1,5 @@
-import "./styles/client.css";
 import { render } from "preact";
-import { Counter } from "./components/counter";
+import { Counter } from "../components/counter";
 
 function main() {
   const domRoot = document.getElementById("client-app")!;

@@ -1,3 +1,4 @@
+import "./client.css";
 import { useState } from "preact/hooks";
 
 export function Counter() {

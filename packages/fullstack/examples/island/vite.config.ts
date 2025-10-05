@@ -1,16 +1,19 @@
 import fullstack from "@hiogawa/vite-plugin-fullstack";
 import preact from "@preact/preset-vite";
 import { defineConfig } from "vite";
+import { islandPlugin } from "./vite-island";
+// import inspect from "vite-plugin-inspect";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
     // inspect(),
-    fullstack(),
     preact(),
+    islandPlugin(),
+    fullstack(),
   ],
   optimizeDeps: {
-    entries: ["./src/entry.client.tsx", "./src/components/**/*"],
+    entries: ["./src/framework/entry.client.tsx", "./src/components/**/*"],
   },
   environments: {
     client: {
@@ -23,7 +26,7 @@ export default defineConfig((_env) => ({
         outDir: "./dist/ssr",
         rollupOptions: {
           input: {
-            index: "./src/entry.server.tsx",
+            index: "./src/framework/entry.server.tsx",
           },
         },
       },
@@ -31,8 +34,8 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      await builder.build(builder.environments["ssr"]!);
-      await builder.build(builder.environments["client"]!);
+      await builder.build(builder.environments.ssr);
+      await builder.build(builder.environments.client);
     },
   },
 }));

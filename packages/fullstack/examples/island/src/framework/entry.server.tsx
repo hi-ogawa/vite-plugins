@@ -1,8 +1,8 @@
-import "./styles/server.css";
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { renderToStringAsync } from "preact-render-to-string";
+import IndexPage from "../routes";
 import clientAssets from "./entry.client.tsx?assets=client";
-import serverAssets from "./entry.client.tsx?assets=ssr";
+import serverAssets from "./entry.server.tsx?assets=ssr";
 
 async function handler(_request: Request): Promise<Response> {
   const html = await renderToStringAsync(<Root />);
@@ -37,12 +37,7 @@ function Root() {
         <script type="module" src={clientAssets.entry}></script>
       </head>
       <body>
-        <div style={{ border: "2px solid lightseagreen", padding: "1rem" }}>
-          <h4>Server only shell</h4>
-          <div>SSR at {new Date().toISOString()}</div>
-          <div className="test-server-style">test-server-style</div>
-          <div id="client-app"></div>
-        </div>
+        <IndexPage />
       </body>
     </html>
   );
