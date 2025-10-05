@@ -3,7 +3,7 @@ import "virtual:react-hmr-preamble";
 import { StrictMode, startTransition } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter, matchRoutes } from "react-router";
-import { routes } from "../routes";
+import { routes } from "./routes";
 
 declare const __staticRouterHydrationData: any;
 
@@ -36,14 +36,6 @@ async function main() {
       </StrictMode>,
     );
   });
-
-  if (import.meta.hot) {
-    // TODO
-    import.meta.hot.on("fullstack:update", (e) => {
-      console.log("[fullstack:update]", e);
-      window.location.reload();
-    });
-  }
 }
 
 main();
