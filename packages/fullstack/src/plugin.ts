@@ -394,7 +394,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     {
       name: "fullstack:assets-query",
       resolveId: {
-        order: 'pre',
+        order: "pre",
         handler(source) {
           const { query } = parseIdQuery(source);
           const value = query["assets"];
