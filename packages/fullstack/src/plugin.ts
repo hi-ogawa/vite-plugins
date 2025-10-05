@@ -135,11 +135,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           const output = new MagicString(code);
           const strippedCode = stripLiteral(code);
 
-          const emptyResult: ImportAssetsResult = {
-            js: [],
-            css: [],
-          };
-
           const newImports = new Set<string>();
 
           for (const match of code.matchAll(
@@ -159,7 +154,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             // No-op on client since vite build handles preload/css for dynamic import on client.
             // https://vite.dev/guide/features.html#async-chunk-loading-optimization
             if (this.environment.name === "client") {
-              const replacement = `(${JSON.stringify(emptyResult)})`;
+              const replacement = `(${JSON.stringify(EMPTY_ASSETS)})`;
               output.update(start, end, replacement);
               continue;
             }
@@ -398,8 +393,23 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     },
     {
       name: "fullstack:assets-query",
+      resolveId: {
+        order: "pre",
+        handler(source) {
+          const { query } = parseIdQuery(source);
+          const value = query["assets"];
+          if (typeof value !== "undefined") {
+            if (this.environment.name === "client") {
+              return `\0virtual:fullstack/empty-assets`;
+            }
+          }
+        },
+      },
       load: {
         handler(id) {
+          if (id === "\0virtual:fullstack/empty-assets") {
+            return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
+          }
           const { filename, query } = parseIdQuery(id);
           const value = query["assets"];
           if (typeof value !== "undefined") {
@@ -408,7 +418,11 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               environment: value,
               asEntry: value === "client",
             };
-            return `export default import.meta.vite.assets(${JSON.stringify(options)})`;
+            const result = `export default import.meta.vite.assets(${JSON.stringify(options)})`;
+            return {
+              code: result,
+              moduleSideEffects: false,
+            };
           }
         },
       },
@@ -448,6 +462,11 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     patchVueScopeCssHmr(),
   ];
 }
+
+const EMPTY_ASSETS: ImportAssetsResult = {
+  js: [],
+  css: [],
+};
 
 const BUILD_ASSETS_MANIFEST_NAME = "__fullstack_assets_manifest.js";
 
