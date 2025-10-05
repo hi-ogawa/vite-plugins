@@ -1,46 +1,67 @@
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
-import { renderToStringAsync } from "preact-render-to-string";
-import IndexPage from "../routes";
+import {
+  type ImportAssetsResult,
+  mergeAssets,
+} from "@hiogawa/vite-plugin-fullstack/runtime";
+import type { ComponentType } from "preact";
+import { renderToReadableStream } from "preact-render-to-string/stream";
 import clientAssets from "./entry.client.tsx?assets=client";
-import serverAssets from "./entry.server.tsx?assets=ssr";
 
-async function handler(_request: Request): Promise<Response> {
-  const html = await renderToStringAsync(<Root />);
+async function handler(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+
+  let Page: ComponentType;
+  let pageAssets: ImportAssetsResult[] = [];
+  switch (url.pathname) {
+    case "/": {
+      Page = (await import("../routes")).default;
+      pageAssets.push((await import("../routes?assets=ssr")).default);
+      break;
+    }
+    case "/about": {
+      Page = (await import("../routes/about")).default;
+      pageAssets.push((await import("../routes/about?assets=ssr")).default);
+      break;
+    }
+    default: {
+      Page = (await import("../routes/not-found")).default;
+    }
+  }
+
+  const assets = mergeAssets(clientAssets, ...pageAssets);
+
+  function Root() {
+    return (
+      <html lang="en">
+        <head>
+          {assets.css.map((attrs) => (
+            <link
+              key={attrs.href}
+              {...attrs}
+              rel="stylesheet"
+              crossOrigin="anonymous"
+            />
+          ))}
+          {assets.js.map((attrs) => (
+            <link
+              key={attrs.href}
+              {...attrs}
+              rel="modulepreload"
+              crossOrigin="anonymous"
+            />
+          ))}
+          <script type="module" src={clientAssets.entry}></script>
+        </head>
+        <body>
+          <Page />
+        </body>
+      </html>
+    );
+  }
+
+  const html = renderToReadableStream(<Root />);
   return new Response(html, {
     headers: { "Content-Type": "text/html;charset=utf-8" },
   });
-}
-
-function Root() {
-  const assets = mergeAssets(clientAssets, serverAssets);
-
-  return (
-    <html>
-      <head>
-        <title>Vite Fullstack</title>
-        {assets.css.map((attrs) => (
-          <link
-            key={attrs.href}
-            {...attrs}
-            rel="stylesheet"
-            crossOrigin="anonymous"
-          />
-        ))}
-        {assets.js.map((attrs) => (
-          <link
-            key={attrs.href}
-            {...attrs}
-            rel="modulepreload"
-            crossOrigin="anonymous"
-          />
-        ))}
-        <script type="module" src={clientAssets.entry}></script>
-      </head>
-      <body>
-        <IndexPage />
-      </body>
-    </html>
-  );
 }
 
 export default {

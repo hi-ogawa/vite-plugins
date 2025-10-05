@@ -1,7 +1,7 @@
 import fullstack from "@hiogawa/vite-plugin-fullstack";
 import preact from "@preact/preset-vite";
 import { defineConfig } from "vite";
-import { islandPlugin } from "./vite-island";
+import { islandPlugin } from "./src/framework/island/plugin";
 // import inspect from "vite-plugin-inspect";
 
 export default defineConfig((_env) => ({

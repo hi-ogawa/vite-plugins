@@ -1,4 +1,5 @@
 import "./server.css";
+import Client from "../components/client?island";
 
 export default function IndexPage() {
   return (
@@ -6,7 +7,7 @@ export default function IndexPage() {
       <h4>Server only shell</h4>
       <div>SSR at {new Date().toISOString()}</div>
       <div className="test-server-style">test-server-style</div>
-      <div id="client-app"></div>
+      <Client />
     </div>
   );
 }
