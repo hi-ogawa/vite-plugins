@@ -6,7 +6,8 @@ const globAssets = import.meta.glob<typeof import("*?assets")>(
   { base: "../routes", query: "?assets" },
 );
 const pages = Object.entries(glob).map(([key, lazy]) => {
-  // ./xxx/page.tsx => xxx
+  // extract route path
+  // "./about/page.tsx" => "/about"
   const path = key.slice(1).replace(/\/page\.tsx$/g, "") || "/";
   const assets = globAssets[key];
   return {
