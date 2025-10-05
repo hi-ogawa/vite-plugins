@@ -403,14 +403,14 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               environment: value,
               asEntry: value === "client",
             };
-            if (this.environment.name === 'client') {
+            if (this.environment.name === "client") {
               return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
             }
-            const result = `export default import.meta.vite.assets(${JSON.stringify(options)})`;;
+            const result = `export default import.meta.vite.assets(${JSON.stringify(options)})`;
             return {
               code: result,
               moduleSideEffects: false,
-            }
+            };
           }
         },
       },
