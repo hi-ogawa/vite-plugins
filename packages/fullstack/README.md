@@ -1,10 +1,8 @@
-# @hiogawa/vite-plugin-fullstack
+# SSR Assets API Proposal
 
-## SSR Assets API Proposal
+This proposal introduces a new API that enables SSR environments to access client assets information required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack).
 
-This proposal introduces a new API that enables SSR environments to access client assets information required for server-side rendering. This feature is currently prototyped in the package `@hiogawa/vite-plugin-fullstack`.
-
-### `?assets` Query Import
+## `?assets` Query Import
 
 The plugin provides a new query import `?assets` to access assets information of the module. There are three variations of the import:
 
@@ -52,7 +50,7 @@ export function renderHtml(content) {
 ```
 
 - **Universal routes accessing their assets**: Routes shared by CSR and SSR can retrieve their associated assets
-  - See [`examples/react-router`](./examples/react-router) and [`examples/vue-router`](./examples/vue-router) for detailed integrations
+  - See [`examples/react-router`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router) and [`examples/vue-router`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router) for detailed integrations
 
 ```js
 // routes.js - Router configuration with assets preloading
@@ -171,11 +169,11 @@ TypeScript support for `?assets` imports can be enabled by adding the following 
 
 | Example | Playground |
 | --- | --- |
-| [Basic](./examples/basic/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/basic) |
-| [React Router](./examples/react-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router) |
-| [Vue Router / SSG](./examples/vue-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router) |
+| [Basic](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/basic/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/basic) |
+| [React Router](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router) |
+| [Vue Router / SSG](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router) |
 | [Nitro](https://github.com/hi-ogawa/nitro-vite-examples/tree/10-02-feat_add_vue-router-ssr_example/examples/vue-router-ssr) | [stackblitz](https://stackblitz.com/github/hi-ogawa/nitro-vite-examples/tree/10-02-feat_add_vue-router-ssr_example/examples/vue-router-ssr) |
-| [Cloudflare](./examples/cloudflare/) | - |
+| [Cloudflare](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/cloudflare/) | - |
 
 
 ## Feedback
