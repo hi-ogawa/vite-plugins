@@ -21,9 +21,9 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "/about",
         name: "about",
-        component: () => import("./pages/about.vue"),
+        component: () => import("./pages/about.ts"),
         meta: {
-          assets: () => import("./pages/about.vue?assets"),
+          assets: () => import("./pages/about.ts?assets"),
         },
       },
       {
