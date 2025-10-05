@@ -1,5 +1,5 @@
+import "./layout.css";
 import { NavLink, Outlet } from "react-router";
-import "./styles.css";
 
 export function Component() {
   return (
@@ -17,6 +17,9 @@ export function Component() {
             </li>
             <li>
               <NavLink to="/about">About</NavLink>
+            </li>
+            <li>
+              <NavLink to="/blog">Blog</NavLink>
             </li>
           </ul>
         </nav>

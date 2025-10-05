@@ -5,8 +5,8 @@ import {
   createStaticHandler,
   createStaticRouter,
 } from "react-router";
-import { routes } from "../routes";
 import clientEntry from "./entry.client.tsx?assets=client";
+import { routes } from "./routes";
 
 const { query, dataRoutes } = createStaticHandler(routes);
 

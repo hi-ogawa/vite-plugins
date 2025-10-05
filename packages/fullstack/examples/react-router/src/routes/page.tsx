@@ -1,5 +1,5 @@
+import "./page.css";
 import { useState } from "react";
-import "./index.css";
 
 export function Component() {
   const [count, setCount] = useState(0);

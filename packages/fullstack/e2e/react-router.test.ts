@@ -56,7 +56,7 @@ function defineTest(f: Fixture) {
 
       await testClient(page);
 
-      const jsFile = f.createEditor("src/routes/index.tsx");
+      const jsFile = f.createEditor("src/routes/page.tsx");
       jsFile.edit((s) => s.replace("Count:", "Count-edit:"));
 
       await expect(page.locator(".counter-card")).toContainText(
@@ -77,7 +77,7 @@ function defineTest(f: Fixture) {
       await testClient(page);
 
       // scoped css
-      const cssFile = f.createEditor("src/routes/index.css");
+      const cssFile = f.createEditor("src/routes/page.css");
       cssFile.edit((s) =>
         s.replace("color: rgb(100, 108, 255);", "color: rgb(0, 0, 255);"),
       );
@@ -114,4 +114,14 @@ async function testNavigation(page: Page) {
   await page.getByRole("link", { name: "About" }).click();
   await page.waitForURL("**/about");
   await expect(page.getByRole("heading", { name: "About" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Blog" }).click();
+  await page.waitForURL("**/blog");
+  await expect(page.getByRole("heading", { name: "Blog" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Hello World" }).click();
+  await page.waitForURL("**/blog/hello-world");
+  await expect(
+    page.getByRole("heading", { name: "Hello World" }),
+  ).toBeVisible();
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@hiogawa/vite-plugin-fullstack-examples-react-router",
+  "name": "@hiogawa/vite-plugin-fullstack-examples-vue-router",
   "private": true,
   "type": "module",
   "scripts": {
