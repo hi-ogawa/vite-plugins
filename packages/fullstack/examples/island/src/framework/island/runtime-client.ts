@@ -15,5 +15,6 @@ export class DemoIsland extends HTMLElement {
     const Component = module[exportName];
     const vnode = h(Component, props);
     render(vnode, this);
+    Object.assign(this, { __island_ready__: true });
   }
 }

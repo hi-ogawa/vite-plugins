@@ -1,3 +1,3 @@
 # Island Framework Example
 
-TODO
+TODO: explain how it works
