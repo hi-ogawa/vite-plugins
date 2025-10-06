@@ -42,11 +42,14 @@ type FullstackPluginOptions = {
    * @default ["ssr"]
    */
   serverEnvironments?: string[];
-  dev?: {
+  /**
+   * @experimental
+   */
+  experimental?: {
     /**
      * @default true
      */
-    eagerTransform?: boolean;
+    devEagerTransform?: boolean;
   };
 };
 
@@ -260,7 +263,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
             if (environment.name !== "client") {
               const collected = await collectCss(environment, resolved.id, {
-                eagerTransform: pluginOpts?.dev?.eagerTransform ?? true,
+                eager: pluginOpts?.experimental?.devEagerTransform ?? true,
               });
               for (const file of [
                 cleanUrl(resolved.id),
@@ -481,7 +484,7 @@ const BUILD_ASSETS_MANIFEST_NAME = "__fullstack_assets_manifest.js";
 async function collectCss(
   environment: DevEnvironment,
   entryId: string,
-  options: { eagerTransform: boolean },
+  options: { eager: boolean },
 ) {
   const visited = new Set<string>();
   const cssIds = new Set<string>();
@@ -497,7 +500,7 @@ async function collectCss(
     if (mod?.file) {
       visitedFiles.add(mod.file);
     }
-    if (options.eagerTransform && !mod?.transformResult) {
+    if (options.eager && !mod?.transformResult) {
       try {
         await environment.transformRequest(id);
       } catch (e) {
