@@ -42,6 +42,12 @@ type FullstackPluginOptions = {
    * @default ["ssr"]
    */
   serverEnvironments?: string[];
+  dev?: {
+    /**
+     * @default true
+     */
+    eagerTransform?: boolean;
+  };
 };
 
 type ImportAssetsMeta = {
@@ -253,7 +259,9 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               );
             }
             if (environment.name !== "client") {
-              const collected = await collectCss(environment, resolved.id);
+              const collected = await collectCss(environment, resolved.id, {
+                eagerTransform: pluginOpts?.dev?.eagerTransform ?? true,
+              });
               for (const file of [
                 cleanUrl(resolved.id),
                 ...collected.visitedFiles,
@@ -470,7 +478,11 @@ const EMPTY_ASSETS: ImportAssetsResult = {
 
 const BUILD_ASSETS_MANIFEST_NAME = "__fullstack_assets_manifest.js";
 
-async function collectCss(environment: DevEnvironment, entryId: string) {
+async function collectCss(
+  environment: DevEnvironment,
+  entryId: string,
+  options: { eagerTransform: boolean },
+) {
   const visited = new Set<string>();
   const cssIds = new Set<string>();
   const visitedFiles = new Set<string>();
@@ -484,6 +496,13 @@ async function collectCss(environment: DevEnvironment, entryId: string) {
     if (!mod) return;
     if (mod?.file) {
       visitedFiles.add(mod.file);
+    }
+    if (options.eagerTransform && !mod?.transformResult) {
+      try {
+        await environment.transformRequest(id);
+      } catch (e) {
+        console.error(`[collectCss] Failed to transform '${id}'`, e);
+      }
     }
     for (const next of mod?.importedModules ?? []) {
       if (next.id) {
