@@ -2,63 +2,52 @@ import {
   type ImportAssetsResult,
   mergeAssets,
 } from "@hiogawa/vite-plugin-fullstack/runtime";
-import type { ComponentType } from "preact";
 import { renderToReadableStream } from "preact-render-to-string/stream";
+import Root from "../root";
+import NotFound from "../routes/404";
 import clientAssets from "./entry.client.tsx?assets=client";
+import serverAssets from "./entry.server.tsx?assets=ssr";
+
+const routes = {
+  "/": {
+    render: () => import("../routes"),
+    assets: () => import("../routes?assets=ssr"),
+  },
+  "/about": {
+    render: () => import("../routes/about"),
+    assets: () => import("../routes/about?assets=ssr"),
+  },
+};
 
 async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
 
-  let Page: ComponentType;
-  let pageAssets: ImportAssetsResult[] = [];
-  switch (url.pathname) {
-    case "/": {
-      Page = (await import("../routes")).default;
-      pageAssets.push((await import("../routes?assets=ssr")).default);
-      break;
-    }
-    case "/about": {
-      Page = (await import("../routes/about")).default;
-      pageAssets.push((await import("../routes/about?assets=ssr")).default);
-      break;
-    }
-    default: {
-      Page = (await import("../routes/not-found")).default;
-    }
+  // render page and collect assets
+  let assets: ImportAssetsResult = mergeAssets(clientAssets, serverAssets);
+  let content = <NotFound />;
+  const match = routes[url.pathname as "/"];
+  if (match) {
+    const renderModule = await match.render();
+    content = await renderModule.default();
+    const assetsModule = (await match.assets()).default;
+    assets = mergeAssets(assets, assetsModule);
   }
 
-  const assets = mergeAssets(clientAssets, ...pageAssets);
+  // render assets as <head>
+  const head = (
+    <>
+      {assets.css.map((attrs) => (
+        <link key={attrs.href} {...attrs} rel="stylesheet" />
+      ))}
+      {assets.js.map((attrs) => (
+        <link key={attrs.href} {...attrs} rel="modulepreload" />
+      ))}
+      <script type="module" src={clientAssets.entry}></script>
+    </>
+  );
 
-  function Root() {
-    return (
-      <html lang="en">
-        <head>
-          {assets.css.map((attrs) => (
-            <link
-              key={attrs.href}
-              {...attrs}
-              rel="stylesheet"
-              crossOrigin="anonymous"
-            />
-          ))}
-          {assets.js.map((attrs) => (
-            <link
-              key={attrs.href}
-              {...attrs}
-              rel="modulepreload"
-              crossOrigin="anonymous"
-            />
-          ))}
-          <script type="module" src={clientAssets.entry}></script>
-        </head>
-        <body>
-          <Page />
-        </body>
-      </html>
-    );
-  }
-
-  const html = renderToReadableStream(<Root />);
+  const root = <Root head={head}>{content}</Root>;
+  const html = renderToReadableStream(root);
   return new Response(html, {
     headers: { "Content-Type": "text/html;charset=utf-8" },
   });

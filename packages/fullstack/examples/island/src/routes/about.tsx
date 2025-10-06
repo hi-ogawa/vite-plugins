@@ -1,4 +1,4 @@
-export default function AboutPage() {
+export default function Page() {
   return (
     <div style={{ border: "2px solid lightcoral", padding: "1rem" }}>
       <h4>About Page</h4>
