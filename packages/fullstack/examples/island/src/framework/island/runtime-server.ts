@@ -1,7 +1,7 @@
 import type { ImportAssetsResult } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { type ComponentType, h } from "preact";
 
-export function defineIsland(
+export function createIsland(
   Component: ComponentType,
   exportName: string,
   assets: ImportAssetsResult,

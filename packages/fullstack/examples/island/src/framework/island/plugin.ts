@@ -14,8 +14,8 @@ export function islandPlugin(): Plugin[] {
             return `\
 import * as module from ${JSON.stringify(filename)};
 import assets from ${JSON.stringify(filename + "?assets=client")};
-import { defineIsland } from "/src/framework/island/runtime-server";
-export default defineIsland(module.default, "default", assets);
+import { createIsland } from "/src/framework/island/runtime-server";
+export default createIsland(module.default, "default", assets);
 `;
           }
         },
