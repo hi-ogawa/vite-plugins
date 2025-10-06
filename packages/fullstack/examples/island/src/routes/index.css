@@ -1,3 +1,8 @@
-.test-server-style {
-  color: lightseagreen;
+.hero {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  color: rgb(100, 108, 255);
 }

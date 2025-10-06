@@ -1,8 +1,10 @@
 export default function Page() {
   return (
-    <div style={{ border: "2px solid lightcoral", padding: "1rem" }}>
-      <h4>About Page</h4>
-      <div>SSR at {new Date().toISOString()}</div>
-    </div>
+    <main>
+      <h1>About</h1>
+      <div className="card">
+        <p>This is a simple Island Framework Demo using SSR Assets API.</p>
+      </div>
+    </main>
   );
 }

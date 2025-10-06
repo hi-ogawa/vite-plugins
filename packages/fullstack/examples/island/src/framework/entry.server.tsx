@@ -6,7 +6,9 @@ import { renderToReadableStream } from "preact-render-to-string/stream";
 import Root from "../root";
 import NotFound from "../routes/404";
 import clientAssets from "./entry.client.tsx?assets=client";
-import serverAssets from "./entry.server.tsx?assets=ssr";
+
+// TODO: server hmr broken when importing server entry assets `./entry.server.tsx?assets=ssr`
+import serverAssets from "../root?assets=ssr";
 
 const routes = {
   "/": {
@@ -24,6 +26,7 @@ async function handler(request: Request): Promise<Response> {
 
   // match route
   let assets: ImportAssetsResult = mergeAssets(clientAssets, serverAssets);
+  // let assets: ImportAssetsResult = mergeAssets(clientAssets);
   let content = <NotFound />;
   const match = routes[url.pathname as "/"];
   if (match) {

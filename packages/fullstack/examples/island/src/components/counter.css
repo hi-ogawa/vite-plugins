@@ -1,0 +1,14 @@
+.counter-card {
+  text-align: center;
+}
+
+.counter-card h2 {
+  color: #646cff;
+  margin-bottom: 1rem;
+}
+
+.counter-card p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}

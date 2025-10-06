@@ -1,13 +1,14 @@
 import "./index.css";
-import Client from "../components/client?island";
+import Counter from "../components/counter?island";
 
 export default async function Page() {
   return (
-    <div style={{ border: "2px solid lightseagreen", padding: "1rem" }}>
-      <h4>Server only shell</h4>
-      <div>SSR at {new Date().toISOString()}</div>
-      <div className="test-server-style">test-server-style</div>
-      <Client />
-    </div>
+    <main>
+      <div className="hero">
+        <h1>Island Framework</h1>
+        <p class="subtitle">This is static</p>
+      </div>
+      <Counter />
+    </main>
   );
 }
