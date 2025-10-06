@@ -1,8 +1,8 @@
 import "./counter.css";
 import { useState } from "preact/hooks";
 
-export default function Counter() {
-  const [count, setCount] = useState(0);
+export default function Counter(props: { defaultValue?: number }) {
+  const [count, setCount] = useState(props.defaultValue ?? 0);
   return (
     <div className="card counter-card">
       <p>Count: {count}</p>

@@ -8,7 +8,7 @@ export default async function Page() {
         <h1>Island Framework</h1>
         <p class="subtitle">This is static</p>
       </div>
-      <Counter />
+      <Counter defaultValue={2} />
     </main>
   );
 }
