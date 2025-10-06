@@ -26,7 +26,6 @@ async function handler(request: Request): Promise<Response> {
 
   // match route
   let assets: ImportAssetsResult = mergeAssets(clientAssets, serverAssets);
-  // let assets: ImportAssetsResult = mergeAssets(clientAssets);
   let content = <NotFound />;
   const match = routes[url.pathname as "/"];
   if (match) {
