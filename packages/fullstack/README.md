@@ -172,6 +172,7 @@ TypeScript support for `?assets` imports can be enabled by adding the following 
 | [Basic](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/basic/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/basic) |
 | [React Router](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/react-router) |
 | [Vue Router / SSG](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/vue-router) |
+| [Preact Island](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island) |
 | [Nitro](https://github.com/hi-ogawa/nitro-vite-examples/tree/10-02-feat_add_vue-router-ssr_example/examples/vue-router-ssr) | [stackblitz](https://stackblitz.com/github/hi-ogawa/nitro-vite-examples/tree/10-02-feat_add_vue-router-ssr_example/examples/vue-router-ssr) |
 | [Cloudflare](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/cloudflare/) | - |
 
