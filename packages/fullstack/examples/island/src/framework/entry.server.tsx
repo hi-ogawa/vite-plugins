@@ -22,13 +22,15 @@ const routes = {
 async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
 
-  // render page and collect assets
+  // match route
   let assets: ImportAssetsResult = mergeAssets(clientAssets, serverAssets);
   let content = <NotFound />;
   const match = routes[url.pathname as "/"];
   if (match) {
+    // render page
     const renderModule = await match.render();
     content = await renderModule.default();
+    // collect assets
     const assetsModule = (await match.assets()).default;
     assets = mergeAssets(assets, assetsModule);
   }
@@ -46,6 +48,7 @@ async function handler(request: Request): Promise<Response> {
     </>
   );
 
+  // SSR
   const root = <Root head={head}>{content}</Root>;
   const html = renderToReadableStream(root);
   return new Response(html, {
