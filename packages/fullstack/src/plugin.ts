@@ -131,7 +131,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         const collected = await collectCss(environment, id, {
           eager: pluginOpts?.experimental?.devEagerTransform ?? true,
         });
-        for (const file of [id, ...collected.visitedFiles]) {
+        for (const file of [cleanUrl(id), ...collected.visitedFiles]) {
           if (fs.existsSync(file)) {
             ctx.addWatchFile(file);
           }
