@@ -331,6 +331,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
                 this.emitFile({
                   type: "chunk",
                   id: meta.id,
+                  preserveSignature: "exports-only",
                 });
               }
             }
