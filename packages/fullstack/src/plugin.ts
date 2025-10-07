@@ -296,55 +296,18 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           const resolved = await this.resolve(parsed.import, parsed.importer);
           assert(resolved, `Failed to resolve: ${parsed.import}`);
 
-          if (this.environment.mode === "dev") {
-            const result: ImportAssetsResult = {
-              entry: undefined, // defined only on client
-              js: [], // always empty
-              css: [], // defined only on server
-            };
-            const environment = server.environments[parsed.environment];
-            assert(environment, `Unknown environment: ${parsed.environment}`);
-            if (parsed.environment === "client") {
-              result.entry = normalizeViteImportAnalysisUrl(
-                environment,
-                resolved.id,
-              );
-            }
-            if (environment.name !== "client") {
-              const collected = await collectCss(environment, resolved.id, {
-                eager: pluginOpts?.experimental?.devEagerTransform ?? true,
-              });
-              for (const file of [
-                cleanUrl(resolved.id),
-                ...collected.visitedFiles,
-              ]) {
-                if (fs.existsSync(file)) {
-                  this.addWatchFile(file);
-                }
-              }
-              result.css = collected.hrefs.map((href, i) => ({
-                href,
-                "data-vite-dev-id": collected.ids[i],
-              }));
-            }
-            return `export default ${JSON.stringify(result)}`;
-          } else {
-            const id = resolved.id;
-            const map = (importAssetsMetaMap[parsed.environment] ??= {});
-            const meta: ImportAssetsMeta = {
-              id,
-              // normalize key to have machine-independent build output
-              key: path.relative(resolvedConfig.root, resolved.id),
-              importerEnvironment: this.environment.name,
-              // merge `entry`
-              entry: map[id]?.entry || !!parsed.entry,
-            };
-            map[id] = meta;
-            return `\
-              import __assets_manifest from "virtual:fullstack/assets-manifest";
-              export default __assets_manifest[${JSON.stringify(parsed.environment)}][${JSON.stringify(meta.key)}];
-            `;
+          const s = new MagicString("");
+          const code = await processAssetsImport(this, resolved.id, {
+            environment: parsed.environment,
+            isEntry: !!parsed.entry,
+          });
+          s.append(`export default ${code};\n`);
+          if (this.environment.mode === "build") {
+            s.prepend(
+              `import __assets_manifest from "virtual:fullstack/assets-manifest";\n`,
+            );
           }
+          return s.toString();
         },
       },
       // non-client builds can load assets manifest as external
