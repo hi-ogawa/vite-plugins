@@ -57,7 +57,7 @@ This creates a custom element `<demo-island>` with:
 - Client entry point URL (`assets.entry`)
 - Component export name and serialized props
 
-### 3. Client-Side Hydration
+### 3. Client-Side Rendering
 
 The client entry (`entry.client.tsx`) registers a web component:
 
@@ -66,9 +66,8 @@ customElements.define("demo-island", DemoIsland);
 ```
 
 The `DemoIsland` class (`runtime-client.ts`):
-- Reads attributes from the custom element
-- Dynamically imports the component using `__island_raw_import__`
-- Hydrates the component with the deserialized props
+- Imports the component via `entry` and `export-name` attributes
+- Renders the component with `props`
 
 ## Key Components
 
