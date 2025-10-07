@@ -6,7 +6,7 @@ This document explains the internal architecture and implementation details of `
 
 - [Overview](#overview)
 - [Plugin Architecture](#plugin-architecture)
-- [API Transform Pipeline](#api-transform-pipeline)
+
 - [Query Import System](#query-import-system)
 - [Virtual Module System](#virtual-module-system)
 - [Dev Mode: CSS Collection](#dev-mode-css-collection)
@@ -16,12 +16,15 @@ This document explains the internal architecture and implementation details of `
 
 ## Overview
 
-The plugin provides two main APIs for accessing build assets information:
+The plugin provides a `?assets` query import API for accessing build assets information:
 
-1. **`import.meta.vite.assets()`** - Transform-based API for inline asset queries
-2. **`?assets` query import** - Query-based API for importing asset information
+```js
+import assets from "./page.js?assets";
+import clientAssets from "./client.js?assets=client";
+import ssrAssets from "./server.js?assets=ssr";
+```
 
-Both APIs compile to the same underlying implementation:
+The implementation differs between dev and build modes:
 - **Dev mode**: Dynamic CSS collection via module graph traversal
 - **Build mode**: Static asset manifest generated during build
 
@@ -48,47 +51,6 @@ assetsPlugin()
 ├── fullstack:patch-vite-client  - Patches Vite's HMR for SSR-injected CSS
 └── fullstack:patch-vue-scope-css-hmr - Fixes Vue scoped CSS HMR
 ```
-
-## API Transform Pipeline
-
-### `import.meta.vite.assets()` Transform
-
-The plugin transforms code containing `import.meta.vite.assets()` calls:
-
-**Input:**
-```js
-// page.js
-const assets = import.meta.vite.assets();
-```
-
-**Transform Steps:**
-
-1. **Parse arguments** - Extract options from the function call:
-   ```ts
-   {
-     import: id,              // Module to get assets for (defaults to current file)
-     environment: undefined,  // Target environment (undefined = universal)
-     asEntry: false,          // Whether to treat as entry point
-   }
-   ```
-
-2. **Generate virtual imports** - Create import statements for each environment:
-   ```js
-   import __assets_abc123 from "virtual:fullstack/assets?import=/page.js&importer=/page.js&environment=client";
-   import __assets_def456 from "virtual:fullstack/assets?import=/page.js&importer=/page.js&environment=ssr";
-   import * as __assets_runtime from "@hiogawa/vite-plugin-fullstack/runtime";
-   ```
-
-3. **Replace call** - Replace `import.meta.vite.assets()` with:
-   ```js
-   const assets = (__assets_runtime.mergeAssets(__assets_abc123, __assets_def456));
-   ```
-
-4. **Client environment optimization** - On the client environment, the transform is a no-op:
-   ```js
-   const assets = ({ js: [], css: [] });
-   ```
-   This is because Vite handles preloading and CSS injection automatically for client-side code.
 
 ## Query Import System
 
@@ -403,7 +365,7 @@ This prevents absolute paths like `/home/user/project/page.js` from appearing in
 
 The plugin works by:
 
-1. **Transform phase**: Converting `import.meta.vite.assets()` and `?assets` imports to virtual module imports
+1. **Query import system**: Providing `?assets` query imports that resolve to virtual modules
 2. **Dev mode**: Dynamically collecting CSS via module graph traversal at request time
 3. **Build mode**: 
    - Tracking asset imports during server build
