@@ -29,4 +29,4 @@ Example: `packages/rsc`
 1. Manually bump `packages/rsc/package.json` version
 2. Update changelog via `pnpm changelog packages/rsc`
 3. Create a PR and merge to main
-4. Locally run `node scripts/release.js rsc`
+4. Locally run `pnpm release packages/rsc`
