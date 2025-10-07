@@ -6,6 +6,7 @@ import clientAssets from "./entry.client.tsx?assets=client";
 
 // TODO: server hmr broken when importing server entry assets `./entry.server.tsx?assets=ssr`
 import serverAssets from "../root?assets=ssr";
+// import serverAssets from "./entry.server.tsx?assets=ssr";
 
 const routes = {
   "/": {
