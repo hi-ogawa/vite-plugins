@@ -528,7 +528,11 @@ async function collectCss(
   const visitedFiles = new Set<string>();
 
   async function recurse(id: string) {
-    if (visited.has(id) || parseAssetsVirtual(id)) {
+    if (
+      visited.has(id) ||
+      parseAssetsVirtual(id) ||
+      "assets" in parseIdQuery(id).query
+    ) {
       return;
     }
     visited.add(id);
@@ -544,6 +548,7 @@ async function collectCss(
         console.error(`[collectCss] Failed to transform '${id}'`, e);
       }
     }
+    // TODO: should skip dynamic imports? but no such metadata in dev module graph.
     for (const next of mod?.importedModules ?? []) {
       if (next.id) {
         if (isCSSRequest(next.id)) {
