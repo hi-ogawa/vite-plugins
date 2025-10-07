@@ -17,6 +17,7 @@ export type ImportAssetsOptions = {
   // universal?: boolean;
 };
 
+// TODO: rename to just Assets?
 export type ImportAssetsResult = {
   entry?: string;
   js: { href: string }[];

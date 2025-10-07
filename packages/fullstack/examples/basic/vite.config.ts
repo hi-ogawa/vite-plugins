@@ -1,12 +1,11 @@
 import fullstack from "@hiogawa/vite-plugin-fullstack";
-// import inspect from "vite-plugin-inspect";
 import react from "@vitejs/plugin-react";
 import { type Plugin, defineConfig } from "vite";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
-    // inspect(),
+    // import("vite-plugin-inspect").then((m) => m.default()),
     react(),
     reactHmrPreamblePlugin(),
     fullstack(),
