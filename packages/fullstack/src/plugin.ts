@@ -132,11 +132,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         const collected = await collectCss(environment, id, {
           eager: pluginOpts?.experimental?.devEagerTransform ?? true,
         });
-        for (const file of [cleanUrl(id), ...collected.visitedFiles]) {
-          if (fs.existsSync(file)) {
-            // ctx.addWatchFile(file);
-          }
-        }
         result.css = collected.hrefs.map((href, i) => ({
           href,
           "data-vite-dev-id": collected.ids[i],
@@ -548,7 +543,6 @@ async function collectCss(
 ) {
   const visited = new Set<string>();
   const cssIds = new Set<string>();
-  const visitedFiles = new Set<string>();
 
   async function recurse(id: string) {
     if (
@@ -561,9 +555,6 @@ async function collectCss(
     visited.add(id);
     const mod = environment.moduleGraph.getModuleById(id);
     if (!mod) return;
-    if (mod?.file) {
-      visitedFiles.add(mod.file);
-    }
     if (options.eager && !mod?.transformResult) {
       try {
         await environment.transformRequest(id);
@@ -592,7 +583,7 @@ async function collectCss(
   const hrefs = [...cssIds].map((id) =>
     normalizeViteImportAnalysisUrl(environment, id),
   );
-  return { ids: [...cssIds], hrefs, visitedFiles: [...visitedFiles] };
+  return { ids: [...cssIds], hrefs };
 }
 
 function invalidteModuleById(environment: DevEnvironment, id: string) {
