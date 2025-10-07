@@ -25,6 +25,7 @@ type Assets = {
 The goal of this API is to cover the following use cases in SSR applications:
 
 - **Server entry accessing client entry**: Enables the server to inject client-side assets during SSR
+  - This can be also used for implementing "Island Architecutre". See [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island) for the example.
 
 ```js
 // server.js - Server entry injecting client assets during SSR
