@@ -277,10 +277,71 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             assert.equal(this.environment.mode, "build");
             return { id: source, external: true };
           }
+          if (source === "virtual:dev-server-css") {
+            return "\0" + source;
+          }
         },
       },
       load: {
         async handler(id) {
+          if (id === "\0virtual:dev-server-css") {
+            // Only works in dev mode and on server environments
+            if (this.environment.mode !== "dev") {
+              return `export default [];`;
+            }
+            if (this.environment.name === "client") {
+              return `export default [];`;
+            }
+
+            // Collect all CSS from the entire server module graph
+            const cssIds = new Set<string>();
+            const visited = new Set<string>();
+
+            function collectCssFromModule(mod: EnvironmentModuleNode) {
+              if (!mod.id || visited.has(mod.id)) return;
+              visited.add(mod.id);
+
+              // Check if the module itself is CSS
+              if (isCSSRequest(mod.id)) {
+                if (!hasSpecialCssQuery(mod.id)) {
+                  cssIds.add(mod.id);
+                }
+                return;
+              }
+
+              // Skip virtual assets modules to avoid circular dependencies
+              if (
+                parseAssetsVirtual(mod.id) ||
+                "assets" in parseIdQuery(mod.id).query
+              ) {
+                return;
+              }
+
+              // Recursively collect from imported modules
+              for (const next of mod.importedModules ?? []) {
+                collectCssFromModule(next);
+              }
+            }
+
+            // Start from all modules in the server module graph
+            const environment = server.environments[this.environment.name];
+            assert(environment);
+            for (const mod of environment.moduleGraph.idToModuleMap.values()) {
+              collectCssFromModule(mod);
+            }
+
+            const hrefs = [...cssIds].map((id) =>
+              normalizeViteImportAnalysisUrl(environment, id),
+            );
+
+            const result = hrefs.map((href, i) => ({
+              href,
+              "data-vite-dev-id": [...cssIds][i],
+            }));
+
+            return `export default ${JSON.stringify(result)};`;
+          }
+
           const parsed = parseAssetsVirtual(id);
           if (!parsed) return;
           assert.notEqual(this.environment.name, "client");

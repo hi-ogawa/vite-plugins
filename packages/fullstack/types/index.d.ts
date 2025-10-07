@@ -10,3 +10,12 @@ declare global {
     };
   }
 }
+
+declare module "virtual:dev-server-css" {
+  type CssLinkAttributes = {
+    href: string;
+    "data-vite-dev-id"?: string;
+  };
+  const css: CssLinkAttributes[];
+  export default css;
+}

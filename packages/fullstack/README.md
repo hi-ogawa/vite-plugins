@@ -91,6 +91,31 @@ export function renderHtml() {
 }
 ```
 
+## `virtual:dev-server-css` Virtual Module
+
+For simplified use cases where code-splitting by route is not important, you can use the `virtual:dev-server-css` module to collect all CSS in the server module graph:
+
+```js
+// server.js - Simplified approach for collecting all CSS
+import devServerCss from "virtual:dev-server-css";
+
+export function renderHtml() {
+  // devServerCss contains all CSS files loaded in the server module graph
+  const cssLinks = devServerCss
+    .map(css => `<link rel="stylesheet" href="${css.href}" ${css['data-vite-dev-id'] ? `data-vite-dev-id="${css['data-vite-dev-id']}"` : ''} />`)
+    .join('\n');
+  // ...
+}
+```
+
+**Note:** The `virtual:dev-server-css` module:
+- Only works in dev mode (returns empty array in build mode)
+- Returns empty array in client environment
+- Collects all CSS files from the entire server module graph
+- Does not split CSS by route/entry point
+- Type: `CssLinkAttributes[]` where `CssLinkAttributes = { href: string; "data-vite-dev-id"?: string }`
+
+
 ## Configuration
 
 The API is enabled by adding the plugin and minimal build configuration:
