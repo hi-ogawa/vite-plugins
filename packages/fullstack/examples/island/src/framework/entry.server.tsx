@@ -1,7 +1,4 @@
-import {
-  type ImportAssetsResult,
-  mergeAssets,
-} from "@hiogawa/vite-plugin-fullstack/runtime";
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { renderToReadableStream } from "preact-render-to-string/stream";
 import Root from "../root";
 import NotFound from "../routes/404";
@@ -25,7 +22,7 @@ async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
 
   // match route
-  let assets: ImportAssetsResult = mergeAssets(clientAssets, serverAssets);
+  let assets = mergeAssets(clientAssets, serverAssets);
   let content = <NotFound />;
   const match = routes[url.pathname as "/"];
   if (match) {

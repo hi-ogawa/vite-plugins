@@ -1,16 +1,16 @@
-type Default = import("./shared").ImportAssetsResult;
+type Assets = import("./shared").ImportAssetsResult;
 
 declare module "*?assets" {
-  const default_: Default;
-  export default result;
+  const assets: Assets;
+  export default assets;
 }
 
 declare module "*?assets=client" {
-  const default_: Default;
-  export default result;
+  const assets: Assets;
+  export default assets;
 }
 
 declare module "*?assets=ssr" {
-  const default_: Default;
-  export default result;
+  const assets: Assets;
+  export default assets;
 }
