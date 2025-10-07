@@ -57,7 +57,7 @@ type ImportAssetsMeta = {
   id: string;
   key: string;
   importerEnvironment: string;
-  entry: boolean;
+  isEntry: boolean;
 };
 
 export default function vitePluginFullstack(
@@ -149,8 +149,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         // normalize key to have machine-independent build output
         key: path.relative(resolvedConfig.root, id),
         importerEnvironment: ctx.environment.name,
-        // merge `entry`
-        entry: !!(map[id]?.entry || options.isEntry),
+        isEntry: !!(map[id]?.isEntry || options.isEntry),
       };
       map[id] = meta;
       return `__assets_manifest[${JSON.stringify(options.environment)}][${JSON.stringify(meta.key)}]`;
@@ -339,7 +338,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           const metas = importAssetsMetaMap["client"];
           if (metas) {
             for (const meta of Object.values(importAssetsMetaMap["client"]!)) {
-              if (meta.entry) {
+              if (meta.isEntry) {
                 this.emitFile({
                   type: "chunk",
                   id: meta.id,
