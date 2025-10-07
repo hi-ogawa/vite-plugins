@@ -17,10 +17,8 @@ export function App() {
 }
 
 function TodoApp() {
-  const query = useSuspenseQuery({
-    queryKey: ["todos"],
-    queryFn: () => $rpc.listItems(),
-  });
+  const query = useSuspenseQuery($rpcq.listItems.queryOptions());
+
   return (
     <main>
       <form
