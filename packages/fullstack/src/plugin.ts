@@ -115,14 +115,13 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     [environment: string]: { [id: string]: ImportAssetsMeta };
   } = {};
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
-  // Track CSS modules imported by server environments for deduplication
-  // Maps server module ID -> Set of CSS module IDs it imports
-  const serverModuleToCss = new Map<string, Set<string>>();
-  // Track virtual CSS entry modules and their reference IDs
-  // Maps server module ID -> reference ID of the virtual CSS entry
-  const serverModuleToVirtualCssEntry = new Map<string, string>();
-  // Reverse mapping: hash -> server module ID
-  const hashToServerModule = new Map<string, string>();
+
+  // Shared state for CSS deduplication between plugins
+  const cssDeduplicationState = {
+    serverModuleToCss: new Map<string, Set<string>>(),
+    serverModuleToVirtualCssEntry: new Map<string, string>(),
+    hashToServerModule: new Map<string, string>(),
+  };
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -186,24 +185,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               emitAssets: true,
             },
           };
-        }
-      },
-      moduleParsed(info) {
-        // Track CSS imports from server environments for deduplication
-        if (
-          pluginOpts?.experimental?.deduplicateCss &&
-          this.environment.mode === "build" &&
-          this.environment.name !== "client"
-        ) {
-          // Track which CSS modules are imported by which server modules
-          for (const importedId of info.importedIds) {
-            if (isCSSRequest(importedId) && !hasSpecialCssQuery(importedId)) {
-              if (!serverModuleToCss.has(info.id)) {
-                serverModuleToCss.set(info.id, new Set());
-              }
-              serverModuleToCss.get(info.id)!.add(importedId);
-            }
-          }
         }
       },
       /**
@@ -311,31 +292,10 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             assert.equal(this.environment.mode, "build");
             return { id: source, external: true };
           }
-          // Handle virtual CSS entry modules for deduplication
-          if (source.startsWith("virtual:fullstack/css-entry-")) {
-            return "\0" + source;
-          }
         },
       },
       load: {
         async handler(id) {
-          // Handle virtual CSS entry modules
-          if (id.startsWith("\0virtual:fullstack/css-entry-")) {
-            const hash = id.slice("\0virtual:fullstack/css-entry-".length);
-            const serverModuleId = hashToServerModule.get(hash);
-            if (serverModuleId) {
-              const cssModules = serverModuleToCss.get(serverModuleId);
-              if (cssModules && cssModules.size > 0) {
-                // Generate imports for all CSS modules
-                const imports = [...cssModules].map(cssId => 
-                  `import ${JSON.stringify(cssId)};`
-                ).join("\n");
-                return imports;
-              }
-            }
-            return ""; // Empty module if no CSS
-          }
-          
           const parsed = parseAssetsVirtual(id);
           if (!parsed) return;
           assert.notEqual(this.environment.name, "client");
@@ -379,33 +339,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       writeBundle(_options, bundle) {
         bundleMap[this.environment.name] = bundle;
       },
-      generateBundle(_options, bundle) {
-        // After client build, map virtual CSS entry modules to their output CSS filenames
-        if (
-          pluginOpts?.experimental?.deduplicateCss &&
-          this.environment.name === "client"
-        ) {
-          for (const [serverModuleId, refId] of serverModuleToVirtualCssEntry.entries()) {
-            try {
-              const chunkFileName = this.getFileName(refId);
-              // The chunk is a .js file that imports the actual .css files
-              // Get the actual CSS files from the chunk's viteMetadata
-              const chunk = bundle[chunkFileName];
-              if (chunk && chunk.type === "chunk") {
-                const cssFiles = chunk.viteMetadata?.importedCss ?? new Set();
-                if (cssFiles.size > 0) {
-                  // Store the CSS files for this server module
-                  // Update the map to store CSS filenames instead of reference IDs
-                  const cssArray = [...cssFiles];
-                  serverModuleToVirtualCssEntry.set(serverModuleId, cssArray.join(","));
-                }
-              }
-            } catch (e) {
-              // Ignore errors for CSS modules that couldn't be mapped
-            }
-          }
-        }
-      },
       buildStart() {
         // dynamically add client entry during build
         if (
@@ -421,24 +354,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
                   id: meta.id,
                   preserveSignature: "exports-only",
                 });
-              }
-            }
-          }
-          // Add tracked server CSS modules as entries to client build for deduplication
-          // Create a virtual module per server module that imports CSS files
-          if (pluginOpts?.experimental?.deduplicateCss) {
-            for (const [serverModuleId, cssModules] of serverModuleToCss.entries()) {
-              if (cssModules.size > 0) {
-                // Create a virtual CSS entry module for this server module
-                // Use a hash to create a shorter, stable ID
-                const hash = hashString(serverModuleId);
-                const virtualId = `virtual:fullstack/css-entry-${hash}`;
-                hashToServerModule.set(hash, serverModuleId);
-                const refId = this.emitFile({
-                  type: "chunk",
-                  id: virtualId,
-                });
-                serverModuleToVirtualCssEntry.set(serverModuleId, refId);
               }
             }
           }
@@ -501,7 +416,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
                 
                 // For each server module, check if we have a virtual CSS entry for it
                 for (const moduleId of serverModuleIds) {
-                  const cssFilesStr = serverModuleToVirtualCssEntry.get(moduleId);
+                  const cssFilesStr = cssDeduplicationState.serverModuleToVirtualCssEntry.get(moduleId);
                   if (cssFilesStr) {
                     // Split comma-separated CSS files and add them
                     const cssFileNames = cssFilesStr.split(",");
@@ -674,6 +589,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         }
       },
     },
+    cssDeduplicateServerPlugin(pluginOpts, cssDeduplicationState),
     patchViteClientPlugin(),
     patchVueScopeCssHmr(),
   ];
@@ -821,6 +737,119 @@ function collectAssetDepsInner(
   return {
     js: [...visited],
     css: [...new Set(css)],
+  };
+}
+
+function cssDeduplicateServerPlugin(
+  pluginOpts: FullstackPluginOptions | undefined,
+  state: {
+    serverModuleToCss: Map<string, Set<string>>;
+    serverModuleToVirtualCssEntry: Map<string, string>;
+    hashToServerModule: Map<string, string>;
+  },
+): Plugin {
+  return {
+    name: "fullstack:assets-deduplicate-server-css",
+    sharedDuringBuild: true,
+    apply: () => pluginOpts?.experimental?.deduplicateCss === true,
+    moduleParsed(info) {
+      // Track CSS imports from server environments for deduplication
+      if (
+        this.environment.mode === "build" &&
+        this.environment.name !== "client"
+      ) {
+        // Track which CSS modules are imported by which server modules
+        for (const importedId of info.importedIds) {
+          if (isCSSRequest(importedId) && !hasSpecialCssQuery(importedId)) {
+            if (!state.serverModuleToCss.has(info.id)) {
+              state.serverModuleToCss.set(info.id, new Set());
+            }
+            state.serverModuleToCss.get(info.id)!.add(importedId);
+          }
+        }
+      }
+    },
+    resolveId: {
+      handler(source) {
+        // Handle virtual CSS entry modules for deduplication
+        if (source.startsWith("virtual:fullstack/css-entry-")) {
+          return "\0" + source;
+        }
+      },
+    },
+    load: {
+      async handler(id) {
+        // Handle virtual CSS entry modules
+        if (id.startsWith("\0virtual:fullstack/css-entry-")) {
+          const hash = id.slice("\0virtual:fullstack/css-entry-".length);
+          const serverModuleId = state.hashToServerModule.get(hash);
+          if (serverModuleId) {
+            const cssModules = state.serverModuleToCss.get(serverModuleId);
+            if (cssModules && cssModules.size > 0) {
+              // Generate imports for all CSS modules
+              const imports = [...cssModules]
+                .map((cssId) => `import ${JSON.stringify(cssId)};`)
+                .join("\n");
+              return imports;
+            }
+          }
+          return ""; // Empty module if no CSS
+        }
+      },
+    },
+    buildStart() {
+      // Add tracked server CSS modules as entries to client build for deduplication
+      // Create a virtual module per server module that imports CSS files
+      if (
+        this.environment.mode === "build" &&
+        this.environment.name === "client"
+      ) {
+        for (const [serverModuleId, cssModules] of state.serverModuleToCss.entries()) {
+          if (cssModules.size > 0) {
+            // Create a virtual CSS entry module for this server module
+            // Use a hash to create a shorter, stable ID
+            const hash = hashString(serverModuleId);
+            const virtualId = `virtual:fullstack/css-entry-${hash}`;
+            state.hashToServerModule.set(hash, serverModuleId);
+            const refId = this.emitFile({
+              type: "chunk",
+              id: virtualId,
+            });
+            state.serverModuleToVirtualCssEntry.set(serverModuleId, refId);
+          }
+        }
+      }
+    },
+    generateBundle(_options, bundle) {
+      // After client build, map virtual CSS entry modules to their output CSS filenames
+      if (this.environment.name === "client") {
+        for (const [
+          serverModuleId,
+          refId,
+        ] of state.serverModuleToVirtualCssEntry.entries()) {
+          try {
+            const chunkFileName = this.getFileName(refId);
+            // The chunk is a .js file that imports the actual .css files
+            // Get the actual CSS files from the chunk's viteMetadata
+            const chunk = bundle[chunkFileName];
+            if (chunk && chunk.type === "chunk") {
+              const cssFiles = chunk.viteMetadata?.importedCss ?? new Set();
+              if (cssFiles.size > 0) {
+                // Store the CSS files for this server module
+                // Update the map to store CSS filenames instead of reference IDs
+                const cssArray = [...cssFiles];
+                state.serverModuleToVirtualCssEntry.set(
+                  serverModuleId,
+                  cssArray.join(","),
+                );
+              }
+            }
+          } catch (e) {
+            // Ignore errors for CSS modules that couldn't be mapped
+          }
+        }
+      }
+    },
   };
 }
 
