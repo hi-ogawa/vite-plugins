@@ -113,6 +113,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     [environment: string]: { [id: string]: ImportAssetsMeta };
   } = {};
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
+  const noSplitCssEnvironments = new Set<string>();
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -297,61 +298,70 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             pluginOpts?.experimental?.noSplitCss &&
             id === "\0virtual:fullstack/no-split-css"
           ) {
-            // Only works in dev mode and on server environments
-            if (this.environment.mode !== "dev") {
-              return `export default [];`;
-            }
             if (this.environment.name === "client") {
               return `export default [];`;
             }
 
-            // Collect all CSS from the entire server module graph
-            const cssIds = new Set<string>();
-            const visited = new Set<string>();
+            if (this.environment.mode === "dev") {
+              // Dev mode: collect all CSS from the entire server module graph
+              const cssIds = new Set<string>();
+              const visited = new Set<string>();
 
-            function collectCssFromModule(mod: EnvironmentModuleNode) {
-              if (!mod.id || visited.has(mod.id)) return;
-              visited.add(mod.id);
+              function collectCssFromModule(mod: EnvironmentModuleNode) {
+                if (!mod.id || visited.has(mod.id)) return;
+                visited.add(mod.id);
 
-              // Check if the module itself is CSS
-              if (isCSSRequest(mod.id)) {
-                if (!hasSpecialCssQuery(mod.id)) {
-                  cssIds.add(mod.id);
+                // Check if the module itself is CSS
+                if (isCSSRequest(mod.id)) {
+                  if (!hasSpecialCssQuery(mod.id)) {
+                    cssIds.add(mod.id);
+                  }
+                  return;
                 }
-                return;
+
+                // Skip virtual assets modules to avoid circular dependencies
+                if (
+                  parseAssetsVirtual(mod.id) ||
+                  "assets" in parseIdQuery(mod.id).query
+                ) {
+                  return;
+                }
+
+                // Recursively collect from imported modules
+                for (const next of mod.importedModules ?? []) {
+                  collectCssFromModule(next);
+                }
               }
 
-              // Skip virtual assets modules to avoid circular dependencies
-              if (
-                parseAssetsVirtual(mod.id) ||
-                "assets" in parseIdQuery(mod.id).query
-              ) {
-                return;
+              // Start from all modules in the server module graph
+              const environment = server.environments[this.environment.name];
+              assert(environment);
+              for (const mod of environment.moduleGraph.idToModuleMap.values()) {
+                collectCssFromModule(mod);
               }
 
-              // Recursively collect from imported modules
-              for (const next of mod.importedModules ?? []) {
-                collectCssFromModule(next);
-              }
+              const hrefs = [...cssIds].map((id) =>
+                normalizeViteImportAnalysisUrl(environment, id),
+              );
+
+              const result = hrefs.map((href, i) => ({
+                href,
+                "data-vite-dev-id": [...cssIds][i],
+              }));
+
+              return `export default ${JSON.stringify(result)};`;
+            } else {
+              // Build mode: track that this environment uses no-split-css
+              noSplitCssEnvironments.add(this.environment.name);
+
+              // Import from the manifest
+              const s = new MagicString("");
+              s.append(
+                `import __assets_manifest from "virtual:fullstack/assets-manifest";\n` +
+                  `export default __assets_manifest["__no_split_css__"]["${this.environment.name}"] || [];\n`,
+              );
+              return s.toString();
             }
-
-            // Start from all modules in the server module graph
-            const environment = server.environments[this.environment.name];
-            assert(environment);
-            for (const mod of environment.moduleGraph.idToModuleMap.values()) {
-              collectCssFromModule(mod);
-            }
-
-            const hrefs = [...cssIds].map((id) =>
-              normalizeViteImportAnalysisUrl(environment, id),
-            );
-
-            const result = hrefs.map((href, i) => ({
-              href,
-              "data-vite-dev-id": [...cssIds][i],
-            }));
-
-            return `export default ${JSON.stringify(result)};`;
           }
 
           const parsed = parseAssetsVirtual(id);
@@ -453,12 +463,51 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
           }
 
+          // Add no-split-css entries to manifest
+          if (pluginOpts?.experimental?.noSplitCss) {
+            const noSplitCssManifest: {
+              [environment: string]: { href: string }[];
+            } = {};
+
+            for (const environmentName of noSplitCssEnvironments) {
+              const bundle = bundleMap[environmentName];
+              if (!bundle) continue;
+
+              // Collect all CSS from all chunks in this environment
+              const allCss = new Set<string>();
+              for (const chunk of Object.values(bundle)) {
+                if (chunk.type === "chunk") {
+                  const deps = collectAssetDepsInner(chunk.fileName, bundle);
+                  for (const cssFile of deps.css) {
+                    allCss.add(cssFile);
+                  }
+                }
+              }
+
+              noSplitCssManifest[environmentName] = [...allCss].map(
+                (fileName) => ({
+                  href: `/${fileName}`,
+                }),
+              );
+            }
+
+            if (Object.keys(noSplitCssManifest).length > 0) {
+              manifest["__no_split_css__"] = noSplitCssManifest as any;
+            }
+          }
+
           // write manifest to importer environments
           const importerEnvironments = new Set(
             Object.values(importAssetsMetaMap)
               .flatMap((metas) => Object.values(metas))
               .flatMap((meta) => meta.importerEnvironment),
           );
+
+          // Also add environments that use no-split-css
+          for (const env of noSplitCssEnvironments) {
+            importerEnvironments.add(env);
+          }
+
           for (const environmentName of importerEnvironments) {
             const outDir =
               builder.environments[environmentName]!.config.build.outDir;

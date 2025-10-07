@@ -117,7 +117,7 @@ import noSplitCss from "virtual:fullstack/no-split-css";
 export function renderHtml() {
   // noSplitCss contains all CSS files loaded in the server module graph
   const cssLinks = noSplitCss
-    .map(css => `<link rel="stylesheet" href="${css.href}" ${css['data-vite-dev-id'] ? `data-vite-dev-id="${css['data-vite-dev-id']}"` : ''} />`)
+    .map(css => `<link rel="stylesheet" href="${css.href}" />`)
     .join('\n');
   // ...
 }
@@ -125,10 +125,12 @@ export function renderHtml() {
 
 **Note:** The `virtual:fullstack/no-split-css` module:
 - **Experimental**: Must be enabled via `experimental.noSplitCss` option
-- Only works in dev mode (returns empty array in build mode)
+- Works in both dev and build modes
 - Returns empty array in client environment
 - Collects all CSS files from the entire server module graph
 - Does not split CSS by route/entry point
+- In dev mode: Includes `data-vite-dev-id` attributes for HMR
+- In build mode: Reads from the generated assets manifest
 - Type: `CssLinkAttributes[]` where `CssLinkAttributes = { href: string; "data-vite-dev-id"?: string }`
 
 
