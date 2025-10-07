@@ -16,6 +16,7 @@ export async function waitForHydration(page: Page, selector = "body") {
               Object.keys(el).some(
                 (key) =>
                   key.startsWith("__reactFiber") ||
+                  key.startsWith("__island_ready__") ||
                   key.startsWith("__vue_app__"),
               ),
           ),

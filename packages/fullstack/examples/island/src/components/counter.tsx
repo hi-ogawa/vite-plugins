@@ -1,10 +1,15 @@
-import { useState } from "react";
+import "./counter.css";
+import { useState } from "preact/hooks";
 
-export function Counter() {
-  const [count, setCount] = useState(0);
+export default function Counter(props: { defaultValue?: number }) {
+  const [count, setCount] = useState(props.defaultValue ?? 0);
   return (
-    <button data-testid="client" onClick={() => setCount((c) => c + 1)}>
-      Client counter: {count}
-    </button>
+    <div className="card counter-card">
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <br />
+      <br />
+      <span class="subtitle">This is interactive</span>
+    </div>
   );
 }

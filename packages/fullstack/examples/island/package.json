@@ -9,11 +9,10 @@
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-fullstack": "latest",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "latest",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "@preact/preset-vite": "^2.10.2",
+    "@preact/signals": "^2.3.2",
+    "preact": "^10.27.2",
+    "preact-render-to-string": "^6.6.2",
     "srvx": "^0.8.7",
     "vite": "^7.1.5"
   }

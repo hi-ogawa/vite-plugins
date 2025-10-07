@@ -2,6 +2,7 @@
   "include": ["src", "*.ts"],
   "compilerOptions": {
     "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "erasableSyntaxOnly": true,
     "allowImportingTsExtensions": true,
     "strict": true,

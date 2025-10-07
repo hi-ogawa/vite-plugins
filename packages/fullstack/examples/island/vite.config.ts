@@ -1,17 +1,19 @@
 import fullstack from "@hiogawa/vite-plugin-fullstack";
-import react from "@vitejs/plugin-react";
-import { type Plugin, defineConfig } from "vite";
+import preact from "@preact/preset-vite";
+import { defineConfig } from "vite";
+import { islandPlugin } from "./src/framework/island/plugin";
+// import inspect from "vite-plugin-inspect";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
     // inspect(),
+    preact(),
+    islandPlugin(),
     fullstack(),
-    react(),
-    reactHmrPreamblePlugin(),
   ],
   optimizeDeps: {
-    entries: ["./src/entry.client.tsx"],
+    entries: ["./src/framework/entry.client.tsx", "./src/components/**/*"],
   },
   environments: {
     client: {
@@ -24,7 +26,7 @@ export default defineConfig((_env) => ({
         outDir: "./dist/ssr",
         rollupOptions: {
           input: {
-            index: "./src/entry.server.tsx",
+            index: "./src/framework/entry.server.tsx",
           },
         },
       },
@@ -32,24 +34,8 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      // NOTE: support any build order
-      await builder.build(builder.environments["ssr"]!);
-      await builder.build(builder.environments["client"]!);
+      await builder.build(builder.environments.ssr);
+      await builder.build(builder.environments.client);
     },
   },
 }));
-
-// waiting for https://github.com/vitejs/vite-plugin-react/pull/890
-function reactHmrPreamblePlugin(): Plugin[] {
-  return [
-    {
-      name: "react-hmr-preamble",
-      resolveId: (id) =>
-        id === "virtual:react-hmr-preamble" ? "\0" + id : null,
-      load: (id) =>
-        id === "\0virtual:react-hmr-preamble"
-          ? react.preambleCode.replace("__BASE__", "/")
-          : null,
-    },
-  ];
-}
