@@ -179,6 +179,17 @@ TypeScript support for `?assets` imports can be enabled by adding the following 
 | [Data Fetching](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/data-fetching/) | [stackblitz](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/data-fetching) |
 
 
+## How It Works
+
+For a detailed explanation of the plugin's internal architecture and implementation, see [HOW_IT_WORKS.md](./HOW_IT_WORKS.md).
+
+This document covers:
+- Plugin architecture and transform pipeline
+- Virtual module system
+- Dev-time CSS collection via module graph
+- Build-time asset manifest generation
+- Hot Module Replacement handling
+
 ## Feedback
 
 Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
