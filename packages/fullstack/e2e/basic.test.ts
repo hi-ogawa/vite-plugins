@@ -105,6 +105,10 @@ function defineTest(f: Fixture) {
         page.getByRole("button", { name: "count (edit) is 1" }),
       ).toBeVisible();
 
+      // test SSR is also updated
+      const res = await page.request.get(page.url());
+      expect(await res.text()).toContain("count (edit)");
+
       jsFile.reset();
       await expect(
         page.getByRole("button", { name: "count is 1" }),

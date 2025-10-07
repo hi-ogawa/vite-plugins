@@ -73,6 +73,10 @@ function defineTest(f: Fixture) {
         "Count-edit: 1",
       );
 
+      // test SSR is also updated
+      const res = await page.request.get(page.url());
+      expect(await res.text()).toContain("Count-edit:");
+
       jsFile.reset();
       await expect(page.locator(".counter-card")).toContainText("Count: 1");
 
