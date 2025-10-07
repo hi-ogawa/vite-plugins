@@ -22,8 +22,6 @@ This API is part of a larger vision for improving SSR development in Vite. By pr
 
 For detailed API documentation, examples, and configuration, see [README.md](./README.md).
 
-For implementation details and internal architecture, see [HOW_IT_WORKS.md](./HOW_IT_WORKS.md).
-
 ## Why This Matters
 
 ### The Problem Space

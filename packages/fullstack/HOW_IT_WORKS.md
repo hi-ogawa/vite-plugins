@@ -30,18 +30,7 @@ The implementation differs between dev and build modes:
 
 ## Plugin Architecture
 
-The plugin exports two sets of Vite plugins:
-
-### 1. Server Handler Plugin (`serverHandlerPlugin`)
-
-Provides a development server middleware that:
-- Sets `appType: "custom"` to disable Vite's default HTML middleware
-- Imports the SSR entry module at runtime
-- Delegates HTTP requests to the entry's `export default { fetch }` handler
-
-### 2. Assets Plugin (`assetsPlugin`)
-
-The main plugin consists of multiple sub-plugins:
+The assets plugin (`assetsPlugin`) consists of multiple sub-plugins:
 
 ```
 assetsPlugin()
@@ -87,16 +76,7 @@ The `fullstack:assets-query` plugin intercepts `?assets` imports:
 
 ### Virtual Module Flow
 
-```
-Source: page.js?assets
-    ↓
-Resolve: \0virtual:fullstack/assets?import=/page.js&...
-    ↓
-Load: Call processAssetsImport()
-    ↓
-    ├── Dev: Return JSON.stringify(result)
-    └── Build: Return __assets_manifest["ssr"]["/page.js"]
-```
+When you import `page.js?assets`, the plugin resolves it to a virtual module that loads the assets information. In dev mode, it returns the CSS collected via module graph traversal. In build mode, it returns a reference to the static assets manifest.
 
 ### `processAssetsImport()` Implementation
 
@@ -121,53 +101,7 @@ __assets_manifest["ssr"]["/page.js"]
 
 ## Dev Mode: CSS Collection
 
-The `collectCss()` function traverses the module graph to find all CSS dependencies:
-
-### Algorithm
-
-```js
-async function collectCss(environment, entryId, options) {
-  const visited = new Set();
-  const cssIds = new Set();
-  
-  async function recurse(id) {
-    // Skip already visited, virtual modules, and ?assets queries
-    if (visited.has(id) || parseAssetsVirtual(id) || "assets" in parseIdQuery(id).query) {
-      return;
-    }
-    visited.add(id);
-    
-    const mod = environment.moduleGraph.getModuleById(id);
-    if (!mod) return;
-    
-    // Eagerly transform modules if needed (ensures CSS imports are analyzed)
-    if (options.eager && !mod.transformResult) {
-      await environment.transformRequest(id);
-    }
-    
-    // Traverse imported modules
-    for (const next of mod.importedModules ?? []) {
-      if (isCSSRequest(next.id)) {
-        if (!hasSpecialCssQuery(next.id)) {  // Skip ?url, ?inline, ?raw
-          cssIds.add(next.id);
-        }
-      } else {
-        recurse(next.id);  // Recursively collect from JS modules
-      }
-    }
-  }
-  
-  await recurse(entryId);
-  return { ids: [...cssIds], hrefs: [...cssIds].map(normalizeUrl) };
-}
-```
-
-### Key Features
-
-1. **Eager transformation**: By default, modules are transformed during collection to ensure all imports are discovered
-2. **Special query handling**: Skips CSS with `?url`, `?inline`, `?raw` queries
-3. **Circular dependency handling**: The `visited` Set prevents infinite loops
-4. **Virtual module skipping**: Avoids collecting from `?assets` modules themselves
+In dev mode, the plugin traverses the module graph to find all CSS dependencies of a given entry module. It recursively visits all imported modules, collecting any CSS imports it encounters. To ensure all imports are discovered, modules are eagerly transformed if not already processed. The traversal skips special CSS queries like `?url`, `?inline`, and `?raw`, as well as virtual modules and `?assets` queries themselves to avoid circular dependencies.
 
 ## Build Mode: Asset Manifest
 
@@ -259,93 +193,13 @@ During `renderChunk`, the plugin rewrites the import to a relative path:
 
 ### SSR-Injected CSS HMR
 
-The plugin patches Vite's client-side HMR to handle CSS `<link>` tags injected by SSR:
-
-**Problem**: Vite's HMR assumes all CSS is injected via `import`, not via SSR-rendered `<link>` tags.
-
-**Solution** (`patchViteClientPlugin`):
-
-```js
-// Track SSR-injected links
-const linkSheetsMap = new Map();
-document.querySelectorAll('link[rel="stylesheet"][data-vite-dev-id]')
-  .forEach((el) => {
-    linkSheetsMap.set(el.getAttribute('data-vite-dev-id'), el);
-  });
-
-// Prevent Vite from injecting duplicate <style> tags
-function updateStyle(id, content) {
-  if (linkSheetsMap.has(id)) { return }
-  // ... original Vite logic
-}
-
-// Remove SSR-injected links on HMR
-function removeStyle(id) {
-  const link = linkSheetsMap.get(id);
-  if (link) {
-    document.querySelectorAll('link[rel="stylesheet"][data-vite-dev-id]')
-      .forEach((el) => {
-        if (el.getAttribute('data-vite-dev-id') === id) {
-          el.remove();
-        }
-      });
-    linkSheetsMap.delete(id);
-  }
-  // ... original Vite logic
-}
-```
+Vite's HMR assumes all CSS is injected via `import`, not via SSR-rendered `<link>` tags. The plugin patches Vite's client-side HMR to track SSR-injected CSS links and prevent duplicate style injection. When CSS updates, it removes the old `<link>` tags with matching `data-vite-dev-id` attributes instead of trying to update them as `<style>` tags.
 
 ### Virtual Module Invalidation
 
-The `hotUpdate` hook manually invalidates `?assets` virtual modules:
-
-```js
-hotUpdate(ctx) {
-  // When a file changes, invalidate all ?assets queries for its dependents
-  const mods = collectModuleDependents(ctx.modules);
-  for (const mod of mods) {
-    invalidateModuleById(environment, `${mod.id}?assets`);
-    invalidateModuleById(environment, `${mod.id}?assets=client`);
-    invalidateModuleById(environment, `${mod.id}?assets=${environment.name}`);
-  }
-}
-```
-
-This ensures that when CSS imports change, the assets information is recalculated.
+When a file changes, the plugin manually invalidates all related `?assets` virtual modules for that file and its dependents. This ensures that when CSS imports change, the assets information is recalculated on the next request.
 
 ## Implementation Details
-
-### Client Fallback
-
-Vite requires at least one input to build. The plugin injects a fallback entry if none exists:
-
-```js
-{
-  build: {
-    rollupOptions: {
-      input: {
-        __fallback: "virtual:fullstack/client-fallback"
-      }
-    }
-  }
-}
-```
-
-This chunk is removed in `generateBundle` to avoid polluting the output.
-
-### Environment Configuration
-
-The plugin automatically enables `emitAssets: true` for server environments:
-
-```js
-configEnvironment(name) {
-  if (serverEnvironments.includes(name)) {
-    return { build: { emitAssets: true } };
-  }
-}
-```
-
-This ensures CSS files are written to disk during server builds.
 
 ### Module Side Effects
 
@@ -353,13 +207,7 @@ Virtual `?assets` modules are marked with `moduleSideEffects: false` to prevent 
 
 ### Machine-Independent Builds
 
-The plugin uses relative paths for manifest keys to ensure builds are reproducible across different machines:
-
-```js
-key: path.relative(resolvedConfig.root, id)
-```
-
-This prevents absolute paths like `/home/user/project/page.js` from appearing in the output.
+The plugin uses relative paths for manifest keys to ensure builds are reproducible across different machines, preventing absolute paths from appearing in the output.
 
 ## Summary
 
