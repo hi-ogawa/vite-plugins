@@ -5,14 +5,11 @@ This document explains the internal architecture and implementation details of `
 ## Table of Contents
 
 - [Overview](#overview)
-- [Plugin Architecture](#plugin-architecture)
-
 - [Query Import System](#query-import-system)
 - [Virtual Module System](#virtual-module-system)
 - [Dev Mode: CSS Collection](#dev-mode-css-collection)
 - [Build Mode: Asset Manifest](#build-mode-asset-manifest)
 - [Hot Module Replacement](#hot-module-replacement)
-- [Implementation Details](#implementation-details)
 
 ## Overview
 
@@ -27,19 +24,6 @@ import ssrAssets from "./server.js?assets=ssr";
 The implementation differs between dev and build modes:
 - **Dev mode**: Dynamic CSS collection via module graph traversal
 - **Build mode**: Static asset manifest generated during build
-
-## Plugin Architecture
-
-The assets plugin (`assetsPlugin`) consists of multiple sub-plugins:
-
-```
-assetsPlugin()
-├── fullstack:assets             - Main assets transform logic
-├── fullstack:assets-query       - Handles ?assets query imports
-├── fullstack/client-fallback    - Ensures client build has at least one entry
-├── fullstack:patch-vite-client  - Patches Vite's HMR for SSR-injected CSS
-└── fullstack:patch-vue-scope-css-hmr - Fixes Vue scoped CSS HMR
-```
 
 ## Query Import System
 
@@ -94,9 +78,21 @@ This core function has different behavior in dev vs build:
 ```
 
 **Build Mode:**
+
+Returns a reference to the static manifest entry (see [Build Mode: Asset Manifest](#build-mode-asset-manifest) for how the manifest is generated):
+
 ```js
-// Returns reference to manifest entry
-__assets_manifest["ssr"]["/page.js"]
+{
+  entry: "/assets/index-abc123.js",           // Entry chunk file name
+  js: [                                        // Preload chunks
+    { href: "/assets/chunk-def456.js" }
+  ],
+  css: [                                       // CSS files
+    { href: "/assets/style-789xyz.css" }
+  ]
+}
+
+// Implementation: __assets_manifest["ssr"]["/src/entry.client.tsx"]
 ```
 
 ## Dev Mode: CSS Collection
@@ -198,16 +194,6 @@ Vite's HMR assumes all CSS is injected via `import`, not via SSR-rendered `<link
 ### Virtual Module Invalidation
 
 When a file changes, the plugin manually invalidates all related `?assets` virtual modules for that file and its dependents. This ensures that when CSS imports change, the assets information is recalculated on the next request.
-
-## Implementation Details
-
-### Module Side Effects
-
-Virtual `?assets` modules are marked with `moduleSideEffects: false` to prevent them from being included unnecessarily in builds.
-
-### Machine-Independent Builds
-
-The plugin uses relative paths for manifest keys to ensure builds are reproducible across different machines, preventing absolute paths from appearing in the output.
 
 ## Summary
 
