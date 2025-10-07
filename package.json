@@ -5,6 +5,7 @@
   "scripts": {
     "build": "pnpm -r '--filter=!*example*' build",
     "changelog": "pnpm dlx @hiogawa/changelog --repo https://github.com/hi-ogawa/vite-plugins --dir",
+    "release": "node scripts/release.js",
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/e2e/tsconfig.json packages/*/examples/*/tsconfig.json",
     "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
     "test": "pnpm -r --sequential test run",
