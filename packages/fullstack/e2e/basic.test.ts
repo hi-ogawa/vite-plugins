@@ -56,6 +56,11 @@ function defineTest(f: Fixture) {
       "background-color",
       "rgb(249, 249, 249)",
     );
+    // - App.module.css
+    await expect(page.getByText("css module")).toHaveCSS(
+      "background-color",
+      "rgb(200, 250, 250)",
+    );
 
     expect(errors).toEqual([]);
   });
@@ -75,6 +80,11 @@ function defineTest(f: Fixture) {
       await expect(page.locator(".read-the-docs")).toHaveCSS(
         "color",
         "rgb(136, 136, 136)",
+      );
+      // - App.module.css
+      await expect(page.getByText("css module")).toHaveCSS(
+        "background-color",
+        "rgb(200, 250, 250)",
       );
 
       // modulepreload
@@ -140,6 +150,38 @@ function defineTest(f: Fixture) {
       await expect(page.locator(".read-the-docs")).toHaveCSS(
         "color",
         "rgb(136, 136, 136)",
+      );
+
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+    });
+
+    test("hmr css module", async ({ page }) => {
+      await page.goto(f.url());
+      await waitForHydration(page, "main");
+      await using _ = await expectNoReload(page);
+
+      await expect(
+        page.getByRole("button", { name: "count is 0" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "count is 0" }).click();
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+
+      const cssModuleFile = f.createEditor("src/App.module.css");
+      cssModuleFile.edit((s) =>
+        s.replace("rgb(200, 250, 250)", "rgb(123, 250, 250)"),
+      );
+      await expect(page.getByText("css module")).toHaveCSS(
+        "background-color",
+        "rgb(123, 250, 250)",
+      );
+      cssModuleFile.reset();
+      await expect(page.getByText("css module")).toHaveCSS(
+        "background-color",
+        "rgb(200, 250, 250)",
       );
 
       await expect(

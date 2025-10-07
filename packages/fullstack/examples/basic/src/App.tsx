@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState } from "react";
+import styles from "./App.module.css";
 import reactLogo from "./assets/react.svg";
 
 export function App() {
@@ -18,6 +19,7 @@ export function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <div className={styles.test}>css module</div>
     </main>
   );
 }
