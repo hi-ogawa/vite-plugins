@@ -29,7 +29,6 @@ import {
   normalizeRelativePath,
 } from "./plugins/utils";
 import {
-  cleanUrl,
   evalValue,
   normalizeViteImportAnalysisUrl,
 } from "./plugins/vite-utils";
