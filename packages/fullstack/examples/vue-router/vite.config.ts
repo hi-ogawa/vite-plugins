@@ -3,7 +3,6 @@ import path from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
 import fullstack from "@hiogawa/vite-plugin-fullstack";
-// import inspect from "vite-plugin-inspect";
 import vue from "@vitejs/plugin-vue";
 import { type Plugin, type ResolvedConfig, defineConfig } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
@@ -11,7 +10,7 @@ import devtoolsJson from "vite-plugin-devtools-json";
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
-    // inspect(),
+    // import("vite-plugin-inspect").then((m) => m.default()),
     patchVueExclude(vue(), /\?assets/),
     devtoolsJson(),
     fullstack(),
