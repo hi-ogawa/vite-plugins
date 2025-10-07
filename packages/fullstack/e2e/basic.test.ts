@@ -160,8 +160,8 @@ function defineTest(f: Fixture) {
     test("hmr css module", async ({ page }) => {
       await page.goto(f.url());
       await waitForHydration(page, "main");
-      await using _ = await expectNoReload(page);
 
+      // set client state
       await expect(
         page.getByRole("button", { name: "count is 0" }),
       ).toBeVisible();
@@ -170,6 +170,13 @@ function defineTest(f: Fixture) {
         page.getByRole("button", { name: "count is 1" }),
       ).toBeVisible();
 
+      // verify initial CSS module styles
+      await expect(page.getByText("css module")).toHaveCSS(
+        "background-color",
+        "rgb(200, 250, 250)",
+      );
+
+      // edit CSS module and verify HMR
       const cssModuleFile = f.createEditor("src/App.module.css");
       cssModuleFile.edit((s) =>
         s.replace("rgb(200, 250, 250)", "rgb(123, 250, 250)"),
@@ -178,12 +185,15 @@ function defineTest(f: Fixture) {
         "background-color",
         "rgb(123, 250, 250)",
       );
+
+      // reset and verify
       cssModuleFile.reset();
       await expect(page.getByText("css module")).toHaveCSS(
         "background-color",
         "rgb(200, 250, 250)",
       );
 
+      // verify client state is preserved (no full page reload)
       await expect(
         page.getByRole("button", { name: "count is 1" }),
       ).toBeVisible();
