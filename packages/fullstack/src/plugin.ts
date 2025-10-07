@@ -50,6 +50,14 @@ type FullstackPluginOptions = {
      * @default true
      */
     devEagerTransform?: boolean;
+    /**
+     * Deduplicate CSS by processing all CSS imports only in client build.
+     * When enabled, CSS imports from server/universal modules are tracked
+     * and added as entries to the client build, preventing duplicate CSS
+     * processing across builds.
+     * @default false
+     */
+    deduplicateCss?: boolean;
   };
 };
 
@@ -107,6 +115,12 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     [environment: string]: { [id: string]: ImportAssetsMeta };
   } = {};
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
+  // Track CSS modules imported by server environments for deduplication
+  // Maps CSS module ID -> Set of server entry IDs that import it
+  const serverCssModules = new Map<string, Set<string>>();
+  const serverEntryToCss = new Map<string, Set<string>>();
+  // Track reference IDs from emitFile for CSS modules
+  const cssIdToReferenceId = new Map<string, string>();
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -170,6 +184,24 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               emitAssets: true,
             },
           };
+        }
+      },
+      moduleParsed(info) {
+        // Track CSS imports from server environments for deduplication
+        if (
+          pluginOpts?.experimental?.deduplicateCss &&
+          this.environment.mode === "build" &&
+          this.environment.name !== "client"
+        ) {
+          // Track which CSS modules are imported and by which server modules
+          for (const importedId of info.importedIds) {
+            if (isCSSRequest(importedId) && !hasSpecialCssQuery(importedId)) {
+              if (!serverCssModules.has(importedId)) {
+                serverCssModules.set(importedId, new Set());
+              }
+              serverCssModules.get(importedId)!.add(info.id);
+            }
+          }
         }
       },
       /**
@@ -323,6 +355,49 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       writeBundle(_options, bundle) {
         bundleMap[this.environment.name] = bundle;
+        
+        // After server build, compute which CSS files should be associated with each server entry
+        if (
+          pluginOpts?.experimental?.deduplicateCss &&
+          this.environment.name !== "client"
+        ) {
+          // Build reverse mapping from server entries to CSS they import
+          for (const [cssId, serverModuleIds] of serverCssModules.entries()) {
+            for (const serverId of serverModuleIds) {
+              if (!serverEntryToCss.has(serverId)) {
+                serverEntryToCss.set(serverId, new Set());
+              }
+              serverEntryToCss.get(serverId)!.add(cssId);
+            }
+          }
+        }
+      },
+      generateBundle(_options, bundle) {
+        // After client build, map CSS module IDs to their output filenames
+        if (
+          pluginOpts?.experimental?.deduplicateCss &&
+          this.environment.name === "client"
+        ) {
+          for (const [cssId, refId] of cssIdToReferenceId.entries()) {
+            try {
+              const chunkFileName = this.getFileName(refId);
+              // The chunk is a .js file that imports the actual .css file
+              // Get the actual CSS file from the chunk's viteMetadata
+              const chunk = bundle[chunkFileName];
+              if (chunk && chunk.type === "chunk") {
+                const cssFiles = chunk.viteMetadata?.importedCss ?? new Set();
+                if (cssFiles.size > 0) {
+                  // The cssFiles is a Set, convert to array
+                  const cssArray = [...cssFiles];
+                  // Map the CSS module ID to the actual CSS output filename
+                  cssIdToReferenceId.set(cssId, cssArray[0]!);
+                }
+              }
+            } catch (e) {
+              // Ignore errors for CSS modules that couldn't be mapped
+            }
+          }
+        }
       },
       buildStart() {
         // dynamically add client entry during build
@@ -342,6 +417,16 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               }
             }
           }
+          // Add tracked server CSS modules as entries to client build for deduplication
+          if (pluginOpts?.experimental?.deduplicateCss) {
+            for (const cssId of serverCssModules.keys()) {
+              const refId = this.emitFile({
+                type: "chunk",
+                id: cssId,
+              });
+              cssIdToReferenceId.set(cssId, refId);
+            }
+          }
         }
       },
       buildApp: {
@@ -349,6 +434,12 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         async handler(builder) {
           // build manifest of imported assets
           const manifest: BuildAssetsManifest = {};
+          const deduplicateCss = pluginOpts?.experimental?.deduplicateCss ?? false;
+          
+          // Build a mapping from CSS module IDs to their output file names in client build
+          // The cssIdToReferenceId map is populated in generateBundle with filenames
+          const cssIdToClientFile = cssIdToReferenceId;
+          
           for (const [environmentName, metas] of Object.entries(
             importAssetsMetaMap,
           )) {
@@ -373,9 +464,49 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
                   href: `/${fileName}`,
                 }));
               }
-              result.css = deps.css.map((fileName) => ({
-                href: `/${fileName}`,
-              }));
+              
+              // When CSS deduplication is enabled and this is a server environment,
+              // collect CSS from the client build instead
+              if (deduplicateCss && environmentName !== "client") {
+                const cssFiles = new Set<string>();
+                // Collect CSS files from client bundle that correspond to any
+                // CSS modules imported in the server module graph
+                // We need to walk the server module graph to find all CSS imports
+                const serverBundle = bundleMap[environmentName]!;
+                const serverModuleIds = new Set<string>();
+                
+                // Collect all module IDs reachable from this entry
+                function collectModules(chunkFileName: string) {
+                  const chunk = serverBundle[chunkFileName];
+                  if (chunk?.type === "chunk") {
+                    for (const moduleId of chunk.moduleIds) {
+                      serverModuleIds.add(moduleId);
+                    }
+                  }
+                }
+                collectModules(chunk.fileName);
+                
+                // For each server module, check if it imports any tracked CSS
+                for (const moduleId of serverModuleIds) {
+                  const cssModulesForThisModule = serverEntryToCss.get(moduleId);
+                  if (cssModulesForThisModule) {
+                    for (const cssId of cssModulesForThisModule) {
+                      const clientCssFile = cssIdToClientFile.get(cssId);
+                      if (clientCssFile) {
+                        cssFiles.add(clientCssFile);
+                      }
+                    }
+                  }
+                }
+                
+                result.css = [...cssFiles].map((fileName) => ({
+                  href: `/${fileName}`,
+                }));
+              } else if (!deduplicateCss || environmentName === "client") {
+                result.css = deps.css.map((fileName) => ({
+                  href: `/${fileName}`,
+                }));
+              }
               (manifest[environmentName] ??= {})[meta.key] = result;
             }
           }
@@ -395,10 +526,16 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             );
 
             // copy assets to client (mainly for server css)
+            // Skip CSS assets when deduplication is enabled
             const clientOutDir =
               builder.environments["client"]!.config.build.outDir;
             for (const asset of Object.values(bundleMap[environmentName]!)) {
               if (asset.type === "asset") {
+                const isCssAsset = asset.fileName.endsWith(".css");
+                if (deduplicateCss && isCssAsset && environmentName !== "client") {
+                  // Skip copying CSS assets from server to client when deduplication is enabled
+                  continue;
+                }
                 const srcFile = path.join(outDir, asset.fileName);
                 const destFile = path.join(clientOutDir, asset.fileName);
                 fs.mkdirSync(path.dirname(destFile), { recursive: true });
