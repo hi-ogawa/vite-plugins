@@ -39,8 +39,23 @@ const removeItem = os
     items.splice(idx, 1);
   });
 
+const toggleItem = os
+  .input(
+    z.object({
+      id: z.string(),
+    }),
+  )
+  .handler(async ({ input }) => {
+    const item = items.find((x) => x.id === input.id);
+    if (!item) {
+      throw new ORPCError("NOT_FOUND");
+    }
+    item.completed = !item.completed;
+  });
+
 export const __rpc_router__ = {
   listItems,
   addItem,
   removeItem,
+  toggleItem,
 };

@@ -219,7 +219,8 @@ body {
 .todo-list li .destroy {
   bottom: 0;
   color: #949494;
-  display: none;
+  cursor: pointer;
+  display: block;
   font-size: 30px;
   height: 40px;
   margin: auto 0;
@@ -232,15 +233,6 @@ body {
 .todo-list li .destroy:focus,
 .todo-list li .destroy:hover {
   color: #c18585;
-}
-.todo-list li .destroy:after {
-  content: "×";
-  display: block;
-  height: 100%;
-  line-height: 1.1;
-}
-.todo-list li:hover .destroy {
-  display: block;
 }
 .todo-list li .edit {
   display: none;
