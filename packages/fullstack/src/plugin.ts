@@ -7,6 +7,7 @@ import { toNodeHandler } from "srvx/node";
 import { stripLiteral } from "strip-literal";
 import {
   DevEnvironment,
+  type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
   type Rollup,
@@ -133,7 +134,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         });
         for (const file of [cleanUrl(id), ...collected.visitedFiles]) {
           if (fs.existsSync(file)) {
-            ctx.addWatchFile(file);
+            // ctx.addWatchFile(file);
           }
         }
         result.css = collected.hrefs.map((href, i) => ({
@@ -474,6 +475,28 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           }
         },
       },
+      // NOTE:
+      // manually invalidate instead of automatic module graph based invalidation via `addWatchFile`.
+      // context:
+      // - https://github.com/hi-ogawa/vite-plugins/issues/1233
+      // - https://github.com/vitejs/vite-plugin-react/pull/847
+      hotUpdate(ctx) {
+        if (this.environment.name === "rsc") {
+          const mods = collectModuleDependents(ctx.modules);
+          for (const mod of mods) {
+            if (mod.id) {
+              const ids = [
+                `${mod.id}?assets`,
+                `${mod.id}?assets=client`,
+                `${mod.id}?assets=${this.environment.name}`,
+              ];
+              for (const id of ids) {
+                invalidteModuleById(this.environment, id);
+              }
+            }
+          }
+        }
+      },
     },
     // ensure at least one client build input to prevent Vite
     // from looking for index.html and breaking build
@@ -570,6 +593,29 @@ async function collectCss(
     normalizeViteImportAnalysisUrl(environment, id),
   );
   return { ids: [...cssIds], hrefs, visitedFiles: [...visitedFiles] };
+}
+
+function invalidteModuleById(environment: DevEnvironment, id: string) {
+  const mod = environment.moduleGraph.getModuleById(id);
+  if (mod) {
+    environment.moduleGraph.invalidateModule(mod);
+  }
+  return mod;
+}
+
+function collectModuleDependents(mods: EnvironmentModuleNode[]) {
+  const visited = new Set<EnvironmentModuleNode>();
+  function recurse(mod: EnvironmentModuleNode) {
+    if (visited.has(mod)) return;
+    visited.add(mod);
+    for (const importer of mod.importers) {
+      recurse(importer);
+    }
+  }
+  for (const mod of mods) {
+    recurse(mod);
+  }
+  return [...visited];
 }
 
 function hasSpecialCssQuery(id: string): boolean {
