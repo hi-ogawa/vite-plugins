@@ -91,24 +91,40 @@ export function renderHtml() {
 }
 ```
 
-## `virtual:dev-server-css` Virtual Module
+## `virtual:fullstack/no-split-css` Virtual Module (Experimental)
 
-For simplified use cases where code-splitting by route is not important, you can use the `virtual:dev-server-css` module to collect all CSS in the server module graph:
+For simplified use cases where code-splitting by route is not important, you can enable the experimental `virtual:fullstack/no-split-css` module to collect all CSS in the server module graph:
+
+```js
+// vite.config.ts
+import fullstack from "@hiogawa/vite-plugin-fullstack";
+
+export default {
+  plugins: [
+    fullstack({
+      experimental: {
+        noSplitCss: true, // Enable the feature
+      },
+    }),
+  ],
+};
+```
 
 ```js
 // server.js - Simplified approach for collecting all CSS
-import devServerCss from "virtual:dev-server-css";
+import noSplitCss from "virtual:fullstack/no-split-css";
 
 export function renderHtml() {
-  // devServerCss contains all CSS files loaded in the server module graph
-  const cssLinks = devServerCss
+  // noSplitCss contains all CSS files loaded in the server module graph
+  const cssLinks = noSplitCss
     .map(css => `<link rel="stylesheet" href="${css.href}" ${css['data-vite-dev-id'] ? `data-vite-dev-id="${css['data-vite-dev-id']}"` : ''} />`)
     .join('\n');
   // ...
 }
 ```
 
-**Note:** The `virtual:dev-server-css` module:
+**Note:** The `virtual:fullstack/no-split-css` module:
+- **Experimental**: Must be enabled via `experimental.noSplitCss` option
 - Only works in dev mode (returns empty array in build mode)
 - Returns empty array in client environment
 - Collects all CSS files from the entire server module graph

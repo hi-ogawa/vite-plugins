@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-declare module "virtual:dev-server-css" {
+declare module "virtual:fullstack/no-split-css" {
   type CssLinkAttributes = {
     href: string;
     "data-vite-dev-id"?: string;

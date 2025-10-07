@@ -50,6 +50,12 @@ type FullstackPluginOptions = {
      * @default true
      */
     devEagerTransform?: boolean;
+    /**
+     * Enable simplified API for collecting all CSS without code-splitting by route.
+     * This provides `virtual:fullstack/no-split-css` module.
+     * @default false
+     */
+    noSplitCss?: boolean;
   };
 };
 
@@ -277,14 +283,20 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             assert.equal(this.environment.mode, "build");
             return { id: source, external: true };
           }
-          if (source === "virtual:dev-server-css") {
+          if (
+            pluginOpts?.experimental?.noSplitCss &&
+            source === "virtual:fullstack/no-split-css"
+          ) {
             return "\0" + source;
           }
         },
       },
       load: {
         async handler(id) {
-          if (id === "\0virtual:dev-server-css") {
+          if (
+            pluginOpts?.experimental?.noSplitCss &&
+            id === "\0virtual:fullstack/no-split-css"
+          ) {
             // Only works in dev mode and on server environments
             if (this.environment.mode !== "dev") {
               return `export default [];`;
