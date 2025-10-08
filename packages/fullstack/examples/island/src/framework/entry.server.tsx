@@ -3,6 +3,7 @@ import { renderToReadableStream } from "preact-render-to-string/stream";
 import NotFound from "../routes/404";
 import clientAssets from "./entry.client.tsx?assets=client";
 import serverAssets from "./entry.server.tsx?assets=ssr";
+
 import Root from "../root";
 
 const routes = {
