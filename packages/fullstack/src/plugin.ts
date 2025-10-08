@@ -377,6 +377,23 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               result.css = deps.css.map((fileName) => ({
                 href: `/${fileName}`,
               }));
+
+              // add single css when `cssCodeSplit: false`
+              // https://github.com/vitejs/vite/blob/3a92bc79b306a01b8aaf37f80b2239eaf6e488e7/packages/vite/src/node/plugins/css.ts#L999-L1011
+              if (
+                !builder.environments[environmentName]!.config.build
+                  .cssCodeSplit
+              ) {
+                const singleCss = Object.values(bundle).find(
+                  (v) =>
+                    v.type === "asset" &&
+                    v.originalFileNames.includes("style.css"),
+                );
+                if (singleCss) {
+                  result.css.push({ href: `/${singleCss.fileName}` });
+                }
+              }
+
               (manifest[environmentName] ??= {})[meta.key] = result;
             }
           }
