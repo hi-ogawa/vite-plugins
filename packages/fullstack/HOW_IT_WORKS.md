@@ -46,15 +46,15 @@ import assets from "./page.js?assets=ssr";
 
 The `fullstack:assets-query` plugin intercepts `?assets` imports:
 
-1. **Client environment**: Returns empty assets (client doesn't need this info)
-   ```js
-   return `\0virtual:fullstack/empty-assets`;
-   ```
-
-2. **Server environments**: Generates code based on query value:
+1. **Server environments**: Generates code based on query value:
    - `?assets=client` → Single environment import
    - `?assets=ssr` → Single environment import  
    - `?assets` → Merged client + current environment
+
+2. **Client environment**: Returns empty assets (client doesn't need this info)
+   ```js
+   return `\0virtual:fullstack/empty-assets`;
+   ```
 
 ## Virtual Module System
 
