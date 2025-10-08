@@ -1,36 +1,22 @@
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { renderToReadableStream } from "preact-render-to-string/stream";
 import Root from "../root";
-import NotFound from "../routes/404";
 import clientAssets from "./entry.client.tsx?assets=client";
 import serverAssets from "./entry.server.tsx?assets=ssr";
 
 const routes = {
-  "/": {
-    render: () => import("../routes"),
-    assets: () => import("../routes?assets=ssr"),
-  },
-  "/about": {
-    render: () => import("../routes/about"),
-    assets: () => import("../routes/about?assets=ssr"),
-  },
+  "/": () => import("../routes"),
+  "/about": () => import("../routes/about"),
+  "*": () => import("../routes/404"),
 };
 
 async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
 
-  // match route
-  let assets = mergeAssets(clientAssets, serverAssets);
-  let content = <NotFound />;
-  const match = routes[url.pathname as "/"];
-  if (match) {
-    // render page
-    const renderModule = await match.render();
-    content = await renderModule.default();
-    // collect assets
-    const assetsModule = (await match.assets()).default;
-    assets = mergeAssets(assets, assetsModule);
-  }
+  // match route and render page
+  const assets = mergeAssets(clientAssets, serverAssets);
+  const match = routes[url.pathname as "/"] ?? routes["*"];
+  const content = await (await match()).default();
 
   // render assets as <head>
   const head = (

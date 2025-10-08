@@ -23,6 +23,7 @@ export default defineConfig((_env) => ({
     ssr: {
       build: {
         outDir: "./dist/ssr",
+        cssCodeSplit: false,
         rollupOptions: {
           input: {
             index: "./src/framework/entry.server.tsx",
