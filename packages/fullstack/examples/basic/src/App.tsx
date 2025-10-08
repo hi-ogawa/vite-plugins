@@ -19,7 +19,6 @@ export function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <div className={styles.test}>css module</div>
     </main>
   );
 }
@@ -28,7 +27,7 @@ function Card() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="card">
+    <div className={styles.card}>
       <button onClick={() => setCount((count) => count + 1)}>
         count is {count}
       </button>
