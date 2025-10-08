@@ -842,7 +842,6 @@ function collectAssetDepsInner(
   };
 }
 
-
 // TODO: patch @vite/client for https://github.com/vitejs/vite/pull/20767
 function patchViteClientPlugin(): Plugin {
   const viteClientPath = normalizePath(
