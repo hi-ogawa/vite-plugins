@@ -46,7 +46,11 @@ async function handler(request: Request): Promise<Response> {
   );
 
   // SSR
-  const root = <Root head={head}>{content}</Root>;
+  const root = (
+    <Root head={head} pathname={url.pathname}>
+      {content}
+    </Root>
+  );
   const html = renderToReadableStream(root);
   return new Response(html, {
     headers: { "Content-Type": "text/html;charset=utf-8" },
