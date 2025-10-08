@@ -29,6 +29,7 @@ import {
   normalizeRelativePath,
 } from "./plugins/utils";
 import {
+  directRequestRE,
   evalValue,
   normalizeViteImportAnalysisUrl,
 } from "./plugins/vite-utils";
@@ -440,6 +441,26 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
                   href: `/${fileName}`,
                 }));
               }
+              result.css = deps.css.map((fileName) => ({
+                href: `/${fileName}`,
+              }));
+
+              // add single css when `cssCodeSplit: false`
+              // https://github.com/vitejs/vite/blob/3a92bc79b306a01b8aaf37f80b2239eaf6e488e7/packages/vite/src/node/plugins/css.ts#L999-L1011
+              if (
+                !builder.environments[environmentName]!.config.build
+                  .cssCodeSplit
+              ) {
+                const singleCss = Object.values(bundle).find(
+                  (v) =>
+                    v.type === "asset" &&
+                    v.originalFileNames.includes("style.css"),
+                );
+                if (singleCss) {
+                  result.css.push({ href: `/${singleCss.fileName}` });
+                }
+              }
+
               (manifest[environmentName] ??= {})[meta.key] = result;
             }
           }
@@ -714,6 +735,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     },
     patchViteClientPlugin(),
     patchVueScopeCssHmr(),
+    patchCssLinkSelfAccept(),
   ];
 }
 
@@ -759,7 +781,7 @@ async function collectCss(
           }
           cssIds.add(next.id);
         } else {
-          recurse(next.id);
+          await recurse(next.id);
         }
       }
     }
@@ -936,6 +958,33 @@ function patchVueScopeCssHmr(): Plugin {
         }
         next();
       });
+    },
+  };
+}
+
+// TODO: upstream?
+// force self accepting "?direct" css (injected via SSR `<link />`) to avoid full reload.
+// this should only apply to css modules
+// https://github.com/vitejs/vite/blob/84079a84ad94de4c1ef4f1bdb2ab448ff2c01196/packages/vite/src/node/plugins/css.ts#L1096
+function patchCssLinkSelfAccept(): Plugin {
+  return {
+    name: "fullstack:patch-css-link-self-accept",
+    apply: "serve",
+    transform: {
+      order: "post",
+      handler(_code, id, _options) {
+        if (
+          this.environment.name === "client" &&
+          this.environment.mode === "dev" &&
+          isCSSRequest(id) &&
+          directRequestRE.test(id)
+        ) {
+          const mod = this.environment.moduleGraph.getModuleById(id);
+          if (mod && !mod.isSelfAccepting) {
+            mod.isSelfAccepting = true;
+          }
+        }
+      },
     },
   };
 }

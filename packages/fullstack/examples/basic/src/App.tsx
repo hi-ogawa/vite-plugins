@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState } from "react";
+import styles from "./App.module.css";
 import reactLogo from "./assets/react.svg";
 
 export function App() {
@@ -26,7 +27,7 @@ function Card() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="card">
+    <div className={styles.card} data-testid="css-module-test">
       <button onClick={() => setCount((count) => count + 1)}>
         count is {count}
       </button>

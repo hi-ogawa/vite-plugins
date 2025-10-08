@@ -56,6 +56,11 @@ function defineTest(f: Fixture) {
       "background-color",
       "rgb(249, 249, 249)",
     );
+    // - App.module.css
+    await expect(page.getByTestId("css-module-test")).toHaveCSS(
+      "padding",
+      "32px",
+    );
 
     expect(errors).toEqual([]);
   });
@@ -75,6 +80,11 @@ function defineTest(f: Fixture) {
       await expect(page.locator(".read-the-docs")).toHaveCSS(
         "color",
         "rgb(136, 136, 136)",
+      );
+      // - App.module.css (verify CSS module is applied)
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "32px",
       );
 
       // modulepreload
@@ -140,6 +150,42 @@ function defineTest(f: Fixture) {
       await expect(page.locator(".read-the-docs")).toHaveCSS(
         "color",
         "rgb(136, 136, 136)",
+      );
+
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+    });
+
+    test("hmr css module", async ({ page }) => {
+      await page.goto(f.url());
+      await waitForHydration(page, "main");
+      await using _ = await expectNoReload(page);
+
+      await expect(
+        page.getByRole("button", { name: "count is 0" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "count is 0" }).click();
+      await expect(
+        page.getByRole("button", { name: "count is 1" }),
+      ).toBeVisible();
+
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "32px",
+      );
+
+      const cssModuleFile = f.createEditor("src/App.module.css");
+      cssModuleFile.edit((s) => s.replace("padding: 2em;", "padding: 4em;"));
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "64px",
+      );
+
+      cssModuleFile.reset();
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "32px",
       );
 
       await expect(

@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.0.2 (2025-10-08)
+
+- fix: support `cssCodeSplit: false` ([#1255](https://github.com/hi-ogawa/vite-plugins/pull/1255))
+- fix: fix `collectCss` not traversing module due to non awaited promise ([#1254](https://github.com/hi-ogawa/vite-plugins/pull/1254))
+- fix: fix css module hmr ([#1250](https://github.com/hi-ogawa/vite-plugins/pull/1250))
+- chore: nav active link in `examples/island` ([#1253](https://github.com/hi-ogawa/vite-plugins/pull/1253))
+- docs: add comprehensive "How It Works" documentation ([#1252](https://github.com/hi-ogawa/vite-plugins/pull/1252))
+- docs: tweak readme ([#1247](https://github.com/hi-ogawa/vite-plugins/pull/1247))
+
 ## v0.0.1 (2025-10-07)
 
 - fix: avoid `addWatchFile` for virtual invalidation ([#1239](https://github.com/hi-ogawa/vite-plugins/pull/1239))

@@ -4,6 +4,7 @@ import type { ComponentChildren } from "preact";
 export default function Root(props: {
   head: ComponentChildren;
   children: ComponentChildren;
+  pathname: string;
 }) {
   return (
     <html lang="en">
@@ -17,10 +18,20 @@ export default function Root(props: {
         <nav>
           <ul>
             <li>
-              <a href="/">Home</a>
+              <a
+                href="/"
+                className={props.pathname === "/" ? "active" : undefined}
+              >
+                Home
+              </a>
             </li>
             <li>
-              <a href="/about">About</a>
+              <a
+                href="/about"
+                className={props.pathname === "/about" ? "active" : undefined}
+              >
+                About
+              </a>
             </li>
           </ul>
         </nav>
