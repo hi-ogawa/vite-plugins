@@ -29,6 +29,7 @@ import {
   normalizeRelativePath,
 } from "./plugins/utils";
 import {
+  directRequestRE,
   evalValue,
   normalizeViteImportAnalysisUrl,
 } from "./plugins/vite-utils";
@@ -525,6 +526,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     },
     patchViteClientPlugin(),
     patchVueScopeCssHmr(),
+    patchCssLinkSelfAccept(),
   ];
 }
 
@@ -747,6 +749,33 @@ function patchVueScopeCssHmr(): Plugin {
         }
         next();
       });
+    },
+  };
+}
+
+// TODO: upstream?
+// force self accepting "?direct" css (injected via SSR `<link />`) to avoid full reload.
+// this should only apply to css modules
+// https://github.com/vitejs/vite/blob/84079a84ad94de4c1ef4f1bdb2ab448ff2c01196/packages/vite/src/node/plugins/css.ts#L1096
+function patchCssLinkSelfAccept(): Plugin {
+  return {
+    name: "fullstack:patch-css-link-self-accept",
+    apply: "serve",
+    transform: {
+      order: "post",
+      handler(_code, id, _options) {
+        if (
+          this.environment.name === "client" &&
+          this.environment.mode === "dev" &&
+          isCSSRequest(id) &&
+          directRequestRE.test(id)
+        ) {
+          const mod = this.environment.moduleGraph.getModuleById(id);
+          if (mod && !mod.isSelfAccepting) {
+            mod.isSelfAccepting = true;
+          }
+        }
+      },
     },
   };
 }
