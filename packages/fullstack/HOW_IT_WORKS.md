@@ -69,9 +69,9 @@ This core function has different behavior in dev vs build:
 **Dev Mode:**
 ```js
 {
-  entry: "/@id/__x00__virtual:client-entry",  // Only for client environment
-  js: [],                                      // Always empty in dev
-  css: [                                       // Collected via module graph
+  entry: "/src/entry.client.tsx",  // Only for client environment
+  js: [],                          // Always empty in dev
+  css: [                           // Collected via module graph on server. Empty for `?assets=client`
     { href: "/src/styles.css", "data-vite-dev-id": "..." }
   ]
 }
@@ -82,17 +82,16 @@ This core function has different behavior in dev vs build:
 Returns a reference to the static manifest entry (see [Build Mode: Asset Manifest](#build-mode-asset-manifest) for how the manifest is generated):
 
 ```js
-{
-  entry: "/assets/index-abc123.js",           // Entry chunk file name
-  js: [                                        // Preload chunks
-    { href: "/assets/chunk-def456.js" }
-  ],
-  css: [                                       // CSS files
-    { href: "/assets/style-789xyz.css" }
-  ]
-}
-
-// Implementation: __assets_manifest["ssr"]["/src/entry.client.tsx"]
+__assets_manifest["ssr"]["/src/entry.client.tsx"]
+// {
+//   entry: "/assets/index-abc123.js",           // Entry chunk file name
+//   js: [                                        // Preload chunks
+//     { href: "/assets/chunk-def456.js" }
+//   ],
+//   css: [                                       // CSS files
+//     { href: "/assets/style-789xyz.css" }
+//   ]
+// }
 ```
 
 ## Dev Mode: CSS Collection
