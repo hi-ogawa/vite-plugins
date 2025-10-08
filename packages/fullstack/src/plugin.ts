@@ -572,7 +572,7 @@ async function collectCss(
           }
           cssIds.add(next.id);
         } else {
-          recurse(next.id);
+          await recurse(next.id);
         }
       }
     }
