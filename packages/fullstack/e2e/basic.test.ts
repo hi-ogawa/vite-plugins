@@ -57,9 +57,9 @@ function defineTest(f: Fixture) {
       "rgb(249, 249, 249)",
     );
     // - App.module.css
-    await expect(page.getByText("css module")).toHaveCSS(
-      "background-color",
-      "rgb(200, 250, 250)",
+    await expect(page.getByTestId("css-module-test")).toHaveCSS(
+      "padding",
+      "32px",
     );
 
     expect(errors).toEqual([]);
@@ -81,10 +81,10 @@ function defineTest(f: Fixture) {
         "color",
         "rgb(136, 136, 136)",
       );
-      // - App.module.css
-      await expect(page.getByText("css module")).toHaveCSS(
-        "background-color",
-        "rgb(200, 250, 250)",
+      // - App.module.css (verify CSS module is applied)
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "32px",
       );
 
       // modulepreload
@@ -160,8 +160,8 @@ function defineTest(f: Fixture) {
     test("hmr css module", async ({ page }) => {
       await page.goto(f.url());
       await waitForHydration(page, "main");
+      await using _ = await expectNoReload(page);
 
-      // set client state
       await expect(
         page.getByRole("button", { name: "count is 0" }),
       ).toBeVisible();
@@ -170,30 +170,24 @@ function defineTest(f: Fixture) {
         page.getByRole("button", { name: "count is 1" }),
       ).toBeVisible();
 
-      // verify initial CSS module styles
-      await expect(page.getByText("css module")).toHaveCSS(
-        "background-color",
-        "rgb(200, 250, 250)",
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "32px",
       );
 
-      // edit CSS module and verify HMR
       const cssModuleFile = f.createEditor("src/App.module.css");
-      cssModuleFile.edit((s) =>
-        s.replace("rgb(200, 250, 250)", "rgb(123, 250, 250)"),
-      );
-      await expect(page.getByText("css module")).toHaveCSS(
-        "background-color",
-        "rgb(123, 250, 250)",
+      cssModuleFile.edit((s) => s.replace("padding: 2em;", "padding: 4em;"));
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "64px",
       );
 
-      // reset and verify
       cssModuleFile.reset();
-      await expect(page.getByText("css module")).toHaveCSS(
-        "background-color",
-        "rgb(200, 250, 250)",
+      await expect(page.getByTestId("css-module-test")).toHaveCSS(
+        "padding",
+        "32px",
       );
 
-      // verify client state is preserved (no full page reload)
       await expect(
         page.getByRole("button", { name: "count is 1" }),
       ).toBeVisible();

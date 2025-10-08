@@ -27,7 +27,7 @@ function Card() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} data-testid="css-module-test">
       <button onClick={() => setCount((count) => count + 1)}>
         count is {count}
       </button>
