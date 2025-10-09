@@ -206,9 +206,7 @@ For a detailed explanation of the plugin's internal architecture and implementat
 
 ## Future Considerations
 
-Asset management is one of many interconnected challenges in the SSR ecosystem. While Vite's [SSR guide](https://vite.dev/guide/ssr.html) provides general guidance for SSR implementation, certain patterns like asset tracking are common enough to warrant standardized primitives rather than expecting each framework to reinvent the wheel.
-
-We view this proposal as part of an ongoing effort to identify which SSR patterns deserve first-class support in Vite, informed by the collective experience of framework authors.
+Asset management is one of many challenges when buildinrg SSR frameworks. While Vite's [SSR guide](https://vite.dev/guide/ssr.html) provides general guidance for SSR implementation, certain patterns like asset tracking are common enough to warrant standardized primitives rather than expecting each framework to reinvent the wheel. I see this proposal as part of an ongoing effort to identify which SSR patterns deserve first-class support in Vite based on common needs of existing frameworks.
 
 ## Request for Feedback
 
