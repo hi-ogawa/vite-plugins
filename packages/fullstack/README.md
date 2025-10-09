@@ -11,7 +11,7 @@ The new API addresses two critical challenges that every SSR framework must solv
 
 Currently, meta-frameworks implement their own solutions for these problems. This proposal aims to provide a unified primitive that frameworks can adopt, reducing complexity and lowering the barrier for new custom frameworks to integrate SSR with Vite.
 
-Also having this proposal as a starting point, I hope we can share knowledge across the ecosystem to find a future-proof solution.
+This proposal also aims to initiate discussion around common SSR asset handling patterns, with the hope of finding more robust and future-proof solutions through community feedback.
 
 ## Proposed API
 
