@@ -1,10 +1,15 @@
 # Proposal: Client assets metadata API for SSR
 
-This proposal introduces a new API that enables server code to access client runtime assets metadata required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack). You can find [examples](#examples) at the bottom.
+This proposal introduces a new API that enables server code to access client runtime assets metadata required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack) with [examples](#examples).
 
-## Motivation / Scope
+## Motivation
 
-TODO
+The new API addresses two critical challenges that every SSR framework must solve:
+
+1. **Asset preloading**: Preventing client-side assets waterfalls by knowing which assets to preload
+2. **FOUC prevention**: Ensuring CSS is loaded with the HTML rendered on ther server
+
+Currently, meta-frameworks implement their own solutions for these problems. This proposal aims to provide a unified primitive that frameworks can adopt, reducing complexity and sharing knowledge across the ecosystem for finding a future-proof solution. It lowers the barrier for new custom frameworks to integrate SSR with Vite.
 
 ## Proposed API
 
@@ -141,6 +146,7 @@ export default defineConfig({
     ssr: {
       build: {
         outDir: "./dist/ssr",
+        emitAssets: true,
         rollupOptions: {
           input: {
             index: "./src/entry.server.tsx",
@@ -189,21 +195,17 @@ TypeScript support for `?assets` imports can be enabled by adding the following 
 
 For a detailed explanation of the plugin's internal architecture and implementation, see [HOW_IT_WORKS.md](./HOW_IT_WORKS.md).
 
-This document covers:
-- Plugin architecture and transform pipeline
-- Virtual module system
-- Dev-time CSS collection via module graph
-- Build-time asset manifest generation
-- Hot Module Replacement handling
+## Known limitations
 
-## Kown issues
-
-TODO
+- Duplicated CSS build for each environment (e.g. client build and ssr build)
+  - I'm not sure whether this has been in general. Currently each css import is processed and built for each environment build and they can potentially cause inconsistecy due to differing code split, configuration, etc. This can causes duplicate css content loaded on client or break expected style processing.
+- `?assets=client` doesn't provide `css` during dev.
+  - Due to unbundled dev, the plugin doesn't eager traverse client module graph and `?assets=client` provides only `entry` field during dev. It's currently assumed that css files needed for SSR are the css files imported on server module graph.
 
 ## Request for Feedback
 
-As this is a proposal for a standardized API, feedback from framework authors and the community is essential:
+Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
 
-- **Framework authors**: How does this compare to your current implementation? What's missing?
-- **Edge cases**: What platform-specific or use-case-specific concerns should we address?
-- **API design**: Is the `?assets` / `?assets=client` / `?assets=ssr` API intuitive and flexible enough?
+- Is the API sufficiently powerful for various use cases?
+- Are there any implementation considerations or edge cases to be aware of?
+- How can this API be improved to better serve framework needs?
