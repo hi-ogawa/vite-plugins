@@ -1,8 +1,21 @@
-# SSR Assets API Proposal
+# Proposal: Client assets metadata API for SSR
 
-This proposal introduces a new API that enables SSR environments to access client assets information required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack).
+This proposal introduces a new API that enables server code to access client runtime assets metadata required for server-side rendering in a framework agnostic way. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack) with [examples](#examples).
 
-## `?assets` Query Import
+## Motivation
+
+The new API addresses two critical challenges that every SSR framework must solve:
+
+1. **Asset preloading**: Preventing client-side assets waterfalls by knowing which assets to preload
+2. **FOUC prevention**: Ensuring CSS is loaded with the HTML rendered on the server
+
+Currently, meta-frameworks implement their own solutions for these problems. This proposal aims to provide a unified primitive that frameworks can adopt, reducing complexity and lowering the barrier for new custom frameworks to integrate SSR with Vite.
+
+This proposal also aims to initiate discussion around common SSR asset handling patterns, with the hope of finding more robust and future-proof solutions through community feedback.
+
+## Proposed API
+
+### `?assets` Query Import
 
 The plugin provides a new query import `?assets` to access assets information of the module. There are three variations of the import:
 
@@ -25,7 +38,7 @@ type Assets = {
 The goal of this API is to cover the following use cases in SSR applications:
 
 - **Server entry accessing client entry**: Enables the server to inject client-side assets during SSR
-  - This can be also used for implementing "Island Architecutre". See [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island) for the example.
+  - This can also be used for implementing "Island Architecture" - see [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island)
 
 ```js
 // server.js - Server entry injecting client assets during SSR
@@ -75,6 +88,7 @@ export const routes = [
 ```
 
 - **Server-only pages accessing CSS dependencies**: Server-rendered pages can retrieve their CSS assets
+  - See [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island)
 
 ```js
 // server.js - Server-side page with CSS dependencies
@@ -91,7 +105,22 @@ export function renderHtml() {
 }
 ```
 
-## Configuration
+### Runtime Helpers
+
+The plugin provides a utility function `mergeAssets` to combine multiple assets objects into a single deduplicated assets object.
+
+```js
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
+
+// Example: Merging assets from multiple route components
+const route1Assets = await import("./pages/layout.js?assets");
+const route2Assets = await import("./pages/home.js?assets");
+
+const mergedAssets = mergeAssets(route1Assets, route2Assets);
+// Result: { js: [...], css: [...] } with deduplicated entries
+```
+
+### Configuration
 
 The API is enabled by adding the plugin and minimal build configuration:
 
@@ -119,6 +148,7 @@ export default defineConfig({
     ssr: {
       build: {
         outDir: "./dist/ssr",
+        emitAssets: true,
         rollupOptions: {
           input: {
             index: "./src/entry.server.tsx",
@@ -138,23 +168,7 @@ export default defineConfig({
 })
 ```
 
-## Helper API
-
-The plugin provides utility function `mergeAssets` to combines multiple assets objects into a single deduplicated assets object.
-
-```js
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
-
-// Example: Merging assets from multiple route components
-const route1Assets = await import("./pages/layout.js?assets");
-const route2Assets = await import("./pages/home.js?assets");
-
-const mergedAssets = mergeAssets(route1Assets, route2Assets);
-// Result: { js: [...], css: [...] } with deduplicated entries
-```
-
-
-## TypeScript Support
+### TypeScript Support
 
 TypeScript support for `?assets` imports can be enabled by adding the following to your `tsconfig.json`:
 
@@ -183,16 +197,16 @@ TypeScript support for `?assets` imports can be enabled by adding the following 
 
 For a detailed explanation of the plugin's internal architecture and implementation, see [HOW_IT_WORKS.md](./HOW_IT_WORKS.md).
 
-This document covers:
-- Plugin architecture and transform pipeline
-- Virtual module system
-- Dev-time CSS collection via module graph
-- Build-time asset manifest generation
-- Hot Module Replacement handling
+## Known limitations
 
-## Feedback
+- Duplicated CSS build for each environment (e.g. client build and ssr build)
+  - Currently each CSS import is processed and built for each environment build, which can potentially cause inconsistency due to differing code splits, configuration, etc. This can cause duplicate CSS content loaded on client or break expected style processing.
+- `?assets=client` doesn't provide `css` during dev.
+  - Due to unbundled dev, the plugin doesn't eagerly traverse the client module graph and `?assets=client` provides only the `entry` field during dev. It's currently assumed that CSS files needed for SSR are the CSS files imported on the server module graph.
 
-Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
+## Request for Feedback
+
+Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions. Key questions include:
 
 - Is the API sufficiently powerful for various use cases?
 - Are there any implementation considerations or edge cases to be aware of?
