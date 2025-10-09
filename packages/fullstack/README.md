@@ -38,7 +38,7 @@ type Assets = {
 The goal of this API is to cover the following use cases in SSR applications:
 
 - **Server entry accessing client entry**: Enables the server to inject client-side assets during SSR
-  - This can be also used for implementing "Island Architecutre". See [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island) for the example.
+  - This can also be used for implementing "Island Architecture" - see [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island)
 
 ```js
 // server.js - Server entry injecting client assets during SSR
@@ -88,7 +88,7 @@ export const routes = [
 ```
 
 - **Server-only pages accessing CSS dependencies**: Server-rendered pages can retrieve their CSS assets
-  - See [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island) for the example.
+  - See [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island)
 
 ```js
 // server.js - Server-side page with CSS dependencies
@@ -107,7 +107,7 @@ export function renderHtml() {
 
 ### Runtime Helpers
 
-The plugin provides utility function `mergeAssets` to combines multiple assets objects into a single deduplicated assets object.
+The plugin provides a utility function `mergeAssets` to combine multiple assets objects into a single deduplicated assets object.
 
 ```js
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
@@ -200,9 +200,9 @@ For a detailed explanation of the plugin's internal architecture and implementat
 ## Known limitations
 
 - Duplicated CSS build for each environment (e.g. client build and ssr build)
-  - I'm not sure whether this has been in general. Currently each css import is processed and built for each environment build and they can potentially cause inconsistecy due to differing code split, configuration, etc. This can causes duplicate css content loaded on client or break expected style processing.
+  - Currently each CSS import is processed and built for each environment build, which can potentially cause inconsistency due to differing code splits, configuration, etc. This can cause duplicate CSS content loaded on client or break expected style processing.
 - `?assets=client` doesn't provide `css` during dev.
-  - Due to unbundled dev, the plugin doesn't eager traverse client module graph and `?assets=client` provides only `entry` field during dev. It's currently assumed that css files needed for SSR are the css files imported on server module graph.
+  - Due to unbundled dev, the plugin doesn't eagerly traverse the client module graph and `?assets=client` provides only the `entry` field during dev. It's currently assumed that CSS files needed for SSR are the CSS files imported on the server module graph.
 
 ## Future Considerations
 
@@ -212,7 +212,7 @@ We view this proposal as part of an ongoing effort to identify which SSR pattern
 
 ## Request for Feedback
 
-Feedback is greatly appreciated! For example, I'm interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
+Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions. Key questions include:
 
 - Is the API sufficiently powerful for various use cases?
 - Are there any implementation considerations or edge cases to be aware of?
