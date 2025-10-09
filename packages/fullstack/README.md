@@ -1,6 +1,6 @@
 # Proposal: Client assets metadata API for SSR
 
-This proposal introduces a new API that enables server code to access client runtime assets metadata required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack) with [examples](#examples).
+This proposal introduces a new API that enables server code to access client runtime assets metadata required for server-side rendering in a framework agnostic way. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack) with [examples](#examples).
 
 ## Motivation
 
