@@ -1,6 +1,6 @@
 # SSR Assets API Proposal
 
-This proposal introduces a new API that enables SSR environments to access client assets information required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack).
+This proposal introduces a new API that enables SSR environments to access client runtime assets metada required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack). You can find [examples](#examples) at the bottom.
 
 ## Motivation
 
@@ -196,10 +196,14 @@ This document covers:
 - Build-time asset manifest generation
 - Hot Module Replacement handling
 
-## Feedback
+## Kown issues
 
-Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
+TODO
 
-- Is the API sufficiently powerful for various use cases?
-- Are there any implementation considerations or edge cases to be aware of?
-- How can this API be improved to better serve framework needs?
+## Request for Feedback
+
+As this is a proposal for a standardized API, feedback from framework authors and the community is essential:
+
+- **Framework authors**: How does this compare to your current implementation? What's missing?
+- **Edge cases**: What platform-specific or use-case-specific concerns should we address?
+- **API design**: Is the `?assets` / `?assets=client` / `?assets=ssr` API intuitive and flexible enough?
