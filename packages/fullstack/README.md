@@ -212,7 +212,7 @@ We view this proposal as part of an ongoing effort to identify which SSR pattern
 
 ## Request for Feedback
 
-Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
+Feedback is greatly appreciated! For example, I'm interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
 
 - Is the API sufficiently powerful for various use cases?
 - Are there any implementation considerations or edge cases to be aware of?
