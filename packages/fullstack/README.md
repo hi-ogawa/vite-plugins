@@ -2,7 +2,7 @@
 
 This proposal introduces a new API that enables server code to access client runtime assets metadata required for server-side rendering. This feature is currently prototyped in the package [`@hiogawa/vite-plugin-fullstack`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack). You can find [examples](#examples) at the bottom.
 
-## Motivation
+## Motivation / Scope
 
 TODO
 
@@ -81,6 +81,7 @@ export const routes = [
 ```
 
 - **Server-only pages accessing CSS dependencies**: Server-rendered pages can retrieve their CSS assets
+  - See [`examples/island`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island) for the example.
 
 ```js
 // server.js - Server-side page with CSS dependencies
