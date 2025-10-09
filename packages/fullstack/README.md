@@ -6,7 +6,7 @@ This proposal introduces a new API that enables SSR environments to access clien
 
 TODO
 
-## API
+## Proposed API
 
 ### `?assets` Query Import
 
@@ -97,6 +97,21 @@ export function renderHtml() {
 }
 ```
 
+### Runtime Helpers
+
+The plugin provides utility function `mergeAssets` to combines multiple assets objects into a single deduplicated assets object.
+
+```js
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
+
+// Example: Merging assets from multiple route components
+const route1Assets = await import("./pages/layout.js?assets");
+const route2Assets = await import("./pages/home.js?assets");
+
+const mergedAssets = mergeAssets(route1Assets, route2Assets);
+// Result: { js: [...], css: [...] } with deduplicated entries
+```
+
 ### Configuration
 
 The API is enabled by adding the plugin and minimal build configuration:
@@ -143,22 +158,6 @@ export default defineConfig({
   }
 })
 ```
-
-### Helper API
-
-The plugin provides utility function `mergeAssets` to combines multiple assets objects into a single deduplicated assets object.
-
-```js
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
-
-// Example: Merging assets from multiple route components
-const route1Assets = await import("./pages/layout.js?assets");
-const route2Assets = await import("./pages/home.js?assets");
-
-const mergedAssets = mergeAssets(route1Assets, route2Assets);
-// Result: { js: [...], css: [...] } with deduplicated entries
-```
-
 
 ### TypeScript Support
 
