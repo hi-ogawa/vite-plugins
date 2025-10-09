@@ -7,9 +7,11 @@ This proposal introduces a new API that enables server code to access client run
 The new API addresses two critical challenges that every SSR framework must solve:
 
 1. **Asset preloading**: Preventing client-side assets waterfalls by knowing which assets to preload
-2. **FOUC prevention**: Ensuring CSS is loaded with the HTML rendered on ther server
+2. **FOUC prevention**: Ensuring CSS is loaded with the HTML rendered on the server
 
-Currently, meta-frameworks implement their own solutions for these problems. This proposal aims to provide a unified primitive that frameworks can adopt, reducing complexity and sharing knowledge across the ecosystem for finding a future-proof solution. It lowers the barrier for new custom frameworks to integrate SSR with Vite.
+Currently, meta-frameworks implement their own solutions for these problems. This proposal aims to provide a unified primitive that frameworks can adopt, reducing complexity and lowering the barrier for new custom frameworks to integrate SSR with Vite.
+
+Also having this proposal as a starting point, I hope we can share knowledge across the ecosystem to find a future-proof solution.
 
 ## Proposed API
 
