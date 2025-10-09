@@ -204,6 +204,12 @@ For a detailed explanation of the plugin's internal architecture and implementat
 - `?assets=client` doesn't provide `css` during dev.
   - Due to unbundled dev, the plugin doesn't eager traverse client module graph and `?assets=client` provides only `entry` field during dev. It's currently assumed that css files needed for SSR are the css files imported on server module graph.
 
+## Future Considerations
+
+Asset management is one of many interconnected challenges in the SSR ecosystem. While Vite's [SSR guide](https://vite.dev/guide/ssr.html) provides general guidance for SSR implementation, certain patterns like asset tracking are common enough to warrant standardized primitives rather than expecting each framework to reinvent the wheel.
+
+We view this proposal as part of an ongoing effort to identify which SSR patterns deserve first-class support in Vite, informed by the collective experience of framework authors.
+
 ## Request for Feedback
 
 Feedback is greatly appreciated! I'm particularly interested in hearing from framework authors who have likely implemented their own solutions without such an abstract API. Key questions include:
