@@ -11,7 +11,7 @@ overrides:
   react-server-dom-webpack: ^19.1.0
   '@hiogawa/react-server': workspace:*
   '@hiogawa/vite-rsc': workspace:*
-  '@hiogawa/import-attributes': workspace:*
+  '@hiogawa/vite-plugin-import-attributes': workspace:*
   '@playwright/test': ^1.53.1
   '@types/react': ^19.1.8
   '@types/react-dom': ^19.1.6
@@ -226,7 +226,7 @@ importers:
         specifier: latest
         version: link:../..
       '@hiogawa/vite-plugin-import-attributes':
-        specifier: latest
+        specifier: workspace:*
         version: link:../../../import-attributes
       '@preact/preset-vite':
         specifier: ^2.10.2

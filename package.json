@@ -51,7 +51,7 @@
       "react-server-dom-webpack": "$react-server-dom-webpack",
       "@hiogawa/react-server": "workspace:*",
       "@hiogawa/vite-rsc": "workspace:*",
-      "@hiogawa/import-attributes": "workspace:*",
+      "@hiogawa/vite-plugin-import-attributes": "workspace:*",
       "@playwright/test": "$@playwright/test",
       "@types/react": "$@types/react",
       "@types/react-dom": "$@types/react-dom",
