@@ -44,12 +44,7 @@ export default defineConfig({
         const { rawId, attributes } = getImportAttributesFromId(id);
         if (attributes["island"] === "client-only") {
           // Custom transformation based on attributes
-          return `
-import * as module from ${JSON.stringify(rawId)};
-export const Counter = Object.assign(module.Counter, {
-  __island: true,
-});
-`;
+          return ...
         }
       },
     },
