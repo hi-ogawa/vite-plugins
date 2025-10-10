@@ -1,2 +1,2 @@
-exports.a = 'a'
-exports.b = 'b'
+exports.a = "a";
+exports.b = "b";

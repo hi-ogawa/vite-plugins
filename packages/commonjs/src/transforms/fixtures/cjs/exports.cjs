@@ -1,1 +1,1 @@
-exports = '[not-exports]'
+exports = "[not-exports]";

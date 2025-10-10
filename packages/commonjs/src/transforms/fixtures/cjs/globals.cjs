@@ -1,1 +1,1 @@
-exports.test = [typeof __filename, typeof __dirname]
+exports.test = [typeof __filename, typeof __dirname];
