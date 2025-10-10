@@ -12,9 +12,7 @@ npm install @hiogawa/vite-plugin-import-attributes
 
 ## Usage
 
-The plugin transforms import statements with attributes into imports with query parameters, allowing other plugins to access and process these attributes.
-
-### Basic Example
+The plugin transforms import statements with attributes into imports with query parameters, allowing other plugins to access and process these attributes, for example:
 
 ```js
 // [entry.js]
@@ -23,8 +21,6 @@ import Counter from "./counter" with { island: "client-only" };
 // [counter.js]
 export function Counter() { ... }
 ```
-
-### Vite Configuration
 
 ```js
 // [vite.config.ts]
