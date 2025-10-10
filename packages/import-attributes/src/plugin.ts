@@ -12,9 +12,9 @@ export default function vitePluginImportAttributes(pluginOptions?: {
   );
   return [
     {
-      name: "import-attributes-transform",
+      name: "import-attributes",
       async config() {
-        esModuleLexer.init;
+        await esModuleLexer.init;
       },
       transform(code, id) {
         if (!code.includes("with")) return;
@@ -32,6 +32,8 @@ export default function vitePluginImportAttributes(pluginOptions?: {
   ];
 }
 
+const KEY = "__attributes";
+
 export function transformImportAttributes(
   code: string,
 ): MagicString | undefined {
@@ -47,7 +49,7 @@ export function transformImportAttributes(
         end,
         "?" +
           new URLSearchParams({
-            __attributes: JSON.stringify(attributes),
+            [KEY]: JSON.stringify(attributes),
           }),
       );
       output.remove(end + 1, expEnd);
@@ -56,9 +58,9 @@ export function transformImportAttributes(
   return output;
 }
 
-export function getImportAttributes(id: string): object | undefined {
+export function getImportAttributesFromId(id: string): object | undefined {
   const { query } = parseIdQuery(id);
-  const attributes = query["__attributes"];
+  const attributes = query[KEY];
   return attributes as any;
 }
 

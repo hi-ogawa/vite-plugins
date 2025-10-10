@@ -1,1 +1,1 @@
-export { default } from "./plugin";
+export { default, getImportAttributesFromId } from "./plugin";
