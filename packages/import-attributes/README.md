@@ -83,14 +83,3 @@ Utility function to extract attributes from a transformed module ID.
    ```
 
 2. Other Vite plugins can then use `getImportAttributesFromId` to extract and process these attributes during module resolution or transformation.
-
-## Use Cases
-
-- **Island Architecture**: Conditionally hydrate components based on import attributes
-- **Module Variants**: Load different implementations based on attributes
-- **Build-time Optimizations**: Apply specific transformations based on import metadata
-- **Framework Integration**: Extend framework capabilities with custom import semantics
-
-## License
-
-MIT
