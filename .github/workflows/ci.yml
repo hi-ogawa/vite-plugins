@@ -32,7 +32,7 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           build: false
-      - run: pnpm -C packages/fullstack build
+      - run: pnpm -F './packages/fullstack' -F './packages/import-attributes' build
       - run: pnpm -C packages/fullstack test-e2e
 
   # superseded by @vitejs/plugin-rsc
