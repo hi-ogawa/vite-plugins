@@ -1,23 +1,49 @@
-import assert from "node:assert";
+import MagicString from "magic-string";
 import type { Plugin } from "vite";
 
 export function islandPlugin(): Plugin[] {
   return [
     {
       name: "island",
-      load: {
-        handler(id) {
-          const { filename, query } = parseIdQuery(id);
-          const q = query["island"];
-          if (typeof q !== "undefined") {
-            assert.equal(this.environment.name, "ssr");
-            return `\
-import * as module from ${JSON.stringify(filename)};
-import assets from ${JSON.stringify(filename + "?assets=client")};
-import { createIsland } from "/src/framework/island/runtime-server";
-export default createIsland(module.default, "default", assets);
-`;
+      transform: {
+        handler(code, id) {
+          if (this.environment.name !== "ssr") return;
+          if (!id.includes("/islands/")) return;
+          if (!/\.(t|j)sx?$/.test(id)) return;
+          //
+          // quick and dirty export wrapping transform
+          // (more robust appraoch is found in https://github.com/vitejs/vite-plugin-react/blob/fffb7eb7a4d939783d1da09e2ca6368382735ca3/packages/plugin-rsc/src/transforms/wrap-export.ts#L24)
+          //
+          // [input]
+          //   export function Counter() { ... }
+          //
+          // [output]
+          //  function Counter() { ... }
+          //  const __wrap_Counter = __runtime.createIsland(Counter, ...)
+          //  export { __wrap_Counter as Counter }
+          //
+          const s = new MagicString(code);
+          const matches = code.matchAll(
+            /\b(export)\s+(function|const)\s+(\w+)/dg,
+          );
+          for (const match of matches) {
+            const [exportStart, exportEnd] = match.indices![1];
+            s.update(
+              exportStart,
+              exportEnd,
+              " ".repeat(exportEnd - exportStart),
+            );
+            const exportName = match[3];
+            s.append(
+              `;const __wrap_${exportName} = __runtime.createIsland(${exportName}, ${JSON.stringify(exportName)}, __assets);\n` +
+                `export { __wrap_${exportName} as ${exportName} };\n`,
+            );
           }
+          return `\
+${s.toString()};
+import __assets from ${JSON.stringify(id + "?assets=client")};
+import * as __runtime from "/src/framework/island/runtime-server";
+`;
         },
       },
     },
@@ -33,17 +59,4 @@ export default createIsland(module.default, "default", assets);
       },
     },
   ];
-}
-
-// https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
-function parseIdQuery(id: string): {
-  filename: string;
-  query: {
-    [k: string]: string;
-  };
-} {
-  if (!id.includes("?")) return { filename: id, query: {} };
-  const [filename, rawQuery] = id.split(`?`, 2) as [string, string];
-  const query = Object.fromEntries(new URLSearchParams(rawQuery));
-  return { filename, query };
 }

@@ -55,7 +55,7 @@ function defineTest(f: Fixture) {
 
       await testClient(page);
 
-      const jsFile = f.createEditor("src/components/counter.tsx");
+      const jsFile = f.createEditor("src/islands/counter.tsx");
       jsFile.edit((s) => s.replace("Count:", "Count-edit:"));
 
       await expect(page.locator(".counter-card")).toContainText(

@@ -12,7 +12,7 @@ export default defineConfig((_env) => ({
     fullstack(),
   ],
   optimizeDeps: {
-    entries: ["./src/framework/entry.client.tsx", "./src/components/**/*"],
+    entries: ["./src/framework/entry.client.tsx", "./src/islands/**/*"],
   },
   environments: {
     client: {
