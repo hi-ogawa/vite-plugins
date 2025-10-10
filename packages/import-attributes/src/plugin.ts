@@ -58,10 +58,16 @@ export function transformImportAttributes(
   return output;
 }
 
-export function getImportAttributesFromId(id: string): object | undefined {
-  const { query } = parseIdQuery(id);
-  const attributes = query[KEY];
-  return attributes as any;
+export function getImportAttributesFromId(
+  id: string,
+): { rawId: string; attributes: Record<string, unknown> } | undefined {
+  const { filename, query } = parseIdQuery(id);
+  if (query[KEY]) {
+    const attributes = JSON.parse(query[KEY]);
+    delete query[KEY];
+    const rawId = filename! + new URLSearchParams(query);
+    return { rawId, attributes };
+  }
 }
 
 function parseIdQuery(id: string): {
@@ -69,7 +75,7 @@ function parseIdQuery(id: string): {
   query: Record<string, string>;
 } {
   if (!id.includes("?")) return { filename: id, query: {} };
-  const [filename, rawQuery] = id.split(`?`, 2);
+  const [filename, rawQuery] = id.split(`?`, 2) as [string, string];
   const query = Object.fromEntries(new URLSearchParams(rawQuery));
   return { filename, query };
 }
