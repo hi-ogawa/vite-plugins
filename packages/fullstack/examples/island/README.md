@@ -1,36 +1,40 @@
 # Island Framework Example
 
-This example demonstrates an islands architecture implementation using Vite's SSR Assets API (`?assets` query import).
+This example demonstrates an islands architecture implementation using Vite's SSR Assets API and import attributes.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/island)
 
 ## Implementation Overview
 
-The implementation uses a custom Vite plugin that transforms island imports (`?island`) and leverages Vite's `?assets=client` query to get the client entry point for each island component.
+The implementation uses a custom Vite plugin that transforms island imports (using import attributes syntax) and leverages Vite's `?assets=client` query to get the client entry point for each island component.
 
 ## How It's Implemented
 
 ### 1. Island Plugin Transform
 
-When you import a component with `?island`:
+When you import a component with import attributes:
 
 ```tsx
-import Counter from "../components/counter?island";
+import { Counter } from "../components/counter" with { island: "" };
 ```
 
-The Vite plugin (`src/framework/island/plugin.ts`) transforms this import during SSR to:
+The Vite plugin (`src/framework/island/plugin.ts`) transforms this import during SSR using:
+- [`@hiogawa/vite-plugin-import-attributes`](https://github.com/hi-ogawa/vite-plugins/tree/main/packages/import-attributes) for handling import attributes
+- `es-module-lexer` for parsing exports
+
+The transformation generates:
 
 ```tsx
-import * as module from "../components/counter";
-import assets from "../components/counter?assets=client";
-import { createIsland } from "/src/framework/island/runtime-server";
-export default createIsland(module.default, "default", assets);
+import * as __module from "../components/counter";
+import __assets from "../components/counter?assets=client";
+import * as __runtime from "/src/framework/island/runtime-server";
+export const Counter = __runtime.createIsland(__module["Counter"], "Counter", __assets);
 ```
 
 This transformation:
 - Imports the original component module on the server
 - Gets the client-side assets using Vite's `?assets=client` query
-- Wraps the component with `createIsland` for server rendering
+- Wraps each exported component with `createIsland` for server rendering
 
 ### 2. Server-Side Rendering
 
@@ -71,14 +75,7 @@ The `DemoIsland` class (`runtime-client.ts`):
 
 ## Key Components
 
-- **`plugin.ts`**: Vite plugin that transforms `?island` imports and handles raw imports
+- **`plugin.ts`**: Vite plugin that transforms island imports using import attributes syntax
 - **`runtime-server.ts`**: Server-side island wrapper that creates `<demo-island>` elements
 - **`runtime-client.ts`**: Client-side web component that hydrates islands
 - **`entry.client.tsx`**: Client entry that registers the island web component
-
-## Technical Details
-
-- Uses Vite's SSR Assets API (`?assets=client`) to get client entry points
-- Leverages web components for island hydration
-- Props are serialized as JSON attributes on custom elements
-- Each island component is code-split automatically
