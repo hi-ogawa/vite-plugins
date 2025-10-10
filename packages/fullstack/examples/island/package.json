@@ -12,6 +12,7 @@
     "@hiogawa/vite-plugin-import-attributes": "latest",
     "@preact/preset-vite": "^2.10.2",
     "@preact/signals": "^2.3.2",
+    "es-module-lexer": "^1.7.0",
     "preact": "^10.27.2",
     "preact-render-to-string": "^6.6.2",
     "srvx": "^0.8.7",

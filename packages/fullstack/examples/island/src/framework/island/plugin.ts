@@ -2,6 +2,7 @@ import assert from "node:assert";
 import vitePluginImportAttributes, {
   getImportAttributesFromId,
 } from "@hiogawa/vite-plugin-import-attributes";
+import * as esModuelLexer from "es-module-lexer";
 import type { Plugin } from "vite";
 
 export function islandPlugin(): Plugin[] {
@@ -9,17 +10,29 @@ export function islandPlugin(): Plugin[] {
     ...vitePluginImportAttributes(),
     {
       name: "island",
-      load: {
-        handler(id) {
+      async config() {
+        await esModuelLexer.init;
+      },
+      transform: {
+        async handler(code, id) {
           const { rawId, attributes } = getImportAttributesFromId(id);
           if ("island" in attributes) {
             assert.equal(this.environment.name, "ssr");
-            // TODO: how to extract exports?
+            const parsed = esModuelLexer.parse(code);
+            let output = "";
+            for (const e of parsed[1]) {
+              output +=
+                `export ${e.n === "default" ? "" : "const"} ${e.n} = __runtime.createIsland(` +
+                `__module[${JSON.stringify(e.n)}],` +
+                `${JSON.stringify(e.n)},` +
+                `__assets,` +
+                `);\n`;
+            }
             return `\
-import * as module from ${JSON.stringify(rawId)};
-import assets from ${JSON.stringify(rawId + "?assets=client")};
-import { createIsland } from "/src/framework/island/runtime-server";
-export const Counter = createIsland(module.Counter, "Counter", assets);
+import * as __module from ${JSON.stringify(rawId)};
+import __assets from ${JSON.stringify(rawId + "?assets=client")};
+import * as __runtime from "/src/framework/island/runtime-server";
+${output}
 `;
           }
         },
