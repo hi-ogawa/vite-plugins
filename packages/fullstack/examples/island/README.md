@@ -40,7 +40,7 @@ export const Counter = __runtime.createIsland(
 );
 ```
 
-This transformation:
+This wrapper module:
 
 - Imports the original component module on the server
 - Gets the client-side assets using Vite's `?assets=client` query
