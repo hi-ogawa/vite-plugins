@@ -33,10 +33,10 @@ describe("e2e", () => {
       {
         name: "test-plugin",
         load(id) {
-          const parsed = getImportAttributesFromId(id);
-          if (parsed?.attributes["island"] === "test") {
+          const { rawId, attributes } = getImportAttributesFromId(id);
+          if (attributes["island"] === "test") {
             return `\
-import * as module from ${JSON.stringify(parsed.rawId)};
+import * as module from ${JSON.stringify(rawId)};
 export const Counter = Object.assign(module.Counter, {
   __island: true,
 });
