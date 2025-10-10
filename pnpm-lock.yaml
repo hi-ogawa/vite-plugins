@@ -230,6 +230,9 @@ importers:
       '@preact/signals':
         specifier: ^2.3.2
         version: 2.3.2(preact@10.27.2)
+      magic-string:
+        specifier: ^0.30.19
+        version: 0.30.19
       preact:
         specifier: ^10.27.2
         version: 10.27.2
@@ -501,7 +504,7 @@ importers:
         version: 3.0.0
       styled-jsx:
         specifier: ^5.1.6
-        version: 5.1.6(react@19.1.0)
+        version: 5.1.6(@babel/core@7.27.7)(react@19.1.0)
     devDependencies:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
@@ -12205,10 +12208,12 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.1.6(react@19.1.0):
+  styled-jsx@5.1.6(@babel/core@7.27.7)(react@19.1.0):
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+    optionalDependencies:
+      '@babel/core': 7.27.7
 
   sucrase@3.35.0:
     dependencies:
