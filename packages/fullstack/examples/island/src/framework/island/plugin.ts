@@ -28,7 +28,11 @@ export function islandPlugin(): Plugin[] {
           );
           for (const match of matches) {
             const [exportStart, exportEnd] = match.indices![1];
-            s.update(exportStart, exportEnd, " ".repeat(exportEnd - exportStart));
+            s.update(
+              exportStart,
+              exportEnd,
+              " ".repeat(exportEnd - exportStart),
+            );
             const exportName = match[3];
             s.append(
               `;const __wrap_${exportName} = __runtime.createIsland(${exportName}, ${JSON.stringify(exportName)}, __assets);\n` +
