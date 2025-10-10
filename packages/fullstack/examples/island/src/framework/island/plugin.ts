@@ -1,21 +1,25 @@
 import assert from "node:assert";
+import vitePluginImportAttributes, {
+  getImportAttributesFromId,
+} from "@hiogawa/vite-plugin-import-attributes";
 import type { Plugin } from "vite";
 
 export function islandPlugin(): Plugin[] {
   return [
+    ...vitePluginImportAttributes(),
     {
       name: "island",
       load: {
         handler(id) {
-          const { filename, query } = parseIdQuery(id);
-          const q = query["island"];
-          if (typeof q !== "undefined") {
+          const { rawId, attributes } = getImportAttributesFromId(id);
+          if ("island" in attributes) {
             assert.equal(this.environment.name, "ssr");
+            // TODO: how to extract exports?
             return `\
-import * as module from ${JSON.stringify(filename)};
-import assets from ${JSON.stringify(filename + "?assets=client")};
+import * as module from ${JSON.stringify(rawId)};
+import assets from ${JSON.stringify(rawId + "?assets=client")};
 import { createIsland } from "/src/framework/island/runtime-server";
-export default createIsland(module.default, "default", assets);
+export const Counter = createIsland(module.Counter, "Counter", assets);
 `;
           }
         },
@@ -33,17 +37,4 @@ export default createIsland(module.default, "default", assets);
       },
     },
   ];
-}
-
-// https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
-function parseIdQuery(id: string): {
-  filename: string;
-  query: {
-    [k: string]: string;
-  };
-} {
-  if (!id.includes("?")) return { filename: id, query: {} };
-  const [filename, rawQuery] = id.split(`?`, 2) as [string, string];
-  const query = Object.fromEntries(new URLSearchParams(rawQuery));
-  return { filename, query };
 }

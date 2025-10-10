@@ -1,5 +1,5 @@
 import "./index.css";
-import Counter from "../components/counter?island";
+import { Counter } from "../components/counter" with { island: "" };
 
 export default async function Page() {
   return (

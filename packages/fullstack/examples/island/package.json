@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@hiogawa/vite-plugin-fullstack": "latest",
+    "@hiogawa/vite-plugin-import-attributes": "latest",
     "@preact/preset-vite": "^2.10.2",
     "@preact/signals": "^2.3.2",
     "preact": "^10.27.2",
