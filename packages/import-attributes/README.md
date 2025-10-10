@@ -71,18 +71,19 @@ Utility function to extract attributes from a transformed module ID.
 
 ```ts
 {
-  rawId: string;      // Original module ID without attribute parameters
-  attributes: Record<string, unknown>;  // Parsed attributes object
+  rawId: string; // Original module ID without attribute parameters
+  attributes: Record<string, unknown>; // Parsed attributes object
 }
 ```
 
 ## How It Works
 
 1. The plugin transforms import statements with attributes:
+
    ```js
    // Before transformation
    import { Counter } from "./counter" with { island: "client-only" };
-   
+
    // After transformation
    import { Counter } from "./counter?__attributes=%7B%22island%22%3A%22client-only%22%7D";
    ```
