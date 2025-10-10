@@ -17,19 +17,17 @@ The plugin transforms import statements with attributes into imports with query 
 ### Basic Example
 
 ```js
-// entry.js
+// [entry.js]
 import Counter from "./counter" with { island: "client-only" };
 
-// counter.js
-export function Counter() {
-  return /* component implementation */;
-}
+// [counter.js]
+export function Counter() { ... }
 ```
 
 ### Vite Configuration
 
 ```js
-// vite.config.ts
+// [vite.config.ts]
 import { defineConfig } from "vite";
 import importAttributes, {
   getImportAttributesFromId,
