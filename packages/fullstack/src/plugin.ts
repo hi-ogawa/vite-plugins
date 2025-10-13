@@ -101,15 +101,23 @@ export function serverHandlerPlugin(
   ];
 }
 
-export type AssetsPluginApi = {
-  assets: {};
+export type PluginApi = {
+  assets: {
+    generateCode: (
+      ctx: Rollup.PluginContext,
+      options: {
+        id: string;
+        query: string;
+      },
+    ) => Promise<string>;
+  };
 };
 
-export function getAssetsPluginApi(
+export function getPluginApi(
   config: Pick<ResolvedConfig, "plugins">,
-): AssetsPluginApi | undefined {
+): PluginApi | undefined {
   const plugin = config.plugins.find((p) => p.name === "fullstack:assets");
-  return plugin?.api as AssetsPluginApi | undefined;
+  return plugin?.api as PluginApi | undefined;
 }
 
 export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
@@ -163,14 +171,45 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     }
   }
 
-  function processAssetsImportApi(
+  async function processAssetsImportWrapper(
     ctx: Rollup.PluginContext,
     options: {
       id: string;
-      environment: string;
-      isEntry: boolean;
+      query: string;
     },
-  ) {}
+  ) {
+    // implement different semantics depending on query
+    // assets=client => { environment: "client", isEntry: true }
+    // assets=ssr    => { environment: "ssr",    isEntry: false }
+    // assets        => { environment: "client", isEntry: false }, { environment: <this>, isEntry: false }
+    const s = new MagicString("");
+    if (options.query) {
+      const code = await processAssetsImport(ctx, options.id, {
+        environment: options.query,
+        isEntry: options.query === "client",
+      });
+      s.append(`export default ${code};\n`);
+    } else {
+      const code1 = await processAssetsImport(ctx, options.id, {
+        environment: "client",
+        isEntry: false,
+      });
+      const code2 = await processAssetsImport(ctx, options.id, {
+        environment: ctx.environment.name,
+        isEntry: false,
+      });
+      s.append(
+        `import * as __assets_runtime from "@hiogawa/vite-plugin-fullstack/runtime";\n` +
+          `export default __assets_runtime.mergeAssets(${code1}, ${code2});\n`,
+      );
+    }
+    if (ctx.environment.mode === "build") {
+      s.prepend(
+        `import __assets_manifest from "virtual:fullstack/assets-manifest";\n`,
+      );
+    }
+    return s.toString();
+  }
 
   return [
     {
@@ -178,8 +217,10 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       // TODO: support non shared build?
       sharedDuringBuild: true,
       api: {
-        assets: () => {},
-      } satisfies AssetsPluginApi,
+        assets: {
+          generateCode: processAssetsImportWrapper,
+        },
+      } satisfies PluginApi,
       configureServer(server_) {
         server = server_;
       },
@@ -473,40 +514,10 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           const { filename, query } = parseIdQuery(id);
           const value = query["assets"];
           if (typeof value !== "undefined") {
-            // implement different semantics depending on query
-            // assets=client => { environment: "client", isEntry: true }
-            // assets=ssr    => { environment: "ssr",    isEntry: false }
-            // assets        => { environment: "client", isEntry: false }, { environment: <this>, isEntry: false }
-            const s = new MagicString("");
-            if (value) {
-              const code = await processAssetsImport(this, filename, {
-                environment: value,
-                isEntry: value === "client",
-              });
-              s.append(`export default ${code};\n`);
-            } else {
-              const code1 = await processAssetsImport(this, filename, {
-                environment: "client",
-                isEntry: false,
-              });
-              const code2 = await processAssetsImport(this, filename, {
-                environment: this.environment.name,
-                isEntry: false,
-              });
-              s.append(
-                `import * as __assets_runtime from "@hiogawa/vite-plugin-fullstack/runtime";\n` +
-                  `export default __assets_runtime.mergeAssets(${code1}, ${code2});\n`,
-              );
-            }
-            if (this.environment.mode === "build") {
-              s.prepend(
-                `import __assets_manifest from "virtual:fullstack/assets-manifest";\n`,
-              );
-            }
-            return {
-              code: s.toString(),
-              moduleSideEffects: false,
-            };
+            return processAssetsImportWrapper(this, {
+              id: filename,
+              query: value,
+            });
           }
         },
       },

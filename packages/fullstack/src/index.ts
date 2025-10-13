@@ -2,6 +2,6 @@ export {
   default,
   serverHandlerPlugin,
   assetsPlugin,
-  type AssetsPluginApi,
-  getAssetsPluginApi,
+  type PluginApi,
+  getPluginApi,
 } from "./plugin.ts";
