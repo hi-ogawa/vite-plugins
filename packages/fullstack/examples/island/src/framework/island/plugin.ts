@@ -1,3 +1,4 @@
+import { getPluginApi } from "@hiogawa/vite-plugin-fullstack";
 import MagicString from "magic-string";
 import type { Plugin } from "vite";
 
@@ -6,7 +7,7 @@ export function islandPlugin(): Plugin[] {
     {
       name: "island",
       transform: {
-        handler(code, id) {
+        async handler(code, id) {
           if (this.environment.name !== "ssr") return;
           if (!id.includes("/islands/")) return;
           if (!/\.(t|j)sx?$/.test(id)) return;
@@ -39,6 +40,9 @@ export function islandPlugin(): Plugin[] {
                 `export { __wrap_${exportName} as ${exportName} };\n`,
             );
           }
+          // TODO: we should generate code as expression instead of virtual module `export default`?
+          const pluginApi = getPluginApi(this.environment.getTopLevelConfig())!;
+          await pluginApi.assets.generateCode(this, { id, query: "client" });
           return `\
 ${s.toString()};
 import __assets from ${JSON.stringify(id + "?assets=client")};
