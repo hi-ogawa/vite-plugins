@@ -130,12 +130,13 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
-    id: string,
     options: {
+      id: string;
       environment: string;
       isEntry: boolean;
     },
   ) {
+    const id = options.id;
     if (ctx.environment.mode === "dev") {
       const result: ImportAssetsResult = {
         entry: undefined, // defined only on client
@@ -184,17 +185,20 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     // assets        => { environment: "client", isEntry: false }, { environment: <this>, isEntry: false }
     const s = new MagicString("");
     if (options.query) {
-      const code = await processAssetsImport(ctx, options.id, {
+      const code = await processAssetsImport(ctx, {
+        id: options.id,
         environment: options.query,
         isEntry: options.query === "client",
       });
       s.append(`export default ${code};\n`);
     } else {
-      const code1 = await processAssetsImport(ctx, options.id, {
+      const code1 = await processAssetsImport(ctx, {
+        id: options.id,
         environment: "client",
         isEntry: false,
       });
-      const code2 = await processAssetsImport(ctx, options.id, {
+      const code2 = await processAssetsImport(ctx, {
+        id: options.id,
         environment: ctx.environment.name,
         isEntry: false,
       });
@@ -356,7 +360,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           assert(resolved, `Failed to resolve: ${parsed.import}`);
 
           const s = new MagicString("");
-          const code = await processAssetsImport(this, resolved.id, {
+          const code = await processAssetsImport(this, {
+            id: resolved.id,
             environment: parsed.environment,
             isEntry: !!parsed.entry,
           });
