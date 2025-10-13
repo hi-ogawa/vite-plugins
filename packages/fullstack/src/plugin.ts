@@ -101,6 +101,17 @@ export function serverHandlerPlugin(
   ];
 }
 
+export type AssetsPluginApi = {
+  assets: {};
+};
+
+export function getAssetsPluginApi(
+  config: Pick<ResolvedConfig, "plugins">,
+): AssetsPluginApi | undefined {
+  const plugin = config.plugins.find((p) => p.name === "fullstack:assets");
+  return plugin?.api as AssetsPluginApi | undefined;
+}
+
 export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   let server: ViteDevServer;
   let resolvedConfig: ResolvedConfig;
@@ -152,11 +163,23 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     }
   }
 
+  function processAssetsImportApi(
+    ctx: Rollup.PluginContext,
+    options: {
+      id: string;
+      environment: string;
+      isEntry: boolean;
+    },
+  ) {}
+
   return [
     {
       name: "fullstack:assets",
       // TODO: support non shared build?
       sharedDuringBuild: true,
+      api: {
+        assets: () => {},
+      } satisfies AssetsPluginApi,
       configureServer(server_) {
         server = server_;
       },
