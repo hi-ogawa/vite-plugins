@@ -1,4 +1,5 @@
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
+import { Frame } from "@remix-run/dom";
 import { renderToStream } from "@remix-run/dom/server";
 import Root from "../root";
 import clientAssets from "./entry.client.tsx?assets=client";
@@ -34,10 +35,14 @@ async function handler(request: Request): Promise<Response> {
   // SSR
   const root = (
     <Root head={head} pathname={url.pathname}>
-      {content}
+      <Frame src="/__content" />
     </Root>
   );
-  const html = renderToStream(root);
+  const html = renderToStream(root, {
+    resolveFrame() {
+      return content;
+    },
+  });
   return new Response(html, {
     headers: { "Content-Type": "text/html;charset=utf-8" },
   });
