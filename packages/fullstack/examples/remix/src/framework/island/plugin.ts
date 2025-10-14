@@ -18,8 +18,10 @@ export function islandPlugin(): Plugin[] {
           //   export function Counter() { ... }
           //
           // [output]
+          //  import * as __runtime from "@remix-run/dom";
+          //  import * as __assets from "<id>?assets=client";
           //  function Counter() { ... }
-          //  const __wrap_Counter = __runtime.createIsland(Counter, ...)
+          //  const __wrap_Counter = __runtime.hydrated(__assets.entry + "#Counter", Counter);
           //  export { __wrap_Counter as Counter }
           //
           const s = new MagicString(code);
@@ -34,15 +36,14 @@ export function islandPlugin(): Plugin[] {
               " ".repeat(exportEnd - exportStart),
             );
             const exportName = match[3];
-            s.append(
-              `;const __wrap_${exportName} = __runtime.createIsland(${exportName}, ${JSON.stringify(exportName)}, __assets);\n` +
-                `export { __wrap_${exportName} as ${exportName} };\n`,
-            );
+            s.append(`;\
+const __wrap_${exportName} = __runtime.hydrated(__assets.entry + "#" + ${JSON.stringify(exportName)}, ${exportName});
+export { __wrap_${exportName} as ${exportName} };`);
           }
           return `\
 ${s.toString()};
 import __assets from ${JSON.stringify(id + "?assets=client")};
-import * as __runtime from "/src/framework/island/runtime-server";
+import * as __runtime from "@remix-run/dom";
 `;
         },
       },
