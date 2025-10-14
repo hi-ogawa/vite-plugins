@@ -1,0 +1,18 @@
+{
+  "name": "@hiogawa/vite-plugin-fullstack-examples-remix",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "srvx --prod -s ../client dist/ssr/index.js"
+  },
+  "devDependencies": {
+    "@hiogawa/vite-plugin-fullstack": "latest",
+    "@remix-run/dom": "0.0.0-experimental-remix-jam.6",
+    "@remix-run/events": "0.0.0-experimental-remix-jam.5",
+    "magic-string": "^0.30.19",
+    "srvx": "^0.8.7",
+    "vite": "^7.1.5"
+  }
+}
