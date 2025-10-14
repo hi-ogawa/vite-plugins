@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import MagicString from "magic-string";
 import type { Plugin } from "vite";
 
@@ -59,5 +60,77 @@ import * as __runtime from "@remix-run/dom";
         },
       },
     },
+    {
+      name: "partial",
+      transform: {
+        handler(code, id) {
+          if (!id.includes("/partials/")) return;
+          if (!/\.(t|j)sx?$/.test(id)) return;
+          assert.equal(this.environment.name, "ssr");
+
+          //
+          // [input]
+          //   export function Counter() { ... }
+          //
+          // [output]
+          //  import * as __dom from "@remix-run/dom";
+          //  import * as __dom_jsx from "@remix-run/dom/jsx-runtime";
+          //  function Counter() { ... }
+          //  const __frame_Counter = ...createFrameWrapper...
+          //  export { __frame_Counter as Counter }
+          //
+
+          const s = new MagicString(code);
+          const matches = code.matchAll(
+            /\b(export)\s+(function|const)\s+(\w+)/dg,
+          );
+          for (const match of matches) {
+            const [exportStart, exportEnd] = match.indices![1];
+            s.update(
+              exportStart,
+              exportEnd,
+              " ".repeat(exportEnd - exportStart),
+            );
+            const entry = id.split("/partials/")[1];
+            const exportName = match[3];
+            s.append(`;\
+export const __frame_${exportName} = (${createFrameWrapper.toString()})(
+  ${exportName},
+  ${JSON.stringify(entry)},
+  ${JSON.stringify(exportName)},
+  __dom,
+  __dom_jsx
+);
+export { __frame_${exportName} as ${exportName} };
+`);
+          }
+          return `\
+${s.toString()};
+import * as __dom from "@remix-run/dom";
+import * as __dom_jsx from "@remix-run/dom/jsx-runtime";
+`;
+        },
+      },
+    },
   ];
+}
+
+function createFrameWrapper(
+  Component: any,
+  entry: string,
+  exportName: string,
+  __dom: typeof import("@remix-run/dom"),
+  __dom_jsx: typeof import("@remix-run/dom/jsx-runtime"),
+) {
+  function FrameWrapper(props: any) {
+    const params = new URLSearchParams({
+      entry,
+      exportName,
+      props: JSON.stringify(props),
+    });
+    const src = "/__frame?" + params.toString();
+    return __dom_jsx.jsx(__dom.Frame as any, { src });
+  }
+  Object.assign(FrameWrapper, { Component });
+  return FrameWrapper;
 }

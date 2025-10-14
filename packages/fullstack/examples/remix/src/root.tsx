@@ -33,6 +33,14 @@ export default function Root(props: {
                 About
               </a>
             </li>
+            <li>
+              <a
+                href="/books"
+                className={props.pathname === "/books" ? "active" : undefined}
+              >
+                Books
+              </a>
+            </li>
           </ul>
         </nav>
         {props.children}
