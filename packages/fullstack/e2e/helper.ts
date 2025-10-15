@@ -10,6 +10,7 @@ export async function waitForHydration(page: Page, selector = "body") {
       () =>
         page
           .locator(selector)
+          .last()
           .evaluate(
             (el) =>
               (el &&

@@ -10,6 +10,7 @@ export function CartButton(this: Remix.Handle) {
 
     return (
       <form
+        className="cart-button"
         method={method}
         action={action}
         on={dom.submit(async (event, signal) => {

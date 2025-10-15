@@ -1,3 +1,4 @@
+// TODO: use cookie as state?
 const cartStates: Record<string, boolean> = {};
 
 export const POST = async (request: Request) => {

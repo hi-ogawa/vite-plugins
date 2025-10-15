@@ -22,7 +22,7 @@ export function Counter(this: Remix.Handle, props: { initialCount: number }) {
         </button>
         <br />
         <br />
-        <span class="subtitle">This is interactive</span>
+        <span class="subtitle">Hydrated component</span>
       </div>
     );
   };
