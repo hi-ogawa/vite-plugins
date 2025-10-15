@@ -24,16 +24,15 @@ test.describe("remix", () => {
   test.describe("build", () => {
     const f = useFixture({ root: "examples/remix", mode: "build" });
     defineTest(f);
-    // document.querySelector(".counter-card").previousSibling.$rmx
   });
 });
 
 function defineTest(f: Fixture) {
   const exampleType = f.root.includes("examples/remix") ? "remix" : "preact";
-  const waitForHydration = async (page: Page) => {
+  const waitForHydration = async (page: Page, locator?: string) => {
     await waitForHydrationBase(
       page,
-      exampleType === "preact" ? "demo-island" : ".counter-card",
+      locator || (exampleType === "preact" ? "demo-island" : ".counter-card"),
     );
   };
 
@@ -118,6 +117,45 @@ function defineTest(f: Fixture) {
       // css is restored
       await testCss(page);
     });
+  }
+
+  if (exampleType === "remix") {
+    test("frame", async ({ page }) => {
+      await page.goto(f.url("/books"));
+      await using _ = await expectNoReload(page);
+      await waitForHydrationBase(page, ".cart-button");
+      await testFrame(page);
+    });
+
+    test.describe(() => {
+      test.use({ javaScriptEnabled: false });
+      test("frame nojs", async ({ page }) => {
+        await page.goto(f.url("/books"));
+        await testFrame(page);
+      });
+    });
+
+    async function testFrame(page: Page) {
+      await expect(page.locator(".book-card").nth(0)).toContainText(
+        "The Great Gatsby",
+      );
+      await expect(page.locator(".book-card").nth(1)).toContainText(
+        "To Kill a Mockingbird",
+      );
+
+      // test form
+      await expect(page.locator(".book-card button").nth(0)).toContainText(
+        "Add to Cart",
+      );
+      await page.locator(".book-card button").nth(0).click();
+      await expect(page.locator(".book-card button").nth(0)).toContainText(
+        "Remove from Cart",
+      );
+      await page.locator(".book-card button").nth(0).click();
+      await expect(page.locator(".book-card button").nth(0)).toContainText(
+        "Add to Cart",
+      );
+    }
   }
 }
 

@@ -1,12 +1,12 @@
 import fullstack from "@hiogawa/vite-plugin-fullstack";
 import { defineConfig } from "vite";
-import { islandPlugin } from "./src/framework/island/plugin";
+import { frameworkPlugin } from "./src/framework/plugin";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [
     // import("vite-plugin-inspect").then((m) => m.default()),
-    islandPlugin(),
+    frameworkPlugin(),
     fullstack(),
   ],
   optimizeDeps: {

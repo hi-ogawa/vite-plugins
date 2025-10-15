@@ -6,7 +6,7 @@ export default async function Page() {
     <main>
       <div className="hero">
         <h1>Island Framework</h1>
-        <p class="subtitle">This is static</p>
+        <p class="subtitle">Remix Hydrated Comopnents and Frames!</p>
       </div>
       <Counter initialCount={2} />
     </main>

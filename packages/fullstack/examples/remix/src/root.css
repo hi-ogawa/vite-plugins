@@ -62,9 +62,9 @@ h1 {
 .card {
   background: white;
   border-radius: 8px;
-  padding: 2rem;
+  padding: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 button {

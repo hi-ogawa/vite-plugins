@@ -20,9 +20,6 @@ export function Counter(this: Remix.Handle, props: { initialCount: number }) {
         >
           Increment
         </button>
-        <br />
-        <br />
-        <span class="subtitle">This is interactive</span>
       </div>
     );
   };
