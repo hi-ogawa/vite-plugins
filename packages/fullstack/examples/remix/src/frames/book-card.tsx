@@ -1,5 +1,5 @@
-import { isInCart } from "../api";
 import { CartButton } from "../islands/cart-button";
+import { isInCart } from "../routes/api";
 
 export function BookCard(props: { name: string }) {
   const inCart = isInCart(props.name); // TODO: support async?

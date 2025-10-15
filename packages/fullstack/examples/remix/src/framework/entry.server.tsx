@@ -74,7 +74,7 @@ function renderToHtmlResponse(el: Remix.RemixNode) {
 async function handleApi(request: Request) {
   const url = new URL(request.url);
   assert(url.pathname === "/api");
-  const api = await import("../api");
+  const api = await import("../routes/api");
   return api.POST(request);
 }
 
