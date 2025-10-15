@@ -1,6 +1,9 @@
 import { type Page, expect, test } from "@playwright/test";
 import { type Fixture, useFixture } from "./fixture";
-import { expectNoReload, waitForHydration } from "./helper";
+import {
+  expectNoReload,
+  waitForHydration as waitForHydrationBase,
+} from "./helper";
 
 test.describe("dev", () => {
   const f = useFixture({ root: "examples/island", mode: "dev" });
@@ -12,7 +15,28 @@ test.describe("build", () => {
   defineTest(f);
 });
 
+test.describe("remix", () => {
+  test.describe("dev", () => {
+    const f = useFixture({ root: "examples/remix", mode: "dev" });
+    defineTest(f);
+  });
+
+  test.describe("build", () => {
+    const f = useFixture({ root: "examples/remix", mode: "build" });
+    defineTest(f);
+    // document.querySelector(".counter-card").previousSibling.$rmx
+  });
+});
+
 function defineTest(f: Fixture) {
+  const exampleType = f.root.includes("examples/remix") ? "remix" : "preact";
+  const waitForHydration = async (page: Page) => {
+    await waitForHydrationBase(
+      page,
+      exampleType === "preact" ? "demo-island" : ".counter-card",
+    );
+  };
+
   test("basic", async ({ page }) => {
     await page.goto(f.url());
 
@@ -22,7 +46,7 @@ function defineTest(f: Fixture) {
     });
 
     // hydration
-    await waitForHydration(page, "demo-island");
+    await waitForHydration(page);
     expect(errors).toEqual([]); // no hydration mismatch
 
     await testClient(page);
@@ -48,9 +72,11 @@ function defineTest(f: Fixture) {
   });
 
   if (f.mode === "dev") {
-    test("preact hmr", async ({ page }) => {
+    test("component hmr", async ({ page }) => {
+      test.skip(exampleType === "remix");
+
       await page.goto(f.url());
-      await waitForHydration(page, "demo-island");
+      await waitForHydration(page);
       await using _ = await expectNoReload(page);
 
       await testClient(page);
@@ -74,7 +100,7 @@ function defineTest(f: Fixture) {
 
     test("hmr css", async ({ page }) => {
       await page.goto(f.url());
-      await waitForHydration(page, "demo-island");
+      await waitForHydration(page);
       await using _ = await expectNoReload(page);
 
       await testClient(page);

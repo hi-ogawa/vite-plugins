@@ -12,13 +12,14 @@ export async function waitForHydration(page: Page, selector = "body") {
           .locator(selector)
           .evaluate(
             (el) =>
-              el &&
-              Object.keys(el).some(
-                (key) =>
-                  key.startsWith("__reactFiber") ||
-                  key.startsWith("__island_ready__") ||
-                  key.startsWith("__vue_app__"),
-              ),
+              (el &&
+                Object.keys(el).some(
+                  (key) =>
+                    key.startsWith("__reactFiber") ||
+                    key.startsWith("__island_ready__") ||
+                    key.startsWith("__vue_app__"),
+                )) ||
+              (el.previousSibling && "$rmx" in el.previousSibling),
           ),
       { timeout: 3000 },
     )
