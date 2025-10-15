@@ -19,10 +19,10 @@ export function frameworkPlugin(): Plugin[] {
           //   export function Counter() { ... }
           //
           // [output]
-          //  import * as __runtime from "@remix-run/dom";
+          //  import * as __dom from "@remix-run/dom";
           //  import * as __assets from "<id>?assets=client";
           //  function Counter() { ... }
-          //  const __wrap_Counter = __runtime.hydrated(__assets.entry + "#Counter", Counter);
+          //  const __wrap_Counter = __dom.hydrated(__assets.entry + "#Counter", Counter);
           //  export { __wrap_Counter as Counter }
           //
           const s = new MagicString(code);
