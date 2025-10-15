@@ -1,4 +1,4 @@
-import { BookCard } from "../partials/book-card";
+import { BookCard } from "../frames/book-card";
 
 export default function BooksPage() {
   return (

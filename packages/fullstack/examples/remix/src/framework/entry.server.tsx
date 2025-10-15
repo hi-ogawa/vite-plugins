@@ -52,7 +52,7 @@ async function handler(request: Request): Promise<Response> {
   return renderToHtmlResponse(root);
 }
 
-const partials = import.meta.glob("./*.tsx", { base: "/src/partials" });
+const frameModules = import.meta.glob("./*.tsx", { base: "/src/frames" });
 
 const resolveFrame = async (src: string) => {
   const url = new URL(src, "http://localhost");
@@ -60,7 +60,7 @@ const resolveFrame = async (src: string) => {
   const entry = url.searchParams.get("entry")!;
   const exportName = url.searchParams.get("exportName")!;
   const props = JSON.parse(url.searchParams.get("props")!);
-  const mod: any = await partials["./" + entry]();
+  const mod: any = await frameModules["./" + entry]();
   return jsx(mod[exportName].Component, props);
 };
 

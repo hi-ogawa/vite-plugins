@@ -2,10 +2,10 @@ import assert from "node:assert";
 import MagicString from "magic-string";
 import type { Plugin } from "vite";
 
-export function islandPlugin(): Plugin[] {
+export function frameworkPlugin(): Plugin[] {
   return [
     {
-      name: "island",
+      name: "framework:island",
       transform: {
         handler(code, id) {
           if (this.environment.name !== "ssr") return;
@@ -50,7 +50,7 @@ import * as __runtime from "@remix-run/dom";
       },
     },
     {
-      name: "island:raw-import",
+      name: "framework:raw-import",
       transform: {
         order: "post",
         handler(code) {
@@ -61,10 +61,10 @@ import * as __runtime from "@remix-run/dom";
       },
     },
     {
-      name: "partial",
+      name: "framework:frame",
       transform: {
         handler(code, id) {
-          if (!id.includes("/partials/")) return;
+          if (!id.includes("/frames/")) return;
           if (!/\.(t|j)sx?$/.test(id)) return;
           assert.equal(this.environment.name, "ssr");
 
@@ -91,7 +91,7 @@ import * as __runtime from "@remix-run/dom";
               exportEnd,
               " ".repeat(exportEnd - exportStart),
             );
-            const entry = id.split("/partials/")[1];
+            const entry = id.split("/frames/")[1];
             const exportName = match[3];
             s.append(`;\
 export const __frame_${exportName} = (${createFrameWrapper.toString()})(
