@@ -1,6 +1,6 @@
 # Remix Example
 
-The demo of Remix hydrated components and Frames with framework-like convention. `?assets=client` API is used for hydrated compoments.
+The demo of Remix hydrated components and Frames with framework-like convention. `?assets=client` API is used for hydrated components.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/remix)
 
@@ -23,7 +23,7 @@ export function CartButton() { ... }
 
 ```tsx
 import * as __dom from "@remix-run/dom";
-import __assets from "src/islands/counter.tsx?assets=client";
+import __assets from "src/islands/cart-button.tsx?assets=client";
 
 function CartButton(props) { ... }
 const __wrap_CartButton = __dom.hydrated(__assets.entry + "#CartButton", CartButton);
