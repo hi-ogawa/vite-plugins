@@ -692,7 +692,6 @@ function collectAssetDepsInner(
   };
 }
 
-// TODO: patch @vite/client for https://github.com/vitejs/vite/pull/20767
 function patchViteClientPlugin(): Plugin {
   const viteClientPath = normalizePath(
     fileURLToPath(import.meta.resolve("vite/dist/client/client.mjs")),
@@ -708,6 +707,9 @@ function patchViteClientPlugin(): Plugin {
     transform: {
       handler(code, id) {
         if (id === viteClientPath) {
+          // skip for latest vite https://github.com/vitejs/vite/pull/20767
+          if (code.includes("linkSheetsMap")) return;
+
           const s = new MagicString(code);
           s.prependLeft(
             code.indexOf("const sheetsMap"),
