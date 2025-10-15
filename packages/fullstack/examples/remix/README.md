@@ -4,6 +4,8 @@ The demo of Remix hydrated components and Frames with framework-like convention.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/remix)
 
+(TODO: Frame reloading is failing on Stackblitz)
+
 ## How it works
 
 ### `src/islands` Convention
