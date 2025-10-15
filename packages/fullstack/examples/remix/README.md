@@ -1,6 +1,6 @@
 # Remix Example
 
-The demo of Remix hydrated components and Frames with framework-like convention. `?assets=client` API is used for hydrated compoments.
+The demo of Remix hydrated components and Frames with framework-like convention. `?assets=client` API is used for hydrated components.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/vite-plugins/tree/main/packages/fullstack/examples/remix)
 
