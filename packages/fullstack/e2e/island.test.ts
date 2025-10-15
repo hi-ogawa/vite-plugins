@@ -129,10 +129,9 @@ function defineTest(f: Fixture) {
 
     test.describe(() => {
       test.use({ javaScriptEnabled: false });
-      test("frame @nojs", async ({ page }) => {
+      test("frame nojs", async ({ page }) => {
         await page.goto(f.url("/books"));
-        // TODO
-        // await testFrame(page);
+        await testFrame(page);
       });
     });
 

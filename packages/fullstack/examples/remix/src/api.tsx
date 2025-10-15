@@ -16,7 +16,11 @@ export const POST = async (request: Request) => {
     throw new Error("invalid action");
   }
 
-  return new Response("ok");
+  if (formData.get("redirect") === "none") {
+    return new Response(null, { status: 204 });
+  }
+
+  return Response.redirect(new URL("/books", request.url));
 };
 
 function addToCart(name: string) {

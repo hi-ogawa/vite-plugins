@@ -6,8 +6,8 @@ Remix port of [preact Islands example](../examples/island).
 
 ## How it works
 
-TODO: explain hydrated components
-TODO: explain frames
+TODO: `src/island` convention
+TODO: `src/frames` convention
 
 ## References
 

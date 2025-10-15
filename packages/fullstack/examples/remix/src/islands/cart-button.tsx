@@ -20,9 +20,11 @@ export function CartButton(this: Remix.Handle) {
           this.update();
 
           // TODO: single flight mutation?
+          const formData = new FormData(event.currentTarget);
+          formData.set("redirect", "none");
           await fetch(action, {
             method,
-            body: new FormData(event.currentTarget),
+            body: formData,
             signal,
           });
           if (signal.aborted) return;
