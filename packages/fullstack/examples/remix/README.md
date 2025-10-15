@@ -23,7 +23,7 @@ export function CartButton() { ... }
 
 ```tsx
 import * as __dom from "@remix-run/dom";
-import __assets from "src/islands/counter.tsx?assets=client";
+import __assets from "src/islands/cart-button.tsx?assets=client";
 
 function CartButton(props) { ... }
 const __wrap_CartButton = __dom.hydrated(__assets.entry + "#CartButton", CartButton);
