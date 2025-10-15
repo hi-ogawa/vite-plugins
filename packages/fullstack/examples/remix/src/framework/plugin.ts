@@ -38,13 +38,13 @@ export function frameworkPlugin(): Plugin[] {
             );
             const exportName = match[3];
             s.append(`;\
-const __wrap_${exportName} = __runtime.hydrated(__assets.entry + "#" + ${JSON.stringify(exportName)}, ${exportName});
+const __wrap_${exportName} = __dom.hydrated(__assets.entry + "#" + ${JSON.stringify(exportName)}, ${exportName});
 export { __wrap_${exportName} as ${exportName} };`);
           }
           return `\
 ${s.toString()};
 import __assets from ${JSON.stringify(id + "?assets=client")};
-import * as __runtime from "@remix-run/dom";
+import * as __dom from "@remix-run/dom";
 `;
         },
       },
@@ -94,14 +94,14 @@ import * as __runtime from "@remix-run/dom";
             const entry = id.split("/frames/")[1];
             const exportName = match[3];
             s.append(`;\
-export const __frame_${exportName} = (${createFrameWrapper.toString()})(
+export const __wrap_${exportName} = (${createFrameWrapper.toString()})(
   ${exportName},
   ${JSON.stringify(entry)},
   ${JSON.stringify(exportName)},
   __dom,
   __dom_jsx
 );
-export { __frame_${exportName} as ${exportName} };
+export { __wrap_${exportName} as ${exportName} };
 `);
           }
           return `\
