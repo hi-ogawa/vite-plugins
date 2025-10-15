@@ -15,8 +15,8 @@ Components in the `src/islands/` directory are automatically transformed into in
 **Transform Input:**
 
 ```tsx
-// src/islands/counter.tsx
-export function Counter(props) { ... }
+// src/islands/cart-button.tsx
+export function CartButton() { ... }
 ```
 
 **Transform Output:**
@@ -44,7 +44,7 @@ Components in the `src/frames/` directory are wrapped with Remix's `Frame` compo
 
 ```tsx
 // src/frames/book-card.tsx
-export function BookCard(props) { ... }
+export function BookCard() { ... }
 ```
 
 **Transform Output:**
