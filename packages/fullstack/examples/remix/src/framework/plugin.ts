@@ -112,6 +112,31 @@ import * as __dom_jsx from "@remix-run/dom/jsx-runtime";
         },
       },
     },
+    //
+    {
+      name: "framework:server:update",
+      hotUpdate(ctx) {
+        const ids = ctx.modules.map((mod) => mod.id!).filter(Boolean);
+        if (ids.length === 0) return;
+
+        // send server:update event to client to refetch ssr html
+        if (this.environment.name === "ssr") {
+          ctx.server.environments.client.hot.send({
+            type: "custom",
+            event: "server:update",
+            data: {
+              file: ctx.file,
+            },
+          });
+        }
+
+        // prevent default full reload on client for clinet components
+        const isIsland = ids.some((id) => id.includes("/islands/"));
+        if (isIsland && this.environment.name === "client") {
+          return [];
+        }
+      },
+    },
   ];
 }
 
