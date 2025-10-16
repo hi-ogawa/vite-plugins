@@ -168,10 +168,11 @@ export default defineConfig({
   },
   builder: {
     async buildApp(builder) {
-      // Currently, the plugin requires this specific build order
-      // to dynamically add client entries
+      // The plugin requires "ssr -> client" build order to support dynamically adding client entries
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
+      // `writeAssetsManifest` is exposed under `builder` to allow flexible build pipeline
+      await builder.writeAssetsManifest()
     }
   }
 })

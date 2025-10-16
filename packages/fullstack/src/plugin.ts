@@ -11,6 +11,7 @@ import {
   type Plugin,
   type ResolvedConfig,
   type Rollup,
+  type ViteBuilder,
   type ViteDevServer,
   isCSSRequest,
   isRunnableDevEnvironment,
@@ -152,6 +153,84 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       };
       map[id] = meta;
       return `__assets_manifest[${JSON.stringify(options.environment)}][${JSON.stringify(meta.key)}]`;
+    }
+  }
+
+  let writeAssetsManifestCalled = false;
+  async function writeAssetsManifest(builder: ViteBuilder) {
+    if (writeAssetsManifestCalled) return;
+    writeAssetsManifestCalled = true;
+
+    // build manifest of imported assets
+    const manifest: BuildAssetsManifest = {};
+    for (const [environmentName, metas] of Object.entries(
+      importAssetsMetaMap,
+    )) {
+      const bundle = bundleMap[environmentName]!;
+      const assetDepsMap = collectAssetDeps(bundle);
+      for (const [id, meta] of Object.entries(metas)) {
+        const found = assetDepsMap[id];
+        if (!found) {
+          builder.config.logger.error(
+            `[vite-plugin-fullstack] failed to find built chunk for ${meta.id} imported by ${meta.importerEnvironment} environment`,
+          );
+          return;
+        }
+        const result: ImportAssetsResultRaw = {
+          js: [],
+          css: [],
+        };
+        const { chunk, deps } = found;
+        // TODO: base
+        if (environmentName === "client") {
+          result.entry = `/${chunk.fileName}`;
+          result.js = deps.js.map((fileName) => ({
+            href: `/${fileName}`,
+          }));
+        }
+        result.css = deps.css.map((fileName) => ({
+          href: `/${fileName}`,
+        }));
+
+        // add single css when `cssCodeSplit: false`
+        // https://github.com/vitejs/vite/blob/3a92bc79b306a01b8aaf37f80b2239eaf6e488e7/packages/vite/src/node/plugins/css.ts#L999-L1011
+        if (!builder.environments[environmentName]!.config.build.cssCodeSplit) {
+          const singleCss = Object.values(bundle).find(
+            (v) =>
+              v.type === "asset" && v.originalFileNames.includes("style.css"),
+          );
+          if (singleCss) {
+            result.css.push({ href: `/${singleCss.fileName}` });
+          }
+        }
+
+        (manifest[environmentName] ??= {})[meta.key] = result;
+      }
+    }
+
+    // write manifest to importer environments
+    const importerEnvironments = new Set(
+      Object.values(importAssetsMetaMap)
+        .flatMap((metas) => Object.values(metas))
+        .flatMap((meta) => meta.importerEnvironment),
+    );
+    for (const environmentName of importerEnvironments) {
+      const outDir = builder.environments[environmentName]!.config.build.outDir;
+      fs.writeFileSync(
+        path.join(outDir, BUILD_ASSETS_MANIFEST_NAME),
+        `export default ${JSON.stringify(manifest, null, 2)};`,
+      );
+
+      // copy assets to client (mainly for server css)
+      const clientOutDir = builder.environments["client"]!.config.build.outDir;
+      for (const asset of Object.values(bundleMap[environmentName]!)) {
+        if (asset.type === "asset") {
+          const srcFile = path.join(outDir, asset.fileName);
+          const destFile = path.join(clientOutDir, asset.fileName);
+          fs.mkdirSync(path.dirname(destFile), { recursive: true });
+          fs.copyFileSync(srcFile, destFile);
+        }
+      }
     }
   }
 
@@ -349,84 +428,22 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         }
       },
       buildApp: {
+        order: "pre",
+        async handler(builder) {
+          // expose writeAssetsManifest to builder
+          builder.writeAssetsManifest = async () => {
+            await writeAssetsManifest(builder);
+          };
+        },
+      },
+    },
+    {
+      name: "fullstack:write-assets-manifest-post",
+      buildApp: {
         order: "post",
         async handler(builder) {
-          // build manifest of imported assets
-          const manifest: BuildAssetsManifest = {};
-          for (const [environmentName, metas] of Object.entries(
-            importAssetsMetaMap,
-          )) {
-            const bundle = bundleMap[environmentName]!;
-            const assetDepsMap = collectAssetDeps(bundle);
-            for (const [id, meta] of Object.entries(metas)) {
-              const found = assetDepsMap[id];
-              if (!found) {
-                return this.error(
-                  `[vite-plugin-fullstack] failed to find built chunk for ${meta.id} imported by ${meta.importerEnvironment} environment`,
-                );
-              }
-              const result: ImportAssetsResultRaw = {
-                js: [],
-                css: [],
-              };
-              const { chunk, deps } = found;
-              // TODO: base
-              if (environmentName === "client") {
-                result.entry = `/${chunk.fileName}`;
-                result.js = deps.js.map((fileName) => ({
-                  href: `/${fileName}`,
-                }));
-              }
-              result.css = deps.css.map((fileName) => ({
-                href: `/${fileName}`,
-              }));
-
-              // add single css when `cssCodeSplit: false`
-              // https://github.com/vitejs/vite/blob/3a92bc79b306a01b8aaf37f80b2239eaf6e488e7/packages/vite/src/node/plugins/css.ts#L999-L1011
-              if (
-                !builder.environments[environmentName]!.config.build
-                  .cssCodeSplit
-              ) {
-                const singleCss = Object.values(bundle).find(
-                  (v) =>
-                    v.type === "asset" &&
-                    v.originalFileNames.includes("style.css"),
-                );
-                if (singleCss) {
-                  result.css.push({ href: `/${singleCss.fileName}` });
-                }
-              }
-
-              (manifest[environmentName] ??= {})[meta.key] = result;
-            }
-          }
-
-          // write manifest to importer environments
-          const importerEnvironments = new Set(
-            Object.values(importAssetsMetaMap)
-              .flatMap((metas) => Object.values(metas))
-              .flatMap((meta) => meta.importerEnvironment),
-          );
-          for (const environmentName of importerEnvironments) {
-            const outDir =
-              builder.environments[environmentName]!.config.build.outDir;
-            fs.writeFileSync(
-              path.join(outDir, BUILD_ASSETS_MANIFEST_NAME),
-              `export default ${JSON.stringify(manifest, null, 2)};`,
-            );
-
-            // copy assets to client (mainly for server css)
-            const clientOutDir =
-              builder.environments["client"]!.config.build.outDir;
-            for (const asset of Object.values(bundleMap[environmentName]!)) {
-              if (asset.type === "asset") {
-                const srcFile = path.join(outDir, asset.fileName);
-                const destFile = path.join(clientOutDir, asset.fileName);
-                fs.mkdirSync(path.dirname(destFile), { recursive: true });
-                fs.copyFileSync(srcFile, destFile);
-              }
-            }
-          }
+          // ensure this is called at least once
+          await builder.writeAssetsManifest();
         },
       },
     },

@@ -10,3 +10,14 @@ declare global {
     };
   }
 }
+
+declare module "vite" {
+  interface ViteBuilder {
+    /**
+     * The plugin injects this method to allow flexible build pipeline
+     * for downstream integrations. This will be automatically called during the plugin
+     * post `buildApp` hook when it was not called by users.
+     */
+    writeAssetsManifest(): Promise<void>;
+  }
+}
