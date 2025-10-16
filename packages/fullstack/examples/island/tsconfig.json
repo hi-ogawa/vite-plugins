@@ -15,6 +15,6 @@
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "@hiogawa/vite-plugin-fullstack/types"]
+    "types": ["vite/client"]
   }
 }
