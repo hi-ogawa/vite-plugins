@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.0.5 (2025-10-16)
+
+- feat: expose `ViteBuilder.writeAssetsManifest` ([#1288](https://github.com/hi-ogawa/vite-plugins/pull/1288))
+- feat: add `clientBuildFallback` option ([#1289](https://github.com/hi-ogawa/vite-plugins/pull/1289))
+
 ## v0.0.4 (2025-10-16)
 
 - feat: provide ambient types through plugin import ([#1286](https://github.com/hi-ogawa/vite-plugins/pull/1286))
