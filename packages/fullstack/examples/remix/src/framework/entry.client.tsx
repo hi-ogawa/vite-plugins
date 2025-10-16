@@ -4,6 +4,7 @@ import { createFrame } from "@remix-run/dom";
 declare let __island_raw_import__: (file: string) => Promise<any>;
 
 // based on https://github.com/remix-run/remix/blob/90d4fb75dfc14e70d12a903019aaab189b922ff7/demos/bookstore/app/assets/entry.tsx
+// using `document.body` instead of `document` since otherwise "server:update" re-rendering seems broken.
 const mainFrame = createFrame(document.body, {
   async loadModule(moduleUrl, name) {
     let mod = await __island_raw_import__(moduleUrl);
