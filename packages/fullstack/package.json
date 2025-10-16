@@ -9,9 +9,6 @@
   },
   "license": "MIT",
   "type": "module",
-  "imports": {
-    "#types": "./types/index.d.ts"
-  },
   "exports": {
     "./package.json": "./package.json",
     "./types": "./types/index.d.ts",
