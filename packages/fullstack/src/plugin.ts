@@ -55,10 +55,6 @@ type FullstackPluginOptions = {
      * @default true
      */
     devEagerTransform?: boolean;
-    /**
-     * @default true
-     */
-    writeAssetsManifest?: boolean;
   };
 };
 
@@ -160,7 +156,11 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     }
   }
 
+  let writeAssetsManifestCalled = false;
   async function writeAssetsManifest(builder: ViteBuilder) {
+    if (writeAssetsManifestCalled) return;
+    writeAssetsManifestCalled = true;
+
     // build manifest of imported assets
     const manifest: BuildAssetsManifest = {};
     for (const [environmentName, metas] of Object.entries(
@@ -430,6 +430,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       buildApp: {
         order: "pre",
         async handler(builder) {
+          // expose writeAssetsManifest to builder
           builder.writeAssetsManifest = async () => {
             await writeAssetsManifest(builder);
           };
@@ -437,13 +438,12 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
     },
     {
-      name: "fullstack:write-assets-manifest",
+      name: "fullstack:write-assets-manifest-post",
       buildApp: {
         order: "post",
         async handler(builder) {
-          if (pluginOpts?.experimental?.writeAssetsManifest !== false) {
-            await builder.writeAssetsManifest();
-          }
+          // ensure this is called at least once
+          await builder.writeAssetsManifest();
         },
       },
     },

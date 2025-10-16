@@ -36,6 +36,7 @@ export default defineConfig((_env) => ({
     async buildApp(builder) {
       await builder.build(builder.environments["ssr"]!);
       await builder.build(builder.environments["client"]!);
+      await builder.writeAssetsManifest();
     },
   },
 }));
