@@ -16,7 +16,10 @@ import {
   isRunnableDevEnvironment,
   normalizePath,
 } from "vite";
-import type { ImportAssetsOptions, ImportAssetsResult } from "../types/shared";
+import type {
+  ImportAssetsOptions,
+  ImportAssetsResultRaw,
+} from "../types/shared";
 import {
   parseAssetsVirtual,
   parseIdQuery,
@@ -118,7 +121,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     },
   ) {
     if (ctx.environment.mode === "dev") {
-      const result: ImportAssetsResult = {
+      const result: ImportAssetsResultRaw = {
         entry: undefined, // defined only on client
         js: [], // always empty
         css: [], // defined only on server
@@ -362,7 +365,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
                   `[vite-plugin-fullstack] failed to find built chunk for ${meta.id} imported by ${meta.importerEnvironment} environment`,
                 );
               }
-              const result: ImportAssetsResult = {
+              const result: ImportAssetsResultRaw = {
                 js: [],
                 css: [],
               };
@@ -440,6 +443,9 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               return `\0virtual:fullstack/empty-assets`;
             }
           }
+          if (source === "virtual:fullstack/runtime") {
+            return this.resolve("./runtime.js", import.meta.filename);
+          }
         },
       },
       load: {
@@ -455,12 +461,13 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             // assets=ssr    => { environment: "ssr",    isEntry: false }
             // assets        => { environment: "client", isEntry: false }, { environment: <this>, isEntry: false }
             const s = new MagicString("");
+            const codes: string[] = [];
             if (value) {
               const code = await processAssetsImport(this, filename, {
                 environment: value,
                 isEntry: value === "client",
               });
-              s.append(`export default ${code};\n`);
+              codes.push(code);
             } else {
               const code1 = await processAssetsImport(this, filename, {
                 environment: "client",
@@ -470,11 +477,12 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
                 environment: this.environment.name,
                 isEntry: false,
               });
-              s.append(
-                `import * as __assets_runtime from "@hiogawa/vite-plugin-fullstack/runtime";\n` +
-                  `export default __assets_runtime.mergeAssets(${code1}, ${code2});\n`,
-              );
+              codes.push(code1, code2);
             }
+            s.append(`
+import * as __assets_runtime from "virtual:fullstack/runtime";\n
+export default __assets_runtime.mergeAssets(${codes.join(", ")});
+`);
             if (this.environment.mode === "build") {
               s.prepend(
                 `import __assets_manifest from "virtual:fullstack/assets-manifest";\n`,
@@ -547,7 +555,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   ];
 }
 
-const EMPTY_ASSETS: ImportAssetsResult = {
+const EMPTY_ASSETS: ImportAssetsResultRaw = {
   js: [],
   css: [],
 };
@@ -633,7 +641,7 @@ function hasSpecialCssQuery(id: string): boolean {
 
 type BuildAssetsManifest = {
   [environment: string]: {
-    [import_: string]: ImportAssetsResult;
+    [import_: string]: ImportAssetsResultRaw;
   };
 };
 

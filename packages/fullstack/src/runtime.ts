@@ -1,8 +1,13 @@
-import type { ImportAssetsResult } from "../types/shared";
+import type {
+  ImportAssetsResult,
+  ImportAssetsResultRaw,
+} from "../types/shared";
 
 export type { ImportAssetsResult };
 
-export function mergeAssets(...args: ImportAssetsResult[]): ImportAssetsResult {
+export function mergeAssets(
+  ...args: ImportAssetsResultRaw[]
+): ImportAssetsResult {
   const js = uniqBy(
     args.flatMap((h) => h.js),
     (a) => a.href,
@@ -11,7 +16,9 @@ export function mergeAssets(...args: ImportAssetsResult[]): ImportAssetsResult {
     args.flatMap((h) => h.css),
     (a) => a.href,
   );
-  return { js, css };
+  const entry = args.filter((arg) => arg.entry)?.[0]?.entry;
+  const raw: ImportAssetsResultRaw = { entry, js, css };
+  return { ...raw, merge: (...args) => mergeAssets(raw, ...args) };
 }
 
 // merging is cumbersome because of `data-vite-dev-id` :(

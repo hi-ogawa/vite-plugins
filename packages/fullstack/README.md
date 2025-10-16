@@ -53,10 +53,10 @@ export function renderHtml(content) {
     <!DOCTYPE html>
     <html>
       <head>
-        ${clientAssets.css.map(css => 
+        ${clientAssets.css.map(css =>
           `<link rel="stylesheet" href="${css.href}" />`
         ).join('\n')}
-        ${clientAssets.js.map(js => 
+        ${clientAssets.js.map(js =>
           `<link rel="modulepreload" href="${js.href}" />`
         ).join('\n')}
         <script type="module" src="${clientAssets.entry}"></script>
@@ -109,19 +109,24 @@ export function renderHtml() {
 }
 ```
 
-### Runtime Helpers
+### Merging assets
 
-The plugin provides a utility function `mergeAssets` to combine multiple assets objects into a single deduplicated assets object.
+Each `?assets` import provides a `merge` method to combine multiple assets objects into a single deduplicated assets object. This is useful for aggregating assets from multiple route components or modules.
+
+```js
+import route1Assets from "./pages/layout.js?assets";
+import route2Assets from "./pages/home.js?assets";
+
+const mergedAssets = route1Assets.merge(route2Assets);
+// Result: { js: [...], css: [...] } with deduplicated entries
+```
+
+Alternatively, the package exports `mergeAssets` utility from `@hiogawa/vite-plugin-fullstack/runtime`:
 
 ```js
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 
-// Example: Merging assets from multiple route components
-const route1Assets = await import("./pages/layout.js?assets");
-const route2Assets = await import("./pages/home.js?assets");
-
 const mergedAssets = mergeAssets(route1Assets, route2Assets);
-// Result: { js: [...], css: [...] } with deduplicated entries
 ```
 
 ### Configuration

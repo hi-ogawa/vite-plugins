@@ -18,7 +18,11 @@ export type ImportAssetsOptions = {
 };
 
 // TODO: rename to just Assets?
-export type ImportAssetsResult = {
+export type ImportAssetsResult = ImportAssetsResultRaw & {
+  merge(...args: ImportAssetsResultRaw[]): ImportAssetsResult;
+};
+
+export type ImportAssetsResultRaw = {
   entry?: string;
   js: { href: string }[];
   css: CssLinkAttributes[];
