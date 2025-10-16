@@ -124,6 +124,8 @@ const mergedAssets = route1Assets.merge(route2Assets);
 Alternatively, the package exports `mergeAssets` utility from `@hiogawa/vite-plugin-fullstack/runtime`: 
 
 ```js
+import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
+
 const mergedAssets = mergeAssets(route1Assets, route2Assets);
 ```
 
