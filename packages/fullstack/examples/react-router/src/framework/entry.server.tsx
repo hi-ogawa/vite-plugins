@@ -1,4 +1,3 @@
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { renderToReadableStream } from "react-dom/server.edge";
 import {
   StaticRouterProvider,
@@ -21,8 +20,7 @@ async function handler(request: Request): Promise<Response> {
   const router = createStaticRouter(dataRoutes, context);
 
   // collect assets from matched routes
-  const assets = mergeAssets(
-    clientEntry,
+  const assets = clientEntry.merge(
     ...(await Promise.all(
       context.matches
         .map(
