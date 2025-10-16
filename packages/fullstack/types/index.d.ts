@@ -10,3 +10,9 @@ declare global {
     };
   }
 }
+
+declare module "vite" {
+  interface ViteBuilder {
+    writeAssetsManifest(): Promise<void>;
+  }
+}
