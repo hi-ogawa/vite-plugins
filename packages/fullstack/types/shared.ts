@@ -19,7 +19,7 @@ export type ImportAssetsOptions = {
 
 // TODO: rename to just Assets?
 export type ImportAssetsResult = ImportAssetsResultRaw & {
-  merge(...args: ImportAssetsResult[]): ImportAssetsResult;
+  merge(...args: ImportAssetsResultRaw[]): ImportAssetsResult;
 };
 
 export type ImportAssetsResultRaw = {
