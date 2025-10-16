@@ -8,9 +8,16 @@ export function frameworkPlugin(): Plugin[] {
       name: "framework:island",
       transform: {
         handler(code, id) {
-          if (this.environment.name !== "ssr") return;
           if (!id.includes("/islands/")) return;
           if (!/\.(t|j)sx?$/.test(id)) return;
+
+          // TODO:
+          // This only prevents full reload on island change and cannot preserve client state.
+          // Remix hydrated component needds proper HMR runtime.
+          if (this.environment.name === "client") {
+            return code + `;if (import.meta.hot) { import.meta.hot.accept() }`;
+          }
+
           //
           // quick and dirty export wrapping transform
           // (more robust appraoch is found in https://github.com/vitejs/vite-plugin-react/blob/fffb7eb7a4d939783d1da09e2ca6368382735ca3/packages/plugin-rsc/src/transforms/wrap-export.ts#L24)
@@ -110,6 +117,29 @@ import * as __dom from "@remix-run/dom";
 import * as __dom_jsx from "@remix-run/dom/jsx-runtime";
 `;
         },
+      },
+    },
+    // similar idea as RSC HMR
+    // https://github.com/vitejs/vite-plugin-react/blob/910cd41d7e56c54466cfb3de9ea42f5671e347fc/packages/plugin-rsc/src/plugin.ts#L568-L569
+    {
+      name: "framework:server:update",
+      hotUpdate(ctx) {
+        const ids = ctx.modules.map((mod) => mod.id!).filter(Boolean);
+        if (ids.length === 0) return;
+
+        // TODO: if remix hydrated component supports proper HMR, server refetch should be skipped in this case
+        // https://github.com/vitejs/vite-plugin-react/blob/910cd41d7e56c54466cfb3de9ea42f5671e347fc/packages/plugin-rsc/src/plugin.ts#L614C14-L614C36
+
+        // send server:update event to client to refetch ssr html
+        if (this.environment.name === "ssr") {
+          ctx.server.environments.client.hot.send({
+            type: "custom",
+            event: "server:update",
+            data: {
+              file: ctx.file,
+            },
+          });
+        }
       },
     },
   ];

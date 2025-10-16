@@ -117,6 +117,24 @@ function defineTest(f: Fixture) {
       // css is restored
       await testCss(page);
     });
+
+    if (exampleType === "remix") {
+      test("hmr server", async ({ page }) => {
+        await page.goto(f.url());
+        await waitForHydration(page);
+        await using _ = await expectNoReload(page);
+
+        const file = f.createEditor("src/routes/index.tsx");
+        file.edit((s) =>
+          s.replace("Island Framework", "Island-edit-Framework"),
+        );
+        await expect(page.locator(".hero")).toContainText(
+          "Island-edit-Framework",
+        );
+        file.reset();
+        await expect(page.locator(".hero")).toContainText("Island Framework");
+      });
+    }
   }
 
   if (exampleType === "remix") {
