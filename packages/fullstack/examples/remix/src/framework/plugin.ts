@@ -8,9 +8,16 @@ export function frameworkPlugin(): Plugin[] {
       name: "framework:island",
       transform: {
         handler(code, id) {
-          if (this.environment.name !== "ssr") return;
           if (!id.includes("/islands/")) return;
           if (!/\.(t|j)sx?$/.test(id)) return;
+
+          // TODO:
+          // This only prevents full reload on island change and cannot preserve client state.
+          // Remix hydrated component needds proper HMR runtime.
+          if (this.environment.name === "client") {
+            return code + `;if (import.meta.hot) { import.meta.hot.accept() }`;
+          }
+
           //
           // quick and dirty export wrapping transform
           // (more robust appraoch is found in https://github.com/vitejs/vite-plugin-react/blob/fffb7eb7a4d939783d1da09e2ca6368382735ca3/packages/plugin-rsc/src/transforms/wrap-export.ts#L24)
@@ -128,12 +135,6 @@ import * as __dom_jsx from "@remix-run/dom/jsx-runtime";
               file: ctx.file,
             },
           });
-        }
-
-        // prevent default full reload on client for clinet components
-        const isIsland = ids.some((id) => id.includes("/islands/"));
-        if (isIsland && this.environment.name === "client") {
-          return [];
         }
       },
     },
