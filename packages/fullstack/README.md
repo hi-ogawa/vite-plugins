@@ -179,7 +179,7 @@ export default defineConfig({
 
 ### TypeScript Support
 
-TypeScript support for `?assets` imports can be enabled by adding the following to your `tsconfig.json`:
+TypeScript support for `?assets` imports is automatically enabled if `@hiogawa/vite-plugin-fullstack` is imported in the project. Additionally, the package provides `@hiogawa/vite-plugin-fullstack/types` to only enable ambient types, which can be referenced through `tsconfig.json`, for example:
 
 ```json
 {
