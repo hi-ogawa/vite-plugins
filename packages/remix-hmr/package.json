@@ -15,7 +15,7 @@
   },
   "files": ["dist"],
   "scripts": {
-    "dev": "tsdown --watch",
+    "dev": "tsdown --watch src",
     "build": "tsdown",
     "test": "vitest"
   },

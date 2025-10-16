@@ -21,9 +21,9 @@ export async function transform(code: string, options: TransformOptions) {
     })
     .join("");
   const footer = `
-import * as $$refresh from "virtual:remix-hmr-runtime";
-if (${hot}) {
-  (() => ${hot}.accept());
+;import * as $$refresh from "virtual:remix-hmr-runtime";
+if (import.meta.hot) {
+  (() => import.meta.hot.accept());
   const $$manager = $$refresh.initialize(
     ${hot},
     ${JSON.stringify(options)}

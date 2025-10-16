@@ -525,7 +525,7 @@ importers:
         version: 3.0.0
       styled-jsx:
         specifier: ^5.1.6
-        version: 5.1.6(react@19.1.0)
+        version: 5.1.6(@babel/core@7.27.7)(react@19.1.0)
     devDependencies:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
@@ -784,6 +784,21 @@ importers:
       '@remix-run/dom':
         specifier: 0.0.0-experimental-remix-jam.6
         version: 0.0.0-experimental-remix-jam.6
+
+  packages/remix-hmr/examples/basic:
+    devDependencies:
+      '@hiogawa/remix-hmr':
+        specifier: workspace:*
+        version: link:../..
+      '@remix-run/dom':
+        specifier: 0.0.0-experimental-remix-jam.6
+        version: 0.0.0-experimental-remix-jam.6
+      '@remix-run/events':
+        specifier: 0.0.0-experimental-remix-jam.5
+        version: 0.0.0-experimental-remix-jam.5
+      vite:
+        specifier: ^7.1.5
+        version: 7.1.5(@types/node@22.16.0)(jiti@2.5.1)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
 
   packages/rsc:
     dependencies:
@@ -12260,10 +12275,12 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.1.6(react@19.1.0):
+  styled-jsx@5.1.6(@babel/core@7.27.7)(react@19.1.0):
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+    optionalDependencies:
+      '@babel/core': 7.27.7
 
   sucrase@3.35.0:
     dependencies:

@@ -56,11 +56,12 @@ const NotFn = "hello";
       // export const FnExpr = function() {}
       // export const NotFn2 = "hello";
 
-      import * as $$refresh from "virtual:remix-hmr-runtime";
+      ;import * as $$refresh from "virtual:remix-hmr-runtime";
       if (import.meta.hot) {
         (() => import.meta.hot.accept());
         const $$manager = $$refresh.initialize(
           import.meta.hot,
+          undefined,
           {"mode":"vite","debug":false}
         );
 
