@@ -55,6 +55,10 @@ type FullstackPluginOptions = {
      * @default true
      */
     devEagerTransform?: boolean;
+    /**
+     * @default true
+     */
+    clientBuildFallback?: boolean;
   };
 };
 
@@ -543,7 +547,9 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
         order: "post",
         handler(name, config, _env) {
           if (name === "client") {
-            if (!config.build?.rollupOptions?.input) {
+            const clientBuildFallback =
+              pluginOpts?.experimental?.clientBuildFallback ?? true;
+            if (clientBuildFallback && !config.build?.rollupOptions?.input) {
               return {
                 build: {
                   rollupOptions: {
