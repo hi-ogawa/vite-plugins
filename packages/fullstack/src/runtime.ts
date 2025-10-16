@@ -16,7 +16,7 @@ export function mergeAssets(
     args.flatMap((h) => h.css),
     (a) => a.href,
   );
-  const entry = args.filter(arg => arg.entry)?.[0]?.entry
+  const entry = args.filter((arg) => arg.entry)?.[0]?.entry;
   const raw: ImportAssetsResultRaw = { entry, js, css };
   return { ...raw, merge: (...args) => mergeAssets(raw, ...args) };
 }
