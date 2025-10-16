@@ -1,4 +1,3 @@
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { RPCHandler } from "@orpc/server/fetch";
 import { renderToReadableStream } from "react-dom/server.edge";
 import { App } from "../app";
@@ -13,7 +12,7 @@ import {
 } from "@tanstack/react-query";
 
 const rpcHandler = new RPCHandler(__rpc_router__);
-const assets = mergeAssets(clientAssets, serverAssets);
+const assets = clientAssets.merge(serverAssets);
 
 async function handler(request: Request): Promise<Response> {
   const rpcResult = await rpcHandler.handle(request, { prefix: "/rpc" });

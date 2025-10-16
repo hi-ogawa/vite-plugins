@@ -1,4 +1,3 @@
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import { createHead, transformHtmlTemplate } from "unhead/server";
 import { createSSRApp } from "vue";
 import { RouterView, createMemoryHistory, createRouter } from "vue-router";
@@ -24,8 +23,7 @@ async function handler(request: Request): Promise<Response> {
   await router.isReady();
 
   // collect assets from current route
-  const assets = mergeAssets(
-    clientEntry,
+  const assets = clientEntry.merge(
     ...(await Promise.all(
       router.currentRoute.value.matched
         .map((to) => to.meta.assets)

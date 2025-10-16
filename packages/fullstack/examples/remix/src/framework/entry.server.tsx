@@ -1,5 +1,4 @@
 import assert from "node:assert";
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import type { Remix } from "@remix-run/dom";
 import { jsx } from "@remix-run/dom/jsx-runtime";
 import { renderToStream } from "@remix-run/dom/server";
@@ -26,7 +25,7 @@ async function handler(request: Request): Promise<Response> {
   }
 
   // match route and render page
-  const assets = mergeAssets(clientAssets, serverAssets);
+  const assets = clientAssets.merge(serverAssets);
   const match = routes[url.pathname as "/"] ?? routes["*"];
   const content = await (await match()).default();
 

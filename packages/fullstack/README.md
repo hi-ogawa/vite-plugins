@@ -53,10 +53,10 @@ export function renderHtml(content) {
     <!DOCTYPE html>
     <html>
       <head>
-        ${clientAssets.css.map(css => 
+        ${clientAssets.css.map(css =>
           `<link rel="stylesheet" href="${css.href}" />`
         ).join('\n')}
-        ${clientAssets.js.map(js => 
+        ${clientAssets.js.map(js =>
           `<link rel="modulepreload" href="${js.href}" />`
         ).join('\n')}
         <script type="module" src="${clientAssets.entry}"></script>
@@ -115,13 +115,13 @@ Each `?assets` import provides a `merge` method to combine multiple assets objec
 
 ```js
 import route1Assets from "./pages/layout.js?assets";
-import route2Assets from "./pages/home.js?assets";  
+import route2Assets from "./pages/home.js?assets";
 
 const mergedAssets = route1Assets.merge(route2Assets);
 // Result: { js: [...], css: [...] } with deduplicated entries
 ```
 
-Alternatively, the package exports `mergeAssets` utility from `@hiogawa/vite-plugin-fullstack/runtime`: 
+Alternatively, the package exports `mergeAssets` utility from `@hiogawa/vite-plugin-fullstack/runtime`:
 
 ```js
 import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
