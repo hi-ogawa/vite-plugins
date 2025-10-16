@@ -1,7 +1,6 @@
 import { renderToReadableStream } from "react-dom/server.edge";
 import { App } from "./App";
 import "./index.css";
-import { mergeAssets } from "@hiogawa/vite-plugin-fullstack/runtime";
 import clientAssets from "./entry.client.tsx?assets=client";
 import serverAssets from "./entry.server.tsx?assets=ssr";
 
@@ -13,7 +12,7 @@ async function handler(_request: Request): Promise<Response> {
 }
 
 function Root() {
-  const assets = mergeAssets(clientAssets, serverAssets);
+  const assets = clientAssets.merge(serverAssets);
 
   return (
     <html>
