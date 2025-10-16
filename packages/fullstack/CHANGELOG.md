@@ -1,13 +1,20 @@
 # Changelog
 
+## v0.0.4 (2025-10-16)
+
+- feat: provide ambient types through plugin import ([#1286](https://github.com/hi-ogawa/vite-plugins/pull/1286))
+- feat: expose `Assets.merge` method ([#1285](https://github.com/hi-ogawa/vite-plugins/pull/1285))
+- chore: server hmr in remix 3 ([#1280](https://github.com/hi-ogawa/vite-plugins/pull/1280))
+- chore: update version to 0.0.3 ([#1277](https://github.com/hi-ogawa/vite-plugins/pull/1277))
+
 ## v0.0.3 (2025-10-15)
 
-- fix(fullstack): skip `@vite/client` patch on latest vite ([#1275](https://github.com/hi-ogawa/vite-plugins/pull/1275))
-- fix(fullstack): fix vite peerDependencies range ([#1261](https://github.com/hi-ogawa/vite-plugins/pull/1261))
-- chore(fullstack): remix frame demo ([#1273](https://github.com/hi-ogawa/vite-plugins/pull/1273))
-- chore(fullstack): remix hydrated component demo ([#1272](https://github.com/hi-ogawa/vite-plugins/pull/1272))
-- chore(fullstack): use `/islands/` directory convention ([#1265](https://github.com/hi-ogawa/vite-plugins/pull/1265))
-- docs(fullstack): polish proposal ([#1259](https://github.com/hi-ogawa/vite-plugins/pull/1259))
+- fix: skip `@vite/client` patch on latest vite ([#1275](https://github.com/hi-ogawa/vite-plugins/pull/1275))
+- fix: fix vite peerDependencies range ([#1261](https://github.com/hi-ogawa/vite-plugins/pull/1261))
+- chore: remix frame demo ([#1273](https://github.com/hi-ogawa/vite-plugins/pull/1273))
+- chore: remix hydrated component demo ([#1272](https://github.com/hi-ogawa/vite-plugins/pull/1272))
+- chore: use `/islands/` directory convention ([#1265](https://github.com/hi-ogawa/vite-plugins/pull/1265))
+- docs: polish proposal ([#1259](https://github.com/hi-ogawa/vite-plugins/pull/1259))
 
 ## v0.0.2 (2025-10-08)
 
