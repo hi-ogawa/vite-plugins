@@ -1,5 +1,5 @@
 > [!NOTE]
-> The propsoal is available on [Vite discussion](https://github.com/vitejs/vite/discussions/20913).
+> This was a draft version of the prospoal, which is now available on [Vite discussion](https://github.com/vitejs/vite/discussions/20913).
 > Please leave a comment there if you have any feedback.
 
 # Proposal: Client assets metadata API for SSR
