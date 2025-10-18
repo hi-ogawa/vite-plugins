@@ -1,0 +1,32 @@
+{
+  "name": "@hiogawa/remix-hmr",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-remix-hmr",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hi-ogawa/vite-plugins.git",
+    "directory": "packages/remix-hmr"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./vite": "./dist/vite.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsdown --watch src",
+    "build": "tsdown",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "magic-string": "^0.30.17"
+  },
+  "devDependencies": {
+    "@remix-run/dom": "0.0.0-experimental-remix-jam.6"
+  },
+  "peerDependencies": {
+    "@remix-run/dom": "*",
+    "vite": "*"
+  }
+}
