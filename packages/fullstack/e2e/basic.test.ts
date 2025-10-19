@@ -10,6 +10,39 @@ test.describe("dev", () => {
 test.describe("build", () => {
   const f = useFixture({ root: "examples/basic", mode: "build" });
   defineTest(f);
+  
+  test("css deduplication", async () => {
+    // Verify that CSS deduplication worked
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    
+    const clientCssDir = path.join(f.root, "dist/client/assets");
+    const ssrCssDir = path.join(f.root, "dist/ssr/assets");
+    
+    // Find CSS files
+    const clientCssFiles = fs.readdirSync(clientCssDir)
+      .filter(file => file.endsWith('.css') && !file.startsWith('index-'));
+    const ssrCssFiles = fs.readdirSync(ssrCssDir)
+      .filter(file => file.endsWith('.css'));
+    
+    // Verify SSR CSS exists and has content
+    expect(ssrCssFiles.length).toBeGreaterThan(0);
+    const ssrCssContent = fs.readFileSync(
+      path.join(ssrCssDir, ssrCssFiles[0]!),
+      'utf-8'
+    );
+    expect(ssrCssContent.length).toBeGreaterThan(0);
+    
+    // Verify client entry CSS is empty (deduplicated)
+    if (clientCssFiles.length > 0) {
+      const clientCssContent = fs.readFileSync(
+        path.join(clientCssDir, clientCssFiles[0]!),
+        'utf-8'
+      );
+      // With deduplication enabled, client CSS should be empty
+      expect(clientCssContent).toBe('');
+    }
+  });
 });
 
 test.describe("cloudflare dev", () => {
