@@ -20,6 +20,7 @@ test.describe("build", () => {
     const ssrCssDir = path.join(f.root, "dist/ssr/assets");
 
     // Find CSS files
+    // Exclude index-*.css files which are copied from SSR build to client build
     const clientCssFiles = fs
       .readdirSync(clientCssDir)
       .filter((file) => file.endsWith(".css") && !file.startsWith("index-"));
@@ -29,16 +30,20 @@ test.describe("build", () => {
 
     // Verify SSR CSS exists and has content
     expect(ssrCssFiles.length).toBeGreaterThan(0);
+    const ssrCssFile = ssrCssFiles[0];
+    expect(ssrCssFile).toBeDefined();
     const ssrCssContent = fs.readFileSync(
-      path.join(ssrCssDir, ssrCssFiles[0]!),
+      path.join(ssrCssDir, ssrCssFile!),
       "utf-8",
     );
     expect(ssrCssContent.length).toBeGreaterThan(0);
 
     // Verify client entry CSS is empty (deduplicated)
     if (clientCssFiles.length > 0) {
+      const clientCssFile = clientCssFiles[0];
+      expect(clientCssFile).toBeDefined();
       const clientCssContent = fs.readFileSync(
-        path.join(clientCssDir, clientCssFiles[0]!),
+        path.join(clientCssDir, clientCssFile!),
         "utf-8",
       );
       // With deduplication enabled, client CSS should be empty
