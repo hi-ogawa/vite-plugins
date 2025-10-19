@@ -59,6 +59,13 @@ type FullstackPluginOptions = {
      * @default true
      */
     clientBuildFallback?: boolean;
+    /**
+     * Deduplicate CSS between server and client builds.
+     * When enabled, CSS that is already processed in the server build
+     * will be emptied in the client build to avoid duplication.
+     * @default false
+     */
+    deduplicateCss?: boolean;
   };
 };
 
@@ -116,6 +123,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     [environment: string]: { [id: string]: ImportAssetsMeta };
   } = {};
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
+  // Track CSS module IDs processed in server environments for deduplication
+  const ssrCssModuleIds = new Set<string>();
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -410,6 +419,22 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       writeBundle(_options, bundle) {
         bundleMap[this.environment.name] = bundle;
+        
+        // Track CSS module IDs from server environments for deduplication
+        if (
+          pluginOpts?.experimental?.deduplicateCss &&
+          this.environment.name !== "client"
+        ) {
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === "chunk") {
+              for (const moduleId of chunk.moduleIds) {
+                if (isCSSRequest(moduleId)) {
+                  ssrCssModuleIds.add(moduleId);
+                }
+              }
+            }
+          }
+        }
       },
       buildStart() {
         // dynamically add client entry during build
@@ -575,6 +600,7 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
     patchViteClientPlugin(),
     patchVueScopeCssHmr(),
     patchCssLinkSelfAccept(),
+    cssDeduplicationPlugin(pluginOpts, ssrCssModuleIds),
   ];
 }
 
@@ -824,6 +850,41 @@ function patchCssLinkSelfAccept(): Plugin {
           if (mod && !mod.isSelfAccepting) {
             mod.isSelfAccepting = true;
           }
+        }
+      },
+    },
+  };
+}
+
+/**
+ * Deduplicate CSS between server and client builds.
+ * For CSS files that were already processed in server build,
+ * return empty content in client build to avoid duplication.
+ */
+function cssDeduplicationPlugin(
+  pluginOpts: FullstackPluginOptions | undefined,
+  ssrCssModuleIds: Set<string>,
+): Plugin {
+  return {
+    name: "fullstack:css-deduplication",
+    apply: "build",
+    sharedDuringBuild: true,
+    load: {
+      order: "pre",
+      handler(id) {
+        // Only apply to client environment during build
+        if (
+          !pluginOpts?.experimental?.deduplicateCss ||
+          this.environment.name !== "client" ||
+          this.environment.mode !== "build"
+        ) {
+          return;
+        }
+
+        // Check if this CSS was already processed in SSR build
+        if (isCSSRequest(id) && ssrCssModuleIds.has(id)) {
+          // Return empty CSS to avoid duplication
+          return "";
         }
       },
     },
