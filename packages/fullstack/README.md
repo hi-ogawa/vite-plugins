@@ -146,6 +146,16 @@ export default defineConfig({
       // from the `ssr.build.rollupOptions.input` entry.
       // This can be disabled by setting `serverHandler: false`
       // to use alternative server plugins like `@cloudflare/vite-plugin`, `nitro/vite`, etc.
+      
+      // experimental: object (optional)
+      // Experimental features that may change in future releases
+      experimental: {
+        // deduplicateCss: boolean (default: false)
+        // Deduplicate CSS between server and client builds.
+        // When enabled, CSS that is already processed in the server build
+        // will be emptied in the client build to avoid duplication.
+        deduplicateCss: true,
+      }
     })
   ],
   environments: {
@@ -212,6 +222,7 @@ For a detailed explanation of the plugin's internal architecture and implementat
 
 - Duplicated CSS build for each environment (e.g. client build and ssr build)
   - Currently each CSS import is processed and built for each environment build, which can potentially cause inconsistency due to differing code splits, configuration, etc. This can cause duplicate CSS content loaded on client or break expected style processing.
+  - **Mitigation**: The experimental `deduplicateCss` option can be enabled to deduplicate CSS between server and client builds. When enabled, CSS files that are already processed in the server build will be emptied in the client build to avoid duplication. Enable this feature by setting `experimental: { deduplicateCss: true }` in the plugin options.
 - `?assets=client` doesn't provide `css` during dev.
   - Due to unbundled dev, the plugin doesn't eagerly traverse the client module graph and `?assets=client` provides only the `entry` field during dev. It's currently assumed that CSS files needed for SSR are the CSS files imported on the server module graph.
 

@@ -419,7 +419,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       writeBundle(_options, bundle) {
         bundleMap[this.environment.name] = bundle;
-        
+
         // Track CSS module IDs from server environments for deduplication
         if (
           pluginOpts?.experimental?.deduplicateCss &&
