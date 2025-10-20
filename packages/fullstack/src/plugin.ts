@@ -615,7 +615,72 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
     patchViteClientPlugin(),
     patchVueScopeCssHmr(),
     patchCssLinkSelfAccept(),
-    cssDeduplicationPlugin(pluginOpts, ssrCssModuleIds, ssrCssModuleToFiles),
+    // CSS deduplication plugin inlined
+    {
+      name: "fullstack:css-deduplication",
+      apply: "build",
+      sharedDuringBuild: true,
+      load: {
+        order: "pre",
+        handler(id) {
+          // Only apply to client environment during build
+          if (
+            !pluginOpts?.experimental?.deduplicateCss ||
+            this.environment.name !== "client" ||
+            this.environment.mode !== "build"
+          ) {
+            return;
+          }
+
+          // Check if this CSS was already processed in SSR build
+          if (isCSSRequest(id) && ssrCssModuleIds.has(id)) {
+            // Return empty CSS to avoid duplication
+            return "";
+          }
+        },
+      },
+      generateBundle(_options, bundle) {
+        // Only apply to client environment during build
+        if (
+          !pluginOpts?.experimental?.deduplicateCss ||
+          this.environment.name !== "client" ||
+          this.environment.mode !== "build"
+        ) {
+          return;
+        }
+
+        // Mutate client chunks to reference SSR CSS files
+        for (const chunk of Object.values(bundle)) {
+          if (chunk.type === "chunk") {
+            const importedCss = chunk.viteMetadata?.importedCss ?? [];
+            const newImportedCss = new Set<string>();
+
+            // Keep non-deduplicated CSS files
+            for (const cssFile of importedCss) {
+              newImportedCss.add(cssFile);
+            }
+
+            // Add SSR CSS files for deduplicated CSS modules
+            for (const moduleId of chunk.moduleIds) {
+              if (isCSSRequest(moduleId) && ssrCssModuleIds.has(moduleId)) {
+                const ssrCssFiles = ssrCssModuleToFiles.get(moduleId);
+                if (ssrCssFiles) {
+                  for (const cssFile of ssrCssFiles) {
+                    newImportedCss.add(cssFile);
+                  }
+                }
+              }
+            }
+
+            // Update the chunk metadata (using type assertion to work around readonly)
+            if (chunk.viteMetadata) {
+              (chunk.viteMetadata as { importedCss: Set<string> }).importedCss =
+                newImportedCss;
+            }
+          }
+        }
+      },
+    } satisfies Plugin,
   ];
 }
 
@@ -867,82 +932,6 @@ function patchCssLinkSelfAccept(): Plugin {
           }
         }
       },
-    },
-  };
-}
-
-/**
- * Deduplicate CSS between server and client builds.
- * For CSS files that were already processed in server build,
- * return empty content in client build to avoid duplication.
- */
-function cssDeduplicationPlugin(
-  pluginOpts: FullstackPluginOptions | undefined,
-  ssrCssModuleIds: Set<string>,
-  ssrCssModuleToFiles: Map<string, Set<string>>,
-): Plugin {
-  return {
-    name: "fullstack:css-deduplication",
-    apply: "build",
-    sharedDuringBuild: true,
-    load: {
-      order: "pre",
-      handler(id) {
-        // Only apply to client environment during build
-        if (
-          !pluginOpts?.experimental?.deduplicateCss ||
-          this.environment.name !== "client" ||
-          this.environment.mode !== "build"
-        ) {
-          return;
-        }
-
-        // Check if this CSS was already processed in SSR build
-        if (isCSSRequest(id) && ssrCssModuleIds.has(id)) {
-          // Return empty CSS to avoid duplication
-          return "";
-        }
-      },
-    },
-    generateBundle(_options, bundle) {
-      // Only apply to client environment during build
-      if (
-        !pluginOpts?.experimental?.deduplicateCss ||
-        this.environment.name !== "client" ||
-        this.environment.mode !== "build"
-      ) {
-        return;
-      }
-
-      // Mutate client chunks to reference SSR CSS files
-      for (const chunk of Object.values(bundle)) {
-        if (chunk.type === "chunk") {
-          const importedCss = chunk.viteMetadata?.importedCss ?? [];
-          const newImportedCss = new Set<string>();
-
-          // Keep non-deduplicated CSS files
-          for (const cssFile of importedCss) {
-            newImportedCss.add(cssFile);
-          }
-
-          // Add SSR CSS files for deduplicated CSS modules
-          for (const moduleId of chunk.moduleIds) {
-            if (isCSSRequest(moduleId) && ssrCssModuleIds.has(moduleId)) {
-              const ssrCssFiles = ssrCssModuleToFiles.get(moduleId);
-              if (ssrCssFiles) {
-                for (const cssFile of ssrCssFiles) {
-                  newImportedCss.add(cssFile);
-                }
-              }
-            }
-          }
-
-          // Update the chunk metadata
-          if (chunk.viteMetadata) {
-            chunk.viteMetadata.importedCss = [...newImportedCss];
-          }
-        }
-      }
     },
   };
 }
