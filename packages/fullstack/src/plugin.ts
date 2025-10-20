@@ -124,7 +124,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   } = {};
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
   // Map from CSS module ID to the corresponding CSS file names in server bundle
-  const serverCssIdToFiles = new Map<string, string[]>();
+  const serverCssIdToFiles: Record<string, string[]> = {};
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -593,8 +593,7 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
           if (
             pluginOpts?.experimental?.deduplicateCss &&
             this.environment.name === "client" &&
-            isCSSRequest(id) &&
-            serverCssIdToFiles.has(id)
+            serverCssIdToFiles[id]
           ) {
             return ``;
           }
@@ -608,19 +607,15 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
             if (chunk.type === "chunk") {
               const serverCssFiles: string[] = [];
               for (const moduleId of chunk.moduleIds) {
-                if (
-                  isCSSRequest(moduleId) &&
-                  serverCssIdToFiles.has(moduleId)
-                ) {
-                  const ssrCssFiles = serverCssIdToFiles.get(moduleId)!;
-                  serverCssFiles.push(...ssrCssFiles);
+                if (serverCssIdToFiles[moduleId]) {
+                  serverCssFiles.push(...serverCssIdToFiles[moduleId]);
                 }
               }
               if (chunk.viteMetadata) {
                 chunk.viteMetadata.importedCss = new Set([
                   ...chunk.viteMetadata.importedCss,
                   ...serverCssFiles,
-                ])
+                ]);
               }
             }
           }
@@ -634,10 +629,10 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
         ) {
           for (const chunk of Object.values(bundle)) {
             if (chunk.type === "chunk") {
-              const cssFiles = [...chunk.viteMetadata?.importedCss ?? []];
+              const cssFiles = [...(chunk.viteMetadata?.importedCss ?? [])];
               for (const moduleId of chunk.moduleIds) {
                 if (isCSSRequest(moduleId)) {
-                  serverCssIdToFiles.set(moduleId, cssFiles);
+                  serverCssIdToFiles[moduleId] = cssFiles;
                 }
               }
             }
