@@ -123,10 +123,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     [environment: string]: { [id: string]: ImportAssetsMeta };
   } = {};
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
-  // Track CSS module IDs processed in server environments for deduplication
-  const ssrCssModuleIds = new Set<string>();
-  // Map from CSS module ID to the corresponding CSS file names in SSR bundle
-  const ssrCssModuleToFiles = new Map<string, Set<string>>();
+  // Map from CSS module ID to the corresponding CSS file names in server bundle
+  const serverCssIdToFiles = new Map<string, string[]>();
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -421,35 +419,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       writeBundle(_options, bundle) {
         bundleMap[this.environment.name] = bundle;
-
-        // Track CSS module IDs from server environments for deduplication
-        if (
-          pluginOpts?.experimental?.deduplicateCss &&
-          this.environment.name !== "client"
-        ) {
-          for (const chunk of Object.values(bundle)) {
-            if (chunk.type === "chunk") {
-              // Track CSS module IDs
-              for (const moduleId of chunk.moduleIds) {
-                if (isCSSRequest(moduleId)) {
-                  ssrCssModuleIds.add(moduleId);
-                }
-              }
-              // Track which CSS files are associated with each CSS module
-              const cssFiles = chunk.viteMetadata?.importedCss ?? [];
-              for (const moduleId of chunk.moduleIds) {
-                if (isCSSRequest(moduleId)) {
-                  if (!ssrCssModuleToFiles.has(moduleId)) {
-                    ssrCssModuleToFiles.set(moduleId, new Set());
-                  }
-                  for (const cssFile of cssFiles) {
-                    ssrCssModuleToFiles.get(moduleId)!.add(cssFile);
-                  }
-                }
-              }
-            }
-          }
-        }
       },
       buildStart() {
         // dynamically add client entry during build
@@ -612,75 +581,73 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
         }
       },
     },
-    patchViteClientPlugin(),
-    patchVueScopeCssHmr(),
-    patchCssLinkSelfAccept(),
-    // CSS deduplication plugin inlined
     {
       name: "fullstack:css-deduplication",
       apply: "build",
       sharedDuringBuild: true,
+      // Empty client css if it's already included in server builds.
+      // TODO: how to avoid empty files being generated in the end?
       load: {
         order: "pre",
         handler(id) {
-          // Only apply to client environment during build
           if (
-            !pluginOpts?.experimental?.deduplicateCss ||
-            this.environment.name !== "client" ||
-            this.environment.mode !== "build"
+            pluginOpts?.experimental?.deduplicateCss &&
+            this.environment.name === "client" &&
+            isCSSRequest(id) &&
+            serverCssIdToFiles.has(id)
           ) {
-            return;
-          }
-
-          // Check if this CSS was already processed in SSR build
-          if (isCSSRequest(id) && ssrCssModuleIds.has(id)) {
-            // Return empty CSS to avoid duplication
-            return "";
+            return ``;
           }
         },
       },
-      generateBundle(_options, bundle) {
-        // Only apply to client environment during build
-        if (
-          !pluginOpts?.experimental?.deduplicateCss ||
-          this.environment.name !== "client" ||
-          this.environment.mode !== "build"
-        ) {
-          return;
-        }
-
-        // Mutate client chunks to reference SSR CSS files
-        for (const chunk of Object.values(bundle)) {
-          if (chunk.type === "chunk") {
-            const importedCss = chunk.viteMetadata?.importedCss ?? [];
-            const newImportedCss = new Set<string>();
-
-            // Keep non-deduplicated CSS files
-            for (const cssFile of importedCss) {
-              newImportedCss.add(cssFile);
-            }
-
-            // Add SSR CSS files for deduplicated CSS modules
-            for (const moduleId of chunk.moduleIds) {
-              if (isCSSRequest(moduleId) && ssrCssModuleIds.has(moduleId)) {
-                const ssrCssFiles = ssrCssModuleToFiles.get(moduleId);
-                if (ssrCssFiles) {
-                  for (const cssFile of ssrCssFiles) {
-                    newImportedCss.add(cssFile);
-                  }
+      // Mutate client build `viteMetadata` to reference server CSS files
+      generateBundle: {
+        order: "pre",
+        handler(_options, bundle) {
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === "chunk") {
+              const serverCssFiles: string[] = [];
+              for (const moduleId of chunk.moduleIds) {
+                if (
+                  isCSSRequest(moduleId) &&
+                  serverCssIdToFiles.has(moduleId)
+                ) {
+                  const ssrCssFiles = serverCssIdToFiles.get(moduleId)!;
+                  serverCssFiles.push(...ssrCssFiles);
                 }
               }
+              if (chunk.viteMetadata) {
+                chunk.viteMetadata.importedCss = new Set([
+                  ...chunk.viteMetadata.importedCss,
+                  ...serverCssFiles,
+                ])
+              }
             }
-
-            // Update the chunk metadata (using type assertion to work around readonly)
-            if (chunk.viteMetadata) {
-              (chunk.viteMetadata as { importedCss: Set<string> }).importedCss =
-                newImportedCss;
+          }
+        },
+      },
+      // Track CSS module IDs from server builds for deduplication
+      writeBundle(_options, bundle) {
+        if (
+          pluginOpts?.experimental?.deduplicateCss &&
+          this.environment.name !== "client"
+        ) {
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === "chunk") {
+              const cssFiles = [...chunk.viteMetadata?.importedCss ?? []];
+              for (const moduleId of chunk.moduleIds) {
+                if (isCSSRequest(moduleId)) {
+                  serverCssIdToFiles.set(moduleId, cssFiles);
+                }
+              }
             }
           }
         }
       },
-    } satisfies Plugin,
+    },
+    patchViteClientPlugin(),
+    patchVueScopeCssHmr(),
+    patchCssLinkSelfAccept(),
   ];
 }
 
