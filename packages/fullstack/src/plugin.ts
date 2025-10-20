@@ -125,6 +125,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
   // Track CSS module IDs processed in server environments for deduplication
   const ssrCssModuleIds = new Set<string>();
+  // Map from CSS module ID to the corresponding CSS file names in SSR bundle
+  const ssrCssModuleToFiles = new Map<string, Set<string>>();
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -427,9 +429,22 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         ) {
           for (const chunk of Object.values(bundle)) {
             if (chunk.type === "chunk") {
+              // Track CSS module IDs
               for (const moduleId of chunk.moduleIds) {
                 if (isCSSRequest(moduleId)) {
                   ssrCssModuleIds.add(moduleId);
+                }
+              }
+              // Track which CSS files are associated with each CSS module
+              const cssFiles = chunk.viteMetadata?.importedCss ?? [];
+              for (const moduleId of chunk.moduleIds) {
+                if (isCSSRequest(moduleId)) {
+                  if (!ssrCssModuleToFiles.has(moduleId)) {
+                    ssrCssModuleToFiles.set(moduleId, new Set());
+                  }
+                  for (const cssFile of cssFiles) {
+                    ssrCssModuleToFiles.get(moduleId)!.add(cssFile);
+                  }
                 }
               }
             }
@@ -600,7 +615,7 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
     patchViteClientPlugin(),
     patchVueScopeCssHmr(),
     patchCssLinkSelfAccept(),
-    cssDeduplicationPlugin(pluginOpts, ssrCssModuleIds),
+    cssDeduplicationPlugin(pluginOpts, ssrCssModuleIds, ssrCssModuleToFiles),
   ];
 }
 
@@ -864,6 +879,7 @@ function patchCssLinkSelfAccept(): Plugin {
 function cssDeduplicationPlugin(
   pluginOpts: FullstackPluginOptions | undefined,
   ssrCssModuleIds: Set<string>,
+  ssrCssModuleToFiles: Map<string, Set<string>>,
 ): Plugin {
   return {
     name: "fullstack:css-deduplication",
@@ -887,6 +903,46 @@ function cssDeduplicationPlugin(
           return "";
         }
       },
+    },
+    generateBundle(_options, bundle) {
+      // Only apply to client environment during build
+      if (
+        !pluginOpts?.experimental?.deduplicateCss ||
+        this.environment.name !== "client" ||
+        this.environment.mode !== "build"
+      ) {
+        return;
+      }
+
+      // Mutate client chunks to reference SSR CSS files
+      for (const chunk of Object.values(bundle)) {
+        if (chunk.type === "chunk") {
+          const importedCss = chunk.viteMetadata?.importedCss ?? [];
+          const newImportedCss = new Set<string>();
+
+          // Keep non-deduplicated CSS files
+          for (const cssFile of importedCss) {
+            newImportedCss.add(cssFile);
+          }
+
+          // Add SSR CSS files for deduplicated CSS modules
+          for (const moduleId of chunk.moduleIds) {
+            if (isCSSRequest(moduleId) && ssrCssModuleIds.has(moduleId)) {
+              const ssrCssFiles = ssrCssModuleToFiles.get(moduleId);
+              if (ssrCssFiles) {
+                for (const cssFile of ssrCssFiles) {
+                  newImportedCss.add(cssFile);
+                }
+              }
+            }
+          }
+
+          // Update the chunk metadata
+          if (chunk.viteMetadata) {
+            chunk.viteMetadata.importedCss = [...newImportedCss];
+          }
+        }
+      }
     },
   };
 }
