@@ -8,7 +8,11 @@ export default defineConfig((_env) => ({
     // import("vite-plugin-inspect").then((m) => m.default()),
     react(),
     reactHmrPreamblePlugin(),
-    fullstack(),
+    fullstack({
+      experimental: {
+        deduplicateCss: true,
+      },
+    }),
   ],
   environments: {
     client: {

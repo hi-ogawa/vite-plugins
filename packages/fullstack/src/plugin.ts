@@ -59,6 +59,13 @@ type FullstackPluginOptions = {
      * @default true
      */
     clientBuildFallback?: boolean;
+    /**
+     * Deduplicate CSS between server and client builds.
+     * When enabled, CSS that is already processed in the server build
+     * will be emptied in the client build to avoid duplication.
+     * @default false
+     */
+    deduplicateCss?: boolean;
   };
 };
 
@@ -116,6 +123,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
     [environment: string]: { [id: string]: ImportAssetsMeta };
   } = {};
   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
+  // Map from CSS module ID to the corresponding CSS file names in server bundle
+  const serverCssIdToFiles: Record<string, string[]> = {};
 
   async function processAssetsImport(
     ctx: Rollup.PluginContext,
@@ -568,6 +577,65 @@ export default __assets_runtime.mergeAssets(${codes.join(", ")});
         for (const [k, v] of Object.entries(bundle)) {
           if (v.type === "chunk" && v.name === "__fallback") {
             delete bundle[k];
+          }
+        }
+      },
+    },
+    {
+      name: "fullstack:css-deduplication",
+      apply: "build",
+      sharedDuringBuild: true,
+      // Empty client css if it's already included in server builds.
+      // TODO: how to avoid empty files being generated in the end?
+      load: {
+        order: "pre",
+        handler(id) {
+          if (
+            pluginOpts?.experimental?.deduplicateCss &&
+            this.environment.name === "client" &&
+            serverCssIdToFiles[id]
+          ) {
+            return ``;
+          }
+        },
+      },
+      // Mutate client build `viteMetadata` to reference server CSS files
+      generateBundle: {
+        order: "pre",
+        handler(_options, bundle) {
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === "chunk") {
+              const serverCssFiles: string[] = [];
+              for (const moduleId of chunk.moduleIds) {
+                if (serverCssIdToFiles[moduleId]) {
+                  serverCssFiles.push(...serverCssIdToFiles[moduleId]);
+                }
+              }
+              if (chunk.viteMetadata) {
+                chunk.viteMetadata.importedCss = new Set([
+                  ...chunk.viteMetadata.importedCss,
+                  ...serverCssFiles,
+                ]);
+              }
+            }
+          }
+        },
+      },
+      // Track CSS module IDs from server builds for deduplication
+      writeBundle(_options, bundle) {
+        if (
+          pluginOpts?.experimental?.deduplicateCss &&
+          this.environment.name !== "client"
+        ) {
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === "chunk") {
+              const cssFiles = [...(chunk.viteMetadata?.importedCss ?? [])];
+              for (const moduleId of chunk.moduleIds) {
+                if (isCSSRequest(moduleId)) {
+                  serverCssIdToFiles[moduleId] = cssFiles;
+                }
+              }
+            }
           }
         }
       },
