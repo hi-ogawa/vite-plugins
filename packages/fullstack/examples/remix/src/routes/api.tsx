@@ -32,6 +32,6 @@ function removeFromCart(name: string) {
 }
 
 // used directly from book-card.tsx
-export function isInCart(name: string) {
+export async function isInCart(name: string) {
   return !!cartStates[name];
 }
