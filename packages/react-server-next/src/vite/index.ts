@@ -10,17 +10,13 @@ import {
   vitePluginFetchUrlImportMetaUrl,
   vitePluginWasmModule,
 } from "@hiogawa/vite-plugin-server-asset";
+import { vitePluginServerDotenv } from "@hiogawa/vite-plugin-server-dotenv";
 import {
   vitePluginLogger,
   vitePluginSsrMiddleware,
 } from "@hiogawa/vite-plugin-ssr-middleware";
 import react from "@vitejs/plugin-react-swc";
-import {
-  type Plugin,
-  type PluginOption,
-  loadEnv,
-  transformWithEsbuild,
-} from "vite";
+import { type Plugin, type PluginOption, transformWithEsbuild } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type AdapterType, adapterPlugin, autoSelectAdapter } from "./adapters";
 
@@ -38,7 +34,9 @@ export default function vitePluginReactServerNext(
     react(),
     nextJsxPlugin(),
     tsconfigPaths(),
-    nextConfigPlugin(),
+    vitePluginServerDotenv({
+      envPrefix: ["VITE_", "NEXT_PUBLIC_"],
+    }),
     vitePluginReactServer({
       ...options,
       routeDir: options?.routeDir ?? "app",
@@ -109,37 +107,6 @@ function nextOgPlugin(): Plugin[] {
       },
     },
   ];
-}
-
-// workaround https://github.com/vitejs/vite/issues/17689
-(globalThis as any).__next_vite_last_env__ ??= [];
-declare let __next_vite_last_env__: string[];
-
-function nextConfigPlugin(): Plugin {
-  return {
-    name: nextConfigPlugin.name,
-    config() {
-      // remove last loaded env so that Vite reloads a new value
-      for (const key of __next_vite_last_env__) {
-        delete process.env[key];
-      }
-
-      // TODO
-      // this is only for import.meta.env.NEXT_PUBLIC_xxx replacement.
-      // we might want to define process.env.NEXT_PUBLIC_xxx for better compatibility.
-      // https://nextjs.org/docs/app/building-your-application/configuring/environment-variables#bundling-environment-variables-for-the-browser
-      return {
-        envPrefix: ["VITE_", "NEXT_PUBLIC_"],
-      };
-    },
-    configResolved(config) {
-      const loadedEnv = loadEnv(config.mode, config.envDir, "");
-      __next_vite_last_env__ = Object.keys(loadedEnv).filter(
-        (key) => !(key in process.env),
-      );
-      Object.assign(process.env, loadedEnv);
-    },
-  };
 }
 
 function nextJsxPlugin(): Plugin {
