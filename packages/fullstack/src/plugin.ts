@@ -332,7 +332,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             let replacement = importedNames[0]!;
             if (importedNames.length > 1) {
               newImports.add(
-                `;import * as __assets_runtime from "@hiogawa/vite-plugin-fullstack/runtime";\n`,
+                `;import * as __assets_runtime from "virtual:fullstack/runtime";\n`,
               );
               replacement = `__assets_runtime.mergeAssets(${importedNames.join(", ")})`;
             }
@@ -364,10 +364,17 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             assert.equal(this.environment.mode, "build");
             return { id: source, external: true };
           }
+          if (source === "virtual:fullstack/runtime") {
+            return { id: source };
+          }
         },
       },
       load: {
         async handler(id) {
+          if (id === "virtual:fullstack/runtime") {
+            return runtimeUtils();
+          }
+
           const parsed = parseAssetsVirtual(id);
           if (!parsed) return;
           assert.notEqual(this.environment.name, "client");
@@ -465,7 +472,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             }
           }
           if (source === "virtual:fullstack/runtime") {
-            return this.resolve("./runtime.js", import.meta.filename);
+            return source;
           }
         },
       },
@@ -473,6 +480,9 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         async handler(id) {
           if (id === "\0virtual:fullstack/empty-assets") {
             return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
+          }
+          if (id === "virtual:fullstack/runtime") {
+            return runtimeUtils();
           }
           const { filename, query } = parseIdQuery(id);
           const value = query["assets"];
@@ -828,4 +838,25 @@ function patchCssLinkSelfAccept(): Plugin {
       },
     },
   };
+}
+
+// virtual:fullstack/runtime
+function runtimeUtils() {
+  return /* js */ `
+export function mergeAssets(...args) {
+  const js = uniqBy(args.flatMap((h) => h.js), (a) => a.href);
+  const css = uniqBy(args.flatMap((h) => h.css), (a) => a.href);
+  const entry = args.filter((arg) => arg.entry)?.[0]?.entry;
+  const raw = { entry, js, css };
+  return { ...raw, merge: (...args$1) => mergeAssets(raw, ...args$1) };
+}
+function uniqBy(array, key) {
+  const seen = new Set();
+  return array.filter((item) => {
+    const k = key(item);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}`;
 }
