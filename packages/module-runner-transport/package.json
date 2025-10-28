@@ -21,10 +21,8 @@
     "prepack": "tsdown --clean",
     "test-e2e": "playwright test"
   },
-  "dependencies": {
-  },
-  "devDependencies": {
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "peerDependencies": {
     "vite": "*"
   }
