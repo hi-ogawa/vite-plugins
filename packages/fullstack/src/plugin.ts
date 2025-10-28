@@ -356,6 +356,9 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       resolveId: {
         handler(source) {
+          if (source === "virtual:fullstack/runtime") {
+            return "\0" + source;
+          }
           if (source.startsWith("virtual:fullstack/assets?")) {
             return "\0" + source;
           }
@@ -364,15 +367,15 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             assert.equal(this.environment.mode, "build");
             return { id: source, external: true };
           }
-          if (source === "virtual:fullstack/runtime") {
-            return { id: source };
-          }
         },
       },
       load: {
         async handler(id) {
-          if (id === "virtual:fullstack/runtime") {
-            return runtimeUtils();
+          if (id === "\0virtual:fullstack/runtime") {
+            return fs.readFileSync(
+              path.join(import.meta.dirname, "runtime.js"),
+              "utf-8",
+            );
           }
 
           const parsed = parseAssetsVirtual(id);
@@ -471,18 +474,12 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               return `\0virtual:fullstack/empty-assets`;
             }
           }
-          if (source === "virtual:fullstack/runtime") {
-            return source;
-          }
         },
       },
       load: {
         async handler(id) {
           if (id === "\0virtual:fullstack/empty-assets") {
             return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
-          }
-          if (id === "virtual:fullstack/runtime") {
-            return runtimeUtils();
           }
           const { filename, query } = parseIdQuery(id);
           const value = query["assets"];
@@ -838,25 +835,4 @@ function patchCssLinkSelfAccept(): Plugin {
       },
     },
   };
-}
-
-// virtual:fullstack/runtime
-function runtimeUtils() {
-  return /* js */ `
-export function mergeAssets(...args) {
-  const js = uniqBy(args.flatMap((h) => h.js), (a) => a.href);
-  const css = uniqBy(args.flatMap((h) => h.css), (a) => a.href);
-  const entry = args.filter((arg) => arg.entry)?.[0]?.entry;
-  const raw = { entry, js, css };
-  return { ...raw, merge: (...args$1) => mergeAssets(raw, ...args$1) };
-}
-function uniqBy(array, key) {
-  const seen = new Set();
-  return array.filter((item) => {
-    const k = key(item);
-    if (seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
-}`;
 }
