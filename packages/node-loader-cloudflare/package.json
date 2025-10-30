@@ -11,7 +11,8 @@
   "type": "module",
   "exports": {
     "./package.json": "./package.json",
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./vite": "./dist/vite.js"
   },
   "files": ["dist"],
   "scripts": {
@@ -20,6 +21,7 @@
     "prepack": "tsdown --clean"
   },
   "devDependencies": {
+    "@types/node": "^24.9.2",
     "wrangler": "^4.41.0"
   },
   "peerDependencies": {
