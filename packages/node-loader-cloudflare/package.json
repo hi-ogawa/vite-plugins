@@ -21,7 +21,6 @@
     "prepack": "tsdown --clean"
   },
   "devDependencies": {
-    "@types/node": "^24.9.2",
     "wrangler": "^4.41.0"
   },
   "peerDependencies": {
