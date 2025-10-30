@@ -370,6 +370,12 @@ importers:
         specifier: ^0.8.7
         version: 0.8.7
 
+  packages/node-loader-cloudflare:
+    devDependencies:
+      wrangler:
+        specifier: ^4.41.0
+        version: 4.41.0(@cloudflare/workers-types@4.20251003.0)
+
   packages/pre-bundle-new-url:
     dependencies:
       magic-string:
@@ -525,7 +531,7 @@ importers:
         version: 3.0.0
       styled-jsx:
         specifier: ^5.1.6
-        version: 5.1.6(react@19.1.0)
+        version: 5.1.6(@babel/core@7.27.7)(react@19.1.0)
     devDependencies:
       '@hiogawa/unocss-preset-antd':
         specifier: 2.2.1-pre.7
@@ -12247,10 +12253,12 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.1.6(react@19.1.0):
+  styled-jsx@5.1.6(@babel/core@7.27.7)(react@19.1.0):
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+    optionalDependencies:
+      '@babel/core': 7.27.7
 
   sucrase@3.35.0:
     dependencies:
@@ -12624,12 +12632,12 @@ snapshots:
 
   unplugin@1.16.1:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       webpack-virtual-modules: 0.6.2
 
   unplugin@2.3.5:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       picomatch: 4.0.3
       webpack-virtual-modules: 0.6.2
 
