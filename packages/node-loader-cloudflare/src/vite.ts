@@ -9,6 +9,12 @@ export default function nodeLoaderCloudflarePlugin(): Plugin[] {
       async buildStart() {
         deregister ??= await registerCloudflare();
       },
+      async buildEnd() {
+        if (this.environment.mode === "dev") {
+          await deregister?.();
+          deregister = undefined;
+        }
+      },
       buildApp: {
         order: "post",
         async handler() {
