@@ -31,10 +31,14 @@ export default function nodeLoaderCloudflarePlugin(
     {
       name: "node-loader-cloudflare",
       sharedDuringBuild: true,
-      configEnvironment() {
+      configEnvironment(_name, config) {
         return {
           resolve: {
-            builtins: [/^cloudflare:/],
+            // TODO: doesn't merge?
+            builtins: [
+              /^cloudflare:/,
+              ...config.resolve?.builtins ?? []
+            ],
           },
         };
       },
