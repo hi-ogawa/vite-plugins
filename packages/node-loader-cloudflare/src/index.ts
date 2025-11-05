@@ -1,9 +1,11 @@
 import * as nodeModule from "node:module";
-import { getPlatformProxy } from "wrangler";
+import { type GetPlatformProxyOptions, getPlatformProxy } from "wrangler";
 
 // use node custom loader to implement "cloudflare:workers"
-export async function registerCloudflare(): Promise<() => Promise<void>> {
-  const platformProxy = await getPlatformProxy();
+export async function registerCloudflare(
+  options?: GetPlatformProxyOptions,
+): Promise<() => Promise<void>> {
+  const platformProxy = await getPlatformProxy(options);
   (globalThis as any).__node_loader_cloudflare_platform_proxy = platformProxy;
 
   const resolveFn: nodeModule.ResolveHook = async function (

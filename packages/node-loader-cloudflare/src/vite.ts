@@ -1,9 +1,22 @@
 import type { Plugin } from "vite";
+import type { GetPlatformProxyOptions } from "wrangler";
 import { registerCloudflare } from ".";
 
-// TODO: configFile options etc.
+export interface NodeLoaderCloudflarePluginOptions {
+  /**
+   * Whether to enable the plugin during build time for SSG etc.
+   * @default false
+   */
+  build?: boolean;
+  /**
+   * Options to pass to `getPlatformProxy` from `wrangler`.
+   */
+  options?: GetPlatformProxyOptions;
+}
 
-export default function nodeLoaderCloudflarePlugin(): Plugin[] {
+export default function nodeLoaderCloudflarePlugin(
+  pluginOpts?: NodeLoaderCloudflarePluginOptions,
+): Plugin[] {
   let registerPromise: Promise<() => Promise<void>> | undefined;
   async function deregister() {
     if (registerPromise) {
@@ -26,9 +39,12 @@ export default function nodeLoaderCloudflarePlugin(): Plugin[] {
         };
       },
       async buildStart() {
+        if (this.environment.mode === "build" && !pluginOpts?.build) {
+          return;
+        }
         if (!registerPromise) {
           console.log("[node-loader-cloudflare] registering...");
-          registerPromise = registerCloudflare();
+          registerPromise = registerCloudflare(pluginOpts?.options);
         }
         await registerPromise;
       },
