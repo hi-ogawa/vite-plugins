@@ -3,9 +3,17 @@ import { registerCloudflare } from ".";
 
 export default function nodeLoaderCloudflarePlugin(): Plugin[] {
   let deregister: (() => Promise<void>) | undefined;
+
   return [
     {
       name: "node-loader-cloudflare",
+      configEnvironment() {
+        return {
+          resolve: {
+            builtins: [/^cloudflare:/],
+          },
+        };
+      },
       async buildStart() {
         deregister ??= await registerCloudflare();
       },
