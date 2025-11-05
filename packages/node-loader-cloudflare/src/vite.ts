@@ -1,3 +1,4 @@
+import { builtinModules } from "node:module";
 import type { Plugin } from "vite";
 import type { GetPlatformProxyOptions } from "wrangler";
 import { registerCloudflare } from ".";
@@ -8,6 +9,10 @@ export interface NodeLoaderCloudflarePluginOptions {
    * @default false
    */
   build?: boolean;
+  /**
+   * @default ["ssr"]
+   */
+  environments?: string[];
   /**
    * Options to pass to `getPlatformProxy` from `wrangler`.
    */
@@ -27,28 +32,33 @@ export default function nodeLoaderCloudflarePlugin(
     }
   }
 
+  const resolvedPluginOpts: Required<NodeLoaderCloudflarePluginOptions> = {
+    build: pluginOpts?.build ?? false,
+    environments: pluginOpts?.environments ?? ["ssr"],
+    options: pluginOpts?.options ?? {},
+  };
+
   return [
     {
       name: "node-loader-cloudflare",
       sharedDuringBuild: true,
-      configEnvironment(_name, config) {
-        return {
-          resolve: {
-            // TODO: doesn't merge?
-            builtins: [
-              /^cloudflare:/,
-              ...config.resolve?.builtins ?? []
-            ],
-          },
-        };
+      configEnvironment(name) {
+        if (resolvedPluginOpts.environments.includes(name)) {
+          return {
+            resolve: {
+              // TODO: doesn't merge?
+              builtins: [/^cloudflare:/, ...nodeLikeBuiltins],
+            },
+          };
+        }
       },
       async buildStart() {
-        if (this.environment.mode === "build" && !pluginOpts?.build) {
+        if (this.environment.mode === "build" && !resolvedPluginOpts.build) {
           return;
         }
         if (!registerPromise) {
           console.log("[node-loader-cloudflare] registering...");
-          registerPromise = registerCloudflare(pluginOpts?.options);
+          registerPromise = registerCloudflare(resolvedPluginOpts.options);
         }
         await registerPromise;
       },
@@ -66,3 +76,19 @@ export default function nodeLoaderCloudflarePlugin(
     },
   ];
 }
+
+// copied from
+// https://github.com/vitejs/vite/blob/2833c5576a87be2db450c195ccf64dfc8925a15b/packages/vite/src/node/utils.ts#L121
+
+// Supported by Node, Deno, Bun
+const NODE_BUILTIN_NAMESPACE = "node:";
+// Supported by Bun
+const BUN_BUILTIN_NAMESPACE = "bun:";
+// Some runtimes like Bun injects namespaced modules here, which is not a node builtin
+const nodeBuiltins = builtinModules.filter((id) => !id.includes(":"));
+
+export const nodeLikeBuiltins: (string | RegExp)[] = [
+  ...nodeBuiltins,
+  new RegExp(`^${NODE_BUILTIN_NAMESPACE}`),
+  new RegExp(`^${BUN_BUILTIN_NAMESPACE}`),
+];
