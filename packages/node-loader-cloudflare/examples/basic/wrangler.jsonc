@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.unpkg.com/wrangler@4.41.0/config-schema.json",
-  "name": "node-loader-demo",
+  "name": "node-loader-example-basic",
   "main": "dist/ssr/index.js",
   "assets": {
     "directory": "dist/client"
