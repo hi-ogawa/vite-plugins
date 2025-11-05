@@ -26,8 +26,16 @@ function ClientCounter() {
       </p>
       <div class="counter-value">{count}</div>
       <div class="button-group">
-        <button onClick={() => setCount((c) => c - 1)}>Decrement</button>
-        <button data-testid="client" onClick={() => setCount((c) => c + 1)}>
+        <button
+          data-testid="client-decrement"
+          onClick={() => setCount((c) => c - 1)}
+        >
+          Decrement
+        </button>
+        <button
+          data-testid="client-increment"
+          onClick={() => setCount((c) => c + 1)}
+        >
           Increment
         </button>
       </div>
@@ -66,10 +74,18 @@ function ServerCounter() {
       </p>
       <div class="counter-value">{count}</div>
       <div class="button-group">
-        <button onClick={() => handleChange(-1)} disabled={isPending}>
+        <button
+          data-testid="server-decrement"
+          onClick={() => handleChange(-1)}
+          disabled={isPending}
+        >
           Decrement
         </button>
-        <button onClick={() => handleChange(1)} disabled={isPending}>
+        <button
+          data-testid="server-increment"
+          onClick={() => handleChange(1)}
+          disabled={isPending}
+        >
           Increment
         </button>
       </div>

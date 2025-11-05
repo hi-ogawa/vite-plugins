@@ -18,9 +18,11 @@
   "scripts": {
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
-    "prepack": "tsdown --clean"
+    "prepack": "tsdown --clean",
+    "test-e2e": "playwright test"
   },
   "devDependencies": {
+    "tinyexec": "^1.0.1",
     "wrangler": "^4.41.0"
   },
   "peerDependencies": {
