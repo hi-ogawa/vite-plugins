@@ -1,4 +1,3 @@
-import "/@vite/client";
 import { render } from "hono/jsx/dom";
 import { App } from "./app";
 

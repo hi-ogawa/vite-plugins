@@ -21,6 +21,7 @@ function Root() {
           name="description"
           content="Full-stack demo application built with Vite and Cloudflare Workers"
         />
+        {import.meta.env.DEV && <script type="module" src="/@vite/client" />}
         <script type="module" src={clientAssets.entry} />
         <link rel="stylesheet" href={stylesUrl} />
       </head>
