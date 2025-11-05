@@ -376,6 +376,18 @@ importers:
         specifier: ^4.41.0
         version: 4.41.0(@cloudflare/workers-types@4.20251003.0)
 
+  packages/node-loader-cloudflare/examples/basic:
+    devDependencies:
+      '@hiogawa/node-loader-cloudflare':
+        specifier: latest
+        version: link:../..
+      '@hiogawa/vite-plugin-fullstack':
+        specifier: latest
+        version: link:../../../fullstack
+      wrangler:
+        specifier: ^4.41.0
+        version: 4.41.0(@cloudflare/workers-types@4.20251003.0)
+
   packages/pre-bundle-new-url:
     dependencies:
       magic-string:
