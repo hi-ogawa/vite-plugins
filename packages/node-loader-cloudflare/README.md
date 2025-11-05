@@ -56,12 +56,7 @@ This allows you to:
 
 ## Example
 
-Check out the [basic example](./examples/basic) for a complete setup with:
-
-- Vite + Cloudflare Workers integration
-- Client and server-side code
-- KV namespace usage
-- Full-stack counter demo
+- [basic example](./examples/basic)
 
 ## License
 
