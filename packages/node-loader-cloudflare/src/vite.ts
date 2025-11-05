@@ -46,7 +46,6 @@ export default function nodeLoaderCloudflarePlugin(
         if (resolvedPluginOpts.environments.includes(name)) {
           return {
             resolve: {
-              // TODO: doesn't merge?
               builtins: [/^cloudflare:/, ...nodeLikeBuiltins],
             },
           };
@@ -87,7 +86,7 @@ const BUN_BUILTIN_NAMESPACE = "bun:";
 // Some runtimes like Bun injects namespaced modules here, which is not a node builtin
 const nodeBuiltins = builtinModules.filter((id) => !id.includes(":"));
 
-export const nodeLikeBuiltins: (string | RegExp)[] = [
+const nodeLikeBuiltins: (string | RegExp)[] = [
   ...nodeBuiltins,
   new RegExp(`^${NODE_BUILTIN_NAMESPACE}`),
   new RegExp(`^${BUN_BUILTIN_NAMESPACE}`),
