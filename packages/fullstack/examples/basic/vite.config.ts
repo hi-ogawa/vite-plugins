@@ -1,6 +1,6 @@
 import fullstack from "@hiogawa/vite-plugin-fullstack";
 import react from "@vitejs/plugin-react";
-import { type Plugin, defineConfig } from "vite";
+import { defineConfig } from "vite";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
