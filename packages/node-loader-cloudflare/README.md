@@ -1,6 +1,6 @@
 # @hiogawa/node-loader-cloudflare
 
-Use Cloudflare Workers runtime APIs via Node.js custom loaders to allow `cloudflare:workers` import seemlessly both development and deployment, such as:
+Enable `cloudflare:workers` imports in Vite for both development and deployment via Node.js custom loaders and Wrangler's platform proxy:
 
 ```js
 import { env } from "cloudflare:workers";
@@ -32,7 +32,7 @@ export default defineConfig({
 });
 ```
 
-Or you can directly regsiter the loader via:
+Or you can directly register the loader via:
 
 ```ts
 import { registerCloudflare } from "@hiogawa/node-loader-cloudflare";
