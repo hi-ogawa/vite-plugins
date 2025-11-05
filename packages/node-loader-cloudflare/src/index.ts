@@ -11,16 +11,18 @@ export async function registerCloudflare(
 
   // Expose globals to globalThis if requested
   if (exposeGlobals) {
-    // Expose caches from platformProxy
-    Object.assign(globalThis, {
-      caches: platformProxy.caches,
-    });
+    // Expose caches from platformProxy if not already present
+    if (!(globalThis as any).caches) {
+      Object.assign(globalThis, {
+        caches: platformProxy.caches,
+      });
+    }
 
     // Dynamically import miniflare and expose WebSocketPair
     try {
-      // @ts-expect-error - miniflare is an optional transitive dependency of wrangler
+      // @ts-expect-error Cannot find module 'miniflare' - it's an optional transitive dependency of wrangler
       const miniflare = await import("miniflare");
-      if (miniflare.WebSocketPair) {
+      if (miniflare.WebSocketPair && !(globalThis as any).WebSocketPair) {
         Object.assign(globalThis, { WebSocketPair: miniflare.WebSocketPair });
       }
     } catch (error) {
