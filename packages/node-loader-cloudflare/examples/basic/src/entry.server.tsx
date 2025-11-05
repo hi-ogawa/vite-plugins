@@ -6,7 +6,7 @@ import stylesUrl from "./styles.css?url";
 const app = new Hono();
 export default app;
 
-app.get("*", async (c) => {
+app.get("/", async (c) => {
   return c.html(<Root />);
 });
 
@@ -51,6 +51,10 @@ app.get("/count", async (c) => {
 app.post("/count", async (c) => {
   const { change } = await c.req.json();
   return c.json({ count: await Counter.change(change) });
+});
+
+app.notFound((c) => {
+  return c.text("404 Not Found", 404);
 });
 
 if (import.meta.hot) {
