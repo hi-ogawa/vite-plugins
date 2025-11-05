@@ -1,5 +1,4 @@
 import { useEffect, useState, useTransition } from "hono/jsx";
-import { rpc } from "./rpc";
 
 export function App() {
   return (
@@ -40,29 +39,22 @@ function ServerCounter() {
   const [count, setCount] = useState(0);
   const [isPending, startTransition] = useTransition();
 
-  // Fetch initial count
   useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const res = await rpc.count.$get();
-        const data = await res.json();
-        setCount(data.count);
-      } catch (error) {
-        console.error("Failed to fetch count:", error);
-      }
-    };
-    fetchCount();
+    (async () => {
+      const res = await fetch("/count");
+      const data: any = await res.json();
+      setCount(data.count);
+    })();
   }, []);
 
   const handleChange = (delta: number) => {
     startTransition(async () => {
-      try {
-        const res = await rpc.count.$post({ json: { change: delta } });
-        const data = await res.json();
-        setCount(data.count);
-      } catch (error) {
-        console.error("Failed to update count:", error);
-      }
+      const res = await fetch("/count", {
+        method: "POST",
+        body: JSON.stringify({ change: delta }),
+      });
+      const data: any = await res.json();
+      setCount(data.count);
     });
   };
 

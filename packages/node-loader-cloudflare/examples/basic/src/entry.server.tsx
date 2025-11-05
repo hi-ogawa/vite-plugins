@@ -50,9 +50,12 @@ app.get("/count", async (c) => {
 });
 
 app.post("/count", async (c) => {
+  await sleep(500 * Math.random());
   const { change } = await c.req.json();
   return c.json({ count: await Counter.change(change) });
 });
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 app.notFound((c) => {
   return c.text("404 Not Found", 404);
