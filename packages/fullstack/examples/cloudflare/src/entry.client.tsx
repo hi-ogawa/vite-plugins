@@ -1,5 +1,4 @@
-// @ts-ignore
-import "virtual:react-hmr-preamble";
+import "@vitejs/plugin-react-swc/preamble";
 import { StrictMode, startTransition } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { App } from "./App";
