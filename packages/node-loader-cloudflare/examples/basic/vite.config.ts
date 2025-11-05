@@ -6,7 +6,7 @@ export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [fullstack(), nodeLoaderCloudflare()],
   optimizeDeps: {
-    entries: ["./src/entry.client.tsx"],
+    entries: ["./src/client/main.tsx"],
   },
   environments: {
     ssr: {
