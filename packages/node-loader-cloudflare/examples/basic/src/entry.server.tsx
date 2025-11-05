@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { Hono } from "hono";
 import clientAssets from "./client/main?assets=client";
+import stylesUrl from "./styles.css?url";
 
 const app = new Hono();
 export default app;
@@ -15,6 +16,7 @@ function Root() {
       <head>
         <title>Vite SSR</title>
         <script type="module" src={clientAssets.entry} />
+        <link rel="stylesheet" href={stylesUrl} />
       </head>
       <body>
         <div id="client-app"></div>

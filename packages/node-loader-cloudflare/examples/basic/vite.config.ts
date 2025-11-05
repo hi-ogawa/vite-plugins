@@ -9,8 +9,14 @@ export default defineConfig((_env) => ({
     entries: ["./src/client/main.tsx"],
   },
   environments: {
+    client: {
+      build: {
+        outDir: "dist/client",
+      },
+    },
     ssr: {
       build: {
+        outDir: "dist/ssr",
         rollupOptions: {
           input: "./src/entry.server.tsx",
         },

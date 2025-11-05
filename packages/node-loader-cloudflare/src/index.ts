@@ -4,7 +4,7 @@ import { getPlatformProxy } from "wrangler";
 // use node custom loader to implement "cloudflare:workers"
 export async function registerCloudflare(): Promise<() => Promise<void>> {
   const platformProxy = await getPlatformProxy();
-  (globalThis as any).__polyfill_platform_proxy = platformProxy;
+  (globalThis as any).__node_loader_cloudflare_platform_proxy = platformProxy;
 
   const resolveFn: nodeModule.ResolveHook = async function (
     specifier,
@@ -27,7 +27,7 @@ export async function registerCloudflare(): Promise<() => Promise<void>> {
         format: "module",
         // TODO: more API? waitUntil
         source: `\
-export const env = globalThis.__polyfill_platform_proxy.env;
+export const env = globalThis.__node_loader_cloudflare_platform_proxy.env;
 `,
       };
     }

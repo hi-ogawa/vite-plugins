@@ -1,10 +1,13 @@
 import type { Plugin } from "vite";
 import { registerCloudflare } from ".";
 
+// TODO: configFile options etc.
+
 export default function nodeLoaderCloudflarePlugin(): Plugin[] {
   let registerPromise: Promise<() => Promise<void>> | undefined;
   async function deregister() {
     if (registerPromise) {
+      console.log("[node-loader-cloudflare] deregistering...");
       let promise = registerPromise;
       registerPromise = undefined;
       await (await promise)();
@@ -14,6 +17,7 @@ export default function nodeLoaderCloudflarePlugin(): Plugin[] {
   return [
     {
       name: "node-loader-cloudflare",
+      sharedDuringBuild: true,
       configEnvironment() {
         return {
           resolve: {
