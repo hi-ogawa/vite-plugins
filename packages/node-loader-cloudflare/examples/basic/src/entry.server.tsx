@@ -12,9 +12,15 @@ app.get("*", async (c) => {
 
 function Root() {
   return (
-    <html>
+    <html lang="en">
       <head>
-        <title>Vite SSR</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Vite + Cloudflare Workers Demo</title>
+        <meta
+          name="description"
+          content="Full-stack demo application built with Vite and Cloudflare Workers"
+        />
         <script type="module" src={clientAssets.entry} />
         <link rel="stylesheet" href={stylesUrl} />
       </head>
