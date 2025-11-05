@@ -5,9 +5,6 @@ import { defineConfig } from "vite";
 export default defineConfig((_env) => ({
   clearScreen: false,
   plugins: [fullstack(), nodeLoaderCloudflare()],
-  optimizeDeps: {
-    entries: ["./src/client/main.tsx"],
-  },
   environments: {
     client: {
       build: {
@@ -18,7 +15,9 @@ export default defineConfig((_env) => ({
       build: {
         outDir: "dist/ssr",
         rollupOptions: {
-          input: "./src/entry.server.tsx",
+          input: {
+            index: "./src/entry.server.tsx",
+          },
         },
       },
     },
