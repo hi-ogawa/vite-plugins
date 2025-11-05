@@ -13,6 +13,6 @@
     "noEmit": true,
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "target": "ESNext",
+    "target": "ESNext"
   }
 }

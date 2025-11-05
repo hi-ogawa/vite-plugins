@@ -5,7 +5,7 @@ const app = new Hono();
 export default app;
 
 app.get("*", async (c) => {
-  return c.html(<Root />)
+  return c.html(<Root />);
 });
 
 function Root() {

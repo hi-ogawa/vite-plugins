@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "types": "wrangler types",
     "preview": "wrangler dev",
-    "release": "wrangler dev"
+    "release": "wrangler deploy"
   },
   "devDependencies": {
     "@hiogawa/node-loader-cloudflare": "latest",
