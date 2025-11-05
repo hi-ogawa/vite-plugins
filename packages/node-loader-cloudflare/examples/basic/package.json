@@ -8,10 +8,11 @@
     "preview": "wrangler dev",
     "release": "wrangler dev"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@hiogawa/vite-plugin-fullstack": "latest",
     "@hiogawa/node-loader-cloudflare": "latest",
+    "@hiogawa/vite-plugin-fullstack": "latest",
+    "hono": "^4.7.5",
+    "vite": "^7.1.5",
     "wrangler": "^4.41.0"
   }
 }

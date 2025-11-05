@@ -1,12 +1,12 @@
-import { renderToString } from "react-dom/server";
+import { Hono } from "hono";
 import clientAssets from "./entry.client?assets=client";
 
-async function handler(_request: Request): Promise<Response> {
-  const html = renderToString(<Root />);
-  return new Response(html, {
-    headers: { "Content-Type": "text/html" },
-  });
-}
+const app = new Hono();
+export default app;
+
+app.get("*", async (c) => {
+  return c.html(<Root />)
+});
 
 function Root() {
   return (
@@ -21,10 +21,6 @@ function Root() {
     </html>
   );
 }
-
-export default {
-  fetch: handler,
-};
 
 if (import.meta.hot) {
   import.meta.hot.accept();

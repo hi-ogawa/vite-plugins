@@ -1,5 +1,5 @@
 {
-  "$schema": "https://www.unpkg.com/wrangler@4.13.0/config-schema.json",
+  "$schema": "https://www.unpkg.com/wrangler@4.41.0/config-schema.json",
   "name": "vite-rsc-basic",
   "main": "dist/rsc/cloudflare.js",
   "assets": {
@@ -7,5 +7,12 @@
   },
   "workers_dev": true,
   "compatibility_date": "2025-10-01",
-  "compatibility_flags": ["nodejs_als"]
+  "compatibility_flags": ["nodejs_als"],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "test",
+      "preview_id": "test"
+    }
+  ]
 }

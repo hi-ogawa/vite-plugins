@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { createRoot } from "react-dom/client";
+import { useState } from "hono/jsx";
+import { render } from "hono/jsx/dom";
 
 function main() {
   const domRoot = document.getElementById("client-app")!;
-  createRoot(domRoot).render(<App />);
+  render(<App />, domRoot);
 }
 
 function App() {

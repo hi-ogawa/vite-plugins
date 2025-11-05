@@ -19,8 +19,8 @@ export default defineConfig((_env) => ({
   },
   builder: {
     async buildApp(builder) {
-      // TODO
-      builder;
+      await builder.build(builder.environments["ssr"]!);
+      await builder.build(builder.environments["client"]!);
     },
   },
 }));
