@@ -33,8 +33,9 @@ function Root() {
 
 class Counter {
   static async get() {
-    const count = Number(env.KV.get("count") || 0);
-    return count;
+    const raw = await env.KV.get("count");
+    const count = Number(raw || 0);
+    return Number.isSafeInteger(count) ? count : 0;
   }
   static async change(delta: number) {
     const count = await this.get();

@@ -1,4 +1,4 @@
-import { useState } from "hono/jsx";
+import { useEffect, useState, useTransition } from "hono/jsx";
 import { rpc } from "./rpc";
 
 export function App() {
@@ -37,18 +37,49 @@ function ClientCounter() {
 }
 
 function ServerCounter() {
-  // TODO
-  rpc;
+  const [count, setCount] = useState(0);
+  const [isPending, startTransition] = useTransition();
+
+  // Fetch initial count
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const res = await rpc.count.$get();
+        const data = await res.json();
+        setCount(data.count);
+      } catch (error) {
+        console.error("Failed to fetch count:", error);
+      }
+    };
+    fetchCount();
+  }, []);
+
+  const handleChange = (delta: number) => {
+    startTransition(async () => {
+      try {
+        const res = await rpc.count.$post({ json: { change: delta } });
+        const data = await res.json();
+        setCount(data.count);
+      } catch (error) {
+        console.error("Failed to update count:", error);
+      }
+    });
+  };
+
   return (
     <div class="counter-card server">
       <h2>Server Counter</h2>
       <p class="counter-description">
         Runs on Cloudflare Workers. Persists in KV storage.
       </p>
-      <div class="counter-value">0</div>
+      <div class="counter-value">{count}</div>
       <div class="button-group">
-        <button>Decrement</button>
-        <button>Increment</button>
+        <button onClick={() => handleChange(-1)} disabled={isPending}>
+          Decrement
+        </button>
+        <button onClick={() => handleChange(1)} disabled={isPending}>
+          Increment
+        </button>
       </div>
     </div>
   );
