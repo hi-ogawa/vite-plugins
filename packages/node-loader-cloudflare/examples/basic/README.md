@@ -1,5 +1,7 @@
 # node-loader-cloudflare basic example
 
+https://node-loader-example-basic.hiro18181.workers.dev
+
 A full-stack demo showcasing `@hiogawa/node-loader-cloudflare` with Vite, Hono, and Cloudflare Workers KV.
 
 This example demonstrates:
@@ -52,8 +54,14 @@ Deploy to Cloudflare Workers:
 # Build the application
 npm run build
 
+# Preview locally
+npm wrangler dev
+
+# Create remote bindings
+npx wrangler kv namespace create KV
+
 # Deploy with Wrangler
-npx wrangler deploy
+npm wrangler deploy
 ```
 
 Configure your KV namespace in `wrangler.jsonc` before deploying.
