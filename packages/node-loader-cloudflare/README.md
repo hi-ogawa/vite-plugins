@@ -27,6 +27,9 @@ export default defineConfig({
       // For SSG (Static Site Generation) or other build-time use cases,
       // you can also enable the plugin during build:
       // build: true,
+      
+      // Expose Cloudflare globals like WebSocketPair and caches to globalThis:
+      // exposeGlobals: true,
     }),
   ],
 });
@@ -53,6 +56,24 @@ This allows you to:
 - Import `cloudflare:workers` modules in your Vite application
 - Access Cloudflare Workers runtime environment (`env`) in dev server and optionally during build
 - Use bindings like KV, D1, R2, etc. in your local environment
+- Optionally expose Cloudflare globals like `WebSocketPair` and `caches` to `globalThis` by setting `exposeGlobals: true`
+
+## Options
+
+### `exposeGlobals`
+
+When set to `true`, exposes Cloudflare globals to `globalThis`:
+
+- `caches`: The Caches API from Wrangler's platform proxy
+- `WebSocketPair`: WebSocket implementation from miniflare
+
+This is useful for code that expects these globals to be available without explicit imports, similar to how they work in Cloudflare Workers runtime.
+
+```ts
+nodeLoaderCloudflare({
+  exposeGlobals: true,
+})
+```
 
 ## Example
 

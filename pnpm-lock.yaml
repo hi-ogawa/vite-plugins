@@ -394,6 +394,21 @@ importers:
         specifier: ^4.41.0
         version: 4.41.0(@cloudflare/workers-types@4.20251003.0)
 
+  packages/node-loader-cloudflare/examples/expose-globals:
+    dependencies:
+      '@hiogawa/node-loader-cloudflare':
+        specifier: workspace:*
+        version: link:../..
+      '@hiogawa/vite-plugin-fullstack':
+        specifier: workspace:*
+        version: link:../../../fullstack
+      hono:
+        specifier: ^4.8.12
+        version: 4.10.4
+      vite:
+        specifier: ^7.1.5
+        version: 7.1.5(@types/node@22.16.0)(jiti@2.5.1)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+
   packages/pre-bundle-new-url:
     dependencies:
       magic-string:
@@ -4634,6 +4649,10 @@ packages:
   hex-rgb@4.3.0:
     resolution: {integrity: sha512-Ox1pJVrDCyGHMG9CFg1tmrRUMRPRsAWYc/PinY0XzJU4K7y7vjNoLKIQ7BR5UJMCxNN8EM1MNDmHWA/B3aZUuw==}
     engines: {node: '>=6'}
+
+  hono@4.10.4:
+    resolution: {integrity: sha512-YG/fo7zlU3KwrBL5vDpWKisLYiM+nVstBQqfr7gCPbSYURnNEP9BDxEMz8KfsDR9JX0lJWDRNc6nXX31v7ZEyg==}
+    engines: {node: '>=16.9.0'}
 
   hono@4.7.5:
     resolution: {integrity: sha512-fDOK5W2C1vZACsgLONigdZTRZxuBqFtcKh7bUQ5cVSbwI2RWjloJDcgFOVzbQrlI6pCmhlTsVYZ7zpLj4m4qMQ==}
@@ -10413,6 +10432,8 @@ snapshots:
   he@1.2.0: {}
 
   hex-rgb@4.3.0: {}
+
+  hono@4.10.4: {}
 
   hono@4.7.5: {}
 
