@@ -43,7 +43,6 @@ export async function registerCloudflare(registerOptions?: {
         format: "module",
         source: `\
 export const env = globalThis.__node_loader_cloudflare_platform_proxy.env;
-
 const __ctx = globalThis.__node_loader_cloudflare_platform_proxy.ctx;
 export const waitUntil = __ctx.waitUntil.bind(__ctx);
 `,
