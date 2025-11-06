@@ -40,8 +40,12 @@ export function transformImportAttributes(
   const parsed = esModuleLexer.parse(code);
   let output: MagicString | undefined;
   for (const importSpecifier of parsed[0]) {
-    const { e: end, se: expEnd, a: attributeIndex } = importSpecifier;
+    let { e: end, se: expEnd, a: attributeIndex } = importSpecifier;
     if (attributeIndex > -1) {
+      // tweak end for dynamic import
+      if (code[expEnd - 1] === ")") {
+        expEnd--;
+      }
       const attributesCode = code.slice(attributeIndex, expEnd);
       const attributes = evalValue(attributesCode);
       output ??= new MagicString(code);

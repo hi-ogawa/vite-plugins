@@ -11,11 +11,20 @@ beforeAll(async () => {
   await esModuleLexer.init;
 });
 
-test(transformImportAttributes, () => {
-  const input = `import { Counter } from "./counter" with { island: "client-only" };`;
-  expect(transformImportAttributes(input)?.toString()).toMatchInlineSnapshot(
-    `"import { Counter } from "./counter?__attributes=%7B%22island%22%3A%22client-only%22%7D";"`,
-  );
+describe(transformImportAttributes, () => {
+  test("basic", () => {
+    const input = `import { Counter } from "./counter" with { island: "client-only" };`;
+    expect(transformImportAttributes(input)?.toString()).toMatchInlineSnapshot(
+      `"import { Counter } from "./counter?__attributes=%7B%22island%22%3A%22client-only%22%7D";"`,
+    );
+  });
+
+  test("dynamic import", () => {
+    const input = `import("./counter", { with: { island: "client-only" } });`;
+    expect(transformImportAttributes(input)?.toString()).toMatchInlineSnapshot(
+      `"import("./counter"?__attributes=%7B%22with%22%3A%7B%22island%22%3A%22client-only%22%7D%7D,);"`,
+    );
+  });
 });
 
 describe("e2e", () => {
