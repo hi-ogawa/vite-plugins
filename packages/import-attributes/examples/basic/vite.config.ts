@@ -12,8 +12,16 @@ export default defineConfig((_env) => ({
     {
       name: "import-bytes",
       load(id) {
+        const info = this.getModuleInfo(id);
+        if (info) {
+          info.attributes;
+          // info.rawId;
+        }
         const meta: importAttributesMeta =
           this.getModuleInfo(id)?.meta["vite-plugin-import-attributes"];
+        if (id.includes("bytes")) {
+          console.log("[load]", { id, meta }, this.getModuleInfo(id));
+        }
         if (!meta) return;
         const { rawId, attributes } = meta;
         if (attributes["type"] === "bytes") {
