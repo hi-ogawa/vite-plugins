@@ -1,12 +1,15 @@
 # @hiogawa/node-loader-cloudflare
 
-Enable `cloudflare:workers` imports via Node.js custom loaders with Wrangler's platform proxy:
+This package provides [Node.js custom loaders](https://nodejs.org/api/module.html#customization-hooks) to enable `cloudflare:workers` imports based on [Wrangler platform proxy](https://developers.cloudflare.com/workers/wrangler/api/#getplatformproxy) on Node.js.
 
 ```js
 import { env, waitUntil } from "cloudflare:workers";
 await env.KV.get("some-key");
 waitUntil(someTask());
 ```
+
+This allows Vite SSR application to seemlessly access Cloudflare Workers runtime APIs during both development and deployment
+when the framework doesn't have a support of [@cloudflare/vite-plugin](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare).
 
 ## Installation
 
