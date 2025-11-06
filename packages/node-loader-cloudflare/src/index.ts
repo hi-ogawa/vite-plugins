@@ -10,9 +10,6 @@ export async function registerCloudflare(registerOptions?: {
   const platformProxy = await getPlatformProxy(options);
   (globalThis as any).__node_loader_cloudflare_platform_proxy = platformProxy;
 
-  // TODO: what to do with?
-  // platformProxy.cf;
-  // platformProxy.ctx;
   if (exposeGlobals) {
     if (!(globalThis as any).caches) {
       Object.assign(globalThis, {
@@ -44,9 +41,9 @@ export async function registerCloudflare(registerOptions?: {
       return {
         shortCircuit: true,
         format: "module",
-        // TODO: more API? waitUntil
         source: `\
 export const env = globalThis.__node_loader_cloudflare_platform_proxy.env;
+export const waitUntil = globalThis.__node_loader_cloudflare_platform_proxy.ctx.waitUntil;
 `,
       };
     }
