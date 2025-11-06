@@ -13,8 +13,6 @@ export default function vitePluginImportAttributes(pluginOptions?: {
   return [
     {
       name: "import-attributes",
-      // TODO: inter-plugin API
-      api: {},
       async config() {
         await esModuleLexer.init;
       },
@@ -29,24 +27,6 @@ export default function vitePluginImportAttributes(pluginOptions?: {
             map: transformed.generateMap({ hires: "boundary" }),
           };
         }
-      },
-      resolveId: {
-        order: "pre",
-        async handler(source, importer, options) {
-          const result = getImportAttributesFromId(source);
-          if (Object.keys(result.attributes).length > 0) {
-            // TODO: how to workaround automatic query decoding during dev
-            const resolved = await this.resolve(source, importer, options);
-            console.log("[resolveId]", { source, result, resolved });
-            if (resolved) {
-              // console.log(getImportAttributesFromId(resolved.id))
-              resolved.meta ??= {};
-              resolved.meta["vite-plugin-import-attributes"] =
-                getImportAttributesFromId(resolved.id);
-            }
-            return resolved;
-          }
-        },
       },
     },
   ];
@@ -82,15 +62,12 @@ export function transformImportAttributes(
   return output;
 }
 
-export type importAttributesMeta = {
+export type ImportAttributesMeta = {
   rawId: string;
   attributes: Record<string, unknown>;
 };
 
-export function getImportAttributesFromId(id: string): {
-  rawId: string;
-  attributes: Record<string, unknown>;
-} {
+export function parseImportAttributes(id: string): ImportAttributesMeta {
   const { filename, query } = parseIdQuery(id);
   if (query[KEY]) {
     const attributes = JSON.parse(query[KEY]);
