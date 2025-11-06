@@ -4,7 +4,12 @@ import { defineConfig } from "vite";
 
 export default defineConfig((_env) => ({
   clearScreen: false,
-  plugins: [fullstack(), nodeLoaderCloudflare()],
+  plugins: [
+    fullstack(),
+    nodeLoaderCloudflare({
+      exposeGlobals: true,
+    }),
+  ],
   environments: {
     client: {
       build: {
