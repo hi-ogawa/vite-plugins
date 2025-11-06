@@ -1,4 +1,4 @@
-import { env } from "cloudflare:workers";
+import { env, waitUntil } from "cloudflare:workers";
 import { Hono } from "hono";
 import clientAssets from "./client/main?assets=client";
 import stylesUrl from "./styles.css?url";
@@ -7,6 +7,7 @@ const app = new Hono();
 export default app;
 
 app.get("/", async (c) => {
+  waitUntil(new Promise((resolve) => setTimeout(resolve, 10)));
   return c.html(<Root />);
 });
 
