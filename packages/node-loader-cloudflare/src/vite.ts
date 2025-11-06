@@ -48,6 +48,13 @@ export default function nodeLoaderCloudflarePlugin(
     {
       name: "node-loader-cloudflare",
       sharedDuringBuild: true,
+      config() {
+        return {
+          optimizeDeps: {
+            exclude: ["cloudflare:workers"],
+          }
+        }
+      },
       configEnvironment(name) {
         if (resolvedPluginOpts.environments.includes(name)) {
           return {
