@@ -6,7 +6,7 @@ export default defineConfig((_env) => ({
   plugins: [
     importAttributes(),
     {
-      name: 'import-bytes',
+      name: "import-bytes",
       resolveId(source, importer, options) {
         if (options.attributes["type"] === "bytes") {
         }
@@ -14,6 +14,6 @@ export default defineConfig((_env) => ({
       load(id, options) {
         // TODO
       },
-    }
+    },
   ],
 }));
