@@ -7,13 +7,13 @@ export default defineConfig((_env) => ({
     importAttributes(),
     {
       name: "import-bytes",
-      resolveId(source, importer, options) {
-        if (options.attributes["type"] === "bytes") {
-        }
-      },
-      load(id, options) {
-        // TODO
-      },
+      // resolveId(source, importer, options) {
+      //   if (options.attributes["type"] === "bytes") {
+      //   }
+      // },
+      // load(id, options) {
+      //   // TODO
+      // },
     },
   ],
 }));
