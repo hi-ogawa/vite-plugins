@@ -21,28 +21,22 @@ npm install @hiogawa/vite-plugin-import-attributes
 The plugin transforms import statements with attributes into imports with query parameters, allowing other plugins to access and process these attributes, for example:
 
 ```js
-// [entry.js]
-import Counter from "./counter" with { island: "client-only" };
-
-// [counter.js]
-export function Counter() { ... }
+import data from "./data.bin" with { type: "bytes" };
 ```
 
 ```js
 // [vite.config.ts]
 import { defineConfig } from "vite";
-import importAttributes, {
-  parseImportAttributes,
-} from "@hiogawa/vite-plugin-import-attributes";
+import importAttributes, { parseImportAttributes } from "@hiogawa/vite-plugin-import-attributes";
 
 export default defineConfig({
   plugins: [
     importAttributes(),
     {
-      name: "island-plugin",
+      name: "import-bytes",
       load(id) {
         const { rawId, attributes } = parseImportAttributes(id);
-        if (attributes["island"] === "client-only") {
+        if (attributes["type"] === "bytes") {
           // Custom transformation based on attributes
           return ...
         }
@@ -90,52 +84,6 @@ Utility function to extract attributes from a transformed module ID.
 
 2. Other Vite plugins can then use `parseImportAttributes` to extract and process these attributes during module resolution or transformation.
 
-## Example: Custom Binary Loader
+## Examples
 
-Here's a complete example showing how to load binary files with a custom attribute:
-
-```js
-// [src/main.js]
-import data from "./data.bin" with { type: "bytes" };
-
-const decoded = new TextDecoder().decode(data);
-console.log(decoded); // Output: hello
-```
-
-```js
-// [vite.config.ts]
-import { readFileSync } from "fs";
-import importAttributes, {
-  parseImportAttributes,
-} from "@hiogawa/vite-plugin-import-attributes";
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  plugins: [
-    importAttributes(),
-    {
-      name: "import-bytes",
-      load(id) {
-        const { rawId, attributes } = parseImportAttributes(id);
-        if (attributes["type"] === "bytes") {
-          const data = readFileSync(rawId);
-          const base64 = data.toString("base64");
-          return `export default (${base64ToBytes.toString()}(${JSON.stringify(base64)}));`;
-        }
-      },
-    },
-  ],
-});
-
-function base64ToBytes(str: string): Uint8Array {
-  const binaryString = atob(str);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
-```
-
-See [examples/basic](./examples/basic) for a working demo.
+- [examples/basic](./examples/basic)
