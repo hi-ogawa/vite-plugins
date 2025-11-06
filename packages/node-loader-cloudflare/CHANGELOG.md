@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.2 (2025-11-06)
+
+- fix: add vite as peer dep ([#1316](https://github.com/hi-ogawa/vite-plugins/pull/1316))
+
 ## v0.0.1 (2025-11-06)
 
 - feat: export `waitUntil` ([#1305](https://github.com/hi-ogawa/vite-plugins/pull/1305))
