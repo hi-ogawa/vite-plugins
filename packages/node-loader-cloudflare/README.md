@@ -1,6 +1,6 @@
 # @hiogawa/node-loader-cloudflare
 
-Enable `cloudflare:workers` imports in Vite for both development and deployment via Node.js custom loaders and Wrangler's platform proxy:
+Enable `cloudflare:workers` imports via Node.js custom loaders with Wrangler's platform proxy:
 
 ```js
 import { env, waitUntil } from "cloudflare:workers";
@@ -60,7 +60,9 @@ This allows you to:
 
 ## Example
 
-- [basic](./examples/basic)
+- [Basic SSR example](./examples/basic)
+- [React Router RSC Framework Mode](https://github.com/hi-ogawa/vite-rsc-node-loader-cloudflare-example/)
+- [Waku](https://github.com/wakujs/waku/pull/1749)
 
 ## License
 
