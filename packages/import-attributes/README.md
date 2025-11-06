@@ -4,6 +4,9 @@ A Vite plugin that transforms [import attributes](https://github.com/tc39/propos
 
 This is a userland implementation of the feature discussed in https://github.com/vitejs/vite/discussions/18534#discussioncomment-12078191.
 
+- https://github.com/vitejs/vite/issues/14674
+- https://github.com/vitejs/vite/issues/12140
+
 ## Installation
 
 ```bash
