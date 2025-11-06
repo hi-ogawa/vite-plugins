@@ -22,7 +22,7 @@ describe(transformImportAttributes, () => {
   test("dynamic import", () => {
     const input = `import("./counter", { with: { island: "client-only" } });`;
     expect(transformImportAttributes(input)?.toString()).toMatchInlineSnapshot(
-      `"import("./counter"?__attributes=%7B%22with%22%3A%7B%22island%22%3A%22client-only%22%7D%7D,);"`,
+      `"import("./counter?__attributes=%7B%22island%22%3A%22client-only%22%7D");"`,
     );
   });
 });

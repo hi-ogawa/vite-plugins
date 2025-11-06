@@ -1,8 +1,12 @@
 import data from "./data.bin" with { type: "bytes" };
 
-function main() {
-  const decoded = new TextDecoder().decode(data);
-  document.getElementById("app")!.textContent = `data.bin: ${decoded}`;
+async function main() {
+  document.getElementById("app")!.textContent =
+    `data.bin: ${new TextDecoder().decode(data)}`;
+
+  const dynamic = await import("./dynamic.bin", { with: { type: "bytes" } });
+  document.getElementById("app")!.textContent +=
+    `, dynamic.bin: ${new TextDecoder().decode(dynamic.default)}`;
 }
 
 main();
