@@ -17,6 +17,11 @@ export interface NodeLoaderCloudflarePluginOptions {
    * Options to pass to `getPlatformProxy` from `wrangler`.
    */
   options?: GetPlatformProxyOptions;
+  /**
+   * Whether to expose Cloudflare globals like `WebSocketPair` and `caches` to globalThis.
+   * @default false
+   */
+  exposeGlobals?: boolean;
 }
 
 export default function nodeLoaderCloudflarePlugin(
@@ -36,6 +41,7 @@ export default function nodeLoaderCloudflarePlugin(
     build: pluginOpts?.build ?? false,
     environments: pluginOpts?.environments ?? ["ssr"],
     options: pluginOpts?.options ?? {},
+    exposeGlobals: pluginOpts?.exposeGlobals ?? false,
   };
 
   return [
@@ -57,7 +63,7 @@ export default function nodeLoaderCloudflarePlugin(
         }
         if (!registerPromise) {
           console.log("[node-loader-cloudflare] registering...");
-          registerPromise = registerCloudflare(resolvedPluginOpts.options);
+          registerPromise = registerCloudflare(resolvedPluginOpts);
         }
         await registerPromise;
       },

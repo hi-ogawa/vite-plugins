@@ -2,11 +2,28 @@ import * as nodeModule from "node:module";
 import { type GetPlatformProxyOptions, getPlatformProxy } from "wrangler";
 
 // use node custom loader to implement "cloudflare:workers"
-export async function registerCloudflare(
-  options?: GetPlatformProxyOptions,
-): Promise<() => Promise<void>> {
+export async function registerCloudflare(registerOptions?: {
+  options?: GetPlatformProxyOptions;
+  exposeGlobals?: boolean;
+}): Promise<() => Promise<void>> {
+  const { options, exposeGlobals } = registerOptions ?? {};
   const platformProxy = await getPlatformProxy(options);
   (globalThis as any).__node_loader_cloudflare_platform_proxy = platformProxy;
+
+  // TODO: what to do with?
+  // platformProxy.cf;
+  // platformProxy.ctx;
+  if (exposeGlobals) {
+    if (!(globalThis as any).caches) {
+      Object.assign(globalThis, {
+        caches: platformProxy.caches,
+      });
+    }
+    try {
+      const miniflare = await import("miniflare");
+      Object.assign(globalThis, { WebSocketPair: miniflare.WebSocketPair });
+    } catch {}
+  }
 
   const resolveFn: nodeModule.ResolveHook = async function (
     specifier,
