@@ -1,0 +1,31 @@
+{
+  "name": "@hiogawa/vite-plugin-import-attributes",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/import-attributes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hi-ogawa/vite-plugins.git",
+    "directory": "packages/import-attributes"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsdown --sourcemap --watch src",
+    "build": "tsdown",
+    "prepack": "tsdown --clean",
+    "test": "vitest",
+    "test-e2e": "playwright test"
+  },
+  "dependencies": {
+    "es-module-lexer": "^1.6.0",
+    "magic-string": "^0.30.17"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}
