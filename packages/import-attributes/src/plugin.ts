@@ -40,19 +40,23 @@ export function transformImportAttributes(
   const parsed = esModuleLexer.parse(code);
   let output: MagicString | undefined;
   for (const importSpecifier of parsed[0]) {
-    const { e: end, se: expEnd, a: attributeIndex } = importSpecifier;
+    let { e: moduleEnd, se: statementEnd, a: attributeIndex } = importSpecifier;
     if (attributeIndex > -1) {
-      const attributesCode = code.slice(attributeIndex, expEnd);
+      // tweak end for dynamic import
+      if (code[statementEnd - 1] === ")") {
+        statementEnd--;
+      }
+      const attributesCode = code.slice(attributeIndex, statementEnd);
       const attributes = evalValue(attributesCode);
       output ??= new MagicString(code);
       output.appendLeft(
-        end,
+        moduleEnd,
         "?" +
           new URLSearchParams({
             [KEY]: JSON.stringify(attributes),
           }),
       );
-      output.remove(end + 1, expEnd);
+      output.remove(moduleEnd + 1, statementEnd);
     }
   }
   return output;
