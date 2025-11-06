@@ -43,11 +43,16 @@ export function transformImportAttributes(
     let { e: moduleEnd, se: statementEnd, a: attributeIndex } = importSpecifier;
     if (attributeIndex > -1) {
       // tweak end for dynamic import
-      if (code[statementEnd - 1] === ")") {
+      const isDynamicImport = code[statementEnd - 1] === ")";
+      if (isDynamicImport) {
+        moduleEnd--;
         statementEnd--;
       }
       const attributesCode = code.slice(attributeIndex, statementEnd);
-      const attributes = evalValue(attributesCode);
+      let attributes = evalValue(attributesCode);
+      if (isDynamicImport) {
+        attributes = attributes.with;
+      }
       output ??= new MagicString(code);
       output.appendLeft(
         moduleEnd,
