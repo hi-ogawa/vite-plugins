@@ -5,6 +5,11 @@ import { registerCloudflare } from ".";
 
 export interface NodeLoaderCloudflarePluginOptions {
   /**
+   * Options to pass to `getPlatformProxy` from `wrangler`.
+   * @link https://developers.cloudflare.com/workers/wrangler/api/#getplatformproxy
+   */
+  getPlatformProxyOptions?: GetPlatformProxyOptions;
+  /**
    * Whether to enable the plugin during build time for SSG etc.
    * @default false
    */
@@ -13,10 +18,6 @@ export interface NodeLoaderCloudflarePluginOptions {
    * @default ["ssr"]
    */
   environments?: string[];
-  /**
-   * Options to pass to `getPlatformProxy` from `wrangler`.
-   */
-  getPlatformProxyOptions?: GetPlatformProxyOptions;
   /**
    * Whether to expose Cloudflare globals like `WebSocketPair` and `caches` to globalThis.
    * @default false
