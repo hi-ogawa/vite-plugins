@@ -62,10 +62,12 @@ export function transformImportAttributes(
   return output;
 }
 
-export function getImportAttributesFromId(id: string): {
+export type ImportAttributesMeta = {
   rawId: string;
   attributes: Record<string, unknown>;
-} {
+};
+
+export function parseImportAttributes(id: string): ImportAttributesMeta {
   const { filename, query } = parseIdQuery(id);
   if (query[KEY]) {
     const attributes = JSON.parse(query[KEY]);

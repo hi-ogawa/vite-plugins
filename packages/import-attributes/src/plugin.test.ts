@@ -3,7 +3,7 @@ import * as esModuleLexer from "es-module-lexer";
 import * as vite from "vite";
 import { beforeAll, describe, expect, onTestFinished, test } from "vitest";
 import vitePluginImportAttributes, {
-  getImportAttributesFromId,
+  parseImportAttributes,
   transformImportAttributes,
 } from "./plugin";
 
@@ -42,7 +42,7 @@ describe("e2e", () => {
       {
         name: "test-plugin",
         load(id) {
-          const { rawId, attributes } = getImportAttributesFromId(id);
+          const { rawId, attributes } = parseImportAttributes(id);
           if (attributes["island"] === "test") {
             return `\
 import * as module from ${JSON.stringify(rawId)};

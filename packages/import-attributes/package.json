@@ -18,7 +18,8 @@
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
     "prepack": "tsdown --clean",
-    "test": "vitest"
+    "test": "vitest",
+    "test-e2e": "playwright test"
   },
   "dependencies": {
     "es-module-lexer": "^1.6.0",
