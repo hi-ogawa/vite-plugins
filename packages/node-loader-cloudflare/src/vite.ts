@@ -52,8 +52,8 @@ export default function nodeLoaderCloudflarePlugin(
         return {
           optimizeDeps: {
             exclude: ["cloudflare:workers"],
-          }
-        }
+          },
+        };
       },
       configEnvironment(name) {
         if (resolvedPluginOpts.environments.includes(name)) {
