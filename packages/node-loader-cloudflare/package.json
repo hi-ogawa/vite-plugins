@@ -27,8 +27,8 @@
   },
   "peerDependencies": {
     "miniflare": "*",
-    "wrangler": "*",
-    "vite": "*"
+    "vite": "*",
+    "wrangler": "*"
   },
   "peerDependenciesMeta": {
     "miniflare": {
