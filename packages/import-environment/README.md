@@ -1,12 +1,10 @@
 # @hiogawa/vite-plugin-import-environment
 
+TODO: docs
+
 A Vite plugin that transforms [import attributes](https://github.com/tc39/proposal-import-attributes) into query parameters, enabling custom module handling based on import metadata.
 
 This is a userland implementation of the feature discussed in https://github.com/vitejs/vite/discussions/18534#discussioncomment-12078191.
-
-<!--
-https://github.com/jacob-ebey/vite-import-env/
--->
 
 ## Installation
 
