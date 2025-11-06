@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import importAttributes, {
-  getImportAttributesFromId,
+  // getImportAttributesFromId,
+  type importAttributesMeta,
 } from "@hiogawa/vite-plugin-import-attributes";
 import { defineConfig } from "vite";
 
@@ -11,8 +12,17 @@ export default defineConfig((_env) => ({
     {
       name: "import-bytes",
       load(id) {
-        const { rawId, attributes } = getImportAttributesFromId(id);
+        const meta: importAttributesMeta =
+          this.getModuleInfo(id)?.meta["vite-plugin-import-attributes"];
+        if (!meta) return;
+        const { rawId, attributes } = meta;
         if (attributes["type"] === "bytes") {
+          // console.log(`<attributes["type"] === "bytes">`, {
+          //   id,
+          //   rawId,
+          //   attributes,
+          //   moduleInfo: this.getModuleInfo(id),
+          // });
           const data = readFileSync(rawId);
           const base64 = data.toString("base64");
           return `export default (${base64ToBytes.toString()}(${JSON.stringify(base64)}));`;

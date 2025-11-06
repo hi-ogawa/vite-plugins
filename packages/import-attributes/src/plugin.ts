@@ -28,6 +28,22 @@ export default function vitePluginImportAttributes(pluginOptions?: {
           };
         }
       },
+      resolveId: {
+        order: "pre",
+        async handler(source, importer, options) {
+          const result = getImportAttributesFromId(source);
+          if (Object.keys(result.attributes).length > 0) {
+            const resolved = await this.resolve(source, importer, options);
+            console.log({ source, result, resolved });
+            if (resolved) {
+              resolved.meta ??= {};
+              resolved.meta["vite-plugin-import-attributes"] =
+                getImportAttributesFromId(resolved.id);
+            }
+            return resolved;
+          }
+        },
+      },
     },
   ];
 }
@@ -61,6 +77,11 @@ export function transformImportAttributes(
   }
   return output;
 }
+
+export type importAttributesMeta = {
+  rawId: string;
+  attributes: Record<string, unknown>;
+};
 
 export function getImportAttributesFromId(id: string): {
   rawId: string;
