@@ -17,6 +17,6 @@ function defineTest(f: Fixture) {
 
     // Verify that the binary file was imported and decoded correctly
     const appContent = page.locator("#app");
-    await expect(appContent).toHaveText("data.bin: hello");
+    await expect(appContent).toHaveText("data.bin: hello, dynamic.bin: world");
   });
 }

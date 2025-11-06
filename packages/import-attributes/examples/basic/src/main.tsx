@@ -2,11 +2,11 @@ import data from "./data.bin" with { type: "bytes" };
 
 async function main() {
   document.getElementById("app")!.textContent =
-    `data.bin: ${new TextDecoder().decode(data)}`;
+    `data.bin: ${new TextDecoder().decode(data).trim()}`;
 
   const dynamic = await import("./dynamic.bin", { with: { type: "bytes" } });
   document.getElementById("app")!.textContent +=
-    `, dynamic.bin: ${new TextDecoder().decode(dynamic.default)}`;
+    `, dynamic.bin: ${new TextDecoder().decode(dynamic.default).trim()}`;
 }
 
 main();
