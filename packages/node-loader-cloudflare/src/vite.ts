@@ -63,10 +63,7 @@ export default function nodeLoaderCloudflarePlugin(
         }
         if (!registerPromise) {
           console.log("[node-loader-cloudflare] registering...");
-          registerPromise = registerCloudflare(
-            resolvedPluginOpts.options,
-            resolvedPluginOpts.exposeGlobals,
-          );
+          registerPromise = registerCloudflare(resolvedPluginOpts);
         }
         await registerPromise;
       },
