@@ -3,11 +3,11 @@ import { type GetPlatformProxyOptions, getPlatformProxy } from "wrangler";
 
 // use node custom loader to implement "cloudflare:workers"
 export async function registerCloudflare(registerOptions?: {
-  options?: GetPlatformProxyOptions;
+  getPlatformProxyOptions?: GetPlatformProxyOptions;
   exposeGlobals?: boolean;
 }): Promise<() => Promise<void>> {
-  const { options, exposeGlobals } = registerOptions ?? {};
-  const platformProxy = await getPlatformProxy(options);
+  const { getPlatformProxyOptions, exposeGlobals } = registerOptions ?? {};
+  const platformProxy = await getPlatformProxy(getPlatformProxyOptions);
   (globalThis as any).__node_loader_cloudflare_platform_proxy = platformProxy;
 
   if (exposeGlobals) {

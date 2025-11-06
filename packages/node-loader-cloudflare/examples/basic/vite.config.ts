@@ -8,6 +8,9 @@ export default defineConfig((_env) => ({
     fullstack(),
     nodeLoaderCloudflare({
       exposeGlobals: true,
+      getPlatformProxyOptions: {
+        persist: true,
+      },
     }),
   ],
   environments: {

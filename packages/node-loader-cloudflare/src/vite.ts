@@ -16,7 +16,7 @@ export interface NodeLoaderCloudflarePluginOptions {
   /**
    * Options to pass to `getPlatformProxy` from `wrangler`.
    */
-  options?: GetPlatformProxyOptions;
+  getPlatformProxyOptions?: GetPlatformProxyOptions;
   /**
    * Whether to expose Cloudflare globals like `WebSocketPair` and `caches` to globalThis.
    * @default false
@@ -40,7 +40,7 @@ export default function nodeLoaderCloudflarePlugin(
   const resolvedPluginOpts: Required<NodeLoaderCloudflarePluginOptions> = {
     build: pluginOpts?.build ?? false,
     environments: pluginOpts?.environments ?? ["ssr"],
-    options: pluginOpts?.options ?? {},
+    getPlatformProxyOptions: pluginOpts?.getPlatformProxyOptions ?? {},
     exposeGlobals: pluginOpts?.exposeGlobals ?? false,
   };
 
