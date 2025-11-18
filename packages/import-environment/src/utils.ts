@@ -65,6 +65,9 @@ export function getEntrySource(
   name: string = "index",
 ): string {
   const input = config.build.rollupOptions.input;
+  if (typeof input == "string") {
+    return input;
+  }
   assert(
     typeof input === "object" &&
       !Array.isArray(input) &&

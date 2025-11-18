@@ -22,7 +22,7 @@ export default function vitePluginImportEnvironment(_pluginOpts?: {}): Plugin[] 
         server = server_;
       },
       async transform(code) {
-        if (!code.includes("import.meta.viteRsc.loadModule")) return;
+        if (!code.includes("import.meta.loadEnvironmentModule")) return;
         const s = new MagicString(code);
         for (const match of stripLiteral(code).matchAll(
           /import\.meta\.viteRsc\.loadModule\(([\s\S]*?)\)/dg,
@@ -42,8 +42,9 @@ export default function vitePluginImportEnvironment(_pluginOpts?: {}): Plugin[] 
                 environmentName,
               )}]` + `.runner.import(${JSON.stringify(resolved.id)})`;
           } else {
+            this.environment.name;
             replacement = JSON.stringify(
-              `__vite_rsc_load_module:${this.environment.name}:${environmentName}:${entryName}`,
+              `__vite_load_environment_module:${this.environment.name}:${environmentName}:${entryName}`,
             );
           }
           const [start, end] = match.indices![0]!;
@@ -57,10 +58,10 @@ export default function vitePluginImportEnvironment(_pluginOpts?: {}): Plugin[] 
         }
       },
       renderChunk(code, chunk) {
-        if (!code.includes("__vite_rsc_load_module")) return;
+        if (!code.includes("__vite_load_environment_module")) return;
         const s = new MagicString(code);
         for (const match of code.matchAll(
-          /['"]__vite_rsc_load_module:(\w+):(\w+):(\w+)['"]/dg,
+          /['"]__vite_load_environment_module:(\w+):(\w+):(\w+)['"]/dg,
         )) {
           const [fromEnv, toEnv, entryName] = match.slice(1);
           const importPath = normalizeRelativePath(
