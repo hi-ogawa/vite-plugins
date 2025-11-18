@@ -1,12 +1,16 @@
 import assetsManifest from "virtual:assets-manifest";
 import { renderToString } from "react-dom/server";
 
-export default async function handler(_request: Request): Promise<Response> {
+async function handler(_request: Request): Promise<Response> {
   const html = renderToString(<Root />);
   return new Response(html, {
     headers: { "Content-Type": "text/html" },
   });
 }
+
+export default {
+  fetch: handler,
+};
 
 function Root() {
   return (

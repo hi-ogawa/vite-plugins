@@ -70,9 +70,10 @@ export async function buildApp(
           load(id) {
             if (id === "\0virtual:renderer-entry") {
               return `\
-import handler from 'virtual:renderer-entry-inner';
-import { defineEventHandler, toWebRequest } from "h3"
-export default defineEventHandler((event) => handler(toWebRequest(event)))
+import * as entryExports from "virtual:renderer-entry-inner";
+import { defineEventHandler, toWebRequest } from "h3";
+const handler = (${getFetchHandlerExport.toString()})(entryExports);
+export default defineEventHandler((event) => handler(toWebRequest(event)));
 `;
             }
           },
@@ -124,6 +125,25 @@ export default defineEventHandler((event) => handler(toWebRequest(event)))
   }
   await build(nitro);
   await nitro.close();
+}
+
+// https://github.com/vitejs/vite-plugin-react/blob/87557115710b060ee9f534300a7209ddc62be9cf/packages/plugin-rsc/src/plugins/utils.ts#L87
+function getFetchHandlerExport(exports: object): any {
+  if ("default" in exports) {
+    const default_ = exports.default;
+    if (
+      default_ &&
+      typeof default_ === "object" &&
+      "fetch" in default_ &&
+      typeof default_.fetch === "function"
+    ) {
+      return default_.fetch;
+    }
+    if (typeof default_ === "function") {
+      return default_;
+    }
+  }
+  throw new Error("Invalid server handler entry");
 }
 
 // In Waku's case, it currently has own prerender pass, so this is not necessary.
