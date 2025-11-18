@@ -129,21 +129,21 @@ export default defineEventHandler((event) => handler(toWebRequest(event)));
 
 // https://github.com/vitejs/vite-plugin-react/blob/87557115710b060ee9f534300a7209ddc62be9cf/packages/plugin-rsc/src/plugins/utils.ts#L87
 function getFetchHandlerExport(exports: object): any {
-  if ('default' in exports) {
-    const default_ = exports.default
+  if ("default" in exports) {
+    const default_ = exports.default;
     if (
       default_ &&
-      typeof default_ === 'object' &&
-      'fetch' in default_ &&
-      typeof default_.fetch === 'function'
+      typeof default_ === "object" &&
+      "fetch" in default_ &&
+      typeof default_.fetch === "function"
     ) {
-      return default_.fetch
+      return default_.fetch;
     }
-    if (typeof default_ === 'function') {
-      return default_
+    if (typeof default_ === "function") {
+      return default_;
     }
   }
-  throw new Error('Invalid server handler entry')
+  throw new Error("Invalid server handler entry");
 }
 
 // In Waku's case, it currently has own prerender pass, so this is not necessary.
