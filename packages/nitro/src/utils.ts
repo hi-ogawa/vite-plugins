@@ -72,6 +72,7 @@ export async function buildApp(
               return `\
 import handler from 'virtual:renderer-entry-inner';
 import { defineEventHandler, toWebRequest } from "h3"
+const fetchHandler = handler.default || handler;
 export default defineEventHandler((event) => handler(toWebRequest(event)))
 `;
             }
