@@ -332,7 +332,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             let replacement = importedNames[0]!;
             if (importedNames.length > 1) {
               newImports.add(
-                `;import * as __assets_runtime from "@hiogawa/vite-plugin-fullstack/runtime";\n`,
+                `;import * as __assets_runtime from "virtual:fullstack/runtime";\n`,
               );
               replacement = `__assets_runtime.mergeAssets(${importedNames.join(", ")})`;
             }
@@ -356,6 +356,9 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       resolveId: {
         handler(source) {
+          if (source === "virtual:fullstack/runtime") {
+            return "\0" + source;
+          }
           if (source.startsWith("virtual:fullstack/assets?")) {
             return "\0" + source;
           }
@@ -368,6 +371,13 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       },
       load: {
         async handler(id) {
+          if (id === "\0virtual:fullstack/runtime") {
+            return fs.readFileSync(
+              path.join(import.meta.dirname, "runtime.js"),
+              "utf-8",
+            );
+          }
+
           const parsed = parseAssetsVirtual(id);
           if (!parsed) return;
           assert.notEqual(this.environment.name, "client");
@@ -463,9 +473,6 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
             if (this.environment.name === "client") {
               return `\0virtual:fullstack/empty-assets`;
             }
-          }
-          if (source === "virtual:fullstack/runtime") {
-            return this.resolve("./runtime.js", import.meta.filename);
           }
         },
       },
