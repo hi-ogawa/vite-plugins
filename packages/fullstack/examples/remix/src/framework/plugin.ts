@@ -89,7 +89,7 @@ import * as __dom from "@remix-run/dom";
 
           const s = new MagicString(code);
           const matches = code.matchAll(
-            /\b(export)\s+(function|const)\s+(\w+)/dg,
+            /\b(export)\s+(?:async)?\s(function|const)\s+(\w+)/dg,
           );
           for (const match of matches) {
             const [exportStart, exportEnd] = match.indices![1];

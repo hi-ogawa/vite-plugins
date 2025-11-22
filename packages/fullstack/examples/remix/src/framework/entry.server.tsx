@@ -60,7 +60,9 @@ const resolveFrame = async (src: string) => {
   const exportName = url.searchParams.get("exportName")!;
   const props = JSON.parse(url.searchParams.get("props")!);
   const mod: any = await frameModules["./" + entry]();
-  return jsx(mod[exportName].Component, props);
+  const Component = mod[exportName].Component;
+  const setupResult = await Component(props); // support async setup
+  return jsx(setupResult, props);
 };
 
 function renderToHtmlResponse(el: Remix.RemixNode) {
