@@ -1,0 +1,14 @@
+{
+  "name": "@hiogawa/vite-plugin-import-attributes-example-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@hiogawa/vite-plugin-import-attributes": "latest",
+    "vite": "^7.1.5"
+  }
+}

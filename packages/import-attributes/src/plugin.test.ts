@@ -3,7 +3,7 @@ import * as esModuleLexer from "es-module-lexer";
 import * as vite from "vite";
 import { beforeAll, describe, expect, onTestFinished, test } from "vitest";
 import vitePluginImportAttributes, {
-  getImportAttributesFromId,
+  parseImportAttributes,
   transformImportAttributes,
 } from "./plugin";
 
@@ -11,11 +11,20 @@ beforeAll(async () => {
   await esModuleLexer.init;
 });
 
-test(transformImportAttributes, () => {
-  const input = `import { Counter } from "./counter" with { island: "client-only" };`;
-  expect(transformImportAttributes(input)?.toString()).toMatchInlineSnapshot(
-    `"import { Counter } from "./counter?__attributes=%7B%22island%22%3A%22client-only%22%7D";"`,
-  );
+describe(transformImportAttributes, () => {
+  test("basic", () => {
+    const input = `import { Counter } from "./counter" with { island: "client-only" };`;
+    expect(transformImportAttributes(input)?.toString()).toMatchInlineSnapshot(
+      `"import { Counter } from "./counter?__attributes=%7B%22island%22%3A%22client-only%22%7D";"`,
+    );
+  });
+
+  test("dynamic import", () => {
+    const input = `import("./counter", { with: { island: "client-only" } });`;
+    expect(transformImportAttributes(input)?.toString()).toMatchInlineSnapshot(
+      `"import("./counter?__attributes=%7B%22island%22%3A%22client-only%22%7D");"`,
+    );
+  });
 });
 
 describe("e2e", () => {
@@ -33,7 +42,7 @@ describe("e2e", () => {
       {
         name: "test-plugin",
         load(id) {
-          const { rawId, attributes } = getImportAttributesFromId(id);
+          const { rawId, attributes } = parseImportAttributes(id);
           if (attributes["island"] === "test") {
             return `\
 import * as module from ${JSON.stringify(rawId)};

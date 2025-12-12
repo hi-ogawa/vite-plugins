@@ -1,0 +1,19 @@
+{
+  "name": "@hiogawa/node-loader-cloudflare-example-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "types": "wrangler types",
+    "preview": "wrangler dev",
+    "release": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@hiogawa/node-loader-cloudflare": "latest",
+    "@hiogawa/vite-plugin-fullstack": "latest",
+    "hono": "^4.7.5",
+    "vite": "^7.1.5",
+    "wrangler": "^4.41.0"
+  }
+}

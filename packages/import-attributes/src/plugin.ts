@@ -40,28 +40,39 @@ export function transformImportAttributes(
   const parsed = esModuleLexer.parse(code);
   let output: MagicString | undefined;
   for (const importSpecifier of parsed[0]) {
-    const { e: end, se: expEnd, a: attributeIndex } = importSpecifier;
+    let { e: moduleEnd, se: statementEnd, a: attributeIndex } = importSpecifier;
     if (attributeIndex > -1) {
-      const attributesCode = code.slice(attributeIndex, expEnd);
-      const attributes = evalValue(attributesCode);
+      // tweak end for dynamic import
+      const isDynamicImport = code[statementEnd - 1] === ")";
+      if (isDynamicImport) {
+        moduleEnd--;
+        statementEnd--;
+      }
+      const attributesCode = code.slice(attributeIndex, statementEnd);
+      let attributes = evalValue(attributesCode);
+      if (isDynamicImport) {
+        attributes = attributes.with;
+      }
       output ??= new MagicString(code);
       output.appendLeft(
-        end,
+        moduleEnd,
         "?" +
           new URLSearchParams({
             [KEY]: JSON.stringify(attributes),
           }),
       );
-      output.remove(end + 1, expEnd);
+      output.remove(moduleEnd + 1, statementEnd);
     }
   }
   return output;
 }
 
-export function getImportAttributesFromId(id: string): {
+export type ImportAttributesMeta = {
   rawId: string;
   attributes: Record<string, unknown>;
-} {
+};
+
+export function parseImportAttributes(id: string): ImportAttributesMeta {
   const { filename, query } = parseIdQuery(id);
   if (query[KEY]) {
     const attributes = JSON.parse(query[KEY]);

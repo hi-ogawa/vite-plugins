@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.4 (2025-11-18)
+
+- fix(nitro): support `export default { fetch }` handler ([#1320](https://github.com/hi-ogawa/vite-plugins/pull/1320))
+
 ## v0.0.3 (2025-09-24)
 
 - fix(nitro): avoid `dist` since it breaks netlify ([#1163](https://github.com/hi-ogawa/vite-plugins/pull/1163))

@@ -1,5 +1,4 @@
-// @ts-ignore
-import "virtual:react-hmr-preamble";
+import "@vitejs/plugin-react/preamble";
 import "./rpc.client";
 import {
   HydrationBoundary,
