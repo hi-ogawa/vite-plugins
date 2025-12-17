@@ -673,12 +673,12 @@ function hasSpecialCssQuery(id: string): boolean {
   return /[?&](url|inline|raw)(\b|=|&|$)/.test(id);
 }
 
-// Internal type for build manifest that supports RuntimeAsset for dynamic URL generation.
+// Internal type for build manifest that supports BuildAssetURL for dynamic URL generation.
 // This differs from ImportAssetsResultRaw which is exported and used at runtime with string URLs only.
 type BuildAssetsManifestRaw = {
-  entry?: string | RuntimeAsset;
-  js: { href: string | RuntimeAsset }[];
-  css: { href: string | RuntimeAsset; "data-vite-dev-id"?: string }[];
+  entry?: BuildAssetURL;
+  js: { href: BuildAssetURL }[];
+  css: { href: BuildAssetURL; "data-vite-dev-id"?: string }[];
 };
 
 type BuildAssetsManifest = {
@@ -852,18 +852,18 @@ function patchCssLinkSelfAccept(): Plugin {
 // advanced base option support ported from @vitejs/plugin-rsc
 // https://github.com/vitejs/vite-plugin-react/pull/612
 
-// TODO: refactor to BuildAssetURL to
-// accomodate string | RuntimeAsset union internally
-class RuntimeAsset {
+type BuildAssetURL = string | BuildAssetsURLWithRuntime;
+
+class BuildAssetsURLWithRuntime {
   constructor(public runtime: string) {}
 }
 
-function serializeValueWithRuntime(value: any) {
+function serializeValueWithRuntime(value: BuildAssetsManifest) {
   const replacements: [string, string][] = [];
   let result = JSON.stringify(
     value,
     (_key, value) => {
-      if (value instanceof RuntimeAsset) {
+      if (value instanceof BuildAssetsURLWithRuntime) {
         const placeholder = `__runtime_placeholder_${replacements.length}__`;
         replacements.push([placeholder, value.runtime]);
         return placeholder;
@@ -881,7 +881,7 @@ function serializeValueWithRuntime(value: any) {
   return result;
 }
 
-function assetsURL(url: string, config: ResolvedConfig): string | RuntimeAsset {
+function assetsURL(url: string, config: ResolvedConfig): BuildAssetURL {
   if (
     config.command === "build" &&
     typeof config.experimental?.renderBuiltUrl === "function"
@@ -896,7 +896,7 @@ function assetsURL(url: string, config: ResolvedConfig): string | RuntimeAsset {
 
     if (typeof result === "object") {
       if (result.runtime) {
-        return new RuntimeAsset(result.runtime);
+        return new BuildAssetsURLWithRuntime(result.runtime);
       }
       assert(
         !result.relative,
