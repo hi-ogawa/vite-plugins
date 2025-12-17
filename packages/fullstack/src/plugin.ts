@@ -28,6 +28,7 @@ import {
 } from "./plugins/shared";
 import {
   createVirtualPlugin,
+  escapeRegExp,
   getEntrySource,
   hashString,
   normalizeRelativePath,
@@ -758,6 +759,7 @@ function patchViteClientPlugin(): Plugin {
   return {
     name: "fullstack:patch-vite-client",
     transform: {
+      filter: { id: new RegExp("^" + escapeRegExp(viteClientPath) + "$") },
       handler(code, id) {
         if (id === viteClientPath) {
           // skip for latest vite https://github.com/vitejs/vite/pull/20767
