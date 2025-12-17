@@ -109,6 +109,66 @@ export function serverHandlerPlugin(
   ];
 }
 
+class RuntimeAsset {
+  runtime: string;
+  constructor(value: string) {
+    this.runtime = value;
+  }
+}
+
+function serializeValueWithRuntime(value: any) {
+  const replacements: [string, string][] = [];
+  let result = JSON.stringify(
+    value,
+    (_key, value) => {
+      if (value instanceof RuntimeAsset) {
+        const placeholder = `__runtime_placeholder_${replacements.length}__`;
+        replacements.push([placeholder, value.runtime]);
+        return placeholder;
+      }
+
+      return value;
+    },
+    2,
+  );
+
+  for (const [placeholder, runtime] of replacements) {
+    result = result.replace(`"${placeholder}"`, runtime);
+  }
+
+  return result;
+}
+
+function assetsURL(url: string, config: ResolvedConfig): string | RuntimeAsset {
+  if (
+    config.command === "build" &&
+    typeof config.experimental?.renderBuiltUrl === "function"
+  ) {
+    // https://github.com/vitejs/vite/blob/bdde0f9e5077ca1a21a04eefc30abad055047226/packages/vite/src/node/build.ts#L1369
+    const result = config.experimental.renderBuiltUrl(url, {
+      type: "asset",
+      hostType: "js",
+      ssr: true,
+      hostId: "",
+    });
+
+    if (typeof result === "object") {
+      if (result.runtime) {
+        return new RuntimeAsset(result.runtime);
+      }
+      assert(
+        !result.relative,
+        '"result.relative" not supported on renderBuiltUrl() for fullstack plugin',
+      );
+    } else if (result) {
+      return result satisfies string;
+    }
+  }
+
+  // https://github.com/vitejs/vite/blob/2a7473cfed96237711cda9f736465c84d442ddef/packages/vite/src/node/plugins/importAnalysisBuild.ts#L222-L230
+  return config.base + url;
+}
+
 export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   let server: ViteDevServer;
   let resolvedConfig: ResolvedConfig;
@@ -180,20 +240,19 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
           );
           return;
         }
-        const result: ImportAssetsResultRaw = {
+        const result: BuildAssetsManifestRaw = {
           js: [],
           css: [],
         };
         const { chunk, deps } = found;
-        // TODO: base
         if (environmentName === "client") {
-          result.entry = `/${chunk.fileName}`;
+          result.entry = assetsURL(chunk.fileName, builder.config);
           result.js = deps.js.map((fileName) => ({
-            href: `/${fileName}`,
+            href: assetsURL(fileName, builder.config),
           }));
         }
         result.css = deps.css.map((fileName) => ({
-          href: `/${fileName}`,
+          href: assetsURL(fileName, builder.config),
         }));
 
         // add single css when `cssCodeSplit: false`
@@ -204,7 +263,9 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
               v.type === "asset" && v.originalFileNames.includes("style.css"),
           );
           if (singleCss) {
-            result.css.push({ href: `/${singleCss.fileName}` });
+            result.css.push({
+              href: assetsURL(singleCss.fileName, builder.config),
+            });
           }
         }
 
@@ -222,7 +283,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       const outDir = builder.environments[environmentName]!.config.build.outDir;
       fs.writeFileSync(
         path.join(outDir, BUILD_ASSETS_MANIFEST_NAME),
-        `export default ${JSON.stringify(manifest, null, 2)};`,
+        `export default ${serializeValueWithRuntime(manifest)};`,
       );
 
       // copy assets to client (mainly for server css)
@@ -669,9 +730,15 @@ function hasSpecialCssQuery(id: string): boolean {
   return /[?&](url|inline|raw)(\b|=|&|$)/.test(id);
 }
 
+type BuildAssetsManifestRaw = {
+  entry?: string | RuntimeAsset;
+  js: { href: string | RuntimeAsset }[];
+  css: { href: string | RuntimeAsset; "data-vite-dev-id"?: string }[];
+};
+
 type BuildAssetsManifest = {
   [environment: string]: {
-    [import_: string]: ImportAssetsResultRaw;
+    [import_: string]: BuildAssetsManifestRaw;
   };
 };
 
