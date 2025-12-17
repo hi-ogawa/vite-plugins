@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.6 (2025-12-17)
+
+- refactor: use virtual runtime entry ([#1297](https://github.com/hi-ogawa/vite-plugins/pull/1297))
+
 ## v0.0.5 (2025-10-16)
 
 - feat: expose `ViteBuilder.writeAssetsManifest` ([#1288](https://github.com/hi-ogawa/vite-plugins/pull/1288))
