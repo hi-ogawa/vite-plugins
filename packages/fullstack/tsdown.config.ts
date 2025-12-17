@@ -14,8 +14,14 @@ export default defineConfig({
         "./dist/index.d.ts",
         `\nimport type {} from "@hiogawa/vite-plugin-fullstack/types";\n`,
       );
-      let pluginBundle = await readFile("dist/index.js", "utf-8")
-      await writeFile("dist/index.js", pluginBundle.replace(`fs.readFileSync(path.join(import.meta.dirname, "runtime.js"), "utf-8")`, `\`${await readFile("dist/runtime.js", "utf-8")}\``))
+      let pluginBundle = await readFile("dist/index.js", "utf-8");
+      await writeFile(
+        "dist/index.js",
+        pluginBundle.replace(
+          `fs.readFileSync(path.join(import.meta.dirname, "runtime.js"), "utf-8")`,
+          `\`${await readFile("dist/runtime.js", "utf-8")}\``,
+        ),
+      );
     },
   },
 }) as any;
