@@ -1,0 +1,14 @@
+{
+  "name": "@hiogawa/remix-hmr-examples-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev"
+  },
+  "devDependencies": {
+    "@hiogawa/remix-hmr": "workspace:*",
+    "@remix-run/dom": "0.0.0-experimental-remix-jam.6",
+    "@remix-run/events": "0.0.0-experimental-remix-jam.5",
+    "vite": "^7.1.5"
+  }
+}
