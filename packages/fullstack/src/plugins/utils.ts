@@ -37,6 +37,10 @@ export function withRollupError<F extends (...args: any[]) => any>(
   } as F;
 }
 
+export function escapeRegExp(string: string): string {
+  return string.replace(/[-\\^$*+?.()|[\]{}]/g, String.raw`\$&`);
+}
+
 export function createVirtualPlugin(
   name: string,
   load: Plugin["load"],
@@ -45,11 +49,13 @@ export function createVirtualPlugin(
   return {
     name: `rsc:virtual-${name}`,
     resolveId: {
+      filter: { id: new RegExp("^" + escapeRegExp(name) + "$") },
       handler(source, _importer, _options) {
         return source === name ? "\0" + name : undefined;
       },
     },
     load: {
+      filter: { id: new RegExp("^\\0" + escapeRegExp(name) + "$") },
       handler(id, options) {
         if (id === "\0" + name) {
           return (load as Function).apply(this, [id, options]);
