@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.7 (2025-12-17)
+
+- feat: support custom base URLs ([#1325](https://github.com/hi-ogawa/vite-plugins/pull/1325))
+
 ## v0.0.6 (2025-12-17)
 
 - refactor: use virtual runtime entry ([#1297](https://github.com/hi-ogawa/vite-plugins/pull/1297))
