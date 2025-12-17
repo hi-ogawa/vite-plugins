@@ -471,7 +471,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       sharedDuringBuild: true,
       resolveId: {
         order: "pre",
-        filter: { id: /[?&]assets=/ },
+        filter: { id: /[?&]assets/ },
         handler(source) {
           const { query } = parseIdQuery(source);
           const value = query["assets"];
@@ -483,7 +483,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         },
       },
       load: {
-        filter: { id: [/^\\0virtual:fullstack\/empty-assets$/, /[?&]assets=/] },
+        filter: { id: [/^\0virtual:fullstack\/empty-assets$/, /[?&]assets/] },
         async handler(id) {
           if (id === "\0virtual:fullstack/empty-assets") {
             return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
