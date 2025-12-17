@@ -730,6 +730,8 @@ function hasSpecialCssQuery(id: string): boolean {
   return /[?&](url|inline|raw)(\b|=|&|$)/.test(id);
 }
 
+// Internal type for build manifest that supports RuntimeAsset for dynamic URL generation.
+// This differs from ImportAssetsResultRaw which is exported and used at runtime with string URLs only.
 type BuildAssetsManifestRaw = {
   entry?: string | RuntimeAsset;
   js: { href: string | RuntimeAsset }[];
