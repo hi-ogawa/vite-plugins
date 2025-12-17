@@ -852,6 +852,8 @@ function patchCssLinkSelfAccept(): Plugin {
 // advanced base option support ported from @vitejs/plugin-rsc
 // https://github.com/vitejs/vite-plugin-react/pull/612
 
+// TODO: refactor to BuildAssetURL to
+// accomodate string | RuntimeAsset union internally
 class RuntimeAsset {
   constructor(public runtime: string) {}
 }
