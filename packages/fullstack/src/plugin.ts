@@ -109,66 +109,6 @@ export function serverHandlerPlugin(
   ];
 }
 
-class RuntimeAsset {
-  runtime: string;
-  constructor(value: string) {
-    this.runtime = value;
-  }
-}
-
-function serializeValueWithRuntime(value: any) {
-  const replacements: [string, string][] = [];
-  let result = JSON.stringify(
-    value,
-    (_key, value) => {
-      if (value instanceof RuntimeAsset) {
-        const placeholder = `__runtime_placeholder_${replacements.length}__`;
-        replacements.push([placeholder, value.runtime]);
-        return placeholder;
-      }
-
-      return value;
-    },
-    2,
-  );
-
-  for (const [placeholder, runtime] of replacements) {
-    result = result.replace(`"${placeholder}"`, runtime);
-  }
-
-  return result;
-}
-
-function assetsURL(url: string, config: ResolvedConfig): string | RuntimeAsset {
-  if (
-    config.command === "build" &&
-    typeof config.experimental?.renderBuiltUrl === "function"
-  ) {
-    // https://github.com/vitejs/vite/blob/bdde0f9e5077ca1a21a04eefc30abad055047226/packages/vite/src/node/build.ts#L1369
-    const result = config.experimental.renderBuiltUrl(url, {
-      type: "asset",
-      hostType: "js",
-      ssr: true,
-      hostId: "",
-    });
-
-    if (typeof result === "object") {
-      if (result.runtime) {
-        return new RuntimeAsset(result.runtime);
-      }
-      assert(
-        !result.relative,
-        '"result.relative" not supported on renderBuiltUrl() for fullstack plugin',
-      );
-    } else if (result) {
-      return result satisfies string;
-    }
-  }
-
-  // https://github.com/vitejs/vite/blob/2a7473cfed96237711cda9f736465c84d442ddef/packages/vite/src/node/plugins/importAnalysisBuild.ts#L222-L230
-  return config.base + url;
-}
-
 export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
   let server: ViteDevServer;
   let resolvedConfig: ResolvedConfig;
@@ -194,14 +134,17 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       const environment = server.environments[options.environment];
       assert(environment, `Unknown environment: ${options.environment}`);
       if (options.environment === "client") {
-        result.entry = normalizeViteImportAnalysisUrl(environment, id);
+        result.entry = assetsURLDev(
+          normalizeViteImportAnalysisUrl(environment, id).slice(1),
+          resolvedConfig,
+        );
       }
       if (environment.name !== "client") {
         const collected = await collectCss(environment, id, {
           eager: pluginOpts?.experimental?.devEagerTransform ?? true,
         });
         result.css = collected.hrefs.map((href, i) => ({
-          href,
+          href: assetsURLDev(href.slice(1), resolvedConfig),
           "data-vite-dev-id": collected.ids[i],
         }));
       }
@@ -904,4 +847,69 @@ function patchCssLinkSelfAccept(): Plugin {
       },
     },
   };
+}
+
+// advanced base option support ported from @vitejs/plugin-rsc
+// https://github.com/vitejs/vite-plugin-react/pull/612
+
+class RuntimeAsset {
+  constructor(public runtime: string) {}
+}
+
+function serializeValueWithRuntime(value: any) {
+  const replacements: [string, string][] = [];
+  let result = JSON.stringify(
+    value,
+    (_key, value) => {
+      if (value instanceof RuntimeAsset) {
+        const placeholder = `__runtime_placeholder_${replacements.length}__`;
+        replacements.push([placeholder, value.runtime]);
+        return placeholder;
+      }
+
+      return value;
+    },
+    2,
+  );
+
+  for (const [placeholder, runtime] of replacements) {
+    result = result.replace(`"${placeholder}"`, runtime);
+  }
+
+  return result;
+}
+
+function assetsURL(url: string, config: ResolvedConfig): string | RuntimeAsset {
+  if (
+    config.command === "build" &&
+    typeof config.experimental?.renderBuiltUrl === "function"
+  ) {
+    // https://github.com/vitejs/vite/blob/bdde0f9e5077ca1a21a04eefc30abad055047226/packages/vite/src/node/build.ts#L1369
+    const result = config.experimental.renderBuiltUrl(url, {
+      type: "asset",
+      hostType: "js",
+      ssr: true,
+      hostId: "",
+    });
+
+    if (typeof result === "object") {
+      if (result.runtime) {
+        return new RuntimeAsset(result.runtime);
+      }
+      assert(
+        !result.relative,
+        '"result.relative" not supported on renderBuiltUrl() for fullstack plugin',
+      );
+    } else if (result) {
+      return result satisfies string;
+    }
+  }
+
+  // https://github.com/vitejs/vite/blob/2a7473cfed96237711cda9f736465c84d442ddef/packages/vite/src/node/plugins/importAnalysisBuild.ts#L222-L230
+  return config.base + url;
+}
+
+function assetsURLDev(url: string, config: ResolvedConfig): string {
+  // https://github.com/vitejs/vite/blob/2a7473cfed96237711cda9f736465c84d442ddef/packages/vite/src/node/plugins/importAnalysisBuild.ts#L222-L230
+  return config.base + url;
 }
