@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "preview-custom": "node ./preview.ts dist/ssr/index.js",
     "preview": "srvx --prod -s ../client dist/ssr/index.js"
   },
   "devDependencies": {
