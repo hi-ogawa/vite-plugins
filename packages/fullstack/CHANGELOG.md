@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.8 (2025-12-17)
+
+- build: inline runtime ([#1327](https://github.com/hi-ogawa/vite-plugins/pull/1327))
+
 ## v0.0.7 (2025-12-17)
 
 - feat: support custom base URLs ([#1325](https://github.com/hi-ogawa/vite-plugins/pull/1325))
