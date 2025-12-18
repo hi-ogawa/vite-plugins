@@ -15,10 +15,7 @@
     ".": "./dist/index.js",
     "./*": "./dist/*.js"
   },
-  "files": [
-    "dist",
-    "types"
-  ],
+  "files": ["dist", "types"],
   "scripts": {
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
