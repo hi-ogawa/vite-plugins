@@ -15,7 +15,10 @@
     ".": "./dist/index.js",
     "./*": "./dist/*.js"
   },
-  "files": ["dist", "types"],
+  "files": [
+    "dist",
+    "types"
+  ],
   "scripts": {
     "dev": "tsdown --sourcemap --watch src",
     "build": "tsdown",
@@ -23,6 +26,7 @@
     "test-e2e": "playwright test"
   },
   "dependencies": {
+    "@rolldown/pluginutils": "1.0.0-beta.55",
     "magic-string": "^0.30.17",
     "srvx": "^0.8.7",
     "strip-literal": "^3.1.0"
