@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { exactRegex } from "@rolldown/pluginutils";
 import MagicString from "magic-string";
 import { toNodeHandler } from "srvx/node";
 import { stripLiteral } from "strip-literal";
@@ -28,7 +29,6 @@ import {
 } from "./plugins/shared";
 import {
   createVirtualPlugin,
-  escapeRegExp,
   getEntrySource,
   hashString,
   normalizeRelativePath,
@@ -759,7 +759,7 @@ function patchViteClientPlugin(): Plugin {
   return {
     name: "fullstack:patch-vite-client",
     transform: {
-      filter: { id: new RegExp("^" + escapeRegExp(viteClientPath) + "$") },
+      filter: { id: exactRegex(viteClientPath) },
       handler(code, id) {
         if (id === viteClientPath) {
           // skip for latest vite https://github.com/vitejs/vite/pull/20767
