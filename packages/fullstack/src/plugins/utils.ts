@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { createHash } from "node:crypto";
-import { exactRegex} from '@rolldown/pluginutils'
+import { exactRegex } from "@rolldown/pluginutils";
 import {
   type Plugin,
   type ResolvedConfig,
@@ -52,7 +52,7 @@ export function createVirtualPlugin(
       },
     },
     load: {
-      filter: { id: exactRegex("\0" + name)  },
+      filter: { id: exactRegex("\0" + name) },
       handler(id, options) {
         return (load as Function).apply(this, [id, options]);
       },
