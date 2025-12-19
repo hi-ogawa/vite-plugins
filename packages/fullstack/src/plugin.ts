@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { exactRegex } from "@rolldown/pluginutils";
 import MagicString from "magic-string";
 import { toNodeHandler } from "srvx/node";
 import { stripLiteral } from "strip-literal";
@@ -272,9 +273,8 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
        *   const assets = __assets_xxx
        */
       transform: {
+        filter: { code: /import\.meta\.vite\.assets\(/ },
         async handler(code, id, _options) {
-          if (!code.includes("import.meta.vite.assets")) return;
-
           const output = new MagicString(code);
           const strippedCode = stripLiteral(code);
 
@@ -359,6 +359,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         },
       },
       resolveId: {
+        filter: { id: /^virtual:fullstack\// },
         handler(source) {
           if (source === "virtual:fullstack/runtime") {
             return "\0" + source;
@@ -374,6 +375,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         },
       },
       load: {
+        filter: { id: /^\0virtual:fullstack\// },
         async handler(id) {
           if (id === "\0virtual:fullstack/runtime") {
             return fs.readFileSync(
@@ -470,6 +472,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
       sharedDuringBuild: true,
       resolveId: {
         order: "pre",
+        filter: { id: /[?&]assets/ },
         handler(source) {
           const { query } = parseIdQuery(source);
           const value = query["assets"];
@@ -481,6 +484,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
         },
       },
       load: {
+        filter: { id: [/^\0virtual:fullstack\/empty-assets$/, /[?&]assets/] },
         async handler(id) {
           if (id === "\0virtual:fullstack/empty-assets") {
             return `export default ${JSON.stringify(EMPTY_ASSETS)}`;
@@ -755,6 +759,7 @@ function patchViteClientPlugin(): Plugin {
   return {
     name: "fullstack:patch-vite-client",
     transform: {
+      filter: { id: exactRegex(viteClientPath) },
       handler(code, id) {
         if (id === viteClientPath) {
           // skip for latest vite https://github.com/vitejs/vite/pull/20767

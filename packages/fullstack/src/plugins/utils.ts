@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { createHash } from "node:crypto";
+import { exactRegex } from "@rolldown/pluginutils";
 import {
   type Plugin,
   type ResolvedConfig,
@@ -45,15 +46,15 @@ export function createVirtualPlugin(
   return {
     name: `rsc:virtual-${name}`,
     resolveId: {
+      filter: { id: exactRegex(name) },
       handler(source, _importer, _options) {
         return source === name ? "\0" + name : undefined;
       },
     },
     load: {
+      filter: { id: exactRegex("\0" + name) },
       handler(id, options) {
-        if (id === "\0" + name) {
-          return (load as Function).apply(this, [id, options]);
-        }
+        return (load as Function).apply(this, [id, options]);
       },
     },
   };
