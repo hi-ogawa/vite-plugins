@@ -53,6 +53,5 @@ jobs:
             packages/pre-bundle-new-url \
             packages/server-asset \
             packages/nitro \
-            packages/fullstack \
             packages/node-loader-cloudflare \
             packages/ssr-css
