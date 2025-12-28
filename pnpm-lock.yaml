@@ -87,6 +87,34 @@ importers:
         specifier: ^4.41.0
         version: 4.41.0(@cloudflare/workers-types@4.20251003.0)
 
+  packages/commonjs:
+    dependencies:
+      es-module-lexer:
+        specifier: ^1.7.0
+        version: 1.7.0
+      estree-walker:
+        specifier: ^3.0.3
+        version: 3.0.3
+      magic-string:
+        specifier: ^0.30.19
+        version: 0.30.19
+      periscopic:
+        specifier: ^4.0.2
+        version: 4.0.2
+      vite:
+        specifier: ^7.1.5
+        version: 7.1.5(@types/node@22.16.0)(jiti@2.5.1)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vitefu:
+        specifier: ^1.0.5
+        version: 1.0.5(vite@7.1.5(@types/node@22.16.0)(jiti@2.5.1)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+    devDependencies:
+      '@hiogawa/utils':
+        specifier: ^1.7.0
+        version: 1.7.0
+      '@vitejs/test-dep-cjs-and-esm':
+        specifier: ./test-dep/cjs-and-esm
+        version: link:test-dep/cjs-and-esm
+
   packages/error-overlay:
     dependencies:
       vite:
