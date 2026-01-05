@@ -59,47 +59,26 @@ Removed custom RSC HMR event sending since `@vitejs/plugin-rsc` handles `rsc:upd
 
 ---
 
-## Known Issues / Remaining Work
+## Remaining Work
 
-### 1. Build Orchestration Mismatch
+### Remove Framework Plugins Now Handled by @vitejs/plugin-rsc
 
-**Issue:** `@hiogawa/react-server` uses a 4-phase build (scan → server → browser → ssr), while `@vitejs/plugin-rsc` has its own build orchestration.
+The following framework plugins should be removed since `@vitejs/plugin-rsc` handles their functionality:
 
-**Current State:** The framework's `buildOrchestrationPlugin` may conflict with or duplicate the plugin's build process.
+| Plugin | Reason |
+|--------|--------|
+| `rscParentPlugin` | RSC environment setup handled by plugin |
+| `buildOrchestrationPlugin` | Build orchestration handled by plugin |
+| `inject-async-local-storage` | Async local storage injection handled by plugin |
+| `validateImportPlugin` | Import validation handled by plugin |
+| `serverDepsConfigPlugin()` | Server deps config handled by plugin |
+| `serverAssetsPluginServer` | Server assets handling handled by plugin |
+| `vitePluginServerAssets` | Server assets handling handled by plugin |
+| `virtual:react-server-build` | Build info virtual module handled by plugin |
 
-**TODO:** Investigate if we can remove `buildOrchestrationPlugin` and rely on `@vitejs/plugin-rsc`'s build orchestration.
+### E2E Testing Required
 
-### 2. Route-based Client Reference Tracking
-
-**Issue:** The framework tracked client references per route for asset optimization:
-```typescript
-manager.routeToClientReferences[routeKey] = ids;
-```
-
-This relied on `CustomModuleMeta.$$rsc.type === "client"` which was set by the removed transform plugins.
-
-**Current State:** `routeManifestPluginServer` still tries to detect client references but the metadata is no longer set.
-
-**TODO:** Either:
-- Use `@vitejs/plugin-rsc`'s `getPluginApi()` to access its reference maps
-- Or remove route-based asset optimization entirely
-
-### 3. Virtual Modules
-
-**Issue:** The framework defines virtual modules that may conflict with or duplicate plugin's:
-
-| Framework Virtual | Plugin Virtual |
-|------------------|----------------|
-| `virtual:client-references` | `virtual:vite-rsc/client-references` |
-| `virtual:server-references` | `virtual:vite-rsc/server-references` |
-
-**Current State:** Framework's virtual modules are still defined but return empty objects.
-
-**TODO:** Remove framework's virtual modules or make them re-export from plugin's.
-
-### 4. E2E Testing Required
-
-Unit tests pass but e2e tests need to be run to verify:
+After removing the above plugins, e2e tests need to verify:
 - Dev server works
 - Production build works
 - HMR works (both server and client components)
