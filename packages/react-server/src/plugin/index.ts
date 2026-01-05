@@ -86,9 +86,7 @@ export function vitePluginReactServer(
             ),
           ],
           exclude: ["@hiogawa/react-server"],
-          include: [
-            "@hiogawa/react-server > @vitejs/plugin-rsc/browser",
-          ],
+          include: ["@hiogawa/react-server > @vitejs/plugin-rsc/browser"],
         },
         build: {
           manifest: true,
@@ -241,11 +239,13 @@ export function vitePluginReactServer(
       `;
     }),
 
-    createVirtualPlugin(ENTRY_BROWSER_WRAPPER.slice("virtual:".length), function () {
-      // dev
-      if (this.environment?.mode === "dev") {
-        // wrapper entry to ensure client entry runs after vite/react initialization
-        return /* js */ `
+    createVirtualPlugin(
+      ENTRY_BROWSER_WRAPPER.slice("virtual:".length),
+      function () {
+        // dev
+        if (this.environment?.mode === "dev") {
+          // wrapper entry to ensure client entry runs after vite/react initialization
+          return /* js */ `
           import "${SERVER_CSS_PROXY}";
           import RefreshRuntime from "/@react-refresh";
           RefreshRuntime.injectIntoGlobalHook(window);
@@ -254,14 +254,14 @@ export function vitePluginReactServer(
           window.__vite_plugin_react_preamble_installed__ = true;
           await import("${entryBrowser}");
         `;
-      }
-      // build
-      return /* js */ `
+        }
+        // build
+        return /* js */ `
         import "${SERVER_CSS_PROXY}";
         import("@hiogawa/react-server/runtime/client");
         import "${entryBrowser}";
       `;
-    }),
+      },
+    ),
   ];
 }
-
