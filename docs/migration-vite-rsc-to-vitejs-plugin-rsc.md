@@ -59,26 +59,39 @@ Removed custom RSC HMR event sending since `@vitejs/plugin-rsc` handles `rsc:upd
 
 ---
 
-## Remaining Work
+### 8. Removed Framework Plugins Now Handled by @vitejs/plugin-rsc
 
-### Remove Framework Plugins Now Handled by @vitejs/plugin-rsc
-
-The following framework plugins should be removed since `@vitejs/plugin-rsc` handles their functionality:
+The following framework plugins were removed since `@vitejs/plugin-rsc` handles their functionality:
 
 | Plugin | Reason |
 |--------|--------|
-| `rscParentPlugin` | RSC environment setup handled by plugin |
+| `rscParentPlugin` | RSC environment setup handled by plugin (replaced with `frameworkConfigPlugin`) |
 | `buildOrchestrationPlugin` | Build orchestration handled by plugin |
 | `inject-async-local-storage` | Async local storage injection handled by plugin |
 | `validateImportPlugin` | Import validation handled by plugin |
 | `serverDepsConfigPlugin()` | Server deps config handled by plugin |
 | `serverAssetsPluginServer` | Server assets handling handled by plugin |
-| `vitePluginServerAssets` | Server assets handling handled by plugin |
-| `virtual:react-server-build` | Build info virtual module handled by plugin |
+| `virtual:react-server-build` | Replaced with `import.meta.viteRsc.loadModule("rsc", "index")` |
+
+### 9. Deleted Plugin Files
+
+- `packages/react-server/src/features/client-component/plugin.ts`
+- `packages/react-server/src/features/server-action/plugin.tsx`
+
+### 10. Updated Build Phase Detection
+
+Replaced `manager.buildType` checks with `this.environment.name` checks:
+- `router/plugin.ts` - uses `this.environment.name === "rsc"`, `"client"`, `"ssr"`
+- `prerender/plugin.ts` - uses `this.environment.name === "ssr"`
+- `assets/plugin.ts` - uses `this.environment?.mode === "dev"`
+
+---
+
+## Remaining Work
 
 ### E2E Testing Required
 
-After removing the above plugins, e2e tests need to verify:
+E2E tests need to verify:
 - Dev server works
 - Production build works
 - HMR works (both server and client components)
@@ -116,10 +129,11 @@ After removing the above plugins, e2e tests need to verify:
 @hiogawa/react-server
 ├── Plugin layer
 │   ├── rsc() from @vitejs/plugin-rsc - handles ALL RSC bundling
-│   ├── buildOrchestrationPlugin - TODO: may be removable
+│   ├── frameworkConfigPlugin - framework-specific config (outDir, entries)
 │   └── Framework plugins (router, prerender, assets, etc.)
 ├── Entry points
 │   ├── Auto-initialized by plugin imports
+│   ├── import.meta.viteRsc.loadModule for cross-environment imports
 │   └── Framework-specific routing/rendering
 └── Framework features
     └── File-based routing, metadata, error handling, etc.
