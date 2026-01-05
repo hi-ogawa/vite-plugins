@@ -35,11 +35,14 @@ export function prerenderPlugin({
     {
       name: prerenderPlugin.name + ":build",
       enforce: "post",
-      apply: () => manager.buildType === "ssr",
+      apply: "build",
       writeBundle: {
         sequential: true,
         handler() {
-          return processPrerender(prerender, manager.outDir);
+          // Run during ssr build
+          if (this.environment.name === "ssr") {
+            return processPrerender(prerender, manager.outDir);
+          }
         },
       },
     },

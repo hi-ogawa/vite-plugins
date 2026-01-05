@@ -23,9 +23,9 @@ export function vitePluginServerAssets({
   entryServer: string;
 }): Plugin[] {
   return [
-    createVirtualPlugin("ssr-assets", async () => {
+    createVirtualPlugin("ssr-assets", async function () {
       // dev
-      if (!manager.buildType) {
+      if (this.environment?.mode === "dev") {
         // extract <head> injected by plugins
         let { head } = await getIndexHtmlTransform($__global.dev.server);
 
@@ -54,38 +54,28 @@ export function vitePluginServerAssets({
         return `export default ${JSON.stringify(result)}`;
       }
 
-      // build
-      if (manager.buildType === "ssr") {
-        // TODO: (refactor) use RouteManifest?
-        const manifest: Manifest = JSON.parse(
-          await fs.promises.readFile(
-            path.join(manager.outDir, "client", ".vite", "manifest.json"),
-            "utf-8",
-          ),
-        );
-        const entry = manifest[ENTRY_BROWSER_WRAPPER];
-        tinyassert(entry);
-        const css = [
-          ...(entry.css ?? []),
-          ...manager.serverAssets.filter((file) => file.endsWith(".css")),
-        ];
-        const head = [
-          ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
-        ].join("\n");
-        const result: SsrAssetsType = {
-          bootstrapModules: [`/${entry.file}`],
-          head,
-        };
-        return `export default ${JSON.stringify(result)}`;
-      }
-
-      tinyassert(false);
+      // build - use @vitejs/plugin-rsc assets manifest
+      const manifest: Manifest = JSON.parse(
+        await fs.promises.readFile(
+          path.join(manager.outDir, "client", ".vite", "manifest.json"),
+          "utf-8",
+        ),
+      );
+      const entry = manifest[ENTRY_BROWSER_WRAPPER];
+      tinyassert(entry);
+      const css = entry.css ?? [];
+      const head = [
+        ...css.map((href) => `<link rel="stylesheet" href="/${href}" />`),
+      ].join("\n");
+      const result: SsrAssetsType = {
+        bootstrapModules: [`/${entry.file}`],
+        head,
+      };
+      return `export default ${JSON.stringify(result)}`;
     }),
 
-    createVirtualPlugin(DEV_SSR_CSS.split(":")[1]!, async () => {
-      tinyassert(!manager.buildType);
-      // TODO: client reference CSS preloading not supported in native RSC
-      // https://github.com/wakujs/waku/issues/1656
+    createVirtualPlugin(DEV_SSR_CSS.split(":")[1]!, async function () {
+      tinyassert(this.environment?.mode === "dev");
       const serverStyleUrls = await collectStyleUrls(
         $__global.dev.server.environments["rsc"]!,
         {
@@ -113,10 +103,9 @@ export function vitePluginServerAssets({
       return styles.join("\n\n");
     }),
 
-    createVirtualPlugin(SERVER_CSS_PROXY.split(":")[1]!, async () => {
+    createVirtualPlugin(SERVER_CSS_PROXY.split(":")[1]!, async function () {
       // virtual module to proxy css imports from react server to client
-      // TODO: invalidate + full reload when add/remove css file?
-      if (!manager.buildType) {
+      if (this.environment?.mode === "dev") {
         const urls = await collectStyleUrls(
           $__global.dev.server.environments["rsc"]!,
           {
@@ -127,56 +116,9 @@ export function vitePluginServerAssets({
         // ensure hmr boundary since css module doesn't have `import.meta.hot.accept`
         return code + `if (import.meta.hot) { import.meta.hot.accept() }`;
       }
-      if (manager.buildType === "browser") {
-        return "export {}";
-      }
-      tinyassert(false);
+      // build
+      return "export {}";
     }),
-
-    {
-      name: vitePluginServerAssets.name + ":copy-build",
-      async writeBundle() {
-        if (manager.buildType === "browser") {
-          for (const file of manager.serverAssets) {
-            await fs.promises.cp(
-              path.join(manager.outDir, "rsc", file),
-              path.join(manager.outDir, "client", file),
-            );
-          }
-        }
-      },
-    },
-  ];
-}
-
-export function serverAssetsPluginServer({
-  manager,
-}: { manager: PluginStateManager }): Plugin[] {
-  // 0. track server assets during server build (this plugin)
-  // 1. copy all server assets to browser build (copy-build plugin)
-  // 2. out of those, inject links automatically (ssr-assets virtual plugin)
-  //    - .css => stylesheet
-  //    - .woff => font preload
-
-  // TODO
-  // - css ordering?
-  // - css code split by route?
-
-  return [
-    {
-      name: serverAssetsPluginServer.name + ":build",
-      apply: "build",
-      generateBundle(_options, bundle) {
-        if (manager.buildType !== "server") {
-          return;
-        }
-        for (const [_k, v] of Object.entries(bundle)) {
-          if (v.type === "asset") {
-            manager.serverAssets.push(v.fileName);
-          }
-        }
-      },
-    },
   ];
 }
 

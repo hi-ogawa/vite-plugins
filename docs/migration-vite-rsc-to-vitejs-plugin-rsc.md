@@ -131,4 +131,5 @@ After removing the above plugins, e2e tests need to verify:
 
 - `@vitejs/plugin-rsc` source: `/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc`
 - Starter example: `/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc/examples/starter`
+- SSG/Prerender example: `/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc/examples/ssg`
 - Plugin API: `getPluginApi(config)` returns `{ manager: RscPluginManager }`

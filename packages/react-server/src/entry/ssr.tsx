@@ -74,7 +74,10 @@ export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServerRunner.import(ENTRY_SERVER_WRAPPER);
   } else {
-    return import("virtual:react-server-build" as string);
+    return import.meta.viteRsc.loadModule<typeof import("./server")>(
+      "rsc",
+      "index",
+    );
   }
 }
 
