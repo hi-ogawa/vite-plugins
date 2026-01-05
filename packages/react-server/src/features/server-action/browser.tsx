@@ -1,1 +1,1 @@
-export * from "@hiogawa/vite-rsc/react/browser";
+export * from "@vitejs/plugin-rsc/browser";

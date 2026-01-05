@@ -1,12 +1,11 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
-import * as ReactClient from "@hiogawa/vite-rsc/react/ssr";
 import { createMemoryHistory } from "@tanstack/history";
+import * as ReactClient from "@vitejs/plugin-rsc/ssr";
 import ReactDOMServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { DevEnvironment, EnvironmentModuleNode } from "vite";
 import type { SsrAssetsType } from "../features/assets/plugin";
 import { DEV_SSR_CSS, SERVER_CSS_PROXY } from "../features/assets/shared";
-import { initializeReactClientSsr } from "../features/client-component/ssr";
 import {
   DEFAULT_ERROR_CONTEXT,
   getErrorContext,
@@ -75,7 +74,10 @@ export async function importReactServer(): Promise<typeof import("./server")> {
   if (import.meta.env.DEV) {
     return $__global.dev.reactServerRunner.import(ENTRY_SERVER_WRAPPER);
   } else {
-    return import("virtual:react-server-build" as string);
+    return import.meta.viteRsc.loadModule<typeof import("./server")>(
+      "rsc",
+      "index",
+    );
   }
 }
 
@@ -84,8 +86,6 @@ export async function renderHtml(
   result: ReactServerHandlerStreamResult,
   opitons?: { prerender?: boolean },
 ) {
-  initializeReactClientSsr();
-
   //
   // ssr root
   //

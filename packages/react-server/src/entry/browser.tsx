@@ -1,11 +1,10 @@
 import * as virtualClientRoutes from "virtual:client-routes";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import * as ReactClient from "@hiogawa/vite-rsc/react/browser";
 import type { RouterHistory } from "@tanstack/history";
+import * as ReactClient from "@vitejs/plugin-rsc/browser";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { initializeReactClientBrowser } from "../features/client-component/browser";
 import { ErrorBoundary } from "../features/error/error-boundary";
 import { DefaultGlobalErrorPage } from "../features/error/global-error";
 import {
@@ -34,8 +33,6 @@ import { createError } from "../server";
 const debug = createDebug("react-server:browser");
 
 async function start() {
-  initializeReactClientBrowser();
-
   const history = createEncodedBrowserHistory();
   const router = new Router(history);
 

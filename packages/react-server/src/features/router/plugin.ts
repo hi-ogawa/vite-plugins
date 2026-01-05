@@ -9,11 +9,7 @@ import {
 import FastGlob from "fast-glob";
 import type { Plugin, Rollup } from "vite";
 import type { PluginStateManager } from "../../plugin";
-import {
-  type CustomModuleMeta,
-  createVirtualPlugin,
-  hashString,
-} from "../../plugin/utils";
+import { createVirtualPlugin, hashString } from "../../plugin/utils";
 import {
   type AssetDeps,
   type RouteAssetDeps,
@@ -30,7 +26,8 @@ export function routeManifestPluginServer({
       name: "server-route-manifest",
       apply: "build",
       async buildEnd(error) {
-        if (!error && manager.buildType === "server") {
+        // Run during rsc build
+        if (!error && this.environment.name === "rsc") {
           const routeFiles = await FastGlob(
             path.posix.join(
               routeDir,
@@ -40,14 +37,14 @@ export function routeManifestPluginServer({
           for (const routeFile of routeFiles) {
             const absFile = path.join(manager.config.root, routeFile);
             const deps = collectModuleDeps(absFile, this);
-            let ids: string[] = [];
+            const ids: string[] = [];
             for (const id of deps) {
               const info = this.getModuleInfo(id);
               tinyassert(info);
-              const meta = info.meta as CustomModuleMeta;
-              if (meta.$$rsc?.type === "client") {
-                ids.push(id);
-              }
+              // Note: client reference tracking via CustomModuleMeta is no longer available
+              // since @vitejs/plugin-rsc handles transforms. Route-based asset optimization
+              // is disabled for now.
+              // TODO: Use getPluginApi() to access client reference info if needed
             }
             const routeKey = routeFile.slice(routeDir.length);
             manager.routeToClientReferences[routeKey] = ids;
@@ -66,7 +63,8 @@ export function routeManifestPluginClient({
       name: routeManifestPluginClient.name + ":bundle",
       apply: "build",
       generateBundle(_options, bundle) {
-        if (manager.buildType === "browser") {
+        // Run during client build
+        if (this.environment.name === "client") {
           const facadeModuleDeps: Record<string, AssetDeps> = {};
           for (const [k, v] of Object.entries(bundle)) {
             if (v.type === "chunk" && v.facadeModuleId) {
@@ -85,17 +83,13 @@ export function routeManifestPluginClient({
             routeTree: createFsRouteTree<RouteAssetDeps>(routeToAssetDeps).tree,
           };
 
-          const prepareDestinationManifest: Record<string, string[]> = {};
-          for (const [id, clientId] of manager.clientReferenceMap) {
-            prepareDestinationManifest[clientId] =
-              facadeModuleDeps[id]?.js ?? [];
-          }
-          manager.prepareDestinationManifest = prepareDestinationManifest;
+          // TODO: client reference preloading not supported in native RSC
+          // https://github.com/wakujs/waku/issues/1656
         }
       },
     },
-    createVirtualPlugin("route-manifest", async () => {
-      tinyassert(manager.buildType === "ssr");
+    createVirtualPlugin("route-manifest", async function () {
+      tinyassert(this.environment.name === "ssr");
       tinyassert(manager.routeManifest);
 
       // create asset for browser
@@ -115,12 +109,10 @@ export function routeManifestPluginClient({
         2,
       )}`;
     }),
+    // TODO: client reference preloading not supported in native RSC
+    // https://github.com/wakujs/waku/issues/1656
     createVirtualPlugin("prepare-destination-manifest", async function () {
-      if (this.environment.mode === "dev") {
-        return `export default {}`;
-      }
-      tinyassert(manager.prepareDestinationManifest);
-      return `export default ${JSON.stringify(manager.prepareDestinationManifest)}`;
+      return `export default {}`;
     }),
   ];
 }

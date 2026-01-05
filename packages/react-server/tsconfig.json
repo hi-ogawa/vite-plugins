@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src", "e2e", "*.ts"],
   "compilerOptions": {
-    "types": ["vite/client"],
+    "types": ["vite/client", "@vitejs/plugin-rsc/types"],
     "jsx": "react-jsx"
   }
 }
