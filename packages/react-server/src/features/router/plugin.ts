@@ -85,12 +85,8 @@ export function routeManifestPluginClient({
             routeTree: createFsRouteTree<RouteAssetDeps>(routeToAssetDeps).tree,
           };
 
-          const prepareDestinationManifest: Record<string, string[]> = {};
-          for (const [id, clientId] of manager.clientReferenceMap) {
-            prepareDestinationManifest[clientId] =
-              facadeModuleDeps[id]?.js ?? [];
-          }
-          manager.prepareDestinationManifest = prepareDestinationManifest;
+          // TODO: client reference preloading not supported in native RSC
+          // https://github.com/wakujs/waku/issues/1656
         }
       },
     },
@@ -115,12 +111,10 @@ export function routeManifestPluginClient({
         2,
       )}`;
     }),
+    // TODO: client reference preloading not supported in native RSC
+    // https://github.com/wakujs/waku/issues/1656
     createVirtualPlugin("prepare-destination-manifest", async function () {
-      if (this.environment.mode === "dev") {
-        return `export default {}`;
-      }
-      tinyassert(manager.prepareDestinationManifest);
-      return `export default ${JSON.stringify(manager.prepareDestinationManifest)}`;
+      return `export default {}`;
     }),
   ];
 }

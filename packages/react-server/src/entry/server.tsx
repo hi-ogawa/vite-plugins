@@ -1,6 +1,6 @@
 import * as serverRoutes from "virtual:server-routes";
 import { createDebug, objectPick, objectPickBy } from "@hiogawa/utils";
-import * as ReactServer from "@hiogawa/vite-rsc/react/rsc";
+import * as ReactServer from "@vitejs/plugin-rsc/rsc";
 import type { RenderToReadableStreamOptions } from "react-dom/server";
 import { DefaultNotFoundPage } from "../features/error/not-found";
 import {
@@ -23,10 +23,7 @@ import {
   createActionRedirectResponse,
   createFlightRedirectResponse,
 } from "../features/server-action/redirect";
-import {
-  type ActionResult,
-  initializeReactServer,
-} from "../features/server-action/server";
+import type { ActionResult } from "../features/server-action/server";
 import { unwrapStreamRequest } from "../features/server-component/utils";
 
 const debug = createDebug("react-server:rsc");
@@ -57,8 +54,6 @@ export type ReactServerHandlerResult =
   | ReactServerHandlerStreamResult;
 
 export const handler: ReactServerHandler = async (ctx) => {
-  initializeReactServer();
-
   const handled = handleTrailingSlash(new URL(ctx.request.url));
   if (handled) return handled;
 

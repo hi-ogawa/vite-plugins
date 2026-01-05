@@ -19,10 +19,6 @@ import {
 } from "../features/assets/plugin";
 import { SERVER_CSS_PROXY } from "../features/assets/shared";
 import {
-  vitePluginClientUseClient,
-  vitePluginServerUseClient,
-} from "../features/client-component/plugin";
-import {
   OUTPUT_SERVER_JS_EXT,
   createServerPackageJson,
 } from "../features/next/plugin";
@@ -36,22 +32,16 @@ import {
   routeManifestPluginClient,
   routeManifestPluginServer,
 } from "../features/router/plugin";
-import {
-  vitePluginClientUseServer,
-  vitePluginServerUseServer,
-} from "../features/server-action/plugin";
 import { $__global } from "../global";
 import {
   ENTRY_BROWSER_WRAPPER,
   ENTRY_SERVER_WRAPPER,
   createVirtualPlugin,
-  hashString,
   wrapClientPlugin,
   wrapServerPlugin,
 } from "./utils";
 export { wrapClientPlugin, wrapServerPlugin } from "./utils";
-import rscCore from "@hiogawa/vite-rsc/core/plugin";
-import { vitePluginFindSourceMapURL } from "@hiogawa/vite-rsc/plugin";
+import rsc from "@vitejs/plugin-rsc";
 
 const debug = createDebug("react-server:plugin");
 
@@ -84,34 +74,9 @@ class PluginStateManager {
   routeToClientReferences: Record<string, string[]> = {};
   routeManifest?: RouteManifest;
   serverAssets: string[] = [];
-  prepareDestinationManifest?: Record<string, string[]> = {};
-
-  // expose "use client" node modules to client via virtual modules
-  // to avoid dual package due to deps optimization hash during dev
-  nodeModules = {
-    useClient: new Map<string, { id: string; exportNames: Set<string> }>(),
-  };
 
   // all files in parent server
   parentIds = new Set<string>();
-  // all files in rsc server
-  serverIds = new Set<string>();
-  // "use client" files
-  clientReferenceMap = new Map<string, string>();
-
-  // "use server" files
-  serverReferenceMap = new Map<string, string>();
-
-  shouldReloadRsc(id: string) {
-    const ok = this.serverIds.has(id) && !this.clientReferenceMap.has(id);
-    debug("[RscManager.shouldReloadRsc]", { ok, id });
-    return ok;
-  }
-
-  normalizeReferenceId(id: string) {
-    id = path.relative(this.config.root, id);
-    return this.buildType ? hashString(id) : id;
-  }
 }
 
 // persist singleton during build
@@ -162,7 +127,7 @@ export function vitePluginReactServer(
             "react/jsx-dev-runtime",
             "react-dom",
             "react-dom/client",
-            "@hiogawa/react-server > @hiogawa/vite-rsc/react/browser",
+            "@hiogawa/react-server > @vitejs/plugin-rsc/browser",
           ],
         },
         build: {
@@ -236,23 +201,7 @@ export function vitePluginReactServer(
       }
     },
     async hotUpdate(ctx) {
-      const isClientReference = ctx.modules.every(
-        (mod) => mod.id && manager.clientReferenceMap.has(mod.id),
-      );
-
-      if (this.environment.name === "rsc") {
-        // client reference id is also in react server module graph,
-        // but we skip RSC HMR for this case to avoid conflicting with Client HMR.
-        if (ctx.modules.length > 0 && !isClientReference) {
-          $__global.dev.server.environments.client.hot.send({
-            type: "custom",
-            event: "rsc:update",
-            data: {
-              file: ctx.file,
-            },
-          });
-        }
-      }
+      // Note: @vitejs/plugin-rsc handles rsc:update events for RSC module changes
 
       if (this.environment.name === "client") {
         // css module is not self-accepting, so we filter out
@@ -267,10 +216,7 @@ export function vitePluginReactServer(
         // In this case, reload all importers (for css hmr),
         // and return empty modules to avoid full-reload
         const reactServerEnv = $__global.dev.server.environments["rsc"]!;
-        if (
-          !isClientReference &&
-          reactServerEnv.moduleGraph.getModulesByFile(ctx.file)
-        ) {
+        if (reactServerEnv.moduleGraph.getModulesByFile(ctx.file)) {
           const importers = ctx.modules.flatMap((m) => [...m.importers]);
           if (
             importers.length > 0 &&
@@ -302,7 +248,6 @@ export function vitePluginReactServer(
         await builder.build(builder.environments["rsc"]!);
         console.log("▶▶▶ REACT SERVER BUILD (server) [2/4]");
         manager.buildType = "server";
-        manager.clientReferenceMap.clear();
         builder.environments["rsc"]!.config.build.write = true;
         await builder.build(builder.environments["rsc"]!);
         console.log("▶▶▶ REACT SERVER BUILD (browser) [3/4]");
@@ -328,22 +273,14 @@ export function vitePluginReactServer(
 
   // plugins for main vite dev server (browser / ssr)
   return [
-    ...rscCore(),
-    ...vitePluginFindSourceMapURL(),
+    ...rsc(),
     rscParentPlugin,
     buildOrchestrationPlugin,
 
     //
     // react server
     //
-    ...vitePluginServerUseServer({
-      manager,
-      runtimePath: RUNTIME_SERVER_PATH,
-    }),
-    ...vitePluginServerUseClient({
-      manager,
-      runtimePath: RUNTIME_SERVER_PATH,
-    }),
+    // Note: "use client" and "use server" transforms are handled by @vitejs/plugin-rsc
     ...routeManifestPluginServer({ manager, routeDir }),
     createVirtualPlugin("server-routes", () => {
       return `
@@ -408,13 +345,7 @@ export function vitePluginReactServer(
     //
     // react client
     //
-
-    vitePluginClientUseServer({
-      manager,
-      runtimePath: RUNTIME_BROWSER_PATH,
-      ssrRuntimePath: RUNTIME_SSR_PATH,
-    }),
-    ...vitePluginClientUseClient({ manager }),
+    // Note: "use client" and "use server" transforms are handled by @vitejs/plugin-rsc
     ...vitePluginServerAssets({ manager, entryBrowser, entryServer }),
     ...routeManifestPluginClient({ manager }),
     ...(options?.prerender
@@ -554,9 +485,9 @@ function serverDepsConfigPlugin(): Plugin {
             ...(name === "ssr"
               ? [
                   "react-dom/server.edge",
-                  "@hiogawa/react-server > @hiogawa/vite-rsc/react/ssr",
+                  "@hiogawa/react-server > @vitejs/plugin-rsc/ssr",
                 ]
-              : ["@hiogawa/react-server > @hiogawa/vite-rsc/react/rsc"]),
+              : ["@hiogawa/react-server > @vitejs/plugin-rsc/rsc"]),
           ],
           exclude: ["@hiogawa/react-server"],
         },

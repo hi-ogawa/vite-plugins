@@ -1,1 +1,1 @@
-export { registerClientReference } from "@hiogawa/vite-rsc/react/rsc";
+export { registerClientReference } from "@vitejs/plugin-rsc/rsc";

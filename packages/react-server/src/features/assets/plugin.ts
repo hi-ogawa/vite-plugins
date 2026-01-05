@@ -84,14 +84,8 @@ export function vitePluginServerAssets({
 
     createVirtualPlugin(DEV_SSR_CSS.split(":")[1]!, async () => {
       tinyassert(!manager.buildType);
-      // normalize it again to workaround inconsistent hmr path issue
-      // https://github.com/hi-ogawa/reproductions/tree/main/vite-v6-hmr-path
-      const root = manager.config.root;
-      const clientReferences = [...manager.clientReferenceMap.keys()].map(
-        (file) => {
-          return file.startsWith(root) ? file.slice(root.length) : file;
-        },
-      );
+      // TODO: client reference CSS preloading not supported in native RSC
+      // https://github.com/wakujs/waku/issues/1656
       const serverStyleUrls = await collectStyleUrls(
         $__global.dev.server.environments["rsc"]!,
         {
@@ -101,12 +95,7 @@ export function vitePluginServerAssets({
       const clientStyleUrls = await collectStyleUrls(
         $__global.dev.server.environments.client,
         {
-          entries: [
-            entryBrowser,
-            "virtual:client-routes",
-            // TODO: dev should also use RouteManifest to manage client css
-            ...clientReferences,
-          ],
+          entries: [entryBrowser, "virtual:client-routes"],
         },
       );
       const styles = await Promise.all([

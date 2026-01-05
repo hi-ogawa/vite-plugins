@@ -1,1 +1,1 @@
-export * from "@hiogawa/vite-rsc/react/ssr";
+export * from "@vitejs/plugin-rsc/ssr";
