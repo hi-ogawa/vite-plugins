@@ -8,7 +8,6 @@ const deps = ["react-server", "transforms", "vite-plugin-ssr-middleware"];
 const overrides = Object.fromEntries(
   deps.map((dep) => [`@hiogawa/${dep}`, `file:${resolve(packages, dep)}`]),
 );
-overrides["@hiogawa/vite-rsc"] = `file:${resolve(packages, "rsc")}`;
 
 editJson(argv[2], (pkg) => {
   Object.assign(((pkg.pnpm ??= {}).overrides ??= {}), overrides);

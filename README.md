@@ -4,13 +4,6 @@ Random collection of vite plugins
 
 ## plugins
 
-### [`@hiogawa/vite-rsc`](./packages/rsc)
-
-> [!important]
-> `@hiogawa/vite-rsc` is now maintained as Vite's official package [`@vitejs/plugin-rsc`](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-rsc).
-
-Framework-less Vite RSC plugin
-
 ### [`@hiogawa/react-server`](./packages/react-server)
 
 Next.js-like RSC framework on Vite
@@ -24,9 +17,9 @@ and [`@vavite/expose-vite-dev-server`](https://github.com/cyco130/vavite/tree/ma
 
 ### How to release a package
 
-Example: `packages/rsc`
+Example: `packages/transforms`
 
-1. Manually bump `packages/rsc/package.json` version
-2. Update changelog via `pnpm changelog packages/rsc`
+1. Manually bump `packages/transforms/package.json` version
+2. Update changelog via `pnpm changelog packages/transforms`
 3. Create a PR and merge to main
-4. Locally run `pnpm release packages/rsc`
+4. Locally run `pnpm release packages/transforms`
