@@ -1,6 +1,6 @@
 import { createDebug, tinyassert } from "@hiogawa/utils";
-import * as ReactClient from "@vitejs/plugin-rsc/ssr";
 import { createMemoryHistory } from "@tanstack/history";
+import * as ReactClient from "@vitejs/plugin-rsc/ssr";
 import ReactDOMServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { DevEnvironment, EnvironmentModuleNode } from "vite";
@@ -83,7 +83,6 @@ export async function renderHtml(
   result: ReactServerHandlerStreamResult,
   opitons?: { prerender?: boolean },
 ) {
-
   //
   // ssr root
   //

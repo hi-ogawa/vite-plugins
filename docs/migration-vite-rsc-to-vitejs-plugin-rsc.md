@@ -1,323 +1,111 @@
 # Migration Plan: @hiogawa/vite-rsc → @vitejs/plugin-rsc
 
-## Overview
+## Status: In Progress
 
-Migrate `@hiogawa/react-server` to fully leverage `@vitejs/plugin-rsc` as the complete RSC bundler layer. This is an "all-in" migration - the plugin provides the entire RSC bundler feature set, and `@hiogawa/react-server` becomes a thin framework layer on top.
+This document tracks the migration of `@hiogawa/react-server` from `@hiogawa/vite-rsc` to `@vitejs/plugin-rsc`.
 
-### Reference Implementation
+## Completed Changes
 
-See the minimal starter example:
-```
-/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc/examples/starter/src/framework/
-├── entry.browser.tsx  # ~140 lines - hydration, navigation, server callback
-├── entry.rsc.tsx      # ~120 lines - RSC rendering, action handling
-├── entry.ssr.tsx      # ~75 lines  - HTML streaming
-├── error-boundary.tsx # Error boundary component
-└── request.tsx        # Request routing conventions
-```
+### 1. Dependency Update
+- Replaced `@hiogawa/vite-rsc@^0.4.9` with `@vitejs/plugin-rsc@^0.5.9`
 
----
+### 2. Import Path Updates
 
-## What @vitejs/plugin-rsc Provides
+| Old Path | New Path |
+|----------|----------|
+| `@hiogawa/vite-rsc/react/rsc` | `@vitejs/plugin-rsc/rsc` |
+| `@hiogawa/vite-rsc/react/ssr` | `@vitejs/plugin-rsc/ssr` |
+| `@hiogawa/vite-rsc/react/browser` | `@vitejs/plugin-rsc/browser` |
+| `@hiogawa/vite-rsc/core/plugin` | `@vitejs/plugin-rsc` (default export) |
 
-### Build-time (Plugin)
+### 3. Removed Custom Transform Plugins
 
-| Feature | API |
-|---------|-----|
-| `"use client"` transform | Automatic client reference generation |
-| `"use server"` transform | Automatic server reference generation |
-| CSS code-splitting | Auto-inject or `import.meta.viteRsc.loadCss()` |
-| Multi-environment build | Orchestrates rsc → client → ssr builds |
-| Asset manifests | Client reference deps, server resources |
-| Import validation | `server-only` / `client-only` checks |
+The following plugins were removed since `@vitejs/plugin-rsc` handles transforms:
+- `vitePluginServerUseClient` - "use client" transform in RSC env
+- `vitePluginServerUseServer` - "use server" transform in RSC env
+- `vitePluginClientUseClient` - client reference handling
+- `vitePluginClientUseServer` - "use server" transform in client env
 
-### Runtime Helpers
+### 4. Removed Manual Initialization
 
-| Helper | Environment | Purpose |
-|--------|-------------|---------|
-| `import.meta.viteRsc.loadModule()` | rsc | Load SSR module from RSC env |
-| `import.meta.viteRsc.loadBootstrapScriptContent()` | ssr | Get client bootstrap JS |
-| `import.meta.viteRsc.loadCss()` | rsc | Collect CSS for current module |
-| `import.meta.hot.on('rsc:update', ...)` | browser | Server HMR trigger |
+`@vitejs/plugin-rsc` auto-initializes `setRequireModule` when imported:
+- Removed `initializeReactServer()` from `entry/server.tsx`
+- Removed `initializeReactClientSsr()` from `entry/ssr.tsx`
+- Removed `initializeReactClientBrowser()` from `entry/browser.tsx`
+- Simplified `features/client-component/*.tsx` and `features/server-action/*.tsx`
 
-### Runtime APIs
+### 5. Simplified PluginStateManager
 
-**`@vitejs/plugin-rsc/rsc`:**
-- `renderToReadableStream`, `createFromReadableStream`
-- `registerClientReference`, `registerServerReference`
-- `loadServerAction`, `decodeReply`, `decodeAction`, `decodeFormState`
-- `createTemporaryReferenceSet`, `encodeReply`
+Removed unused properties:
+- `clientReferenceMap` - was populated by removed transform plugins
+- `serverReferenceMap` - was populated by removed transform plugins
+- `nodeModules.useClient` - was used for node_modules client references
+- `serverIds` - was used for HMR tracking
+- `shouldReloadRsc()` - depended on removed maps
+- `normalizeReferenceId()` - was used by transform plugins
+- `prepareDestinationManifest` - was used for client reference preloading
 
-**`@vitejs/plugin-rsc/ssr`:**
-- `createFromReadableStream`
-- `createServerConsumerManifest`
+### 6. Dropped Client Reference Preloading
 
-**`@vitejs/plugin-rsc/browser`:**
-- `createFromReadableStream`, `createFromFetch`
-- `setServerCallback`, `createServerReference`
-- `createTemporaryReferenceSet`, `encodeReply`
-- `findSourceMapURL`
+Native RSC doesn't support client reference preloading. Removed:
+- `prepareDestinationManifest` generation in `router/plugin.ts`
+- Client reference CSS collection in `assets/plugin.ts`
 
----
+TODO: https://github.com/wakujs/waku/issues/1656
 
-## What @hiogawa/react-server Keeps
+### 7. Simplified HMR Logic
 
-These are framework-specific features not provided by the plugin:
-
-| Feature | Directory | Description |
-|---------|-----------|-------------|
-| File-based routing | `src/features/router/` | Route discovery, tree building, manifest |
-| Metadata handling | `src/features/meta/` | `<head>` management |
-| Error handling | `src/features/error/` | Error boundaries, not-found |
-| Request context | `src/features/request-context/` | AsyncLocalStorage, cookies, headers |
-| Prerender | `src/features/prerender/` | Static generation |
-| Next.js compat | `src/features/next/` | NextRequest/NextResponse APIs |
-| Assets | `src/features/assets/` | Route-based asset injection |
+Removed custom RSC HMR event sending since `@vitejs/plugin-rsc` handles `rsc:update` events.
 
 ---
 
-## What @hiogawa/react-server Removes
+## Known Issues / Remaining Work
 
-### Plugins (Replaced by @vitejs/plugin-rsc)
+### 1. Build Orchestration Mismatch
 
-| File | Reason |
-|------|--------|
-| `src/features/client-component/plugin.ts` | Plugin handles `"use client"` transforms |
-| `src/features/server-action/plugin.tsx` | Plugin handles `"use server"` transforms |
+**Issue:** `@hiogawa/react-server` uses a 4-phase build (scan → server → browser → ssr), while `@vitejs/plugin-rsc` has its own build orchestration.
 
-### Utilities (No Longer Needed)
+**Current State:** The framework's `buildOrchestrationPlugin` may conflict with or duplicate the plugin's build process.
 
-| Utility | Reason |
-|---------|--------|
-| `normalizeViteImportAnalysisUrl` | Plugin's transform handles client IDs |
-| `vitePluginFindSourceMapURL` | Use `findSourceMapURL` from `/browser` |
+**TODO:** Investigate if we can remove `buildOrchestrationPlugin` and rely on `@vitejs/plugin-rsc`'s build orchestration.
 
-### Core Plugin Setup
+### 2. Route-based Client Reference Tracking
 
-The entire RSC environment setup from `@hiogawa/vite-rsc/core/plugin` is replaced by:
-
+**Issue:** The framework tracked client references per route for asset optimization:
 ```typescript
-import rsc from '@vitejs/plugin-rsc'
-
-export default defineConfig({
-  plugins: [rsc()],
-  environments: {
-    rsc: { build: { rollupOptions: { input: { index: './entry.rsc.tsx' } } } },
-    ssr: { build: { rollupOptions: { input: { index: './entry.ssr.tsx' } } } },
-    client: { build: { rollupOptions: { input: { index: './entry.browser.tsx' } } } },
-  },
-})
+manager.routeToClientReferences[routeKey] = ids;
 ```
 
----
+This relied on `CustomModuleMeta.$$rsc.type === "client"` which was set by the removed transform plugins.
 
-## Entry Point Rewrites
+**Current State:** `routeManifestPluginServer` still tries to detect client references but the metadata is no longer set.
 
-### entry.rsc.tsx (Server)
+**TODO:** Either:
+- Use `@vitejs/plugin-rsc`'s `getPluginApi()` to access its reference maps
+- Or remove route-based asset optimization entirely
 
-**Before:** Complex integration with vite-rsc internals
-**After:** Minimal API usage
+### 3. Virtual Modules
 
-```typescript
-import {
-  renderToReadableStream,
-  createTemporaryReferenceSet,
-  decodeReply,
-  loadServerAction,
-  decodeAction,
-  decodeFormState,
-} from '@vitejs/plugin-rsc/rsc'
+**Issue:** The framework defines virtual modules that may conflict with or duplicate plugin's:
 
-export default async function handler(request: Request): Promise<Response> {
-  // Handle server actions...
-  // Render RSC stream
-  const rscStream = renderToReadableStream(payload)
+| Framework Virtual | Plugin Virtual |
+|------------------|----------------|
+| `virtual:client-references` | `virtual:vite-rsc/client-references` |
+| `virtual:server-references` | `virtual:vite-rsc/server-references` |
 
-  // For SSR: delegate to SSR environment
-  const ssrEntry = await import.meta.viteRsc.loadModule<...>('ssr', 'index')
-  const html = await ssrEntry.renderHTML(rscStream)
-  return new Response(html)
-}
-```
+**Current State:** Framework's virtual modules are still defined but return empty objects.
 
-### entry.ssr.tsx (SSR)
+**TODO:** Remove framework's virtual modules or make them re-export from plugin's.
 
-```typescript
-import { createFromReadableStream } from '@vitejs/plugin-rsc/ssr'
-import { renderToReadableStream } from 'react-dom/server.edge'
-import { injectRSCPayload } from 'rsc-html-stream/server'
+### 4. E2E Testing Required
 
-export async function renderHTML(rscStream: ReadableStream) {
-  const [rscStream1, rscStream2] = rscStream.tee()
-
-  // Deserialize RSC → React VDOM
-  const payload = createFromReadableStream(rscStream1)
-
-  // Get bootstrap script
-  const bootstrapScriptContent = await import.meta.viteRsc.loadBootstrapScriptContent('index')
-
-  // Render HTML
-  const htmlStream = await renderToReadableStream(<Root />, { bootstrapScriptContent })
-
-  // Inject RSC payload for hydration
-  return htmlStream.pipeThrough(injectRSCPayload(rscStream2))
-}
-```
-
-### entry.browser.tsx (Client)
-
-```typescript
-import {
-  createFromReadableStream,
-  createFromFetch,
-  setServerCallback,
-  createTemporaryReferenceSet,
-  encodeReply,
-} from '@vitejs/plugin-rsc/browser'
-import { rscStream } from 'rsc-html-stream/client'
-
-// Hydrate from initial RSC payload
-const initialPayload = await createFromReadableStream(rscStream)
-hydrateRoot(document, <Root />)
-
-// Server action callback
-setServerCallback(async (id, args) => {
-  const body = await encodeReply(args, { temporaryReferences })
-  const payload = await createFromFetch(fetch(actionRequest))
-  // Re-render...
-})
-
-// Server HMR
-import.meta.hot?.on('rsc:update', () => refetch())
-```
-
----
-
-## Plugin Configuration
-
-### Vite Config
-
-```typescript
-import rsc from '@vitejs/plugin-rsc'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [
-    rsc({
-      // Entries shorthand (optional, can use environments.*.build.rollupOptions.input)
-      entries: {
-        rsc: './src/entry/server.tsx',
-        ssr: './src/entry/ssr.tsx',
-        client: './src/entry/browser.tsx',
-      },
-      // Auto CSS injection for server components (default: enabled)
-      rscCssTransform: true,
-    }),
-    react(), // For client HMR
-  ],
-
-  environments: {
-    rsc: {
-      build: {
-        outDir: 'dist/rsc',
-        rollupOptions: { input: { index: './src/entry/server.tsx' } },
-      },
-    },
-    ssr: {
-      build: {
-        outDir: 'dist/server',
-        rollupOptions: { input: { index: './src/entry/ssr.tsx' } },
-      },
-    },
-    client: {
-      build: {
-        outDir: 'dist/client',
-        rollupOptions: { input: { index: './src/entry/browser.tsx' } },
-      },
-    },
-  },
-})
-```
-
----
-
-## Migration Steps
-
-### Phase 1: Add New Dependency
-
-1. [ ] Add `@vitejs/plugin-rsc` to dependencies
-2. [ ] Add `rsc-html-stream` for RSC payload injection (if not already)
-
-### Phase 2: Rewrite Plugin Layer
-
-3. [ ] Rewrite `src/plugin/index.ts`:
-   - Remove `rscCore` from `@hiogawa/vite-rsc/core/plugin`
-   - Use `rsc()` from `@vitejs/plugin-rsc` as base
-   - Keep framework-specific plugins (router, prerender, etc.)
-
-4. [ ] Remove transform plugins:
-   - Delete/simplify `src/features/client-component/plugin.ts`
-   - Delete/simplify `src/features/server-action/plugin.tsx`
-
-### Phase 3: Rewrite Entry Points
-
-5. [ ] Rewrite `src/entry/server.tsx`:
-   - Import from `@vitejs/plugin-rsc/rsc`
-   - Use `import.meta.viteRsc.loadModule()` for SSR delegation
-
-6. [ ] Rewrite `src/entry/ssr.tsx`:
-   - Import from `@vitejs/plugin-rsc/ssr`
-   - Use `import.meta.viteRsc.loadBootstrapScriptContent()`
-   - Use `rsc-html-stream/server` for payload injection
-
-7. [ ] Rewrite `src/entry/browser.tsx`:
-   - Import from `@vitejs/plugin-rsc/browser`
-   - Use `rsc-html-stream/client` for initial payload
-   - Use `import.meta.hot.on('rsc:update', ...)` for HMR
-
-### Phase 4: Update Feature Modules
-
-8. [ ] Update `src/features/client-component/`:
-   - `browser.tsx` → import from `@vitejs/plugin-rsc/browser`
-   - `server.tsx` → import from `@vitejs/plugin-rsc/rsc`
-   - `ssr.tsx` → import from `@vitejs/plugin-rsc/ssr`
-
-9. [ ] Update `src/features/server-action/`:
-   - Same pattern as client-component
-
-10. [ ] Update CSS handling:
-    - Remove custom CSS proxy
-    - Rely on plugin's `rscCssTransform` or `import.meta.viteRsc.loadCss()`
-
-### Phase 5: Cleanup
-
-11. [ ] Remove `@hiogawa/vite-rsc` from dependencies
-12. [ ] Delete unused utilities (`normalizeViteImportAnalysisUrl`, etc.)
-13. [ ] Update TypeScript config to include `@vitejs/plugin-rsc/types`
-
-### Phase 6: Testing
-
-14. [ ] Run type checking
-15. [ ] Run unit tests
-16. [ ] Run e2e tests
-17. [ ] Test dev server (HMR for server + client components)
-18. [ ] Test production build
-19. [ ] Test server actions (both JS-enabled and progressive enhancement)
-
----
-
-## Package.json Changes
-
-```diff
-  "dependencies": {
--   "@hiogawa/vite-rsc": "^0.4.9",
-+   "@vitejs/plugin-rsc": "^0.5.9",
-+   "rsc-html-stream": "^0.0.3",
-    "es-module-lexer": "^1.6.0",
-    "fast-glob": "^3.3.3",
-    "vitefu": "^1.0.5"
-  }
-```
+Unit tests pass but e2e tests need to be run to verify:
+- Dev server works
+- Production build works
+- HMR works (both server and client components)
+- Server actions work
+- SSR streaming works
+- File-based routing works
 
 ---
 
@@ -328,15 +116,19 @@ export default defineConfig({
 ```
 @hiogawa/react-server
 ├── Plugin layer
-│   ├── Core RSC plugin (from vite-rsc)
-│   ├── "use client" transform (own implementation)
-│   ├── "use server" transform (own implementation)
-│   ├── CSS proxy (own implementation)
-│   └── Framework plugins (router, prerender, etc.)
+│   ├── rscCore() from vite-rsc - core RSC environment
+│   ├── vitePluginFindSourceMapURL() - error overlay
+│   ├── vitePluginServerUseClient - "use client" transform
+│   ├── vitePluginServerUseServer - "use server" transform
+│   ├── vitePluginClientUseClient - client reference virtual module
+│   ├── vitePluginClientUseServer - "use server" in client
+│   ├── buildOrchestrationPlugin - 4-phase build
+│   └── Framework plugins (router, prerender, assets, etc.)
 ├── Entry points
-│   └── Heavy integration with vite-rsc internals
+│   ├── Manual setRequireModule initialization
+│   └── Framework-specific routing/rendering
 └── Framework features
-    └── Routing, metadata, error handling, etc.
+    └── File-based routing, metadata, error handling, etc.
 ```
 
 ### After (with @vitejs/plugin-rsc)
@@ -344,27 +136,20 @@ export default defineConfig({
 ```
 @hiogawa/react-server
 ├── Plugin layer
-│   ├── rsc() from @vitejs/plugin-rsc (handles all RSC bundling)
-│   └── Framework plugins (router, prerender, etc.)
+│   ├── rsc() from @vitejs/plugin-rsc - handles ALL RSC bundling
+│   ├── buildOrchestrationPlugin - TODO: may be removable
+│   └── Framework plugins (router, prerender, assets, etc.)
 ├── Entry points
-│   └── Minimal API usage (starter example pattern)
+│   ├── Auto-initialized by plugin imports
+│   └── Framework-specific routing/rendering
 └── Framework features
-    └── Routing, metadata, error handling, etc.
+    └── File-based routing, metadata, error handling, etc.
 ```
 
 ---
 
-## Key Benefits
+## Reference
 
-1. **Simpler codebase** - Remove ~500+ lines of RSC transform code
-2. **Upstream maintenance** - RSC bundler bugs fixed in plugin-rsc
-3. **Feature parity** - Get new RSC features automatically (e.g., `"use cache"`)
-4. **Better integration** - Plugin designed for Vite ecosystem
-
----
-
-## References
-
+- `@vitejs/plugin-rsc` source: `/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc`
 - Starter example: `/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc/examples/starter`
-- Plugin README: `/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc/README.md`
-- Plugin source: `/home/hiroshi/code/others/vite-plugin-react/packages/plugin-rsc/src/plugin.ts`
+- Plugin API: `getPluginApi(config)` returns `{ manager: RscPluginManager }`

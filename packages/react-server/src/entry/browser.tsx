@@ -1,7 +1,7 @@
 import * as virtualClientRoutes from "virtual:client-routes";
 import { createDebug, memoize, tinyassert } from "@hiogawa/utils";
-import * as ReactClient from "@vitejs/plugin-rsc/browser";
 import type { RouterHistory } from "@tanstack/history";
+import * as ReactClient from "@vitejs/plugin-rsc/browser";
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
