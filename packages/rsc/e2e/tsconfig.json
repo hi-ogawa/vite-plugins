@@ -1,8 +1,0 @@
-{
-  "extends": "../../../tsconfig.base.json",
-  "compilerOptions": {
-    "noPropertyAccessFromIndexSignature": false,
-    "noImplicitReturns": false,
-    "checkJs": false
-  }
-}

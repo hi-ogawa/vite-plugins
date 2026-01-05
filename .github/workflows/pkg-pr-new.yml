@@ -13,26 +13,6 @@ jobs:
         with:
           playwright: false
 
-      # stable
-      - run: |
-          cp -rf packages/rsc packages/rsc-stable
-
-      # canary
-      - run: |
-          pnpm i -w react@canary react-dom@canary react-server-dom-webpack@canary
-          pnpm i --no-frozen-lockfile
-          pnpm -C packages/rsc build
-          cp -rf packages/rsc packages/rsc-canary
-          sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-canary"#' packages/rsc-canary/package.json
-
-      # experimental
-      - run: |
-          pnpm i -w react@experimental react-dom@experimental react-server-dom-webpack@experimental
-          pnpm i --no-frozen-lockfile
-          pnpm -C packages/rsc build
-          cp -rf packages/rsc packages/rsc-experimental
-          sed -i 's#"name": "@hiogawa/vite-rsc"#"name": "@hiogawa/vite-rsc-experimental"#' packages/rsc-experimental/package.json
-
       # strip prepack to avoid duplicate builds
       - run: |
           for pkg in packages/*/package.json; do
@@ -43,10 +23,6 @@ jobs:
           pnpx pkg-pr-new publish --comment=off \
             packages/react-server \
             packages/react-server-next \
-            packages/rsc-stable \
-            packages/rsc-canary \
-            packages/rsc-experimental \
-            packages/rsc-react-router \
             packages/transforms \
             packages/import-attributes \
             packages/vite-plugin-ssr-middleware \

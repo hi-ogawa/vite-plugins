@@ -9,9 +9,6 @@
     "tsc": "tsc -b packages/*/tsconfig.json packages/*/e2e/tsconfig.json packages/*/examples/*/tsconfig.json",
     "tsc-dev": "pnpm tsc --watch --preserveWatchOutput",
     "test": "pnpm -r --sequential test run",
-    "vite-ecosystem-ci:build": "pnpm -r --filter '@hiogawa/vite-rsc...' build",
-    "vite-ecosystem-ci:before-test": "playwright install chromium",
-    "vite-ecosystem-ci:test": "pnpm -C packages/rsc test-e2e",
     "lint": "biome check --write .",
     "lint-check": "biome check ."
   },
@@ -50,7 +47,6 @@
       "react-dom": "$react-dom",
       "react-server-dom-webpack": "$react-server-dom-webpack",
       "@hiogawa/react-server": "workspace:*",
-      "@hiogawa/vite-rsc": "workspace:*",
       "@playwright/test": "$@playwright/test",
       "@types/react": "$@types/react",
       "@types/react-dom": "$@types/react-dom",

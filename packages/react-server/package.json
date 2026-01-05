@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@hiogawa/transforms": "workspace:*",
-    "@hiogawa/vite-rsc": "workspace:*",
+    "@hiogawa/vite-rsc": "^0.4.9",
     "es-module-lexer": "^1.6.0",
     "fast-glob": "^3.3.3",
     "vitefu": "^1.0.5"
