@@ -1,0 +1,28 @@
+{
+  "name": "@hiogawa/vite-plugin-server-dotenv",
+  "version": "0.0.1",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/vite-plugin-server-dotenv",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hi-ogawa/vite-plugins.git",
+    "directory": "packages/vite-plugin-server-dotenv"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}
