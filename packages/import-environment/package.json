@@ -1,0 +1,31 @@
+{
+  "name": "@hiogawa/vite-plugin-import-environment",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hi-ogawa/vite-plugins/tree/main/packages/import-environment",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hi-ogawa/vite-plugins.git",
+    "directory": "packages/import-environment"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsdown --sourcemap --watch src",
+    "build": "tsdown",
+    "prepack": "tsdown --clean",
+    "test-e2e": "playwright test"
+  },
+  "dependencies": {
+    "es-module-lexer": "^1.6.0",
+    "magic-string": "^0.30.17",
+    "strip-literal": "^3.1.0"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  }
+}
